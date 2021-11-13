@@ -1,11 +1,11 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { FunctionDeclaration, Node, StatementedNode } from "../../../../../compiler";
 import { FunctionDeclarationStructure, StructureKind } from "../../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia } from "../../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("StatementedNode", () => {
-    describe(nameof.property<StatementedNode>("insertFunctions"), () => {
+    describe(nameof<StatementedNode>("insertFunctions"), () => {
         function doTest(startCode: string, index: number, structures: OptionalKindAndTrivia<FunctionDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertFunctions(index, structures);
@@ -102,7 +102,7 @@ describe("StatementedNode", () => {
         });
     });
 
-    describe(nameof.property<StatementedNode>("insertFunction"), () => {
+    describe(nameof<StatementedNode>("insertFunction"), () => {
         function doTest(startCode: string, index: number, structure: OptionalKindAndTrivia<FunctionDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertFunction(index, structure);
@@ -115,7 +115,7 @@ describe("StatementedNode", () => {
         });
     });
 
-    describe(nameof.property<StatementedNode>("addFunctions"), () => {
+    describe(nameof<StatementedNode>("addFunctions"), () => {
         function doTest(startCode: string, structures: OptionalKindAndTrivia<FunctionDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addFunctions(structures);
@@ -129,7 +129,7 @@ describe("StatementedNode", () => {
         });
     });
 
-    describe(nameof.property<StatementedNode>("addFunction"), () => {
+    describe(nameof<StatementedNode>("addFunction"), () => {
         function doTest(startCode: string, structure: OptionalKindAndTrivia<FunctionDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addFunction(structure);
@@ -142,7 +142,7 @@ describe("StatementedNode", () => {
         });
     });
 
-    describe(nameof.property<StatementedNode>("getFunctions"), () => {
+    describe(nameof<StatementedNode>("getFunctions"), () => {
         const { sourceFile } = getInfoFromText("function Identifier1();function Identifier1() {}\nfunction Identifier2() {}"
             + "declare function Identifier3(); declare function Identifier3();");
         const functions = sourceFile.getFunctions();
@@ -161,7 +161,7 @@ describe("StatementedNode", () => {
         });
     });
 
-    describe(nameof.property<StatementedNode>("getFunction"), () => {
+    describe(nameof<StatementedNode>("getFunction"), () => {
         const { sourceFile } = getInfoFromText("function Identifier1() {}\nfunction Identifier2() {}");
 
         it("should get a function by a name", () => {
@@ -177,7 +177,7 @@ describe("StatementedNode", () => {
         });
     });
 
-    describe(nameof.property<StatementedNode>("getFunctionOrThrow"), () => {
+    describe(nameof<StatementedNode>("getFunctionOrThrow"), () => {
         const { sourceFile } = getInfoFromText("function Identifier1() {}\nfunction Identifier2() {}");
 
         it("should get a function by a name", () => {

@@ -1,19 +1,19 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { InterfaceDeclaration } from "../../../../compiler";
 import { InterfaceDeclarationSpecificStructure, InterfaceDeclarationStructure, OptionalKind, StructureKind,
     TypeParameterDeclarationStructure } from "../../../../structures";
 import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("InterfaceDeclaration", () => {
-    describe(nameof.property<InterfaceDeclaration>("getType"), () => {
+    describe(nameof<InterfaceDeclaration>("getType"), () => {
         it("should get the interface's type", () => {
             const { sourceFile } = getInfoFromText("interface Identifier { prop: string; }");
             expect(sourceFile.getInterfaceOrThrow("Identifier").getType().getText()).to.deep.equal("Identifier");
         });
     });
 
-    describe(nameof.property<InterfaceDeclaration>("getBaseTypes"), () => {
+    describe(nameof<InterfaceDeclaration>("getBaseTypes"), () => {
         function doTest(text: string, interfaceName: string, expectedNames: string[]) {
             const { sourceFile } = getInfoFromText(text);
             const types = sourceFile.getInterfaceOrThrow(interfaceName).getBaseTypes();
@@ -33,7 +33,7 @@ describe("InterfaceDeclaration", () => {
         });
     });
 
-    describe(nameof.property<InterfaceDeclaration>("getBaseDeclarations"), () => {
+    describe(nameof<InterfaceDeclaration>("getBaseDeclarations"), () => {
         function doTest(text: string, interfaceName: string, expectedNames: string[]) {
             const { sourceFile } = getInfoFromText(text);
             const declarations = sourceFile.getInterfaceOrThrow(interfaceName).getBaseDeclarations();
@@ -58,7 +58,7 @@ describe("InterfaceDeclaration", () => {
         });
     });
 
-    describe(nameof.property<InterfaceDeclaration>("set"), () => {
+    describe(nameof<InterfaceDeclaration>("set"), () => {
         function doTest(startingCode: string, structure: OptionalKind<InterfaceDeclarationSpecificStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startingCode);
             firstChild.set(structure);
@@ -72,7 +72,7 @@ describe("InterfaceDeclaration", () => {
         // currently no members exist on InterfaceDeclarationSpecificStructure
     });
 
-    describe(nameof.property<InterfaceDeclaration>("remove"), () => {
+    describe(nameof<InterfaceDeclaration>("remove"), () => {
         function doTest(text: string, index: number, expectedText: string) {
             const { sourceFile } = getInfoFromText(text);
             sourceFile.getInterfaces()[index].remove();
@@ -84,7 +84,7 @@ describe("InterfaceDeclaration", () => {
         });
     });
 
-    describe(nameof.property<InterfaceDeclaration>("getImplementations"), () => {
+    describe(nameof<InterfaceDeclaration>("getImplementations"), () => {
         it("should get the implementations", () => {
             const sourceFileText = "interface MyInterface {}\nexport class Class1 implements MyInterface {}\nclass Class2 implements MyInterface {}";
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(sourceFileText);
@@ -95,7 +95,7 @@ describe("InterfaceDeclaration", () => {
         });
     });
 
-    describe(nameof.property<InterfaceDeclaration>("getStructure"), () => {
+    describe(nameof<InterfaceDeclaration>("getStructure"), () => {
         function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<InterfaceDeclarationStructure>>) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(code);
             const structure = firstChild.getStructure();

@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { TypeQueryNode } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
@@ -9,7 +9,7 @@ describe("TypeQueryNode", () => {
         return sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.TypeQuery);
     }
 
-    describe(nameof.property<TypeQueryNode>("getExprName"), () => {
+    describe(nameof<TypeQueryNode>("getExprName"), () => {
         it("should get", () => {
             expect(getTypeQueryNode("const test: typeof Test").getExprName().getText(), "Test");
         });

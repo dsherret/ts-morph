@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ExternalModuleReference } from "../../../../compiler";
 import { Project } from "../../../../Project";
@@ -11,21 +11,21 @@ describe("ExternalModuleReference", () => {
 
     // I'm not sure how to make expression null
 
-    describe(nameof.property<ExternalModuleReference>("getExpression"), () => {
+    describe(nameof<ExternalModuleReference>("getExpression"), () => {
         it("should get the expression", () => {
             const { descendant } = getNode("import test = require('expression');");
             expect(descendant.getExpression()!.getText()).to.equal("'expression'");
         });
     });
 
-    describe(nameof.property<ExternalModuleReference>("getExpressionOrThrow"), () => {
+    describe(nameof<ExternalModuleReference>("getExpressionOrThrow"), () => {
         it("should get the expression", () => {
             const { descendant } = getNode("import test = require('expression');");
             expect(descendant.getExpressionOrThrow().getText()).to.equal("'expression'");
         });
     });
 
-    describe(nameof.property<ExternalModuleReference>("isRelative"), () => {
+    describe(nameof<ExternalModuleReference>("isRelative"), () => {
         function doTest(text: string, expected: boolean) {
             const { descendant } = getNode(text);
             expect(descendant.isRelative()).to.equal(expected);
@@ -56,7 +56,7 @@ describe("ExternalModuleReference", () => {
         });
     });
 
-    describe(nameof.property<ExternalModuleReference>("getReferencedSourceFile"), () => {
+    describe(nameof<ExternalModuleReference>("getReferencedSourceFile"), () => {
         it("should get the referenced source file", () => {
             const project = new Project({ useInMemoryFileSystem: true });
             const mainSourceFile = project.createSourceFile("main.ts", `import test = require('./class');`);
@@ -73,7 +73,7 @@ describe("ExternalModuleReference", () => {
         });
     });
 
-    describe(nameof.property<ExternalModuleReference>("getReferencedSourceFileOrThrow"), () => {
+    describe(nameof<ExternalModuleReference>("getReferencedSourceFileOrThrow"), () => {
         it("should get the referenced source file", () => {
             const project = new Project({ useInMemoryFileSystem: true });
             const mainSourceFile = project.createSourceFile("main.ts", `import test = require('./class');`);

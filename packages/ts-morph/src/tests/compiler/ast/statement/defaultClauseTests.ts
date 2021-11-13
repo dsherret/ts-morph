@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { DefaultClause } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -8,7 +8,7 @@ function getDefaultClause(text: string) {
 }
 
 describe("DefaultClause", () => {
-    describe(nameof.property<DefaultClause>("getStatementsWithComments"), () => {
+    describe(nameof<DefaultClause>("getStatementsWithComments"), () => {
         function doTest(text: string, expectedTexts: string[]) {
             const defaultClause = getDefaultClause(text);
             expect(defaultClause.getStatementsWithComments().map(s => s.getText())).to.deep.equal(expectedTexts);

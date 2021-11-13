@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { UnionTypeNode } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -8,7 +8,7 @@ describe("UnionTypeNode", () => {
         return getInfoFromTextWithDescendant<UnionTypeNode>(text, SyntaxKind.UnionType);
     }
 
-    describe(nameof.property<UnionTypeNode>("getTypeNodes"), () => {
+    describe(nameof<UnionTypeNode>("getTypeNodes"), () => {
         it("should get the type nodes of the union type nodes", () => {
             const { descendant } = getNode("var t: string | number");
             expect(descendant.getTypeNodes().map(t => t.getText())).to.deep.equal(["string", "number"]);

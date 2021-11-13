@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ObjectLiteralExpression, PropertyAssignment, ShorthandPropertyAssignment } from "../../../../../compiler";
 import { ShorthandPropertyAssignmentStructure, StructureKind } from "../../../../../structures";
@@ -14,7 +14,7 @@ describe("ShorthandPropertyAssignment", () => {
         };
     }
 
-    describe(nameof.property<ShorthandPropertyAssignment>("getObjectAssignmentInitializer"), () => {
+    describe(nameof<ShorthandPropertyAssignment>("getObjectAssignmentInitializer"), () => {
         it("should get the object assignment initializer", () => {
             const { shorthandPropertyAssignment } = getShorthandPropertyAssignemntExpression("({prop = 5})");
             expect(shorthandPropertyAssignment.getObjectAssignmentInitializer()!.getText()).to.equal("5");
@@ -26,7 +26,7 @@ describe("ShorthandPropertyAssignment", () => {
         });
     });
 
-    describe(nameof.property<ShorthandPropertyAssignment>("hasObjectAssignmentInitializer"), () => {
+    describe(nameof<ShorthandPropertyAssignment>("hasObjectAssignmentInitializer"), () => {
         function doTest(text: string, expected: boolean) {
             const { shorthandPropertyAssignment } = getShorthandPropertyAssignemntExpression(text);
             expect(shorthandPropertyAssignment.hasObjectAssignmentInitializer()).to.equal(expected);
@@ -41,7 +41,7 @@ describe("ShorthandPropertyAssignment", () => {
         });
     });
 
-    describe(nameof.property<ShorthandPropertyAssignment>("getObjectAssignmentInitializerOrThrow"), () => {
+    describe(nameof<ShorthandPropertyAssignment>("getObjectAssignmentInitializerOrThrow"), () => {
         it("should get the object assignment initializer", () => {
             const { shorthandPropertyAssignment } = getShorthandPropertyAssignemntExpression("({prop = 5})");
             expect(shorthandPropertyAssignment.getObjectAssignmentInitializerOrThrow().getText()).to.equal("5");
@@ -53,7 +53,7 @@ describe("ShorthandPropertyAssignment", () => {
         });
     });
 
-    describe(nameof.property<ShorthandPropertyAssignment>("getEqualsToken"), () => {
+    describe(nameof<ShorthandPropertyAssignment>("getEqualsToken"), () => {
         it("should get the equals token", () => {
             const { shorthandPropertyAssignment } = getShorthandPropertyAssignemntExpression("({prop = 5})");
             expect(shorthandPropertyAssignment.getEqualsToken()!.getText()).to.equal("=");
@@ -65,7 +65,7 @@ describe("ShorthandPropertyAssignment", () => {
         });
     });
 
-    describe(nameof.property<ShorthandPropertyAssignment>("getEqualsTokenOrThrow"), () => {
+    describe(nameof<ShorthandPropertyAssignment>("getEqualsTokenOrThrow"), () => {
         it("should get the equals token", () => {
             const { shorthandPropertyAssignment } = getShorthandPropertyAssignemntExpression("({prop = 5})");
             expect(shorthandPropertyAssignment.getEqualsTokenOrThrow().getText()).to.equal("=");
@@ -77,7 +77,7 @@ describe("ShorthandPropertyAssignment", () => {
         });
     });
 
-    describe(nameof.property<ShorthandPropertyAssignment>("setInitializer"), () => {
+    describe(nameof<ShorthandPropertyAssignment>("setInitializer"), () => {
         it("should set a new initializer", () => {
             const { sourceFile } = getInfoFromText("const t = { prop, prop2 }");
             const shortPropAssignment = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ShorthandPropertyAssignment);
@@ -88,7 +88,7 @@ describe("ShorthandPropertyAssignment", () => {
         });
     });
 
-    describe(nameof.property<ShorthandPropertyAssignment>("removeObjectAssignmentInitializer"), () => {
+    describe(nameof<ShorthandPropertyAssignment>("removeObjectAssignmentInitializer"), () => {
         function doTest(start: string, expected: string) {
             const { sourceFile } = getInfoFromText(start);
             const shortPropAssignment = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ShorthandPropertyAssignment);
@@ -105,7 +105,7 @@ describe("ShorthandPropertyAssignment", () => {
         });
     });
 
-    describe(nameof.property<ShorthandPropertyAssignment>("remove"), () => {
+    describe(nameof<ShorthandPropertyAssignment>("remove"), () => {
         function doTest(code: string, propertyToRemove: string, expectedCode: string) {
             const { descendant } = getInfoFromTextWithDescendant<ObjectLiteralExpression>(code, SyntaxKind.ObjectLiteralExpression);
 
@@ -138,7 +138,7 @@ describe("ShorthandPropertyAssignment", () => {
         });
     });
 
-    describe(nameof.property<ShorthandPropertyAssignment>("set"), () => {
+    describe(nameof<ShorthandPropertyAssignment>("set"), () => {
         function test(code: string, structure: Partial<ShorthandPropertyAssignmentStructure>, expectedText: string) {
             const { descendant, sourceFile } = getInfoFromTextWithDescendant<ShorthandPropertyAssignment>(code, SyntaxKind.ShorthandPropertyAssignment);
             expect(descendant.set(structure).wasForgotten()).to.be.false;
@@ -158,7 +158,7 @@ describe("ShorthandPropertyAssignment", () => {
         });
     });
 
-    describe(nameof.property<ShorthandPropertyAssignment>("getStructure"), () => {
+    describe(nameof<ShorthandPropertyAssignment>("getStructure"), () => {
         function test(code: string, expectedStructure: OptionalTrivia<MakeRequired<ShorthandPropertyAssignmentStructure>>) {
             const { descendant } = getInfoFromTextWithDescendant<ShorthandPropertyAssignment>(code, SyntaxKind.ShorthandPropertyAssignment);
             expect(descendant.getStructure()).to.deep.equals(expectedStructure);

@@ -1,11 +1,11 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ParameterDeclarationStructurePrinter } from "../../../structurePrinters";
 import { OptionalKind, ParameterDeclarationStructure } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("ParameterDeclarationStructurePrinter", () => {
-    describe(nameof.property<ParameterDeclarationStructurePrinter>("printTextsWithParenthesis"), () => {
+    describe(nameof<ParameterDeclarationStructurePrinter>("printTextsWithParenthesis"), () => {
         function doTest(structures: OptionalKind<ParameterDeclarationStructure>[], expectedOutput: string) {
             const { writer, factory } = getStructureFactoryAndWriter();
             factory.forParameterDeclaration().printTextsWithParenthesis(writer, structures);

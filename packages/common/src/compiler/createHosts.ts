@@ -162,7 +162,7 @@ export function createHosts(options: CreateHostsOptions) {
         if (options.libFolderPath != null) {
             if (options.skipLoadingLibFiles === true) {
                 throw new errors.InvalidOperationError(
-                    `Cannot set ${nameof.property(options, "skipLoadingLibFiles")} to true when ${nameof.property(options, "libFolderPath")} is provided.`,
+                    `Cannot set ${nameof(options, "skipLoadingLibFiles")} to true when ${nameof(options, "libFolderPath")} is provided.`,
                 );
             }
             return options.libFolderPath;

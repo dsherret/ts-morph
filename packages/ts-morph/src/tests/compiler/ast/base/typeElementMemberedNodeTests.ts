@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { CallSignatureDeclaration, CommentTypeElement, ConstructSignatureDeclaration, IndexSignatureDeclaration, InterfaceDeclaration, MethodSignature, Node,
     PropertySignature, TypeElementMemberedNode, TypeLiteralNode } from "../../../../compiler";
@@ -8,7 +8,7 @@ import { WriterFunction } from "../../../../types";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia } from "../../testHelpers";
 
 describe("TypeElementMemberedNode", () => {
-    describe(nameof.property<TypeElementMemberedNode>("addMember"), () => {
+    describe(nameof<TypeElementMemberedNode>("addMember"), () => {
         function doTest(startCode: string, member: string | WriterFunction | TypeElementMemberStructures, expectedCode: string) {
             const { sourceFile, firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.addMember(member);
@@ -25,7 +25,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("addMembers"), () => {
+    describe(nameof<TypeElementMemberedNode>("addMembers"), () => {
         type MembersType = string | WriterFunction | (string | WriterFunction | TypeElementMemberStructures)[];
         function doTest(startCode: string, members: MembersType, expectedCode: string, expectedResultCount: number) {
             const { sourceFile, firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
@@ -46,7 +46,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("insertMember"), () => {
+    describe(nameof<TypeElementMemberedNode>("insertMember"), () => {
         function doTest(startCode: string, insertIndex: number, member: string | WriterFunction | TypeElementMemberStructures, expectedCode: string) {
             const { sourceFile, firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.insertMember(insertIndex, member);
@@ -63,7 +63,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("insertMembers"), () => {
+    describe(nameof<TypeElementMemberedNode>("insertMembers"), () => {
         type MembersType = string | WriterFunction | (string | WriterFunction | TypeElementMemberStructures)[];
         function doTest(startCode: string, insertIndex: number, members: MembersType, expectedCode: string, expectedResultCount: number) {
             const { sourceFile, firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
@@ -106,7 +106,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("insertConstructSignatures"), () => {
+    describe(nameof<TypeElementMemberedNode>("insertConstructSignatures"), () => {
         function doTest(
             startCode: string,
             insertIndex: number,
@@ -139,7 +139,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("insertConstructSignature"), () => {
+    describe(nameof<TypeElementMemberedNode>("insertConstructSignature"), () => {
         function doTest(
             startCode: string,
             insertIndex: number,
@@ -157,7 +157,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("addConstructSignatures"), () => {
+    describe(nameof<TypeElementMemberedNode>("addConstructSignatures"), () => {
         function doTest(startCode: string, structures: OptionalKindAndTrivia<ConstructSignatureDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.addConstructSignatures(structures);
@@ -170,7 +170,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("addConstructSignature"), () => {
+    describe(nameof<TypeElementMemberedNode>("addConstructSignature"), () => {
         function doTest(startCode: string, structure: OptionalKindAndTrivia<ConstructSignatureDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.addConstructSignature(structure);
@@ -183,7 +183,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("getConstructSignatures"), () => {
+    describe(nameof<TypeElementMemberedNode>("getConstructSignatures"), () => {
         describe("none", () => {
             it("should not have any", () => {
                 const { firstChild } = getInfoFromText<InterfaceDeclaration>("interface Identifier {\n}\n");
@@ -205,7 +205,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("getConstructSignature"), () => {
+    describe(nameof<TypeElementMemberedNode>("getConstructSignature"), () => {
         const { firstChild } = getInfoFromText<InterfaceDeclaration>("interface Identifier { new(): string; new(str: string): string; }");
 
         it("should get the first that matches", () => {
@@ -217,7 +217,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("getConstructSignatureOrThrow"), () => {
+    describe(nameof<TypeElementMemberedNode>("getConstructSignatureOrThrow"), () => {
         const { firstChild } = getInfoFromText<InterfaceDeclaration>("interface Identifier { new(): string; new(str: string): string; }");
 
         it("should get the first that matches", () => {
@@ -229,7 +229,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("insertIndexSignatures"), () => {
+    describe(nameof<TypeElementMemberedNode>("insertIndexSignatures"), () => {
         function doTest(
             startCode: string,
             insertIndex: number,
@@ -264,7 +264,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("insertIndexSignature"), () => {
+    describe(nameof<TypeElementMemberedNode>("insertIndexSignature"), () => {
         function doTest(startCode: string, insertIndex: number, structure: OptionalKindAndTrivia<IndexSignatureDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.insertIndexSignature(insertIndex, structure);
@@ -278,7 +278,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("addIndexSignatures"), () => {
+    describe(nameof<TypeElementMemberedNode>("addIndexSignatures"), () => {
         function doTest(startCode: string, structures: OptionalKindAndTrivia<IndexSignatureDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.addIndexSignatures(structures);
@@ -292,7 +292,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("addIndexSignature"), () => {
+    describe(nameof<TypeElementMemberedNode>("addIndexSignature"), () => {
         function doTest(startCode: string, structure: OptionalKindAndTrivia<IndexSignatureDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.addIndexSignature(structure);
@@ -305,7 +305,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("getIndexSignatures"), () => {
+    describe(nameof<TypeElementMemberedNode>("getIndexSignatures"), () => {
         describe("none", () => {
             it("should not have any", () => {
                 const { firstChild } = getInfoFromText<InterfaceDeclaration>("interface Identifier {\n}\n");
@@ -327,7 +327,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("getIndexSignature"), () => {
+    describe(nameof<TypeElementMemberedNode>("getIndexSignature"), () => {
         const { firstChild } = getInfoFromText<InterfaceDeclaration>("interface Identifier { [key: string]: string; [key2: string]: Date; }");
 
         it("should get the first that matches", () => {
@@ -339,7 +339,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("getIndexSignatureOrThrow"), () => {
+    describe(nameof<TypeElementMemberedNode>("getIndexSignatureOrThrow"), () => {
         const { firstChild } = getInfoFromText<InterfaceDeclaration>("interface Identifier { [key: string]: string; [key2: string]: Date; }");
 
         it("should get the first that matches", () => {
@@ -351,7 +351,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("insertCallSignatures"), () => {
+    describe(nameof<TypeElementMemberedNode>("insertCallSignatures"), () => {
         function doTest(startCode: string, insertIndex: number, structures: OptionalKindAndTrivia<CallSignatureDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.insertCallSignatures(insertIndex, structures);
@@ -379,7 +379,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("insertCallSignature"), () => {
+    describe(nameof<TypeElementMemberedNode>("insertCallSignature"), () => {
         function doTest(startCode: string, insertIndex: number, structure: OptionalKindAndTrivia<CallSignatureDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.insertCallSignature(insertIndex, structure);
@@ -392,7 +392,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("addCallSignatures"), () => {
+    describe(nameof<TypeElementMemberedNode>("addCallSignatures"), () => {
         function doTest(startCode: string, structures: OptionalKindAndTrivia<CallSignatureDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.addCallSignatures(structures);
@@ -405,7 +405,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("addCallSignature"), () => {
+    describe(nameof<TypeElementMemberedNode>("addCallSignature"), () => {
         function doTest(startCode: string, structure: OptionalKindAndTrivia<CallSignatureDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.addCallSignature(structure);
@@ -418,7 +418,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("getCallSignatures"), () => {
+    describe(nameof<TypeElementMemberedNode>("getCallSignatures"), () => {
         describe("none", () => {
             it("should not have any", () => {
                 const { firstChild } = getInfoFromText<InterfaceDeclaration>("interface Identifier {\n}\n");
@@ -440,7 +440,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("getCallSignature"), () => {
+    describe(nameof<TypeElementMemberedNode>("getCallSignature"), () => {
         const { firstChild } = getInfoFromText<InterfaceDeclaration>("interface Identifier { (): string; (str: string): string; }");
 
         it("should get the first that matches", () => {
@@ -452,7 +452,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("getCallSignatureOrThrow"), () => {
+    describe(nameof<TypeElementMemberedNode>("getCallSignatureOrThrow"), () => {
         const { firstChild } = getInfoFromText<InterfaceDeclaration>("interface Identifier { (): string; (str: string): string; }");
 
         it("should get the first that matches", () => {
@@ -464,7 +464,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("insertMethods"), () => {
+    describe(nameof<TypeElementMemberedNode>("insertMethods"), () => {
         function doTest(startCode: string, insertIndex: number, structures: OptionalKindAndTrivia<MethodSignatureStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.insertMethods(insertIndex, structures);
@@ -498,7 +498,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("insertMethod"), () => {
+    describe(nameof<TypeElementMemberedNode>("insertMethod"), () => {
         function doTest(startCode: string, insertIndex: number, structure: OptionalKindAndTrivia<MethodSignatureStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.insertMethod(insertIndex, structure);
@@ -512,7 +512,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("addMethods"), () => {
+    describe(nameof<TypeElementMemberedNode>("addMethods"), () => {
         function doTest(startCode: string, structures: OptionalKindAndTrivia<MethodSignatureStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.addMethods(structures);
@@ -526,7 +526,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("addMethod"), () => {
+    describe(nameof<TypeElementMemberedNode>("addMethod"), () => {
         function doTest(startCode: string, structure: OptionalKindAndTrivia<MethodSignatureStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.addMethod(structure);
@@ -539,7 +539,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("getMethod"), () => {
+    describe(nameof<TypeElementMemberedNode>("getMethod"), () => {
         const { firstChild } = getInfoFromText<InterfaceDeclaration>("interface Identifier { method1(); method2(); method3(); }");
 
         it("should get the first that matches by name", () => {
@@ -555,7 +555,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("getMethodOrThrow"), () => {
+    describe(nameof<TypeElementMemberedNode>("getMethodOrThrow"), () => {
         const { firstChild } = getInfoFromText<InterfaceDeclaration>("interface Identifier { method1(); method2(); method3(); }");
 
         it("should get the first that matches by name", () => {
@@ -571,7 +571,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("getMethods"), () => {
+    describe(nameof<TypeElementMemberedNode>("getMethods"), () => {
         describe("no methods", () => {
             it("should not have any methods", () => {
                 const { firstChild } = getInfoFromText<InterfaceDeclaration>("interface Identifier {\n}\n");
@@ -594,7 +594,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("insertProperties"), () => {
+    describe(nameof<TypeElementMemberedNode>("insertProperties"), () => {
         function doTest(startCode: string, insertIndex: number, structures: OptionalKindAndTrivia<PropertySignatureStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.insertProperties(insertIndex, structures);
@@ -624,7 +624,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("insertProperty"), () => {
+    describe(nameof<TypeElementMemberedNode>("insertProperty"), () => {
         function doTest(startCode: string, insertIndex: number, structure: OptionalKindAndTrivia<PropertySignatureStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.insertProperty(insertIndex, structure);
@@ -637,7 +637,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("addProperties"), () => {
+    describe(nameof<TypeElementMemberedNode>("addProperties"), () => {
         function doTest(startCode: string, structures: OptionalKindAndTrivia<PropertySignatureStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.addProperties(structures);
@@ -650,7 +650,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("addProperty"), () => {
+    describe(nameof<TypeElementMemberedNode>("addProperty"), () => {
         function doTest(startCode: string, structure: OptionalKindAndTrivia<PropertySignatureStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.addProperty(structure);
@@ -663,7 +663,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("getProperty"), () => {
+    describe(nameof<TypeElementMemberedNode>("getProperty"), () => {
         const { firstChild } = getInfoFromText<InterfaceDeclaration>("interface Identifier { prop1: string; prop2: number; prop3: Date; }");
 
         it("should get the first that matches by name", () => {
@@ -679,7 +679,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("getPropertyOrThrow"), () => {
+    describe(nameof<TypeElementMemberedNode>("getPropertyOrThrow"), () => {
         const { firstChild } = getInfoFromText<InterfaceDeclaration>("interface Identifier { prop1: string; prop2: number; prop3: Date; }");
 
         it("should get the first that matches by name", () => {
@@ -695,7 +695,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("getProperties"), () => {
+    describe(nameof<TypeElementMemberedNode>("getProperties"), () => {
         describe("no properties", () => {
             it("should not have any properties", () => {
                 const { firstChild } = getInfoFromText<InterfaceDeclaration>("interface Identifier {\n}\n");
@@ -716,7 +716,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("getMembers"), () => {
+    describe(nameof<TypeElementMemberedNode>("getMembers"), () => {
         function doTest(text: string, members: string[]) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(text);
             expect(firstChild.getMembers().map(m => m.getText())).to.deep.equal(members);
@@ -727,7 +727,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<TypeElementMemberedNode>("getMembersWithComments"), () => {
+    describe(nameof<TypeElementMemberedNode>("getMembersWithComments"), () => {
         function doTest(text: string, members: string[]) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(text);
             expect(firstChild.getMembersWithComments().map(m => m.getText())).to.deep.equal(members);
@@ -765,7 +765,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<InterfaceDeclaration>("set"), () => {
+    describe(nameof<InterfaceDeclaration>("set"), () => {
         function doTest(startingCode: string, structure: TypeElementMemberedNodeStructure, expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startingCode);
             firstChild.set(structure);
@@ -805,7 +805,7 @@ describe("TypeElementMemberedNode", () => {
         });
     });
 
-    describe(nameof.property<InterfaceDeclaration>("getStructure"), () => {
+    describe(nameof<InterfaceDeclaration>("getStructure"), () => {
         function doTest(startingCode: string, expectedStructure: TypeElementMemberedNodeStructure) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startingCode);
             const structure = firstChild.getStructure();

@@ -5,7 +5,7 @@ import { ExportableNodeStructure } from "../../../../../structures";
 import { getInfoFromText } from "../../../testHelpers";
 
 describe("ExportableNode", () => {
-    describe(nameof.property<ExportableNode>("setIsDefaultExport"), () => {
+    describe(nameof<ExportableNode>("setIsDefaultExport"), () => {
         function doTest(text: string, value: boolean, expectedText: string) {
             const { sourceFile, firstChild } = getInfoFromText<ClassDeclaration>(text);
             firstChild.setIsDefaultExport(value);
@@ -67,7 +67,7 @@ describe("ExportableNode", () => {
         });
     });
 
-    describe(nameof.property<ExportableNode>("setIsExported"), () => {
+    describe(nameof<ExportableNode>("setIsExported"), () => {
         function doTest(text: string, value: boolean, expected: string) {
             const { sourceFile, firstChild } = getInfoFromText<ClassDeclaration>(text);
             firstChild.setIsExported(value);
@@ -146,7 +146,7 @@ describe("ExportableNode", () => {
         });
     });
 
-    describe(nameof.property<FunctionDeclaration>("set"), () => {
+    describe(nameof<FunctionDeclaration>("set"), () => {
         function doTest(startingCode: string, structure: ExportableNodeStructure, expectedCode: string) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startingCode);
             firstChild.set(structure);
@@ -174,7 +174,7 @@ describe("ExportableNode", () => {
         });
     });
 
-    describe(nameof.property<FunctionDeclaration>("getStructure"), () => {
+    describe(nameof<FunctionDeclaration>("getStructure"), () => {
         function doTest(startingCode: string, expectedStructure: { isDefaultExport: boolean; isExported: boolean; }) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startingCode);
             const structure = firstChild.getStructure();

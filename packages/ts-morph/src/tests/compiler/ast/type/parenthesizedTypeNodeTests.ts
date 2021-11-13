@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ParenthesizedTypeNode } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -8,14 +8,14 @@ describe("ParenthesizedTypeNode", () => {
         return getInfoFromTextWithDescendant<ParenthesizedTypeNode>(text, SyntaxKind.ParenthesizedType);
     }
 
-    describe(nameof.property<ParenthesizedTypeNode>("getType"), () => {
+    describe(nameof<ParenthesizedTypeNode>("getType"), () => {
         it("should get the type", () => {
             const { descendant } = getNode("var t: (string | number);");
             expect(descendant.getTypeNode().getText()).to.equal("string | number");
         });
     });
 
-    describe(nameof.property<ParenthesizedTypeNode>("setType"), () => {
+    describe(nameof<ParenthesizedTypeNode>("setType"), () => {
         it("should set the type", () => {
             const { descendant, sourceFile } = getNode("var t: (string | number);");
             descendant.setType("number");

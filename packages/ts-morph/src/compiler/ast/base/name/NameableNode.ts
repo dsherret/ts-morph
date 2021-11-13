@@ -98,7 +98,7 @@ function NameableNodeInternal<T extends Constructor<NameableNodeExtensionType>>(
                 else
                     nameNode.replaceWithText(structure.name);
             }
-            else if (structure.hasOwnProperty(nameof.property(structure, "name"))) {
+            else if (structure.hasOwnProperty(nameof(structure, "name"))) {
                 this.removeName();
             }
 

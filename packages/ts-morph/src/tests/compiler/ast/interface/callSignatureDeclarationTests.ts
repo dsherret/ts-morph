@@ -1,8 +1,8 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { CallSignatureDeclaration, InterfaceDeclaration } from "../../../../compiler";
 import { CallSignatureDeclarationStructure, StructureKind, TypeParameterDeclarationStructure } from "../../../../structures";
 import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("CallSignatureDeclaration", () => {
     function getFirstCallSignatureWithInfo(code: string) {
@@ -10,7 +10,7 @@ describe("CallSignatureDeclaration", () => {
         return { ...opts, firstCallSignature: opts.firstChild.getCallSignatures()[0] };
     }
 
-    describe(nameof.property<CallSignatureDeclaration>("set"), () => {
+    describe(nameof<CallSignatureDeclaration>("set"), () => {
         function doTest(code: string, structure: Partial<CallSignatureDeclarationStructure>, expectedCode: string) {
             const { firstCallSignature, sourceFile } = getFirstCallSignatureWithInfo(code);
             firstCallSignature.set(structure);
@@ -36,7 +36,7 @@ describe("CallSignatureDeclaration", () => {
         });
     });
 
-    describe(nameof.property<CallSignatureDeclaration>("getStructure"), () => {
+    describe(nameof<CallSignatureDeclaration>("getStructure"), () => {
         function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<CallSignatureDeclarationStructure>>) {
             const { firstCallSignature } = getFirstCallSignatureWithInfo(text);
             const structure = firstCallSignature.getStructure();
@@ -70,7 +70,7 @@ interface Identifier {
         });
     });
 
-    describe(nameof.property<CallSignatureDeclaration>("remove"), () => {
+    describe(nameof<CallSignatureDeclaration>("remove"), () => {
         function doTest(code: string, indexToRemove: number, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<InterfaceDeclaration>(code);
             firstChild.getCallSignatures()[indexToRemove].remove();

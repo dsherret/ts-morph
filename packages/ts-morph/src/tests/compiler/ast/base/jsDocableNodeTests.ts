@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, FunctionDeclaration, JSDocableNode, Node, VariableStatement } from "../../../../compiler";
 import { JSDocableNodeStructure, JSDocStructure, OptionalKind } from "../../../../structures";
@@ -13,7 +13,7 @@ describe("JSDocableNode", () => {
         const multiDocedStatement = statements[1];
         const nonDocedStatement = statements[2];
 
-        describe(nameof.property<JSDocableNode>("getJsDocs"), () => {
+        describe(nameof<JSDocableNode>("getJsDocs"), () => {
             describe("documentationed node", () => {
                 const nodes = docedStatement.getJsDocs();
                 it("should have the right number of nodes", () => {
@@ -52,7 +52,7 @@ describe("JSDocableNode", () => {
         });
     });
 
-    describe(nameof.property<JSDocableNode>("insertJsDocs"), () => {
+    describe(nameof<JSDocableNode>("insertJsDocs"), () => {
         function doTest(
             startCode: string,
             insertIndex: number,
@@ -118,7 +118,7 @@ describe("JSDocableNode", () => {
         });
     });
 
-    describe(nameof.property<JSDocableNode>("insertJsDoc"), () => {
+    describe(nameof<JSDocableNode>("insertJsDoc"), () => {
         function doTest(startCode: string, index: number, structure: OptionalKind<JSDocStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.insertJsDoc(index, structure);
@@ -136,7 +136,7 @@ describe("JSDocableNode", () => {
         });
     });
 
-    describe(nameof.property<JSDocableNode>("addJsDocs"), () => {
+    describe(nameof<JSDocableNode>("addJsDocs"), () => {
         function doTest(startCode: string, structures: (OptionalKind<JSDocStructure> | string)[], expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.addJsDocs(structures);
@@ -150,7 +150,7 @@ describe("JSDocableNode", () => {
         });
     });
 
-    describe(nameof.property<JSDocableNode>("addJsDoc"), () => {
+    describe(nameof<JSDocableNode>("addJsDoc"), () => {
         function doTest(startCode: string, structure: OptionalKind<JSDocStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.addJsDoc(structure);
@@ -164,7 +164,7 @@ describe("JSDocableNode", () => {
         });
     });
 
-    describe(nameof.property<ClassDeclaration>("set"), () => {
+    describe(nameof<ClassDeclaration>("set"), () => {
         function doTest(startingCode: string, structure: JSDocableNodeStructure, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             firstChild.set(structure);
@@ -188,7 +188,7 @@ describe("JSDocableNode", () => {
         });
     });
 
-    describe(nameof.property<ClassDeclaration>("getStructure"), () => {
+    describe(nameof<ClassDeclaration>("getStructure"), () => {
         function doTest(startingCode: string, docTexts: string[]) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startingCode);
             expect((firstChild.getStructure().docs! as JSDocStructure[]).map(d => d.description)).to.deep.equal(docTexts);

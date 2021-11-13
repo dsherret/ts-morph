@@ -4,7 +4,7 @@ import { ClassDeclaration, Node, SourceFile, TextInsertableNode } from "../../..
 import { getInfoFromText } from "../../testHelpers";
 
 describe("TextInsertableNode", () => {
-    describe(nameof.property<TextInsertableNode>("replaceText"), () => {
+    describe(nameof<TextInsertableNode>("replaceText"), () => {
         describe("SourceFile", () => {
             function doTest(startCode: string, range: [number, number], insertCode: string, expectedCode: string) {
                 const { sourceFile } = getInfoFromText(startCode);
@@ -75,7 +75,7 @@ describe("TextInsertableNode", () => {
         });
     });
 
-    describe(nameof.property<TextInsertableNode>("insertText"), () => {
+    describe(nameof<TextInsertableNode>("insertText"), () => {
         describe("SourceFile", () => {
             function doTest(startCode: string, pos: number, insertCode: string, expectedCode: string) {
                 const { sourceFile } = getInfoFromText(startCode);
@@ -111,7 +111,7 @@ describe("TextInsertableNode", () => {
         });
     });
 
-    describe(nameof.property<TextInsertableNode>("removeText"), () => {
+    describe(nameof<TextInsertableNode>("removeText"), () => {
         describe("SourceFile", () => {
             function doSourceFileTest(startCode: string, expectedCode: string) {
                 const { sourceFile } = getInfoFromText(startCode);

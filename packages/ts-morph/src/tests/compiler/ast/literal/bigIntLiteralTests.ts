@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { BigIntLiteral } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -10,7 +10,7 @@ describe("BigIntLiteral", typeof BigInt === "undefined" ? () => {} : () => {
         return getInfoFromTextWithDescendant<BigIntLiteral>(text, SyntaxKind.BigIntLiteral);
     }
 
-    describe(nameof.property<BigIntLiteral>("getLiteralValue"), () => {
+    describe(nameof<BigIntLiteral>("getLiteralValue"), () => {
         function doTest(text: string, expectedValue: number) {
             const { descendant } = getDescendant(text);
             expect(descendant.getLiteralValue()).to.equal(expectedValue);
@@ -21,7 +21,7 @@ describe("BigIntLiteral", typeof BigInt === "undefined" ? () => {} : () => {
         });
     });
 
-    describe(nameof.property<BigIntLiteral>("setLiteralValue"), () => {
+    describe(nameof<BigIntLiteral>("setLiteralValue"), () => {
         function doTest(text: string, value: any, expectedText: string) {
             const { descendant, sourceFile } = getDescendant(text);
             descendant.setLiteralValue(value);

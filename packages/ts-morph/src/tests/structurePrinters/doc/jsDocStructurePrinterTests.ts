@@ -1,9 +1,9 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { FormatCodeSettings } from "../../../compiler";
 import { JSDocStructurePrinter } from "../../../structurePrinters";
 import { JSDocStructure, OptionalKind } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("JSDocStructurePrinter", () => {
     interface Options {
@@ -16,8 +16,8 @@ describe("JSDocStructurePrinter", () => {
         expect(writer.toString()).to.equal(expectedOutput);
     }
 
-    describe(nameof.property<JSDocStructurePrinter>("printText"), () => {
-        describe(nameof.property<JSDocStructure>("description"), () => {
+    describe(nameof<JSDocStructurePrinter>("printText"), () => {
+        describe(nameof<JSDocStructure>("description"), () => {
             it("should write when single line", () => {
                 doTest({ description: "Test" }, `/** Test */`);
             });
@@ -46,7 +46,7 @@ describe("JSDocStructurePrinter", () => {
             });
         });
 
-        describe(nameof.property<JSDocStructure>("tags"), () => {
+        describe(nameof<JSDocStructure>("tags"), () => {
             it("should write with single line description and tag", () => {
                 doTest(
                     { description: "Test", tags: [{ tagName: "param", text: "p - Test" }] },

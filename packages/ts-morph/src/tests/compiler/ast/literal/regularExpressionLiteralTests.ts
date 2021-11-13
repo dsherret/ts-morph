@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import * as os from "os";
 import { RegularExpressionLiteral } from "../../../../compiler";
@@ -7,7 +7,7 @@ import { getInfoFromTextWithDescendant } from "../../testHelpers";
 describe("RegularExpressionLiteral", () => {
     const isWindows = os.platform() === "win32";
 
-    describe(nameof.property<RegularExpressionLiteral>("getLiteralValue"), () => {
+    describe(nameof<RegularExpressionLiteral>("getLiteralValue"), () => {
         function doTest(text: string, pattern: string, flags: string) {
             const { descendant } = getInfoFromTextWithDescendant<RegularExpressionLiteral>(text, SyntaxKind.RegularExpressionLiteral);
             const regExpr = descendant.getLiteralValue();
@@ -27,7 +27,7 @@ describe("RegularExpressionLiteral", () => {
         });
     });
 
-    describe(nameof.property<RegularExpressionLiteral>("setLiteralValue"), () => {
+    describe(nameof<RegularExpressionLiteral>("setLiteralValue"), () => {
         function doObjectTest(text: string, value: RegExp, expectedText: string) {
             const { descendant, sourceFile } = getInfoFromTextWithDescendant<RegularExpressionLiteral>(text, SyntaxKind.RegularExpressionLiteral);
             descendant.setLiteralValue(value);

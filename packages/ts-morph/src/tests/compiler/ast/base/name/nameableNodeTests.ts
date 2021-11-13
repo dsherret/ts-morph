@@ -1,8 +1,8 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, FunctionExpression, InterfaceDeclaration, NameableNode, VariableStatement } from "../../../../../compiler";
 import { NameableNodeStructure } from "../../../../../structures";
 import { getInfoFromText } from "../../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("NameableNode", () => {
     function getFunctionExpression(startCode: string) {
@@ -11,7 +11,7 @@ describe("NameableNode", () => {
         return { funcExpr, ...result };
     }
 
-    describe(nameof.property<NameableNode>("rename"), () => {
+    describe(nameof<NameableNode>("rename"), () => {
         function testFunction(startCode: string, newName: string, expectedCode: string) {
             const { funcExpr, sourceFile } = getFunctionExpression(startCode);
             funcExpr.rename(newName);
@@ -52,7 +52,7 @@ describe("NameableNode", () => {
         });
     });
 
-    describe(nameof.property<NameableNode>("removeName"), () => {
+    describe(nameof<NameableNode>("removeName"), () => {
         function doTest(startCode: string, expectedCode: string) {
             const { funcExpr, sourceFile } = getFunctionExpression(startCode);
             funcExpr.removeName();
@@ -68,7 +68,7 @@ describe("NameableNode", () => {
         });
     });
 
-    describe(nameof.property<NameableNode>("getName"), () => {
+    describe(nameof<NameableNode>("getName"), () => {
         function doTest(startCode: string, expectedName: string | undefined) {
             const { funcExpr, sourceFile } = getFunctionExpression(startCode);
             expect(funcExpr.getName()).to.equal(expectedName);
@@ -83,7 +83,7 @@ describe("NameableNode", () => {
         });
     });
 
-    describe(nameof.property<NameableNode>("getNameOrThrow"), () => {
+    describe(nameof<NameableNode>("getNameOrThrow"), () => {
         it("should get the name when it exists", () => {
             const { funcExpr, sourceFile } = getFunctionExpression("const v = function name() {};");
             expect(funcExpr.getNameOrThrow()).to.equal("name");
@@ -95,7 +95,7 @@ describe("NameableNode", () => {
         });
     });
 
-    describe(nameof.property<NameableNode>("getNameNode"), () => {
+    describe(nameof<NameableNode>("getNameNode"), () => {
         function doTest(startCode: string, expectedName: string | undefined) {
             const { funcExpr, sourceFile } = getFunctionExpression(startCode);
             const identifier = funcExpr.getNameNode();
@@ -111,7 +111,7 @@ describe("NameableNode", () => {
         });
     });
 
-    describe(nameof.property<NameableNode>("getNameNodeOrThrow"), () => {
+    describe(nameof<NameableNode>("getNameNodeOrThrow"), () => {
         it("should get the name when it exists", () => {
             const { funcExpr } = getFunctionExpression("const v = function name() {};");
             expect(funcExpr.getNameNodeOrThrow().getText()).to.equal("name");
@@ -123,7 +123,7 @@ describe("NameableNode", () => {
         });
     });
 
-    describe(nameof.property<NameableNode>("findReferences"), () => {
+    describe(nameof<NameableNode>("findReferences"), () => {
         it("should find the references when there is a name", () => {
             // most of the tests for this are in identifierTests
             const { firstChild, project } = getInfoFromText<ClassDeclaration>("class MyClass {}");
@@ -140,7 +140,7 @@ describe("NameableNode", () => {
         });
     });
 
-    describe(nameof.property<NameableNode>("findReferencesAsNodes"), () => {
+    describe(nameof<NameableNode>("findReferencesAsNodes"), () => {
         it("should find all the references and exclude the definition when there is a name", () => {
             const { firstChild, project } = getInfoFromText<ClassDeclaration>("class MyClass {}\nconst reference = MyClass;");
             const secondSourceFile = project.createSourceFile("second.ts", "const reference2 = MyClass;");
@@ -160,7 +160,7 @@ describe("NameableNode", () => {
         });
     });
 
-    describe(nameof.property<ClassDeclaration>("set"), () => {
+    describe(nameof<ClassDeclaration>("set"), () => {
         function doTest(text: string, structure: NameableNodeStructure, expectedText: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(text);
             firstChild.set(structure);
@@ -180,7 +180,7 @@ describe("NameableNode", () => {
         });
     });
 
-    describe(nameof.property<ClassDeclaration>("getStructure"), () => {
+    describe(nameof<ClassDeclaration>("getStructure"), () => {
         function doTest(text: string, name: string | undefined) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(text);
             expect(firstChild.getStructure().name).to.equal(name);

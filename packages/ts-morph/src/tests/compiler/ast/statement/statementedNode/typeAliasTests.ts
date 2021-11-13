@@ -1,11 +1,11 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { Node, StatementedNode, TypeAliasDeclaration } from "../../../../../compiler";
 import { TypeAliasDeclarationStructure } from "../../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia } from "../../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("StatementedNode", () => {
-    describe(nameof.property<StatementedNode>("insertTypeAliases"), () => {
+    describe(nameof<StatementedNode>("insertTypeAliases"), () => {
         function doTest(startCode: string, index: number, structures: OptionalKindAndTrivia<TypeAliasDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertTypeAliases(index, structures);
@@ -69,7 +69,7 @@ describe("StatementedNode", () => {
         });
     });
 
-    describe(nameof.property<StatementedNode>("insertTypeAlias"), () => {
+    describe(nameof<StatementedNode>("insertTypeAlias"), () => {
         function doTest(startCode: string, index: number, structure: OptionalKindAndTrivia<TypeAliasDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertTypeAlias(index, structure);
@@ -82,7 +82,7 @@ describe("StatementedNode", () => {
         });
     });
 
-    describe(nameof.property<StatementedNode>("addTypeAliases"), () => {
+    describe(nameof<StatementedNode>("addTypeAliases"), () => {
         function doTest(startCode: string, structures: OptionalKindAndTrivia<TypeAliasDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addTypeAliases(structures);
@@ -96,7 +96,7 @@ describe("StatementedNode", () => {
         });
     });
 
-    describe(nameof.property<StatementedNode>("addTypeAlias"), () => {
+    describe(nameof<StatementedNode>("addTypeAlias"), () => {
         function doTest(startCode: string, structure: OptionalKindAndTrivia<TypeAliasDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addTypeAlias(structure);
@@ -109,7 +109,7 @@ describe("StatementedNode", () => {
         });
     });
 
-    describe(nameof.property<StatementedNode>("getTypeAliases"), () => {
+    describe(nameof<StatementedNode>("getTypeAliases"), () => {
         const { sourceFile } = getInfoFromText("type Identifier1 = string;\ntype Identifier2 = number;");
         const typeAliases = sourceFile.getTypeAliases();
 
@@ -127,7 +127,7 @@ describe("StatementedNode", () => {
         });
     });
 
-    describe(nameof.property<StatementedNode>("getTypeAlias"), () => {
+    describe(nameof<StatementedNode>("getTypeAlias"), () => {
         const { sourceFile } = getInfoFromText("type Identifier1 = string;\ntype Identifier2 = number;");
 
         it("should get a type alias by a name", () => {
@@ -143,7 +143,7 @@ describe("StatementedNode", () => {
         });
     });
 
-    describe(nameof.property<StatementedNode>("getTypeAliasOrThrow"), () => {
+    describe(nameof<StatementedNode>("getTypeAliasOrThrow"), () => {
         const { sourceFile } = getInfoFromText("type Identifier1 = string;\ntype Identifier2 = number;");
 
         it("should get a type alias by a name", () => {

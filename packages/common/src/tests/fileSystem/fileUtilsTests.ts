@@ -3,7 +3,7 @@ import { FileUtils, InMemoryFileSystemHost } from "../../fileSystem";
 import { nameof } from "../../utils";
 
 describe("FileUtils", () => {
-    describe(nameof.property(FileUtils, "getStandardizedAbsolutePath"), () => {
+    describe(nameof(FileUtils, "getStandardizedAbsolutePath"), () => {
         const fileSystem = new InMemoryFileSystemHost();
 
         it("should get the absolute path when absolute", () => {
@@ -24,13 +24,13 @@ describe("FileUtils", () => {
         });
     });
 
-    describe(nameof.property(FileUtils, "standardizeSlashes"), () => {
+    describe(nameof(FileUtils, "standardizeSlashes"), () => {
         it("should change all back slashes to forward slashes", () => {
             expect(FileUtils.standardizeSlashes("/some/path\\including\\back/spaces")).to.equal("/some/path/including/back/spaces");
         });
     });
 
-    describe(nameof.property(FileUtils, "pathStartsWith"), () => {
+    describe(nameof(FileUtils, "pathStartsWith"), () => {
         it("should return false for a undefined path", () => {
             expect(FileUtils.pathStartsWith(undefined, "test.ts")).to.be.false;
         });
@@ -88,7 +88,7 @@ describe("FileUtils", () => {
         });
     });
 
-    describe(nameof.property(FileUtils, "pathEndsWith"), () => {
+    describe(nameof(FileUtils, "pathEndsWith"), () => {
         it("should return false for a undefined path", () => {
             expect(FileUtils.pathEndsWith(undefined, "test.ts")).to.be.false;
         });
@@ -138,7 +138,7 @@ describe("FileUtils", () => {
         });
     });
 
-    describe(nameof.property(FileUtils, "getParentMostPaths"), () => {
+    describe(nameof(FileUtils, "getParentMostPaths"), () => {
         function doTest(paths: string[], expected: string[]) {
             expect(FileUtils.getParentMostPaths(paths).sort()).to.deep.equal(expected.sort());
         }
@@ -152,7 +152,7 @@ describe("FileUtils", () => {
         });
     });
 
-    describe(nameof.property(FileUtils, "getRelativePathTo"), () => {
+    describe(nameof(FileUtils, "getRelativePathTo"), () => {
         function doTest(from: string, to: string, expected: string) {
             expect(FileUtils.getRelativePathTo(from, to)).to.equal(expected);
         }
@@ -178,7 +178,7 @@ describe("FileUtils", () => {
         });
     });
 
-    describe(nameof.property(FileUtils, "getExtension"), () => {
+    describe(nameof(FileUtils, "getExtension"), () => {
         function doTest(path: string, expected: string) {
             expect(FileUtils.getExtension(path)).to.equal(expected);
         }

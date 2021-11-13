@@ -1,10 +1,10 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, CommentClassElement } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("CommentClassElement", () => {
-    describe(nameof.property<CommentClassElement>("remove"), () => {
+    describe(nameof<CommentClassElement>("remove"), () => {
         function doTest(startCode: string, index: number, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             firstChild.getMembersWithComments()[index].remove();

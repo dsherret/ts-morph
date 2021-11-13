@@ -1,7 +1,7 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { TypeParameter } from "../../../compiler";
 import { getInfoFromText } from "../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("TypeParameter", () => {
     function getTypeParameter(text: string) {
@@ -10,7 +10,7 @@ describe("TypeParameter", () => {
         return type.getCallSignatures()[0].getTypeParameters()[0];
     }
 
-    describe(nameof.property<TypeParameter>("getConstraint"), () => {
+    describe(nameof<TypeParameter>("getConstraint"), () => {
         it("should be undefined when there isn't one", () => {
             const typeParam = getTypeParameter("let t: <T>() => void;");
             expect(typeParam.getConstraint()).to.be.undefined;
@@ -22,7 +22,7 @@ describe("TypeParameter", () => {
         });
     });
 
-    describe(nameof.property<TypeParameter>("getConstraintOrThrow"), () => {
+    describe(nameof<TypeParameter>("getConstraintOrThrow"), () => {
         it("should throw when there isn't one", () => {
             const typeParam = getTypeParameter("let t: <T>() => void;");
             expect(() => typeParam.getConstraintOrThrow()).to.throw();
@@ -34,7 +34,7 @@ describe("TypeParameter", () => {
         });
     });
 
-    describe(nameof.property<TypeParameter>("getDefault"), () => {
+    describe(nameof<TypeParameter>("getDefault"), () => {
         it("should be undefined when there isn't one", () => {
             const typeParam = getTypeParameter("let t: <T>() => void;");
             expect(typeParam.getDefault()).to.be.undefined;
@@ -46,7 +46,7 @@ describe("TypeParameter", () => {
         });
     });
 
-    describe(nameof.property<TypeParameter>("getDefaultOrThrow"), () => {
+    describe(nameof<TypeParameter>("getDefaultOrThrow"), () => {
         it("should throw when there isn't one", () => {
             const typeParam = getTypeParameter("let t: <T>() => void;");
             expect(() => typeParam.getDefaultOrThrow()).to.throw();

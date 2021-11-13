@@ -1,11 +1,11 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { FunctionDeclaration, ParameterDeclaration, ParameteredNode, Scope } from "../../../../compiler";
 import { OptionalKind, ParameterDeclarationStructure, ParameteredNodeStructure } from "../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("ParameteredNode", () => {
-    describe(nameof.property<ParameteredNode>("getParameter"), () => {
+    describe(nameof<ParameteredNode>("getParameter"), () => {
         const { firstChild } = getInfoFromText<FunctionDeclaration>("function func(param1: string, param2: number){}");
 
         it("should get the parameter by name", () => {
@@ -21,7 +21,7 @@ describe("ParameteredNode", () => {
         });
     });
 
-    describe(nameof.property<ParameteredNode>("getParameterOrThrow"), () => {
+    describe(nameof<ParameteredNode>("getParameterOrThrow"), () => {
         const { firstChild } = getInfoFromText<FunctionDeclaration>("function func(param1: string, param2: number){}");
 
         it("should get the parameter by name", () => {
@@ -37,7 +37,7 @@ describe("ParameteredNode", () => {
         });
     });
 
-    describe(nameof.property<ParameteredNode>("getParameters"), () => {
+    describe(nameof<ParameteredNode>("getParameters"), () => {
         const { firstChild } = getInfoFromText<FunctionDeclaration>("function func(param1: string, param2: number){}");
         const parameters = firstChild.getParameters();
 
@@ -50,7 +50,7 @@ describe("ParameteredNode", () => {
         });
     });
 
-    describe(nameof.property<ParameteredNode>("addParameter"), () => {
+    describe(nameof<ParameteredNode>("addParameter"), () => {
         function doTest(startCode: string, structure: OptionalKind<ParameterDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.addParameter(structure);
@@ -67,7 +67,7 @@ describe("ParameteredNode", () => {
         });
     });
 
-    describe(nameof.property<ParameteredNode>("addParameters"), () => {
+    describe(nameof<ParameteredNode>("addParameters"), () => {
         function doTest(startCode: string, structures: OptionalKind<ParameterDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.addParameters(structures);
@@ -80,7 +80,7 @@ describe("ParameteredNode", () => {
         });
     });
 
-    describe(nameof.property<ParameteredNode>("insertParameter"), () => {
+    describe(nameof<ParameteredNode>("insertParameter"), () => {
         function doTest(startCode: string, index: number, structure: OptionalKind<ParameterDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.insertParameter(index, structure);
@@ -97,7 +97,7 @@ describe("ParameteredNode", () => {
         });
     });
 
-    describe(nameof.property<ParameteredNode>("insertParameters"), () => {
+    describe(nameof<ParameteredNode>("insertParameters"), () => {
         function doTest(startCode: string, insertIndex: number, structures: OptionalKind<ParameterDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.insertParameters(insertIndex, structures);
@@ -142,7 +142,7 @@ describe("ParameteredNode", () => {
         });
     });
 
-    describe(nameof.property<FunctionDeclaration>("set"), () => {
+    describe(nameof<FunctionDeclaration>("set"), () => {
         function doTest(startingCode: string, structure: ParameteredNodeStructure, expectedCode: string) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startingCode);
             firstChild.set(structure);
@@ -166,7 +166,7 @@ describe("ParameteredNode", () => {
         });
     });
 
-    describe(nameof.property<FunctionDeclaration>("getStructure"), () => {
+    describe(nameof<FunctionDeclaration>("getStructure"), () => {
         function doTest(startingCode: string, names: string[]) {
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startingCode);
             expect(firstChild.getStructure().parameters!.map(s => s.name)).to.deep.equal(names);

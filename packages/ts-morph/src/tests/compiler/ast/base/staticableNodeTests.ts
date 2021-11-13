@@ -1,8 +1,8 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, MethodDeclaration, Node, PropertyDeclaration, StaticableNode } from "../../../../compiler";
 import { StaticableNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("StaticableNode", () => {
     const { sourceFile: mainSourceFile } = getInfoFromText("class MyClass { static prop: string; prop2: string; }");
@@ -10,7 +10,7 @@ describe("StaticableNode", () => {
     const staticProp = classDec.getStaticProperties()[0];
     const instanceProp = classDec.getInstanceProperties()[0] as PropertyDeclaration;
 
-    describe(nameof.property<StaticableNode>("isStatic"), () => {
+    describe(nameof<StaticableNode>("isStatic"), () => {
         it("should be static when static", () => {
             expect(staticProp.isStatic()).to.be.true;
         });
@@ -20,7 +20,7 @@ describe("StaticableNode", () => {
         });
     });
 
-    describe(nameof.property<StaticableNode>("getStaticKeyword"), () => {
+    describe(nameof<StaticableNode>("getStaticKeyword"), () => {
         it("should have a static keyword when static", () => {
             expect(staticProp.getStaticKeyword()!.getText()).to.equal("static");
         });
@@ -30,7 +30,7 @@ describe("StaticableNode", () => {
         });
     });
 
-    describe(nameof.property<StaticableNode>("getStaticKeywordOrThrow"), () => {
+    describe(nameof<StaticableNode>("getStaticKeywordOrThrow"), () => {
         it("should have a static keyword when static", () => {
             expect(staticProp.getStaticKeywordOrThrow().getText()).to.equal("static");
         });
@@ -40,7 +40,7 @@ describe("StaticableNode", () => {
         });
     });
 
-    describe(nameof.property<StaticableNode>("setIsStatic"), () => {
+    describe(nameof<StaticableNode>("setIsStatic"), () => {
         it("should set as static when not static", () => {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>("class MyClass { prop: string; }");
             (firstChild.getInstanceProperties()[0] as PropertyDeclaration).setIsStatic(true);
@@ -60,7 +60,7 @@ describe("StaticableNode", () => {
         return { firstMethod, ...result };
     }
 
-    describe(nameof.property<MethodDeclaration>("set"), () => {
+    describe(nameof<MethodDeclaration>("set"), () => {
         function doTest(startCode: string, structure: StaticableNodeStructure, expectedCode: string) {
             const { firstMethod, sourceFile } = getFirstMethod(startCode);
             firstMethod.set(structure);
@@ -80,7 +80,7 @@ describe("StaticableNode", () => {
         });
     });
 
-    describe(nameof.property<MethodDeclaration>("getStructure"), () => {
+    describe(nameof<MethodDeclaration>("getStructure"), () => {
         function doTest(startCode: string, isStatic: boolean) {
             const { firstMethod, sourceFile } = getFirstMethod(startCode);
             expect(firstMethod.getStructure().isStatic).to.equal(isStatic);

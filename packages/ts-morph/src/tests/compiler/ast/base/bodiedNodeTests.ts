@@ -1,11 +1,11 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { BodiedNode, ModuleDeclaration } from "../../../../compiler";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("BodiedNode", () => {
-    describe(nameof.property<BodiedNode>("setBodyText"), () => {
+    describe(nameof<BodiedNode>("setBodyText"), () => {
         function doTest(startCode: string, newText: string, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ModuleDeclaration>(startCode);
             firstChild.setBodyText(newText);
@@ -28,7 +28,7 @@ describe("BodiedNode", () => {
         });
     });
 
-    describe(nameof.property<ModuleDeclaration>("getBodyText"), () => {
+    describe(nameof<ModuleDeclaration>("getBodyText"), () => {
         function doTest(startCode: string, bodyText: string | undefined) {
             const { firstChild } = getInfoFromText<ModuleDeclaration>(startCode);
             expect(firstChild.getBodyText()).to.equal(bodyText);

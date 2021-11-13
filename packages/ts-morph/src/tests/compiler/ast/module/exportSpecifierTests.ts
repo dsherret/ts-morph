@@ -1,4 +1,4 @@
-import { ArrayUtils, SyntaxKind, nameof } from "@ts-morph/common";
+import { ArrayUtils, nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ExportDeclaration, ExportSpecifier } from "../../../../compiler";
 import { Project } from "../../../../Project";
@@ -10,7 +10,7 @@ describe("ExportSpecifier", () => {
         return new Project({ useInMemoryFileSystem: true });
     }
 
-    describe(nameof.property<ExportSpecifier>("getNameNode"), () => {
+    describe(nameof<ExportSpecifier>("getNameNode"), () => {
         function doTest(text: string, name: string) {
             const { firstChild } = getInfoFromText<ExportDeclaration>(text);
             const namedExport = firstChild.getNamedExports()[0];
@@ -30,7 +30,7 @@ describe("ExportSpecifier", () => {
         });
     });
 
-    describe(nameof.property<ExportSpecifier>("getName"), () => {
+    describe(nameof<ExportSpecifier>("getName"), () => {
         function doTest(text: string, name: string) {
             const { firstChild } = getInfoFromText<ExportDeclaration>(text);
             const namedImport = firstChild.getNamedExports()[0];
@@ -42,7 +42,7 @@ describe("ExportSpecifier", () => {
         });
     });
 
-    describe(nameof.property<ExportSpecifier>("setName"), () => {
+    describe(nameof<ExportSpecifier>("setName"), () => {
         it("should change what's imported, but not change anything in the other files", () => {
             const project = getProject();
             const myClassFile = project.createSourceFile("MyClass.ts", {
@@ -77,7 +77,7 @@ describe("ExportSpecifier", () => {
         });
     });
 
-    describe(nameof.property<ExportSpecifier>("getAliasNode"), () => {
+    describe(nameof<ExportSpecifier>("getAliasNode"), () => {
         function doTest(text: string, alias: string | undefined) {
             const { firstChild } = getInfoFromText<ExportDeclaration>(text);
             const namedExport = firstChild.getNamedExports()[0];
@@ -97,7 +97,7 @@ describe("ExportSpecifier", () => {
         });
     });
 
-    describe(nameof.property<ExportSpecifier>("renameAlias"), () => {
+    describe(nameof<ExportSpecifier>("renameAlias"), () => {
         function doTest(text: string, newAlias: string, expected: string, expectedImportName: string) {
             const { sourceFile, project } = getInfoFromText<ExportDeclaration>(text, { filePath: "/b.ts" });
             const otherSourceFile = project.createSourceFile("a.ts", "export class name {}");
@@ -127,7 +127,7 @@ describe("ExportSpecifier", () => {
         });
     });
 
-    describe(nameof.property<ExportSpecifier>("setAlias"), () => {
+    describe(nameof<ExportSpecifier>("setAlias"), () => {
         function doTest(text: string, newAlias: string, expected: string, expectedImportName: string) {
             const { sourceFile, project } = getInfoFromText<ExportDeclaration>(text);
             const otherSourceFile = project.createSourceFile("file.ts", "export class name {}");
@@ -153,7 +153,7 @@ describe("ExportSpecifier", () => {
         });
     });
 
-    describe(nameof.property<ExportSpecifier>("removeAlias"), () => {
+    describe(nameof<ExportSpecifier>("removeAlias"), () => {
         function doTest(text: string, expected: string, expectedImportName: string) {
             const { sourceFile, project } = getInfoFromText<ExportDeclaration>(text);
             const otherSourceFile = project.createSourceFile("file.ts", "export class name {}");
@@ -174,7 +174,7 @@ describe("ExportSpecifier", () => {
         });
     });
 
-    describe(nameof.property<ExportSpecifier>("removeAliasWithRename"), () => {
+    describe(nameof<ExportSpecifier>("removeAliasWithRename"), () => {
         function doTest(text: string, expected: string, expectedImportName: string) {
             const { sourceFile, project } = getInfoFromText<ExportDeclaration>(text);
             const otherSourceFile = project.createSourceFile("file.ts", "export class name {}");
@@ -202,7 +202,7 @@ describe("ExportSpecifier", () => {
         return mainFile.getExportDeclarations()[0].getNamedExports();
     }
 
-    describe(nameof.property<ExportSpecifier>("getLocalTargetSymbol"), () => {
+    describe(nameof<ExportSpecifier>("getLocalTargetSymbol"), () => {
         it("should get the local target symbol when it exists", () => {
             const myClassExportSpecifier = setupLocalTargetSymbolTest()[0];
             expect(myClassExportSpecifier.getLocalTargetSymbol()!.getDeclarations()[0].getKind()).to.equal(SyntaxKind.ClassDeclaration);
@@ -214,7 +214,7 @@ describe("ExportSpecifier", () => {
         });
     });
 
-    describe(nameof.property<ExportSpecifier>("getLocalTargetSymbolOrThrow"), () => {
+    describe(nameof<ExportSpecifier>("getLocalTargetSymbolOrThrow"), () => {
         it("should get the local target symbol when it exists", () => {
             const myClassExportSpecifier = setupLocalTargetSymbolTest()[0];
             expect(myClassExportSpecifier.getLocalTargetSymbolOrThrow().getDeclarations()[0].getKind()).to.equal(SyntaxKind.ClassDeclaration);
@@ -226,7 +226,7 @@ describe("ExportSpecifier", () => {
         });
     });
 
-    describe(nameof.property<ExportSpecifier>("getLocalTargetDeclarations"), () => {
+    describe(nameof<ExportSpecifier>("getLocalTargetDeclarations"), () => {
         it("should get the local target declarations when they exist", () => {
             const myClassExportSpecifier = setupLocalTargetSymbolTest()[0];
             expect(myClassExportSpecifier.getLocalTargetDeclarations().map(d => d.getKind())).to.deep.equal([SyntaxKind.ClassDeclaration]);
@@ -295,7 +295,7 @@ describe("ExportSpecifier", () => {
         });
     });
 
-    describe(nameof.property<ExportSpecifier>("getExportDeclaration"), () => {
+    describe(nameof<ExportSpecifier>("getExportDeclaration"), () => {
         it("should get the parent export declaration", () => {
             const { firstChild } = getInfoFromText<ExportDeclaration>(`export {name} from "./test";`);
             const namedExport = firstChild.getNamedExports()[0];
@@ -303,7 +303,7 @@ describe("ExportSpecifier", () => {
         });
     });
 
-    describe(nameof.property<ExportSpecifier>("remove"), () => {
+    describe(nameof<ExportSpecifier>("remove"), () => {
         function doTest(text: string, nameToRemove: string, expectedText: string) {
             const { sourceFile, firstChild } = getInfoFromText<ExportDeclaration>(text);
             const namedExport = firstChild.getNamedExports().find(e => e.getNameNode().getText() === nameToRemove);
@@ -332,7 +332,7 @@ describe("ExportSpecifier", () => {
         });
     });
 
-    describe(nameof.property<ExportSpecifier>("set"), () => {
+    describe(nameof<ExportSpecifier>("set"), () => {
         function doTest(text: string, structure: Partial<ExportSpecifierStructure>, expectedText: string, expectedImportName: string) {
             const { sourceFile, project } = getInfoFromText<ExportDeclaration>(text);
             const otherSourceFile = project.createSourceFile("file.ts", "export class name {}");
@@ -373,7 +373,7 @@ describe("ExportSpecifier", () => {
         });
     });
 
-    describe(nameof.property<ExportSpecifier>("getStructure"), () => {
+    describe(nameof<ExportSpecifier>("getStructure"), () => {
         function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<ExportSpecifierStructure>>) {
             const { firstChild } = getInfoFromText<ExportDeclaration>(text);
             expect(firstChild.getNamedExports()[0].getStructure()).to.deep.equal(expectedStructure);

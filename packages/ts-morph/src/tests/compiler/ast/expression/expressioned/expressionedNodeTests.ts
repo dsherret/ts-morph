@@ -1,10 +1,10 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ExpressionedNode, ParenthesizedExpression } from "../../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../../testHelpers";
 
 describe("ExpressionedNode", () => {
-    describe(nameof.property<ExpressionedNode>("getExpression"), () => {
+    describe(nameof<ExpressionedNode>("getExpression"), () => {
         function doTest(text: string, expectedText: string) {
             const { descendant } = getInfoFromTextWithDescendant<ParenthesizedExpression>(text, SyntaxKind.ParenthesizedExpression);
             expect(descendant.getExpression().getText()).to.equal(expectedText);
@@ -15,7 +15,7 @@ describe("ExpressionedNode", () => {
         });
     });
 
-    describe(nameof.property<ExpressionedNode>("getExpressionIfKind"), () => {
+    describe(nameof<ExpressionedNode>("getExpressionIfKind"), () => {
         function doTest(text: string, kind: SyntaxKind, expectedText: string | undefined) {
             const { descendant } = getInfoFromTextWithDescendant<ParenthesizedExpression>(text, SyntaxKind.ParenthesizedExpression);
             const result = descendant.getExpressionIfKind(kind);
@@ -31,7 +31,7 @@ describe("ExpressionedNode", () => {
         });
     });
 
-    describe(nameof.property<ExpressionedNode>("getExpressionIfKindOrThrow"), () => {
+    describe(nameof<ExpressionedNode>("getExpressionIfKindOrThrow"), () => {
         function doTest(text: string, kind: SyntaxKind, expectedText: string | undefined) {
             const { descendant } = getInfoFromTextWithDescendant<ParenthesizedExpression>(text, SyntaxKind.ParenthesizedExpression);
             if (expectedText == null)
@@ -49,7 +49,7 @@ describe("ExpressionedNode", () => {
         });
     });
 
-    describe(nameof.property<ExpressionedNode>("setExpression"), () => {
+    describe(nameof<ExpressionedNode>("setExpression"), () => {
         function doTest(text: string, newText: string, expected: string) {
             const { descendant, sourceFile } = getInfoFromTextWithDescendant<ParenthesizedExpression>(text, SyntaxKind.ParenthesizedExpression);
             descendant.setExpression(newText);

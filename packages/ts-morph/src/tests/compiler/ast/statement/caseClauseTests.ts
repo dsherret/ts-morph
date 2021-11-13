@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { CaseClause } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -8,7 +8,7 @@ function getCaseClause(text: string) {
 }
 
 describe("CaseClause", () => {
-    describe(nameof.property<CaseClause>("getStatementsWithComments"), () => {
+    describe(nameof<CaseClause>("getStatementsWithComments"), () => {
         function doTest(text: string, expectedTexts: string[]) {
             const caseClause = getCaseClause(text);
             expect(caseClause.getStatementsWithComments().map(s => s.getText())).to.deep.equal(expectedTexts);
@@ -19,7 +19,7 @@ describe("CaseClause", () => {
         });
     });
 
-    describe(nameof.property<CaseClause>("getExpression"), () => {
+    describe(nameof<CaseClause>("getExpression"), () => {
         function doTest(text: string, expectedText: string) {
             const caseClause = getCaseClause(text);
             expect(caseClause.getExpression().getText()).to.equal(expectedText);

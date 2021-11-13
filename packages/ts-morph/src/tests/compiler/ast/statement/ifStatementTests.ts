@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { IfStatement } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -13,7 +13,7 @@ describe("IfStatement", () => {
     const elseStatement = "{ x = 2; }";
     const statement = `if (${expression}) ${thenStatement} else ${elseStatement}`;
 
-    describe(nameof.property<IfStatement>("getExpression"), () => {
+    describe(nameof<IfStatement>("getExpression"), () => {
         function doTest(text: string, expectedText: string) {
             const ifStatement = getStatement(text);
             expect(ifStatement.getExpression().getText()).to.equal(expectedText);
@@ -24,7 +24,7 @@ describe("IfStatement", () => {
         });
     });
 
-    describe(nameof.property<IfStatement>("getThenStatement"), () => {
+    describe(nameof<IfStatement>("getThenStatement"), () => {
         function doTest(text: string, expectedText: string) {
             const ifStatement = getStatement(text);
             expect(ifStatement.getThenStatement().getText()).to.equal(expectedText);
@@ -35,7 +35,7 @@ describe("IfStatement", () => {
         });
     });
 
-    describe(nameof.property<IfStatement>("getElseStatement"), () => {
+    describe(nameof<IfStatement>("getElseStatement"), () => {
         function doTest(text: string, expectedText: string | undefined) {
             const ifStatement = getStatement(text);
             const value = ifStatement.getElseStatement();

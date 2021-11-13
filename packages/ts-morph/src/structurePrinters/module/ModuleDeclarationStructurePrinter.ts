@@ -29,7 +29,7 @@ export class ModuleDeclarationStructurePrinter extends NodePrinter<OptionalKind<
             writer.write("global");
 
         if (structure.hasDeclareKeyword && StringUtils.isQuoted(structure.name.trim())
-            && structure.hasOwnProperty(nameof.property(structure, "statements")) && structure.statements == null)
+            && structure.hasOwnProperty(nameof(structure, "statements")) && structure.statements == null)
         {
             writer.write(";");
         }

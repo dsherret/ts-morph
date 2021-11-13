@@ -1,8 +1,8 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { AwaitableNode, ForOfStatement } from "../../../../compiler";
 import { AwaitableNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("AwaitableNode", () => {
     const awaitForOfText = "for await (const x of [Promise.resolve(1)]) {}";
@@ -11,7 +11,7 @@ describe("AwaitableNode", () => {
     const awaitForOf = mainSourceFile.getStatements()[0] as ForOfStatement;
     const forOf = mainSourceFile.getStatements()[1] as ForOfStatement;
 
-    describe(nameof.property<AwaitableNode>("isAwaited"), () => {
+    describe(nameof<AwaitableNode>("isAwaited"), () => {
         it("should be a await when so", () => {
             expect(awaitForOf.isAwaited()).to.be.true;
         });
@@ -21,7 +21,7 @@ describe("AwaitableNode", () => {
         });
     });
 
-    describe(nameof.property<AwaitableNode>("getAwaitKeyword"), () => {
+    describe(nameof<AwaitableNode>("getAwaitKeyword"), () => {
         it("should have an await token when awaited", () => {
             expect(awaitForOf.getAwaitKeyword()!.getText()).to.equal("await");
         });
@@ -31,7 +31,7 @@ describe("AwaitableNode", () => {
         });
     });
 
-    describe(nameof.property<AwaitableNode>("getAwaitKeywordOrThrow"), () => {
+    describe(nameof<AwaitableNode>("getAwaitKeywordOrThrow"), () => {
         it("should have an await token when awaited", () => {
             expect(awaitForOf.getAwaitKeywordOrThrow().getText()).to.equal("await");
         });
@@ -41,7 +41,7 @@ describe("AwaitableNode", () => {
         });
     });
 
-    describe(nameof.property<AwaitableNode>("setIsAwaited"), () => {
+    describe(nameof<AwaitableNode>("setIsAwaited"), () => {
         describe("For of", () => {
             it("should set as await when not a await", () => {
                 const { firstChild, sourceFile } = getInfoFromText<ForOfStatement>(forOfText);

@@ -1,13 +1,13 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ExportAssignment, ExportDeclaration, ExportedDeclarations, ImportDeclaration, ModuleDeclaration, ModuledNode, Node, QuoteKind,
     SourceFile } from "../../../../compiler";
 import { Project } from "../../../../Project";
 import { ExportAssignmentStructure, ExportDeclarationStructure, ImportDeclarationStructure, OptionalKind } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("ModuledNode", () => {
-    describe(nameof.property<ModuledNode>("insertImportDeclarations"), () => {
+    describe(nameof<ModuledNode>("insertImportDeclarations"), () => {
         function doTest(
             startCode: string,
             index: number,
@@ -82,7 +82,7 @@ describe("ModuledNode", () => {
         });
     });
 
-    describe(nameof.property<ModuledNode>("insertImportDeclaration"), () => {
+    describe(nameof<ModuledNode>("insertImportDeclaration"), () => {
         function doTest(startCode: string, index: number, structure: OptionalKind<ImportDeclarationStructure>, expectedCode: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertImportDeclaration(index, structure);
@@ -95,7 +95,7 @@ describe("ModuledNode", () => {
         });
     });
 
-    describe(nameof.property<ModuledNode>("addImportDeclaration"), () => {
+    describe(nameof<ModuledNode>("addImportDeclaration"), () => {
         function doTest(startCode: string, structure: OptionalKind<ImportDeclarationStructure>, expectedCode: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addImportDeclaration(structure);
@@ -121,7 +121,7 @@ describe("ModuledNode", () => {
         });
     });
 
-    describe(nameof.property<ModuledNode>("addImportDeclarations"), () => {
+    describe(nameof<ModuledNode>("addImportDeclarations"), () => {
         function doTest(startCode: string, structures: OptionalKind<ImportDeclarationStructure>[], expectedCode: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addImportDeclarations(structures);
@@ -140,7 +140,7 @@ describe("ModuledNode", () => {
         });
     });
 
-    describe(nameof.property<ModuledNode>("getImportDeclarations"), () => {
+    describe(nameof<ModuledNode>("getImportDeclarations"), () => {
         it("should get in a source file", () => {
             const { sourceFile } = getInfoFromText("import myImport from 'test'; import {next} from './test';");
             expect(sourceFile.getImportDeclarations().length).to.equal(2);
@@ -154,7 +154,7 @@ describe("ModuledNode", () => {
         });
     });
 
-    describe(nameof.property<ModuledNode>("getImportDeclaration"), () => {
+    describe(nameof<ModuledNode>("getImportDeclaration"), () => {
         function doTest(text: string, conditionOrModuleSpecifier: string | ((importDeclaration: ImportDeclaration) => boolean), expected: string | undefined) {
             const { sourceFile } = getInfoFromText(text);
             const result = sourceFile.getImportDeclaration(conditionOrModuleSpecifier);
@@ -174,7 +174,7 @@ describe("ModuledNode", () => {
         });
     });
 
-    describe(nameof.property<ModuledNode>("getImportDeclarationOrThrow"), () => {
+    describe(nameof<ModuledNode>("getImportDeclarationOrThrow"), () => {
         function doTest(text: string, conditionOrModuleSpecifier: string | ((importDeclaration: ImportDeclaration) => boolean), expected: string | undefined) {
             const { sourceFile } = getInfoFromText(text);
             if (expected == null)
@@ -196,7 +196,7 @@ describe("ModuledNode", () => {
         });
     });
 
-    describe(nameof.property<ModuledNode>("insertExportDeclarations"), () => {
+    describe(nameof<ModuledNode>("insertExportDeclarations"), () => {
         function doTest(startCode: string, index: number, structures: OptionalKind<ExportDeclarationStructure>[], expectedCode: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertExportDeclarations(index, structures);
@@ -255,7 +255,7 @@ describe("ModuledNode", () => {
         });
     });
 
-    describe(nameof.property<ModuledNode>("insertExportDeclaration"), () => {
+    describe(nameof<ModuledNode>("insertExportDeclaration"), () => {
         function doTest(startCode: string, index: number, structure: OptionalKind<ExportDeclarationStructure>, expectedCode: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertExportDeclaration(index, structure);
@@ -269,7 +269,7 @@ describe("ModuledNode", () => {
         });
     });
 
-    describe(nameof.property<ModuledNode>("addExportDeclaration"), () => {
+    describe(nameof<ModuledNode>("addExportDeclaration"), () => {
         function doTest(startCode: string, structure: OptionalKind<ExportDeclarationStructure>, expectedCode: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addExportDeclaration(structure);
@@ -282,7 +282,7 @@ describe("ModuledNode", () => {
         });
     });
 
-    describe(nameof.property<ModuledNode>("addExportDeclarations"), () => {
+    describe(nameof<ModuledNode>("addExportDeclarations"), () => {
         function doTest(startCode: string, structures: OptionalKind<ExportDeclarationStructure>[], expectedCode: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addExportDeclarations(structures);
@@ -296,7 +296,7 @@ describe("ModuledNode", () => {
         });
     });
 
-    describe(nameof.property<ModuledNode>("getExportDeclarations"), () => {
+    describe(nameof<ModuledNode>("getExportDeclarations"), () => {
         it("should get in a source file", () => {
             const { sourceFile } = getInfoFromText("export * from 'test'; export {next} from './test';");
             expect(sourceFile.getExportDeclarations().length).to.equal(2);
@@ -310,7 +310,7 @@ describe("ModuledNode", () => {
         });
     });
 
-    describe(nameof.property<ModuledNode>("getExportDeclaration"), () => {
+    describe(nameof<ModuledNode>("getExportDeclaration"), () => {
         function doTest(text: string, conditionOrModuleSpecifier: string | ((importDeclaration: ExportDeclaration) => boolean), expected: string | undefined) {
             const { sourceFile } = getInfoFromText(text);
             const result = sourceFile.getExportDeclaration(conditionOrModuleSpecifier);
@@ -330,7 +330,7 @@ describe("ModuledNode", () => {
         });
     });
 
-    describe(nameof.property<ModuledNode>("getExportDeclarationOrThrow"), () => {
+    describe(nameof<ModuledNode>("getExportDeclarationOrThrow"), () => {
         function doTest(text: string, conditionOrModuleSpecifier: string | ((importDeclaration: ExportDeclaration) => boolean), expected: string | undefined) {
             const { sourceFile } = getInfoFromText(text);
             if (expected == null)
@@ -352,7 +352,7 @@ describe("ModuledNode", () => {
         });
     });
 
-    describe(nameof.property<ModuledNode>("insertExportAssignments"), () => {
+    describe(nameof<ModuledNode>("insertExportAssignments"), () => {
         function doTest(startCode: string, index: number, structures: OptionalKind<ExportAssignmentStructure>[], expectedCode: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertExportAssignments(index, structures);
@@ -405,7 +405,7 @@ describe("ModuledNode", () => {
         });
     });
 
-    describe(nameof.property<ModuledNode>("insertExportAssignment"), () => {
+    describe(nameof<ModuledNode>("insertExportAssignment"), () => {
         function doTest(startCode: string, index: number, structure: OptionalKind<ExportAssignmentStructure>, expectedCode: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertExportAssignment(index, structure);
@@ -418,7 +418,7 @@ describe("ModuledNode", () => {
         });
     });
 
-    describe(nameof.property<ModuledNode>("addExportAssignment"), () => {
+    describe(nameof<ModuledNode>("addExportAssignment"), () => {
         function doTest(startCode: string, structure: OptionalKind<ExportAssignmentStructure>, expectedCode: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addExportAssignment(structure);
@@ -431,7 +431,7 @@ describe("ModuledNode", () => {
         });
     });
 
-    describe(nameof.property<ModuledNode>("addExportAssignments"), () => {
+    describe(nameof<ModuledNode>("addExportAssignments"), () => {
         function doTest(startCode: string, structures: OptionalKind<ExportAssignmentStructure>[], expectedCode: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addExportAssignments(structures);
@@ -444,7 +444,7 @@ describe("ModuledNode", () => {
         });
     });
 
-    describe(nameof.property<SourceFile>("getExportAssignments"), () => {
+    describe(nameof<SourceFile>("getExportAssignments"), () => {
         it("should get from file", () => {
             const { sourceFile } = getInfoFromText("export = 5; export = 6;");
             expect(sourceFile.getExportAssignments().length).to.equal(2);
@@ -459,14 +459,14 @@ describe("ModuledNode", () => {
         });
     });
 
-    describe(nameof.property<ModuledNode>("getExportAssignment"), () => {
+    describe(nameof<ModuledNode>("getExportAssignment"), () => {
         it("should get the export declaration", () => {
             const { sourceFile } = getInfoFromText("export = 5; export default 6;");
             expect(sourceFile.getExportAssignment(e => !e.isExportEquals())!.getText()).to.equal("export default 6;");
         });
     });
 
-    describe(nameof.property<ModuledNode>("getExportAssignmentOrThrow"), () => {
+    describe(nameof<ModuledNode>("getExportAssignmentOrThrow"), () => {
         it("should get the export declaration", () => {
             const { sourceFile } = getInfoFromText("export = 5; export default 6;");
             expect(sourceFile.getExportAssignmentOrThrow(e => !e.isExportEquals()).getText()).to.equal("export default 6;");
@@ -478,7 +478,7 @@ describe("ModuledNode", () => {
         });
     });
 
-    describe(nameof.property<ModuledNode>("getExportedDeclarations"), () => {
+    describe(nameof<ModuledNode>("getExportedDeclarations"), () => {
         function assertMapsEqual(expected: [string, string[]][], actual: ReadonlyMap<string, ExportedDeclarations[]>) {
             for (const nodes of actual.values())
                 nodes.forEach(assertExportedDeclaration);
@@ -671,7 +671,7 @@ export = ts;`);
         });
     });
 
-    describe(nameof.property<ModuledNode>("getDefaultExportSymbol"), () => {
+    describe(nameof<ModuledNode>("getDefaultExportSymbol"), () => {
         function doTest(text: string, expectedName: string | undefined) {
             const { sourceFile } = getInfoFromText(text);
             const defaultSymbol = sourceFile.getDefaultExportSymbol();
@@ -698,7 +698,7 @@ export = ts;`);
         });
     });
 
-    describe(nameof.property<ModuledNode>("getDefaultExportSymbolOrThrow"), () => {
+    describe(nameof<ModuledNode>("getDefaultExportSymbolOrThrow"), () => {
         function doTest(text: string, expectedName: string | undefined) {
             const { sourceFile } = getInfoFromText(text);
             if (expectedName == null)
@@ -716,7 +716,7 @@ export = ts;`);
         });
     });
 
-    describe(nameof.property<SourceFile>("removeDefaultExport"), () => {
+    describe(nameof<SourceFile>("removeDefaultExport"), () => {
         function doTest(text: string, expected: string) {
             const { sourceFile } = getInfoFromText(text);
             sourceFile.removeDefaultExport();

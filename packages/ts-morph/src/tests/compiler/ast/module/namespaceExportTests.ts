@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { NamespaceExport } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -8,7 +8,7 @@ describe("NamespaceExport", () => {
         return getInfoFromTextWithDescendant<NamespaceExport>(text, SyntaxKind.NamespaceExport, { filePath: "main.ts" });
     }
 
-    describe(nameof.property<NamespaceExport>("setName"), () => {
+    describe(nameof<NamespaceExport>("setName"), () => {
         it("should only change what's imported", () => {
             const { descendant, sourceFile, project } = getNamespaceExport("export * as ts from './file';");
             const otherSourceFile = project.createSourceFile("file.ts", "export class name {}\nexport class newName {}");
@@ -20,7 +20,7 @@ describe("NamespaceExport", () => {
         });
     });
 
-    describe(nameof.property<NamespaceExport>("rename"), () => {
+    describe(nameof<NamespaceExport>("rename"), () => {
         // Doesn't work. Opened https://github.com/microsoft/TypeScript/issues/36836
         it.skip("should rename what's imported", () => {
             const { descendant, sourceFile, project } = getNamespaceExport("export * as ts from './file';");
@@ -33,7 +33,7 @@ describe("NamespaceExport", () => {
         });
     });
 
-    describe(nameof.property<NamespaceExport>("getNameNode"), () => {
+    describe(nameof<NamespaceExport>("getNameNode"), () => {
         function doTest(text: string, name: string) {
             const { descendant } = getNamespaceExport(text);
             expect(descendant.getNameNode().getText()).to.equal(name);
@@ -44,7 +44,7 @@ describe("NamespaceExport", () => {
         });
     });
 
-    describe(nameof.property<NamespaceExport>("getName"), () => {
+    describe(nameof<NamespaceExport>("getName"), () => {
         function doTest(text: string, name: string) {
             const { descendant } = getNamespaceExport(text);
             expect(descendant.getName()).to.equal(name);

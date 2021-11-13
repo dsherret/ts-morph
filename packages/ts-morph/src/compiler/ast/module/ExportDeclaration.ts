@@ -1,4 +1,4 @@
-import { ArrayUtils, errors, StringUtils, SyntaxKind, ts, nameof } from "@ts-morph/common";
+import { ArrayUtils, errors, nameof, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, removeChildren, verifyAndGetIndex } from "../../../manipulation";
 import { ExportDeclarationSpecificStructure, ExportDeclarationStructure, ExportSpecifierStructure, OptionalKind, StructureKind } from "../../../structures";
 import { WriterFunction } from "../../../types";
@@ -332,16 +332,16 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
             setEmptyNamedExport(this);
             this.addNamedExports(structure.namedExports);
         }
-        else if (structure.hasOwnProperty(nameof.property(structure, "namedExports")) && structure.moduleSpecifier == null) {
+        else if (structure.hasOwnProperty(nameof(structure, "namedExports")) && structure.moduleSpecifier == null) {
             this.toNamespaceExport();
         }
 
         if (structure.moduleSpecifier != null)
             this.setModuleSpecifier(structure.moduleSpecifier);
-        else if (structure.hasOwnProperty(nameof.property(structure, "moduleSpecifier")))
+        else if (structure.hasOwnProperty(nameof(structure, "moduleSpecifier")))
             this.removeModuleSpecifier();
 
-        if (structure.namedExports == null && structure.hasOwnProperty(nameof.property(structure, "namedExports")))
+        if (structure.namedExports == null && structure.hasOwnProperty(nameof(structure, "namedExports")))
             this.toNamespaceExport();
 
         if (structure.namespaceExport != null)

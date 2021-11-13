@@ -1,8 +1,8 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { InterfaceDeclaration, MethodSignature } from "../../../../compiler";
 import { MethodSignatureStructure, StructureKind, TypeParameterDeclarationStructure } from "../../../../structures";
 import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("MethodSignature", () => {
     function getFirstMethodWithInfo(code: string) {
@@ -10,7 +10,7 @@ describe("MethodSignature", () => {
         return { ...opts, firstMethod: opts.firstChild.getMethods()[0] };
     }
 
-    describe(nameof.property<MethodSignature>("set"), () => {
+    describe(nameof<MethodSignature>("set"), () => {
         function doTest(code: string, structure: Partial<MethodSignatureStructure>, expectedCode: string) {
             const { firstMethod, sourceFile } = getFirstMethodWithInfo(code);
             firstMethod.set(structure);
@@ -42,7 +42,7 @@ describe("MethodSignature", () => {
         });
     });
 
-    describe(nameof.property<MethodSignature>("remove"), () => {
+    describe(nameof<MethodSignature>("remove"), () => {
         function doTest(code: string, nameToRemove: string, indexToRemove: number, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<InterfaceDeclaration>(code);
             firstChild.getMethods().filter(m => m.getName() === nameToRemove)[indexToRemove].remove();
@@ -74,7 +74,7 @@ describe("MethodSignature", () => {
         });
     });
 
-    describe(nameof.property<MethodSignature>("getStructure"), () => {
+    describe(nameof<MethodSignature>("getStructure"), () => {
         function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<MethodSignatureStructure>>) {
             const { firstMethod } = getFirstMethodWithInfo(code);
             const structure = firstMethod.getStructure();

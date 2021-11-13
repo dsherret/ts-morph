@@ -1,4 +1,4 @@
-import { ArrayUtils, ts, nameof } from "@ts-morph/common";
+import { ArrayUtils, nameof, ts } from "@ts-morph/common";
 import { ScopeableNodeStructure } from "../../../structures";
 import { Constructor } from "../../../types";
 import { callBaseGetStructure } from "../callBaseGetStructure";
@@ -57,7 +57,7 @@ export function ScopeableNode<T extends Constructor<ScopeableNodeExtensionType>>
         set(structure: Partial<ScopeableNodeStructure>) {
             callBaseSet(Base.prototype, this, structure);
 
-            if (structure.hasOwnProperty(nameof.property(structure, "scope")))
+            if (structure.hasOwnProperty(nameof(structure, "scope")))
                 this.setScope(structure.scope);
 
             return this;

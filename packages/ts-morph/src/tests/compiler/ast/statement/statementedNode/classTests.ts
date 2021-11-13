@@ -1,11 +1,11 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, FunctionDeclaration, Node, StatementedNode } from "../../../../../compiler";
 import { ClassDeclarationStructure } from "../../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia } from "../../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("StatementedNode", () => {
-    describe(nameof.property<StatementedNode>("insertClasses"), () => {
+    describe(nameof<StatementedNode>("insertClasses"), () => {
         function doTest(startCode: string, index: number, structures: OptionalKindAndTrivia<ClassDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertClasses(index, structures);
@@ -106,7 +106,7 @@ describe("StatementedNode", () => {
         });
     });
 
-    describe(nameof.property<StatementedNode>("insertClass"), () => {
+    describe(nameof<StatementedNode>("insertClass"), () => {
         function doTest(startCode: string, index: number, structure: OptionalKindAndTrivia<ClassDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertClass(index, structure);
@@ -119,7 +119,7 @@ describe("StatementedNode", () => {
         });
     });
 
-    describe(nameof.property<StatementedNode>("addClasses"), () => {
+    describe(nameof<StatementedNode>("addClasses"), () => {
         function doTest(startCode: string, structures: OptionalKindAndTrivia<ClassDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addClasses(structures);
@@ -133,7 +133,7 @@ describe("StatementedNode", () => {
         });
     });
 
-    describe(nameof.property<StatementedNode>("addClass"), () => {
+    describe(nameof<StatementedNode>("addClass"), () => {
         function doTest(startCode: string, structure: OptionalKindAndTrivia<ClassDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addClass(structure);
@@ -146,7 +146,7 @@ describe("StatementedNode", () => {
         });
     });
 
-    describe(nameof.property<StatementedNode>("getClasses"), () => {
+    describe(nameof<StatementedNode>("getClasses"), () => {
         const { sourceFile } = getInfoFromText("class Identifier1 {}\nclass Identifier2 { prop: string; }");
         const classes = sourceFile.getClasses();
 
@@ -164,7 +164,7 @@ describe("StatementedNode", () => {
         });
     });
 
-    describe(nameof.property<StatementedNode>("getClass"), () => {
+    describe(nameof<StatementedNode>("getClass"), () => {
         const { sourceFile } = getInfoFromText("class Identifier1 {}\nclass Identifier2 { prop: string; }");
 
         it("should get a class by a name", () => {
@@ -180,7 +180,7 @@ describe("StatementedNode", () => {
         });
     });
 
-    describe(nameof.property<StatementedNode>("getClassOrThrow"), () => {
+    describe(nameof<StatementedNode>("getClassOrThrow"), () => {
         const { sourceFile } = getInfoFromText("class Identifier1 {}\nclass Identifier2 { prop: string; }");
 
         it("should get a class by a name", () => {

@@ -1,10 +1,10 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ReturnStatement } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("ReturnStatement", () => {
-    describe(nameof.property<ReturnStatement>("getExpressionOrThrow"), () => {
+    describe(nameof<ReturnStatement>("getExpressionOrThrow"), () => {
         it("should get the expression when it exists", () => {
             const { firstChild } = getInfoFromText<ReturnStatement>("return t;");
             expect(firstChild.getExpressionOrThrow().getText()).to.equal("t");
@@ -16,7 +16,7 @@ describe("ReturnStatement", () => {
         });
     });
 
-    describe(nameof.property<ReturnStatement>("getExpression"), () => {
+    describe(nameof<ReturnStatement>("getExpression"), () => {
         it("should get the expression when it exists", () => {
             const { firstChild } = getInfoFromText<ReturnStatement>("return t;");
             expect(firstChild.getText()).to.equal("return t;");
@@ -29,7 +29,7 @@ describe("ReturnStatement", () => {
         });
     });
 
-    describe(nameof.property<ReturnStatement>("remove"), () => {
+    describe(nameof<ReturnStatement>("remove"), () => {
         function doTest(text: string, index: number, expectedText: string) {
             const { sourceFile } = getInfoFromText(text);
             (sourceFile.getChildSyntaxListOrThrow().getChildren()[index] as ReturnStatement).remove();

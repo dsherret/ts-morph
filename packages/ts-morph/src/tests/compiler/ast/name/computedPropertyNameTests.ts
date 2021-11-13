@@ -1,7 +1,7 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ComputedPropertyName, InterfaceDeclaration } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 function getInfoFromTextWithFirstInterfaceProperty(text: string) {
     const obj = getInfoFromText<InterfaceDeclaration>(text);
@@ -10,7 +10,7 @@ function getInfoFromTextWithFirstInterfaceProperty(text: string) {
 }
 
 describe("ComputedPropertyName", () => {
-    describe(nameof.property<ComputedPropertyName>("getExpression"), () => {
+    describe(nameof<ComputedPropertyName>("getExpression"), () => {
         function doTest(text: string, expectedText: string) {
             const { firstProp } = getInfoFromTextWithFirstInterfaceProperty(text);
             const computedPropertyName = (firstProp.getNameNode() as ComputedPropertyName);

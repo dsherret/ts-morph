@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { WhileStatement } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -11,7 +11,7 @@ describe("WhileStatement", () => {
     const expression = "x <= 10";
     const statement = `while (${expression}) {}`;
 
-    describe(nameof.property<WhileStatement>("getExpression"), () => {
+    describe(nameof<WhileStatement>("getExpression"), () => {
         function doTest(text: string, expectedText?: string) {
             const whileStatement = getStatement(text);
             expect(whileStatement.getExpression().getText()).to.equal(expectedText);

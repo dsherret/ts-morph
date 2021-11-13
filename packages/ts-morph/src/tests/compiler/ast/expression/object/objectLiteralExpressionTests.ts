@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { GetAccessorDeclaration, MethodDeclaration, Node, ObjectLiteralExpression, PropertyAssignment, SetAccessorDeclaration, ShorthandPropertyAssignment,
     SpreadAssignment } from "../../../../../compiler";
@@ -17,7 +17,7 @@ describe("ObjectLiteralExpression", () => {
         };
     }
 
-    describe(nameof.property<ObjectLiteralExpression>("getProperties"), () => {
+    describe(nameof<ObjectLiteralExpression>("getProperties"), () => {
         function doTest(text: string, props: string[]) {
             const { objectLiteralExpression } = getObjectLiteralExpression(text);
             expect(objectLiteralExpression.getProperties().map(p => p.getText())).to.deep.equal(props);
@@ -32,7 +32,7 @@ describe("ObjectLiteralExpression", () => {
         });
     });
 
-    describe(nameof.property<ObjectLiteralExpression>("getPropertiesWithComments"), () => {
+    describe(nameof<ObjectLiteralExpression>("getPropertiesWithComments"), () => {
         function doTest(text: string, props: string[]) {
             const { objectLiteralExpression } = getObjectLiteralExpression(text);
             expect(objectLiteralExpression.getPropertiesWithComments().map(p => p.getText())).to.deep.equal(props);
@@ -43,7 +43,7 @@ describe("ObjectLiteralExpression", () => {
         });
     });
 
-    describe(nameof.property<ObjectLiteralExpression>("getProperty"), () => {
+    describe(nameof<ObjectLiteralExpression>("getProperty"), () => {
         it("should return undefined when it doesn't exist", () => {
             const { objectLiteralExpression } = getObjectLiteralExpression("const t = { prop: 5 }");
             const property = objectLiteralExpression.getProperty("prop2");
@@ -63,7 +63,7 @@ describe("ObjectLiteralExpression", () => {
         });
     });
 
-    describe(nameof.property<ObjectLiteralExpression>("getPropertyOrThrow"), () => {
+    describe(nameof<ObjectLiteralExpression>("getPropertyOrThrow"), () => {
         it("should return undefined when it doesn't exist", () => {
             const { objectLiteralExpression } = getObjectLiteralExpression("const t = { prop: 5 }");
             expect(() => objectLiteralExpression.getPropertyOrThrow("prop2")).to.throw();
@@ -82,7 +82,7 @@ describe("ObjectLiteralExpression", () => {
         });
     });
 
-    describe(nameof.property<ObjectLiteralExpression>("insertProperties"), () => {
+    describe(nameof<ObjectLiteralExpression>("insertProperties"), () => {
         type StructuresType = string | WriterFunction | (string | WriterFunction | ObjectLiteralExpressionPropertyStructures)[];
         function doTest(text: string, index: number, structures: StructuresType, expectedText: string, options?: { useTrailingCommas: boolean; }) {
             const { sourceFile, objectLiteralExpression, project } = getObjectLiteralExpression(text);
@@ -134,7 +134,7 @@ describe("ObjectLiteralExpression", () => {
         });
     });
 
-    describe(nameof.property<ObjectLiteralExpression>("insertProperty"), () => {
+    describe(nameof<ObjectLiteralExpression>("insertProperty"), () => {
         type StructureType = string | WriterFunction | ObjectLiteralExpressionPropertyStructures;
         function doTest(text: string, index: number, structure: StructureType, expectedText: string) {
             const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
@@ -153,7 +153,7 @@ describe("ObjectLiteralExpression", () => {
         });
     });
 
-    describe(nameof.property<ObjectLiteralExpression>("addProperty"), () => {
+    describe(nameof<ObjectLiteralExpression>("addProperty"), () => {
         type StructureType = string | WriterFunction | ObjectLiteralExpressionPropertyStructures;
         function doTest(text: string, structure: StructureType, expectedText: string) {
             const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
@@ -172,7 +172,7 @@ describe("ObjectLiteralExpression", () => {
         });
     });
 
-    describe(nameof.property<ObjectLiteralExpression>("addProperties"), () => {
+    describe(nameof<ObjectLiteralExpression>("addProperties"), () => {
         type StructuresType = string | WriterFunction | (string | WriterFunction | ObjectLiteralExpressionPropertyStructures)[];
         function doTest(text: string, structures: StructuresType, expectedText: string) {
             const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
@@ -220,7 +220,7 @@ describe("ObjectLiteralExpression", () => {
 
     /* Property Assignments */
 
-    describe(nameof.property<ObjectLiteralExpression>("insertPropertyAssignments"), () => {
+    describe(nameof<ObjectLiteralExpression>("insertPropertyAssignments"), () => {
         function doTest(text: string, index: number, structures: OptionalKind<PropertyAssignmentStructure>[], expectedText: string) {
             const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
             const result = objectLiteralExpression.insertPropertyAssignments(index, structures);
@@ -270,7 +270,7 @@ describe("ObjectLiteralExpression", () => {
         });
     });
 
-    describe(nameof.property<ObjectLiteralExpression>("insertPropertyAssignment"), () => {
+    describe(nameof<ObjectLiteralExpression>("insertPropertyAssignment"), () => {
         function doTest(text: string, index: number, structure: OptionalKind<PropertyAssignmentStructure>, expectedText: string) {
             const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
             const result = objectLiteralExpression.insertPropertyAssignment(index, structure);
@@ -288,7 +288,7 @@ describe("ObjectLiteralExpression", () => {
         });
     });
 
-    describe(nameof.property<ObjectLiteralExpression>("addPropertyAssignments"), () => {
+    describe(nameof<ObjectLiteralExpression>("addPropertyAssignments"), () => {
         function doTest(text: string, structures: OptionalKind<PropertyAssignmentStructure>[], expectedText: string) {
             const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
             const result = objectLiteralExpression.addPropertyAssignments(structures);
@@ -302,7 +302,7 @@ describe("ObjectLiteralExpression", () => {
         });
     });
 
-    describe(nameof.property<ObjectLiteralExpression>("addPropertyAssignment"), () => {
+    describe(nameof<ObjectLiteralExpression>("addPropertyAssignment"), () => {
         function doTest(text: string, structure: OptionalKind<PropertyAssignmentStructure>, expectedText: string) {
             const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
             const result = objectLiteralExpression.addPropertyAssignment(structure);
@@ -321,7 +321,7 @@ describe("ObjectLiteralExpression", () => {
 
     /* Shorthand Property Assignments */
 
-    describe(nameof.property<ObjectLiteralExpression>("insertShorthandPropertyAssignments"), () => {
+    describe(nameof<ObjectLiteralExpression>("insertShorthandPropertyAssignments"), () => {
         function doTest(text: string, index: number, structures: OptionalKind<ShorthandPropertyAssignmentStructure>[], expectedText: string) {
             const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
             const result = objectLiteralExpression.insertShorthandPropertyAssignments(index, structures);
@@ -335,7 +335,7 @@ describe("ObjectLiteralExpression", () => {
         });
     });
 
-    describe(nameof.property<ObjectLiteralExpression>("insertShorthandPropertyAssignment"), () => {
+    describe(nameof<ObjectLiteralExpression>("insertShorthandPropertyAssignment"), () => {
         function doTest(text: string, index: number, structure: OptionalKind<ShorthandPropertyAssignmentStructure>, expectedText: string) {
             const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
             const result = objectLiteralExpression.insertShorthandPropertyAssignment(index, structure);
@@ -353,7 +353,7 @@ describe("ObjectLiteralExpression", () => {
         });
     });
 
-    describe(nameof.property<ObjectLiteralExpression>("addShorthandPropertyAssignments"), () => {
+    describe(nameof<ObjectLiteralExpression>("addShorthandPropertyAssignments"), () => {
         function doTest(text: string, structures: OptionalKind<ShorthandPropertyAssignmentStructure>[], expectedText: string) {
             const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
             const result = objectLiteralExpression.addShorthandPropertyAssignments(structures);
@@ -370,7 +370,7 @@ describe("ObjectLiteralExpression", () => {
         });
     });
 
-    describe(nameof.property<ObjectLiteralExpression>("addShorthandPropertyAssignment"), () => {
+    describe(nameof<ObjectLiteralExpression>("addShorthandPropertyAssignment"), () => {
         function doTest(text: string, structure: OptionalKind<ShorthandPropertyAssignmentStructure>, expectedText: string) {
             const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
             const result = objectLiteralExpression.addShorthandPropertyAssignment(structure);
@@ -389,7 +389,7 @@ describe("ObjectLiteralExpression", () => {
 
     /* Spread Assignments */
 
-    describe(nameof.property<ObjectLiteralExpression>("insertSpreadAssignments"), () => {
+    describe(nameof<ObjectLiteralExpression>("insertSpreadAssignments"), () => {
         function doTest(text: string, index: number, structures: OptionalKind<SpreadAssignmentStructure>[], expectedText: string) {
             const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
             const result = objectLiteralExpression.insertSpreadAssignments(index, structures);
@@ -403,7 +403,7 @@ describe("ObjectLiteralExpression", () => {
         });
     });
 
-    describe(nameof.property<ObjectLiteralExpression>("insertSpreadAssignment"), () => {
+    describe(nameof<ObjectLiteralExpression>("insertSpreadAssignment"), () => {
         function doTest(text: string, index: number, structure: OptionalKind<SpreadAssignmentStructure>, expectedText: string) {
             const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
             const result = objectLiteralExpression.insertSpreadAssignment(index, structure);
@@ -421,7 +421,7 @@ describe("ObjectLiteralExpression", () => {
         });
     });
 
-    describe(nameof.property<ObjectLiteralExpression>("addSpreadAssignments"), () => {
+    describe(nameof<ObjectLiteralExpression>("addSpreadAssignments"), () => {
         function doTest(text: string, structures: OptionalKind<SpreadAssignmentStructure>[], expectedText: string) {
             const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
             const result = objectLiteralExpression.addSpreadAssignments(structures);
@@ -435,7 +435,7 @@ describe("ObjectLiteralExpression", () => {
         });
     });
 
-    describe(nameof.property<ObjectLiteralExpression>("addSpreadAssignment"), () => {
+    describe(nameof<ObjectLiteralExpression>("addSpreadAssignment"), () => {
         function doTest(text: string, structure: OptionalKind<SpreadAssignmentStructure>, expectedText: string) {
             const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
             const result = objectLiteralExpression.addSpreadAssignment(structure);
@@ -454,7 +454,7 @@ describe("ObjectLiteralExpression", () => {
 
     /* Methods */
 
-    describe(nameof.property<ObjectLiteralExpression>("insertMethods"), () => {
+    describe(nameof<ObjectLiteralExpression>("insertMethods"), () => {
         function doTest(text: string, index: number, structures: OptionalKind<MethodDeclarationStructure>[], expectedText: string) {
             const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
             const result = objectLiteralExpression.insertMethods(index, structures);
@@ -468,7 +468,7 @@ describe("ObjectLiteralExpression", () => {
         });
     });
 
-    describe(nameof.property<ObjectLiteralExpression>("insertMethod"), () => {
+    describe(nameof<ObjectLiteralExpression>("insertMethod"), () => {
         function doTest(text: string, index: number, structure: OptionalKind<MethodDeclarationStructure>, expectedText: string) {
             const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
             const result = objectLiteralExpression.insertMethod(index, structure);
@@ -486,7 +486,7 @@ describe("ObjectLiteralExpression", () => {
         });
     });
 
-    describe(nameof.property<ObjectLiteralExpression>("addMethods"), () => {
+    describe(nameof<ObjectLiteralExpression>("addMethods"), () => {
         function doTest(text: string, structures: OptionalKind<MethodDeclarationStructure>[], expectedText: string) {
             const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
             const result = objectLiteralExpression.addMethods(structures);
@@ -500,7 +500,7 @@ describe("ObjectLiteralExpression", () => {
         });
     });
 
-    describe(nameof.property<ObjectLiteralExpression>("addMethod"), () => {
+    describe(nameof<ObjectLiteralExpression>("addMethod"), () => {
         function doTest(text: string, structure: OptionalKind<MethodDeclarationStructure>, expectedText: string) {
             const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
             const result = objectLiteralExpression.addMethod(structure);
@@ -519,7 +519,7 @@ describe("ObjectLiteralExpression", () => {
 
     /* Get Accessor */
 
-    describe(nameof.property<ObjectLiteralExpression>("insertGetAccessors"), () => {
+    describe(nameof<ObjectLiteralExpression>("insertGetAccessors"), () => {
         function doTest(text: string, index: number, structures: OptionalKind<GetAccessorDeclarationStructure>[], expectedText: string) {
             const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
             const result = objectLiteralExpression.insertGetAccessors(index, structures);
@@ -533,7 +533,7 @@ describe("ObjectLiteralExpression", () => {
         });
     });
 
-    describe(nameof.property<ObjectLiteralExpression>("insertGetAccessor"), () => {
+    describe(nameof<ObjectLiteralExpression>("insertGetAccessor"), () => {
         function doTest(text: string, index: number, structure: OptionalKind<GetAccessorDeclarationStructure>, expectedText: string) {
             const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
             const result = objectLiteralExpression.insertGetAccessor(index, structure);
@@ -551,7 +551,7 @@ describe("ObjectLiteralExpression", () => {
         });
     });
 
-    describe(nameof.property<ObjectLiteralExpression>("addGetAccessors"), () => {
+    describe(nameof<ObjectLiteralExpression>("addGetAccessors"), () => {
         function doTest(text: string, structures: OptionalKind<GetAccessorDeclarationStructure>[], expectedText: string) {
             const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
             const result = objectLiteralExpression.addGetAccessors(structures);
@@ -565,7 +565,7 @@ describe("ObjectLiteralExpression", () => {
         });
     });
 
-    describe(nameof.property<ObjectLiteralExpression>("addGetAccessor"), () => {
+    describe(nameof<ObjectLiteralExpression>("addGetAccessor"), () => {
         function doTest(text: string, structure: OptionalKind<GetAccessorDeclarationStructure>, expectedText: string) {
             const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
             const result = objectLiteralExpression.addGetAccessor(structure);
@@ -584,7 +584,7 @@ describe("ObjectLiteralExpression", () => {
 
     /* Set Accessor */
 
-    describe(nameof.property<ObjectLiteralExpression>("insertSetAccessors"), () => {
+    describe(nameof<ObjectLiteralExpression>("insertSetAccessors"), () => {
         function doTest(text: string, index: number, structures: OptionalKind<SetAccessorDeclarationStructure>[], expectedText: string) {
             const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
             const result = objectLiteralExpression.insertSetAccessors(index, structures);
@@ -598,7 +598,7 @@ describe("ObjectLiteralExpression", () => {
         });
     });
 
-    describe(nameof.property<ObjectLiteralExpression>("insertSetAccessor"), () => {
+    describe(nameof<ObjectLiteralExpression>("insertSetAccessor"), () => {
         function doTest(text: string, index: number, structure: OptionalKind<SetAccessorDeclarationStructure>, expectedText: string) {
             const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
             const result = objectLiteralExpression.insertSetAccessor(index, structure);
@@ -616,7 +616,7 @@ describe("ObjectLiteralExpression", () => {
         });
     });
 
-    describe(nameof.property<ObjectLiteralExpression>("addSetAccessors"), () => {
+    describe(nameof<ObjectLiteralExpression>("addSetAccessors"), () => {
         function doTest(text: string, structures: OptionalKind<SetAccessorDeclarationStructure>[], expectedText: string) {
             const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
             const result = objectLiteralExpression.addSetAccessors(structures);
@@ -630,7 +630,7 @@ describe("ObjectLiteralExpression", () => {
         });
     });
 
-    describe(nameof.property<ObjectLiteralExpression>("addSetAccessor"), () => {
+    describe(nameof<ObjectLiteralExpression>("addSetAccessor"), () => {
         function doTest(text: string, structure: OptionalKind<SetAccessorDeclarationStructure>, expectedText: string) {
             const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
             const result = objectLiteralExpression.addSetAccessor(structure);

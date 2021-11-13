@@ -1,7 +1,7 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, ExpressionWithTypeArguments } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("ExpressionWithTypeArguments", () => {
     function getFirstExpressionWithTypeArgs(text: string) {
@@ -9,14 +9,14 @@ describe("ExpressionWithTypeArguments", () => {
         return firstChild.getExtends()!;
     }
 
-    describe(nameof.property<ExpressionWithTypeArguments>("getExpression"), () => {
+    describe(nameof<ExpressionWithTypeArguments>("getExpression"), () => {
         it("should get the compiler expression", () => {
             const expression = getFirstExpressionWithTypeArgs("class MyClass extends MyOtherClass {}");
             expect(expression.getExpression().getText()).to.equal("MyOtherClass");
         });
     });
 
-    describe(nameof.property<ExpressionWithTypeArguments>("getTypeArguments"), () => {
+    describe(nameof<ExpressionWithTypeArguments>("getTypeArguments"), () => {
         it("should return an empty array when there's no type arguments", () => {
             const expression = getFirstExpressionWithTypeArgs("class MyClass extends MyOtherClass {}");
             expect(expression.getTypeArguments().length).to.equal(0);

@@ -14,7 +14,7 @@ describe("SortedKeyValueArray", () => {
         }
     }
 
-    describe(nameof.property<SortedKeyValueArray<any, any>>("set"), () => {
+    describe(nameof<SortedKeyValueArray<any, any>>("set"), () => {
         function doTest(startItems: number[], settingItem: number, expected: number[]) {
             const array = new SortedKeyValueArray<number, number>(value => value, new NumberComparer());
             startItems.forEach(item => array.set(item));
@@ -64,15 +64,15 @@ describe("SortedKeyValueArray", () => {
         });
     }
 
-    describe(nameof.property<SortedKeyValueArray<any, any>>("removeByKey"), () => {
+    describe(nameof<SortedKeyValueArray<any, any>>("removeByKey"), () => {
         doRemoveTests((array, keyOrValue) => array.removeByKey(keyOrValue));
     });
 
-    describe(nameof.property<SortedKeyValueArray<any, any>>("removeByValue"), () => {
+    describe(nameof<SortedKeyValueArray<any, any>>("removeByValue"), () => {
         doRemoveTests((array, keyOrValue) => array.removeByValue(keyOrValue));
     });
 
-    describe(nameof.property<SortedKeyValueArray<any, any>>("hasItems"), () => {
+    describe(nameof<SortedKeyValueArray<any, any>>("hasItems"), () => {
         function doTest(startItems: number[], expected: boolean) {
             const array = new SortedKeyValueArray<number, number>(value => value, new NumberComparer());
             startItems.forEach(item => array.set(item));
@@ -88,7 +88,7 @@ describe("SortedKeyValueArray", () => {
         });
     });
 
-    describe(nameof.property<SortedKeyValueArray<any, any>>("entries"), () => {
+    describe(nameof<SortedKeyValueArray<any, any>>("entries"), () => {
         function doTest(startItems: number[]) {
             const array = new SortedKeyValueArray<number, number>(value => value, new NumberComparer());
             startItems.forEach(item => array.set(item));

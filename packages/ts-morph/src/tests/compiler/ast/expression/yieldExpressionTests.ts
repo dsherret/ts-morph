@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { YieldExpression } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -15,7 +15,7 @@ describe("YieldExpression", () => {
     const { yieldExpression } = getInfoFromTextWithYieldExpression(expr);
     const { yieldExpression: emptyYieldExpression } = getInfoFromTextWithYieldExpression(emptyExpr);
 
-    describe(nameof.property<YieldExpression>("getExpression"), () => {
+    describe(nameof<YieldExpression>("getExpression"), () => {
         it("should get the correct expression", () => {
             expect(yieldExpression.getExpression()!.getText()).to.equal(expression);
         });
@@ -25,7 +25,7 @@ describe("YieldExpression", () => {
         });
     });
 
-    describe(nameof.property<YieldExpression>("getExpressionOrThrow"), () => {
+    describe(nameof<YieldExpression>("getExpressionOrThrow"), () => {
         it("should should return the expression", () => {
             expect(yieldExpression.getExpressionOrThrow().getText()).to.equal(expression);
         });

@@ -1,4 +1,4 @@
-import { InMemoryFileSystemHost, ObjectFlags, SymbolFlags, TypeFlags, TypeFormatFlags, nameof } from "@ts-morph/common";
+import { InMemoryFileSystemHost, nameof, ObjectFlags, SymbolFlags, TypeFlags, TypeFormatFlags } from "@ts-morph/common";
 import { expect } from "chai";
 import { FunctionDeclaration, Node, Symbol, Type, TypeAliasDeclaration, VariableStatement } from "../../../compiler";
 import { getInfoFromText } from "../testHelpers";
@@ -69,13 +69,13 @@ let unknownType: unknown;
         for (const dec of sourceFile.getVariableDeclarations())
             typesByName[dec.getName()] = dec.getType();
 
-        describe(nameof.property<Type>("compilerType"), () => {
+        describe(nameof<Type>("compilerType"), () => {
             it("should get the compiler type", () => {
                 expect(typesByName["stringType"].compilerType.flags).to.equal(TypeFlags.String);
             });
         });
 
-        describe(nameof.property<Type>("getUnionTypes"), () => {
+        describe(nameof<Type>("getUnionTypes"), () => {
             it("should get them when there aren't any", () => {
                 expect(typesByName["stringType"].getUnionTypes().length).to.equal(0);
             });
@@ -92,7 +92,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("getIntersectionTypes"), () => {
+        describe(nameof<Type>("getIntersectionTypes"), () => {
             it("should get them when there aren't any", () => {
                 expect(typesByName["stringType"].getIntersectionTypes().length).to.equal(0);
             });
@@ -109,7 +109,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("isAnonymous"), () => {
+        describe(nameof<Type>("isAnonymous"), () => {
             function doTest(typeName: string, expected: boolean) {
                 expect(typesByName[typeName].isAnonymous()).to.equal(expected);
             }
@@ -123,7 +123,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("isAny"), () => {
+        describe(nameof<Type>("isAny"), () => {
             function doTest(typeName: string, expected: boolean) {
                 expect(typesByName[typeName].isAny()).to.equal(expected);
             }
@@ -137,7 +137,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("isBoolean"), () => {
+        describe(nameof<Type>("isBoolean"), () => {
             function doTest(typeName: string, expected: boolean) {
                 expect(typesByName[typeName].isBoolean()).to.equal(expected);
             }
@@ -151,7 +151,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("isString"), () => {
+        describe(nameof<Type>("isString"), () => {
             function doTest(typeName: string, expected: boolean) {
                 expect(typesByName[typeName].isString()).to.equal(expected);
             }
@@ -165,7 +165,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("isNumber"), () => {
+        describe(nameof<Type>("isNumber"), () => {
             function doTest(typeName: string, expected: boolean) {
                 expect(typesByName[typeName].isNumber()).to.equal(expected);
             }
@@ -179,7 +179,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("isLiteral"), () => {
+        describe(nameof<Type>("isLiteral"), () => {
             function doTest(typeName: string, expected: boolean) {
                 expect(typesByName[typeName].isLiteral()).to.equal(expected);
             }
@@ -205,7 +205,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("isBooleanLiteral"), () => {
+        describe(nameof<Type>("isBooleanLiteral"), () => {
             function doTest(typeName: string, expected: boolean) {
                 expect(typesByName[typeName].isBooleanLiteral()).to.equal(expected);
             }
@@ -219,7 +219,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("isEnumLiteral"), () => {
+        describe(nameof<Type>("isEnumLiteral"), () => {
             function doTest(typeName: string, expected: boolean) {
                 expect(typesByName[typeName].isEnumLiteral()).to.equal(expected);
             }
@@ -241,7 +241,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("isStringLiteral"), () => {
+        describe(nameof<Type>("isStringLiteral"), () => {
             function doTest(typeName: string, expected: boolean) {
                 expect(typesByName[typeName].isStringLiteral()).to.equal(expected);
             }
@@ -255,7 +255,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("isNumberLiteral"), () => {
+        describe(nameof<Type>("isNumberLiteral"), () => {
             function doTest(typeName: string, expected: boolean) {
                 expect(typesByName[typeName].isNumberLiteral()).to.equal(expected);
             }
@@ -269,7 +269,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("isClass"), () => {
+        describe(nameof<Type>("isClass"), () => {
             function doTest(typeName: string, expected: boolean) {
                 expect(typesByName[typeName].isClass()).to.equal(expected);
             }
@@ -283,7 +283,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("isClassOrInterface"), () => {
+        describe(nameof<Type>("isClassOrInterface"), () => {
             function doTest(typeName: string, expected: boolean) {
                 expect(typesByName[typeName].isClassOrInterface()).to.equal(expected);
             }
@@ -301,7 +301,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("isEnum"), () => {
+        describe(nameof<Type>("isEnum"), () => {
             function doTest(typeName: string, expected: boolean) {
                 expect(typesByName[typeName].isEnum()).to.equal(expected);
             }
@@ -328,7 +328,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("isInterface"), () => {
+        describe(nameof<Type>("isInterface"), () => {
             function doTest(typeName: string, expected: boolean) {
                 expect(typesByName[typeName].isInterface()).to.equal(expected);
             }
@@ -342,7 +342,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("isIntersection"), () => {
+        describe(nameof<Type>("isIntersection"), () => {
             function doTest(typeName: string, expected: boolean) {
                 expect(typesByName[typeName].isIntersection()).to.equal(expected);
             }
@@ -356,7 +356,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("isUnion"), () => {
+        describe(nameof<Type>("isUnion"), () => {
             function doTest(typeName: string, expected: boolean) {
                 expect(typesByName[typeName].isUnion()).to.equal(expected);
             }
@@ -370,7 +370,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("isUnionOrIntersection"), () => {
+        describe(nameof<Type>("isUnionOrIntersection"), () => {
             function doTest(typeName: string, expected: boolean) {
                 expect(typesByName[typeName].isUnionOrIntersection()).to.equal(expected);
             }
@@ -388,7 +388,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("isObject"), () => {
+        describe(nameof<Type>("isObject"), () => {
             function doTest(typeName: string, expected: boolean) {
                 expect(typesByName[typeName].isObject()).to.equal(expected);
             }
@@ -402,7 +402,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("isTuple"), () => {
+        describe(nameof<Type>("isTuple"), () => {
             function doTest(typeName: string, expected: boolean) {
                 expect(typesByName[typeName].isTuple()).to.equal(expected);
             }
@@ -428,7 +428,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("isUndefined"), () => {
+        describe(nameof<Type>("isUndefined"), () => {
             function doTest(typeName: string, expected: boolean) {
                 expect(typesByName[typeName].isUndefined()).to.equal(expected);
             }
@@ -442,7 +442,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("isUnknown"), () => {
+        describe(nameof<Type>("isUnknown"), () => {
             function doTest(typeName: string, expected: boolean) {
                 expect(typesByName[typeName].isUnknown()).to.equal(expected);
             }
@@ -456,13 +456,13 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("getFlags"), () => {
+        describe(nameof<Type>("getFlags"), () => {
             it("should get the type flags", () => {
                 expect(typesByName["numberType"].getFlags()).to.equal(TypeFlags.Number);
             });
         });
 
-        describe(nameof.property<Type>("getObjectFlags"), () => {
+        describe(nameof<Type>("getObjectFlags"), () => {
             it("should get the object flags when not an object", () => {
                 expect(typesByName["numberType"].getObjectFlags()).to.equal(0);
             });
@@ -472,7 +472,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("getSymbol"), () => {
+        describe(nameof<Type>("getSymbol"), () => {
             it("should get symbol when it has one", () => {
                 expect(typesByName["classType"].getSymbol()!.getName()).to.equal("MyClass");
             });
@@ -482,7 +482,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("getSymbolOrThrow"), () => {
+        describe(nameof<Type>("getSymbolOrThrow"), () => {
             it("should get symbol when it has one", () => {
                 expect(typesByName["classType"].getSymbolOrThrow().getName()).to.equal("MyClass");
             });
@@ -492,13 +492,13 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("getApparentType"), () => {
+        describe(nameof<Type>("getApparentType"), () => {
             it("should get the apparent type", () => {
                 expect(typesByName["numberType"].getApparentType().getText()).to.equal("Number");
             });
         });
 
-        describe(nameof.property<Type>("getCallSignatures"), () => {
+        describe(nameof<Type>("getCallSignatures"), () => {
             it("should return no call signatures when none exist", () => {
                 expect(typesByName["stringType"].getCallSignatures().length).to.equal(0);
             });
@@ -508,7 +508,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("getConstructSignatures"), () => {
+        describe(nameof<Type>("getConstructSignatures"), () => {
             it("should return no construct signatures when none exist", () => {
                 expect(typesByName["stringType"].getConstructSignatures().length).to.equal(0);
             });
@@ -518,7 +518,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("getStringIndexType"), () => {
+        describe(nameof<Type>("getStringIndexType"), () => {
             it("should return undefined when no string index type", () => {
                 expect(typesByName["emptyObjectType"].getStringIndexType()).to.be.undefined;
             });
@@ -528,7 +528,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("getNumberIndexType"), () => {
+        describe(nameof<Type>("getNumberIndexType"), () => {
             it("should return undefined when it doesn't have one", () => {
                 expect(typesByName["emptyObjectType"].getNumberIndexType()).to.be.undefined;
             });
@@ -538,7 +538,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("getNonNullableType"), () => {
+        describe(nameof<Type>("getNonNullableType"), () => {
             function doTest(typeName: string, expected: string) {
                 expect(typesByName[typeName].getNonNullableType().getText()).to.equal(expected);
             }
@@ -560,7 +560,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("isNullable"), () => {
+        describe(nameof<Type>("isNullable"), () => {
             function doTest(typeName: string, expected: boolean) {
                 expect(typesByName[typeName].isNullable()).to.equal(expected);
             }
@@ -587,7 +587,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("getTupleElements"), () => {
+        describe(nameof<Type>("getTupleElements"), () => {
             function doTest(typeName: string, expected: string[]) {
                 expect(typesByName[typeName].getTupleElements().map(t => t.getText())).to.deep.equal(expected);
             }
@@ -605,7 +605,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("getTypeArguments"), () => {
+        describe(nameof<Type>("getTypeArguments"), () => {
             function doTest(typeName: string, expected: string[]) {
                 expect(typesByName[typeName].getTypeArguments().map(t => t.getText())).to.deep.equal(expected);
             }
@@ -623,7 +623,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("getBaseTypeOfLiteralType"), () => {
+        describe(nameof<Type>("getBaseTypeOfLiteralType"), () => {
             function doTest(typeName: string, expected: string) {
                 expect(typesByName[typeName].getBaseTypeOfLiteralType().getText()).to.equal(expected);
             }
@@ -649,7 +649,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("getArrayElementTypeOrThrow"), () => {
+        describe(nameof<Type>("getArrayElementTypeOrThrow"), () => {
             function doTest(typeName: string, expected: string | undefined) {
                 if (expected == null)
                     expect(() => typesByName[typeName].getArrayElementTypeOrThrow()).to.throw();
@@ -666,7 +666,7 @@ let unknownType: unknown;
             });
         });
 
-        describe(nameof.property<Type>("getArrayElementType"), () => {
+        describe(nameof<Type>("getArrayElementType"), () => {
             function doTest(typeName: string, expected: string | undefined) {
                 const type = typesByName[typeName].getArrayElementType();
                 expect(type?.getText()).to.equal(expected);
@@ -682,7 +682,7 @@ let unknownType: unknown;
         });
     });
 
-    describe(nameof.property<Type>("getText"), () => {
+    describe(nameof<Type>("getText"), () => {
         const repeatedStr = "o".repeat(160 * 2);
         const longType = `string | number | Date | { reallyReallyLoo${repeatedStr}ong: string; }`;
 
@@ -702,7 +702,7 @@ let unknownType: unknown;
         });
     });
 
-    describe(nameof.property<Type>("getProperties"), () => {
+    describe(nameof<Type>("getProperties"), () => {
         it("should get the properties when there are none", () => {
             const { firstType } = getTypeFromText("let myType: {};");
             expect(firstType.getProperties().length).to.equal(0);
@@ -721,7 +721,7 @@ let unknownType: unknown;
         });
     });
 
-    describe(nameof.property<Type>("getPropertyOrThrow"), () => {
+    describe(nameof<Type>("getPropertyOrThrow"), () => {
         function doTest(text: string, nameOrFindFunction: string | ((declaration: Symbol) => boolean), expected: string | undefined) {
             const { firstType } = getTypeFromText(text);
             if (expected == null)
@@ -743,7 +743,7 @@ let unknownType: unknown;
         });
     });
 
-    describe(nameof.property<Type>("getProperty"), () => {
+    describe(nameof<Type>("getProperty"), () => {
         function doTest(text: string, nameOrFindFunction: string | ((declaration: Symbol) => boolean), expected: string | undefined) {
             const { firstType } = getTypeFromText(text);
             const prop = firstType.getProperty(nameOrFindFunction);
@@ -763,14 +763,14 @@ let unknownType: unknown;
         });
     });
 
-    describe(nameof.property<Type>("getApparentProperties"), () => {
+    describe(nameof<Type>("getApparentProperties"), () => {
         it("should return the apparent properties of a type", () => {
             const { firstType } = getTypeFromText("let myType: 1;");
             expect(firstType.getApparentProperties().length).to.equal(6);
         });
     });
 
-    describe(nameof.property<Type>("getApparentProperty"), () => {
+    describe(nameof<Type>("getApparentProperty"), () => {
         it("should get the property by name", () => {
             const { firstType } = getTypeFromText("let myType: { str: string; other: number; };");
             const prop = firstType.getApparentProperty("other")!;
@@ -784,7 +784,7 @@ let unknownType: unknown;
         });
     });
 
-    describe(nameof.property<Type>("getConstraint"), () => {
+    describe(nameof<Type>("getConstraint"), () => {
         function doTest(text: string, expected: string | undefined) {
             const { firstType } = getTypeAliasTypeFromText(text);
             expect(firstType.getConstraint()?.getText()).to.equal(expected);
@@ -799,7 +799,7 @@ let unknownType: unknown;
         });
     });
 
-    describe(nameof.property<Type>("getConstraintOrThrow"), () => {
+    describe(nameof<Type>("getConstraintOrThrow"), () => {
         function doTest(text: string, expected: string | undefined) {
             const { firstType } = getTypeAliasTypeFromText(text);
             if (expected == null)
@@ -817,7 +817,7 @@ let unknownType: unknown;
         });
     });
 
-    describe(nameof.property<Type>("getDefault"), () => {
+    describe(nameof<Type>("getDefault"), () => {
         function doTest(text: string, expected: string | undefined) {
             const { firstType } = getTypeAliasTypeFromText(text);
             expect(firstType.getDefault()?.getText()).to.equal(expected);
@@ -832,7 +832,7 @@ let unknownType: unknown;
         });
     });
 
-    describe(nameof.property<Type>("getDefaultOrThrow"), () => {
+    describe(nameof<Type>("getDefaultOrThrow"), () => {
         function doTest(text: string, expected: string | undefined) {
             const { firstType } = getTypeAliasTypeFromText(text);
             if (expected == null)
@@ -850,7 +850,7 @@ let unknownType: unknown;
         });
     });
 
-    describe(nameof.property<Type>("getBaseTypes"), () => {
+    describe(nameof<Type>("getBaseTypes"), () => {
         it("should return the base types of a type", () => {
             const { firstType } = getTypeFromText("let myType: MyInterface; interface MyInterface extends OtherInterface {}\ninterface OtherInterface");
             const baseTypes = firstType.getBaseTypes();
@@ -859,7 +859,7 @@ let unknownType: unknown;
         });
     });
 
-    describe(nameof.property<Type>("getAliasSymbol"), () => {
+    describe(nameof<Type>("getAliasSymbol"), () => {
         it("should return the alias symbol when it exists", () => {
             const { firstType } = getTypeFromText("let myType: MyAlias; type MyAlias = {str: string;};");
             expect(firstType.getAliasSymbol()!.getFlags()).to.equal(SymbolFlags.TypeAlias);
@@ -871,7 +871,7 @@ let unknownType: unknown;
         });
     });
 
-    describe(nameof.property<Type>("getAliasSymbolOrThrow"), () => {
+    describe(nameof<Type>("getAliasSymbolOrThrow"), () => {
         it("should return the alias symbol when it exists", () => {
             const { firstType } = getTypeFromText("let myType: MyAlias; type MyAlias = {str: string;};");
             expect(firstType.getAliasSymbolOrThrow().getFlags()).to.equal(SymbolFlags.TypeAlias);
@@ -883,7 +883,7 @@ let unknownType: unknown;
         });
     });
 
-    describe(nameof.property<Type>("getAliasTypeArguments"), () => {
+    describe(nameof<Type>("getAliasTypeArguments"), () => {
         it("should not have any when none exist", () => {
             const { firstType } = getTypeFromText("let myType: string;");
             expect(firstType.getAliasTypeArguments().length).to.equal(0);
@@ -897,7 +897,7 @@ let unknownType: unknown;
         });
     });
 
-    describe(nameof.property<Type>("getLiteralValue"), () => {
+    describe(nameof<Type>("getLiteralValue"), () => {
         function runTest(text: string, expectedValue: number | string | boolean | undefined) {
             const { firstType } = getTypeFromText(text);
             expect(firstType.getLiteralValue()).to.equal(expectedValue);

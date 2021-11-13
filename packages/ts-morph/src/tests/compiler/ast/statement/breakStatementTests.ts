@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { BreakStatement } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -11,7 +11,7 @@ describe("BreakStatement", () => {
     const label = "foo";
     const statement = `break ${label};`;
     const emptyStatement = "break;";
-    describe(nameof.property<BreakStatement>("getLabel"), () => {
+    describe(nameof<BreakStatement>("getLabel"), () => {
         function doTest(text: string, expectedText?: string) {
             const breakStatement = getBreakStatement(text);
             const value = breakStatement.getLabel();
@@ -27,7 +27,7 @@ describe("BreakStatement", () => {
         });
     });
 
-    describe(nameof.property<BreakStatement>("getLabelOrThrow"), () => {
+    describe(nameof<BreakStatement>("getLabelOrThrow"), () => {
         function doTest(text: string, expectedText?: string) {
             const breakStatement = getBreakStatement(text);
             if (expectedText == null)

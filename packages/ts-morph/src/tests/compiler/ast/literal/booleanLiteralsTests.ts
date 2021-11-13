@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { BooleanLiteral } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
@@ -13,7 +13,7 @@ function getInfoFromTextWithBooleanLiteral(text: string) {
 }
 
 describe("BooleanLiteral", () => {
-    describe(nameof.property<BooleanLiteral>("getLiteralValue"), () => {
+    describe(nameof<BooleanLiteral>("getLiteralValue"), () => {
         function doTest(text: string, expectedValue: boolean) {
             const { literal } = getInfoFromTextWithBooleanLiteral(text);
             expect(literal.getLiteralValue()).to.equal(expectedValue);
@@ -28,7 +28,7 @@ describe("BooleanLiteral", () => {
         });
     });
 
-    describe(nameof.property<BooleanLiteral>("setLiteralValue"), () => {
+    describe(nameof<BooleanLiteral>("setLiteralValue"), () => {
         function doTest(text: string, value: boolean, expectedText: string) {
             const { literal, sourceFile } = getInfoFromTextWithBooleanLiteral(text);
             literal.setLiteralValue(value);

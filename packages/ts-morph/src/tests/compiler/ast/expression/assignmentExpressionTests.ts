@@ -1,10 +1,10 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ExpressionedNode, ParenthesizedExpression } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
 describe("ExpressionedNode", () => {
-    describe(nameof.property<ExpressionedNode>("getExpression"), () => {
+    describe(nameof<ExpressionedNode>("getExpression"), () => {
         function doTest(text: string, expectedText: string) {
             const { descendant } = getInfoFromTextWithDescendant<ParenthesizedExpression>(text, SyntaxKind.ParenthesizedExpression);
             expect(descendant.getExpression().getText()).to.equal(expectedText);

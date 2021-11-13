@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { DoStatement } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -12,7 +12,7 @@ describe("DoStatement", () => {
     const expression = "x > 0";
     const expressionStatement = `do {} while (${expression});`;
 
-    describe(nameof.property<DoStatement>("getExpression"), () => {
+    describe(nameof<DoStatement>("getExpression"), () => {
         function doTest(text: string, expectedText: string) {
             const doStatement = getStatement(text);
             expect(doStatement.getExpression().getText()).to.equal(expectedText);

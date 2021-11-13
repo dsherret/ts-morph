@@ -1,13 +1,13 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { assert, IsExact } from "conditional-type-checks";
 import { CommentEnumMember, EnumDeclaration, EnumMember } from "../../../../compiler";
 import { EnumDeclarationSpecificStructure, EnumDeclarationStructure, EnumMemberStructure, OptionalKind, StructureKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("EnumDeclaration", () => {
-    describe(nameof.property<EnumDeclaration>("getMember"), () => {
+    describe(nameof<EnumDeclaration>("getMember"), () => {
         it("should get a member by its name", () => {
             const { firstChild } = getInfoFromText<EnumDeclaration>("enum MyEnum { member1, member2 }");
             expect(firstChild.getMember("member2")!.getText()).to.equal("member2");
@@ -19,7 +19,7 @@ describe("EnumDeclaration", () => {
         });
     });
 
-    describe(nameof.property<EnumDeclaration>("getMemberOrThrow"), () => {
+    describe(nameof<EnumDeclaration>("getMemberOrThrow"), () => {
         it("should get a member by its name", () => {
             const { firstChild } = getInfoFromText<EnumDeclaration>("enum MyEnum { member1, member2 }");
             expect(firstChild.getMemberOrThrow("member2").getText()).to.equal("member2");
@@ -36,7 +36,7 @@ describe("EnumDeclaration", () => {
         });
     });
 
-    describe(nameof.property<EnumDeclaration>("getMembers"), () => {
+    describe(nameof<EnumDeclaration>("getMembers"), () => {
         it("should get all the members not including comments", () => {
             const { firstChild } = getInfoFromText<EnumDeclaration>("enum MyEnum {\nmember1 = 1,\nmember2\n//a\n}");
             const members = firstChild.getMembers();
@@ -44,7 +44,7 @@ describe("EnumDeclaration", () => {
         });
     });
 
-    describe(nameof.property<EnumDeclaration>("getMembersWithComments"), () => {
+    describe(nameof<EnumDeclaration>("getMembersWithComments"), () => {
         it("should get all the members including comments", () => {
             const { firstChild } = getInfoFromText<EnumDeclaration>("enum MyEnum {\nmember1 = 1,\nmember2\n//a\n}");
             const members = firstChild.getMembersWithComments().map(m => m.getText());
@@ -56,7 +56,7 @@ describe("EnumDeclaration", () => {
         });
     });
 
-    describe(nameof.property<EnumDeclaration>("insertMembers"), () => {
+    describe(nameof<EnumDeclaration>("insertMembers"), () => {
         function doTest(startCode: string, index: number, structures: OptionalKind<EnumMemberStructure>[], expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<EnumDeclaration>(startCode);
             const result = firstChild.insertMembers(index, structures);
@@ -188,7 +188,7 @@ describe("EnumDeclaration", () => {
         });
     });
 
-    describe(nameof.property<EnumDeclaration>("insertMember"), () => {
+    describe(nameof<EnumDeclaration>("insertMember"), () => {
         function doTest(startCode: string, index: number, structure: OptionalKind<EnumMemberStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<EnumDeclaration>(startCode);
             const result = firstChild.insertMember(index, structure);
@@ -201,7 +201,7 @@ describe("EnumDeclaration", () => {
         });
     });
 
-    describe(nameof.property<EnumDeclaration>("addMember"), () => {
+    describe(nameof<EnumDeclaration>("addMember"), () => {
         function doTest(startCode: string, structure: OptionalKind<EnumMemberStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<EnumDeclaration>(startCode);
             const result = firstChild.addMember(structure);
@@ -214,7 +214,7 @@ describe("EnumDeclaration", () => {
         });
     });
 
-    describe(nameof.property<EnumDeclaration>("addMembers"), () => {
+    describe(nameof<EnumDeclaration>("addMembers"), () => {
         function doTest(startCode: string, structures: OptionalKind<EnumMemberStructure>[], expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<EnumDeclaration>(startCode);
             const result = firstChild.addMembers(structures);
@@ -231,7 +231,7 @@ describe("EnumDeclaration", () => {
         });
     });
 
-    describe(nameof.property<EnumDeclaration>("isConstEnum"), () => {
+    describe(nameof<EnumDeclaration>("isConstEnum"), () => {
         it("should have a const keyword when it has one", () => {
             const { firstChild } = getInfoFromText<EnumDeclaration>("const enum MyEnum {}");
             expect(firstChild.isConstEnum()).is.true;
@@ -243,7 +243,7 @@ describe("EnumDeclaration", () => {
         });
     });
 
-    describe(nameof.property<EnumDeclaration>("getConstKeyword"), () => {
+    describe(nameof<EnumDeclaration>("getConstKeyword"), () => {
         it("should get a const keyword when it has one", () => {
             const { firstChild } = getInfoFromText<EnumDeclaration>("const enum MyEnum {}");
             expect(firstChild.getConstKeyword()!.getText()).to.equal("const");
@@ -255,7 +255,7 @@ describe("EnumDeclaration", () => {
         });
     });
 
-    describe(nameof.property<EnumDeclaration>("setIsConstEnum"), () => {
+    describe(nameof<EnumDeclaration>("setIsConstEnum"), () => {
         it("should set as const enum when not one", () => {
             const { firstChild } = getInfoFromText<EnumDeclaration>("enum MyEnum {}");
             firstChild.setIsConstEnum(true);
@@ -287,7 +287,7 @@ describe("EnumDeclaration", () => {
         });
     });
 
-    describe(nameof.property<EnumDeclaration>("set"), () => {
+    describe(nameof<EnumDeclaration>("set"), () => {
         function doTest(startingCode: string, structure: OptionalKind<EnumDeclarationSpecificStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<EnumDeclaration>(startingCode);
             firstChild.set(structure);
@@ -318,7 +318,7 @@ describe("EnumDeclaration", () => {
         });
     });
 
-    describe(nameof.property<EnumDeclaration>("remove"), () => {
+    describe(nameof<EnumDeclaration>("remove"), () => {
         function doTest(text: string, index: number, expectedText: string) {
             const { sourceFile } = getInfoFromText(text);
             sourceFile.getEnums()[index].remove();
@@ -330,7 +330,7 @@ describe("EnumDeclaration", () => {
         });
     });
 
-    describe(nameof.property<EnumDeclaration>("getStructure"), () => {
+    describe(nameof<EnumDeclaration>("getStructure"), () => {
         function doTest(code: string, expected: OptionalTrivia<MakeRequired<EnumDeclarationStructure>>) {
             const { firstChild } = getInfoFromText<EnumDeclaration>(code);
             const structure = firstChild.getStructure();

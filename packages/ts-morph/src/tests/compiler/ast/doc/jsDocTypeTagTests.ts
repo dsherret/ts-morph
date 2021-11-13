@@ -1,7 +1,7 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { JSDocTypeTag, Node } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("JSDocTypeTag", () => {
     function getInfo(text: string) {
@@ -9,7 +9,7 @@ describe("JSDocTypeTag", () => {
         return { descendant: info.sourceFile.getFirstDescendantOrThrow(Node.isJSDocTypeTag), ...info };
     }
 
-    describe(nameof.property<JSDocTypeTag>("getTypeExpression"), () => {
+    describe(nameof<JSDocTypeTag>("getTypeExpression"), () => {
         it("returns undefined when typeExpression is undefined", () => {
             const { descendant } = getInfo("/** @type */\nvar bar = 1;");
             expect(descendant.getTypeExpression()).to.be.undefined;

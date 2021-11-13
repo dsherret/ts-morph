@@ -1,4 +1,4 @@
-import { SymbolFlags, nameof } from "@ts-morph/common";
+import { nameof, SymbolFlags } from "@ts-morph/common";
 import { expect } from "chai";
 import { Symbol, TypeAliasDeclaration } from "../../../compiler";
 import { getInfoFromText } from "../testHelpers";
@@ -8,13 +8,13 @@ describe("Symbol", () => {
     const enumDeclaration = enumSourceFile.getEnums()[0];
     const enumNameNodeSymbol = enumDeclaration.getNameNode().getSymbol()!;
 
-    describe(nameof.property<Symbol>("getName"), () => {
+    describe(nameof<Symbol>("getName"), () => {
         it("should get the symbol name", () => {
             expect(enumNameNodeSymbol.getName()).to.equal("MyEnum");
         });
     });
 
-    describe(nameof.property<Symbol>("getDeclarations"), () => {
+    describe(nameof<Symbol>("getDeclarations"), () => {
         it("should get the symbol declarations", () => {
             const result = enumNameNodeSymbol.getDeclarations();
             expect(result.length).to.equal(1);
@@ -22,13 +22,13 @@ describe("Symbol", () => {
         });
     });
 
-    describe(nameof.property<Symbol>("getFlags"), () => {
+    describe(nameof<Symbol>("getFlags"), () => {
         it("should get the symbol flags", () => {
             expect(enumNameNodeSymbol.getFlags()).to.equal(SymbolFlags.RegularEnum);
         });
     });
 
-    describe(nameof.property<Symbol>("getExport"), () => {
+    describe(nameof<Symbol>("getExport"), () => {
         function doTest(code: string, exportName: string, expectedName: string | undefined) {
             const { sourceFile } = getInfoFromText(code);
             const exportSymbol = sourceFile.getSymbolOrThrow().getExport(exportName);
@@ -44,7 +44,7 @@ describe("Symbol", () => {
         });
     });
 
-    describe(nameof.property<Symbol>("getExportOrThrow"), () => {
+    describe(nameof<Symbol>("getExportOrThrow"), () => {
         function doTest(code: string, exportName: string, expectedName: string | undefined) {
             const { sourceFile } = getInfoFromText(code);
             if (expectedName == null)
@@ -62,7 +62,7 @@ describe("Symbol", () => {
         });
     });
 
-    describe(nameof.property<Symbol>("getGlobalExports"), () => {
+    describe(nameof<Symbol>("getGlobalExports"), () => {
         function doTest(code: string, exportNames: string[]) {
             const { sourceFile } = getInfoFromText(code, { isDefinitionFile: true });
             expect(sourceFile.getSymbolOrThrow().getGlobalExports().map(e => e.getName())).to.deep.equal(exportNames);
@@ -77,7 +77,7 @@ describe("Symbol", () => {
         });
     });
 
-    describe(nameof.property<Symbol>("getGlobalExport"), () => {
+    describe(nameof<Symbol>("getGlobalExport"), () => {
         function doTest(code: string, exportName: string, expectedName: string | undefined) {
             const { sourceFile } = getInfoFromText(code, { isDefinitionFile: true });
             const exportSymbol = sourceFile.getSymbolOrThrow().getGlobalExport(exportName);
@@ -97,7 +97,7 @@ describe("Symbol", () => {
         });
     });
 
-    describe(nameof.property<Symbol>("getGlobalExportOrThrow"), () => {
+    describe(nameof<Symbol>("getGlobalExportOrThrow"), () => {
         function doTest(code: string, exportName: string, expectedName: string | undefined) {
             const { sourceFile } = getInfoFromText(code, { isDefinitionFile: true });
             const symbol = sourceFile.getSymbolOrThrow();
@@ -120,7 +120,7 @@ describe("Symbol", () => {
         });
     });
 
-    describe(nameof.property<Symbol>("getMembers"), () => {
+    describe(nameof<Symbol>("getMembers"), () => {
         function doTest(code: string, expectedNames: string[]) {
             const { sourceFile } = getInfoFromText(code);
             const typeAlias = sourceFile.getTypeAliasOrThrow("myType");
@@ -133,7 +133,7 @@ describe("Symbol", () => {
         });
     });
 
-    describe(nameof.property<Symbol>("getMember"), () => {
+    describe(nameof<Symbol>("getMember"), () => {
         function doTest(code: string, name: string, expectedName: string | undefined) {
             const { sourceFile } = getInfoFromText(code);
             const typeAlias = sourceFile.getTypeAliasOrThrow("myType");
@@ -150,7 +150,7 @@ describe("Symbol", () => {
         });
     });
 
-    describe(nameof.property<Symbol>("getMemberOrThrow"), () => {
+    describe(nameof<Symbol>("getMemberOrThrow"), () => {
         function doTest(code: string, name: string, expectedName: string | undefined) {
             const { sourceFile } = getInfoFromText(code);
             const typeAlias = sourceFile.getTypeAliasOrThrow("myType");
@@ -170,7 +170,7 @@ describe("Symbol", () => {
         });
     });
 
-    describe(nameof.property<Symbol>("getAliasedSymbol"), () => {
+    describe(nameof<Symbol>("getAliasedSymbol"), () => {
         it("should get the aliased symbol when it exists", () => {
             const { sourceFile } = getInfoFromText("class MyTest {}\nexport default MyTest;");
             expect(sourceFile.getDefaultExportSymbolOrThrow().getAliasedSymbol()!.getName()).to.equal("MyTest");
@@ -182,7 +182,7 @@ describe("Symbol", () => {
         });
     });
 
-    describe(nameof.property<Symbol>("getAliasedSymbolOrThrow"), () => {
+    describe(nameof<Symbol>("getAliasedSymbolOrThrow"), () => {
         it("should get the aliased symbol when it exists", () => {
             const { sourceFile } = getInfoFromText("class MyTest {}\nexport default MyTest;");
             expect(sourceFile.getDefaultExportSymbolOrThrow().getAliasedSymbolOrThrow().getName()).to.equal("MyTest");
@@ -194,7 +194,7 @@ describe("Symbol", () => {
         });
     });
 
-    describe(nameof.property<Symbol>("getExportSymbol"), () => {
+    describe(nameof<Symbol>("getExportSymbol"), () => {
         it("should get the export symbol of an export symbol", () => {
             const { firstChild } = getInfoFromText<TypeAliasDeclaration>("export type T = number;");
             const typeAliasSymbol = firstChild.getNameNode().getSymbolsInScope(SymbolFlags.TypeAlias)[0];

@@ -1,16 +1,16 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { FunctionDeclaration, Node, ReturnTypedNode } from "../../../../compiler";
 import { ReturnTypedNodeStructure } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("ReturnTypedNode", () => {
     const { sourceFile: mainSourceFile } = getInfoFromText("function myImplicit() { return 5; }\nfunction myExplicit(): string { return ''; }");
     const implicitDeclaration = mainSourceFile.getFunctions()[0];
     const explicitDeclaration = mainSourceFile.getFunctions()[1];
 
-    describe(nameof.property<ReturnTypedNode>("getReturnType"), () => {
+    describe(nameof<ReturnTypedNode>("getReturnType"), () => {
         it("should get the expected implicit type", () => {
             expect(implicitDeclaration.getReturnType().getText()).to.equal("number");
         });
@@ -20,7 +20,7 @@ describe("ReturnTypedNode", () => {
         });
     });
 
-    describe(nameof.property<ReturnTypedNode>("getReturnTypeNode"), () => {
+    describe(nameof<ReturnTypedNode>("getReturnTypeNode"), () => {
         it("should get the expected explicit type for an explicit type", () => {
             expect(explicitDeclaration.getReturnTypeNode()!.getText()).to.equal("string");
         });
@@ -30,7 +30,7 @@ describe("ReturnTypedNode", () => {
         });
     });
 
-    describe(nameof.property<ReturnTypedNode>("getReturnTypeNodeOrThrow"), () => {
+    describe(nameof<ReturnTypedNode>("getReturnTypeNodeOrThrow"), () => {
         it("should get the expected explicit type for an explicit type", () => {
             expect(explicitDeclaration.getReturnTypeNodeOrThrow().getText()).to.equal("string");
         });
@@ -40,7 +40,7 @@ describe("ReturnTypedNode", () => {
         });
     });
 
-    describe(nameof.property<ReturnTypedNode>("setReturnType"), () => {
+    describe(nameof<ReturnTypedNode>("setReturnType"), () => {
         function doTest(startText: string, returnType: string, expectedText: string) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startText);
             firstChild.setReturnType(returnType);
@@ -78,7 +78,7 @@ describe("ReturnTypedNode", () => {
         });
     });
 
-    describe(nameof.property<ReturnTypedNode>("removeReturnType"), () => {
+    describe(nameof<ReturnTypedNode>("removeReturnType"), () => {
         function doTest(startText: string, expectedText: string) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startText);
             firstChild.removeReturnType();
@@ -94,7 +94,7 @@ describe("ReturnTypedNode", () => {
         });
     });
 
-    describe(nameof.property<FunctionDeclaration>("set"), () => {
+    describe(nameof<FunctionDeclaration>("set"), () => {
         function doTest(startingCode: string, structure: ReturnTypedNodeStructure, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startingCode);
             firstChild.set(structure);
@@ -118,7 +118,7 @@ describe("ReturnTypedNode", () => {
         });
     });
 
-    describe(nameof.property<FunctionDeclaration>("getStructure"), () => {
+    describe(nameof<FunctionDeclaration>("getStructure"), () => {
         function doTest(startingCode: string, returnType: string | undefined) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startingCode);
             expect(firstChild.getStructure().returnType).to.equal(returnType);

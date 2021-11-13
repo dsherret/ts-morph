@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ForInStatement } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -12,7 +12,7 @@ describe("ForInStatement", () => {
     const initializer = "x";
     const statement = `for (${initializer} in ${expression}) {}`;
 
-    describe(nameof.property<ForInStatement>("getExpression"), () => {
+    describe(nameof<ForInStatement>("getExpression"), () => {
         function doTest(text: string, expectedText: string) {
             const forInStatement = getStatement(text);
             expect(forInStatement.getExpression().getText()).to.equal(expectedText);
@@ -23,7 +23,7 @@ describe("ForInStatement", () => {
         });
     });
 
-    describe(nameof.property<ForInStatement>("getInitializer"), () => {
+    describe(nameof<ForInStatement>("getInitializer"), () => {
         function doTest(text: string, expectedText: string) {
             const forInStatement = getStatement(text);
             expect(forInStatement.getInitializer().getText()).to.equal(expectedText);

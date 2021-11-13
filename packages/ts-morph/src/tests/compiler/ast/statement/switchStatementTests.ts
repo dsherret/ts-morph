@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { SwitchStatement } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -13,7 +13,7 @@ describe("SwitchStatement", () => {
     const caseBlock = `{\n  ${clause}\n}`;
     const statement = `switch (${expression}) ${caseBlock}`;
 
-    describe(nameof.property<SwitchStatement>("getExpression"), () => {
+    describe(nameof<SwitchStatement>("getExpression"), () => {
         function doTest(text: string, expectedText: string) {
             const labeledStatement = getStatement(text);
             expect(labeledStatement.getExpression().getText()).to.equal(expectedText);
@@ -24,7 +24,7 @@ describe("SwitchStatement", () => {
         });
     });
 
-    describe(nameof.property<SwitchStatement>("getCaseBlock"), () => {
+    describe(nameof<SwitchStatement>("getCaseBlock"), () => {
         function doTest(text: string, expectedText: string) {
             const labeledStatement = getStatement(text);
             expect(labeledStatement.getCaseBlock().getText()).to.equal(expectedText);
@@ -35,7 +35,7 @@ describe("SwitchStatement", () => {
         });
     });
 
-    describe(nameof.property<SwitchStatement>("getClauses"), () => {
+    describe(nameof<SwitchStatement>("getClauses"), () => {
         function doTest(code: string, clauses: string[]) {
             const labeledStatement = getStatement(code);
             expect(labeledStatement.getClauses().map(s => s.getText())).to.deep.equal(clauses);
@@ -46,7 +46,7 @@ describe("SwitchStatement", () => {
         });
     });
 
-    describe(nameof.property<SwitchStatement>("removeClause"), () => {
+    describe(nameof<SwitchStatement>("removeClause"), () => {
         function doTest(code: string, index: number, expectedCode: string) {
             const labeledStatement = getStatement(code);
             const sourceFile = labeledStatement.getSourceFile();
@@ -60,7 +60,7 @@ describe("SwitchStatement", () => {
         });
     });
 
-    describe(nameof.property<SwitchStatement>("removeClauses"), () => {
+    describe(nameof<SwitchStatement>("removeClauses"), () => {
         function doTest(code: string, range: [number, number], expectedCode: string) {
             const labeledStatement = getStatement(code);
             const sourceFile = labeledStatement.getSourceFile();

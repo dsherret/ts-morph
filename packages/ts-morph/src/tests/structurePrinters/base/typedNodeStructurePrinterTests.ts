@@ -1,9 +1,9 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { FormatCodeSettings } from "../../../compiler";
 import { TypedNodeStructurePrinter } from "../../../structurePrinters";
 import { TypedNodeStructure } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("TypedNodeStructurePrinter", () => {
     interface Options {
@@ -18,7 +18,7 @@ describe("TypedNodeStructurePrinter", () => {
         expect(writer.toString()).to.equal(expectedOutput);
     }
 
-    describe(nameof.property<TypedNodeStructurePrinter>("printText"), () => {
+    describe(nameof<TypedNodeStructurePrinter>("printText"), () => {
         it("should not write when undefined", () => {
             doTest({ type: undefined }, ``);
         });

@@ -1,10 +1,10 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { NumericLiteral } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
 describe("NumericLiteral", () => {
-    describe(nameof.property<NumericLiteral>("getLiteralValue"), () => {
+    describe(nameof<NumericLiteral>("getLiteralValue"), () => {
         function doTest(text: string, expectedValue: number) {
             const { descendant } = getInfoFromTextWithDescendant<NumericLiteral>(text, SyntaxKind.NumericLiteral);
             expect(descendant.getLiteralValue()).to.equal(expectedValue);
@@ -23,7 +23,7 @@ describe("NumericLiteral", () => {
         });
     });
 
-    describe(nameof.property<NumericLiteral>("setLiteralValue"), () => {
+    describe(nameof<NumericLiteral>("setLiteralValue"), () => {
         function doTest(text: string, value: number, expectedText: string) {
             const { descendant, sourceFile } = getInfoFromTextWithDescendant<NumericLiteral>(text, SyntaxKind.NumericLiteral);
             descendant.setLiteralValue(value);

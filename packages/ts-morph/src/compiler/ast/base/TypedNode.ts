@@ -98,7 +98,7 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
 
             if (structure.type != null)
                 this.setType(structure.type);
-            else if (structure.hasOwnProperty(nameof.property(structure, "type")))
+            else if (structure.hasOwnProperty(nameof(structure, "type")))
                 this.removeType();
 
             return this;
@@ -106,7 +106,7 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
 
         removeType() {
             if (this.getKind() === SyntaxKind.TypeAliasDeclaration)
-                throw new errors.NotSupportedError(`Cannot remove the type of a type alias. Use ${nameof.property<TypedNode>("setType")} instead.`);
+                throw new errors.NotSupportedError(`Cannot remove the type of a type alias. Use ${nameof<TypedNode>("setType")} instead.`);
 
             const typeNode = this.getTypeNode();
             if (typeNode == null)

@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ImportTypeNode } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -8,7 +8,7 @@ describe("ImportTypeNode", () => {
         return getInfoFromTextWithDescendant<ImportTypeNode>(text, SyntaxKind.ImportType);
     }
 
-    describe(nameof.property<ImportTypeNode>("getArgument"), () => {
+    describe(nameof<ImportTypeNode>("getArgument"), () => {
         function doTest(text: string, expected: string) {
             const { descendant } = getNode(text);
             expect(descendant.getArgument().getText()).to.equal(expected);
@@ -19,7 +19,7 @@ describe("ImportTypeNode", () => {
         });
     });
 
-    describe(nameof.property<ImportTypeNode>("setArgument"), () => {
+    describe(nameof<ImportTypeNode>("setArgument"), () => {
         function doTest(text: string, newValue: string, expected: string) {
             const { descendant } = getNode(text);
             descendant.setArgument(newValue);
@@ -35,7 +35,7 @@ describe("ImportTypeNode", () => {
         });
     });
 
-    describe(nameof.property<ImportTypeNode>("getQualifier"), () => {
+    describe(nameof<ImportTypeNode>("getQualifier"), () => {
         function doTest(text: string, expected: string | undefined) {
             const { descendant } = getNode(text);
             expect(descendant.getQualifier()?.getText()).to.equal(expected);
@@ -50,7 +50,7 @@ describe("ImportTypeNode", () => {
         });
     });
 
-    describe(nameof.property<ImportTypeNode>("getQualifierOrThrow"), () => {
+    describe(nameof<ImportTypeNode>("getQualifierOrThrow"), () => {
         function doTest(text: string, expected: string | undefined) {
             const { descendant } = getNode(text);
             if (expected == null)
@@ -68,7 +68,7 @@ describe("ImportTypeNode", () => {
         });
     });
 
-    describe(nameof.property<ImportTypeNode>("setQualifier"), () => {
+    describe(nameof<ImportTypeNode>("setQualifier"), () => {
         function doTest(text: string, newValue: string, expected: string) {
             const { descendant } = getNode(text);
             descendant.setQualifier(newValue);

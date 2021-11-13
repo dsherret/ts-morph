@@ -1,4 +1,4 @@
-import { errors, StringUtils, SyntaxKind, ts, nameof } from "@ts-morph/common";
+import { errors, nameof, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange, removeChildren } from "../../../manipulation";
 import { ReturnTypedNodeStructure } from "../../../structures";
 import { Constructor, WriterFunction } from "../../../types";
@@ -104,7 +104,7 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionTy
 
             if (structure.returnType != null)
                 this.setReturnType(structure.returnType);
-            else if (structure.hasOwnProperty(nameof.property(structure, "returnType")))
+            else if (structure.hasOwnProperty(nameof(structure, "returnType")))
                 this.removeReturnType();
 
             return this;

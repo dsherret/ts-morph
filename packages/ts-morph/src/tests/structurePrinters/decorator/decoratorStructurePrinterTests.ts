@@ -1,9 +1,9 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { FormatCodeSettings } from "../../../compiler";
 import { DecoratorStructurePrinter } from "../../../structurePrinters";
 import { DecoratorStructure, OptionalKind } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("DecoratorStructurePrinter", () => {
     interface Options {
@@ -18,7 +18,7 @@ describe("DecoratorStructurePrinter", () => {
 
     // todo: more tests
 
-    describe(nameof.property<DecoratorStructurePrinter>("printText"), () => {
+    describe(nameof<DecoratorStructurePrinter>("printText"), () => {
         describe("arguments", () => {
             it("should write", () => {
                 doTest({ name: "dec", arguments: ["1", writer => writer.write("2")] }, `@dec(1, 2)`);

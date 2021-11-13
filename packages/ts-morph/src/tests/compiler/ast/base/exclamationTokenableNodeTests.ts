@@ -15,7 +15,7 @@ describe("ExclamationTokenableNode", () => {
         return { ...result, firstDeclaration: result.firstChild.getDeclarations()[0] };
     }
 
-    describe(nameof.property<ExclamationTokenableNode>("hasExclamationToken"), () => {
+    describe(nameof<ExclamationTokenableNode>("hasExclamationToken"), () => {
         function doTest(text: string, value: boolean) {
             const { firstProperty } = getInfoWithFirstPropertyFromText(text);
             expect(firstProperty.hasExclamationToken()).to.equal(value);
@@ -30,7 +30,7 @@ describe("ExclamationTokenableNode", () => {
         });
     });
 
-    describe(nameof.property<ExclamationTokenableNode>("getExclamationTokenNode"), () => {
+    describe(nameof<ExclamationTokenableNode>("getExclamationTokenNode"), () => {
         it("should be get the exclamation token node", () => {
             const { firstProperty } = getInfoWithFirstPropertyFromText("class MyClass { prop!: string; }");
             expect(firstProperty.getExclamationTokenNode()!.getText()).to.equal("!");
@@ -42,7 +42,7 @@ describe("ExclamationTokenableNode", () => {
         });
     });
 
-    describe(nameof.property<ExclamationTokenableNode>("getExclamationTokenNodeOrThrow"), () => {
+    describe(nameof<ExclamationTokenableNode>("getExclamationTokenNodeOrThrow"), () => {
         it("should be get the exclamation token node", () => {
             const { firstProperty } = getInfoWithFirstPropertyFromText("class MyClass { prop!: string;} ");
             expect(firstProperty.getExclamationTokenNodeOrThrow().getText()).to.equal("!");
@@ -54,7 +54,7 @@ describe("ExclamationTokenableNode", () => {
         });
     });
 
-    describe(nameof.property<ExclamationTokenableNode>("setHasExclamationToken"), () => {
+    describe(nameof<ExclamationTokenableNode>("setHasExclamationToken"), () => {
         function doTest(startText: string, value: boolean, expected: string) {
             const { firstProperty, sourceFile } = getInfoWithFirstPropertyFromText(startText);
             firstProperty.setHasExclamationToken(value);
@@ -95,7 +95,7 @@ describe("ExclamationTokenableNode", () => {
         });
     });
 
-    describe(nameof.property<PropertyDeclaration>("set"), () => {
+    describe(nameof<PropertyDeclaration>("set"), () => {
         function doTest(startCode: string, structure: ExclamationTokenableNodeStructure, expectedCode: string) {
             const { firstProperty, sourceFile } = getInfoWithFirstPropertyFromText(startCode);
             firstProperty.set(structure);
@@ -115,7 +115,7 @@ describe("ExclamationTokenableNode", () => {
         });
     });
 
-    describe(nameof.property<PropertyDeclaration>("getStructure"), () => {
+    describe(nameof<PropertyDeclaration>("getStructure"), () => {
         function doTest(startCode: string, hasToken: boolean) {
             const { firstProperty, sourceFile } = getInfoWithFirstPropertyFromText(startCode);
             expect(firstProperty.getStructure().hasExclamationToken).to.equal(hasToken);

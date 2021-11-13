@@ -1,4 +1,4 @@
-import { errors, StringUtils, SyntaxKind, ts, nameof } from "@ts-morph/common";
+import { errors, nameof, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange, removeChildren } from "../../../manipulation";
 import { JsxAttributeSpecificStructure, JsxAttributeStructure, StructureKind } from "../../../structures";
 import { WriterFunction } from "../../../types";
@@ -91,7 +91,7 @@ export class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
 
         if (structure.initializer != null)
             this.setInitializer(structure.initializer);
-        else if (structure.hasOwnProperty(nameof.property(structure, "initializer")))
+        else if (structure.hasOwnProperty(nameof(structure, "initializer")))
             this.removeInitializer();
 
         return this;

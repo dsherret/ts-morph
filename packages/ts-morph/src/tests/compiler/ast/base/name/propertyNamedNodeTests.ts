@@ -1,7 +1,7 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ComputedPropertyName, Identifier, InterfaceDeclaration, NumericLiteral, PropertyNamedNode, StringLiteral } from "../../../../../compiler";
 import { getInfoFromText } from "../../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 function getInfoFromTextWithFirstInterfaceProperty(text: string) {
     const obj = getInfoFromText<InterfaceDeclaration>(text);
@@ -10,7 +10,7 @@ function getInfoFromTextWithFirstInterfaceProperty(text: string) {
 }
 
 describe("PropertyNamedNode", () => {
-    describe(nameof.property<PropertyNamedNode>("rename"), () => {
+    describe(nameof<PropertyNamedNode>("rename"), () => {
         function renameTest(startText: string, newName: string, expectedText: string) {
             const { firstProp, sourceFile, project } = getInfoFromTextWithFirstInterfaceProperty(startText);
             firstProp.rename(newName);
@@ -50,7 +50,7 @@ describe("PropertyNamedNode", () => {
         });
     });
 
-    describe(nameof.property<PropertyNamedNode>("getName"), () => {
+    describe(nameof<PropertyNamedNode>("getName"), () => {
         function doTest(sourceFileText: string, expectedName: string) {
             const { firstProp } = getInfoFromTextWithFirstInterfaceProperty(sourceFileText);
             expect(firstProp.getName()).to.equal(expectedName);
@@ -73,7 +73,7 @@ describe("PropertyNamedNode", () => {
         });
     });
 
-    describe(nameof.property<PropertyNamedNode>("getNameNode"), () => {
+    describe(nameof<PropertyNamedNode>("getNameNode"), () => {
         it("should get a regularly named node property", () => {
             const { firstProp } = getInfoFromTextWithFirstInterfaceProperty("interface identifier { prop: string; }");
             const nameNode = firstProp.getNameNode();

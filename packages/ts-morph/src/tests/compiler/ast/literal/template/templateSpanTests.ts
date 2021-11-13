@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { TemplateSpan } from "../../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../../testHelpers";
@@ -13,7 +13,7 @@ describe("TemplateSpan", () => {
     const templateSpanLiteral = "}abc`";
     const expr = `${templateHead}${templateSpanExpression}${templateSpanLiteral}`;
 
-    describe(nameof.property<TemplateSpan>("getLiteral"), () => {
+    describe(nameof<TemplateSpan>("getLiteral"), () => {
         function doTest(text: string, expectedText: string) {
             const expression = getTemplateSpan(text);
             expect(expression.getLiteral().getText()).to.equal(expectedText);

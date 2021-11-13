@@ -1,15 +1,15 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, FunctionDeclaration, GeneratorableNode } from "../../../../compiler";
 import { GeneratorableNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("GeneratorableNode", () => {
     const { sourceFile: mainSourceFile } = getInfoFromText("function* Identifier() {}\nfunction Identifier2() {}");
     const generatorFunc = mainSourceFile.getFunctions()[0];
     const func = mainSourceFile.getFunctions()[1];
 
-    describe(nameof.property<GeneratorableNode>("isGenerator"), () => {
+    describe(nameof<GeneratorableNode>("isGenerator"), () => {
         it("should be a generator when so", () => {
             expect(generatorFunc.isGenerator()).to.be.true;
         });
@@ -19,7 +19,7 @@ describe("GeneratorableNode", () => {
         });
     });
 
-    describe(nameof.property<GeneratorableNode>("getAsteriskToken"), () => {
+    describe(nameof<GeneratorableNode>("getAsteriskToken"), () => {
         it("should have an asterisk token when a generator", () => {
             expect(generatorFunc.getAsteriskToken()!.getText()).to.equal("*");
         });
@@ -29,7 +29,7 @@ describe("GeneratorableNode", () => {
         });
     });
 
-    describe(nameof.property<GeneratorableNode>("getAsteriskTokenOrThrow"), () => {
+    describe(nameof<GeneratorableNode>("getAsteriskTokenOrThrow"), () => {
         it("should have an asterisk token when a generator", () => {
             expect(generatorFunc.getAsteriskTokenOrThrow().getText()).to.equal("*");
         });
@@ -39,7 +39,7 @@ describe("GeneratorableNode", () => {
         });
     });
 
-    describe(nameof.property<GeneratorableNode>("setIsGenerator"), () => {
+    describe(nameof<GeneratorableNode>("setIsGenerator"), () => {
         describe("Functions", () => {
             it("should set as generator when not a generator", () => {
                 const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>("function Identifier() {}");
@@ -77,7 +77,7 @@ describe("GeneratorableNode", () => {
         });
     });
 
-    describe(nameof.property<FunctionDeclaration>("set"), () => {
+    describe(nameof<FunctionDeclaration>("set"), () => {
         function doTest(startCode: string, structure: GeneratorableNodeStructure, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             firstChild.set(structure);
@@ -97,7 +97,7 @@ describe("GeneratorableNode", () => {
         });
     });
 
-    describe(nameof.property<FunctionDeclaration>("getStructure"), () => {
+    describe(nameof<FunctionDeclaration>("getStructure"), () => {
         function doTest(startCode: string, isGenerator: boolean) {
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             expect(firstChild.getStructure().isGenerator).to.equal(isGenerator);

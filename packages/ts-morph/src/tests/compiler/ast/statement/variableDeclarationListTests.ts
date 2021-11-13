@@ -1,11 +1,11 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { VariableDeclaration, VariableDeclarationKind, VariableDeclarationList } from "../../../../compiler";
 import { OptionalKind, VariableDeclarationStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("VariableDeclarationList", () => {
-    describe(nameof.property<VariableDeclarationList>("getDeclarationKind"), () => {
+    describe(nameof<VariableDeclarationList>("getDeclarationKind"), () => {
         function doTest(code: string, expectedType: VariableDeclarationKind) {
             const { firstChild } = getInfoFromText<VariableDeclarationList>(code);
             expect(firstChild.getDeclarationKind()).to.equal(expectedType);
@@ -24,7 +24,7 @@ describe("VariableDeclarationList", () => {
         });
     });
 
-    describe(nameof.property<VariableDeclarationList>("getDeclarationKindKeyword"), () => {
+    describe(nameof<VariableDeclarationList>("getDeclarationKindKeyword"), () => {
         function doTest(code: string, expectedType: VariableDeclarationKind) {
             const { firstChild } = getInfoFromText<VariableDeclarationList>(code);
             expect(firstChild.getDeclarationKindKeyword().getText()).to.equal(expectedType);
@@ -43,7 +43,7 @@ describe("VariableDeclarationList", () => {
         });
     });
 
-    describe(nameof.property<VariableDeclarationList>("setDeclarationKind"), () => {
+    describe(nameof<VariableDeclarationList>("setDeclarationKind"), () => {
         function doTest(code: string, newType: VariableDeclarationKind, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<VariableDeclarationList>(code);
             firstChild.setDeclarationKind(newType);
@@ -67,7 +67,7 @@ describe("VariableDeclarationList", () => {
         });
     });
 
-    describe(nameof.property<VariableDeclarationList>("insertDeclarations"), () => {
+    describe(nameof<VariableDeclarationList>("insertDeclarations"), () => {
         function doTest(startText: string, index: number, structures: OptionalKind<VariableDeclarationStructure>[], expectedText: string) {
             const { firstChild, sourceFile } = getInfoFromText<VariableDeclarationList>(startText);
             const result = firstChild.insertDeclarations(index, structures);
@@ -99,7 +99,7 @@ describe("VariableDeclarationList", () => {
         });
     });
 
-    describe(nameof.property<VariableDeclarationList>("insertDeclaration"), () => {
+    describe(nameof<VariableDeclarationList>("insertDeclaration"), () => {
         function doTest(startText: string, index: number, structure: OptionalKind<VariableDeclarationStructure>, expectedText: string) {
             const { firstChild, sourceFile } = getInfoFromText<VariableDeclarationList>(startText);
             const result = firstChild.insertDeclaration(index, structure);
@@ -112,7 +112,7 @@ describe("VariableDeclarationList", () => {
         });
     });
 
-    describe(nameof.property<VariableDeclarationList>("addDeclarations"), () => {
+    describe(nameof<VariableDeclarationList>("addDeclarations"), () => {
         function doTest(startText: string, structures: OptionalKind<VariableDeclarationStructure>[], expectedText: string) {
             const { firstChild, sourceFile } = getInfoFromText<VariableDeclarationList>(startText);
             const result = firstChild.addDeclarations(structures);
@@ -125,7 +125,7 @@ describe("VariableDeclarationList", () => {
         });
     });
 
-    describe(nameof.property<VariableDeclarationList>("addDeclaration"), () => {
+    describe(nameof<VariableDeclarationList>("addDeclaration"), () => {
         function doTest(startText: string, structure: OptionalKind<VariableDeclarationStructure>, expectedText: string) {
             const { firstChild, sourceFile } = getInfoFromText<VariableDeclarationList>(startText);
             const result = firstChild.addDeclaration(structure);

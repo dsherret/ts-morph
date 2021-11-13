@@ -1,4 +1,4 @@
-import { errors, SyntaxKind, nameof } from "@ts-morph/common";
+import { errors, nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { JsxAttribute, JsxSelfClosingElement } from "../../../../compiler";
 import { JsxAttributeStructure, StructureKind } from "../../../../structures";
@@ -14,7 +14,7 @@ function getInfoForSelfClosingElement(text: string) {
 }
 
 describe("JsxAttribute", () => {
-    describe(nameof.property<JsxAttribute>("getName"), () => {
+    describe(nameof<JsxAttribute>("getName"), () => {
         function doTest(text: string, expected: string) {
             const { descendant } = getInfo(text);
             expect(descendant.getName()).to.equal(expected);
@@ -25,7 +25,7 @@ describe("JsxAttribute", () => {
         });
     });
 
-    describe(nameof.property<JsxAttribute>("rename"), () => {
+    describe(nameof<JsxAttribute>("rename"), () => {
         function doTest(text: string, newName: string, expected: string) {
             const { descendant, sourceFile } = getInfo(text);
             descendant.rename(newName);
@@ -37,7 +37,7 @@ describe("JsxAttribute", () => {
         });
     });
 
-    describe(nameof.property<JsxAttribute>("getInitializer"), () => {
+    describe(nameof<JsxAttribute>("getInitializer"), () => {
         function doTest(text: string, expected: string | undefined) {
             const { descendant } = getInfo(text);
             const initializer = descendant.getInitializer();
@@ -57,7 +57,7 @@ describe("JsxAttribute", () => {
         });
     });
 
-    describe(nameof.property<JsxAttribute>("getInitializerOrThrow"), () => {
+    describe(nameof<JsxAttribute>("getInitializerOrThrow"), () => {
         function doTest(text: string, expected: string | undefined) {
             const { descendant } = getInfo(text);
             if (expected == null)
@@ -75,7 +75,7 @@ describe("JsxAttribute", () => {
         });
     });
 
-    describe(nameof.property<JsxAttribute>("setInitializer"), () => {
+    describe(nameof<JsxAttribute>("setInitializer"), () => {
         function doTest(text: string, initializerText: string | WriterFunction, expected: string) {
             const { descendant, sourceFile } = getInfoForSelfClosingElement(text);
             (descendant.getAttributes()[0] as JsxAttribute).setInitializer(initializerText);
@@ -95,7 +95,7 @@ describe("JsxAttribute", () => {
         });
     });
 
-    describe(nameof.property<JsxAttribute>("removeInitializer"), () => {
+    describe(nameof<JsxAttribute>("removeInitializer"), () => {
         function doTest(text: string, expected: string) {
             const { descendant, sourceFile } = getInfoForSelfClosingElement(text);
             (descendant.getAttributes()[0] as JsxAttribute).removeInitializer();
@@ -115,7 +115,7 @@ describe("JsxAttribute", () => {
         });
     });
 
-    describe(nameof.property<JsxAttribute>("remove"), () => {
+    describe(nameof<JsxAttribute>("remove"), () => {
         function doTest(text: string, index: number, expected: string) {
             const { descendant, sourceFile } = getInfoForSelfClosingElement(text);
             (descendant.getAttributes()[index] as JsxAttribute).remove();
@@ -143,7 +143,7 @@ describe("JsxAttribute", () => {
         });
     });
 
-    describe(nameof.property<JsxAttribute>("set"), () => {
+    describe(nameof<JsxAttribute>("set"), () => {
         function doTest(text: string, structure: Partial<JsxAttributeStructure>, expected: string) {
             const { descendant, sourceFile } = getInfo(text);
             descendant.set(structure);
@@ -168,7 +168,7 @@ describe("JsxAttribute", () => {
         });
     });
 
-    describe(nameof.property<JsxAttribute>("getStructure"), () => {
+    describe(nameof<JsxAttribute>("getStructure"), () => {
         function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<JsxAttributeStructure>>) {
             const { descendant } = getInfo(text);
             const structure = descendant.getStructure();

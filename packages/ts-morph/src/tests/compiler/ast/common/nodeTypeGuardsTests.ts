@@ -1,14 +1,14 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { assert, IsExact } from "conditional-type-checks";
 import { ClassDeclaration, ExpressionStatement, Node } from "../../../../compiler";
 import { Structures } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("Node", () => {
     // most of the type guards are not worth the effort to test... it's auto generated from code so it should be close to correct
 
-    describe(nameof.property(Node, "hasExpression"), () => {
+    describe(nameof(Node, "hasExpression"), () => {
         it("should have an expression when it's a function call", () => {
             const { firstChild } = getInfoFromText("funcCall()");
             expect(Node.hasExpression(firstChild)).to.be.true;
@@ -34,7 +34,7 @@ describe("Node", () => {
         });
     });
 
-    describe(nameof.property(Node, "hasName"), () => {
+    describe(nameof(Node, "hasName"), () => {
         it("should have a name when it does", () => {
             const { firstChild } = getInfoFromText<ClassDeclaration>("class MyClass {}");
             expect(Node.hasName(firstChild)).to.be.true;
@@ -50,7 +50,7 @@ describe("Node", () => {
         });
     });
 
-    describe(nameof.property(Node, "hasStructure"), () => {
+    describe(nameof(Node, "hasStructure"), () => {
         it("should have a structure when it does", () => {
             const { firstChild } = getInfoFromText<Node>("class MyClass {}");
             expect(Node.hasName(firstChild)).to.be.true;
@@ -66,7 +66,7 @@ describe("Node", () => {
         });
     });
 
-    describe(nameof.property(Node, "isNode"), () => {
+    describe(nameof(Node, "isNode"), () => {
         const { firstChild, project } = getInfoFromText("class MyClass {}");
 
         it("should get when it is", () => {

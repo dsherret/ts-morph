@@ -7,7 +7,7 @@ import { WriterFunction } from "../../../../types";
 import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe("ImportDeclaration", () => {
-    describe(nameof.property<ImportDeclaration>("isTypeOnly"), () => {
+    describe(nameof<ImportDeclaration>("isTypeOnly"), () => {
         function doTest(text: string, expected: boolean) {
             const { firstChild } = getInfoFromText<ImportDeclaration>(text);
             expect(firstChild.isTypeOnly()).to.equal(expected);
@@ -22,7 +22,7 @@ describe("ImportDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ImportDeclaration>("setIsTypeOnly"), () => {
+    describe(nameof<ImportDeclaration>("setIsTypeOnly"), () => {
         function doTest(text: string, value: boolean, expectedText: string) {
             const { sourceFile, firstChild } = getInfoFromText<ImportDeclaration>(text);
             firstChild.setIsTypeOnly(value);
@@ -70,7 +70,7 @@ describe("ImportDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ImportDeclaration>("setModuleSpecifier"), () => {
+    describe(nameof<ImportDeclaration>("setModuleSpecifier"), () => {
         function doTest(text: string, newModuleSpecifier: string, expected: string) {
             const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
             firstChild.setModuleSpecifier(newModuleSpecifier);
@@ -96,7 +96,7 @@ describe("ImportDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ImportDeclaration>("getModuleSpecifier"), () => {
+    describe(nameof<ImportDeclaration>("getModuleSpecifier"), () => {
         function doTest(text: string, expected: string) {
             const { firstChild } = getInfoFromText<ImportDeclaration>(text);
             expect(firstChild.getModuleSpecifier().getText()).to.equal(expected);
@@ -107,7 +107,7 @@ describe("ImportDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ImportDeclaration>("getModuleSpecifierValue"), () => {
+    describe(nameof<ImportDeclaration>("getModuleSpecifierValue"), () => {
         function doTest(text: string, expected: string) {
             const { firstChild } = getInfoFromText<ImportDeclaration>(text);
             expect(firstChild.getModuleSpecifierValue()).to.equal(expected);
@@ -126,7 +126,7 @@ describe("ImportDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ImportDeclaration>("getModuleSpecifierSourceFileOrThrow"), () => {
+    describe(nameof<ImportDeclaration>("getModuleSpecifierSourceFileOrThrow"), () => {
         it("should get the source file", () => {
             const project = new Project({ useInMemoryFileSystem: true });
             const mainSourceFile = project.createSourceFile("main.ts", `import {Class} from "./class";`);
@@ -143,7 +143,7 @@ describe("ImportDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ImportDeclaration>("getModuleSpecifierSourceFile"), () => {
+    describe(nameof<ImportDeclaration>("getModuleSpecifierSourceFile"), () => {
         it("should get the source file", () => {
             const project = new Project({ useInMemoryFileSystem: true });
             const mainSourceFile = project.createSourceFile("main.ts", `import {Class} from "./class";`);
@@ -177,7 +177,7 @@ describe("ImportDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ImportDeclaration>("isModuleSpecifierRelative"), () => {
+    describe(nameof<ImportDeclaration>("isModuleSpecifierRelative"), () => {
         function doTest(text: string, expected: boolean) {
             const { firstChild } = getInfoFromText<ImportDeclaration>(text);
             expect(firstChild.isModuleSpecifierRelative()).to.equal(expected);
@@ -200,7 +200,7 @@ describe("ImportDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ImportDeclaration>("setDefaultImport"), () => {
+    describe(nameof<ImportDeclaration>("setDefaultImport"), () => {
         function doTest(text: string, newDefaultImport: string, expected: string) {
             const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
             firstChild.setDefaultImport(newDefaultImport);
@@ -228,7 +228,7 @@ describe("ImportDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ImportDeclaration>("renameDefaultImport"), () => {
+    describe(nameof<ImportDeclaration>("renameDefaultImport"), () => {
         function doTest(text: string, newDefaultImport: string, expected: string) {
             const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
             firstChild.renameDefaultImport(newDefaultImport);
@@ -256,7 +256,7 @@ describe("ImportDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ImportDeclaration>("getDefaultImport"), () => {
+    describe(nameof<ImportDeclaration>("getDefaultImport"), () => {
         function doTest(text: string, expectedName: string | undefined) {
             const { firstChild } = getInfoFromText<ImportDeclaration>(text);
             const defaultImport = firstChild.getDefaultImport();
@@ -288,7 +288,7 @@ describe("ImportDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ImportDeclaration>("getDefaultImport"), () => {
+    describe(nameof<ImportDeclaration>("getDefaultImport"), () => {
         function doTest(text: string, expectedName: string | undefined) {
             const { firstChild } = getInfoFromText<ImportDeclaration>(text);
             if (expectedName == null)
@@ -306,7 +306,7 @@ describe("ImportDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ImportDeclaration>("setNamespaceImport"), () => {
+    describe(nameof<ImportDeclaration>("setNamespaceImport"), () => {
         function doTest(text: string, newNamespaceImport: string, expected: string) {
             const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
             firstChild.setNamespaceImport(newNamespaceImport);
@@ -341,7 +341,7 @@ describe("ImportDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ImportDeclaration>("removeDefaultImport"), () => {
+    describe(nameof<ImportDeclaration>("removeDefaultImport"), () => {
         function doTest(text: string, expected: string) {
             const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
             firstChild.removeDefaultImport();
@@ -365,7 +365,7 @@ describe("ImportDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ImportDeclaration>("removeNamespaceImport"), () => {
+    describe(nameof<ImportDeclaration>("removeNamespaceImport"), () => {
         function doTest(text: string, expected: string) {
             const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
             firstChild.removeNamespaceImport();
@@ -385,7 +385,7 @@ describe("ImportDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ImportDeclaration>("getNamespaceImport"), () => {
+    describe(nameof<ImportDeclaration>("getNamespaceImport"), () => {
         function doTest(text: string, expectedName: string | undefined) {
             const { firstChild } = getInfoFromText<ImportDeclaration>(text);
             const identifier = firstChild.getNamespaceImport();
@@ -417,7 +417,7 @@ describe("ImportDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ImportDeclaration>("getNamespaceImportOrThrow"), () => {
+    describe(nameof<ImportDeclaration>("getNamespaceImportOrThrow"), () => {
         function doTest(text: string, expectedName: string | undefined) {
             const { firstChild } = getInfoFromText<ImportDeclaration>(text);
             if (expectedName == null)
@@ -435,7 +435,7 @@ describe("ImportDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ImportDeclaration>("getNamedImports"), () => {
+    describe(nameof<ImportDeclaration>("getNamedImports"), () => {
         function doTest(text: string, expected: { name: string; alias?: string; }[]) {
             const { firstChild } = getInfoFromText<ImportDeclaration>(text);
             const namedImports = firstChild.getNamedImports();
@@ -474,7 +474,7 @@ describe("ImportDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ImportDeclaration>("insertNamedImports"), () => {
+    describe(nameof<ImportDeclaration>("insertNamedImports"), () => {
         function doTest(
             text: string,
             index: number,
@@ -527,7 +527,7 @@ describe("ImportDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ImportDeclaration>("insertNamedImport"), () => {
+    describe(nameof<ImportDeclaration>("insertNamedImport"), () => {
         function doTest(text: string, index: number, structureOrName: OptionalKind<ImportSpecifierStructure> | string, expected: string) {
             const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
             firstChild.insertNamedImport(index, structureOrName);
@@ -543,7 +543,7 @@ describe("ImportDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ImportDeclaration>("addNamedImport"), () => {
+    describe(nameof<ImportDeclaration>("addNamedImport"), () => {
         function doTest(text: string, structureOrName: OptionalKind<ImportSpecifierStructure> | string, expected: string) {
             const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
             firstChild.addNamedImport(structureOrName);
@@ -559,7 +559,7 @@ describe("ImportDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ImportDeclaration>("addNamedImports"), () => {
+    describe(nameof<ImportDeclaration>("addNamedImports"), () => {
         function doTest(text: string, structures: (OptionalKind<ImportSpecifierStructure> | string)[], expected: string) {
             const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
             firstChild.addNamedImports(structures);
@@ -571,7 +571,7 @@ describe("ImportDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ImportDeclaration>("remove"), () => {
+    describe(nameof<ImportDeclaration>("remove"), () => {
         function doTest(text: string, index: number, expectedText: string) {
             const { sourceFile } = getInfoFromText(text);
             sourceFile.getImportDeclarations()[index].remove();
@@ -583,7 +583,7 @@ describe("ImportDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ImportDeclaration>("removeNamedImports"), () => {
+    describe(nameof<ImportDeclaration>("removeNamedImports"), () => {
         function doTest(text: string, expectedText: string) {
             const { sourceFile } = getInfoFromText(text);
             sourceFile.getImportDeclarations()[0].removeNamedImports();
@@ -599,7 +599,7 @@ describe("ImportDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ImportDeclaration>("getImportClauseOrThrow"), () => {
+    describe(nameof<ImportDeclaration>("getImportClauseOrThrow"), () => {
         function doTest(text: string, expectedName: string | undefined) {
             const { firstChild } = getInfoFromText<ImportDeclaration>(text);
             if (expectedName == null)
@@ -617,7 +617,7 @@ describe("ImportDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ImportDeclaration>("getImportClause"), () => {
+    describe(nameof<ImportDeclaration>("getImportClause"), () => {
         function doTest(text: string, expectedName: string | undefined) {
             const { firstChild } = getInfoFromText<ImportDeclaration>(text);
             expect(firstChild.getImportClause()?.getText()).to.equal(expectedName);
@@ -632,7 +632,7 @@ describe("ImportDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ImportDeclaration>("set"), () => {
+    describe(nameof<ImportDeclaration>("set"), () => {
         function doTest(text: string, structure: Partial<ImportDeclarationStructure>, expectedText: string) {
             const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
             firstChild.set(structure);
@@ -729,7 +729,7 @@ describe("ImportDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ImportDeclaration>("getStructure"), () => {
+    describe(nameof<ImportDeclaration>("getStructure"), () => {
         function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<ImportDeclarationStructure>>) {
             const { firstChild } = getInfoFromText<ImportDeclaration>(text);
             expect(firstChild.getStructure()).to.deep.equal(expectedStructure);

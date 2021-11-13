@@ -1,4 +1,4 @@
-import { StringUtils, SyntaxKind, ts, nameof } from "@ts-morph/common";
+import { nameof, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange, removeChildren, removeCommaSeparatedChild } from "../../../manipulation";
 import { ImportSpecifierSpecificStructure, ImportSpecifierStructure, StructureKind } from "../../../structures";
 import { callBaseGetStructure } from "../callBaseGetStructure";
@@ -155,7 +155,7 @@ export class ImportSpecifier extends ImportSpecifierBase<ts.ImportSpecifier> {
 
         if (structure.alias != null)
             this.setAlias(structure.alias);
-        else if (structure.hasOwnProperty(nameof.property(structure, "alias")))
+        else if (structure.hasOwnProperty(nameof(structure, "alias")))
             this.removeAlias();
 
         return this;

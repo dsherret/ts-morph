@@ -5,7 +5,7 @@ import { ModuleDeclarationStructure, StructureKind } from "../../../../../struct
 import { getInfoFromText, OptionalKindAndTrivia } from "../../../testHelpers";
 
 describe("StatementedNode", () => {
-    describe(nameof.property<StatementedNode>("insertModules"), () => {
+    describe(nameof<StatementedNode>("insertModules"), () => {
         function doTest(startCode: string, index: number, structures: OptionalKindAndTrivia<ModuleDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertModules(index, structures);
@@ -128,7 +128,7 @@ describe("StatementedNode", () => {
         });
     });
 
-    describe(nameof.property<StatementedNode>("insertModule"), () => {
+    describe(nameof<StatementedNode>("insertModule"), () => {
         function doTest(startCode: string, index: number, structure: OptionalKindAndTrivia<ModuleDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertModule(index, structure);
@@ -141,7 +141,7 @@ describe("StatementedNode", () => {
         });
     });
 
-    describe(nameof.property<StatementedNode>("addModules"), () => {
+    describe(nameof<StatementedNode>("addModules"), () => {
         function doTest(startCode: string, structures: OptionalKindAndTrivia<ModuleDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addModules(structures);
@@ -155,7 +155,7 @@ describe("StatementedNode", () => {
         });
     });
 
-    describe(nameof.property<StatementedNode>("addModule"), () => {
+    describe(nameof<StatementedNode>("addModule"), () => {
         function doTest(startCode: string, structure: OptionalKindAndTrivia<ModuleDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addModule(structure);
@@ -168,7 +168,7 @@ describe("StatementedNode", () => {
         });
     });
 
-    describe(nameof.property<StatementedNode>("getModules"), () => {
+    describe(nameof<StatementedNode>("getModules"), () => {
         const { sourceFile } = getInfoFromText("namespace Identifier1 {}\nnamespace Identifier2 {}");
         const namespaces = sourceFile.getModules();
 
@@ -186,7 +186,7 @@ describe("StatementedNode", () => {
         });
     });
 
-    describe(nameof.property<StatementedNode>("getModule"), () => {
+    describe(nameof<StatementedNode>("getModule"), () => {
         const { sourceFile } = getInfoFromText("namespace Identifier1 {}\nnamespace Identifier2 {}, namespace Test.Test {}");
 
         it("should get a namespace by a name", () => {
@@ -206,7 +206,7 @@ describe("StatementedNode", () => {
         });
     });
 
-    describe(nameof.property<StatementedNode>("getModuleOrThrow"), () => {
+    describe(nameof<StatementedNode>("getModuleOrThrow"), () => {
         const { sourceFile } = getInfoFromText("namespace Identifier1 {}\nnamespace Identifier2 {}");
 
         it("should get a namespace by a name", () => {

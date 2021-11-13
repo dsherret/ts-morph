@@ -1,8 +1,8 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { InterfaceDeclaration, PropertySignature } from "../../../../compiler";
 import { PropertySignatureStructure, StructureKind } from "../../../../structures";
 import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("PropertySignature", () => {
     function getFirstPropertyWithInfo(code: string) {
@@ -10,7 +10,7 @@ describe("PropertySignature", () => {
         return { ...opts, firstProperty: opts.firstChild.getProperties()[0] };
     }
 
-    describe(nameof.property<PropertySignature>("set"), () => {
+    describe(nameof<PropertySignature>("set"), () => {
         function doTest(code: string, structure: Partial<PropertySignatureStructure>, expectedCode: string) {
             const { firstProperty, sourceFile } = getFirstPropertyWithInfo(code);
             firstProperty.set(structure);
@@ -42,7 +42,7 @@ describe("PropertySignature", () => {
         });
     });
 
-    describe(nameof.property<PropertySignature>("remove"), () => {
+    describe(nameof<PropertySignature>("remove"), () => {
         function doTest(code: string, nameToRemove: string, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<InterfaceDeclaration>(code);
             firstChild.getProperty(nameToRemove)!.remove();
@@ -72,7 +72,7 @@ describe("PropertySignature", () => {
         });
     });
 
-    describe(nameof.property<PropertySignature>("getStructure"), () => {
+    describe(nameof<PropertySignature>("getStructure"), () => {
         function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<PropertySignatureStructure>>) {
             const { firstProperty } = getFirstPropertyWithInfo(code);
             const structure = firstProperty.getStructure();

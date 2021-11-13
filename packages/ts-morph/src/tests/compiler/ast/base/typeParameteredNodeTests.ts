@@ -1,11 +1,11 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { CallSignatureDeclaration, FunctionDeclaration, TypeAliasDeclaration, TypeParameterDeclaration, TypeParameteredNode } from "../../../../compiler";
 import { OptionalKind, TypeParameterDeclarationStructure, TypeParameteredNodeStructure } from "../../../../structures";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia } from "../../testHelpers";
 
 describe("TypeParameteredNode", () => {
-    describe(nameof.property<TypeParameteredNode>("getTypeParameter"), () => {
+    describe(nameof<TypeParameteredNode>("getTypeParameter"), () => {
         const { firstChild } = getInfoFromText<FunctionDeclaration>("function func<T, U>(){}");
 
         it("should get the type parameter by name", () => {
@@ -21,7 +21,7 @@ describe("TypeParameteredNode", () => {
         });
     });
 
-    describe(nameof.property<TypeParameteredNode>("getTypeParameterOrThrow"), () => {
+    describe(nameof<TypeParameteredNode>("getTypeParameterOrThrow"), () => {
         const { firstChild } = getInfoFromText<FunctionDeclaration>("function func<T, U>(){}");
 
         it("should get the type parameter by name", () => {
@@ -37,7 +37,7 @@ describe("TypeParameteredNode", () => {
         });
     });
 
-    describe(nameof.property<TypeParameteredNode>("getTypeParameters"), () => {
+    describe(nameof<TypeParameteredNode>("getTypeParameters"), () => {
         const { sourceFile } = getInfoFromText("function noTypeParamsFunc() {}\n function typeParamsFunc<T, U>() {}");
         const noTypeParamsFunc = sourceFile.getFunctions()[0];
         const typeParamsFunc = sourceFile.getFunctions()[1];
@@ -59,7 +59,7 @@ describe("TypeParameteredNode", () => {
         });
     });
 
-    describe(nameof.property<TypeParameteredNode>("addTypeParameter"), () => {
+    describe(nameof<TypeParameteredNode>("addTypeParameter"), () => {
         function doTest(startCode: string, structure: OptionalKind<TypeParameterDeclarationStructure> | string, expectedCode: string) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.addTypeParameter(structure);
@@ -80,7 +80,7 @@ describe("TypeParameteredNode", () => {
         });
     });
 
-    describe(nameof.property<TypeParameteredNode>("addTypeParameters"), () => {
+    describe(nameof<TypeParameteredNode>("addTypeParameters"), () => {
         function doTest(startCode: string, structures: (OptionalKind<TypeParameterDeclarationStructure> | string)[], expectedCode: string) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.addTypeParameters(structures);
@@ -93,7 +93,7 @@ describe("TypeParameteredNode", () => {
         });
     });
 
-    describe(nameof.property<TypeParameteredNode>("insertTypeParameter"), () => {
+    describe(nameof<TypeParameteredNode>("insertTypeParameter"), () => {
         it("should insert when none exists for a call signature declaration", () => {
             const startCode = "interface Identifier {\n    (): void;\n}\n";
             const { descendant, sourceFile } = getInfoFromTextWithDescendant<CallSignatureDeclaration>(startCode, SyntaxKind.CallSignature);
@@ -146,7 +146,7 @@ describe("TypeParameteredNode", () => {
         });
     });
 
-    describe(nameof.property<TypeParameteredNode>("insertTypeParameters"), () => {
+    describe(nameof<TypeParameteredNode>("insertTypeParameters"), () => {
         function doTest(
             startCode: string,
             insertIndex: number,
@@ -172,7 +172,7 @@ describe("TypeParameteredNode", () => {
         });
     });
 
-    describe(nameof.property<TypeAliasDeclaration>("set"), () => {
+    describe(nameof<TypeAliasDeclaration>("set"), () => {
         function doTest(startingCode: string, structure: TypeParameteredNodeStructure, expectedCode: string) {
             const { firstChild } = getInfoFromText<TypeAliasDeclaration>(startingCode);
             firstChild.set(structure);
@@ -196,7 +196,7 @@ describe("TypeParameteredNode", () => {
         });
     });
 
-    describe(nameof.property<TypeAliasDeclaration>("getStructure"), () => {
+    describe(nameof<TypeAliasDeclaration>("getStructure"), () => {
         function doTest(startingCode: string, names: string[]) {
             const { firstChild } = getInfoFromText<TypeAliasDeclaration>(startingCode);
             expect(firstChild.getStructure().typeParameters!.map(p => (p as TypeParameterDeclarationStructure).name)).to.deep.equal(names);

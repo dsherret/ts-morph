@@ -1,8 +1,8 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { EnumDeclaration, EnumMember } from "../../../../compiler";
 import { EnumMemberSpecificStructure, EnumMemberStructure, OptionalKind, StructureKind } from "../../../../structures";
 import { fillStructures, getInfoFromText, OptionalTrivia } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 function getInfoFromTextWithFirstMember(text: string) {
     const obj = getInfoFromText<EnumDeclaration>(text);
@@ -11,7 +11,7 @@ function getInfoFromTextWithFirstMember(text: string) {
 }
 
 describe("EnumMember", () => {
-    describe(nameof.property<EnumMember>("getValue"), () => {
+    describe(nameof<EnumMember>("getValue"), () => {
         describe("number enum", () => {
             const { firstChild } = getInfoFromTextWithFirstMember("enum MyEnum {myMember1=4,myMember2}");
             const members = firstChild.getMembers();
@@ -34,7 +34,7 @@ describe("EnumMember", () => {
         });
     });
 
-    describe(nameof.property<EnumMember>("setValue"), () => {
+    describe(nameof<EnumMember>("setValue"), () => {
         function doTest(text: string, value: string | number, expected: string) {
             const { firstChild, firstEnumMember } = getInfoFromTextWithFirstMember(text);
             firstEnumMember.setValue(value);
@@ -58,7 +58,7 @@ describe("EnumMember", () => {
         });
     });
 
-    describe(nameof.property<EnumMember>("remove"), () => {
+    describe(nameof<EnumMember>("remove"), () => {
         it("should remove the member and its comma when its the only member", () => {
             const { firstEnumMember, firstChild, sourceFile } = getInfoFromTextWithFirstMember("enum MyEnum {\n  member,\n}\n");
             firstEnumMember.remove();
@@ -84,7 +84,7 @@ describe("EnumMember", () => {
         });
     });
 
-    describe(nameof.property<EnumMember>("set"), () => {
+    describe(nameof<EnumMember>("set"), () => {
         function doTest(code: string, structure: Partial<EnumMemberStructure>, expectedCode: string) {
             const { firstEnumMember, sourceFile } = getInfoFromTextWithFirstMember(code);
             firstEnumMember.set(structure);
@@ -111,7 +111,7 @@ describe("EnumMember", () => {
         });
     });
 
-    describe(nameof.property<EnumMember>("getStructure"), () => {
+    describe(nameof<EnumMember>("getStructure"), () => {
         function doTest(code: string, expected: OptionalTrivia<MakeRequired<EnumMemberStructure>>) {
             const { firstEnumMember } = getInfoFromTextWithFirstMember(code);
             expect(firstEnumMember.getStructure()).to.deep.equal(fillStructures.enumMember(expected));

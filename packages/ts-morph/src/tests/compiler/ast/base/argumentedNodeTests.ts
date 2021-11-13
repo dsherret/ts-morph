@@ -1,11 +1,11 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ArgumentedNode, ClassDeclaration } from "../../../../compiler";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("ArgumentedNode", () => {
-    describe(nameof.property<ArgumentedNode>("getArguments"), () => {
+    describe(nameof<ArgumentedNode>("getArguments"), () => {
         function doTest(code: string, expectedArgs: string[]) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
             const args = firstChild.getDecorators()[0].getCallExpression()!.getArguments();
@@ -21,7 +21,7 @@ describe("ArgumentedNode", () => {
         });
     });
 
-    describe(nameof.property<ArgumentedNode>("insertArguments"), () => {
+    describe(nameof<ArgumentedNode>("insertArguments"), () => {
         function doTest(code: string, index: number, texts: (string | WriterFunction)[] | WriterFunction, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
             const callExpr = firstChild.getDecorators()[0].getCallExpressionOrThrow();
@@ -64,7 +64,7 @@ describe("ArgumentedNode", () => {
         });
     });
 
-    describe(nameof.property<ArgumentedNode>("insertArgument"), () => {
+    describe(nameof<ArgumentedNode>("insertArgument"), () => {
         function doTest(code: string, index: number, text: string, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
             const callExpr = firstChild.getDecorators()[0].getCallExpressionOrThrow();
@@ -78,7 +78,7 @@ describe("ArgumentedNode", () => {
         });
     });
 
-    describe(nameof.property<ArgumentedNode>("addArguments"), () => {
+    describe(nameof<ArgumentedNode>("addArguments"), () => {
         function doTest(code: string, texts: string[], expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
             const callExpr = firstChild.getDecorators()[0].getCallExpressionOrThrow();
@@ -92,7 +92,7 @@ describe("ArgumentedNode", () => {
         });
     });
 
-    describe(nameof.property<ArgumentedNode>("addArgument"), () => {
+    describe(nameof<ArgumentedNode>("addArgument"), () => {
         function doTest(code: string, text: string, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
             const callExpr = firstChild.getDecorators()[0].getCallExpressionOrThrow();
@@ -106,7 +106,7 @@ describe("ArgumentedNode", () => {
         });
     });
 
-    describe(nameof.property<ArgumentedNode>("removeArgument"), () => {
+    describe(nameof<ArgumentedNode>("removeArgument"), () => {
         function doTest(text: string, removeIndex: number, expectedText: string) {
             doTestByIndex();
             doTestByArg();

@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { TryStatement } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -16,13 +16,13 @@ describe("TryStatement", () => {
     const tryStatement = getStatement(statement);
     const emptyTryStatement = getStatement(emptyStatement);
 
-    describe(nameof.property<TryStatement>("getTryBlock"), () => {
+    describe(nameof<TryStatement>("getTryBlock"), () => {
         it("should get the correct try block", () => {
             expect(tryStatement.getTryBlock().getText()).to.equal(tryBlock);
         });
     });
 
-    describe(nameof.property<TryStatement>("getCatchClause"), () => {
+    describe(nameof<TryStatement>("getCatchClause"), () => {
         it("should get the correct catch clause", () => {
             expect(tryStatement.getCatchClause()!.getText()).to.equal(catchClause);
         });
@@ -32,7 +32,7 @@ describe("TryStatement", () => {
         });
     });
 
-    describe(nameof.property<TryStatement>("getCatchClauseOrThrow"), () => {
+    describe(nameof<TryStatement>("getCatchClauseOrThrow"), () => {
         it("should should return the catch clause", () => {
             expect(tryStatement.getCatchClauseOrThrow().getText()).to.equal(catchClause);
         });
@@ -42,7 +42,7 @@ describe("TryStatement", () => {
         });
     });
 
-    describe(nameof.property<TryStatement>("getFinallyBlock"), () => {
+    describe(nameof<TryStatement>("getFinallyBlock"), () => {
         it("should get the correct finally block", () => {
             expect(tryStatement.getFinallyBlock()!.getText()).to.equal(finallyBlock);
         });
@@ -52,7 +52,7 @@ describe("TryStatement", () => {
         });
     });
 
-    describe(nameof.property<TryStatement>("getFinallyBlockOrThrow"), () => {
+    describe(nameof<TryStatement>("getFinallyBlockOrThrow"), () => {
         it("should should return the finally block", () => {
             expect(tryStatement.getFinallyBlockOrThrow().getText()).to.equal(finallyBlock);
         });

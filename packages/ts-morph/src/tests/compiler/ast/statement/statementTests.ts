@@ -1,10 +1,10 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { Statement } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
 describe("Statement", () => {
-    describe(nameof.property<Statement>("remove"), () => {
+    describe(nameof<Statement>("remove"), () => {
         function doVariableStatementTest(text: string, expectedText: string) {
             const { sourceFile } = getInfoFromText(text);
             const statement = sourceFile.getVariableStatementOrThrow("foo");

@@ -1,10 +1,10 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ModuleChildableNode, ModuleDeclaration } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("ModuleChildableNode", () => {
-    describe(nameof.property<ModuleChildableNode>("getParentModule"), () => {
+    describe(nameof<ModuleChildableNode>("getParentModule"), () => {
         it("should get the parent namespace when not using dot notation", () => {
             const { firstChild } = getInfoFromText<ModuleDeclaration>("namespace MyNamespace { class MyClass {} }");
             expect(firstChild.getClasses()[0].getParentModule()).to.equal(firstChild);
@@ -31,7 +31,7 @@ describe("ModuleChildableNode", () => {
         });
     });
 
-    describe(nameof.property<ModuleChildableNode>("getParentModuleOrThrow"), () => {
+    describe(nameof<ModuleChildableNode>("getParentModuleOrThrow"), () => {
         it("should get the parent namespace when it exists", () => {
             const { firstChild } = getInfoFromText<ModuleDeclaration>("namespace MyNamespace { class MyClass {} }");
             expect(firstChild.getClasses()[0].getParentModuleOrThrow()).to.equal(firstChild);

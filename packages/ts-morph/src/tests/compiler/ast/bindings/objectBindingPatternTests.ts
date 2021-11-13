@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ObjectBindingPattern } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -9,7 +9,7 @@ function getInfoFromTextWithBindingPattern(text: string) {
 }
 
 describe("ObjectBindingPattern", () => {
-    describe(nameof.property<ObjectBindingPattern>("getElements"), () => {
+    describe(nameof<ObjectBindingPattern>("getElements"), () => {
         function doTest(text: string, expectedTexts: string[]) {
             const { bindingPattern } = getInfoFromTextWithBindingPattern(text);
             expect(bindingPattern.getElements().map(e => e.getText())).to.deep.equal(expectedTexts);

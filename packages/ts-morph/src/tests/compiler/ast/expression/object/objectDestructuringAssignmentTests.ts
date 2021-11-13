@@ -1,10 +1,10 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ObjectDestructuringAssignment } from "../../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../../testHelpers";
 
 describe("ObjectDestructuringAssignment", () => {
-    describe(nameof.property<ObjectDestructuringAssignment>("getLeft"), () => {
+    describe(nameof<ObjectDestructuringAssignment>("getLeft"), () => {
         function doTest(text: string, expectedText: string) {
             const { descendant } = getInfoFromTextWithDescendant<ObjectDestructuringAssignment>(text, SyntaxKind.BinaryExpression);
             expect(descendant.getLeft().getText()).to.equal(expectedText);

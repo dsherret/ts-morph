@@ -1,11 +1,11 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { InterfaceDeclaration, Node, StatementedNode } from "../../../../../compiler";
 import { InterfaceDeclarationStructure } from "../../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia } from "../../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("StatementedNode", () => {
-    describe(nameof.property<StatementedNode>("insertInterfaces"), () => {
+    describe(nameof<StatementedNode>("insertInterfaces"), () => {
         function doTest(startCode: string, index: number, structures: OptionalKindAndTrivia<InterfaceDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertInterfaces(index, structures);
@@ -73,7 +73,7 @@ describe("StatementedNode", () => {
         });
     });
 
-    describe(nameof.property<StatementedNode>("insertInterface"), () => {
+    describe(nameof<StatementedNode>("insertInterface"), () => {
         function doTest(startCode: string, index: number, structure: OptionalKindAndTrivia<InterfaceDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertInterface(index, structure);
@@ -86,7 +86,7 @@ describe("StatementedNode", () => {
         });
     });
 
-    describe(nameof.property<StatementedNode>("addInterfaces"), () => {
+    describe(nameof<StatementedNode>("addInterfaces"), () => {
         function doTest(startCode: string, structures: OptionalKindAndTrivia<InterfaceDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addInterfaces(structures);
@@ -100,7 +100,7 @@ describe("StatementedNode", () => {
         });
     });
 
-    describe(nameof.property<StatementedNode>("addInterface"), () => {
+    describe(nameof<StatementedNode>("addInterface"), () => {
         function doTest(startCode: string, structure: OptionalKindAndTrivia<InterfaceDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addInterface(structure);
@@ -113,7 +113,7 @@ describe("StatementedNode", () => {
         });
     });
 
-    describe(nameof.property<StatementedNode>("getInterfaces"), () => {
+    describe(nameof<StatementedNode>("getInterfaces"), () => {
         const { sourceFile } = getInfoFromText("interface Identifier1 {}\ninterface Identifier2 {}");
         const interfaces = sourceFile.getInterfaces();
 
@@ -131,7 +131,7 @@ describe("StatementedNode", () => {
         });
     });
 
-    describe(nameof.property<StatementedNode>("getInterface"), () => {
+    describe(nameof<StatementedNode>("getInterface"), () => {
         const { sourceFile } = getInfoFromText("interface Identifier1 {}\ninterface Identifier2 {}");
 
         it("should get an interface by a name", () => {
@@ -147,7 +147,7 @@ describe("StatementedNode", () => {
         });
     });
 
-    describe(nameof.property<StatementedNode>("getInterfaceOrThrow"), () => {
+    describe(nameof<StatementedNode>("getInterfaceOrThrow"), () => {
         const { sourceFile } = getInfoFromText("interface Identifier1 {}\ninterface Identifier2 {}");
 
         it("should get an interface by a name", () => {

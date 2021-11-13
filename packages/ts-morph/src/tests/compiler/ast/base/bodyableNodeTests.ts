@@ -1,11 +1,11 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { BodyableNode, ClassDeclaration, FunctionDeclaration } from "../../../../compiler";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("BodyableNode", () => {
-    describe(nameof.property<BodyableNode>("setBodyText"), () => {
+    describe(nameof<BodyableNode>("setBodyText"), () => {
         describe("using a writer", () => {
             function doTest(startCode: string, writerFunc: WriterFunction, expectedCode: string) {
                 const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
@@ -97,7 +97,7 @@ describe("BodyableNode", () => {
         });
     });
 
-    describe(nameof.property<FunctionDeclaration>("getBodyText"), () => {
+    describe(nameof<FunctionDeclaration>("getBodyText"), () => {
         function doTest(startCode: string, bodyText: string | undefined) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
             expect(firstChild.getBodyText()).to.equal(bodyText);
@@ -116,7 +116,7 @@ describe("BodyableNode", () => {
         });
     });
 
-    describe(nameof.property<BodyableNode>("hasBody"), () => {
+    describe(nameof<BodyableNode>("hasBody"), () => {
         function doTest(startCode: string, value: boolean) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
             expect(firstChild.hasBody()).to.equal(value);
@@ -131,7 +131,7 @@ describe("BodyableNode", () => {
         });
     });
 
-    describe(nameof.property<BodyableNode>("addBody"), () => {
+    describe(nameof<BodyableNode>("addBody"), () => {
         function doTest(startCode: string, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             firstChild.addBody();
@@ -155,7 +155,7 @@ describe("BodyableNode", () => {
         });
     });
 
-    describe(nameof.property<BodyableNode>("removeBody"), () => {
+    describe(nameof<BodyableNode>("removeBody"), () => {
         function doTest(startCode: string, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             firstChild.removeBody();

@@ -1,8 +1,8 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { AsyncableNode, FunctionDeclaration } from "../../../../compiler";
 import { AsyncableNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("AsyncableNode", () => {
     describe("navigation", () => {
@@ -10,7 +10,7 @@ describe("AsyncableNode", () => {
         const asyncFunc = mainSourceFile.getFunctions()[0];
         const nonAsyncFunc = mainSourceFile.getFunctions()[1];
 
-        describe(nameof.property<AsyncableNode>("isAsync"), () => {
+        describe(nameof<AsyncableNode>("isAsync"), () => {
             it("should be async when async", () => {
                 expect(asyncFunc.isAsync()).to.be.true;
             });
@@ -20,7 +20,7 @@ describe("AsyncableNode", () => {
             });
         });
 
-        describe(nameof.property<AsyncableNode>("getAsyncKeyword"), () => {
+        describe(nameof<AsyncableNode>("getAsyncKeyword"), () => {
             it("should have a async keyword when async", () => {
                 expect(asyncFunc.getAsyncKeyword()!.getText()).to.equal("async");
             });
@@ -30,7 +30,7 @@ describe("AsyncableNode", () => {
             });
         });
 
-        describe(nameof.property<AsyncableNode>("getAsyncKeywordOrThrow"), () => {
+        describe(nameof<AsyncableNode>("getAsyncKeywordOrThrow"), () => {
             it("should have a async keyword when async", () => {
                 expect(asyncFunc.getAsyncKeywordOrThrow().getText()).to.equal("async");
             });
@@ -41,7 +41,7 @@ describe("AsyncableNode", () => {
         });
     });
 
-    describe(nameof.property<AsyncableNode>("setIsAsync"), () => {
+    describe(nameof<AsyncableNode>("setIsAsync"), () => {
         function doTest(text: string, value: boolean, expected: string) {
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(text);
             firstChild.setIsAsync(value);
@@ -57,7 +57,7 @@ describe("AsyncableNode", () => {
         });
     });
 
-    describe(nameof.property<FunctionDeclaration>("getStructure"), () => {
+    describe(nameof<FunctionDeclaration>("getStructure"), () => {
         function doTest(startingCode: string, isAsync: boolean) {
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startingCode);
             expect(firstChild.getStructure().isAsync).to.equal(isAsync);
@@ -72,7 +72,7 @@ describe("AsyncableNode", () => {
         });
     });
 
-    describe(nameof.property<FunctionDeclaration>("set"), () => {
+    describe(nameof<FunctionDeclaration>("set"), () => {
         function doTest(startCode: string, structure: AsyncableNodeStructure, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             firstChild.set(structure);

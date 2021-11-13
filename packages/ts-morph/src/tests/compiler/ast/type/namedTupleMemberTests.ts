@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { NamedTupleMember } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -8,7 +8,7 @@ describe("NamedTupleMember", () => {
         return getInfoFromTextWithDescendant<NamedTupleMember>(text, SyntaxKind.NamedTupleMember);
     }
 
-    describe(nameof.property<NamedTupleMember>("getDotDotDotToken"), () => {
+    describe(nameof<NamedTupleMember>("getDotDotDotToken"), () => {
         function doTest(text: string, expected: string | undefined) {
             const { descendant } = getNode(text);
             expect(descendant.getDotDotDotToken()?.getText()).to.equal(expected);
@@ -23,7 +23,7 @@ describe("NamedTupleMember", () => {
         });
     });
 
-    describe(nameof.property<NamedTupleMember>("getName"), () => {
+    describe(nameof<NamedTupleMember>("getName"), () => {
         function doTest(text: string, expected: string) {
             const { descendant } = getNode(text);
             expect(descendant.getName()).to.equal(expected);
@@ -34,7 +34,7 @@ describe("NamedTupleMember", () => {
         });
     });
 
-    describe(nameof.property<NamedTupleMember>("getType"), () => {
+    describe(nameof<NamedTupleMember>("getType"), () => {
         function doTest(text: string, expected: string) {
             const { descendant } = getNode(text);
             expect(descendant.getTypeNode()!.getText()).to.equal(expected); // todo: should be required
@@ -45,7 +45,7 @@ describe("NamedTupleMember", () => {
         });
     });
 
-    describe(nameof.property<NamedTupleMember>("getQuestionTokenNode"), () => {
+    describe(nameof<NamedTupleMember>("getQuestionTokenNode"), () => {
         function doTest(text: string, expected: string | undefined) {
             const { descendant } = getNode(text);
             expect(descendant.getQuestionTokenNode()?.getText()).to.equal(expected);

@@ -1,7 +1,7 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { JSDocPropertyLikeTag, Node } from "../../../../../compiler";
 import { getInfoFromText } from "../../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("JSDocPropertyLikeTag", () => {
     function getInfo(text: string) {
@@ -9,7 +9,7 @@ describe("JSDocPropertyLikeTag", () => {
         return { descendant: info.sourceFile.getFirstDescendantOrThrow(Node.isJSDocPropertyLikeTag), ...info };
     }
 
-    describe(nameof.property<JSDocPropertyLikeTag>("getTypeExpression"), () => {
+    describe(nameof<JSDocPropertyLikeTag>("getTypeExpression"), () => {
         it("should get undefined when there is no type given", () => {
             const { descendant } = getInfo("/** @param t - String */\nfunction test() {}");
             expect(descendant.getTypeExpression()).to.be.undefined;
@@ -21,7 +21,7 @@ describe("JSDocPropertyLikeTag", () => {
         });
     });
 
-    describe(nameof.property<JSDocPropertyLikeTag>("isBracketed"), () => {
+    describe(nameof<JSDocPropertyLikeTag>("isBracketed"), () => {
         function doTest(text: string, expected: boolean) {
             const { descendant } = getInfo(text);
             expect(descendant.isBracketed()).to.equal(expected);
@@ -36,7 +36,7 @@ describe("JSDocPropertyLikeTag", () => {
         });
     });
 
-    describe(nameof.property<JSDocPropertyLikeTag>("getName"), () => {
+    describe(nameof<JSDocPropertyLikeTag>("getName"), () => {
         function doTest(text: string, expected: string) {
             const { descendant } = getInfo(text);
             expect(descendant.getName()).to.equal(expected);
@@ -51,7 +51,7 @@ describe("JSDocPropertyLikeTag", () => {
         });
     });
 
-    describe(nameof.property<JSDocPropertyLikeTag>("getNameNode"), () => {
+    describe(nameof<JSDocPropertyLikeTag>("getNameNode"), () => {
         function doTest(text: string, expected: string) {
             const { descendant } = getInfo(text);
             expect(descendant.getNameNode().getText()).to.equal(expected);

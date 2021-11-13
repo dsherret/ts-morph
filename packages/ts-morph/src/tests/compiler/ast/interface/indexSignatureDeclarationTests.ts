@@ -11,7 +11,7 @@ describe("IndexSignatureDeclaration", () => {
         return { ...opts, firstIndexSignature: opts.firstChild.getIndexSignatures()[0] };
     }
 
-    describe(nameof.property<IndexSignatureDeclaration>("getKeyName"), () => {
+    describe(nameof<IndexSignatureDeclaration>("getKeyName"), () => {
         function doTest(code: string, expectedName: string) {
             const { firstIndexSignature } = getFirstIndexSignatureWithInfo(code);
             expect(firstIndexSignature.getKeyName()).to.equal(expectedName);
@@ -22,7 +22,7 @@ describe("IndexSignatureDeclaration", () => {
         });
     });
 
-    describe(nameof.property<IndexSignatureDeclaration>("getKeyNameNode"), () => {
+    describe(nameof<IndexSignatureDeclaration>("getKeyNameNode"), () => {
         function doTest(code: string, expectedName: string) {
             const { firstIndexSignature, sourceFile } = getFirstIndexSignatureWithInfo(code);
             expect(firstIndexSignature.getKeyNameNode().getText()).to.equal(expectedName);
@@ -33,7 +33,7 @@ describe("IndexSignatureDeclaration", () => {
         });
     });
 
-    describe(nameof.property<IndexSignatureDeclaration>("setKeyName"), () => {
+    describe(nameof<IndexSignatureDeclaration>("setKeyName"), () => {
         function doTest(code: string, name: string, expectedCode: string) {
             const { firstIndexSignature, sourceFile } = getFirstIndexSignatureWithInfo(code);
             firstIndexSignature.setKeyName(name);
@@ -54,7 +54,7 @@ describe("IndexSignatureDeclaration", () => {
         });
     });
 
-    describe(nameof.property<IndexSignatureDeclaration>("getKeyType"), () => {
+    describe(nameof<IndexSignatureDeclaration>("getKeyType"), () => {
         function doTest(code: string, expected: string) {
             const { firstIndexSignature } = getFirstIndexSignatureWithInfo(code);
             expect(firstIndexSignature.getKeyType().getText()).to.equal(expected);
@@ -65,7 +65,7 @@ describe("IndexSignatureDeclaration", () => {
         });
     });
 
-    describe(nameof.property<IndexSignatureDeclaration>("getKeyTypeNode"), () => {
+    describe(nameof<IndexSignatureDeclaration>("getKeyTypeNode"), () => {
         function doTest(code: string, expectedName: string) {
             const { firstIndexSignature } = getFirstIndexSignatureWithInfo(code);
             expect(firstIndexSignature.getKeyTypeNode().getText()).to.equal(expectedName);
@@ -76,7 +76,7 @@ describe("IndexSignatureDeclaration", () => {
         });
     });
 
-    describe(nameof.property<IndexSignatureDeclaration>("setKeyType"), () => {
+    describe(nameof<IndexSignatureDeclaration>("setKeyType"), () => {
         function doTest(code: string, name: string, expectedCode: string) {
             const { firstIndexSignature, sourceFile } = getFirstIndexSignatureWithInfo(code);
             firstIndexSignature.setKeyType(name);
@@ -97,7 +97,7 @@ describe("IndexSignatureDeclaration", () => {
         });
     });
 
-    describe(nameof.property<IndexSignatureDeclaration>("getReturnType"), () => {
+    describe(nameof<IndexSignatureDeclaration>("getReturnType"), () => {
         function doTest(code: string, expected: string) {
             const { firstIndexSignature, sourceFile } = getFirstIndexSignatureWithInfo(code);
             expect(firstIndexSignature.getReturnType().getText()).to.equal(expected);
@@ -112,7 +112,7 @@ describe("IndexSignatureDeclaration", () => {
         });
     });
 
-    describe(nameof.property<IndexSignatureDeclaration>("getReturnTypeNode"), () => {
+    describe(nameof<IndexSignatureDeclaration>("getReturnTypeNode"), () => {
         function doTest(code: string, expectedName: string | undefined) {
             const { firstIndexSignature } = getFirstIndexSignatureWithInfo(code);
             const returnTypeNode = firstIndexSignature.getReturnTypeNode();
@@ -128,7 +128,7 @@ describe("IndexSignatureDeclaration", () => {
         });
     });
 
-    describe(nameof.property<IndexSignatureDeclaration>("setReturnType"), () => {
+    describe(nameof<IndexSignatureDeclaration>("setReturnType"), () => {
         function doTest(code: string, textOrWriterFunction: string | WriterFunction, expectedCode: string) {
             const { firstIndexSignature, sourceFile } = getFirstIndexSignatureWithInfo(code);
             firstIndexSignature.setReturnType(textOrWriterFunction);
@@ -152,7 +152,7 @@ describe("IndexSignatureDeclaration", () => {
         });
     });
 
-    describe(nameof.property<IndexSignatureDeclaration>("setIsReadonly"), () => {
+    describe(nameof<IndexSignatureDeclaration>("setIsReadonly"), () => {
         function doTest(code: string, value: boolean, expectedCode: string) {
             const { firstIndexSignature, sourceFile } = getFirstIndexSignatureWithInfo(code);
             firstIndexSignature.setIsReadonly(value);
@@ -168,7 +168,7 @@ describe("IndexSignatureDeclaration", () => {
         });
     });
 
-    describe(nameof.property<IndexSignatureDeclaration>("remove"), () => {
+    describe(nameof<IndexSignatureDeclaration>("remove"), () => {
         function doTest(code: string, indexToRemove: number, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<InterfaceDeclaration>(code);
             firstChild.getIndexSignatures()[indexToRemove].remove();
@@ -200,7 +200,7 @@ describe("IndexSignatureDeclaration", () => {
         });
     });
 
-    describe(nameof.property<IndexSignatureDeclaration>("set"), () => {
+    describe(nameof<IndexSignatureDeclaration>("set"), () => {
         function doTest(code: string, structure: Partial<IndexSignatureDeclarationStructure>, expectedCode: string) {
             const { firstIndexSignature, sourceFile } = getFirstIndexSignatureWithInfo(code);
             firstIndexSignature.set(structure);
@@ -229,7 +229,7 @@ describe("IndexSignatureDeclaration", () => {
         });
     });
 
-    describe(nameof.property<IndexSignatureDeclaration>("getStructure"), () => {
+    describe(nameof<IndexSignatureDeclaration>("getStructure"), () => {
         function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<IndexSignatureDeclarationStructure>>) {
             const { firstIndexSignature } = getFirstIndexSignatureWithInfo(code);
             const structure = firstIndexSignature.getStructure();

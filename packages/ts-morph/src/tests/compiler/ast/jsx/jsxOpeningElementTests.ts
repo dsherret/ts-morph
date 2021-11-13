@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { JsxOpeningElement } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -8,7 +8,7 @@ function getInfo(text: string) {
 }
 
 describe("JsxOpeningElement", () => {
-    describe(nameof.property<JsxOpeningElement>("getTagNameNode"), () => {
+    describe(nameof<JsxOpeningElement>("getTagNameNode"), () => {
         function doTest(text: string, expected: string) {
             const { descendant } = getInfo(text);
             expect(descendant.getTagNameNode().getText()).to.equal(expected);

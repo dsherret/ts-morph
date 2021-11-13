@@ -1,4 +1,4 @@
-import { EditorSettings, NewLineKind, ts, nameof } from "@ts-morph/common";
+import { EditorSettings, nameof, NewLineKind, ts } from "@ts-morph/common";
 import { expect } from "chai";
 import { QuoteKind, UserPreferences } from "../compiler";
 import { IndentationText, ManipulationSettings, ManipulationSettingsContainer } from "../options";
@@ -75,7 +75,7 @@ describe("ManipulationSettingsContainer", () => {
         });
     });
 
-    describe(nameof.property<ManipulationSettingsContainer>("getEditorSettings"), () => {
+    describe(nameof<ManipulationSettingsContainer>("getEditorSettings"), () => {
         function doTest(actual: EditorSettings, expected: EditorSettings) {
             expect(actual).is.deep.equal(expected);
         }
@@ -108,7 +108,7 @@ describe("ManipulationSettingsContainer", () => {
         });
     });
 
-    describe(nameof.property<ManipulationSettingsContainer>("getUserPreferences"), () => {
+    describe(nameof<ManipulationSettingsContainer>("getUserPreferences"), () => {
         function doTest(actual: UserPreferences, expected: UserPreferences) {
             expect(actual).is.deep.equal(expected);
         }

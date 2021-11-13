@@ -1,10 +1,10 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { RefactorEditInfo } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
 describe("RefactorEditInfo", () => {
-    describe(nameof.property<RefactorEditInfo>("applyChanges"), () => {
+    describe(nameof<RefactorEditInfo>("applyChanges"), () => {
         it("should apply the refactor 'Move to a new file'", () => {
             const {
                 sourceFile,

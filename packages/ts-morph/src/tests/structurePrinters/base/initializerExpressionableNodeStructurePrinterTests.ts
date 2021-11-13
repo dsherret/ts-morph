@@ -1,9 +1,9 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { FormatCodeSettings } from "../../../compiler";
 import { InitializerExpressionableNodeStructurePrinter } from "../../../structurePrinters";
 import { InitializerExpressionableNodeStructure } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("InitializerExpressionableNodeStructurePrinter", () => {
     interface Options {
@@ -16,7 +16,7 @@ describe("InitializerExpressionableNodeStructurePrinter", () => {
         expect(writer.toString()).to.equal(expectedOutput);
     }
 
-    describe(nameof.property<InitializerExpressionableNodeStructurePrinter>("printText"), () => {
+    describe(nameof<InitializerExpressionableNodeStructurePrinter>("printText"), () => {
         it("should not write when undefined", () => {
             doTest({ initializer: undefined }, ``);
         });

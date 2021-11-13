@@ -20,49 +20,49 @@ describe("Diagnostic", () => {
         });
     });
 
-    describe(nameof.property<Diagnostic>("getMessageText"), () => {
+    describe(nameof<Diagnostic>("getMessageText"), () => {
         it("should get the message text", () => {
             expect(constError.getMessageText()).to.equal(`'const' declarations must be initialized.`);
         });
     });
 
-    describe(nameof.property<Diagnostic>("getCategory"), () => {
+    describe(nameof<Diagnostic>("getCategory"), () => {
         it("should get the category", () => {
             expect(constError.getCategory()).to.equal(DiagnosticCategory.Error);
         });
     });
 
-    describe(nameof.property<Diagnostic>("getCode"), () => {
+    describe(nameof<Diagnostic>("getCode"), () => {
         it("should get the code", () => {
             expect(constError.getCode()).to.equal(1155);
         });
     });
 
-    describe(nameof.property<Diagnostic>("getStart"), () => {
+    describe(nameof<Diagnostic>("getStart"), () => {
         it("should get the start", () => {
             expect(constError.getStart()).to.equal(6);
         });
     });
 
-    describe(nameof.property<Diagnostic>("getLineNumber"), () => {
+    describe(nameof<Diagnostic>("getLineNumber"), () => {
         it("should get the line number", () => {
             expect(constError.getLineNumber()).to.equal(1);
         });
     });
 
-    describe(nameof.property<Diagnostic>("getLength"), () => {
+    describe(nameof<Diagnostic>("getLength"), () => {
         it("should get the length", () => {
             expect(constError.getLength()).to.equal(1);
         });
     });
 
-    describe(nameof.property<Diagnostic>("getSource"), () => {
+    describe(nameof<Diagnostic>("getSource"), () => {
         it("should get the source", () => {
             expect(constError.getSource()).to.be.undefined;
         });
     });
 
-    describe(nameof.property<Diagnostic>("getSourceFile"), () => {
+    describe(nameof<Diagnostic>("getSourceFile"), () => {
         it("should get the source file", () => {
             expect(constError.getSourceFile()!.getFilePath()).to.equal(sourceFile.getFilePath());
         });

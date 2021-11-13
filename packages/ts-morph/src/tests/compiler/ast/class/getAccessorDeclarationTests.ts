@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, GetAccessorDeclaration, Scope } from "../../../../compiler";
 import { GetAccessorDeclarationStructure, StructureKind } from "../../../../structures";
@@ -11,7 +11,7 @@ function getGetAccessorInfo(text: string) {
 }
 
 describe("GetAccessorDeclaration", () => {
-    describe(nameof.property<GetAccessorDeclaration>("getSetAccessor"), () => {
+    describe(nameof<GetAccessorDeclaration>("getSetAccessor"), () => {
         it("should return undefined if no corresponding get accessor exists", () => {
             const { getAccessor } = getGetAccessorInfo(`class Identifier { get identifier(): string { return "" } }`);
             expect(getAccessor.getSetAccessor()).to.be.undefined;
@@ -43,7 +43,7 @@ describe("GetAccessorDeclaration", () => {
         });
     });
 
-    describe(nameof.property<GetAccessorDeclaration>("getSetAccessorOrThrow"), () => {
+    describe(nameof<GetAccessorDeclaration>("getSetAccessorOrThrow"), () => {
         it("should throw if no corresponding get accessor exists", () => {
             const { getAccessor } = getGetAccessorInfo(`class Identifier { get identifier(): string { return "" } }`);
             expect(() => getAccessor.getSetAccessorOrThrow()).to.throw();
@@ -57,7 +57,7 @@ describe("GetAccessorDeclaration", () => {
         });
     });
 
-    describe(nameof.property<GetAccessorDeclaration>("remove"), () => {
+    describe(nameof<GetAccessorDeclaration>("remove"), () => {
         function doTest(code: string, nameToRemove: string, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
             (firstChild.getInstanceProperty(nameToRemove)! as GetAccessorDeclaration).remove();
@@ -88,7 +88,7 @@ describe("GetAccessorDeclaration", () => {
         });
     });
 
-    describe(nameof.property<GetAccessorDeclaration>("set"), () => {
+    describe(nameof<GetAccessorDeclaration>("set"), () => {
         function doTest(startingCode: string, structure: Partial<GetAccessorDeclarationStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             firstChild.getGetAccessors()[0].set(structure);
@@ -134,7 +134,7 @@ class Identifier {
         });
     });
 
-    describe(nameof.property<GetAccessorDeclaration>("getStructure"), () => {
+    describe(nameof<GetAccessorDeclaration>("getStructure"), () => {
         function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<GetAccessorDeclarationStructure>>) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
             const structure = firstChild.getGetAccessors()[0].getStructure();

@@ -1,10 +1,10 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, ModifierableNode } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
 describe("ModifierableNode", () => {
-    describe(nameof.property<ModifierableNode>("getFirstModifierByKind"), () => {
+    describe(nameof<ModifierableNode>("getFirstModifierByKind"), () => {
         const { firstChild } = getInfoFromText<ClassDeclaration>("export class Identifier {}");
         it("should return the modifier when it exists", () => {
             expect(firstChild.getFirstModifierByKind(SyntaxKind.ExportKeyword)).to.not.be.undefined;
@@ -15,7 +15,7 @@ describe("ModifierableNode", () => {
         });
     });
 
-    describe(nameof.property<ModifierableNode>("getFirstModifierByKindOrThrow"), () => {
+    describe(nameof<ModifierableNode>("getFirstModifierByKindOrThrow"), () => {
         const { firstChild } = getInfoFromText<ClassDeclaration>("export class Identifier {}");
         it("should return the modifier when it exists", () => {
             expect(firstChild.getFirstModifierByKindOrThrow(SyntaxKind.ExportKeyword)).to.not.be.undefined;
@@ -26,7 +26,7 @@ describe("ModifierableNode", () => {
         });
     });
 
-    describe(nameof.property<ModifierableNode>("hasModifier"), () => {
+    describe(nameof<ModifierableNode>("hasModifier"), () => {
         const { firstChild } = getInfoFromText<ClassDeclaration>("export class Identifier {}");
         describe("providing string", () => {
             it("should be true when it does", () => {
@@ -49,7 +49,7 @@ describe("ModifierableNode", () => {
         });
     });
 
-    describe(nameof.property<ModifierableNode>("getModifiers"), () => {
+    describe(nameof<ModifierableNode>("getModifiers"), () => {
         const { firstChild } = getInfoFromText<ClassDeclaration>("export abstract class Identifier {}");
         const modifiers = firstChild.getModifiers();
 
@@ -63,7 +63,7 @@ describe("ModifierableNode", () => {
         });
     });
 
-    describe(nameof.property<ModifierableNode>("addModifier"), () => {
+    describe(nameof<ModifierableNode>("addModifier"), () => {
         it("should add a modifier in the correct order in a simple scenario", () => {
             const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier {}");
             firstChild.addModifier("abstract");
@@ -99,7 +99,7 @@ describe("ModifierableNode", () => {
         });
     });
 
-    describe(nameof.property<ModifierableNode>("toggleModifier"), () => {
+    describe(nameof<ModifierableNode>("toggleModifier"), () => {
         it("should add a modifier when toggling on", () => {
             const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier {}");
             firstChild.toggleModifier("export");

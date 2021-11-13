@@ -1410,7 +1410,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param textOrWriterFunction - Text or writer function.
      */
     prependWhitespace(textOrWriterFunction: string | WriterFunction) {
-        insertWhiteSpaceTextAtPos(this, this.getStart(true), textOrWriterFunction, nameof.property(this, "prependWhitespace"));
+        insertWhiteSpaceTextAtPos(this, this.getStart(true), textOrWriterFunction, nameof(this, "prependWhitespace"));
     }
 
     /**
@@ -1418,7 +1418,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param textOrWriterFunction - Text or writer function.
      */
     appendWhitespace(textOrWriterFunction: string | WriterFunction) {
-        insertWhiteSpaceTextAtPos(this, this.getEnd(), textOrWriterFunction, nameof.property(this, "appendWhitespace"));
+        insertWhiteSpaceTextAtPos(this, this.getEnd(), textOrWriterFunction, nameof(this, "appendWhitespace"));
     }
 
     /**

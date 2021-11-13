@@ -1,8 +1,8 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ConstructSignatureDeclaration, InterfaceDeclaration } from "../../../../compiler";
 import { ConstructSignatureDeclarationStructure, StructureKind, TypeParameterDeclarationStructure } from "../../../../structures";
 import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("ConstructSignatureDeclaration", () => {
     function getFirstConstructSignatureWithInfo(code: string) {
@@ -10,7 +10,7 @@ describe("ConstructSignatureDeclaration", () => {
         return { ...opts, firstConstructSignature: opts.firstChild.getConstructSignatures()[0] };
     }
 
-    describe(nameof.property<ConstructSignatureDeclaration>("set"), () => {
+    describe(nameof<ConstructSignatureDeclaration>("set"), () => {
         function doTest(code: string, structure: Partial<ConstructSignatureDeclarationStructure>, expectedCode: string) {
             const { firstConstructSignature, sourceFile } = getFirstConstructSignatureWithInfo(code);
             firstConstructSignature.set(structure);
@@ -40,7 +40,7 @@ describe("ConstructSignatureDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ConstructSignatureDeclaration>("remove"), () => {
+    describe(nameof<ConstructSignatureDeclaration>("remove"), () => {
         function doTest(code: string, indexToRemove: number, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<InterfaceDeclaration>(code);
             firstChild.getConstructSignatures()[indexToRemove].remove();
@@ -75,7 +75,7 @@ describe("ConstructSignatureDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ConstructSignatureDeclaration>("getStructure"), () => {
+    describe(nameof<ConstructSignatureDeclaration>("getStructure"), () => {
         function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<ConstructSignatureDeclarationStructure>>) {
             const { firstConstructSignature } = getFirstConstructSignatureWithInfo(code);
             const structure = firstConstructSignature.getStructure();

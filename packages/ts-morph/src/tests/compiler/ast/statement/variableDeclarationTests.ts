@@ -1,11 +1,11 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { TryStatement, VariableDeclaration } from "../../../../compiler";
 import { StructureKind, VariableDeclarationStructure } from "../../../../structures";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalTrivia } from "../../testHelpers";
 
 describe("VariableDeclaration", () => {
-    describe(nameof.property<VariableDeclaration>("remove"), () => {
+    describe(nameof<VariableDeclaration>("remove"), () => {
         describe("removing from variable statement", () => {
             function doTest(text: string, index: number, expectedText: string) {
                 const { sourceFile } = getInfoFromText(text);
@@ -44,7 +44,7 @@ describe("VariableDeclaration", () => {
         });
     });
 
-    describe(nameof.property<VariableDeclaration>("getVariableStatement"), () => {
+    describe(nameof<VariableDeclaration>("getVariableStatement"), () => {
         function doTest(startCode: string, expectedText: string | undefined) {
             const { descendant } = getInfoFromTextWithDescendant<VariableDeclaration>(startCode, SyntaxKind.VariableDeclaration);
             const statement = descendant.getVariableStatement();
@@ -61,7 +61,7 @@ describe("VariableDeclaration", () => {
         });
     });
 
-    describe(nameof.property<VariableDeclaration>("getVariableStatementOrThrow"), () => {
+    describe(nameof<VariableDeclaration>("getVariableStatementOrThrow"), () => {
         function doTest(startCode: string, expectedText: string | undefined) {
             const { descendant } = getInfoFromTextWithDescendant<VariableDeclaration>(startCode, SyntaxKind.VariableDeclaration);
 
@@ -80,7 +80,7 @@ describe("VariableDeclaration", () => {
         });
     });
 
-    describe(nameof.property<VariableDeclaration>("set"), () => {
+    describe(nameof<VariableDeclaration>("set"), () => {
         function doTest(startCode: string, structure: Partial<VariableDeclarationStructure>, expectedCode: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const variableDeclaration = sourceFile.getVariableDeclarations()[0];
@@ -94,7 +94,7 @@ describe("VariableDeclaration", () => {
         });
     });
 
-    describe(nameof.property<VariableDeclaration>("getStructure"), () => {
+    describe(nameof<VariableDeclaration>("getStructure"), () => {
         function doTest(startCode: string, expectedStructure: OptionalTrivia<MakeRequired<VariableDeclarationStructure>>) {
             const structure = getInfoFromText(startCode).sourceFile.getVariableDeclarations()[0].getStructure();
             expect(structure).to.deep.equal(expectedStructure);

@@ -1,7 +1,7 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, PrivateIdentifier } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 function getInfoFromTextWithFirstProperty(text: string) {
     const obj = getInfoFromText<ClassDeclaration>(text);
@@ -10,7 +10,7 @@ function getInfoFromTextWithFirstProperty(text: string) {
 }
 
 describe("PrivateIdentifier", () => {
-    describe(nameof.property<PrivateIdentifier>("getText"), () => {
+    describe(nameof<PrivateIdentifier>("getText"), () => {
         function doTest(text: string, expectedText: string) {
             const { firstProp } = getInfoFromTextWithFirstProperty(text);
             const identifier = (firstProp.getNameNode() as PrivateIdentifier);
@@ -22,7 +22,7 @@ describe("PrivateIdentifier", () => {
         });
     });
 
-    describe(nameof.property<PrivateIdentifier>("rename"), () => {
+    describe(nameof<PrivateIdentifier>("rename"), () => {
         function doTest(text: string, newName: string, expectedText: string) {
             const { sourceFile, firstProp } = getInfoFromTextWithFirstProperty(text);
             const identifier = (firstProp.getNameNode() as PrivateIdentifier);

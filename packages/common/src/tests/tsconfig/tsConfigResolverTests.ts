@@ -14,7 +14,7 @@ describe("TsConfigResolver", () => {
         );
     }
 
-    describe(nameof.property<TsConfigResolver>("getCompilerOptions"), () => {
+    describe(nameof<TsConfigResolver>("getCompilerOptions"), () => {
         function getCompilerOptions(fileSystem: FileSystemHost) {
             return getResolver(fileSystem).getCompilerOptions();
         }
@@ -50,7 +50,7 @@ describe("TsConfigResolver", () => {
         });
     });
 
-    describe(nameof.property<TsConfigResolver>("getErrors"), () => {
+    describe(nameof<TsConfigResolver>("getErrors"), () => {
         function getErrors(fileSystem: FileSystemHost) {
             return getResolver(fileSystem).getErrors();
         }
@@ -70,7 +70,7 @@ describe("TsConfigResolver", () => {
         });
     });
 
-    describe(nameof.property<TsConfigResolver>("getPaths"), () => {
+    describe(nameof<TsConfigResolver>("getPaths"), () => {
         function getPaths(fileSystem: FileSystemHost) {
             return getResolver(fileSystem).getPaths();
         }

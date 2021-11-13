@@ -1,11 +1,11 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { EnumDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration, NamedNode, ObjectLiteralExpression, RenameOptions, ShorthandPropertyAssignment,
     VariableStatement } from "../../../../../compiler";
 import { getInfoFromText } from "../../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("NamedNode", () => {
-    describe(nameof.property<NamedNode>("rename"), () => {
+    describe(nameof<NamedNode>("rename"), () => {
         it("should set the name and rename any referenced nodes", () => {
             const { firstChild, sourceFile } = getInfoFromText<EnumDeclaration>("enum MyEnum {}\nlet myEnum: MyEnum;");
             firstChild.rename("MyNewEnum");
@@ -139,7 +139,7 @@ describe("NamedNode", () => {
         });
     });
 
-    describe(nameof.property<NamedNode>("getName"), () => {
+    describe(nameof<NamedNode>("getName"), () => {
         const { firstChild } = getInfoFromText<EnumDeclaration>("enum MyEnum {}");
 
         it("should get the name", () => {
@@ -147,7 +147,7 @@ describe("NamedNode", () => {
         });
     });
 
-    describe(nameof.property<NamedNode>("getNameNode"), () => {
+    describe(nameof<NamedNode>("getNameNode"), () => {
         const { firstChild } = getInfoFromText<EnumDeclaration>("enum MyEnum {}");
         const nameNode = firstChild.getNameNode();
 
@@ -160,7 +160,7 @@ describe("NamedNode", () => {
         });
     });
 
-    describe(nameof.property<NamedNode>("findReferences"), () => {
+    describe(nameof<NamedNode>("findReferences"), () => {
         it("should find all the references", () => {
             // most of the tests for this are in identifierTests
             const { firstChild, sourceFile, project } = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
@@ -169,7 +169,7 @@ describe("NamedNode", () => {
         });
     });
 
-    describe(nameof.property<NamedNode>("findReferencesAsNodes"), () => {
+    describe(nameof<NamedNode>("findReferencesAsNodes"), () => {
         it("should find all the references and exclude the definition", () => {
             const { firstChild, sourceFile, project } = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
             const secondSourceFile = project.createSourceFile("second.ts", "const reference2 = myFunction;");
@@ -189,7 +189,7 @@ describe("NamedNode", () => {
         });
     });
 
-    describe(nameof.property<EnumDeclaration>("set"), () => {
+    describe(nameof<EnumDeclaration>("set"), () => {
         it("should fill the node with a new name not via a rename", () => {
             const { firstChild, sourceFile } = getInfoFromText<EnumDeclaration>("enum MyEnum {}\nlet myEnum: MyEnum;");
             firstChild.set({ name: "MyNewEnum" });
@@ -197,7 +197,7 @@ describe("NamedNode", () => {
         });
     });
 
-    describe(nameof.property<EnumDeclaration>("getStructure"), () => {
+    describe(nameof<EnumDeclaration>("getStructure"), () => {
         it("should get the name", () => {
             const { firstChild, sourceFile } = getInfoFromText<EnumDeclaration>("enum MyEnum {}");
             expect(firstChild.getStructure().name).to.equal("MyEnum");

@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ArrayLiteralExpression, VariableStatement } from "../../../../../compiler";
 import { WriterFunction } from "../../../../../types";
@@ -14,7 +14,7 @@ describe("ArrayLiteralExpression", () => {
         };
     }
 
-    describe(nameof.property<ArrayLiteralExpression>("getElements"), () => {
+    describe(nameof<ArrayLiteralExpression>("getElements"), () => {
         function doTest(text: string, elementTexts: string[]) {
             const { arrayLiteralExpression } = getArrayLiteralExpression(text);
             expect(arrayLiteralExpression.getElements().map(e => e.getText())).to.deep.equal(elementTexts);
@@ -29,7 +29,7 @@ describe("ArrayLiteralExpression", () => {
         });
     });
 
-    describe(nameof.property<ArrayLiteralExpression>("insertElements"), () => {
+    describe(nameof<ArrayLiteralExpression>("insertElements"), () => {
         type Options = { useNewLines?: boolean; useTrailingCommas?: boolean; };
         function doTest(text: string, index: number, elementTexts: string[], expectedText: string, options?: Options) {
             const { arrayLiteralExpression, sourceFile, project } = getArrayLiteralExpression(text);
@@ -101,7 +101,7 @@ describe("ArrayLiteralExpression", () => {
         });
     });
 
-    describe(nameof.property<ArrayLiteralExpression>("insertElement"), () => {
+    describe(nameof<ArrayLiteralExpression>("insertElement"), () => {
         function doTest(text: string, index: number, elementText: string, expectedText: string) {
             const { arrayLiteralExpression, sourceFile } = getArrayLiteralExpression(text);
             const result = arrayLiteralExpression.insertElement(index, elementText);
@@ -126,7 +126,7 @@ describe("ArrayLiteralExpression", () => {
         });
     });
 
-    describe(nameof.property<ArrayLiteralExpression>("addElements"), () => {
+    describe(nameof<ArrayLiteralExpression>("addElements"), () => {
         function doTest(text: string, elementTexts: string[], expectedText: string) {
             const { arrayLiteralExpression, sourceFile } = getArrayLiteralExpression(text);
             const result = arrayLiteralExpression.addElements(elementTexts);
@@ -143,7 +143,7 @@ describe("ArrayLiteralExpression", () => {
         });
     });
 
-    describe(nameof.property<ArrayLiteralExpression>("addElement"), () => {
+    describe(nameof<ArrayLiteralExpression>("addElement"), () => {
         function doTest(text: string, elementText: string, expectedText: string) {
             const { arrayLiteralExpression, sourceFile } = getArrayLiteralExpression(text);
             const result = arrayLiteralExpression.addElement(elementText);
@@ -160,7 +160,7 @@ describe("ArrayLiteralExpression", () => {
         });
     });
 
-    describe(nameof.property<ArrayLiteralExpression>("removeElement"), () => {
+    describe(nameof<ArrayLiteralExpression>("removeElement"), () => {
         it("should throw when none exist", () => {
             const { arrayLiteralExpression, sourceFile } = getArrayLiteralExpression("var t = []");
             expect(() => arrayLiteralExpression.removeElement(0)).to.throw();

@@ -1,11 +1,11 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { JSDoc } from "../../../../compiler";
 import { JSDocStructure, JSDocTagStructure, OptionalKind, StructureKind } from "../../../../structures";
 import { fillStructures, getInfoFromText, OptionalTrivia } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("JSDoc", () => {
-    describe(nameof.property<JSDoc>("isMultiLine"), () => {
+    describe(nameof<JSDoc>("isMultiLine"), () => {
         function doTest(text: string, expectedValue: boolean) {
             const { sourceFile } = getInfoFromText(text);
             const actual = sourceFile.getFunctions()[0].getJsDocs()[0].isMultiLine();
@@ -21,7 +21,7 @@ describe("JSDoc", () => {
         });
     });
 
-    describe(nameof.property<JSDoc>("remove"), () => {
+    describe(nameof<JSDoc>("remove"), () => {
         function doTest(text: string, index: number, jsDocIndex: number, expectedText: string) {
             const { sourceFile } = getInfoFromText(text);
             sourceFile.getFunctions()[index].getJsDocs()[jsDocIndex].remove();
@@ -46,7 +46,7 @@ describe("JSDoc", () => {
         });
     });
 
-    describe(nameof.property<JSDoc>("getDescription"), () => {
+    describe(nameof<JSDoc>("getDescription"), () => {
         function doTest(text: string, expectedComment: string | undefined) {
             const { sourceFile } = getInfoFromText(text);
             const comment = sourceFile.getFunctions()[0].getJsDocs()[0].getDescription();
@@ -75,7 +75,7 @@ describe("JSDoc", () => {
         });
     });
 
-    describe(nameof.property<JSDoc>("setDescription"), () => {
+    describe(nameof<JSDoc>("setDescription"), () => {
         function doTest(text: string, comment: string, expectedText: string) {
             const { sourceFile } = getInfoFromText(text);
             sourceFile.getFunctions()[0].getJsDocs()[0].setDescription(comment);
@@ -117,7 +117,7 @@ describe("JSDoc", () => {
         });
     });
 
-    describe(nameof.property<JSDoc>("getTags"), () => {
+    describe(nameof<JSDoc>("getTags"), () => {
         function doTest(text: string, expectedTags: string[]) {
             const { sourceFile } = getInfoFromText(text);
             const tags = sourceFile.getFunctions()[0].getJsDocs()[0].getTags();
@@ -134,7 +134,7 @@ describe("JSDoc", () => {
         });
     });
 
-    describe(nameof.property<JSDoc>("insertTags"), () => {
+    describe(nameof<JSDoc>("insertTags"), () => {
         function doTest(text: string, index: number, structures: OptionalKind<JSDocTagStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(text);
             const jsDoc = sourceFile.getFunctions()[0].getJsDocs()[0];
@@ -207,7 +207,7 @@ describe("JSDoc", () => {
         });
     });
 
-    describe(nameof.property<JSDoc>("insertTag"), () => {
+    describe(nameof<JSDoc>("insertTag"), () => {
         function doTest(text: string, index: number, structure: OptionalKind<JSDocTagStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(text);
             const jsDoc = sourceFile.getFunctions()[0].getJsDocs()[0];
@@ -226,7 +226,7 @@ describe("JSDoc", () => {
         });
     });
 
-    describe(nameof.property<JSDoc>("addTags"), () => {
+    describe(nameof<JSDoc>("addTags"), () => {
         function doTest(text: string, structures: OptionalKind<JSDocTagStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(text);
             const jsDoc = sourceFile.getFunctions()[0].getJsDocs()[0];
@@ -244,7 +244,7 @@ describe("JSDoc", () => {
         });
     });
 
-    describe(nameof.property<JSDoc>("addTag"), () => {
+    describe(nameof<JSDoc>("addTag"), () => {
         function doTest(text: string, structure: OptionalKind<JSDocTagStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(text);
             const jsDoc = sourceFile.getFunctions()[0].getJsDocs()[0];
@@ -262,7 +262,7 @@ describe("JSDoc", () => {
         });
     });
 
-    describe(nameof.property<JSDoc>("getInnerText"), () => {
+    describe(nameof<JSDoc>("getInnerText"), () => {
         function doTest(text: string, expectedText: string) {
             const { sourceFile } = getInfoFromText(text);
             const innerText = sourceFile.getFunctions()[0].getJsDocs()[0].getInnerText();
@@ -307,7 +307,7 @@ describe("JSDoc", () => {
         });
     });
 
-    describe(nameof.property<JSDoc>("set"), () => {
+    describe(nameof<JSDoc>("set"), () => {
         function doTest(text: string, structure: Partial<JSDocStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(text);
             sourceFile.getClasses()[0].getJsDocs()[0].set(structure);
@@ -347,7 +347,7 @@ describe("JSDoc", () => {
         });
     });
 
-    describe(nameof.property<JSDoc>("getStructure"), () => {
+    describe(nameof<JSDoc>("getStructure"), () => {
         function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<JSDocStructure>>) {
             const { sourceFile } = getInfoFromText(text);
             const structure = sourceFile.getFunctions()[0].getJsDocs()[0].getStructure();

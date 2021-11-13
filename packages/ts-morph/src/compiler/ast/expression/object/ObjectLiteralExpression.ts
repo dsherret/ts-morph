@@ -49,7 +49,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
         let findFunc: (property: ObjectLiteralElementLike) => boolean;
         if (typeof nameOrFindFunction === "string") {
             findFunc = prop => {
-                if ((prop as any)[nameof.property<PropertyAssignment>("getName")] == null)
+                if ((prop as any)[nameof<PropertyAssignment>("getName")] == null)
                     return false;
                 return (prop as PropertyAssignment).getName() === nameOrFindFunction;
             };

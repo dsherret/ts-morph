@@ -1,10 +1,10 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { CallExpression } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
 describe("CallExpression", () => {
-    describe(nameof.property<CallExpression>("getReturnType"), () => {
+    describe(nameof<CallExpression>("getReturnType"), () => {
         function doTest(text: string, expectedTypes: string[]) {
             const { sourceFile } = getInfoFromText(text);
             const callExpressions = sourceFile.getDescendantsOfKind(SyntaxKind.CallExpression);

@@ -12,13 +12,13 @@ describe("InMemoryFileSystemHost", () => {
         });
     });
 
-    describe(nameof.property<InMemoryFileSystemHost>("getCurrentDirectory"), () => {
+    describe(nameof<InMemoryFileSystemHost>("getCurrentDirectory"), () => {
         it("should have a current directory of just a forward slash", () => {
             expect(new InMemoryFileSystemHost().getCurrentDirectory()).to.equal("/");
         });
     });
 
-    describe(nameof.property<InMemoryFileSystemHost>("deleteSync"), () => {
+    describe(nameof<InMemoryFileSystemHost>("deleteSync"), () => {
         it("should delete a file", () => {
             const fs = new InMemoryFileSystemHost();
             const filePath = "/dir/file.ts";
@@ -53,7 +53,7 @@ describe("InMemoryFileSystemHost", () => {
         });
     });
 
-    describe(nameof.property<InMemoryFileSystemHost>("delete"), () => {
+    describe(nameof<InMemoryFileSystemHost>("delete"), () => {
         // most tests done in deleteSync
         it("should delete a file", async () => {
             const fs = new InMemoryFileSystemHost();
@@ -75,7 +75,7 @@ describe("InMemoryFileSystemHost", () => {
         });
     });
 
-    describe(nameof.property<InMemoryFileSystemHost>("readDirSync"), () => {
+    describe(nameof<InMemoryFileSystemHost>("readDirSync"), () => {
         it("should read a directory that exists", () => {
             const fs = new InMemoryFileSystemHost();
             fs.writeFileSync("/dir/file.ts", "");
@@ -101,7 +101,7 @@ describe("InMemoryFileSystemHost", () => {
         });
     });
 
-    describe(nameof.property<InMemoryFileSystemHost>("readFileSync"), () => {
+    describe(nameof<InMemoryFileSystemHost>("readFileSync"), () => {
         it("should read a file that exists", () => {
             const fs = new InMemoryFileSystemHost();
             const filePath = "/dir/file.ts";
@@ -116,7 +116,7 @@ describe("InMemoryFileSystemHost", () => {
         });
     });
 
-    describe(nameof.property<InMemoryFileSystemHost>("readFile"), () => {
+    describe(nameof<InMemoryFileSystemHost>("readFile"), () => {
         it("should read a file that exists", async () => {
             const fs = new InMemoryFileSystemHost();
             const filePath = "/dir/file.ts";
@@ -137,7 +137,7 @@ describe("InMemoryFileSystemHost", () => {
         });
     });
 
-    describe(nameof.property<InMemoryFileSystemHost>("writeFileSync"), () => {
+    describe(nameof<InMemoryFileSystemHost>("writeFileSync"), () => {
         it("should write a file", () => {
             const fs = new InMemoryFileSystemHost();
             const filePath = "/dir/file.ts";
@@ -164,7 +164,7 @@ describe("InMemoryFileSystemHost", () => {
         });
     });
 
-    describe(nameof.property<InMemoryFileSystemHost>("writeFile"), () => {
+    describe(nameof<InMemoryFileSystemHost>("writeFile"), () => {
         it("should write a file", async () => {
             const fs = new InMemoryFileSystemHost();
             const filePath = "/dir/file.ts";
@@ -183,7 +183,7 @@ describe("InMemoryFileSystemHost", () => {
         });
     });
 
-    describe(nameof.property<InMemoryFileSystemHost>("mkdirSync"), () => {
+    describe(nameof<InMemoryFileSystemHost>("mkdirSync"), () => {
         it("should create the directory and all its parent directories", () => {
             const fs = new InMemoryFileSystemHost();
             const path = "/dir/subdir";
@@ -193,7 +193,7 @@ describe("InMemoryFileSystemHost", () => {
         });
     });
 
-    describe(nameof.property<InMemoryFileSystemHost>("mkdir"), () => {
+    describe(nameof<InMemoryFileSystemHost>("mkdir"), () => {
         it("should create the directory and all its parent directories", async () => {
             const fs = new InMemoryFileSystemHost();
             const path = "/dir/subdir";
@@ -203,7 +203,7 @@ describe("InMemoryFileSystemHost", () => {
         });
     });
 
-    describe(nameof.property<InMemoryFileSystemHost>("copy"), () => {
+    describe(nameof<InMemoryFileSystemHost>("copy"), () => {
         // this will test copySync because this calls copySync
 
         it("should copy a directory and all its sub directories", async () => {
@@ -273,7 +273,7 @@ describe("InMemoryFileSystemHost", () => {
         });
     });
 
-    describe(nameof.property<InMemoryFileSystemHost>("move"), () => {
+    describe(nameof<InMemoryFileSystemHost>("move"), () => {
         // this will test moveSync because this calls moveSync
 
         it("should move a directory and all its sub directories", async () => {
@@ -341,7 +341,7 @@ describe("InMemoryFileSystemHost", () => {
         });
     });
 
-    describe(nameof.property<InMemoryFileSystemHost>("fileExists"), () => {
+    describe(nameof<InMemoryFileSystemHost>("fileExists"), () => {
         const fs = new InMemoryFileSystemHost();
         fs.writeFileSync("/file.ts", "");
 
@@ -354,7 +354,7 @@ describe("InMemoryFileSystemHost", () => {
         });
     });
 
-    describe(nameof.property<InMemoryFileSystemHost>("fileExistsSync"), () => {
+    describe(nameof<InMemoryFileSystemHost>("fileExistsSync"), () => {
         const fs = new InMemoryFileSystemHost();
         fs.writeFileSync("/file.ts", "");
 
@@ -367,7 +367,7 @@ describe("InMemoryFileSystemHost", () => {
         });
     });
 
-    describe(nameof.property<InMemoryFileSystemHost>("directoryExists"), () => {
+    describe(nameof<InMemoryFileSystemHost>("directoryExists"), () => {
         const fs = new InMemoryFileSystemHost();
         fs.mkdirSync("/dir");
 
@@ -380,7 +380,7 @@ describe("InMemoryFileSystemHost", () => {
         });
     });
 
-    describe(nameof.property<InMemoryFileSystemHost>("directoryExistsSync"), () => {
+    describe(nameof<InMemoryFileSystemHost>("directoryExistsSync"), () => {
         const fs = new InMemoryFileSystemHost();
         fs.mkdirSync("/dir");
 
@@ -393,7 +393,7 @@ describe("InMemoryFileSystemHost", () => {
         });
     });
 
-    describe(nameof.property<InMemoryFileSystemHost>("globSync"), () => {
+    describe(nameof<InMemoryFileSystemHost>("globSync"), () => {
         const fs = new InMemoryFileSystemHost();
         fs.writeFileSync("/dir/file1.ts", "");
         fs.writeFileSync("/dir/file1.d.ts", "");

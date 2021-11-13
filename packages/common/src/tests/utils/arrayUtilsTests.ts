@@ -13,7 +13,7 @@ describe("ArrayUtils", () => {
         }
     }
 
-    describe(`#${nameof.property(ArrayUtils, "isNullOrEmpty")}()`, () => {
+    describe(`#${nameof(ArrayUtils, "isNullOrEmpty")}()`, () => {
         it("should return true when null", () => {
             expect(ArrayUtils.isNullOrEmpty(null as any)).to.equal(true);
         });
@@ -31,13 +31,13 @@ describe("ArrayUtils", () => {
         });
     });
 
-    describe(`#${nameof.property(ArrayUtils, "getUniqueItems")}()`, () => {
+    describe(`#${nameof(ArrayUtils, "getUniqueItems")}()`, () => {
         it("should return all the unique items in the array", () => {
             expect(ArrayUtils.getUniqueItems([1, 2, 3, 3, 2, 1])).to.eql([1, 2, 3]);
         });
     });
 
-    describe(`#${nameof.property(ArrayUtils, "removeFirst")}()`, () => {
+    describe(`#${nameof(ArrayUtils, "removeFirst")}()`, () => {
         it("should remove the first value", () => {
             const a = [1, 2, 3, 3];
             const result = ArrayUtils.removeFirst(a, 3);
@@ -53,7 +53,7 @@ describe("ArrayUtils", () => {
         });
     });
 
-    describe(`#${nameof.property(ArrayUtils, "removeAll")}()`, () => {
+    describe(`#${nameof(ArrayUtils, "removeAll")}()`, () => {
         it("should remove every item that matches", () => {
             const a = [3, 1, 2, 3, 3];
             const result = ArrayUtils.removeAll(a, i => i === 3);
@@ -62,7 +62,7 @@ describe("ArrayUtils", () => {
         });
     });
 
-    describe(`#${nameof.property(ArrayUtils, "binarySearch")}()`, () => {
+    describe(`#${nameof(ArrayUtils, "binarySearch")}()`, () => {
         function doTest(items: number[], value: number, expectedValue: number) {
             const result = ArrayUtils.binarySearch(items, new ComparerToStoredComparer(new NumberComparer(), value));
             expect(result).to.equal(expectedValue);
@@ -109,7 +109,7 @@ describe("ArrayUtils", () => {
         });
     });
 
-    describe(`#${nameof.property(ArrayUtils, "binaryInsertWithOverwrite")}()`, () => {
+    describe(`#${nameof(ArrayUtils, "binaryInsertWithOverwrite")}()`, () => {
         function doTest(items: number[], value: number, expectedItems: number[]) {
             ArrayUtils.binaryInsertWithOverwrite(items, value, new NumberComparer());
             expect(items).to.deep.equal(expectedItems);
@@ -136,7 +136,7 @@ describe("ArrayUtils", () => {
         });
     });
 
-    describe(`#${nameof.property(ArrayUtils, "containsSubArray")}()`, () => {
+    describe(`#${nameof(ArrayUtils, "containsSubArray")}()`, () => {
         function doTest(items: number[], subArray: number[], result: boolean) {
             expect(ArrayUtils.containsSubArray(items, subArray)).equal(result);
         }
@@ -166,7 +166,7 @@ describe("ArrayUtils", () => {
         });
     });
 
-    describe(`#${nameof.property(ArrayUtils, "groupBy")}()`, () => {
+    describe(`#${nameof(ArrayUtils, "groupBy")}()`, () => {
         it("should group by the specified property", () => {
             const items = [{ id: 1, name: "Name1" }, { id: 3, name: "Name2" }, { id: 2, name: "Name1" }];
             const result = ArrayUtils.groupBy(items, item => item.name);

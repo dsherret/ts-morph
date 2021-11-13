@@ -1,4 +1,4 @@
-import { errors, ts, nameof } from "@ts-morph/common";
+import { errors, nameof, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange } from "../../../manipulation";
 import { JsxElementSpecificStructure, JsxElementStructure, StructureKind } from "../../../structures";
 import { WriterFunction } from "../../../types";
@@ -78,7 +78,7 @@ export class JsxElement extends JsxElementBase<ts.JsxElement> {
 
         if (structure.bodyText != null)
             this.setBodyText(structure.bodyText);
-        else if (structure.hasOwnProperty(nameof.property(structure, "bodyText")))
+        else if (structure.hasOwnProperty(nameof(structure, "bodyText")))
             this.setBodyTextInline("");
 
         if (structure.name != null) {

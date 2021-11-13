@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { PostfixUnaryExpression } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -8,13 +8,13 @@ describe("PostfixUnaryExpression", () => {
     const expr = `${expression}++`;
     const { descendant: postfixUnaryExpression } = getInfoFromTextWithDescendant<PostfixUnaryExpression>(expr, SyntaxKind.PostfixUnaryExpression);
 
-    describe(nameof.property<PostfixUnaryExpression>("getOperand"), () => {
+    describe(nameof<PostfixUnaryExpression>("getOperand"), () => {
         it("should get the correct expression", () => {
             expect(postfixUnaryExpression.getOperand()!.getText()).to.equal(expression);
         });
     });
 
-    describe(nameof.property<PostfixUnaryExpression>("getOperatorToken"), () => {
+    describe(nameof<PostfixUnaryExpression>("getOperatorToken"), () => {
         it("should return the operator token", () => {
             expect(postfixUnaryExpression.getOperatorToken()).to.equal(SyntaxKind.PlusPlusToken);
         });

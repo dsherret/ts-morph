@@ -1,11 +1,11 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { FunctionDeclaration, ParameterDeclaration, Scope } from "../../../../compiler";
 import { OptionalKind, ParameterDeclarationSpecificStructure, ParameterDeclarationStructure, StructureKind } from "../../../../structures";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalTrivia } from "../../testHelpers";
 
 describe("ParameterDeclaration", () => {
-    describe(nameof.property<ParameterDeclaration>("isRestParameter"), () => {
+    describe(nameof<ParameterDeclaration>("isRestParameter"), () => {
         function doTest(startCode: string, isRestParameter: boolean) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
             const firstParam = firstChild.getParameters()[0];
@@ -21,7 +21,7 @@ describe("ParameterDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ParameterDeclaration>("setIsRestParameter"), () => {
+    describe(nameof<ParameterDeclaration>("setIsRestParameter"), () => {
         function doTest(startCode: string, isRestParameter: boolean, expectedCode: string) {
             const { descendant, sourceFile } = getInfoFromTextWithDescendant<ParameterDeclaration>(startCode, SyntaxKind.Parameter);
             descendant.setIsRestParameter(isRestParameter);
@@ -49,7 +49,7 @@ describe("ParameterDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ParameterDeclaration>("isParameterProperty"), () => {
+    describe(nameof<ParameterDeclaration>("isParameterProperty"), () => {
         function doTest(startCode: string, isParameterProperty: boolean) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
             const firstParam = firstChild.getParameters()[0];
@@ -74,7 +74,7 @@ describe("ParameterDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ParameterDeclaration>("isOptional"), () => {
+    describe(nameof<ParameterDeclaration>("isOptional"), () => {
         function doTest(startCode: string, isOptional: boolean) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
             const firstParam = firstChild.getParameters()[0];
@@ -98,7 +98,7 @@ describe("ParameterDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ParameterDeclaration>("set"), () => {
+    describe(nameof<ParameterDeclaration>("set"), () => {
         function doTest(startCode: string, structure: Partial<ParameterDeclarationStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             const firstParam = firstChild.getParameters()[0];
@@ -118,7 +118,7 @@ describe("ParameterDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ParameterDeclaration>("remove"), () => {
+    describe(nameof<ParameterDeclaration>("remove"), () => {
         function doTest(code: string, nameToRemove: string, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(code);
             firstChild.getParameters().find(p => p.getName() === nameToRemove)!.remove();
@@ -142,7 +142,7 @@ describe("ParameterDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ParameterDeclaration>("getStructure"), () => {
+    describe(nameof<ParameterDeclaration>("getStructure"), () => {
         function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<ParameterDeclarationStructure>>) {
             const { descendant } = getInfoFromTextWithDescendant<ParameterDeclaration>(code, SyntaxKind.Parameter);
             const structure = descendant.getStructure();
@@ -182,7 +182,7 @@ describe("ParameterDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ParameterDeclaration>("setHasQuestionToken"), () => {
+    describe(nameof<ParameterDeclaration>("setHasQuestionToken"), () => {
         function doTest(code: string, value: boolean, expectedCode: string) {
             const { descendant, sourceFile } = getInfoFromTextWithDescendant<ParameterDeclaration>(code, SyntaxKind.Parameter);
             descendant.setHasQuestionToken(value);
@@ -203,7 +203,7 @@ describe("ParameterDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ParameterDeclaration>("setInitializer"), () => {
+    describe(nameof<ParameterDeclaration>("setInitializer"), () => {
         function doTest(code: string, initializer: string, expectedCode: string) {
             const { descendant, sourceFile } = getInfoFromTextWithDescendant<ParameterDeclaration>(code, SyntaxKind.Parameter);
             descendant.setInitializer(initializer);
@@ -220,7 +220,7 @@ describe("ParameterDeclaration", () => {
         });
     });
 
-    describe(nameof.property<ParameterDeclaration>("setType"), () => {
+    describe(nameof<ParameterDeclaration>("setType"), () => {
         function doTest(code: string, type: string, expectedCode: string) {
             const { descendant, sourceFile } = getInfoFromTextWithDescendant<ParameterDeclaration>(code, SyntaxKind.Parameter);
             descendant.setType(type);

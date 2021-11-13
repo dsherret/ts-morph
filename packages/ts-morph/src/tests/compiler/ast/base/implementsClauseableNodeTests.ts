@@ -1,12 +1,12 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, ImplementsClauseableNode } from "../../../../compiler";
 import { ImplementsClauseableNodeStructure } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("ImplementsClauseableNode", () => {
-    describe(nameof.property<ImplementsClauseableNode>("getImplements"), () => {
+    describe(nameof<ImplementsClauseableNode>("getImplements"), () => {
         it("should return an empty array when they don't exist", () => {
             const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier {}");
             const implementsExpressions = firstChild.getImplements();
@@ -26,7 +26,7 @@ describe("ImplementsClauseableNode", () => {
         });
     });
 
-    describe(nameof.property<ImplementsClauseableNode>("addImplements"), () => {
+    describe(nameof<ImplementsClauseableNode>("addImplements"), () => {
         function doTest(code: string, implementsTextOrArray: string | WriterFunction | (string | WriterFunction)[], expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
             if (implementsTextOrArray instanceof Array || implementsTextOrArray instanceof Function) {
@@ -74,7 +74,7 @@ describe("ImplementsClauseableNode", () => {
         });
     });
 
-    describe(nameof.property<ImplementsClauseableNode>("insertImplements"), () => {
+    describe(nameof<ImplementsClauseableNode>("insertImplements"), () => {
         function doTest(code: string, index: number, implementsTextOrArray: string | WriterFunction | (string | WriterFunction)[], expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
             if (implementsTextOrArray instanceof Array || implementsTextOrArray instanceof Function) {
@@ -105,7 +105,7 @@ describe("ImplementsClauseableNode", () => {
         });
     });
 
-    describe(nameof.property<ImplementsClauseableNode>("removeImplements"), () => {
+    describe(nameof<ImplementsClauseableNode>("removeImplements"), () => {
         function doTest(startingCode: string, index: number, expectedCode: string) {
             doIndexTest();
             doNodeTest();
@@ -154,7 +154,7 @@ describe("ImplementsClauseableNode", () => {
         });
     });
 
-    describe(nameof.property<ClassDeclaration>("set"), () => {
+    describe(nameof<ClassDeclaration>("set"), () => {
         function doTest(startingCode: string, structure: ImplementsClauseableNodeStructure, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startingCode);
             firstChild.set(structure);
@@ -182,7 +182,7 @@ describe("ImplementsClauseableNode", () => {
         });
     });
 
-    describe(nameof.property<ClassDeclaration>("getStructure"), () => {
+    describe(nameof<ClassDeclaration>("getStructure"), () => {
         function doTest(startingCode: string, implementsTexts: string[]) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startingCode);
             expect(firstChild.getStructure().implements).to.deep.equal(implementsTexts);

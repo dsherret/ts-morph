@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { CaseBlock } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
@@ -21,7 +21,7 @@ describe("CaseBlock", () => {
     }
 
     const switchStatement = makeSwitch([firstCase, secondCase, defaultCase]);
-    describe(nameof.property<CaseBlock>("getClauses"), () => {
+    describe(nameof<CaseBlock>("getClauses"), () => {
         function doTest(code: string, clauses: string[]) {
             const { caseBlock } = getCaseBlock(code);
             expect(caseBlock.getClauses().map(s => s.getText())).to.deep.equal(clauses);
@@ -32,7 +32,7 @@ describe("CaseBlock", () => {
         });
     });
 
-    describe(nameof.property<CaseBlock>("removeClauses"), () => {
+    describe(nameof<CaseBlock>("removeClauses"), () => {
         function doTest(code: string, range: [number, number], expectedCode: string) {
             const { sourceFile, caseBlock } = getCaseBlock(code);
             const nodes = caseBlock.removeClauses(range);
@@ -52,7 +52,7 @@ describe("CaseBlock", () => {
         });
     });
 
-    describe(nameof.property<CaseBlock>("removeClause"), () => {
+    describe(nameof<CaseBlock>("removeClause"), () => {
         function doTest(code: string, index: number, expectedCode: string) {
             const { sourceFile, caseBlock } = getCaseBlock(code);
             caseBlock.removeClause(index);

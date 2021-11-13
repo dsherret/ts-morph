@@ -1,4 +1,4 @@
-import { SyntaxKind, ts, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange } from "../../../../manipulation";
 import { PropertyAssignmentSpecificStructure, PropertyAssignmentStructure, StructureKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
@@ -71,7 +71,7 @@ export class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssign
 
         if (structure.initializer != null)
             this.setInitializer(structure.initializer);
-        else if (structure.hasOwnProperty(nameof.property(structure, "initializer")))
+        else if (structure.hasOwnProperty(nameof(structure, "initializer")))
             return this.removeInitializer();
 
         return this;

@@ -4,7 +4,7 @@ import { FileTextChanges } from "../../../../compiler";
 import { Project } from "../../../../Project";
 
 describe("FileTextChanges", () => {
-    describe(nameof.property<FileTextChanges>("applyChanges"), () => {
+    describe(nameof<FileTextChanges>("applyChanges"), () => {
         function setup() {
             const project = new Project({ useInMemoryFileSystem: true });
             project.createSourceFile("test.ts", "const t; const u;");

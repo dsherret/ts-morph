@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { JsxText } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -8,7 +8,7 @@ function getInfo(text: string) {
 }
 
 describe("JsxText", () => {
-    describe(nameof.property<JsxText>("containsOnlyTriviaWhiteSpaces"), () => {
+    describe(nameof<JsxText>("containsOnlyTriviaWhiteSpaces"), () => {
         function doTest(text: string, value: boolean) {
             const { descendant } = getInfo(text);
             expect(descendant.containsOnlyTriviaWhiteSpaces()).to.equal(value);

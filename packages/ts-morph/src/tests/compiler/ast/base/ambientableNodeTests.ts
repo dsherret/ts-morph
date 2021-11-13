@@ -1,8 +1,8 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { AmbientableNode, ClassDeclaration, ModuleDeclaration, Node } from "../../../../compiler";
 import { AmbientableNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("AmbientableNode", () => {
     describe("navigation", () => {
@@ -11,7 +11,7 @@ describe("AmbientableNode", () => {
         const ambientedStatement = statements[0];
         const notAmbientedStatement = statements[1];
 
-        describe(nameof.property<AmbientableNode>("hasDeclareKeyword"), () => {
+        describe(nameof<AmbientableNode>("hasDeclareKeyword"), () => {
             it("should have a declare keyword when it has one", () => {
                 expect(ambientedStatement.hasDeclareKeyword()).to.be.true;
             });
@@ -21,7 +21,7 @@ describe("AmbientableNode", () => {
             });
         });
 
-        describe(nameof.property<AmbientableNode>("getDeclareKeyword"), () => {
+        describe(nameof<AmbientableNode>("getDeclareKeyword"), () => {
             it("should have an declare keyword when it has one", () => {
                 expect(ambientedStatement.getDeclareKeyword()!.getText()).to.equal("declare");
             });
@@ -31,7 +31,7 @@ describe("AmbientableNode", () => {
             });
         });
 
-        describe(nameof.property<AmbientableNode>("getDeclareKeywordOrThrow"), () => {
+        describe(nameof<AmbientableNode>("getDeclareKeywordOrThrow"), () => {
             it("should have an declare keyword when it has one", () => {
                 expect(ambientedStatement.getDeclareKeywordOrThrow().getText()).to.equal("declare");
             });
@@ -41,7 +41,7 @@ describe("AmbientableNode", () => {
             });
         });
 
-        describe(nameof.property<AmbientableNode>("isAmbient"), () => {
+        describe(nameof<AmbientableNode>("isAmbient"), () => {
             function doTest(text: string, expectedValue: boolean) {
                 const { firstChild } = getInfoFromText<AmbientableNode & Node>(text);
                 expect(firstChild.isAmbient()).to.equal(expectedValue);
@@ -75,7 +75,7 @@ describe("AmbientableNode", () => {
         });
     });
 
-    describe(nameof.property<AmbientableNode>("setHasDeclareKeyword"), () => {
+    describe(nameof<AmbientableNode>("setHasDeclareKeyword"), () => {
         function doTest(text: string, value: boolean, expected: string) {
             const { firstChild, sourceFile } = getInfoFromText<AmbientableNode & Node>(text);
             firstChild.setHasDeclareKeyword(value);
@@ -96,7 +96,7 @@ describe("AmbientableNode", () => {
         });
     });
 
-    describe(nameof.property<ClassDeclaration>("getStructure"), () => {
+    describe(nameof<ClassDeclaration>("getStructure"), () => {
         function doTest(startingCode: string, hasDeclareKeyword: boolean) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             expect(firstChild.getStructure().hasDeclareKeyword).to.equal(hasDeclareKeyword);
@@ -111,7 +111,7 @@ describe("AmbientableNode", () => {
         });
     });
 
-    describe(nameof.property<ClassDeclaration>("set"), () => {
+    describe(nameof<ClassDeclaration>("set"), () => {
         function doTest(startingCode: string, structure: AmbientableNodeStructure, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             firstChild.set(structure);

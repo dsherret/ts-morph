@@ -1,9 +1,9 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { FormatCodeSettings } from "../../../compiler";
 import { ExportAssignmentStructurePrinter } from "../../../structurePrinters";
 import { ExportAssignmentStructure, OptionalKind } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("ExportAssignmentStructurePrinter", () => {
     interface Options {
@@ -18,7 +18,7 @@ describe("ExportAssignmentStructurePrinter", () => {
 
     // todo: more tests
 
-    describe(nameof.property<ExportAssignmentStructurePrinter>("printText"), () => {
+    describe(nameof<ExportAssignmentStructurePrinter>("printText"), () => {
         describe("expression", () => {
             it("should write with a string", () => {
                 doTest({ expression: "testing" }, `export = testing;`);

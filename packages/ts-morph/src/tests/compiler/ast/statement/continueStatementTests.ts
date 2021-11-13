@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ContinueStatement } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -12,7 +12,7 @@ describe("ContinueStatement", () => {
     const statement = `continue ${label};`;
     const emptyStatement = "continue;";
 
-    describe(nameof.property<ContinueStatement>("getLabel"), () => {
+    describe(nameof<ContinueStatement>("getLabel"), () => {
         function doTest(text: string, expectedText?: string) {
             const continueStatement = getStatement(text);
             const value = continueStatement.getLabel();
@@ -28,7 +28,7 @@ describe("ContinueStatement", () => {
         });
     });
 
-    describe(nameof.property<ContinueStatement>("getLabelOrThrow"), () => {
+    describe(nameof<ContinueStatement>("getLabelOrThrow"), () => {
         function doTest(text: string, expectedText?: string) {
             const continueStatement = getStatement(text);
             if (expectedText == null)

@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { CatchClause } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -15,13 +15,13 @@ describe("CatchClause", () => {
     const catchClause = getCatchClause(statement);
     const emptyCatchClause = getCatchClause(emptyStatement);
 
-    describe(nameof.property<CatchClause>("getBlock"), () => {
+    describe(nameof<CatchClause>("getBlock"), () => {
         it("should get the correct block", () => {
             expect(catchClause.getBlock().getText()).to.equal(block);
         });
     });
 
-    describe(nameof.property<CatchClause>("getVariableDeclaration"), () => {
+    describe(nameof<CatchClause>("getVariableDeclaration"), () => {
         it("should get the correct variable declaration", () => {
             expect(catchClause.getVariableDeclaration()!.getText()).to.equal(variableDeclaration);
         });
@@ -31,7 +31,7 @@ describe("CatchClause", () => {
         });
     });
 
-    describe(nameof.property<CatchClause>("getVariableDeclarationOrThrow"), () => {
+    describe(nameof<CatchClause>("getVariableDeclarationOrThrow"), () => {
         it("should should return the variable declaration", () => {
             expect(catchClause.getVariableDeclarationOrThrow().getText()).to.equal(variableDeclaration);
         });

@@ -272,13 +272,9 @@ class IterableUtils {
     }
 }
 
-var nameof;
-(function (nameof) {
-    function property(key1, key2) {
-        return key2 !== null && key2 !== void 0 ? key2 : key1;
-    }
-    nameof.property = property;
-})(nameof || (nameof = {}));
+function nameof(key1, key2) {
+    return key2 !== null && key2 !== void 0 ? key2 : key1;
+}
 
 class ObjectUtils {
     constructor() {
@@ -983,7 +979,7 @@ function createHosts(options) {
     function getLibFolderPath() {
         if (options.libFolderPath != null) {
             if (options.skipLoadingLibFiles === true) {
-                throw new errors.InvalidOperationError(`Cannot set ${nameof.property(options, "skipLoadingLibFiles")} to true when ${nameof.property(options, "libFolderPath")} is provided.`);
+                throw new errors.InvalidOperationError(`Cannot set ${nameof(options, "skipLoadingLibFiles")} to true when ${nameof(options, "libFolderPath")} is provided.`);
             }
             return options.libFolderPath;
         }

@@ -1,10 +1,10 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, ExportGetableNode, ModuleDeclaration, Node, VariableStatement } from "../../../../../compiler";
 import { getInfoFromText } from "../../../testHelpers";
 
 describe("ExportGetableNode", () => {
-    describe(nameof.property<ExportGetableNode>("hasExportKeyword"), () => {
+    describe(nameof<ExportGetableNode>("hasExportKeyword"), () => {
         function doTest(text: string, expected: boolean) {
             const node = getInfoFromText(text).firstChild as Node & ExportGetableNode;
             expect(node.hasExportKeyword()).to.equal(expected);
@@ -19,7 +19,7 @@ describe("ExportGetableNode", () => {
         });
     });
 
-    describe(nameof.property<ExportGetableNode>("getExportKeyword"), () => {
+    describe(nameof<ExportGetableNode>("getExportKeyword"), () => {
         function doTest(text: string, expected: string | undefined, childSelector?: (node: Node) => Node & ExportGetableNode) {
             let node = getInfoFromText(text).firstChild as Node & ExportGetableNode;
             if (childSelector != null)
@@ -56,7 +56,7 @@ describe("ExportGetableNode", () => {
         });
     });
 
-    describe(nameof.property<ExportGetableNode>("getExportKeywordOrThrow"), () => {
+    describe(nameof<ExportGetableNode>("getExportKeywordOrThrow"), () => {
         function doTest(text: string, expected: string | undefined) {
             const { firstChild } = getInfoFromText<VariableStatement>(text);
             if (expected != null)
@@ -74,7 +74,7 @@ describe("ExportGetableNode", () => {
         });
     });
 
-    describe(nameof.property<ExportGetableNode>("hasDefaultKeyword"), () => {
+    describe(nameof<ExportGetableNode>("hasDefaultKeyword"), () => {
         function doTest(text: string, expected: boolean) {
             const { firstChild } = getInfoFromText<VariableStatement>(text);
             expect(firstChild.hasDefaultKeyword()).to.equal(expected);
@@ -89,7 +89,7 @@ describe("ExportGetableNode", () => {
         });
     });
 
-    describe(nameof.property<ExportGetableNode>("getDefaultKeyword"), () => {
+    describe(nameof<ExportGetableNode>("getDefaultKeyword"), () => {
         function doTest(text: string, expected: string | undefined, childSelector?: (node: Node) => Node & ExportGetableNode) {
             let node = getInfoFromText(text).firstChild as Node & ExportGetableNode;
             if (childSelector != null)
@@ -110,7 +110,7 @@ describe("ExportGetableNode", () => {
         });
     });
 
-    describe(nameof.property<ExportGetableNode>("getDefaultKeywordOrThrow"), () => {
+    describe(nameof<ExportGetableNode>("getDefaultKeywordOrThrow"), () => {
         function doTest(text: string, expected: string | undefined) {
             const { firstChild } = getInfoFromText<VariableStatement>(text);
             if (expected != null)
@@ -128,7 +128,7 @@ describe("ExportGetableNode", () => {
         });
     });
 
-    describe(nameof.property<ExportGetableNode>("isExported"), () => {
+    describe(nameof<ExportGetableNode>("isExported"), () => {
         describe("regular", () => {
             function doTest(text: string, expected: boolean) {
                 const { firstChild } = getInfoFromText<ClassDeclaration>(text);
@@ -203,7 +203,7 @@ describe("ExportGetableNode", () => {
         });
     });
 
-    describe(nameof.property<ExportGetableNode>("isDefaultExport"), () => {
+    describe(nameof<ExportGetableNode>("isDefaultExport"), () => {
         describe("regular", () => {
             function doTest(text: string, expected: boolean) {
                 const { firstChild } = getInfoFromText<ClassDeclaration>(text);
@@ -247,7 +247,7 @@ describe("ExportGetableNode", () => {
         });
     });
 
-    describe(nameof.property<ExportGetableNode>("isNamedExport"), () => {
+    describe(nameof<ExportGetableNode>("isNamedExport"), () => {
         describe("regular", () => {
             function doTest(text: string, expected: boolean) {
                 const { firstChild } = getInfoFromText<ClassDeclaration>(text);

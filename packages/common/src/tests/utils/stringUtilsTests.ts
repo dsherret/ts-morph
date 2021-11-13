@@ -3,7 +3,7 @@ import { errors } from "../../errors";
 import { nameof, StringUtils } from "../../utils";
 
 describe("StringUtils", () => {
-    describe(nameof.property(StringUtils, "getLineNumberAtPos"), () => {
+    describe(nameof(StringUtils, "getLineNumberAtPos"), () => {
         it("should throw if providing a negative pos", () => {
             expect(() => StringUtils.getLineNumberAtPos("", -1)).to.throw(errors.ArgumentOutOfRangeError);
         });
@@ -39,7 +39,7 @@ describe("StringUtils", () => {
         });
     });
 
-    describe(nameof.property(StringUtils, "getLengthFromLineStartAtPos"), () => {
+    describe(nameof(StringUtils, "getLengthFromLineStartAtPos"), () => {
         it("should throw if providing a negative pos", () => {
             expect(() => StringUtils.getLengthFromLineStartAtPos("", -1)).to.throw(errors.ArgumentOutOfRangeError);
         });
@@ -82,7 +82,7 @@ describe("StringUtils", () => {
         });
     });
 
-    describe(nameof.property(StringUtils, "getLineStartFromPos"), () => {
+    describe(nameof(StringUtils, "getLineStartFromPos"), () => {
         it("should throw if providing a negative pos", () => {
             expect(() => StringUtils.getLineStartFromPos("", -1)).to.throw(errors.ArgumentOutOfRangeError);
         });
@@ -125,7 +125,7 @@ describe("StringUtils", () => {
         });
     });
 
-    describe(nameof.property(StringUtils, "getLineEndFromPos"), () => {
+    describe(nameof(StringUtils, "getLineEndFromPos"), () => {
         it("should throw if providing a negative pos", () => {
             expect(() => StringUtils.getLineEndFromPos("", -1)).to.throw(errors.ArgumentOutOfRangeError);
         });
@@ -168,7 +168,7 @@ describe("StringUtils", () => {
         });
     });
 
-    describe(nameof.property(StringUtils, "isWhitespace"), () => {
+    describe(nameof(StringUtils, "isWhitespace"), () => {
         function doTest(text: string, expected: boolean) {
             expect(StringUtils.isWhitespace(text)).to.equal(expected);
         }
@@ -182,7 +182,7 @@ describe("StringUtils", () => {
         });
     });
 
-    describe(nameof.property(StringUtils, "startsWithNewLine"), () => {
+    describe(nameof(StringUtils, "startsWithNewLine"), () => {
         function doTest(input: string, expected: boolean) {
             expect(StringUtils.startsWithNewLine(input)).to.equal(expected);
         }
@@ -200,7 +200,7 @@ describe("StringUtils", () => {
         });
     });
 
-    describe(nameof.property(StringUtils, "endsWithNewLine"), () => {
+    describe(nameof(StringUtils, "endsWithNewLine"), () => {
         function doTest(input: string, expected: boolean) {
             expect(StringUtils.endsWithNewLine(input)).to.equal(expected);
         }
@@ -218,7 +218,7 @@ describe("StringUtils", () => {
         });
     });
 
-    describe(nameof.property(StringUtils, "insertAtLastNonWhitespace"), () => {
+    describe(nameof(StringUtils, "insertAtLastNonWhitespace"), () => {
         function doTest(input: string, insertText: string, expected: string) {
             expect(StringUtils.insertAtLastNonWhitespace(input, insertText)).to.equal(expected);
         }
@@ -240,7 +240,7 @@ describe("StringUtils", () => {
         });
     });
 
-    describe(nameof.property(StringUtils, "escapeForWithinString"), () => {
+    describe(nameof(StringUtils, "escapeForWithinString"), () => {
         function doTest(input: string, expected: string) {
             expect(StringUtils.escapeForWithinString(input, "\"")).to.equal(expected);
         }
@@ -250,7 +250,7 @@ describe("StringUtils", () => {
         });
     });
 
-    describe(nameof.property(StringUtils, "escapeChar"), () => {
+    describe(nameof(StringUtils, "escapeChar"), () => {
         function doTest(input: string, char: string, expected: string) {
             expect(StringUtils.escapeChar(input, char)).to.equal(expected);
         }
@@ -272,7 +272,7 @@ describe("StringUtils", () => {
         });
     });
 
-    describe(nameof.property(StringUtils, "removeIndentation"), () => {
+    describe(nameof(StringUtils, "removeIndentation"), () => {
         function doTest(input: string, expectedOutput: string, options: { indentSizeInSpaces?: number; isInStringAtPos?: (pos: number) => boolean; } = {}) {
             const actualResult = StringUtils.removeIndentation(input, {
                 indentSizeInSpaces: options.indentSizeInSpaces || 4,
@@ -333,7 +333,7 @@ describe("StringUtils", () => {
         });
     });
 
-    describe(nameof.property(StringUtils, "indent"), () => {
+    describe(nameof(StringUtils, "indent"), () => {
         interface TestOptions {
             indentText?: string;
             indentSizeInSpaces?: number;

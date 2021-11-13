@@ -1,11 +1,11 @@
-import { SyntaxKind, ts, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind, ts } from "@ts-morph/common";
 import { expect } from "chai";
 import { CallExpression, FunctionDeclaration, Identifier, InterfaceDeclaration, ModuleDeclaration, PropertyAccessExpression } from "../../../../compiler";
 import { Project } from "../../../../Project";
 import { getInfoFromText } from "../../testHelpers";
 
 describe("Identifier", () => {
-    describe(nameof.property<Identifier>("rename"), () => {
+    describe(nameof<Identifier>("rename"), () => {
         it("should rename", () => {
             const text = "function myFunction() {} const reference = myFunction;";
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(text);
@@ -23,7 +23,7 @@ describe("Identifier", () => {
         });
     });
 
-    describe(nameof.property<Identifier>("getDefinitions"), () => {
+    describe(nameof<Identifier>("getDefinitions"), () => {
         it("should get the definition", () => {
             const sourceFileText = "function myFunction() {}\nconst reference = myFunction;";
             const { firstChild, sourceFile, project } = getInfoFromText<FunctionDeclaration>(sourceFileText);
@@ -60,7 +60,7 @@ describe("Identifier", () => {
         });
     });
 
-    describe(nameof.property<Identifier>("getImplementations"), () => {
+    describe(nameof<Identifier>("getImplementations"), () => {
         it("should get the implementations", () => {
             const sourceFileText = "interface MyInterface {}\nexport class Class1 implements MyInterface {}\nclass Class2 implements MyInterface {}";
             const { firstChild, sourceFile, project } = getInfoFromText<InterfaceDeclaration>(sourceFileText);
@@ -71,7 +71,7 @@ describe("Identifier", () => {
         });
     });
 
-    describe(nameof.property<Identifier>("findReferences"), () => {
+    describe(nameof<Identifier>("findReferences"), () => {
         it("should find all the references", () => {
             const { firstChild, sourceFile, project } = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
             const secondSourceFile = project.createSourceFile("second.ts", "const reference2 = myFunction;");
@@ -138,7 +138,7 @@ const t = MyNamespace.MyClass;
         });
     });
 
-    describe(nameof.property<Identifier>("findReferencesAsNodes"), () => {
+    describe(nameof<Identifier>("findReferencesAsNodes"), () => {
         it("should find all the references and exclude the definition", () => {
             const { firstChild, sourceFile, project } = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
             const secondSourceFile = project.createSourceFile("second.ts", "const reference2 = myFunction;");
@@ -149,7 +149,7 @@ const t = MyNamespace.MyClass;
         });
     });
 
-    describe(nameof.property<Identifier>("getDefinitionNodes"), () => {
+    describe(nameof<Identifier>("getDefinitionNodes"), () => {
         it("should get the definition nodes", () => {
             const { sourceFile } = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
             const definitionNodes = sourceFile.getVariableDeclarationOrThrow("reference")
@@ -169,7 +169,7 @@ const t = MyNamespace.MyClass;
         });
     });
 
-    describe(nameof.property<Identifier>("getType"), () => {
+    describe(nameof<Identifier>("getType"), () => {
         function doTest(text: string, expectedTypes: string[]) {
             const { sourceFile } = getInfoFromText(text);
             const identifiers = sourceFile.getDescendantsOfKind(SyntaxKind.Identifier);

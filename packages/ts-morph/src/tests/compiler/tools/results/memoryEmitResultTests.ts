@@ -12,7 +12,7 @@ describe("MemoryEmitResult", () => {
         return { project, fileSystem };
     }
 
-    describe(nameof.property<MemoryEmitResult>("saveFiles"), () => {
+    describe(nameof<MemoryEmitResult>("saveFiles"), () => {
         it("should save multiple files asynchronously", async () => {
             const { project, fileSystem } = emitSetup({ noLib: true, outDir: "dist" });
             const result = project.emitToMemory();
@@ -32,7 +32,7 @@ describe("MemoryEmitResult", () => {
         });
     });
 
-    describe(nameof.property<MemoryEmitResult>("saveFilesSync"), () => {
+    describe(nameof<MemoryEmitResult>("saveFilesSync"), () => {
         it("should save multiple files synchronously", () => {
             const { project, fileSystem } = emitSetup({ noLib: true, outDir: "dist" });
             const result = project.emitToMemory();

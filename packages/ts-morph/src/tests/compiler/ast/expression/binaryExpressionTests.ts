@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { BinaryExpression } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -8,7 +8,7 @@ function getBinaryExpression(text: string) {
 }
 
 describe("BinaryExpression", () => {
-    describe(nameof.property<BinaryExpression>("getLeft"), () => {
+    describe(nameof<BinaryExpression>("getLeft"), () => {
         function doTest(text: string, expectedText: string) {
             const expression = getBinaryExpression(text);
             expect(expression.getLeft().getText()).to.equal(expectedText);
@@ -19,7 +19,7 @@ describe("BinaryExpression", () => {
         });
     });
 
-    describe(nameof.property<BinaryExpression>("getOperatorToken"), () => {
+    describe(nameof<BinaryExpression>("getOperatorToken"), () => {
         function doTest(text: string, expectedText: string) {
             const expression = getBinaryExpression(text);
             expect(expression.getOperatorToken().getText()).to.equal(expectedText);
@@ -30,7 +30,7 @@ describe("BinaryExpression", () => {
         });
     });
 
-    describe(nameof.property<BinaryExpression>("getRight"), () => {
+    describe(nameof<BinaryExpression>("getRight"), () => {
         function doTest(text: string, expectedText: string) {
             const expression = getBinaryExpression(text);
             expect(expression.getRight().getText()).to.equal(expectedText);

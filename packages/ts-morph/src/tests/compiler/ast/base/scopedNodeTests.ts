@@ -1,8 +1,8 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, PropertyDeclaration, Scope, ScopedNode } from "../../../../compiler";
 import { ScopedNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("ScopedNode", () => {
     function getInfoWithFirstPropertyFromText(text: string) {
@@ -10,7 +10,7 @@ describe("ScopedNode", () => {
         return { ...result, firstProperty: result.firstChild.getInstanceProperties()[0] as PropertyDeclaration };
     }
 
-    describe(nameof.property<ScopedNode>("getScope"), () => {
+    describe(nameof<ScopedNode>("getScope"), () => {
         it("should get the correct scope when there is no modifier", () => {
             const { firstProperty } = getInfoWithFirstPropertyFromText("class Identifier {\nprop: string;}\n");
             expect(firstProperty.getScope()).to.be.equal(Scope.Public);
@@ -32,7 +32,7 @@ describe("ScopedNode", () => {
         });
     });
 
-    describe(nameof.property<ScopedNode>("hasScopeKeyword"), () => {
+    describe(nameof<ScopedNode>("hasScopeKeyword"), () => {
         it("should not have a scope keyword when there isn't one", () => {
             const { firstProperty } = getInfoWithFirstPropertyFromText("class Identifier {\nprop: string;}\n");
             expect(firstProperty.hasScopeKeyword()).to.be.false;
@@ -44,7 +44,7 @@ describe("ScopedNode", () => {
         });
     });
 
-    describe(nameof.property<ScopedNode>("setScope"), () => {
+    describe(nameof<ScopedNode>("setScope"), () => {
         function doTest(startText: string, scope: Scope | undefined, expectedText: string) {
             const { firstChild, firstProperty } = getInfoWithFirstPropertyFromText(startText);
             firstProperty.setScope(scope);
@@ -80,7 +80,7 @@ describe("ScopedNode", () => {
         });
     });
 
-    describe(nameof.property<PropertyDeclaration>("set"), () => {
+    describe(nameof<PropertyDeclaration>("set"), () => {
         function doTest(startCode: string, structure: ScopedNodeStructure, expectedCode: string) {
             const { firstProperty, sourceFile } = getInfoWithFirstPropertyFromText(startCode);
             firstProperty.set(structure);
@@ -104,7 +104,7 @@ describe("ScopedNode", () => {
         });
     });
 
-    describe(nameof.property<PropertyDeclaration>("getStructure"), () => {
+    describe(nameof<PropertyDeclaration>("getStructure"), () => {
         function doTest(startCode: string, scope: Scope | undefined) {
             const { firstProperty, sourceFile } = getInfoWithFirstPropertyFromText(startCode);
             expect(firstProperty.getStructure().scope).to.equal(scope);

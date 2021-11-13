@@ -1,4 +1,4 @@
-import { SyntaxKind, nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { JSDocTemplateTag } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -8,7 +8,7 @@ describe("JSDocTemplateTag", () => {
         return getInfoFromTextWithDescendant<JSDocTemplateTag>(text, SyntaxKind.JSDocTemplateTag);
     }
 
-    describe(nameof.property<JSDocTemplateTag>("getTypeParameters"), () => {
+    describe(nameof<JSDocTemplateTag>("getTypeParameters"), () => {
         function doTest(text: string, expected: string[]) {
             const { descendant } = getInfo(text);
             expect(descendant.getTypeParameters().map(p => p.getText())).to.deep.equal(expected);
@@ -24,7 +24,7 @@ describe("JSDocTemplateTag", () => {
         });
     });
 
-    describe(nameof.property<JSDocTemplateTag>("getConstraint"), () => {
+    describe(nameof<JSDocTemplateTag>("getConstraint"), () => {
         function doTest(text: string, expectedValue: string | undefined) {
             const { descendant } = getInfo(text);
             expect(descendant.getConstraint()?.getText()).to.equal(expectedValue);

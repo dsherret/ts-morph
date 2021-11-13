@@ -1,10 +1,10 @@
-import { errors, ScriptTarget, ts, nameof } from "@ts-morph/common";
+import { errors, nameof, ScriptTarget, ts } from "@ts-morph/common";
 import { expect } from "chai";
 import { EmitOutput, FileTextChanges, LanguageService, SourceFile, TextChange, TextSpan } from "../../../compiler";
 import { getInfoFromText } from "../testHelpers";
 
 describe("LanguageService", () => {
-    describe(nameof.property<LanguageService>("getEmitOutput"), () => {
+    describe(nameof<LanguageService>("getEmitOutput"), () => {
         it("should get the emit output", () => {
             function doTest(sourceFileOrFilePath: string | SourceFile) {
                 const output = sourceFile._context.languageService.getEmitOutput(sourceFileOrFilePath);
@@ -66,7 +66,7 @@ describe("LanguageService", () => {
         });
     });
 
-    describe(nameof.property<LanguageService>("organizeImports"), () => {
+    describe(nameof<LanguageService>("organizeImports"), () => {
         it("should remove imports that don't exist", () => {
             const { sourceFile, project } = getInfoFromText("import * as bravo from 'bravo';\nimport * as alpha from 'alpha';", { filePath: "/file.ts" });
             const results = project.getLanguageService().organizeImports(sourceFile);
@@ -108,7 +108,7 @@ describe("LanguageService", () => {
         });
     });
 
-    describe(nameof.property<LanguageService>("getEditsForRefactor"), () => {
+    describe(nameof<LanguageService>("getEditsForRefactor"), () => {
         it("should get edits for known refactor 'Move to a new file'", () => {
             const { sourceFile, project } = getInfoFromText("export class A {}\nfunction f() { return new A(); }", { filePath: "/file.ts" });
             const nameNode = sourceFile.getClassOrThrow("A").getNameNodeOrThrow();
@@ -156,7 +156,7 @@ describe("LanguageService", () => {
         });
     });
 
-    describe(nameof.property<LanguageService>("getCombinedCodeFix"), () => {
+    describe(nameof<LanguageService>("getCombinedCodeFix"), () => {
         it("should get the combined code fixes", () => {
             const { sourceFile, project } = getInfoFromText("export class T extends Node {}", { filePath: "/file.ts" });
             const languageService = project.getLanguageService();
@@ -176,7 +176,7 @@ describe("LanguageService", () => {
         });
     });
 
-    describe(nameof.property<LanguageService>("getCodeFixesAtPosition"), () => {
+    describe(nameof<LanguageService>("getCodeFixesAtPosition"), () => {
         it("should get code fixes at position for known code fixes convertToEs6Module (error code 80001)", () => {
             const { sourceFile, project } = getInfoFromText("const moment = require('moment'); moment(); ", { filePath: "/file.ts" });
             const variableDeclaration = sourceFile.getVariableDeclarationOrThrow("moment");
@@ -209,7 +209,7 @@ describe("LanguageService", () => {
         });
     });
 
-    describe(nameof.property<LanguageService>("getSuggestionDiagnostics"), () => {
+    describe(nameof<LanguageService>("getSuggestionDiagnostics"), () => {
         it("should return default suggestion diagnostics for file", () => {
             const { sourceFile, project } = getInfoFromText("const moment = require('moment'); moment(); ");
             const diagnostics = project.getLanguageService().getSuggestionDiagnostics(sourceFile);

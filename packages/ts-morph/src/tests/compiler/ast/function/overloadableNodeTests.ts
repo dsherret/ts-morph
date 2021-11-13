@@ -1,7 +1,7 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, OverloadableNode } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
-import { nameof } from "@ts-morph/common";
 
 describe("OverloadableNode", () => {
     const functionCode = `function myFunction();function myFunction() {}`;
@@ -16,7 +16,7 @@ describe("OverloadableNode", () => {
     const { sourceFile: ambientSourceFile } = getInfoFromText<FunctionDeclaration>(ambientCode);
     const ambientFunctions = ambientSourceFile.getChildSyntaxListOrThrow().getChildren() as FunctionDeclaration[];
 
-    describe(nameof.property<OverloadableNode>("isImplementation"), () => {
+    describe(nameof<OverloadableNode>("isImplementation"), () => {
         it("should not be an implementation when not one", () => {
             expect(functions[0].isImplementation()).to.be.false;
         });
@@ -26,7 +26,7 @@ describe("OverloadableNode", () => {
         });
     });
 
-    describe(nameof.property<OverloadableNode>("isOverload"), () => {
+    describe(nameof<OverloadableNode>("isOverload"), () => {
         it("should be an overload when is one", () => {
             expect(functions[0].isOverload()).to.be.true;
         });
@@ -44,7 +44,7 @@ describe("OverloadableNode", () => {
         });
     });
 
-    describe(nameof.property<OverloadableNode>("getOverloads"), () => {
+    describe(nameof<OverloadableNode>("getOverloads"), () => {
         describe("functions", () => {
             it("should have the right number of overloads when asking an overload", () => {
                 const overloads = functions[0].getOverloads();
@@ -86,7 +86,7 @@ describe("OverloadableNode", () => {
         });
     });
 
-    describe(nameof.property<OverloadableNode>("getImplementation"), () => {
+    describe(nameof<OverloadableNode>("getImplementation"), () => {
         describe("functions", () => {
             it("should get the implementation when asking an overload", () => {
                 const implementation = functions[0].getImplementation();
@@ -120,7 +120,7 @@ describe("OverloadableNode", () => {
         });
     });
 
-    describe(nameof.property<OverloadableNode>("getImplementationOrThrow"), () => {
+    describe(nameof<OverloadableNode>("getImplementationOrThrow"), () => {
         it("should get the implementation when asking an overload", () => {
             const implementation = functions[0].getImplementationOrThrow();
             expect(implementation).to.equal(functions[1]);
