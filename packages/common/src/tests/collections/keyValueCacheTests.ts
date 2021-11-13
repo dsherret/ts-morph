@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { KeyValueCache } from "../../collections";
+import { nameof } from "../../utils";
 
 // todo: more tests
 

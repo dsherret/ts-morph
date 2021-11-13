@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { errors } from "../../errors";
 import { InMemoryFileSystemHost } from "../../fileSystem";
+import { nameof } from "../../utils";
 
 describe("InMemoryFileSystemHost", () => {
     describe("constructor", () => {

@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { errors } from "../../errors";
 import { RealFileSystemHost } from "../../fileSystem";
+import { nameof } from "../../utils";
 
 describe("RealFileSystemHost", () => {
     describe(nameof.property<RealFileSystemHost>("readDirSync"), () => {

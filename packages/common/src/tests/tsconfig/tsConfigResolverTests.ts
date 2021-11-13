@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { errors } from "../../errors";
 import { FileSystemHost, InMemoryFileSystemHost, TransactionalFileSystem } from "../../fileSystem";
 import { TsConfigResolver } from "../../tsconfig";
+import { nameof } from "../../utils";
 
 describe("TsConfigResolver", () => {
     function getResolver(fileSystem: FileSystemHost) {

@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { errors } from "../../errors";
 import { InMemoryFileSystemHost, TransactionalFileSystem } from "../../fileSystem";
+import { nameof } from "../../utils";
 
 describe("TransactionalFileSystem", () => {
     interface SetupObjects {

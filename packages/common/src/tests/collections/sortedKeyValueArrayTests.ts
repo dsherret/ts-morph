@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { SortedKeyValueArray } from "../../collections";
 import { Comparer } from "../../comparers";
+import { nameof } from "../../utils";
 
 describe("SortedKeyValueArray", () => {
     class NumberComparer implements Comparer<number> {
