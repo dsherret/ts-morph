@@ -5,16 +5,22 @@ import { KindedStructure, Structure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 
 export interface ModuleDeclarationStructure
-    extends Structure, ModuleNamedNodeStructure, ModuleDeclarationSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure,
-        StatementedNodeStructure
+  extends
+    Structure,
+    ModuleNamedNodeStructure,
+    ModuleDeclarationSpecificStructure,
+    JSDocableNodeStructure,
+    AmbientableNodeStructure,
+    ExportableNodeStructure,
+    StatementedNodeStructure
 {
 }
 
 export interface ModuleDeclarationSpecificStructure extends KindedStructure<StructureKind.Module> {
-    /**
-     * The module declaration kind.
-     *
-     * @remarks Defaults to "namespace".
-     */
-    declarationKind?: ModuleDeclarationKind;
+  /**
+   * The module declaration kind.
+   *
+   * @remarks Defaults to "namespace".
+   */
+  declarationKind?: ModuleDeclarationKind;
 }

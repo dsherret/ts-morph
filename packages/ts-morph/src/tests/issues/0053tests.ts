@@ -11,10 +11,10 @@ export class Class {
 `;
 
 describe("tests for issue #53", () => {
-    const { firstChild } = getInfoFromText<ClassDeclaration>(code);
+  const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
-    it("should set the type", () => {
-        const prop = firstChild.getInstanceProperty("prop")! as PropertyDeclaration;
-        prop.setType("string");
-    });
+  it("should set the type", () => {
+    const prop = firstChild.getInstanceProperty("prop")! as PropertyDeclaration;
+    prop.setType("string");
+  });
 });

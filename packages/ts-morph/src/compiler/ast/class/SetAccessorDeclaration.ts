@@ -10,47 +10,47 @@ import { ClassElement } from "./ClassElement";
 import { GetAccessorDeclaration } from "./GetAccessorDeclaration";
 
 const createBase = <T extends typeof ClassElement>(ctor: T) =>
-    ChildOrderableNode(TextInsertableNode(
-        DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(FunctionLikeDeclaration(BodyableNode(PropertyNamedNode(ctor))))))),
-    ));
+  ChildOrderableNode(TextInsertableNode(
+    DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(FunctionLikeDeclaration(BodyableNode(PropertyNamedNode(ctor))))))),
+  ));
 export const SetAccessorDeclarationBase = createBase(ClassElement);
 export class SetAccessorDeclaration extends SetAccessorDeclarationBase<ts.SetAccessorDeclaration> {
-    /**
-     * Sets the node from a structure.
-     * @param structure - Structure to set the node with.
-     */
-    set(structure: Partial<SetAccessorDeclarationStructure>) {
-        callBaseSet(SetAccessorDeclarationBase.prototype, this, structure);
-        return this;
-    }
+  /**
+   * Sets the node from a structure.
+   * @param structure - Structure to set the node with.
+   */
+  set(structure: Partial<SetAccessorDeclarationStructure>) {
+    callBaseSet(SetAccessorDeclarationBase.prototype, this, structure);
+    return this;
+  }
 
-    /**
-     * Gets the corresponding get accessor if one exists.
-     */
-    getGetAccessor(): GetAccessorDeclaration | undefined {
-        const thisName = this.getName();
-        const isStatic = this.isStatic();
+  /**
+   * Gets the corresponding get accessor if one exists.
+   */
+  getGetAccessor(): GetAccessorDeclaration | undefined {
+    const thisName = this.getName();
+    const isStatic = this.isStatic();
 
-        return this.getParentOrThrow().forEachChild(sibling => {
-            if (Node.isGetAccessorDeclaration(sibling) && sibling.getName() === thisName && sibling.isStatic() === isStatic)
-                return sibling;
-            return undefined;
-        });
-    }
+    return this.getParentOrThrow().forEachChild(sibling => {
+      if (Node.isGetAccessorDeclaration(sibling) && sibling.getName() === thisName && sibling.isStatic() === isStatic)
+        return sibling;
+      return undefined;
+    });
+  }
 
-    /**
-     * Gets the corresponding get accessor or throws if not exists.
-     */
-    getGetAccessorOrThrow(): GetAccessorDeclaration {
-        return errors.throwIfNullOrUndefined(this.getGetAccessor(), () => `Expected to find a corresponding get accessor for ${this.getName()}.`);
-    }
+  /**
+   * Gets the corresponding get accessor or throws if not exists.
+   */
+  getGetAccessorOrThrow(): GetAccessorDeclaration {
+    return errors.throwIfNullOrUndefined(this.getGetAccessor(), () => `Expected to find a corresponding get accessor for ${this.getName()}.`);
+  }
 
-    /**
-     * Gets the structure equivalent to this node.
-     */
-    getStructure(): SetAccessorDeclarationStructure {
-        return callBaseGetStructure<SetAccessorDeclarationSpecificStructure>(SetAccessorDeclarationBase.prototype, this, {
-            kind: StructureKind.SetAccessor,
-        }) as any as SetAccessorDeclarationStructure;
-    }
+  /**
+   * Gets the structure equivalent to this node.
+   */
+  getStructure(): SetAccessorDeclarationStructure {
+    return callBaseGetStructure<SetAccessorDeclarationSpecificStructure>(SetAccessorDeclarationBase.prototype, this, {
+      kind: StructureKind.SetAccessor,
+    }) as any as SetAccessorDeclarationStructure;
+  }
 }

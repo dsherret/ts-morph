@@ -11,189 +11,188 @@ import { Node } from "../common";
 
 export const ExportSpecifierBase = Node;
 export class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecifier> {
-    /**
-     * Sets the name of what's being exported.
-     */
-    setName(name: string) {
-        const nameNode = this.getNameNode();
-        if (nameNode.getText() === name)
-            return this;
+  /**
+   * Sets the name of what's being exported.
+   */
+  setName(name: string) {
+    const nameNode = this.getNameNode();
+    if (nameNode.getText() === name)
+      return this;
 
-        nameNode.replaceWithText(name);
+    nameNode.replaceWithText(name);
 
-        return this;
+    return this;
+  }
+
+  /**
+   * Gets the name of the export specifier.
+   */
+  getName() {
+    return this.getNameNode().getText();
+  }
+
+  /**
+   * Gets the name node of what's being exported.
+   */
+  getNameNode() {
+    return this._getNodeFromCompilerNode(this.compilerNode.propertyName || this.compilerNode.name);
+  }
+
+  /**
+   * Sets the alias for the name being exported and renames all the usages.
+   * @param alias - Alias to set.
+   */
+  renameAlias(alias: string) {
+    if (StringUtils.isNullOrWhitespace(alias)) {
+      this.removeAliasWithRename();
+      return this;
     }
 
-    /**
-     * Gets the name of the export specifier.
-     */
-    getName() {
-        return this.getNameNode().getText();
+    let aliasIdentifier = this.getAliasNode();
+    if (aliasIdentifier == null) {
+      // trick is to insert an alias with the same name, then rename the alias. TS compiler will take care of the rest.
+      this.setAlias(this.getName());
+      aliasIdentifier = this.getAliasNode()!;
+    }
+    aliasIdentifier.rename(alias);
+    return this;
+  }
+
+  /**
+   * Sets the alias without renaming all the usages.
+   * @param alias - Alias to set.
+   */
+  setAlias(alias: string) {
+    if (StringUtils.isNullOrWhitespace(alias)) {
+      this.removeAlias();
+      return this;
     }
 
-    /**
-     * Gets the name node of what's being exported.
-     */
-    getNameNode() {
-        return this._getNodeFromCompilerNode(this.compilerNode.propertyName || this.compilerNode.name);
+    const aliasIdentifier = this.getAliasNode();
+    if (aliasIdentifier == null) {
+      insertIntoParentTextRange({
+        insertPos: this.getNameNode().getEnd(),
+        parent: this,
+        newText: ` as ${alias}`,
+      });
+    } else {
+      aliasIdentifier.replaceWithText(alias);
     }
 
-    /**
-     * Sets the alias for the name being exported and renames all the usages.
-     * @param alias - Alias to set.
-     */
-    renameAlias(alias: string) {
-        if (StringUtils.isNullOrWhitespace(alias)) {
-            this.removeAliasWithRename();
-            return this;
-        }
+    return this;
+  }
 
-        let aliasIdentifier = this.getAliasNode();
-        if (aliasIdentifier == null) {
-            // trick is to insert an alias with the same name, then rename the alias. TS compiler will take care of the rest.
-            this.setAlias(this.getName());
-            aliasIdentifier = this.getAliasNode()!;
-        }
-        aliasIdentifier.rename(alias);
-        return this;
-    }
+  /**
+   * Removes the alias without renaming.
+   * @remarks Use removeAliasWithRename() if you want it to rename any usages to the name of the export specifier.
+   */
+  removeAlias() {
+    const aliasIdentifier = this.getAliasNode();
+    if (aliasIdentifier == null)
+      return this;
 
-    /**
-     * Sets the alias without renaming all the usages.
-     * @param alias - Alias to set.
-     */
-    setAlias(alias: string) {
-        if (StringUtils.isNullOrWhitespace(alias)) {
-            this.removeAlias();
-            return this;
-        }
+    removeChildren({
+      children: [this.getFirstChildByKindOrThrow(SyntaxKind.AsKeyword), aliasIdentifier],
+      removePrecedingSpaces: true,
+      removePrecedingNewLines: true,
+    });
 
-        const aliasIdentifier = this.getAliasNode();
-        if (aliasIdentifier == null) {
-            insertIntoParentTextRange({
-                insertPos: this.getNameNode().getEnd(),
-                parent: this,
-                newText: ` as ${alias}`,
-            });
-        }
-        else {
-            aliasIdentifier.replaceWithText(alias);
-        }
+    return this;
+  }
 
-        return this;
-    }
+  /**
+   * Removes the alias and renames any usages to the name of the export specifier.
+   */
+  removeAliasWithRename() {
+    const aliasIdentifier = this.getAliasNode();
+    if (aliasIdentifier == null)
+      return this;
 
-    /**
-     * Removes the alias without renaming.
-     * @remarks Use removeAliasWithRename() if you want it to rename any usages to the name of the export specifier.
-     */
-    removeAlias() {
-        const aliasIdentifier = this.getAliasNode();
-        if (aliasIdentifier == null)
-            return this;
+    aliasIdentifier.rename(this.getName());
+    this.removeAlias();
 
-        removeChildren({
-            children: [this.getFirstChildByKindOrThrow(SyntaxKind.AsKeyword), aliasIdentifier],
-            removePrecedingSpaces: true,
-            removePrecedingNewLines: true,
-        });
+    return this;
+  }
 
-        return this;
-    }
+  /**
+   * Gets the alias identifier, if it exists.
+   */
+  getAliasNode() {
+    if (this.compilerNode.propertyName == null)
+      return undefined;
+    return this._getNodeFromCompilerNode(this.compilerNode.name);
+  }
 
-    /**
-     * Removes the alias and renames any usages to the name of the export specifier.
-     */
-    removeAliasWithRename() {
-        const aliasIdentifier = this.getAliasNode();
-        if (aliasIdentifier == null)
-            return this;
+  /**
+   * Gets the export declaration associated with this export specifier.
+   */
+  getExportDeclaration() {
+    return this.getFirstAncestorByKindOrThrow(SyntaxKind.ExportDeclaration);
+  }
 
-        aliasIdentifier.rename(this.getName());
-        this.removeAlias();
+  /**
+   * Gets the local target symbol of the export specifier or throws if it doesn't exist.
+   */
+  getLocalTargetSymbolOrThrow() {
+    return errors.throwIfNullOrUndefined(this.getLocalTargetSymbol(), `The export specifier's local target symbol was expected.`);
+  }
 
-        return this;
-    }
+  /**
+   * Gets the local target symbol of the export specifier or undefined if it doesn't exist.
+   */
+  getLocalTargetSymbol(): Symbol | undefined {
+    return this._context.typeChecker.getExportSpecifierLocalTargetSymbol(this);
+  }
 
-    /**
-     * Gets the alias identifier, if it exists.
-     */
-    getAliasNode() {
-        if (this.compilerNode.propertyName == null)
-            return undefined;
-        return this._getNodeFromCompilerNode(this.compilerNode.name);
-    }
+  /**
+   * Gets all the declarations referenced by the export specifier.
+   */
+  getLocalTargetDeclarations(): LocalTargetDeclarations[] {
+    return this.getLocalTargetSymbol()?.getDeclarations() as LocalTargetDeclarations[] ?? [];
+  }
 
-    /**
-     * Gets the export declaration associated with this export specifier.
-     */
-    getExportDeclaration() {
-        return this.getFirstAncestorByKindOrThrow(SyntaxKind.ExportDeclaration);
-    }
+  /**
+   * Removes the export specifier.
+   */
+  remove() {
+    const exportDeclaration = this.getExportDeclaration();
+    const exports = exportDeclaration.getNamedExports();
 
-    /**
-     * Gets the local target symbol of the export specifier or throws if it doesn't exist.
-     */
-    getLocalTargetSymbolOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getLocalTargetSymbol(), `The export specifier's local target symbol was expected.`);
-    }
+    if (exports.length > 1)
+      removeCommaSeparatedChild(this);
+    else if (exportDeclaration.hasModuleSpecifier())
+      exportDeclaration.toNamespaceExport();
+    else
+      exportDeclaration.remove();
+  }
 
-    /**
-     * Gets the local target symbol of the export specifier or undefined if it doesn't exist.
-     */
-    getLocalTargetSymbol(): Symbol | undefined {
-        return this._context.typeChecker.getExportSpecifierLocalTargetSymbol(this);
-    }
+  /**
+   * Sets the node from a structure.
+   * @param structure - Structure to set the node with.
+   */
+  set(structure: Partial<ExportSpecifierStructure>) {
+    callBaseSet(ExportSpecifierBase.prototype, this, structure);
 
-    /**
-     * Gets all the declarations referenced by the export specifier.
-     */
-    getLocalTargetDeclarations(): LocalTargetDeclarations[] {
-        return this.getLocalTargetSymbol()?.getDeclarations() as LocalTargetDeclarations[] ?? [];
-    }
+    if (structure.name != null)
+      this.setName(structure.name);
 
-    /**
-     * Removes the export specifier.
-     */
-    remove() {
-        const exportDeclaration = this.getExportDeclaration();
-        const exports = exportDeclaration.getNamedExports();
+    if (structure.alias != null)
+      this.setAlias(structure.alias);
+    else if (structure.hasOwnProperty(nameof(structure, "alias")))
+      this.removeAlias();
 
-        if (exports.length > 1)
-            removeCommaSeparatedChild(this);
-        else if (exportDeclaration.hasModuleSpecifier())
-            exportDeclaration.toNamespaceExport();
-        else
-            exportDeclaration.remove();
-    }
+    return this;
+  }
 
-    /**
-     * Sets the node from a structure.
-     * @param structure - Structure to set the node with.
-     */
-    set(structure: Partial<ExportSpecifierStructure>) {
-        callBaseSet(ExportSpecifierBase.prototype, this, structure);
-
-        if (structure.name != null)
-            this.setName(structure.name);
-
-        if (structure.alias != null)
-            this.setAlias(structure.alias);
-        else if (structure.hasOwnProperty(nameof(structure, "alias")))
-            this.removeAlias();
-
-        return this;
-    }
-
-    /**
-     * Gets the structure equivalent to this node.
-     */
-    getStructure(): ExportSpecifierStructure {
-        const alias = this.getAliasNode();
-        return callBaseGetStructure<ExportSpecifierSpecificStructure>(Node.prototype, this, {
-            kind: StructureKind.ExportSpecifier,
-            alias: alias ? alias.getText() : undefined,
-            name: this.getNameNode().getText(),
-        });
-    }
+  /**
+   * Gets the structure equivalent to this node.
+   */
+  getStructure(): ExportSpecifierStructure {
+    const alias = this.getAliasNode();
+    return callBaseGetStructure<ExportSpecifierSpecificStructure>(Node.prototype, this, {
+      kind: StructureKind.ExportSpecifier,
+      alias: alias ? alias.getText() : undefined,
+      name: this.getNameNode().getText(),
+    });
+  }
 }

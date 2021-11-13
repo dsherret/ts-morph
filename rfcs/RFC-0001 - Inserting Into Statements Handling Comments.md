@@ -93,7 +93,7 @@ JS docs will not be considered a statement unless they do not have a following d
 
 ```ts
 function getResult() { // description
-    return 5;
+  return 5;
 }
 ```
 

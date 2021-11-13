@@ -1,3 +1,3 @@
 export interface OverrideableNodeStructure {
-    hasOverrideKeyword?: boolean;
+  hasOverrideKeyword?: boolean;
 }

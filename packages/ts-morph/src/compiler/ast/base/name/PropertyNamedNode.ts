@@ -13,6 +13,6 @@ export interface PropertyNamedNode extends PropertyNamedNodeSpecific, ReferenceF
 export type PropertyNamedNodeSpecific = NamedNodeSpecificBase<PropertyName>;
 
 export function PropertyNamedNode<T extends Constructor<PropertyNamedNodeExtensionType>>(Base: T): Constructor<PropertyNamedNode> & T {
-    const base = ReferenceFindableNode(RenameableNode(Base));
-    return NamedNodeBase<ts.PropertyName, typeof base>(base);
+  const base = ReferenceFindableNode(RenameableNode(Base));
+  return NamedNodeBase<ts.PropertyName, typeof base>(base);
 }

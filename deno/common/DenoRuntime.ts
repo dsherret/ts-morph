@@ -3,191 +3,191 @@ import { expandGlob, expandGlobSync } from "https://deno.land/std@0.106.0/fs/exp
 import * as stdPath from "https://deno.land/std@0.106.0/path/mod.ts";
 
 export class DenoRuntime {
-    fs = new DenoRuntimeFileSystem();
-    path = new DenoRuntimePath();
+  fs = new DenoRuntimeFileSystem();
+  path = new DenoRuntimePath();
 
-    getEnvVar(name: string) {
-        return Deno.env.get(name);
-    }
+  getEnvVar(name: string) {
+    return Deno.env.get(name);
+  }
 
-    getEndOfLine() {
-        return Deno.build.os === "windows" ? "\r\n" : "\n";
-    }
+  getEndOfLine() {
+    return Deno.build.os === "windows" ? "\r\n" : "\n";
+  }
 
-    getPathMatchesPattern(path: string, pattern: string) {
-        return stdPath.globToRegExp(pattern, {
-            extended: true,
-            globstar: true,
-            os: "linux", // use the same behaviour across all operating systems
-        }).test(path);
-    }
+  getPathMatchesPattern(path: string, pattern: string) {
+    return stdPath.globToRegExp(pattern, {
+      extended: true,
+      globstar: true,
+      os: "linux", // use the same behaviour across all operating systems
+    }).test(path);
+  }
 }
 
 class DenoRuntimePath {
-    join(...paths: string[]) {
-        return stdPath.join(...paths);
-    }
+  join(...paths: string[]) {
+    return stdPath.join(...paths);
+  }
 
-    normalize(path: string) {
-        return stdPath.normalize(path);
-    }
+  normalize(path: string) {
+    return stdPath.normalize(path);
+  }
 
-    relative(from: string, to: string) {
-        return stdPath.relative(from, to);
-    }
+  relative(from: string, to: string) {
+    return stdPath.relative(from, to);
+  }
 }
 
 class DenoRuntimeFileSystem {
-    delete(path: string) {
-        return Deno.remove(path);
-    }
+  delete(path: string) {
+    return Deno.remove(path);
+  }
 
-    deleteSync(path: string) {
-        Deno.removeSync(path);
-    }
+  deleteSync(path: string) {
+    Deno.removeSync(path);
+  }
 
-    readDirSync(dirPath: string) {
-        return Array.from(Deno.readDirSync(dirPath));
-    }
+  readDirSync(dirPath: string) {
+    return Array.from(Deno.readDirSync(dirPath));
+  }
 
-    readFile(filePath: string, _encoding = "utf-8") {
-        return Deno.readTextFile(filePath);
-    }
+  readFile(filePath: string, _encoding = "utf-8") {
+    return Deno.readTextFile(filePath);
+  }
 
-    readFileSync(filePath: string, _encoding = "utf-8") {
-        return Deno.readTextFileSync(filePath);
-    }
+  readFileSync(filePath: string, _encoding = "utf-8") {
+    return Deno.readTextFileSync(filePath);
+  }
 
-    writeFile(filePath: string, fileText: string) {
-        return Deno.writeTextFile(filePath, fileText);
-    }
+  writeFile(filePath: string, fileText: string) {
+    return Deno.writeTextFile(filePath, fileText);
+  }
 
-    writeFileSync(filePath: string, fileText: string) {
-        return Deno.writeTextFileSync(filePath, fileText);
-    }
+  writeFileSync(filePath: string, fileText: string) {
+    return Deno.writeTextFileSync(filePath, fileText);
+  }
 
-    async mkdir(dirPath: string) {
-        await ensureDir(dirPath);
-    }
+  async mkdir(dirPath: string) {
+    await ensureDir(dirPath);
+  }
 
-    mkdirSync(dirPath: string) {
-        ensureDirSync(dirPath);
-    }
+  mkdirSync(dirPath: string) {
+    ensureDirSync(dirPath);
+  }
 
-    move(srcPath: string, destPath: string) {
-        return Deno.rename(srcPath, destPath);
-    }
+  move(srcPath: string, destPath: string) {
+    return Deno.rename(srcPath, destPath);
+  }
 
-    moveSync(srcPath: string, destPath: string) {
-        Deno.renameSync(srcPath, destPath);
-    }
+  moveSync(srcPath: string, destPath: string) {
+    Deno.renameSync(srcPath, destPath);
+  }
 
-    copy(srcPath: string, destPath: string) {
-        return Deno.copyFile(srcPath, destPath);
-    }
+  copy(srcPath: string, destPath: string) {
+    return Deno.copyFile(srcPath, destPath);
+  }
 
-    copySync(srcPath: string, destPath: string) {
-        return Deno.copyFileSync(srcPath, destPath);
-    }
+  copySync(srcPath: string, destPath: string) {
+    return Deno.copyFileSync(srcPath, destPath);
+  }
 
-    async fileExists(filePath: string) {
-        try {
-            const stat = await Deno.stat(filePath);
-            return stat.isFile;
-        } catch {
-            return false;
-        }
+  async fileExists(filePath: string) {
+    try {
+      const stat = await Deno.stat(filePath);
+      return stat.isFile;
+    } catch {
+      return false;
     }
+  }
 
-    fileExistsSync(filePath: string) {
-        try {
-            return Deno.statSync(filePath).isFile;
-        } catch {
-            return false;
-        }
+  fileExistsSync(filePath: string) {
+    try {
+      return Deno.statSync(filePath).isFile;
+    } catch {
+      return false;
     }
+  }
 
-    async directoryExists(dirPath: string) {
-        try {
-            const stat = await Deno.stat(dirPath);
-            return stat.isDirectory;
-        } catch {
-            return false;
-        }
+  async directoryExists(dirPath: string) {
+    try {
+      const stat = await Deno.stat(dirPath);
+      return stat.isDirectory;
+    } catch {
+      return false;
     }
+  }
 
-    directoryExistsSync(dirPath: string) {
-        try {
-            return Deno.statSync(dirPath).isDirectory;
-        } catch (err) {
-            return false;
-        }
+  directoryExistsSync(dirPath: string) {
+    try {
+      return Deno.statSync(dirPath).isDirectory;
+    } catch (err) {
+      return false;
     }
+  }
 
-    realpathSync(path: string) {
-        return Deno.realPathSync(path);
-    }
+  realpathSync(path: string) {
+    return Deno.realPathSync(path);
+  }
 
-    getCurrentDirectory(): string {
-        return Deno.cwd();
-    }
+  getCurrentDirectory(): string {
+    return Deno.cwd();
+  }
 
-    async glob(patterns: ReadonlyArray<string>) {
-        const { excludePatterns, pattern } = globPatternsToPattern(patterns);
-        const result: string[] = [];
-        const globEntries = expandGlob(pattern, {
-            root: this.getCurrentDirectory(),
-            extended: true,
-            globstar: true,
-            exclude: excludePatterns,
-        });
-        for await (const globEntry of globEntries) {
-            if (globEntry.isFile)
-                result.push(globEntry.path);
-        }
-        return result;
+  async glob(patterns: ReadonlyArray<string>) {
+    const { excludePatterns, pattern } = globPatternsToPattern(patterns);
+    const result: string[] = [];
+    const globEntries = expandGlob(pattern, {
+      root: this.getCurrentDirectory(),
+      extended: true,
+      globstar: true,
+      exclude: excludePatterns,
+    });
+    for await (const globEntry of globEntries) {
+      if (globEntry.isFile)
+        result.push(globEntry.path);
     }
+    return result;
+  }
 
-    globSync(patterns: ReadonlyArray<string>) {
-        const { excludePatterns, pattern } = globPatternsToPattern(patterns);
-        const result: string[] = [];
-        const globEntries = expandGlobSync(pattern, {
-            root: this.getCurrentDirectory(),
-            extended: true,
-            globstar: true,
-            exclude: excludePatterns,
-        });
-        for (const globEntry of globEntries) {
-            if (globEntry.isFile)
-                result.push(globEntry.path);
-        }
-        return result;
+  globSync(patterns: ReadonlyArray<string>) {
+    const { excludePatterns, pattern } = globPatternsToPattern(patterns);
+    const result: string[] = [];
+    const globEntries = expandGlobSync(pattern, {
+      root: this.getCurrentDirectory(),
+      extended: true,
+      globstar: true,
+      exclude: excludePatterns,
+    });
+    for (const globEntry of globEntries) {
+      if (globEntry.isFile)
+        result.push(globEntry.path);
     }
+    return result;
+  }
 
-    isCaseSensitive() {
-        const platform = Deno.build.os;
-        return platform !== "windows" && platform !== "darwin";
-    }
+  isCaseSensitive() {
+    const platform = Deno.build.os;
+    return platform !== "windows" && platform !== "darwin";
+  }
 }
 
 function globPatternsToPattern(patterns: ReadonlyArray<string>) {
-    const excludePatterns = [];
-    const includePatterns = [];
+  const excludePatterns = [];
+  const includePatterns = [];
 
-    for (const pattern of patterns) {
-        if (isNegatedGlob(pattern))
-            excludePatterns.push(pattern);
-        else
-            includePatterns.push(pattern);
-    }
+  for (const pattern of patterns) {
+    if (isNegatedGlob(pattern))
+      excludePatterns.push(pattern);
+    else
+      includePatterns.push(pattern);
+  }
 
-    return {
-        excludePatterns,
-        pattern: includePatterns.length === 0 ? "." : includePatterns.length === 1 ? includePatterns[0] : `{${includePatterns.join(",")}}`,
-    };
+  return {
+    excludePatterns,
+    pattern: includePatterns.length === 0 ? "." : includePatterns.length === 1 ? includePatterns[0] : `{${includePatterns.join(",")}}`,
+  };
 
-    function isNegatedGlob(glob: string) {
-        // https://github.com/micromatch/is-negated-glob/blob/master/index.js
-        return glob[0] === "!" && glob[1] !== "(";
-    }
+  function isNegatedGlob(glob: string) {
+    // https://github.com/micromatch/is-negated-glob/blob/master/index.js
+    return glob[0] === "!" && glob[1] !== "(";
+  }
 }

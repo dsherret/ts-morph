@@ -4,19 +4,19 @@ import { ArrowFunction } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
 function getInfoFromTextWithExpression(text: string) {
-    const info = getInfoFromTextWithDescendant<ArrowFunction>(text, SyntaxKind.ArrowFunction);
-    return { ...info, expression: info.descendant };
+  const info = getInfoFromTextWithDescendant<ArrowFunction>(text, SyntaxKind.ArrowFunction);
+  return { ...info, expression: info.descendant };
 }
 
 describe("ArrowFunction", () => {
-    describe(nameof<ArrowFunction>("getEqualsGreaterThan"), () => {
-        function doTest(text: string, expectedText: string) {
-            const { expression } = getInfoFromTextWithExpression(text);
-            expect(expression.getEqualsGreaterThan().getText()).to.equal(expectedText);
-        }
+  describe(nameof<ArrowFunction>("getEqualsGreaterThan"), () => {
+    function doTest(text: string, expectedText: string) {
+      const { expression } = getInfoFromTextWithExpression(text);
+      expect(expression.getEqualsGreaterThan().getText()).to.equal(expectedText);
+    }
 
-        it("should get the correct equals greater than token", () => {
-            doTest("(x) => {}", "=>");
-        });
+    it("should get the correct equals greater than token", () => {
+      doTest("(x) => {}", "=>");
     });
+  });
 });

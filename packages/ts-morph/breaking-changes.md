@@ -23,8 +23,8 @@ Previously when using an in memory file system host, ts-morph had all the TypeSc
 ```ts
 const project = new Project({ useInMemoryFileSystem: true });
 const sourceFile = project.createSourceFile(
-    "index.ts",
-    `const mySet = new Set<string>();`,
+  "index.ts",
+  `const mySet = new Set<string>();`,
 );
 const mySetDecl = sourceFile.getVariableDeclarationOrThrow("mySet");
 console.log(mySetDecl.getType().getText()); // Set<string>
@@ -36,10 +36,10 @@ To get around this, you must now do what you would do when using `tsc` and speci
 
 ```ts
 const project = new Project({
-    useInMemoryFileSystem: true,
-    compilerOptions: {
-        lib: ["lib.es2015.d.ts"],
-    },
+  useInMemoryFileSystem: true,
+  compilerOptions: {
+    lib: ["lib.es2015.d.ts"],
+  },
 });
 ```
 
@@ -49,10 +49,10 @@ Or specify a target that will implicitly load in the lib files that you need:
 import { Project, ts } from "ts-morph";
 
 const project = new Project({
-    useInMemoryFileSystem: true,
-    compilerOptions: {
-        target: ts.ScriptTarget.ES2015,
-    },
+  useInMemoryFileSystem: true,
+  compilerOptions: {
+    target: ts.ScriptTarget.ES2015,
+  },
 });
 ```
 
@@ -60,10 +60,10 @@ Note that if you want to include all the lib files, which is similar to the prev
 
 ```ts
 const project = new Project({
-    useInMemoryFileSystem: true,
-    compilerOptions: {
-        lib: ["lib.esnext.full.d.ts"],
-    },
+  useInMemoryFileSystem: true,
+  compilerOptions: {
+    lib: ["lib.esnext.full.d.ts"],
+  },
 });
 ```
 
@@ -141,9 +141,9 @@ Additionally, the second `control` parameter has been removed. So instead of wri
 
 ```ts
 node.forEachChild((child, control) => {
-    if (child.kind === SyntaxKind.PropertyDeclaration)
-        child.stop();
-    doSomethingWithChild(child);
+  if (child.kind === SyntaxKind.PropertyDeclaration)
+    child.stop();
+  doSomethingWithChild(child);
 });
 ```
 
@@ -167,14 +167,14 @@ For example the following:
 
 ```ts
 if (StructureTypeGuards.isExportableNode(structure))
-    structure.isExported = false;
+  structure.isExported = false;
 ```
 
 ...is now updated to be...
 
 ```ts
 if (StructureTypeGuards.isExportable(structure))
-    structure.isExported = false;
+  structure.isExported = false;
 ```
 
 ### Renamed `ObjectLiteralElementMemberStructures` to `ObjectLiteralExpressionPropertyStructures`
@@ -205,14 +205,14 @@ Instead of writing code like the following:
 
 ```ts
 const sourceFileStructure: SourceFileStructure = {
-    classes: [{
-        name: "MyClass",
-    }],
-    enums: [{
-        name: "MyEnum",
-        members: [{ name: "value" }],
-    }],
-    bodyText: "console.log(5);",
+  classes: [{
+    name: "MyClass",
+  }],
+  enums: [{
+    name: "MyEnum",
+    members: [{ name: "value" }],
+  }],
+  bodyText: "console.log(5);",
 };
 ```
 
@@ -220,14 +220,14 @@ Write the following:
 
 ```ts
 const sourceFileStructure: SourceFileStructure = {
-    statements: [{
-        kind: StructureKind.Class,
-        name: "MyClass",
-    }, {
-        kind: StructureKind.Enum,
-        name: "MyEnum",
-        members: [{ name: "value" }],
-    }, "console.log(5);"],
+  statements: [{
+    kind: StructureKind.Class,
+    name: "MyClass",
+  }, {
+    kind: StructureKind.Enum,
+    name: "MyEnum",
+    members: [{ name: "value" }],
+  }, "console.log(5);"],
 };
 ```
 
@@ -388,8 +388,8 @@ Doing this requires an extra analysis step so if you want to revert back to the 
 
 ```ts
 const project = new Project({
-    tsConfigFilePath: "tsconfig.json",
-    skipFileDependencyResolution: true,
+  tsConfigFilePath: "tsconfig.json",
+  skipFileDependencyResolution: true,
 });
 ```
 
@@ -424,7 +424,7 @@ In ambient declarations, there exists namespace declarations that look like the 
 
 ```ts
 global {
-    export class Test {}
+  export class Test {}
 }
 ```
 
@@ -449,7 +449,7 @@ Even though it's a compile error, index signatures may look like the following:
 
 ```ts
 interface MyInterface {
-    [key: string];
+  [key: string];
 }
 ```
 
@@ -486,7 +486,7 @@ Previously calling...
 
 ```ts
 classDeclaration.fill({
-    properties: [{ name: "newProp" }],
+  properties: [{ name: "newProp" }],
 });
 ```
 
@@ -522,7 +522,7 @@ const declaration = statement.getDeclarations();
 
 const name = declaration.getNameNode();
 if (TypeGuards.isBindingElement(name))
-    console.log(name.getElements().map(e => e.getName())); // outputs: ["a", "b"]
+  console.log(name.getElements().map(e => e.getName())); // outputs: ["a", "b"]
 ```
 
 ## Version 13
@@ -552,8 +552,8 @@ Previously, stopping traveral in `node.forEachDescendant(...)` was done like the
 
 ```ts
 node.forEachDescendant((node, stop) => {
-    if (node.getKind() === SyntaxKind.FunctionDeclaration)
-        stop();
+  if (node.getKind() === SyntaxKind.FunctionDeclaration)
+    stop();
 });
 ```
 
@@ -561,8 +561,8 @@ The new code is the following:
 
 ```ts
 node.forEachDescendant((node, traversal) => {
-    if (node.getKind() === SyntaxKind.FunctionDeclaration)
-        traversal.stop();
+  if (node.getKind() === SyntaxKind.FunctionDeclaration)
+    traversal.stop();
 });
 ```
 
@@ -570,20 +570,20 @@ This is to allow for more advanced scenarios:
 
 ```ts
 node.forEachDescendant((node, traversal) => {
-    switch (node.getKind()) {
-        case SyntaxKind.ClassDeclaration:
-            // skips traversal of the current node's descendants
-            traversal.skip();
-            break;
-        case SyntaxKind.ParameterDeclaration:
-            // skips traversal of the current node, siblings, and all their descendants
-            traversal.up();
-            break;
-        case SyntaxKind.FunctionDeclaration:
-            // stop traversal completely
-            traversal.stop();
-            break;
-    }
+  switch (node.getKind()) {
+    case SyntaxKind.ClassDeclaration:
+      // skips traversal of the current node's descendants
+      traversal.skip();
+      break;
+    case SyntaxKind.ParameterDeclaration:
+      // skips traversal of the current node, siblings, and all their descendants
+      traversal.up();
+      break;
+    case SyntaxKind.FunctionDeclaration:
+      // stop traversal completely
+      traversal.stop();
+      break;
+  }
 });
 ```
 
@@ -591,8 +591,8 @@ Also, take note that `node.forEachChild` has been updated for consistency with `
 
 ```ts
 node.forEachChild((node, traversal) => {
-    if (node.getKind() === SyntaxKind.FunctionDeclaration)
-        traversal.stop();
+  if (node.getKind() === SyntaxKind.FunctionDeclaration)
+    traversal.stop();
 });
 ```
 
@@ -673,7 +673,7 @@ I had no idea you can have class declarations with no names...
 
 ```ts
 export default class {
-    // ...etc...
+  // ...etc...
 }
 ```
 

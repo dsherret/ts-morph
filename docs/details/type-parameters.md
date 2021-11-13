@@ -18,8 +18,8 @@ For example:
 
 ```ts
 const typeParameter = classDeclaration.insertTypeParameter(1, {
-    name: "T",
-    constraint: "string", // optional
+  name: "T",
+  constraint: "string", // optional
 });
 ```
 

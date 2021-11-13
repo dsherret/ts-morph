@@ -1,5 +1,5 @@
 export enum ModuleDeclarationKind {
-    Namespace = "namespace",
-    Module = "module",
-    Global = "global",
+  Namespace = "namespace",
+  Module = "module",
+  Global = "global",
 }

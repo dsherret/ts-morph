@@ -29,7 +29,7 @@ import { Node } from "ts-morph";
 // ... some code here that gets a node ...
 
 if (Node.isClassDeclaration(node)) {
-    // node is of type ClassDeclaration in here
+  // node is of type ClassDeclaration in here
 }
 ```
 
@@ -48,14 +48,14 @@ import { printNode, ts } from "ts-morph";
 
 // Source: https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API
 const tsFunctionDeclaration = ts.createFunctionDeclaration(
-    /*decorators*/ undefined,
-    /*modifiers*/ [ts.createToken(SyntaxKind.ExportKeyword)],
-    /*asteriskToken*/ undefined,
-    "myFunction",
-    /*typeParameters*/ undefined,
-    /*parameters*/ [],
-    /*returnType*/ ts.createKeywordTypeNode(SyntaxKind.NumberKeyword),
-    ts.createBlock([ts.createReturn(ts.createLiteral(5))], /*multiline*/ true),
+  /*decorators*/ undefined,
+  /*modifiers*/ [ts.createToken(SyntaxKind.ExportKeyword)],
+  /*asteriskToken*/ undefined,
+  "myFunction",
+  /*typeParameters*/ undefined,
+  /*parameters*/ [],
+  /*returnType*/ ts.createKeywordTypeNode(SyntaxKind.NumberKeyword),
+  ts.createBlock([ts.createReturn(ts.createLiteral(5))], /*multiline*/ true),
 );
 // optionally provide a source file and there is some printing options on this
 const functionText = printNode(tsFunctionDeclaration);

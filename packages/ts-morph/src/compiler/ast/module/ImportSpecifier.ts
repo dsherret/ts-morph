@@ -9,167 +9,166 @@ import { Node } from "../common";
 
 export const ImportSpecifierBase = Node;
 export class ImportSpecifier extends ImportSpecifierBase<ts.ImportSpecifier> {
-    /**
-     * Sets the identifier being imported.
-     * @param name - Name being imported.
-     */
-    setName(name: string) {
-        const nameNode = this.getNameNode();
-        if (nameNode.getText() === name)
-            return this;
+  /**
+   * Sets the identifier being imported.
+   * @param name - Name being imported.
+   */
+  setName(name: string) {
+    const nameNode = this.getNameNode();
+    if (nameNode.getText() === name)
+      return this;
 
-        nameNode.replaceWithText(name);
+    nameNode.replaceWithText(name);
 
-        return this;
+    return this;
+  }
+
+  /**
+   * Gets the name of the import specifier.
+   */
+  getName() {
+    return this.getNameNode().getText();
+  }
+
+  /**
+   * Gets the name node of what's being imported.
+   */
+  getNameNode() {
+    return this._getNodeFromCompilerNode(this.compilerNode.propertyName ?? this.compilerNode.name);
+  }
+
+  /**
+   * Sets the alias for the name being imported and renames all the usages.
+   * @param alias - Alias to set.
+   */
+  renameAlias(alias: string) {
+    if (StringUtils.isNullOrWhitespace(alias)) {
+      this.removeAliasWithRename();
+      return this;
     }
 
-    /**
-     * Gets the name of the import specifier.
-     */
-    getName() {
-        return this.getNameNode().getText();
+    let aliasIdentifier = this.getAliasNode();
+    if (aliasIdentifier == null) {
+      // trick is to insert an alias with the same name, then rename the alias. TS compiler will take care of the rest.
+      this.setAlias(this.getName());
+      aliasIdentifier = this.getAliasNode()!;
+    }
+    aliasIdentifier.rename(alias);
+    return this;
+  }
+
+  /**
+   * Sets the alias without renaming all the usages.
+   * @param alias - Alias to set.
+   */
+  setAlias(alias: string) {
+    if (StringUtils.isNullOrWhitespace(alias)) {
+      this.removeAlias();
+      return this;
     }
 
-    /**
-     * Gets the name node of what's being imported.
-     */
-    getNameNode() {
-        return this._getNodeFromCompilerNode(this.compilerNode.propertyName ?? this.compilerNode.name);
+    const aliasIdentifier = this.getAliasNode();
+    if (aliasIdentifier == null) {
+      insertIntoParentTextRange({
+        insertPos: this.getNameNode().getEnd(),
+        parent: this,
+        newText: ` as ${alias}`,
+      });
+    } else {
+      aliasIdentifier.replaceWithText(alias);
     }
 
-    /**
-     * Sets the alias for the name being imported and renames all the usages.
-     * @param alias - Alias to set.
-     */
-    renameAlias(alias: string) {
-        if (StringUtils.isNullOrWhitespace(alias)) {
-            this.removeAliasWithRename();
-            return this;
-        }
+    return this;
+  }
 
-        let aliasIdentifier = this.getAliasNode();
-        if (aliasIdentifier == null) {
-            // trick is to insert an alias with the same name, then rename the alias. TS compiler will take care of the rest.
-            this.setAlias(this.getName());
-            aliasIdentifier = this.getAliasNode()!;
-        }
-        aliasIdentifier.rename(alias);
-        return this;
-    }
+  /**
+   * Removes the alias without renaming.
+   * @remarks Use removeAliasWithRename() if you want it to rename any usages to the name of the import specifier.
+   */
+  removeAlias() {
+    const aliasIdentifier = this.getAliasNode();
+    if (aliasIdentifier == null)
+      return this;
 
-    /**
-     * Sets the alias without renaming all the usages.
-     * @param alias - Alias to set.
-     */
-    setAlias(alias: string) {
-        if (StringUtils.isNullOrWhitespace(alias)) {
-            this.removeAlias();
-            return this;
-        }
+    removeChildren({
+      children: [this.getFirstChildByKindOrThrow(SyntaxKind.AsKeyword), aliasIdentifier],
+      removePrecedingSpaces: true,
+      removePrecedingNewLines: true,
+    });
 
-        const aliasIdentifier = this.getAliasNode();
-        if (aliasIdentifier == null) {
-            insertIntoParentTextRange({
-                insertPos: this.getNameNode().getEnd(),
-                parent: this,
-                newText: ` as ${alias}`,
-            });
-        }
-        else {
-            aliasIdentifier.replaceWithText(alias);
-        }
+    return this;
+  }
 
-        return this;
-    }
+  /**
+   * Removes the alias and renames any usages to the name of the import specifier.
+   */
+  removeAliasWithRename() {
+    const aliasIdentifier = this.getAliasNode();
+    if (aliasIdentifier == null)
+      return this;
 
-    /**
-     * Removes the alias without renaming.
-     * @remarks Use removeAliasWithRename() if you want it to rename any usages to the name of the import specifier.
-     */
-    removeAlias() {
-        const aliasIdentifier = this.getAliasNode();
-        if (aliasIdentifier == null)
-            return this;
+    aliasIdentifier.rename(this.getName());
+    this.removeAlias();
 
-        removeChildren({
-            children: [this.getFirstChildByKindOrThrow(SyntaxKind.AsKeyword), aliasIdentifier],
-            removePrecedingSpaces: true,
-            removePrecedingNewLines: true,
-        });
+    return this;
+  }
 
-        return this;
-    }
+  /**
+   * Gets the alias identifier, if it exists.
+   */
+  getAliasNode() {
+    if (this.compilerNode.propertyName == null)
+      return undefined;
+    return this._getNodeFromCompilerNode(this.compilerNode.name);
+  }
 
-    /**
-     * Removes the alias and renames any usages to the name of the import specifier.
-     */
-    removeAliasWithRename() {
-        const aliasIdentifier = this.getAliasNode();
-        if (aliasIdentifier == null)
-            return this;
+  /**
+   * Gets the import declaration associated with this import specifier.
+   */
+  getImportDeclaration() {
+    return this.getFirstAncestorByKindOrThrow(SyntaxKind.ImportDeclaration);
+  }
 
-        aliasIdentifier.rename(this.getName());
-        this.removeAlias();
+  /**
+   * Remove the import specifier.
+   */
+  remove() {
+    const importDeclaration = this.getImportDeclaration();
+    const namedImports = importDeclaration.getNamedImports();
 
-        return this;
-    }
+    if (namedImports.length > 1)
+      removeCommaSeparatedChild(this);
+    else
+      importDeclaration.removeNamedImports();
+  }
 
-    /**
-     * Gets the alias identifier, if it exists.
-     */
-    getAliasNode() {
-        if (this.compilerNode.propertyName == null)
-            return undefined;
-        return this._getNodeFromCompilerNode(this.compilerNode.name);
-    }
+  /**
+   * Sets the node from a structure.
+   * @param structure - Structure to set the node with.
+   */
+  set(structure: Partial<ImportSpecifierStructure>) {
+    callBaseSet(ImportSpecifierBase.prototype, this, structure);
 
-    /**
-     * Gets the import declaration associated with this import specifier.
-     */
-    getImportDeclaration() {
-        return this.getFirstAncestorByKindOrThrow(SyntaxKind.ImportDeclaration);
-    }
+    if (structure.name != null)
+      this.setName(structure.name);
 
-    /**
-     * Remove the import specifier.
-     */
-    remove() {
-        const importDeclaration = this.getImportDeclaration();
-        const namedImports = importDeclaration.getNamedImports();
+    if (structure.alias != null)
+      this.setAlias(structure.alias);
+    else if (structure.hasOwnProperty(nameof(structure, "alias")))
+      this.removeAlias();
 
-        if (namedImports.length > 1)
-            removeCommaSeparatedChild(this);
-        else
-            importDeclaration.removeNamedImports();
-    }
+    return this;
+  }
 
-    /**
-     * Sets the node from a structure.
-     * @param structure - Structure to set the node with.
-     */
-    set(structure: Partial<ImportSpecifierStructure>) {
-        callBaseSet(ImportSpecifierBase.prototype, this, structure);
-
-        if (structure.name != null)
-            this.setName(structure.name);
-
-        if (structure.alias != null)
-            this.setAlias(structure.alias);
-        else if (structure.hasOwnProperty(nameof(structure, "alias")))
-            this.removeAlias();
-
-        return this;
-    }
-
-    /**
-     * Gets the structure equivalent to this node.
-     */
-    getStructure() {
-        const alias = this.getAliasNode();
-        return callBaseGetStructure<ImportSpecifierSpecificStructure>(ImportSpecifierBase.prototype, this, {
-            kind: StructureKind.ImportSpecifier,
-            name: this.getName(),
-            alias: alias ? alias.getText() : undefined,
-        }) as ImportSpecifierStructure;
-    }
+  /**
+   * Gets the structure equivalent to this node.
+   */
+  getStructure() {
+    const alias = this.getAliasNode();
+    return callBaseGetStructure<ImportSpecifierSpecificStructure>(ImportSpecifierBase.prototype, this, {
+      kind: StructureKind.ImportSpecifier,
+      name: this.getName(),
+      alias: alias ? alias.getText() : undefined,
+    }) as ImportSpecifierStructure;
+  }
 }

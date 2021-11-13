@@ -114,7 +114,7 @@ project.addSourceFilesAtPaths("**/*.ts");
 const mainFile = project.getSourceFileOrThrow("main.ts");
 
 for (const [name, declarations] of mainFile.getExportedDeclarations())
-    console.log(`${name}: ${declarations.map(d => d.getText()).join(", ")}`);
+  console.log(`${name}: ${declarations.map(d => d.getText()).join(", ")}`);
 ```
 
 Outputs the following:
@@ -166,8 +166,8 @@ Add or insert use `insertExportDeclaration`, `insertExportDeclarations`, `addExp
 
 ```ts
 const exportDeclaration = sourceFile.addExportDeclaration({
-    namedExports: ["MyClass"],
-    moduleSpecifier: "./file",
+  namedExports: ["MyClass"],
+  moduleSpecifier: "./file",
 });
 ```
 
@@ -205,8 +205,8 @@ Adding or inserting named exports can be done via the `addNamedExport`, `addName
 
 ```ts
 const namedExport = exportDeclaration.addNamedExport({
-    name: "MyClass",
-    alias: "MyAliasName", // alias is optional
+  name: "MyClass",
+  alias: "MyAliasName", // alias is optional
 });
 // or
 exportDeclaration.addNamedExport("MyClass");
@@ -294,8 +294,8 @@ Add or insert use `insertExportAssignment`, `insertExportAssignments`, `addExpor
 
 ```ts
 const exportAssignment = sourceFile.addExportAssignment({
-    isExportEquals: true, // defaults to true
-    expression: "5",
+  isExportEquals: true, // defaults to true
+  expression: "5",
 });
 ```
 

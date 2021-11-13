@@ -14,12 +14,12 @@ updateCommonImportsExports(project.addSourceFileAtPath(`${destPath}/ts_morph_boo
 updateCommonImportsExports(project.addSourceFileAtPath(`${destPath}/ts_morph_bootstrap.d.ts`)).saveSync();
 
 function updateCommonImportsExports(file: tsMorph.SourceFile) {
-    for (const statement of file.getStatements()) {
-        if (!Node.isExportDeclaration(statement) && !Node.isImportDeclaration(statement))
-            continue;
-        const moduleSpecifierValue = statement.getModuleSpecifierValue();
-        if (moduleSpecifierValue === "@ts-morph/common")
-            statement.setModuleSpecifier("../common/mod.ts");
-    }
-    return file;
+  for (const statement of file.getStatements()) {
+    if (!Node.isExportDeclaration(statement) && !Node.isImportDeclaration(statement))
+      continue;
+    const moduleSpecifierValue = statement.getModuleSpecifierValue();
+    if (moduleSpecifierValue === "@ts-morph/common")
+      statement.setModuleSpecifier("../common/mod.ts");
+  }
+  return file;
 }

@@ -4,51 +4,51 @@ import { Signature } from "../../../compiler";
 import { getInfoFromText } from "../testHelpers";
 
 describe("Signature", () => {
-    function getSignature(text: string) {
-        const { sourceFile } = getInfoFromText(text);
-        const type = sourceFile.getVariableDeclarations()[0].getType();
-        return type.getCallSignatures()[0];
-    }
+  function getSignature(text: string) {
+    const { sourceFile } = getInfoFromText(text);
+    const type = sourceFile.getVariableDeclarations()[0].getType();
+    return type.getCallSignatures()[0];
+  }
 
-    describe(nameof<Signature>("getTypeParameters"), () => {
-        it("should return an empty array when there are none", () => {
-            const signature = getSignature("let t: () => void;");
-            expect(signature.getTypeParameters().length).to.equal(0);
-        });
-
-        it("should get the type parameters", () => {
-            const signature = getSignature("let t: <T>() => T;");
-            expect(signature.getTypeParameters().map(t => t.getText())).to.deep.equal(["T"]);
-        });
+  describe(nameof<Signature>("getTypeParameters"), () => {
+    it("should return an empty array when there are none", () => {
+      const signature = getSignature("let t: () => void;");
+      expect(signature.getTypeParameters().length).to.equal(0);
     });
 
-    describe(nameof<Signature>("getParameters"), () => {
-        it("should return an empty array when there are none", () => {
-            const signature = getSignature("let t: () => void;");
-            expect(signature.getParameters().length).to.deep.equal(0);
-        });
+    it("should get the type parameters", () => {
+      const signature = getSignature("let t: <T>() => T;");
+      expect(signature.getTypeParameters().map(t => t.getText())).to.deep.equal(["T"]);
+    });
+  });
 
-        it("should get the parameters", () => {
-            const signature = getSignature("let t: (a) => void;");
-            expect(signature.getParameters().map(p => p.getName())).to.deep.equal(["a"]);
-        });
+  describe(nameof<Signature>("getParameters"), () => {
+    it("should return an empty array when there are none", () => {
+      const signature = getSignature("let t: () => void;");
+      expect(signature.getParameters().length).to.deep.equal(0);
     });
 
-    describe(nameof<Signature>("getReturnType"), () => {
-        it("should get the return type", () => {
-            const signature = getSignature("let t: (a) => void;");
-            expect(signature.getReturnType().getText()).to.equal("void");
-        });
+    it("should get the parameters", () => {
+      const signature = getSignature("let t: (a) => void;");
+      expect(signature.getParameters().map(p => p.getName())).to.deep.equal(["a"]);
+    });
+  });
+
+  describe(nameof<Signature>("getReturnType"), () => {
+    it("should get the return type", () => {
+      const signature = getSignature("let t: (a) => void;");
+      expect(signature.getReturnType().getText()).to.equal("void");
+    });
+  });
+
+  describe(nameof<Signature>("getDocumentationComments"), () => {
+    it("should be empty when they don't exist", () => {
+      const signature = getSignature("let t: (a) => void;");
+      expect(signature.getDocumentationComments().length).to.equal(0);
     });
 
-    describe(nameof<Signature>("getDocumentationComments"), () => {
-        it("should be empty when they don't exist", () => {
-            const signature = getSignature("let t: (a) => void;");
-            expect(signature.getDocumentationComments().length).to.equal(0);
-        });
-
-        it("should get the doc comments when they exist", () => {
-            const signature = getSignature(`
+    it("should get the doc comments when they exist", () => {
+      const signature = getSignature(`
 interface MyInterface {
     /**
      * Docs
@@ -58,15 +58,15 @@ interface MyInterface {
 let t: MyInterface;
 `);
 
-            expect(signature.getDocumentationComments().map(c => ({ text: c.getText(), kind: c.getKind() }))).to.deep.equal([
-                { text: "Docs", kind: "text" },
-            ]);
-        });
+      expect(signature.getDocumentationComments().map(c => ({ text: c.getText(), kind: c.getKind() }))).to.deep.equal([
+        { text: "Docs", kind: "text" },
+      ]);
     });
+  });
 
-    describe(nameof<Signature>("getJsDocTags"), () => {
-        it("should be empty when they don't exist", () => {
-            const signature = getSignature(`
+  describe(nameof<Signature>("getJsDocTags"), () => {
+    it("should be empty when they don't exist", () => {
+      const signature = getSignature(`
 interface MyInterface {
     /**
      * Docs
@@ -78,11 +78,11 @@ interface MyInterface {
 }
 let t: MyInterface;
 `);
-            expect(signature.getJsDocTags().length).to.equal(0);
-        });
+      expect(signature.getJsDocTags().length).to.equal(0);
+    });
 
-        it("should get the js doc tags when they exist", () => {
-            const signature = getSignature(`
+    it("should get the js doc tags when they exist", () => {
+      const signature = getSignature(`
 interface MyInterface {
     /**
      * @property Testing.
@@ -92,21 +92,21 @@ interface MyInterface {
 let t: MyInterface;
 `);
 
-            expect(signature.getJsDocTags().map(c => ({ name: c.getName(), text: c.getText() }))).to.deep.equal([{
-                name: "property",
-                text: [{
-                    kind: "text",
-                    text: "Testing.",
-                }],
-            }]);
-        });
+      expect(signature.getJsDocTags().map(c => ({ name: c.getName(), text: c.getText() }))).to.deep.equal([{
+        name: "property",
+        text: [{
+          kind: "text",
+          text: "Testing.",
+        }],
+      }]);
     });
+  });
 
-    describe(nameof<Signature>("getDeclaration"), () => {
-        it("signature<->declaration should match", () => {
-            const signature = getSignature("let t: () => void;");
-            const declaration = signature.getDeclaration();
-            expect(declaration.getSignature()).to.equal(signature);
-        });
+  describe(nameof<Signature>("getDeclaration"), () => {
+    it("signature<->declaration should match", () => {
+      const signature = getSignature("let t: () => void;");
+      const declaration = signature.getDeclaration();
+      expect(declaration.getSignature()).to.equal(signature);
     });
+  });
 });

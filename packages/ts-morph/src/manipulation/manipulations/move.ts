@@ -5,10 +5,10 @@ import { ChangingChildOrderTextManipulator } from "../textManipulators";
 import { doManipulation } from "./doManipulation";
 
 export interface ChangeChildOrderOptions<TParentNode extends Node> {
-    parent: TParentNode;
-    getSiblingFormatting: (parent: TParentNode, sibling: Node) => FormattingKind;
-    oldIndex: number;
-    newIndex: number;
+  parent: TParentNode;
+  getSiblingFormatting: (parent: TParentNode, sibling: Node) => FormattingKind;
+  oldIndex: number;
+  newIndex: number;
 }
 
 /**
@@ -16,11 +16,11 @@ export interface ChangeChildOrderOptions<TParentNode extends Node> {
  * @param opts - Options.
  */
 export function changeChildOrder<TParentNode extends Node>(opts: ChangeChildOrderOptions<TParentNode>) {
-    const { parent } = opts;
+  const { parent } = opts;
 
-    doManipulation(
-        parent._sourceFile,
-        new ChangingChildOrderTextManipulator(opts),
-        new NodeHandlerFactory().getForChangingChildOrder(opts),
-    );
+  doManipulation(
+    parent._sourceFile,
+    new ChangingChildOrderTextManipulator(opts),
+    new NodeHandlerFactory().getForChangingChildOrder(opts),
+  );
 }

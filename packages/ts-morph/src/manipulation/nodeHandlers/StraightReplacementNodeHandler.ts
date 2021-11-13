@@ -8,43 +8,45 @@ import { NodeHandlerHelper } from "./NodeHandlerHelper";
  * Replacement handler for replacing parts of the tree that should be equal.
  */
 export class StraightReplacementNodeHandler implements NodeHandler {
-    protected readonly helper: NodeHandlerHelper;
+  protected readonly helper: NodeHandlerHelper;
 
-    constructor(protected readonly compilerFactory: CompilerFactory) {
-        this.helper = new NodeHandlerHelper(compilerFactory);
+  constructor(protected readonly compilerFactory: CompilerFactory) {
+    this.helper = new NodeHandlerHelper(compilerFactory);
+  }
+
+  handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
+    /* istanbul ignore if */
+    if (currentNode.getKind() !== newNode.kind) {
+      // support a private identifier and identifier being swapped
+      const kinds = [currentNode.getKind(), newNode.kind];
+      if (kinds.includes(ts.SyntaxKind.Identifier) && kinds.includes(ts.SyntaxKind.PrivateIdentifier)) {
+        currentNode.forget();
+        return;
+      }
+
+      throw new errors.InvalidOperationError(
+        `Error replacing tree! Perhaps a syntax error was inserted `
+          + `(Current: ${currentNode.getKindName()} -- New: ${getSyntaxKindName(newNode.kind)}).`,
+      );
     }
 
-    handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
-        /* istanbul ignore if */
-        if (currentNode.getKind() !== newNode.kind) {
-            // support a private identifier and identifier being swapped
-            const kinds = [currentNode.getKind(), newNode.kind];
-            if (kinds.includes(ts.SyntaxKind.Identifier) && kinds.includes(ts.SyntaxKind.PrivateIdentifier)) {
-                currentNode.forget();
-                return;
-            }
+    if (currentNode._hasWrappedChildren())
+      this.handleChildren(currentNode, newNode, newSourceFile);
 
-            throw new errors.InvalidOperationError(`Error replacing tree! Perhaps a syntax error was inserted `
-                + `(Current: ${currentNode.getKindName()} -- New: ${getSyntaxKindName(newNode.kind)}).`);
-        }
+    this.compilerFactory.replaceCompilerNode(currentNode, newNode);
+  }
 
-        if (currentNode._hasWrappedChildren())
-            this.handleChildren(currentNode, newNode, newSourceFile);
+  private handleChildren(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
+    const [currentChildren, newChildren] = this.helper.getChildrenFast(currentNode, newNode, newSourceFile);
 
-        this.compilerFactory.replaceCompilerNode(currentNode, newNode);
+    if (currentChildren.length !== newChildren.length) {
+      throw new Error(
+        `Error replacing tree: The children of the old and new trees were expected to have the `
+          + `same count (${currentChildren.length}:${newChildren.length}).`,
+      );
     }
 
-    private handleChildren(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
-        const [currentChildren, newChildren] = this.helper.getChildrenFast(currentNode, newNode, newSourceFile);
-
-        if (currentChildren.length !== newChildren.length) {
-            throw new Error(
-                `Error replacing tree: The children of the old and new trees were expected to have the `
-                    + `same count (${currentChildren.length}:${newChildren.length}).`,
-            );
-        }
-
-        for (let i = 0; i < currentChildren.length; i++)
-            this.helper.handleForValues(this, currentChildren[i], newChildren[i], newSourceFile);
-    }
+    for (let i = 0; i < currentChildren.length; i++)
+      this.helper.handleForValues(this, currentChildren[i], newChildren[i], newSourceFile);
+  }
 }

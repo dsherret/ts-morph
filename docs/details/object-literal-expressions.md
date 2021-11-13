@@ -8,18 +8,18 @@ Object literal expressions look like the [initializer](initializers) for this va
 
 ```ts
 const obj = {
-    propertyAssignment: 5,
-    shorthandPropertyAssignment,
-    ...spreadAssignment,
-    get getAccessor() {
-        return 5;
-    },
-    set setAccessor(value: number) {
-        // do something
-    },
-    method() {
-        return "some string";
-    },
+  propertyAssignment: 5,
+  shorthandPropertyAssignment,
+  ...spreadAssignment,
+  get getAccessor() {
+    return 5;
+  },
+  set setAccessor(value: number) {
+    // do something
+  },
+  method() {
+    return "some string";
+  },
 };
 ```
 
@@ -33,7 +33,7 @@ const properties = objectLiteralExpression.getProperties();
 const property = objectLiteralExpression.getProperty("propertyAssignment");
 // or
 const spreadAssignment = objectLiteralExpression.getProperty(
-    p => p.getText() === "...spreadAssignment",
+  p => p.getText() === "...spreadAssignment",
 );
 // or
 const method = objectLiteralExpression.getPropertyOrThrow("method");
@@ -45,8 +45,8 @@ Add a property assignment via the `insertPropertyAssignment`, `insertPropertyAss
 
 ```ts
 const propertyAssignment = objectLiteralExpression.addPropertyAssignment({
-    name: "propertyAssignment",
-    initializer: "5",
+  name: "propertyAssignment",
+  initializer: "5",
 });
 ```
 
@@ -57,7 +57,7 @@ Add a shorthand property assignment via the `insertShorthandPropertyAssignment`,
 
 ```ts
 const shorthandPropertyAssignment = objectLiteralExpression.addShorthandPropertyAssignment({
-    name: "shorthandPropertyAssignment",
+  name: "shorthandPropertyAssignment",
 });
 ```
 
@@ -75,14 +75,14 @@ Add get and set accessors via the `insertGetAccessor`, `insertGetAccessors`, `ad
 
 ```ts
 const getAccessor = objectLiteralExpression.addGetAccessor({
-    name: "someNumber",
-    returnType: "number",
-    statements: ["return someNumber;"],
+  name: "someNumber",
+  returnType: "number",
+  statements: ["return someNumber;"],
 });
 const setAccessor = objectLiteralExpression.addSetAccessor({
-    name: "someNumber",
-    parameters: [{ name: "value", type: "number" }],
-    statements: ["someNumber = value;"],
+  name: "someNumber",
+  parameters: [{ name: "value", type: "number" }],
+  statements: ["someNumber = value;"],
 });
 ```
 
@@ -92,8 +92,8 @@ Add a method via the `insertMethod`, `insertMethods`, `addMethod`, or `addMethod
 
 ```ts
 const method = objectLiteralExpression.addMethod({
-    name: "method",
-    statements: [`return "some string";`],
+  name: "method",
+  statements: [`return "some string";`],
 });
 ```
 

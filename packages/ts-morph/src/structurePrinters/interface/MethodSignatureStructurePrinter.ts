@@ -4,19 +4,19 @@ import { NewLineFormattingStructuresPrinter } from "../formatting";
 import { NodePrinter } from "../NodePrinter";
 
 export class MethodSignatureStructurePrinter extends NodePrinter<OptionalKind<MethodSignatureStructure>> {
-    private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);
+  private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);
 
-    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<MethodSignatureStructure>> | undefined) {
-        this.multipleWriter.printText(writer, structures);
-    }
+  printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<MethodSignatureStructure>> | undefined) {
+    this.multipleWriter.printText(writer, structures);
+  }
 
-    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<MethodSignatureStructure>) {
-        this.factory.forJSDoc().printDocs(writer, structure.docs);
-        writer.write(structure.name);
-        writer.conditionalWrite(structure.hasQuestionToken, "?");
-        this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
-        this.factory.forParameterDeclaration().printTextsWithParenthesis(writer, structure.parameters);
-        this.factory.forReturnTypedNode().printText(writer, structure);
-        writer.write(";");
-    }
+  protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<MethodSignatureStructure>) {
+    this.factory.forJSDoc().printDocs(writer, structure.docs);
+    writer.write(structure.name);
+    writer.conditionalWrite(structure.hasQuestionToken, "?");
+    this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
+    this.factory.forParameterDeclaration().printTextsWithParenthesis(writer, structure.parameters);
+    this.factory.forReturnTypedNode().printText(writer, structure);
+    writer.write(";");
+  }
 }

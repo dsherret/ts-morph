@@ -4,14 +4,14 @@ import { TypeQueryNode } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
 describe("TypeQueryNode", () => {
-    function getTypeQueryNode(text: string) {
-        const { sourceFile } = getInfoFromText(text);
-        return sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.TypeQuery);
-    }
+  function getTypeQueryNode(text: string) {
+    const { sourceFile } = getInfoFromText(text);
+    return sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.TypeQuery);
+  }
 
-    describe(nameof<TypeQueryNode>("getExprName"), () => {
-        it("should get", () => {
-            expect(getTypeQueryNode("const test: typeof Test").getExprName().getText(), "Test");
-        });
+  describe(nameof<TypeQueryNode>("getExprName"), () => {
+    it("should get", () => {
+      expect(getTypeQueryNode("const test: typeof Test").getExprName().getText(), "Test");
     });
+  });
 });

@@ -1247,12 +1247,15 @@ class InMemoryFileSystemHost {
         const dir = this.directories.get(standardizedDirPath);
         if (dir == null)
             throw new errors.DirectoryNotFoundError(standardizedDirPath);
-        return [...getDirectories(this.directories.keys()), ...Array.from(dir.files.keys()).map(name => ({
+        return [
+            ...getDirectories(this.directories.keys()),
+            ...Array.from(dir.files.keys()).map(name => ({
                 name,
                 isDirectory: false,
                 isFile: true,
                 isSymlink: false,
-            }))];
+            })),
+        ];
         function* getDirectories(dirPaths) {
             for (const path of dirPaths) {
                 const parentDir = FileUtils.getDirPath(path);

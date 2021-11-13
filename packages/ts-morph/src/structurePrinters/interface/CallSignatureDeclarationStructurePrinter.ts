@@ -4,18 +4,18 @@ import { NewLineFormattingStructuresPrinter } from "../formatting";
 import { NodePrinter } from "../NodePrinter";
 
 export class CallSignatureDeclarationStructurePrinter extends NodePrinter<OptionalKind<CallSignatureDeclarationStructure>> {
-    private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);
+  private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);
 
-    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<CallSignatureDeclarationStructure>> | undefined) {
-        this.multipleWriter.printText(writer, structures);
-    }
+  printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<CallSignatureDeclarationStructure>> | undefined) {
+    this.multipleWriter.printText(writer, structures);
+  }
 
-    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<CallSignatureDeclarationStructure>) {
-        this.factory.forJSDoc().printDocs(writer, structure.docs);
+  protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<CallSignatureDeclarationStructure>) {
+    this.factory.forJSDoc().printDocs(writer, structure.docs);
 
-        this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
-        this.factory.forParameterDeclaration().printTextsWithParenthesis(writer, structure.parameters);
-        this.factory.forReturnTypedNode(true).printText(writer, structure);
-        writer.write(";");
-    }
+    this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
+    this.factory.forParameterDeclaration().printTextsWithParenthesis(writer, structure.parameters);
+    this.factory.forReturnTypedNode(true).printText(writer, structure);
+    writer.write(";");
+  }
 }

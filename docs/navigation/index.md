@@ -34,13 +34,13 @@ In ts-morph, these methods also exist and they can be used similarly to the comp
 const allChildren = node.getChildren();
 
 node.forEachChild(node => {
-    console.log(node.getText());
+  console.log(node.getText());
 });
 
 const classDec = node.forEachChild(node => {
-    if (Node.isClassDeclaration(node))
-        return node; // stops iterating over the children and returns this value
-    return undefined; // return a falsy value or no value to continue iterating
+  if (Node.isClassDeclaration(node))
+    return node; // stops iterating over the children and returns this value
+  return undefined; // return a falsy value or no value to continue iterating
 });
 ```
 
@@ -71,24 +71,24 @@ Traversal can be controlled with the second parameter:
 
 ```ts
 const result = node.forEachDescendant((node, traversal) => {
-    switch (node.getKind()) {
-        case SyntaxKind.ClassDeclaration:
-            // skips traversal of the current node's descendants
-            traversal.skip();
-            break;
-        case SyntaxKind.Parameter:
-            // skips traversal of the current node's descendants and its siblings and all their descendants
-            traversal.up();
-            break;
-        case SyntaxKind.FunctionDeclaration:
-            // stops traversal completely
-            traversal.stop();
-            break;
-        case SyntaxKind.InterfaceDeclaration:
-            // stops traversal completely and returns this value
-            return node;
-    }
+  switch (node.getKind()) {
+    case SyntaxKind.ClassDeclaration:
+      // skips traversal of the current node's descendants
+      traversal.skip();
+      break;
+    case SyntaxKind.Parameter:
+      // skips traversal of the current node's descendants and its siblings and all their descendants
+      traversal.up();
+      break;
+    case SyntaxKind.FunctionDeclaration:
+      // stops traversal completely
+      traversal.stop();
+      break;
+    case SyntaxKind.InterfaceDeclaration:
+      // stops traversal completely and returns this value
+      return node;
+  }
 
-    return undefined;
+  return undefined;
 });
 ```

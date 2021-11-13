@@ -4,69 +4,69 @@ import { ConditionalExpression } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
 function getInfoFromTextWithExpression(text: string) {
-    const info = getInfoFromTextWithDescendant<ConditionalExpression>(text, SyntaxKind.ConditionalExpression);
-    return { ...info, expression: info.descendant };
+  const info = getInfoFromTextWithDescendant<ConditionalExpression>(text, SyntaxKind.ConditionalExpression);
+  return { ...info, expression: info.descendant };
 }
 
 describe("ConditionalExpression", () => {
-    const condition = "x > 0";
-    const questionToken = "?";
-    const whenTrue = "0";
-    const colonToken = ":";
-    const whenFalse = "x";
-    const conditional = `${condition} ${questionToken} ${whenTrue} ${colonToken} ${whenFalse}`;
-    describe(nameof<ConditionalExpression>("getCondition"), () => {
-        function doTest(text: string, expectedText: string) {
-            const { expression } = getInfoFromTextWithExpression(text);
-            expect(expression.getCondition().getText()).to.equal(expectedText);
-        }
+  const condition = "x > 0";
+  const questionToken = "?";
+  const whenTrue = "0";
+  const colonToken = ":";
+  const whenFalse = "x";
+  const conditional = `${condition} ${questionToken} ${whenTrue} ${colonToken} ${whenFalse}`;
+  describe(nameof<ConditionalExpression>("getCondition"), () => {
+    function doTest(text: string, expectedText: string) {
+      const { expression } = getInfoFromTextWithExpression(text);
+      expect(expression.getCondition().getText()).to.equal(expectedText);
+    }
 
-        it("should get the correct condition", () => {
-            doTest(conditional, condition);
-        });
+    it("should get the correct condition", () => {
+      doTest(conditional, condition);
     });
+  });
 
-    describe(nameof<ConditionalExpression>("getQuestionToken"), () => {
-        function doTest(text: string, expectedText: string) {
-            const { expression } = getInfoFromTextWithExpression(text);
-            expect(expression.getQuestionToken().getText()).to.equal(expectedText);
-        }
+  describe(nameof<ConditionalExpression>("getQuestionToken"), () => {
+    function doTest(text: string, expectedText: string) {
+      const { expression } = getInfoFromTextWithExpression(text);
+      expect(expression.getQuestionToken().getText()).to.equal(expectedText);
+    }
 
-        it("should get the correct question token", () => {
-            doTest(conditional, questionToken);
-        });
+    it("should get the correct question token", () => {
+      doTest(conditional, questionToken);
     });
+  });
 
-    describe(nameof<ConditionalExpression>("getWhenTrue"), () => {
-        function doTest(text: string, expectedText: string) {
-            const { expression } = getInfoFromTextWithExpression(text);
-            expect(expression.getWhenTrue().getText()).to.equal(expectedText);
-        }
+  describe(nameof<ConditionalExpression>("getWhenTrue"), () => {
+    function doTest(text: string, expectedText: string) {
+      const { expression } = getInfoFromTextWithExpression(text);
+      expect(expression.getWhenTrue().getText()).to.equal(expectedText);
+    }
 
-        it("should get the correct when true", () => {
-            doTest(conditional, whenTrue);
-        });
+    it("should get the correct when true", () => {
+      doTest(conditional, whenTrue);
     });
+  });
 
-    describe(nameof<ConditionalExpression>("getColonToken"), () => {
-        function doTest(text: string, expectedText: string) {
-            const { expression } = getInfoFromTextWithExpression(text);
-            expect(expression.getColonToken().getText()).to.equal(expectedText);
-        }
+  describe(nameof<ConditionalExpression>("getColonToken"), () => {
+    function doTest(text: string, expectedText: string) {
+      const { expression } = getInfoFromTextWithExpression(text);
+      expect(expression.getColonToken().getText()).to.equal(expectedText);
+    }
 
-        it("should get the correct colon token", () => {
-            doTest(conditional, colonToken);
-        });
+    it("should get the correct colon token", () => {
+      doTest(conditional, colonToken);
     });
+  });
 
-    describe(nameof<ConditionalExpression>("getWhenFalse"), () => {
-        function doTest(text: string, expectedText: string) {
-            const { expression } = getInfoFromTextWithExpression(text);
-            expect(expression.getWhenFalse().getText()).to.equal(expectedText);
-        }
+  describe(nameof<ConditionalExpression>("getWhenFalse"), () => {
+    function doTest(text: string, expectedText: string) {
+      const { expression } = getInfoFromTextWithExpression(text);
+      expect(expression.getWhenFalse().getText()).to.equal(expectedText);
+    }
 
-        it("should get the correct when false", () => {
-            doTest(conditional, whenFalse);
-        });
+    it("should get the correct when false", () => {
+      doTest(conditional, whenFalse);
     });
+  });
 });

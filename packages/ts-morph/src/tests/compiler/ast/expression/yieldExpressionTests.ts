@@ -4,34 +4,34 @@ import { YieldExpression } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
 function getInfoFromTextWithYieldExpression(text: string) {
-    const info = getInfoFromTextWithDescendant<YieldExpression>(text, SyntaxKind.YieldExpression);
-    return { ...info, yieldExpression: info.descendant };
+  const info = getInfoFromTextWithDescendant<YieldExpression>(text, SyntaxKind.YieldExpression);
+  return { ...info, yieldExpression: info.descendant };
 }
 
 describe("YieldExpression", () => {
-    const expression = "x";
-    const expr = `yield ${expression}`;
-    const emptyExpr = "function*() { yield; }";
-    const { yieldExpression } = getInfoFromTextWithYieldExpression(expr);
-    const { yieldExpression: emptyYieldExpression } = getInfoFromTextWithYieldExpression(emptyExpr);
+  const expression = "x";
+  const expr = `yield ${expression}`;
+  const emptyExpr = "function*() { yield; }";
+  const { yieldExpression } = getInfoFromTextWithYieldExpression(expr);
+  const { yieldExpression: emptyYieldExpression } = getInfoFromTextWithYieldExpression(emptyExpr);
 
-    describe(nameof<YieldExpression>("getExpression"), () => {
-        it("should get the correct expression", () => {
-            expect(yieldExpression.getExpression()!.getText()).to.equal(expression);
-        });
-
-        it("should get the correct undefined expression", () => {
-            expect(emptyYieldExpression.getExpression()).to.be.undefined;
-        });
+  describe(nameof<YieldExpression>("getExpression"), () => {
+    it("should get the correct expression", () => {
+      expect(yieldExpression.getExpression()!.getText()).to.equal(expression);
     });
 
-    describe(nameof<YieldExpression>("getExpressionOrThrow"), () => {
-        it("should should return the expression", () => {
-            expect(yieldExpression.getExpressionOrThrow().getText()).to.equal(expression);
-        });
-
-        it("should throw without an expression", () => {
-            expect(() => emptyYieldExpression.getExpressionOrThrow()).to.throw();
-        });
+    it("should get the correct undefined expression", () => {
+      expect(emptyYieldExpression.getExpression()).to.be.undefined;
     });
+  });
+
+  describe(nameof<YieldExpression>("getExpressionOrThrow"), () => {
+    it("should should return the expression", () => {
+      expect(yieldExpression.getExpressionOrThrow().getText()).to.equal(expression);
+    });
+
+    it("should throw without an expression", () => {
+      expect(() => emptyYieldExpression.getExpressionOrThrow()).to.throw();
+    });
+  });
 });

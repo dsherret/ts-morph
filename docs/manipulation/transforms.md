@@ -16,14 +16,14 @@ const sourceFile = project.createSourceFile("Example.ts", "1; 2; 3;");
 
 // this can be done starting on any node and not just the root node
 sourceFile.transform(traversal => {
-    const node = traversal.visitChildren(); // return type is `ts.Node`
+  const node = traversal.visitChildren(); // return type is `ts.Node`
 
-    if (ts.isNumericLiteral(node)) {
-        const incrementedValue = parseInt(node.text, 10) + 1;
-        return ts.createNumericLiteral(incrementedValue.toString());
-    }
+  if (ts.isNumericLiteral(node)) {
+    const incrementedValue = parseInt(node.text, 10) + 1;
+    return ts.createNumericLiteral(incrementedValue.toString());
+  }
 
-    return node;
+  return node;
 });
 
 // outputs: 2; 3; 4;
@@ -38,7 +38,9 @@ Doing this is more performant, but you won't have type checking, symbols, and yo
 import { ts } from "ts-morph";
 
 const project = new Project();
-const sourceFile = project.createSourceFile("Example.ts", `
+const sourceFile = project.createSourceFile(
+  "Example.ts",
+  `
 class C1 {
     myMethod() {
         function nestedFunction() {
@@ -55,27 +57,28 @@ function f1() {
 
     function nestedFunction() {
     }
-}`);
+}`,
+);
 
 sourceFile.transform(traversal => {
-    // this will skip visiting the children of the classes
-    if (ts.isClassDeclaration(traversal.currentNode))
-        return traversal.currentNode;
+  // this will skip visiting the children of the classes
+  if (ts.isClassDeclaration(traversal.currentNode))
+    return traversal.currentNode;
 
-    const node = traversal.visitChildren();
-    if (ts.isFunctionDeclaration(node)) {
-        return ts.updateFunctionDeclaration(
-            node,
-            [],
-            [],
-            undefined,
-            ts.createIdentifier("newName"),
-            [],
-            [],
-            undefined,
-            ts.createBlock([]),
-        );
-    }
-    return node;
+  const node = traversal.visitChildren();
+  if (ts.isFunctionDeclaration(node)) {
+    return ts.updateFunctionDeclaration(
+      node,
+      [],
+      [],
+      undefined,
+      ts.createIdentifier("newName"),
+      [],
+      [],
+      undefined,
+      ts.createBlock([]),
+    );
+  }
+  return node;
 });
 ```

@@ -5,5 +5,5 @@ import { Node } from "../common";
  * JS doc member name node.
  */
 export class JSDocMemberName extends Node<ts.JSDocMemberName> {
-    // todo: helper methods
+  // todo: helper methods
 }

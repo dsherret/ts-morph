@@ -6,11 +6,11 @@ import { OptionalKind } from "../types";
 import { VariableDeclarationStructure } from "./VariableDeclarationStructure";
 
 export interface VariableStatementStructure
-    extends Structure, VariableStatementSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure
+  extends Structure, VariableStatementSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure
 {
 }
 
 export interface VariableStatementSpecificStructure extends KindedStructure<StructureKind.VariableStatement> {
-    declarationKind?: VariableDeclarationKind;
-    declarations: OptionalKind<VariableDeclarationStructure>[];
+  declarationKind?: VariableDeclarationKind;
+  declarations: OptionalKind<VariableDeclarationStructure>[];
 }

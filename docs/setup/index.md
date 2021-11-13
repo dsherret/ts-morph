@@ -18,9 +18,9 @@ const project = new Project();
 import { Project, ScriptTarget } from "ts-morph";
 
 const project = new Project({
-    compilerOptions: {
-        target: ScriptTarget.ES3,
-    },
+  compilerOptions: {
+    target: ScriptTarget.ES3,
+  },
 });
 ```
 
@@ -30,7 +30,7 @@ If you would like to manually specify the path to a _tsconfig.json_ file then sp
 
 ```ts
 const project = new Project({
-    tsConfigFilePath: "path/to/tsconfig.json",
+  tsConfigFilePath: "path/to/tsconfig.json",
 });
 ```
 
@@ -40,8 +40,8 @@ For your convenience, this will automatically add all the associated source file
 
 ```ts
 const project = new Project({
-    tsConfigFilePath: "path/to/tsconfig.json",
-    skipAddingFilesFromTsConfig: true,
+  tsConfigFilePath: "path/to/tsconfig.json",
+  skipAddingFilesFromTsConfig: true,
 });
 ```
 
@@ -56,28 +56,28 @@ import { Project, ts } from "ts-morph";
 
 // this is deno style module resolution (ex. `import { MyClass } from "./MyClass.ts"`)
 const project = new Project({
-    resolutionHost: (moduleResolutionHost, getCompilerOptions) => {
-        return {
-            resolveModuleNames: (moduleNames, containingFile) => {
-                const compilerOptions = getCompilerOptions();
-                const resolvedModules: ts.ResolvedModule[] = [];
+  resolutionHost: (moduleResolutionHost, getCompilerOptions) => {
+    return {
+      resolveModuleNames: (moduleNames, containingFile) => {
+        const compilerOptions = getCompilerOptions();
+        const resolvedModules: ts.ResolvedModule[] = [];
 
-                for (const moduleName of moduleNames.map(removeTsExtension)) {
-                    const result = ts.resolveModuleName(moduleName, containingFile, compilerOptions, moduleResolutionHost);
-                    if (result.resolvedModule)
-                        resolvedModules.push(result.resolvedModule);
-                }
-
-                return resolvedModules;
-            },
-        };
-
-        function removeTsExtension(moduleName: string) {
-            if (moduleName.slice(-3).toLowerCase() === ".ts")
-                return moduleName.slice(0, -3);
-            return moduleName;
+        for (const moduleName of moduleNames.map(removeTsExtension)) {
+          const result = ts.resolveModuleName(moduleName, containingFile, compilerOptions, moduleResolutionHost);
+          if (result.resolvedModule)
+            resolvedModules.push(result.resolvedModule);
         }
-    },
+
+        return resolvedModules;
+      },
+    };
+
+    function removeTsExtension(moduleName: string) {
+      if (moduleName.slice(-3).toLowerCase() === ".ts")
+        return moduleName.slice(0, -3);
+      return moduleName;
+    }
+  },
 });
 ```
 
@@ -89,6 +89,6 @@ If you do not want this behaviour, you may specify an actual folder to get the l
 
 ```ts
 const project = new Project({
-    libFolderPath: "./node_modules/typescript/lib",
+  libFolderPath: "./node_modules/typescript/lib",
 });
 ```

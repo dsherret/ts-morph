@@ -5,17 +5,22 @@ import { StructureKind } from "../StructureKind";
 import { OptionalKind } from "../types";
 
 export interface ConstructorDeclarationStructure
-    extends Structure, ConstructorDeclarationSpecificStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure
+  extends Structure, ConstructorDeclarationSpecificStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure
 {
 }
 
 export interface ConstructorDeclarationSpecificStructure extends KindedStructure<StructureKind.Constructor> {
-    overloads?: OptionalKind<ConstructorDeclarationOverloadStructure>[];
+  overloads?: OptionalKind<ConstructorDeclarationOverloadStructure>[];
 }
 
 export interface ConstructorDeclarationOverloadStructure
-    extends Structure, ConstructorDeclarationOverloadSpecificStructure, ScopedNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure,
-        JSDocableNodeStructure
+  extends
+    Structure,
+    ConstructorDeclarationOverloadSpecificStructure,
+    ScopedNodeStructure,
+    SignaturedDeclarationStructure,
+    TypeParameteredNodeStructure,
+    JSDocableNodeStructure
 {
 }
 

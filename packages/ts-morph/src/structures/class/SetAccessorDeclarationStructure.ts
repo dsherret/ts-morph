@@ -4,8 +4,15 @@ import { KindedStructure, Structure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 
 export interface SetAccessorDeclarationStructure
-    extends Structure, SetAccessorDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure,
-        AbstractableNodeStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure
+  extends
+    Structure,
+    SetAccessorDeclarationSpecificStructure,
+    PropertyNamedNodeStructure,
+    StaticableNodeStructure,
+    DecoratableNodeStructure,
+    AbstractableNodeStructure,
+    ScopedNodeStructure,
+    FunctionLikeDeclarationStructure
 {
 }
 

@@ -3,7 +3,7 @@ import { StructureKind } from "../StructureKind";
 import { JsxAttributedNodeStructure, JsxTagNamedNodeStructure } from "./base";
 
 export interface JsxSelfClosingElementStructure
-    extends Structure, JsxTagNamedNodeStructure, JsxSelfClosingElementSpecificStructure, JsxAttributedNodeStructure
+  extends Structure, JsxTagNamedNodeStructure, JsxSelfClosingElementSpecificStructure, JsxAttributedNodeStructure
 {
 }
 

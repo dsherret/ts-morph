@@ -5,10 +5,10 @@ import { Node } from "../common";
 
 export const StatementBase = ChildOrderableNode(Node);
 export class Statement<T extends ts.Statement = ts.Statement> extends StatementBase<T> {
-    /**
-     * Removes the statement.
-     */
-    remove() {
-        removeStatementedNodeChild(this);
-    }
+  /**
+   * Removes the statement.
+   */
+  remove() {
+    removeStatementedNodeChild(this);
+  }
 }

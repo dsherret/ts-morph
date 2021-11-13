@@ -6,12 +6,12 @@ import { errors } from "@ts-morph/common";
  * @param length - Length index could be in.
  */
 export function verifyAndGetIndex(index: number, length: number) {
-    const newIndex = index < 0 ? length + index : index;
+  const newIndex = index < 0 ? length + index : index;
 
-    if (newIndex < 0)
-        throw new errors.InvalidOperationError(`Invalid index: The max negative index is ${length * -1}, but ${index} was specified.`);
-    if (index > length)
-        throw new errors.InvalidOperationError(`Invalid index: The max index is ${length}, but ${index} was specified.`);
+  if (newIndex < 0)
+    throw new errors.InvalidOperationError(`Invalid index: The max negative index is ${length * -1}, but ${index} was specified.`);
+  if (index > length)
+    throw new errors.InvalidOperationError(`Invalid index: The max index is ${length}, but ${index} was specified.`);
 
-    return newIndex;
+  return newIndex;
 }

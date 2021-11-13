@@ -7,5 +7,5 @@ export const JSDocSeeTagBase = JSDocTypeExpressionableTag(JSDocTag);
  * JS doc "see" tag node.
  */
 export class JSDocSeeTag extends JSDocSeeTagBase<ts.JSDocSeeTag> {
-    // todo: helper methods
+  // todo: helper methods
 }

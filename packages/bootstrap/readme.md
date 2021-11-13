@@ -18,12 +18,12 @@ const project = await createProject(); // or createProjectSync
 
 // these are typed as ts.SourceFile
 const myClassFile = project.createSourceFile(
-    "MyClass.ts",
-    "export class MyClass { prop: string; }",
+  "MyClass.ts",
+  "export class MyClass { prop: string; }",
 );
 const mainFile = project.createSourceFile(
-    "main.ts",
-    "import { MyClass } from './MyClass'",
+  "main.ts",
+  "import { MyClass } from './MyClass'",
 );
 
 // ts.Program
@@ -74,9 +74,9 @@ project.fileSystem.writeFileSync("MyClass.ts", "class MyClass {}");
 
 ```ts
 const project = await createProject({
-    compilerOptions: {
-        target: ts.ScriptTarget.ES3,
-    },
+  compilerOptions: {
+    target: ts.ScriptTarget.ES3,
+  },
 });
 ```
 
@@ -86,7 +86,7 @@ If you would like to manually specify the path to a tsconfig.json file then spec
 
 ```ts
 const project = await createProject({
-    tsConfigFilePath: "packages/my-library/tsconfig.json",
+  tsConfigFilePath: "packages/my-library/tsconfig.json",
 });
 
 // output all the source files that were added
@@ -99,8 +99,8 @@ For your convenience, this will automatically add all the associated source file
 
 ```ts
 const project = await createProject({
-    tsConfigFilePath: "path/to/tsconfig.json",
-    skipAddingFilesFromTsConfig: true,
+  tsConfigFilePath: "path/to/tsconfig.json",
+  skipAddingFilesFromTsConfig: true,
 });
 ```
 
@@ -116,34 +116,34 @@ import { createProject, ts } from "@ts-morph/bootstrap";
 // This is deno style module resolution.
 // Ex. `import { MyClass } from "./MyClass.ts"`;
 const project = await createProject({
-    resolutionHost: (moduleResolutionHost, getCompilerOptions) => {
-        return {
-            resolveModuleNames: (moduleNames, containingFile) => {
-                const compilerOptions = getCompilerOptions();
-                const resolvedModules: ts.ResolvedModule[] = [];
+  resolutionHost: (moduleResolutionHost, getCompilerOptions) => {
+    return {
+      resolveModuleNames: (moduleNames, containingFile) => {
+        const compilerOptions = getCompilerOptions();
+        const resolvedModules: ts.ResolvedModule[] = [];
 
-                for (const moduleName of moduleNames.map(removeTsExtension)) {
-                    const result = ts.resolveModuleName(
-                        moduleName,
-                        containingFile,
-                        compilerOptions,
-                        moduleResolutionHost,
-                    );
+        for (const moduleName of moduleNames.map(removeTsExtension)) {
+          const result = ts.resolveModuleName(
+            moduleName,
+            containingFile,
+            compilerOptions,
+            moduleResolutionHost,
+          );
 
-                    if (result.resolvedModule)
-                        resolvedModules.push(result.resolvedModule);
-                }
-
-                return resolvedModules;
-            },
-        };
-
-        function removeTsExtension(moduleName: string) {
-            if (moduleName.slice(-3).toLowerCase() === ".ts")
-                return moduleName.slice(0, -3);
-            return moduleName;
+          if (result.resolvedModule)
+            resolvedModules.push(result.resolvedModule);
         }
-    },
+
+        return resolvedModules;
+      },
+    };
+
+    function removeTsExtension(moduleName: string) {
+      if (moduleName.slice(-3).toLowerCase() === ".ts")
+        return moduleName.slice(0, -3);
+      return moduleName;
+    }
+  },
 });
 ```
 

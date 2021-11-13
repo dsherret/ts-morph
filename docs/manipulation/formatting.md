@@ -21,7 +21,7 @@ Automatically format the text of this file by calling format text on it:
 sourceFile.formatText();
 // or provide optional formatting settings
 sourceFile.formatText({
-    placeOpenBraceOnNewLineForFunctions: true,
+  placeOpenBraceOnNewLineForFunctions: true,
 });
 ```
 
@@ -31,7 +31,7 @@ This will run the source file's text through the TypeScript compiler's formattin
 // BadlyFormattedFile.ts (not anymore!)
 var myVariable: string | number;
 function myFunction(param: string) {
-    return "";
+  return "";
 }
 ```
 
@@ -55,10 +55,10 @@ You can select down to the specific node you want to format:
 
 ```ts
 project.getSourceFileOrThrow("file.ts")
-    .getClassOrThrow("MyClass")
-    .getInstanceMethodOrThrow("myMethod")
-    .getStatements()[0]
-    .formatText();
+  .getClassOrThrow("MyClass")
+  .getInstanceMethodOrThrow("myMethod")
+  .getStatements()[0]
+  .formatText();
 ```
 
 Which would selectively only format the first statement in the method:

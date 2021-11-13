@@ -6,6 +6,6 @@ export interface ExportAssignmentStructure extends Structure, ExportAssignmentSp
 }
 
 export interface ExportAssignmentSpecificStructure extends KindedStructure<StructureKind.ExportAssignment> {
-    isExportEquals?: boolean;
-    expression: string | WriterFunction;
+  isExportEquals?: boolean;
+  expression: string | WriterFunction;
 }

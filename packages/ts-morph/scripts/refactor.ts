@@ -22,9 +22,9 @@ const commonDir = project.getDirectoryOrThrow("./src/compiler/ast/common");
 const nodeSourceFile = project.getSourceFileOrThrow("./src/compiler/ast/common/Node.ts");
 
 for (let i = 0; i < sourceFiles.length; i++) {
-    const sourceFile = sourceFiles[i];
-    console.log(`[${i + 1}/${sourceFiles.length}] Updating: ${sourceFile.getFilePath()}`);
-    // DON'T CHECK IN THE CHANGES WITHIN THIS BLOCK
+  const sourceFile = sourceFiles[i];
+  console.log(`[${i + 1}/${sourceFiles.length}] Updating: ${sourceFile.getFilePath()}`);
+  // DON'T CHECK IN THE CHANGES WITHIN THIS BLOCK
 }
 
 project.save();

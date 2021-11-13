@@ -6,5 +6,5 @@ export interface SourceFileStructure extends Structure, SourceFileSpecificStruct
 }
 
 export interface SourceFileSpecificStructure {
-    kind: StructureKind.SourceFile;
+  kind: StructureKind.SourceFile;
 }

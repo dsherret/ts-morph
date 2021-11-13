@@ -4,32 +4,32 @@
  * this class should be removed in favour of helper functions around a WeakMap.
  */
 export class WeakCache<T extends object, U> {
-    private readonly cacheItems = new WeakMap<T, U>();
+  private readonly cacheItems = new WeakMap<T, U>();
 
-    getOrCreate<TCreate extends U = U>(key: T, createFunc: () => TCreate) {
-        let item = this.get(key) as TCreate;
+  getOrCreate<TCreate extends U = U>(key: T, createFunc: () => TCreate) {
+    let item = this.get(key) as TCreate;
 
-        if (item == null) {
-            item = createFunc();
-            this.set(key, item);
-        }
-
-        return item;
+    if (item == null) {
+      item = createFunc();
+      this.set(key, item);
     }
 
-    has(key: T) {
-        return this.cacheItems.has(key);
-    }
+    return item;
+  }
 
-    get(key: T) {
-        return this.cacheItems.get(key);
-    }
+  has(key: T) {
+    return this.cacheItems.has(key);
+  }
 
-    set(key: T, value: U) {
-        this.cacheItems.set(key, value);
-    }
+  get(key: T) {
+    return this.cacheItems.get(key);
+  }
 
-    removeByKey(key: T) {
-        this.cacheItems.delete(key);
-    }
+  set(key: T, value: U) {
+    this.cacheItems.set(key, value);
+  }
+
+  removeByKey(key: T) {
+    this.cacheItems.delete(key);
+  }
 }

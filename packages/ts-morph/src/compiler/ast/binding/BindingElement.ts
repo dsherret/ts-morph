@@ -6,21 +6,21 @@ import { Node } from "../common";
 const createBase = <T extends typeof Node>(ctor: T) => DotDotDotTokenableNode(InitializerExpressionableNode(BindingNamedNode(ctor)));
 export const BindingElementBase = createBase(Node);
 export class BindingElement extends BindingElementBase<ts.BindingElement> {
-    /**
-     * Gets binding element's property name node or throws if not found.
-     *
-     * For example in `const { a: b } = { a: 5 }`, `a` would be the property name.
-     */
-    getPropertyNameNodeOrThrow(): PropertyName {
-        return errors.throwIfNullOrUndefined(this.getPropertyNameNode(), "Expected to find a property name node.");
-    }
+  /**
+   * Gets binding element's property name node or throws if not found.
+   *
+   * For example in `const { a: b } = { a: 5 }`, `a` would be the property name.
+   */
+  getPropertyNameNodeOrThrow(): PropertyName {
+    return errors.throwIfNullOrUndefined(this.getPropertyNameNode(), "Expected to find a property name node.");
+  }
 
-    /**
-     * Gets binding element's property name node or returns undefined if not found.
-     *
-     * For example in `const { a: b } = { a: 5 }`, `a` would be the property name.
-     */
-    getPropertyNameNode(): PropertyName | undefined {
-        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.propertyName);
-    }
+  /**
+   * Gets binding element's property name node or returns undefined if not found.
+   *
+   * For example in `const { a: b } = { a: 5 }`, `a` would be the property name.
+   */
+  getPropertyNameNode(): PropertyName | undefined {
+    return this._getNodeFromCompilerNodeIfExists(this.compilerNode.propertyName);
+  }
 }

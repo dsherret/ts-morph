@@ -2,13 +2,13 @@ import { CompilerOptions, FileSystemHost, getCompilerOptionsFromTsConfig as core
 import { Diagnostic } from "../../compiler";
 
 export interface CompilerOptionsFromTsConfigOptions {
-    encoding?: string;
-    fileSystem?: FileSystemHost;
+  encoding?: string;
+  fileSystem?: FileSystemHost;
 }
 
 export interface CompilerOptionsFromTsConfigResult {
-    options: CompilerOptions;
-    errors: Diagnostic[];
+  options: CompilerOptions;
+  errors: Diagnostic[];
 }
 
 /**
@@ -17,9 +17,9 @@ export interface CompilerOptionsFromTsConfigResult {
  * @param options - Options.
  */
 export function getCompilerOptionsFromTsConfig(filePath: string, options: CompilerOptionsFromTsConfigOptions = {}): CompilerOptionsFromTsConfigResult {
-    const result = coreGetCompilerOptionsFromTsConfig(filePath, options);
-    return {
-        options: result.options,
-        errors: result.errors.map(error => new Diagnostic(undefined, error)),
-    };
+  const result = coreGetCompilerOptionsFromTsConfig(filePath, options);
+  return {
+    options: result.options,
+    errors: result.errors.map(error => new Diagnostic(undefined, error)),
+  };
 }

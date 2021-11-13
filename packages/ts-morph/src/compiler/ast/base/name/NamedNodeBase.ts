@@ -7,43 +7,43 @@ import { Node } from "../../common";
 import { CompilerNodeToWrappedType } from "../../CompilerNodeToWrappedType";
 
 export interface NamedNodeSpecificBase<TNode extends Node> {
-    /**
-     * Gets the name node.
-     */
-    getNameNode(): TNode;
-    /**
-     * Gets the name as a string.
-     */
-    getName(): string;
+  /**
+   * Gets the name node.
+   */
+  getNameNode(): TNode;
+  /**
+   * Gets the name as a string.
+   */
+  getName(): string;
 }
 
-export type NamedNodeBaseExtensionType<TCompilerNode extends ts.Node> = Node<ts.Node & { name: TCompilerNode; }>;
+export type NamedNodeBaseExtensionType<TCompilerNode extends ts.Node> = Node<ts.Node & { name: TCompilerNode }>;
 export function NamedNodeBase<TCompilerNode extends ts.Node, U extends Constructor<NamedNodeBaseExtensionType<TCompilerNode>>>(
-    Base: U,
+  Base: U,
 ): Constructor<NamedNodeSpecificBase<CompilerNodeToWrappedType<TCompilerNode>>> & U {
-    return class extends Base implements NamedNodeSpecificBase<CompilerNodeToWrappedType<TCompilerNode>> {
-        getNameNode() {
-            return this._getNodeFromCompilerNode(this.compilerNode.name);
-        }
+  return class extends Base implements NamedNodeSpecificBase<CompilerNodeToWrappedType<TCompilerNode>> {
+    getNameNode() {
+      return this._getNodeFromCompilerNode(this.compilerNode.name);
+    }
 
-        getName() {
-            return this.getNameNode().getText();
-        }
+    getName() {
+      return this.getNameNode().getText();
+    }
 
-        set(structure: Partial<NamedNodeStructure>) {
-            callBaseSet(Base.prototype, this, structure);
+    set(structure: Partial<NamedNodeStructure>) {
+      callBaseSet(Base.prototype, this, structure);
 
-            // do not rename here—don't use language service
-            if (structure.name != null)
-                this.getNameNode().replaceWithText(structure.name);
+      // do not rename here—don't use language service
+      if (structure.name != null)
+        this.getNameNode().replaceWithText(structure.name);
 
-            return this;
-        }
+      return this;
+    }
 
-        getStructure() {
-            return callBaseGetStructure<NamedNodeStructure>(Base.prototype, this, {
-                name: this.getName(),
-            });
-        }
-    };
+    getStructure() {
+      return callBaseGetStructure<NamedNodeStructure>(Base.prototype, this, {
+        name: this.getName(),
+      });
+    }
+  };
 }

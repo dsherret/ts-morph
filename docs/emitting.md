@@ -45,9 +45,9 @@ Or get its emit output:
 const emitOutput = sourceFile.getEmitOutput();
 emitOutput.getEmitSkipped(); // returns: boolean
 for (const outputFile of emitOutput.getOutputFiles()) {
-    outputFile.getFilePath();
-    outputFile.getWriteByteOrderMark();
-    outputFile.getText();
+  outputFile.getFilePath();
+  outputFile.getWriteByteOrderMark();
+  outputFile.getText();
 }
 ```
 
@@ -66,7 +66,7 @@ Diagnostics about the emit can be found on the result:
 ```ts
 const emitResult = await project.emit();
 for (const diagnostic of emitResult.getDiagnostics())
-    console.log(diagnostic.getMessageText());
+  console.log(diagnostic.getMessageText());
 ```
 
 These are good to always check when emitting to ensure everything went smoothly. They will explain why files aren't being emitted.
@@ -79,28 +79,28 @@ The following example will emit the code with all numeric literals change to str
 
 ```ts
 project.emit({
-    customTransformers: {
-        // optional transformers to evaluate before built in .js transformations
-        before: [context => sourceFile => visitSourceFile(sourceFile, context, numericLiteralToStringLiteral)],
-        // optional transformers to evaluate after built in .js transformations
-        after: [],
-        // optional transformers to evaluate after built in .d.ts transformations
-        afterDeclarations: [],
-    },
+  customTransformers: {
+    // optional transformers to evaluate before built in .js transformations
+    before: [context => sourceFile => visitSourceFile(sourceFile, context, numericLiteralToStringLiteral)],
+    // optional transformers to evaluate after built in .js transformations
+    after: [],
+    // optional transformers to evaluate after built in .d.ts transformations
+    afterDeclarations: [],
+  },
 });
 
 function visitSourceFile(sourceFile: ts.SourceFile, context: ts.TransformationContext, visitNode: (node: ts.Node) => ts.Node) {
-    return visitNodeAndChildren(sourceFile) as ts.SourceFile;
+  return visitNodeAndChildren(sourceFile) as ts.SourceFile;
 
-    function visitNodeAndChildren(node: ts.Node): ts.Node {
-        return ts.visitEachChild(visitNode(node), visitNodeAndChildren, context);
-    }
+  function visitNodeAndChildren(node: ts.Node): ts.Node {
+    return ts.visitEachChild(visitNode(node), visitNodeAndChildren, context);
+  }
 }
 
 function numericLiteralToStringLiteral(node: ts.Node) {
-    if (ts.isNumericLiteral(node))
-        return ts.createStringLiteral(node.text);
-    return node;
+  if (ts.isNumericLiteral(node))
+    return ts.createStringLiteral(node.text);
+  return node;
 }
 ```
 
@@ -115,11 +115,11 @@ const result = project.emitToMemory();
 
 // output the emitted files to the console
 for (const file of result.getFiles()) {
-    console.log("----");
-    console.log(file.filePath);
-    console.log("----");
-    console.log(file.text);
-    console.log("\n");
+  console.log("----");
+  console.log(file.filePath);
+  console.log("----");
+  console.log(file.text);
+  console.log("\n");
 }
 
 // or finally save this result to the underlying file system (or use `saveFilesSync()`)
@@ -136,7 +136,7 @@ const result = project.emitToMemory();
 // load the javascript files into a new project
 const newProject = new Project();
 for (const file of result.getFiles())
-    newProject.createSourceFile(file.filePath, file.text, { overwrite: true });
+  newProject.createSourceFile(file.filePath, file.text, { overwrite: true });
 
 // ...manipulate the javascript files here...
 

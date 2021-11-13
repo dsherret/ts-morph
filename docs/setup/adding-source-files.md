@@ -14,7 +14,7 @@ Source files will be added when instantiating with a `tsConfigFilePath`:
 import { Project } from "ts-morph";
 
 const project = new Project({
-    tsConfigFilePath: "path/to/tsconfig.json",
+  tsConfigFilePath: "path/to/tsconfig.json",
 });
 ```
 
@@ -22,8 +22,8 @@ const project = new Project({
 
 ```ts
 const project = new Project({
-    tsConfigFilePath: "path/to/tsconfig.json",
-    skipAddingFilesFromTsConfig: true,
+  tsConfigFilePath: "path/to/tsconfig.json",
+  skipAddingFilesFromTsConfig: true,
 });
 ```
 
@@ -40,8 +40,8 @@ include the source files they depend on. If you wish to skip this analysis step,
 
 ```ts
 const project = new Project({
-    tsConfigFilePath: "path/to/tsconfig.json",
-    skipFileDependencyResolution: true,
+  tsConfigFilePath: "path/to/tsconfig.json",
+  skipFileDependencyResolution: true,
 });
 ```
 
@@ -83,18 +83,18 @@ Create source files based on an object that looks like the AST of a source file:
 
 ```ts
 const sourceFile = project.createSourceFile("path/to/myStructureFile.ts", {
-    statements: [{
-        kind: StructureKind.Enum,
-        name: "MyEnum",
-        members: [{
-            name: "member",
-        }],
-    }, {
-        kind: StructureKind.Class,
-        name: "MyClass",
-        // etc...
+  statements: [{
+    kind: StructureKind.Enum,
+    name: "MyEnum",
+    members: [{
+      name: "member",
     }],
+  }, {
+    kind: StructureKind.Class,
+    name: "MyClass",
     // etc...
+  }],
+  // etc...
 });
 ```
 
@@ -102,7 +102,7 @@ The above would create a source file with the following text:
 
 ```ts
 enum MyEnum {
-    member,
+  member,
 }
 
 class MyClass {
@@ -120,9 +120,9 @@ const sourceFile = project.createSourceFile("path/to/myNewFile.ts", fileText);
 
 ```ts
 const sourceFile = project.createSourceFile("path/to/myOtherNewFile.ts", writer => {
-    writer
-        .writeLine("import * as ts from 'typescript';").blankLine()
-        .writeLine("export class MyClass {}");
+  writer
+    .writeLine("import * as ts from 'typescript';").blankLine()
+    .writeLine("export class MyClass {}");
 });
 ```
 

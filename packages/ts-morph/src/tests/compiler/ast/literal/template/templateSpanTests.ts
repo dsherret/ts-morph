@@ -4,23 +4,23 @@ import { TemplateSpan } from "../../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../../testHelpers";
 
 function getTemplateSpan(text: string) {
-    return getInfoFromTextWithDescendant<TemplateSpan>(text, SyntaxKind.TemplateSpan).descendant;
+  return getInfoFromTextWithDescendant<TemplateSpan>(text, SyntaxKind.TemplateSpan).descendant;
 }
 
 describe("TemplateSpan", () => {
-    const templateHead = "`foo${";
-    const templateSpanExpression = "test";
-    const templateSpanLiteral = "}abc`";
-    const expr = `${templateHead}${templateSpanExpression}${templateSpanLiteral}`;
+  const templateHead = "`foo${";
+  const templateSpanExpression = "test";
+  const templateSpanLiteral = "}abc`";
+  const expr = `${templateHead}${templateSpanExpression}${templateSpanLiteral}`;
 
-    describe(nameof<TemplateSpan>("getLiteral"), () => {
-        function doTest(text: string, expectedText: string) {
-            const expression = getTemplateSpan(text);
-            expect(expression.getLiteral().getText()).to.equal(expectedText);
-        }
+  describe(nameof<TemplateSpan>("getLiteral"), () => {
+    function doTest(text: string, expectedText: string) {
+      const expression = getTemplateSpan(text);
+      expect(expression.getLiteral().getText()).to.equal(expectedText);
+    }
 
-        it("should get the correct template span literal", () => {
-            doTest(expr, templateSpanLiteral);
-        });
+    it("should get the correct template span literal", () => {
+      doTest(expr, templateSpanLiteral);
     });
+  });
 });

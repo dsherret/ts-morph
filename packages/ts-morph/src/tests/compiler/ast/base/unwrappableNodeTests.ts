@@ -4,39 +4,49 @@ import { UnwrappableNode } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
 describe("UnwrappableNode", () => {
-    describe(nameof<UnwrappableNode>("unwrap"), () => {
-        function doTest(startCode: string, expectedCode: string) {
-            const { firstChild, sourceFile } = getInfoFromText(startCode);
-            const nodeInBody = firstChild.getChildSyntaxListOrThrow().getChildren()[0];
-            (firstChild as any as UnwrappableNode).unwrap();
-            expect(() => firstChild.compilerNode).to.throw(); // should be forgotten
-            expect(() => nodeInBody.compilerNode).to.not.throw();
-            expect(sourceFile.getFullText()).to.equal(expectedCode);
-        }
+  describe(nameof<UnwrappableNode>("unwrap"), () => {
+    function doTest(startCode: string, expectedCode: string) {
+      const { firstChild, sourceFile } = getInfoFromText(startCode);
+      const nodeInBody = firstChild.getChildSyntaxListOrThrow().getChildren()[0];
+      (firstChild as any as UnwrappableNode).unwrap();
+      expect(() => firstChild.compilerNode).to.throw(); // should be forgotten
+      expect(() => nodeInBody.compilerNode).to.not.throw();
+      expect(sourceFile.getFullText()).to.equal(expectedCode);
+    }
 
-        it("should unwrap a namespace", () => {
-            doTest(`namespace Test {
+    it("should unwrap a namespace", () => {
+      doTest(
+        `namespace Test {
     var t: string;
     var u: string;
 var v: string;
-}`, `var t: string;\nvar u: string;\nvar v: string;`);
-        });
+}`,
+        `var t: string;\nvar u: string;\nvar v: string;`,
+      );
+    });
 
-        it("should unwrap a namespace with periods in name", () => {
-            doTest(`namespace Test.This.Out {
+    it("should unwrap a namespace with periods in name", () => {
+      doTest(
+        `namespace Test.This.Out {
     var t: string;
-}`, `var t: string;`);
-        });
+}`,
+        `var t: string;`,
+      );
+    });
 
-        it("should unwrap with the correct indentation", () => {
-            doTest(`
+    it("should unwrap with the correct indentation", () => {
+      doTest(
+        `
     namespace Test {
         var t: string;
-    }`, `\n    var t: string;`);
-        });
+    }`,
+        `\n    var t: string;`,
+      );
+    });
 
-        it("should not unindent any string literals", () => {
-            doTest(`namespace Test {
+    it("should not unindent any string literals", () => {
+      doTest(
+        `namespace Test {
     var t = "some text \\
     goes here";
     var u = \`some text
@@ -45,36 +55,44 @@ var v: string;
     goes here $\{test
     }more
     and $\{more}\`;
-}`, `var t = "some text \\
+}`,
+        `var t = "some text \\
     goes here";
 var u = \`some text
     goes here\`;
 var v = \`some text
     goes here $\{test
 }more
-    and $\{more}\`;`);
-        });
+    and $\{more}\`;`,
+      );
+    });
 
-        it("should unwrap a function", () => {
-            doTest(`function myFunction(param: string) {
+    it("should unwrap a function", () => {
+      doTest(
+        `function myFunction(param: string) {
     var t: string;
-}`, `var t: string;`);
-        });
+}`,
+        `var t: string;`,
+      );
+    });
 
-        it("should unwrap a namespace with statements surrounded by comments", () => {
-            doTest(`
+    it("should unwrap a namespace with statements surrounded by comments", () => {
+      doTest(
+        `
 namespace Some {
     // test
     class Whatever {}
     // Some comment.
     /* This one too. */
 }
-`, `
+`,
+        `
 // test
 class Whatever {}
 // Some comment.
 /* This one too. */
-`);
-        });
+`,
+      );
     });
+  });
 });

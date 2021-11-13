@@ -31,314 +31,314 @@ export function forEachStructureChild<TStructure>(structures: ReadonlyArray<Stru
  */
 export function forEachStructureChild<TStructure>(structure: Structures, callback: (child: Structures) => TStructure | void): TStructure | undefined;
 export function forEachStructureChild<TStructure>(structure: Structures | ReadonlyArray<Structures>, callback: (child: Structures) => TStructure | void): TStructure | undefined {
-    // automatically generated: run `npm run code-generate` to update the code in here
-    if (ArrayUtils.isReadonlyArray(structure)) {
-        for (const item of structure) {
-            const result = callback(item);
-            if (result)
-                return result;
-        }
-        return undefined;
+  // automatically generated: run `npm run code-generate` to update the code in here
+  if (ArrayUtils.isReadonlyArray(structure)) {
+    for (const item of structure) {
+      const result = callback(item);
+      if (result)
+        return result;
     }
+    return undefined;
+  }
 
-    switch (structure.kind) {
-        case StructureKind.CallSignature:
-            return forCallSignatureDeclaration(structure, callback);
-        case StructureKind.Class:
-            return forClassDeclaration(structure, callback);
-        case StructureKind.ClassStaticBlock:
-            return forClassStaticBlockDeclaration(structure, callback);
-        case StructureKind.ConstructSignature:
-            return forConstructSignatureDeclaration(structure, callback);
-        case StructureKind.ConstructorOverload:
-            return forConstructorDeclarationOverload(structure, callback);
-        case StructureKind.Constructor:
-            return forConstructorDeclaration(structure, callback);
-        case StructureKind.Enum:
-            return forEnumDeclaration(structure, callback);
-        case StructureKind.EnumMember:
-            return forEnumMember(structure, callback);
-        case StructureKind.ExportDeclaration:
-            return forExportDeclaration(structure, callback);
-        case StructureKind.FunctionOverload:
-            return forFunctionDeclarationOverload(structure, callback);
-        case StructureKind.Function:
-            return forFunctionDeclaration(structure, callback);
-        case StructureKind.GetAccessor:
-            return forGetAccessorDeclaration(structure, callback);
-        case StructureKind.ImportDeclaration:
-            return forImportDeclaration(structure, callback);
-        case StructureKind.IndexSignature:
-            return forIndexSignatureDeclaration(structure, callback);
-        case StructureKind.Interface:
-            return forInterfaceDeclaration(structure, callback);
-        case StructureKind.JSDoc:
-            return forJSDoc(structure, callback);
-        case StructureKind.JsxElement:
-            return forJsxElement(structure, callback);
-        case StructureKind.JsxSelfClosingElement:
-            return forJsxSelfClosingElement(structure, callback);
-        case StructureKind.MethodOverload:
-            return forMethodDeclarationOverload(structure, callback);
-        case StructureKind.Method:
-            return forMethodDeclaration(structure, callback);
-        case StructureKind.MethodSignature:
-            return forMethodSignature(structure, callback);
-        case StructureKind.Module:
-            return forModuleDeclaration(structure, callback);
-        case StructureKind.Parameter:
-            return forParameterDeclaration(structure, callback);
-        case StructureKind.Property:
-            return forPropertyDeclaration(structure, callback);
-        case StructureKind.PropertySignature:
-            return forPropertySignature(structure, callback);
-        case StructureKind.SetAccessor:
-            return forSetAccessorDeclaration(structure, callback);
-        case StructureKind.SourceFile:
-            return forSourceFile(structure, callback);
-        case StructureKind.TypeAlias:
-            return forTypeAliasDeclaration(structure, callback);
-        case StructureKind.VariableStatement:
-            return forVariableStatement(structure, callback);
-        default:
-            return undefined;
-    }
+  switch (structure.kind) {
+    case StructureKind.CallSignature:
+      return forCallSignatureDeclaration(structure, callback);
+    case StructureKind.Class:
+      return forClassDeclaration(structure, callback);
+    case StructureKind.ClassStaticBlock:
+      return forClassStaticBlockDeclaration(structure, callback);
+    case StructureKind.ConstructSignature:
+      return forConstructSignatureDeclaration(structure, callback);
+    case StructureKind.ConstructorOverload:
+      return forConstructorDeclarationOverload(structure, callback);
+    case StructureKind.Constructor:
+      return forConstructorDeclaration(structure, callback);
+    case StructureKind.Enum:
+      return forEnumDeclaration(structure, callback);
+    case StructureKind.EnumMember:
+      return forEnumMember(structure, callback);
+    case StructureKind.ExportDeclaration:
+      return forExportDeclaration(structure, callback);
+    case StructureKind.FunctionOverload:
+      return forFunctionDeclarationOverload(structure, callback);
+    case StructureKind.Function:
+      return forFunctionDeclaration(structure, callback);
+    case StructureKind.GetAccessor:
+      return forGetAccessorDeclaration(structure, callback);
+    case StructureKind.ImportDeclaration:
+      return forImportDeclaration(structure, callback);
+    case StructureKind.IndexSignature:
+      return forIndexSignatureDeclaration(structure, callback);
+    case StructureKind.Interface:
+      return forInterfaceDeclaration(structure, callback);
+    case StructureKind.JSDoc:
+      return forJSDoc(structure, callback);
+    case StructureKind.JsxElement:
+      return forJsxElement(structure, callback);
+    case StructureKind.JsxSelfClosingElement:
+      return forJsxSelfClosingElement(structure, callback);
+    case StructureKind.MethodOverload:
+      return forMethodDeclarationOverload(structure, callback);
+    case StructureKind.Method:
+      return forMethodDeclaration(structure, callback);
+    case StructureKind.MethodSignature:
+      return forMethodSignature(structure, callback);
+    case StructureKind.Module:
+      return forModuleDeclaration(structure, callback);
+    case StructureKind.Parameter:
+      return forParameterDeclaration(structure, callback);
+    case StructureKind.Property:
+      return forPropertyDeclaration(structure, callback);
+    case StructureKind.PropertySignature:
+      return forPropertySignature(structure, callback);
+    case StructureKind.SetAccessor:
+      return forSetAccessorDeclaration(structure, callback);
+    case StructureKind.SourceFile:
+      return forSourceFile(structure, callback);
+    case StructureKind.TypeAlias:
+      return forTypeAliasDeclaration(structure, callback);
+    case StructureKind.VariableStatement:
+      return forVariableStatement(structure, callback);
+    default:
+      return undefined;
+  }
 }
 
 /** @generated */
 function forCallSignatureDeclaration<TStructure>(structure: CallSignatureDeclarationStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forJSDocableNode(structure, callback)
-        || forSignaturedDeclaration(structure, callback)
-        || forTypeParameteredNode(structure, callback);
+  return forJSDocableNode(structure, callback)
+    || forSignaturedDeclaration(structure, callback)
+    || forTypeParameteredNode(structure, callback);
 }
 
 /** @generated */
 function forJSDocableNode<TStructure>(structure: JSDocableNodeStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forAllIfStructure(structure.docs, callback, StructureKind.JSDoc);
+  return forAllIfStructure(structure.docs, callback, StructureKind.JSDoc);
 }
 
 /** @generated */
 function forSignaturedDeclaration<TStructure>(structure: SignaturedDeclarationStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forParameteredNode(structure, callback);
+  return forParameteredNode(structure, callback);
 }
 
 /** @generated */
 function forParameteredNode<TStructure>(structure: ParameteredNodeStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forAll(structure.parameters, callback, StructureKind.Parameter);
+  return forAll(structure.parameters, callback, StructureKind.Parameter);
 }
 
 /** @generated */
 function forTypeParameteredNode<TStructure>(structure: TypeParameteredNodeStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forAllIfStructure(structure.typeParameters, callback, StructureKind.TypeParameter);
+  return forAllIfStructure(structure.typeParameters, callback, StructureKind.TypeParameter);
 }
 
 /** @generated */
 function forClassDeclaration<TStructure>(structure: ClassDeclarationStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forClassLikeDeclarationBase(structure, callback);
+  return forClassLikeDeclarationBase(structure, callback);
 }
 
 /** @generated */
 function forClassLikeDeclarationBase<TStructure>(structure: ClassLikeDeclarationBaseStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forDecoratableNode(structure, callback)
-        || forTypeParameteredNode(structure, callback)
-        || forJSDocableNode(structure, callback)
-        || forAll(structure.ctors, callback, StructureKind.Constructor)
-        || forAll(structure.properties, callback, StructureKind.Property)
-        || forAll(structure.getAccessors, callback, StructureKind.GetAccessor)
-        || forAll(structure.setAccessors, callback, StructureKind.SetAccessor)
-        || forAll(structure.methods, callback, StructureKind.Method);
+  return forDecoratableNode(structure, callback)
+    || forTypeParameteredNode(structure, callback)
+    || forJSDocableNode(structure, callback)
+    || forAll(structure.ctors, callback, StructureKind.Constructor)
+    || forAll(structure.properties, callback, StructureKind.Property)
+    || forAll(structure.getAccessors, callback, StructureKind.GetAccessor)
+    || forAll(structure.setAccessors, callback, StructureKind.SetAccessor)
+    || forAll(structure.methods, callback, StructureKind.Method);
 }
 
 /** @generated */
 function forDecoratableNode<TStructure>(structure: DecoratableNodeStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forAll(structure.decorators, callback, StructureKind.Decorator);
+  return forAll(structure.decorators, callback, StructureKind.Decorator);
 }
 
 /** @generated */
 function forClassStaticBlockDeclaration<TStructure>(structure: ClassStaticBlockDeclarationStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forJSDocableNode(structure, callback)
-        || forStatementedNode(structure, callback);
+  return forJSDocableNode(structure, callback)
+    || forStatementedNode(structure, callback);
 }
 
 /** @generated */
 function forStatementedNode<TStructure>(structure: StatementedNodeStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forAllUnknownKindIfStructure(structure.statements, callback);
+  return forAllUnknownKindIfStructure(structure.statements, callback);
 }
 
 /** @generated */
 function forConstructSignatureDeclaration<TStructure>(structure: ConstructSignatureDeclarationStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forJSDocableNode(structure, callback)
-        || forSignaturedDeclaration(structure, callback)
-        || forTypeParameteredNode(structure, callback);
+  return forJSDocableNode(structure, callback)
+    || forSignaturedDeclaration(structure, callback)
+    || forTypeParameteredNode(structure, callback);
 }
 
 /** @generated */
 function forConstructorDeclarationOverload<TStructure>(structure: ConstructorDeclarationOverloadStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forSignaturedDeclaration(structure, callback)
-        || forTypeParameteredNode(structure, callback)
-        || forJSDocableNode(structure, callback);
+  return forSignaturedDeclaration(structure, callback)
+    || forTypeParameteredNode(structure, callback)
+    || forJSDocableNode(structure, callback);
 }
 
 /** @generated */
 function forConstructorDeclaration<TStructure>(structure: ConstructorDeclarationStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forFunctionLikeDeclaration(structure, callback)
-        || forAll(structure.overloads, callback, StructureKind.ConstructorOverload);
+  return forFunctionLikeDeclaration(structure, callback)
+    || forAll(structure.overloads, callback, StructureKind.ConstructorOverload);
 }
 
 /** @generated */
 function forFunctionLikeDeclaration<TStructure>(structure: FunctionLikeDeclarationStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forSignaturedDeclaration(structure, callback)
-        || forTypeParameteredNode(structure, callback)
-        || forJSDocableNode(structure, callback)
-        || forStatementedNode(structure, callback);
+  return forSignaturedDeclaration(structure, callback)
+    || forTypeParameteredNode(structure, callback)
+    || forJSDocableNode(structure, callback)
+    || forStatementedNode(structure, callback);
 }
 
 /** @generated */
 function forEnumDeclaration<TStructure>(structure: EnumDeclarationStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forJSDocableNode(structure, callback)
-        || forAll(structure.members, callback, StructureKind.EnumMember);
+  return forJSDocableNode(structure, callback)
+    || forAll(structure.members, callback, StructureKind.EnumMember);
 }
 
 /** @generated */
 function forEnumMember<TStructure>(structure: EnumMemberStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forJSDocableNode(structure, callback);
+  return forJSDocableNode(structure, callback);
 }
 
 /** @generated */
 function forExportDeclaration<TStructure>(structure: ExportDeclarationStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forAllIfStructure(structure.namedExports, callback, StructureKind.ExportSpecifier);
+  return forAllIfStructure(structure.namedExports, callback, StructureKind.ExportSpecifier);
 }
 
 /** @generated */
 function forFunctionDeclarationOverload<TStructure>(structure: FunctionDeclarationOverloadStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forSignaturedDeclaration(structure, callback)
-        || forTypeParameteredNode(structure, callback)
-        || forJSDocableNode(structure, callback);
+  return forSignaturedDeclaration(structure, callback)
+    || forTypeParameteredNode(structure, callback)
+    || forJSDocableNode(structure, callback);
 }
 
 /** @generated */
 function forFunctionDeclaration<TStructure>(structure: FunctionDeclarationStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forFunctionLikeDeclaration(structure, callback)
-        || forAll(structure.overloads, callback, StructureKind.FunctionOverload);
+  return forFunctionLikeDeclaration(structure, callback)
+    || forAll(structure.overloads, callback, StructureKind.FunctionOverload);
 }
 
 /** @generated */
 function forGetAccessorDeclaration<TStructure>(structure: GetAccessorDeclarationStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forDecoratableNode(structure, callback)
-        || forFunctionLikeDeclaration(structure, callback);
+  return forDecoratableNode(structure, callback)
+    || forFunctionLikeDeclaration(structure, callback);
 }
 
 /** @generated */
 function forImportDeclaration<TStructure>(structure: ImportDeclarationStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forAllIfStructure(structure.namedImports, callback, StructureKind.ImportSpecifier);
+  return forAllIfStructure(structure.namedImports, callback, StructureKind.ImportSpecifier);
 }
 
 /** @generated */
 function forIndexSignatureDeclaration<TStructure>(structure: IndexSignatureDeclarationStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forJSDocableNode(structure, callback);
+  return forJSDocableNode(structure, callback);
 }
 
 /** @generated */
 function forInterfaceDeclaration<TStructure>(structure: InterfaceDeclarationStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forTypeParameteredNode(structure, callback)
-        || forJSDocableNode(structure, callback)
-        || forTypeElementMemberedNode(structure, callback);
+  return forTypeParameteredNode(structure, callback)
+    || forJSDocableNode(structure, callback)
+    || forTypeElementMemberedNode(structure, callback);
 }
 
 /** @generated */
 function forTypeElementMemberedNode<TStructure>(structure: TypeElementMemberedNodeStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forAll(structure.callSignatures, callback, StructureKind.CallSignature)
-        || forAll(structure.constructSignatures, callback, StructureKind.ConstructSignature)
-        || forAll(structure.indexSignatures, callback, StructureKind.IndexSignature)
-        || forAll(structure.methods, callback, StructureKind.MethodSignature)
-        || forAll(structure.properties, callback, StructureKind.PropertySignature);
+  return forAll(structure.callSignatures, callback, StructureKind.CallSignature)
+    || forAll(structure.constructSignatures, callback, StructureKind.ConstructSignature)
+    || forAll(structure.indexSignatures, callback, StructureKind.IndexSignature)
+    || forAll(structure.methods, callback, StructureKind.MethodSignature)
+    || forAll(structure.properties, callback, StructureKind.PropertySignature);
 }
 
 /** @generated */
 function forJSDoc<TStructure>(structure: JSDocStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forAll(structure.tags, callback, StructureKind.JSDocTag);
+  return forAll(structure.tags, callback, StructureKind.JSDocTag);
 }
 
 /** @generated */
 function forJsxElement<TStructure>(structure: JsxElementStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forAllUnknownKindIfStructure(structure.attributes, callback)
-        || forAllUnknownKindIfStructure(structure.children, callback);
+  return forAllUnknownKindIfStructure(structure.attributes, callback)
+    || forAllUnknownKindIfStructure(structure.children, callback);
 }
 
 /** @generated */
 function forJsxSelfClosingElement<TStructure>(structure: JsxSelfClosingElementStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forJsxAttributedNode(structure, callback);
+  return forJsxAttributedNode(structure, callback);
 }
 
 /** @generated */
 function forJsxAttributedNode<TStructure>(structure: JsxAttributedNodeStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forAllUnknownKindIfStructure(structure.attributes, callback);
+  return forAllUnknownKindIfStructure(structure.attributes, callback);
 }
 
 /** @generated */
 function forMethodDeclarationOverload<TStructure>(structure: MethodDeclarationOverloadStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forSignaturedDeclaration(structure, callback)
-        || forTypeParameteredNode(structure, callback)
-        || forJSDocableNode(structure, callback);
+  return forSignaturedDeclaration(structure, callback)
+    || forTypeParameteredNode(structure, callback)
+    || forJSDocableNode(structure, callback);
 }
 
 /** @generated */
 function forMethodDeclaration<TStructure>(structure: MethodDeclarationStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forDecoratableNode(structure, callback)
-        || forFunctionLikeDeclaration(structure, callback)
-        || forAll(structure.overloads, callback, StructureKind.MethodOverload);
+  return forDecoratableNode(structure, callback)
+    || forFunctionLikeDeclaration(structure, callback)
+    || forAll(structure.overloads, callback, StructureKind.MethodOverload);
 }
 
 /** @generated */
 function forMethodSignature<TStructure>(structure: MethodSignatureStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forJSDocableNode(structure, callback)
-        || forSignaturedDeclaration(structure, callback)
-        || forTypeParameteredNode(structure, callback);
+  return forJSDocableNode(structure, callback)
+    || forSignaturedDeclaration(structure, callback)
+    || forTypeParameteredNode(structure, callback);
 }
 
 /** @generated */
 function forModuleDeclaration<TStructure>(structure: ModuleDeclarationStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forJSDocableNode(structure, callback)
-        || forStatementedNode(structure, callback);
+  return forJSDocableNode(structure, callback)
+    || forStatementedNode(structure, callback);
 }
 
 /** @generated */
 function forParameterDeclaration<TStructure>(structure: ParameterDeclarationStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forDecoratableNode(structure, callback);
+  return forDecoratableNode(structure, callback);
 }
 
 /** @generated */
 function forPropertyDeclaration<TStructure>(structure: PropertyDeclarationStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forJSDocableNode(structure, callback)
-        || forDecoratableNode(structure, callback);
+  return forJSDocableNode(structure, callback)
+    || forDecoratableNode(structure, callback);
 }
 
 /** @generated */
 function forPropertySignature<TStructure>(structure: PropertySignatureStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forJSDocableNode(structure, callback);
+  return forJSDocableNode(structure, callback);
 }
 
 /** @generated */
 function forSetAccessorDeclaration<TStructure>(structure: SetAccessorDeclarationStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forDecoratableNode(structure, callback)
-        || forFunctionLikeDeclaration(structure, callback);
+  return forDecoratableNode(structure, callback)
+    || forFunctionLikeDeclaration(structure, callback);
 }
 
 /** @generated */
 function forSourceFile<TStructure>(structure: SourceFileStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forStatementedNode(structure, callback);
+  return forStatementedNode(structure, callback);
 }
 
 /** @generated */
 function forTypeAliasDeclaration<TStructure>(structure: TypeAliasDeclarationStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forTypeParameteredNode(structure, callback)
-        || forJSDocableNode(structure, callback);
+  return forTypeParameteredNode(structure, callback)
+    || forJSDocableNode(structure, callback);
 }
 
 /** @generated */
 function forVariableStatement<TStructure>(structure: VariableStatementStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forJSDocableNode(structure, callback)
-        || forAll(structure.declarations, callback, StructureKind.VariableDeclaration);
+  return forJSDocableNode(structure, callback)
+    || forAll(structure.declarations, callback, StructureKind.VariableDeclaration);
 }
 
 function forAll<T extends OptionalKind<Structures>, TStructure>(

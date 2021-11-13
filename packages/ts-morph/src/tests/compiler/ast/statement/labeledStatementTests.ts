@@ -4,33 +4,33 @@ import { LabeledStatement } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
 function getStatement(text: string) {
-    return getInfoFromTextWithDescendant<LabeledStatement>(text, SyntaxKind.LabeledStatement).descendant;
+  return getInfoFromTextWithDescendant<LabeledStatement>(text, SyntaxKind.LabeledStatement).descendant;
 }
 
 describe("LabeledStatement", () => {
-    const statement = "let x = 1 + 2";
-    const label = "foo";
-    const labeled = `${label}: ${statement}`;
+  const statement = "let x = 1 + 2";
+  const label = "foo";
+  const labeled = `${label}: ${statement}`;
 
-    describe(nameof<LabeledStatement>("getLabel"), () => {
-        function doTest(text: string, expectedText: string) {
-            const labeledStatement = getStatement(text);
-            expect(labeledStatement.getLabel().getText()).to.equal(expectedText);
-        }
+  describe(nameof<LabeledStatement>("getLabel"), () => {
+    function doTest(text: string, expectedText: string) {
+      const labeledStatement = getStatement(text);
+      expect(labeledStatement.getLabel().getText()).to.equal(expectedText);
+    }
 
-        it("should get the correct label", () => {
-            doTest(labeled, label);
-        });
+    it("should get the correct label", () => {
+      doTest(labeled, label);
     });
+  });
 
-    describe(nameof<LabeledStatement>("getStatement"), () => {
-        function doTest(text: string, expectedText: string) {
-            const labeledStatement = getStatement(text);
-            expect(labeledStatement.getStatement().getText()).to.equal(expectedText);
-        }
+  describe(nameof<LabeledStatement>("getStatement"), () => {
+    function doTest(text: string, expectedText: string) {
+      const labeledStatement = getStatement(text);
+      expect(labeledStatement.getStatement().getText()).to.equal(expectedText);
+    }
 
-        it("should get the correct statement", () => {
-            doTest(labeled, statement);
-        });
+    it("should get the correct statement", () => {
+      doTest(labeled, statement);
     });
+  });
 });

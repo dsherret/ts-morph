@@ -12,8 +12,8 @@ Given the following file:
 // Person.ts
 
 interface Person {
-    name: string;
-    age: number;
+  name: string;
+  age: number;
 }
 
 export default Person;

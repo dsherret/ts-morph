@@ -4,17 +4,17 @@ import { CombinedCodeActions } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
 describe("CombinedCodeActions", () => {
-    describe(nameof<CombinedCodeActions>("applyChanges"), () => {
-        it("should apply the combined code actions", () => {
-            const { sourceFile, project } = getInfoFromText("export class T extends Node {}", { filePath: "/file.ts" });
-            const languageService = project.getLanguageService();
-            project.createSourceFile("/Node.ts", "export class Node { prop: string; }");
+  describe(nameof<CombinedCodeActions>("applyChanges"), () => {
+    it("should apply the combined code actions", () => {
+      const { sourceFile, project } = getInfoFromText("export class T extends Node {}", { filePath: "/file.ts" });
+      const languageService = project.getLanguageService();
+      project.createSourceFile("/Node.ts", "export class Node { prop: string; }");
 
-            const combinedCodeFix = languageService.getCombinedCodeFix(sourceFile, "fixMissingImport");
-            combinedCodeFix.applyChanges();
-            combinedCodeFix.applyChanges(); // should do nothing if called twice
+      const combinedCodeFix = languageService.getCombinedCodeFix(sourceFile, "fixMissingImport");
+      combinedCodeFix.applyChanges();
+      combinedCodeFix.applyChanges(); // should do nothing if called twice
 
-            expect(sourceFile.getFullText()).to.equal(`import { Node } from "./Node";\n\nexport class T extends Node {}`);
-        });
+      expect(sourceFile.getFullText()).to.equal(`import { Node } from "./Node";\n\nexport class T extends Node {}`);
     });
+  });
 });

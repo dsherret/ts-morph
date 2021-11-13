@@ -3,5 +3,5 @@ import { JsxAttributeStructure } from "../JsxAttributeStructure";
 import { JsxSpreadAttributeStructure } from "../JsxSpreadAttributeStructure";
 
 export interface JsxAttributedNodeStructure {
-    attributes?: (OptionalKind<JsxAttributeStructure> | JsxSpreadAttributeStructure)[];
+  attributes?: (OptionalKind<JsxAttributeStructure> | JsxSpreadAttributeStructure)[];
 }

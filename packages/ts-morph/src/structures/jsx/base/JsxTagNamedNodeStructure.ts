@@ -1,3 +1,3 @@
 export interface JsxTagNamedNodeStructure {
-    name: string;
+  name: string;
 }

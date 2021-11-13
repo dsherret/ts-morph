@@ -44,8 +44,8 @@ You may wonder why certain standard types are `any` when using an in memory file
 ```ts
 const project = new Project({ useInMemoryFileSystem: true });
 const sourceFile = project.createSourceFile(
-    "index.ts",
-    `const mySet = new Set<string>();`,
+  "index.ts",
+  `const mySet = new Set<string>();`,
 );
 const mySetDecl = sourceFile.getVariableDeclarationOrThrow("mySet");
 console.log(mySetDecl.getType().getText()); // any
@@ -83,10 +83,10 @@ Note that if you want to include all the lib files, you may specify `lib.esnext.
 
 ```ts
 const project = new Project({
-    useInMemoryFileSystem: true,
-    compilerOptions: {
-        lib: ["lib.esnext.full.d.ts"],
-    },
+  useInMemoryFileSystem: true,
+  compilerOptions: {
+    lib: ["lib.esnext.full.d.ts"],
+  },
 });
 ```
 

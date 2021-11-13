@@ -84,9 +84,9 @@ When adding or inserting, you can also write using a [code writer](code-writer):
 
 ```ts
 functionDeclaration.addStatements(writer => {
-    writer.write("if (true)").block(() => {
-        writer.write("something;");
-    });
+  writer.write("if (true)").block(() => {
+    writer.write("something;");
+  });
 });
 ```
 

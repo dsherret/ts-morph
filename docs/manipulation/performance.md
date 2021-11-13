@@ -40,10 +40,10 @@ removeExports(classesFileStructure);
 project.createSourceFile("private.ts", classesFileStructure);
 
 function removeExports(structure: Structures) {
-    forEachStructureChild(structure, removeExports);
+  forEachStructureChild(structure, removeExports);
 
-    if (Structure.isExportable(structure))
-        structure.isExported = false;
+  if (Structure.isExportable(structure))
+    structure.isExported = false;
 }
 ```
 
@@ -167,13 +167,13 @@ let interfaceDeclaration: InterfaceDeclaration;
 let classDeclaration: ClassDeclaration;
 
 project.forgetNodesCreatedInBlock(remember => {
-    moduleDeclaration = sourceFile.getModuleOrThrow("Namespace");
-    interfaceDeclaration = moduleDeclaration.getInterfaceOrThrow("Interface");
-    classDeclaration = moduleDeclaration.getClassOrThrow("Class");
+  moduleDeclaration = sourceFile.getModuleOrThrow("Namespace");
+  interfaceDeclaration = moduleDeclaration.getInterfaceOrThrow("Interface");
+  classDeclaration = moduleDeclaration.getClassOrThrow("Class");
 
-    // you can mark nodes to remember outside the scope of this block...
-    // this will remember the specified node and all its ancestors
-    remember(interfaceDeclaration); // or pass in multiple nodes
+  // you can mark nodes to remember outside the scope of this block...
+  // this will remember the specified node and all its ancestors
+  remember(interfaceDeclaration); // or pass in multiple nodes
 });
 
 moduleDeclaration.getText(); // ok, child was implicitly marked to remember
@@ -182,9 +182,9 @@ classDeclaration.getText(); // throws, was forgotten
 
 // alternatively, return the node to remember it
 const node = project.forgetNodesCreatedInBlock(() => {
-    const classDec = sourceFile.getClassOrThrow("MyClass");
-    // ...do a lot of stuff...
-    return classDec;
+  const classDec = sourceFile.getClassOrThrow("MyClass");
+  // ...do a lot of stuff...
+  return classDec;
 });
 
 node.getText(); // ok
@@ -194,16 +194,16 @@ Also, do not be concerned about nesting forget blocks. That is perfectly fine to
 
 ```ts
 project.forgetNodesCreatedInBlock(() => {
-    moduleDeclaration = sourceFile.getModuleOrThrow("Namespace");
-    interfaceDeclaration = moduleDeclaration.getInterfaceOrThrow("Interface");
+  moduleDeclaration = sourceFile.getModuleOrThrow("Namespace");
+  interfaceDeclaration = moduleDeclaration.getInterfaceOrThrow("Interface");
 
-    project.forgetNodesCreatedInBlock(remember => {
-        classDeclaration = moduleDeclaration.getClassOrThrow("Class");
-        remember(moduleDeclaration);
-    });
+  project.forgetNodesCreatedInBlock(remember => {
+    classDeclaration = moduleDeclaration.getClassOrThrow("Class");
+    remember(moduleDeclaration);
+  });
 
-    classDeclaration.getText(); // throws, was forgotten outside the block above
-    interfaceDeclaration.getText(); // ok, hasn't been forgotten yet
+  classDeclaration.getText(); // throws, was forgotten outside the block above
+  interfaceDeclaration.getText(); // ok, hasn't been forgotten yet
 });
 
 moduleDeclaration.getText(); // ok, was marked to remember in one of the blocks
@@ -217,6 +217,6 @@ This method supports async and await:
 
 ```ts
 await project.forgetNodesCreatedInBlock(async remember => {
-    // do stuff
+  // do stuff
 });
 ```

@@ -18,7 +18,7 @@ It's important to note that class declarations may not have a name. For example:
 
 ```ts
 export default class {
-    // etc...
+  // etc...
 }
 ```
 
@@ -30,7 +30,7 @@ Add or insert classes to a source file, namespace, or function like declarations
 
 ```ts
 const classDeclaration = sourceFile.addClass({
-    name: "ClassName",
+  name: "ClassName",
 });
 ```
 
@@ -127,7 +127,7 @@ Add or insert a constructor or constructors by calling `addConstructor()`, `addC
 
 ```ts
 const ctor = classDeclaration.addConstructor({
-    /* options like parameters may go here */
+  /* options like parameters may go here */
 });
 ```
 
@@ -193,9 +193,9 @@ Add or insert properties by using `insertProperties()`, `insertProperty`, `addPr
 
 ```ts
 const property = classDeclaration.addProperty({
-    isStatic: true,
-    name: "prop",
-    type: "string",
+  isStatic: true,
+  name: "prop",
+  type: "string",
 });
 ```
 
@@ -203,9 +203,9 @@ Add or insert get accessors by using `insertGetAccessors()`, `insertGetAccessor`
 
 ```ts
 const getAccessor = classDeclaration.addGetAccessor({
-    name: "someNumber",
-    returnType: "number",
-    statements: ["return 5;"],
+  name: "someNumber",
+  returnType: "number",
+  statements: ["return 5;"],
 });
 ```
 
@@ -213,9 +213,9 @@ Add or insert set accessors by using `insertSetAccessors()`, `insertSetAccessor`
 
 ```ts
 const setAccessor = classDeclaration.addSetAccessor({
-    name: "someNumber",
-    parameters: [{ name: "value", type: "number" }],
-    statements: ["_someNumber = value;"],
+  name: "someNumber",
+  parameters: [{ name: "value", type: "number" }],
+  statements: ["_someNumber = value;"],
 });
 ```
 

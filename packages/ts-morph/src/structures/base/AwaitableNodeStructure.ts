@@ -1,3 +1,3 @@
 export interface AwaitableNodeStructure {
-    isAwaited?: boolean;
+  isAwaited?: boolean;
 }

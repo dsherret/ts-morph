@@ -7,54 +7,54 @@ import { Statement } from "../statement";
 
 export const ExportAssignmentBase = ExpressionedNode(Statement);
 export class ExportAssignment extends ExportAssignmentBase<ts.ExportAssignment> {
-    /**
-     * Gets if this is an export equals assignment.
-     *
-     * If this is false, then it's `export default`.
-     */
-    isExportEquals() {
-        return this.compilerNode.isExportEquals || false;
-    }
+  /**
+   * Gets if this is an export equals assignment.
+   *
+   * If this is false, then it's `export default`.
+   */
+  isExportEquals() {
+    return this.compilerNode.isExportEquals || false;
+  }
 
-    /**
-     * Sets if this is an export equals assignment or export default.
-     * @param value - Whether it should be an export equals assignment.
-     */
-    setIsExportEquals(value: boolean) {
-        if (this.isExportEquals() === value)
-            return this;
+  /**
+   * Sets if this is an export equals assignment or export default.
+   * @param value - Whether it should be an export equals assignment.
+   */
+  setIsExportEquals(value: boolean) {
+    if (this.isExportEquals() === value)
+      return this;
 
-        if (value)
-            this.getFirstChildByKindOrThrow(SyntaxKind.DefaultKeyword).replaceWithText("=");
-        else
-            this.getFirstChildByKindOrThrow(SyntaxKind.EqualsToken).replaceWithText("default");
+    if (value)
+      this.getFirstChildByKindOrThrow(SyntaxKind.DefaultKeyword).replaceWithText("=");
+    else
+      this.getFirstChildByKindOrThrow(SyntaxKind.EqualsToken).replaceWithText("default");
 
-        return this;
-    }
+    return this;
+  }
 
-    /**
-     * Sets the node from a structure.
-     * @param structure - Structure to set the node with.
-     */
-    set(structure: Partial<ExportAssignmentStructure>) {
-        callBaseSet(ExportAssignmentBase.prototype, this, structure);
+  /**
+   * Sets the node from a structure.
+   * @param structure - Structure to set the node with.
+   */
+  set(structure: Partial<ExportAssignmentStructure>) {
+    callBaseSet(ExportAssignmentBase.prototype, this, structure);
 
-        if (structure.expression != null)
-            this.setExpression(structure.expression);
-        if (structure.isExportEquals != null)
-            this.setIsExportEquals(structure.isExportEquals);
+    if (structure.expression != null)
+      this.setExpression(structure.expression);
+    if (structure.isExportEquals != null)
+      this.setIsExportEquals(structure.isExportEquals);
 
-        return this;
-    }
+    return this;
+  }
 
-    /**
-     * Gets the structure equivalent to this node.
-     */
-    getStructure(): ExportAssignmentStructure {
-        return callBaseGetStructure<ExportAssignmentSpecificStructure>(Statement.prototype, this, {
-            kind: StructureKind.ExportAssignment,
-            expression: this.getExpression().getText(),
-            isExportEquals: this.isExportEquals(),
-        }) as any as ExportAssignmentStructure;
-    }
+  /**
+   * Gets the structure equivalent to this node.
+   */
+  getStructure(): ExportAssignmentStructure {
+    return callBaseGetStructure<ExportAssignmentSpecificStructure>(Statement.prototype, this, {
+      kind: StructureKind.ExportAssignment,
+      expression: this.getExpression().getText(),
+      isExportEquals: this.isExportEquals(),
+    }) as any as ExportAssignmentStructure;
+  }
 }

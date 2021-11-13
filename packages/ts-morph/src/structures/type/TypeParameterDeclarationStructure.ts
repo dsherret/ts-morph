@@ -7,6 +7,6 @@ export interface TypeParameterDeclarationStructure extends Structure, TypeParame
 }
 
 export interface TypeParameterDeclarationSpecificStructure extends KindedStructure<StructureKind.TypeParameter> {
-    constraint?: string | WriterFunction;
-    default?: string | WriterFunction;
+  constraint?: string | WriterFunction;
+  default?: string | WriterFunction;
 }

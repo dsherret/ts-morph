@@ -5,14 +5,37 @@ import { ClassDeclaration, GetAccessorDeclaration, MethodDeclaration, SetAccesso
 import { Node } from "./common";
 import { Decorator } from "./decorator";
 import { EnumDeclaration } from "./enum";
-import { CallExpression, ElementAccessExpression, Expression, NewExpression, OmittedExpression, PropertyAccessExpression, PropertyAssignment,
-    ShorthandPropertyAssignment, SpreadAssignment, ThisExpression } from "./expression";
+import {
+  CallExpression,
+  ElementAccessExpression,
+  Expression,
+  NewExpression,
+  OmittedExpression,
+  PropertyAccessExpression,
+  PropertyAssignment,
+  ShorthandPropertyAssignment,
+  SpreadAssignment,
+  ThisExpression,
+} from "./expression";
 import { FunctionDeclaration } from "./function";
-import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, InterfaceDeclaration, MethodSignature,
-    PropertySignature } from "./interface";
+import {
+  CallSignatureDeclaration,
+  ConstructSignatureDeclaration,
+  IndexSignatureDeclaration,
+  InterfaceDeclaration,
+  MethodSignature,
+  PropertySignature,
+} from "./interface";
 import { JsxAttribute, JsxElement, JsxExpression, JsxFragment, JsxOpeningElement, JsxSelfClosingElement, JsxSpreadAttribute, JsxText } from "./jsx";
-import { FalseLiteral, NoSubstitutionTemplateLiteral, NumericLiteral, StringLiteral, TaggedTemplateExpression, TemplateExpression,
-    TrueLiteral } from "./literal";
+import {
+  FalseLiteral,
+  NoSubstitutionTemplateLiteral,
+  NumericLiteral,
+  StringLiteral,
+  TaggedTemplateExpression,
+  TemplateExpression,
+  TrueLiteral,
+} from "./literal";
 import { ExportAssignment, ExternalModuleReference, ModuleDeclaration, SourceFile } from "./module";
 import { ComputedPropertyName, Identifier, PrivateIdentifier, QualifiedName } from "./name";
 import { CaseClause, DefaultClause } from "./statement";
@@ -50,8 +73,15 @@ type _EntityNameExpressionTest = AssertTrue<IsExact<WrappedToCompilerNodeType<En
 // not going to support this brand at this time
 type MapPropAccessEntityNameExpr<T> = T extends ts.PropertyAccessEntityNameExpression ? ts.PropertyAccessExpression : T;
 
-export type DeclarationName = Identifier | PrivateIdentifier | StringLiteralLike | NumericLiteral | ComputedPropertyName | ElementAccessExpression
-    | BindingPattern | EntityNameExpression;
+export type DeclarationName =
+  | Identifier
+  | PrivateIdentifier
+  | StringLiteralLike
+  | NumericLiteral
+  | ComputedPropertyName
+  | ElementAccessExpression
+  | BindingPattern
+  | EntityNameExpression;
 type _DeclarationNameTest = AssertTrue<IsExact<WrappedToCompilerNodeType<DeclarationName>, MapPropAccessEntityNameExpr<ts.DeclarationName>>>;
 
 export type EntityName = Identifier | QualifiedName;
@@ -69,9 +99,9 @@ type _JsxOpeningLikeElementTest = AssertTrue<IsExact<WrappedToCompilerNodeType<J
 export type JsxTagNameExpression = Identifier | ThisExpression | JsxTagNamePropertyAccess;
 type _JsxTagNameExpressionTest = AssertTrue<IsExact<ts.Identifier | ts.ThisExpression | ts.JsxTagNamePropertyAccess, ts.JsxTagNameExpression>>;
 export interface JsxTagNamePropertyAccess extends PropertyAccessExpression {
-    getExpression(): JsxTagNameExpression;
+  getExpression(): JsxTagNameExpression;
 }
-type _JsxTagNamePropertyAccess = AssertTrue<IsExact<ts.PropertyAccessExpression & { expression: ts.JsxTagNameExpression; }, ts.JsxTagNamePropertyAccess>>;
+type _JsxTagNamePropertyAccess = AssertTrue<IsExact<ts.PropertyAccessExpression & { expression: ts.JsxTagNameExpression }, ts.JsxTagNamePropertyAccess>>;
 
 export type ObjectLiteralElementLike = PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment | MethodDeclaration | AccessorDeclaration;
 type _ObjectLiteralElementLikeTest = AssertTrue<IsExact<WrappedToCompilerNodeType<ObjectLiteralElementLike>, ts.ObjectLiteralElementLike>>;
@@ -89,7 +119,7 @@ export type TypeElementTypes = PropertySignature | MethodSignature | ConstructSi
 
 /* istanbul ignore next */
 function typeElementTypes() {
-    // todo: some way to validate this
+  // todo: some way to validate this
 }
 
 export type TemplateLiteral = TemplateExpression | NoSubstitutionTemplateLiteral;
@@ -99,12 +129,28 @@ type _TemplateLiteralTest = AssertTrue<IsExact<WrappedToCompilerNodeType<Templat
  * Local target declarations.
  * @remarks This may be missing some types. Please open an issue if this returns a type not listed here.
  */
-export type LocalTargetDeclarations = SourceFile | ClassDeclaration | InterfaceDeclaration | EnumDeclaration | FunctionDeclaration | VariableDeclaration
-    | TypeAliasDeclaration | ModuleDeclaration | ExportAssignment;
+export type LocalTargetDeclarations =
+  | SourceFile
+  | ClassDeclaration
+  | InterfaceDeclaration
+  | EnumDeclaration
+  | FunctionDeclaration
+  | VariableDeclaration
+  | TypeAliasDeclaration
+  | ModuleDeclaration
+  | ExportAssignment;
 
 /**
  * Declarations that can be exported from a module.
  * @remarks This may be missing some types. Please open an issue if this returns a type not listed here.
  */
-export type ExportedDeclarations = ClassDeclaration | InterfaceDeclaration | EnumDeclaration | FunctionDeclaration | VariableDeclaration | TypeAliasDeclaration
-    | ModuleDeclaration | Expression | SourceFile;
+export type ExportedDeclarations =
+  | ClassDeclaration
+  | InterfaceDeclaration
+  | EnumDeclaration
+  | FunctionDeclaration
+  | VariableDeclaration
+  | TypeAliasDeclaration
+  | ModuleDeclaration
+  | Expression
+  | SourceFile;

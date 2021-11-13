@@ -1,3 +1,3 @@
 export interface AbstractableNodeStructure {
-    isAbstract?: boolean;
+  isAbstract?: boolean;
 }

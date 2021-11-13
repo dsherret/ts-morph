@@ -4,33 +4,33 @@ import { ForInStatement } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
 function getStatement(text: string) {
-    return getInfoFromTextWithDescendant<ForInStatement>(text, SyntaxKind.ForInStatement).descendant;
+  return getInfoFromTextWithDescendant<ForInStatement>(text, SyntaxKind.ForInStatement).descendant;
 }
 
 describe("ForInStatement", () => {
-    const expression = "{}";
-    const initializer = "x";
-    const statement = `for (${initializer} in ${expression}) {}`;
+  const expression = "{}";
+  const initializer = "x";
+  const statement = `for (${initializer} in ${expression}) {}`;
 
-    describe(nameof<ForInStatement>("getExpression"), () => {
-        function doTest(text: string, expectedText: string) {
-            const forInStatement = getStatement(text);
-            expect(forInStatement.getExpression().getText()).to.equal(expectedText);
-        }
+  describe(nameof<ForInStatement>("getExpression"), () => {
+    function doTest(text: string, expectedText: string) {
+      const forInStatement = getStatement(text);
+      expect(forInStatement.getExpression().getText()).to.equal(expectedText);
+    }
 
-        it("should get the correct expression", () => {
-            doTest(statement, expression);
-        });
+    it("should get the correct expression", () => {
+      doTest(statement, expression);
     });
+  });
 
-    describe(nameof<ForInStatement>("getInitializer"), () => {
-        function doTest(text: string, expectedText: string) {
-            const forInStatement = getStatement(text);
-            expect(forInStatement.getInitializer().getText()).to.equal(expectedText);
-        }
+  describe(nameof<ForInStatement>("getInitializer"), () => {
+    function doTest(text: string, expectedText: string) {
+      const forInStatement = getStatement(text);
+      expect(forInStatement.getInitializer().getText()).to.equal(expectedText);
+    }
 
-        it("should get the correct initializer", () => {
-            doTest(statement, initializer);
-        });
+    it("should get the correct initializer", () => {
+      doTest(statement, initializer);
     });
+  });
 });

@@ -8,21 +8,21 @@ import { JsxAttributedNode, JsxTagNamedNode } from "./base";
 const createBase = <T extends typeof PrimaryExpression>(ctor: T) => JsxAttributedNode(JsxTagNamedNode(ctor));
 export const JsxSelfClosingElementBase = createBase(PrimaryExpression);
 export class JsxSelfClosingElement extends JsxSelfClosingElementBase<ts.JsxSelfClosingElement> {
-    /**
-     * Sets the node from a structure.
-     * @param structure - Structure to set the node with.
-     */
-    set(structure: Partial<JsxSelfClosingElementStructure>) {
-        callBaseSet(JsxSelfClosingElementBase.prototype, this, structure);
-        return this;
-    }
+  /**
+   * Sets the node from a structure.
+   * @param structure - Structure to set the node with.
+   */
+  set(structure: Partial<JsxSelfClosingElementStructure>) {
+    callBaseSet(JsxSelfClosingElementBase.prototype, this, structure);
+    return this;
+  }
 
-    /**
-     * Gets the structure equivalent to this node.
-     */
-    getStructure(): JsxSelfClosingElementStructure {
-        return callBaseGetStructure<JsxSelfClosingElementSpecificStructure>(JsxSelfClosingElementBase.prototype, this, {
-            kind: StructureKind.JsxSelfClosingElement,
-        });
-    }
+  /**
+   * Gets the structure equivalent to this node.
+   */
+  getStructure(): JsxSelfClosingElementStructure {
+    return callBaseGetStructure<JsxSelfClosingElementSpecificStructure>(JsxSelfClosingElementBase.prototype, this, {
+      kind: StructureKind.JsxSelfClosingElement,
+    });
+  }
 }

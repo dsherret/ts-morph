@@ -9,57 +9,57 @@ import { ModifierableNode } from "./ModifierableNode";
 export type ReadonlyableNodeExtensionType = Node & ModifierableNode;
 
 export interface ReadonlyableNode {
-    /**
-     * Gets if it's readonly.
-     */
-    isReadonly(): boolean;
-    /**
-     * Gets the readonly keyword, or undefined if none exists.
-     */
-    getReadonlyKeyword(): Node | undefined;
-    /**
-     * Gets the readonly keyword, or throws if none exists.
-     */
-    getReadonlyKeywordOrThrow(): Node;
-    /**
-     * Sets if this node is readonly.
-     * @param value - If readonly or not.
-     */
-    setIsReadonly(value: boolean): this;
+  /**
+   * Gets if it's readonly.
+   */
+  isReadonly(): boolean;
+  /**
+   * Gets the readonly keyword, or undefined if none exists.
+   */
+  getReadonlyKeyword(): Node | undefined;
+  /**
+   * Gets the readonly keyword, or throws if none exists.
+   */
+  getReadonlyKeywordOrThrow(): Node;
+  /**
+   * Sets if this node is readonly.
+   * @param value - If readonly or not.
+   */
+  setIsReadonly(value: boolean): this;
 }
 
 export function ReadonlyableNode<T extends Constructor<ReadonlyableNodeExtensionType>>(Base: T): Constructor<ReadonlyableNode> & T {
-    return class extends Base implements ReadonlyableNode {
-        isReadonly() {
-            return this.getReadonlyKeyword() != null;
-        }
+  return class extends Base implements ReadonlyableNode {
+    isReadonly() {
+      return this.getReadonlyKeyword() != null;
+    }
 
-        getReadonlyKeyword() {
-            return this.getFirstModifierByKind(SyntaxKind.ReadonlyKeyword);
-        }
+    getReadonlyKeyword() {
+      return this.getFirstModifierByKind(SyntaxKind.ReadonlyKeyword);
+    }
 
-        getReadonlyKeywordOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getReadonlyKeyword(), "Expected to find a readonly keyword.");
-        }
+    getReadonlyKeywordOrThrow() {
+      return errors.throwIfNullOrUndefined(this.getReadonlyKeyword(), "Expected to find a readonly keyword.");
+    }
 
-        setIsReadonly(value: boolean) {
-            this.toggleModifier("readonly", value);
-            return this;
-        }
+    setIsReadonly(value: boolean) {
+      this.toggleModifier("readonly", value);
+      return this;
+    }
 
-        set(structure: Partial<ReadonlyableNodeStructure>) {
-            callBaseSet(Base.prototype, this, structure);
+    set(structure: Partial<ReadonlyableNodeStructure>) {
+      callBaseSet(Base.prototype, this, structure);
 
-            if (structure.isReadonly != null)
-                this.setIsReadonly(structure.isReadonly);
+      if (structure.isReadonly != null)
+        this.setIsReadonly(structure.isReadonly);
 
-            return this;
-        }
+      return this;
+    }
 
-        getStructure() {
-            return callBaseGetStructure<ReadonlyableNodeStructure>(Base.prototype, this, {
-                isReadonly: this.isReadonly(),
-            });
-        }
-    };
+    getStructure() {
+      return callBaseGetStructure<ReadonlyableNodeStructure>(Base.prototype, this, {
+        isReadonly: this.isReadonly(),
+      });
+    }
+  };
 }

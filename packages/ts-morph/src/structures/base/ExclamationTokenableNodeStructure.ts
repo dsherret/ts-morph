@@ -1,3 +1,3 @@
 export interface ExclamationTokenableNodeStructure {
-    hasExclamationToken?: boolean;
+  hasExclamationToken?: boolean;
 }

@@ -10,7 +10,7 @@ For example, given the following code:
 
 ```ts
 const add = function(a: number, b: number) {
-    return a + b;
+  return a + b;
 };
 ```
 

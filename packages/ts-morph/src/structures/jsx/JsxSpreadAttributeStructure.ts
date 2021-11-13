@@ -5,5 +5,5 @@ export interface JsxSpreadAttributeStructure extends Structure, JsxSpreadAttribu
 }
 
 export interface JsxSpreadAttributeSpecificStructure extends KindedStructure<StructureKind.JsxSpreadAttribute> {
-    expression: string;
+  expression: string;
 }

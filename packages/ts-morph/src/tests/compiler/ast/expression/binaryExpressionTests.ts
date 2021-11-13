@@ -4,40 +4,40 @@ import { BinaryExpression } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
 function getBinaryExpression(text: string) {
-    return getInfoFromTextWithDescendant<BinaryExpression>(text, SyntaxKind.BinaryExpression).descendant;
+  return getInfoFromTextWithDescendant<BinaryExpression>(text, SyntaxKind.BinaryExpression).descendant;
 }
 
 describe("BinaryExpression", () => {
-    describe(nameof<BinaryExpression>("getLeft"), () => {
-        function doTest(text: string, expectedText: string) {
-            const expression = getBinaryExpression(text);
-            expect(expression.getLeft().getText()).to.equal(expectedText);
-        }
+  describe(nameof<BinaryExpression>("getLeft"), () => {
+    function doTest(text: string, expectedText: string) {
+      const expression = getBinaryExpression(text);
+      expect(expression.getLeft().getText()).to.equal(expectedText);
+    }
 
-        it("should get the correct left side", () => {
-            doTest("var t = 1 ^ 2;", "1");
-        });
+    it("should get the correct left side", () => {
+      doTest("var t = 1 ^ 2;", "1");
     });
+  });
 
-    describe(nameof<BinaryExpression>("getOperatorToken"), () => {
-        function doTest(text: string, expectedText: string) {
-            const expression = getBinaryExpression(text);
-            expect(expression.getOperatorToken().getText()).to.equal(expectedText);
-        }
+  describe(nameof<BinaryExpression>("getOperatorToken"), () => {
+    function doTest(text: string, expectedText: string) {
+      const expression = getBinaryExpression(text);
+      expect(expression.getOperatorToken().getText()).to.equal(expectedText);
+    }
 
-        it("should get the correct operator token", () => {
-            doTest("var t = 1 ^ 2;", "^");
-        });
+    it("should get the correct operator token", () => {
+      doTest("var t = 1 ^ 2;", "^");
     });
+  });
 
-    describe(nameof<BinaryExpression>("getRight"), () => {
-        function doTest(text: string, expectedText: string) {
-            const expression = getBinaryExpression(text);
-            expect(expression.getRight().getText()).to.equal(expectedText);
-        }
+  describe(nameof<BinaryExpression>("getRight"), () => {
+    function doTest(text: string, expectedText: string) {
+      const expression = getBinaryExpression(text);
+      expect(expression.getRight().getText()).to.equal(expectedText);
+    }
 
-        it("should get the correct right side", () => {
-            doTest("var t = 1 ^ 2;", "2");
-        });
+    it("should get the correct right side", () => {
+      doTest("var t = 1 ^ 2;", "2");
     });
+  });
 });

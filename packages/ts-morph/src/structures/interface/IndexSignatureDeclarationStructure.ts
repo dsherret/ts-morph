@@ -3,11 +3,11 @@ import { KindedStructure, Structure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 
 export interface IndexSignatureDeclarationStructure
-    extends Structure, IndexSignatureDeclarationSpecificStructure, JSDocableNodeStructure, ReadonlyableNodeStructure, ReturnTypedNodeStructure
+  extends Structure, IndexSignatureDeclarationSpecificStructure, JSDocableNodeStructure, ReadonlyableNodeStructure, ReturnTypedNodeStructure
 {
 }
 
 export interface IndexSignatureDeclarationSpecificStructure extends KindedStructure<StructureKind.IndexSignature> {
-    keyName?: string;
-    keyType?: string;
+  keyName?: string;
+  keyType?: string;
 }

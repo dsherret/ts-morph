@@ -4,50 +4,50 @@ import { IfStatement } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
 function getStatement(text: string) {
-    return getInfoFromTextWithDescendant<IfStatement>(text, SyntaxKind.IfStatement).descendant;
+  return getInfoFromTextWithDescendant<IfStatement>(text, SyntaxKind.IfStatement).descendant;
 }
 
 describe("IfStatement", () => {
-    const expression = "1 + 2 === 3";
-    const thenStatement = "{ x = 1; }";
-    const elseStatement = "{ x = 2; }";
-    const statement = `if (${expression}) ${thenStatement} else ${elseStatement}`;
+  const expression = "1 + 2 === 3";
+  const thenStatement = "{ x = 1; }";
+  const elseStatement = "{ x = 2; }";
+  const statement = `if (${expression}) ${thenStatement} else ${elseStatement}`;
 
-    describe(nameof<IfStatement>("getExpression"), () => {
-        function doTest(text: string, expectedText: string) {
-            const ifStatement = getStatement(text);
-            expect(ifStatement.getExpression().getText()).to.equal(expectedText);
-        }
+  describe(nameof<IfStatement>("getExpression"), () => {
+    function doTest(text: string, expectedText: string) {
+      const ifStatement = getStatement(text);
+      expect(ifStatement.getExpression().getText()).to.equal(expectedText);
+    }
 
-        it("should get the correct expression", () => {
-            doTest(statement, expression);
-        });
+    it("should get the correct expression", () => {
+      doTest(statement, expression);
+    });
+  });
+
+  describe(nameof<IfStatement>("getThenStatement"), () => {
+    function doTest(text: string, expectedText: string) {
+      const ifStatement = getStatement(text);
+      expect(ifStatement.getThenStatement().getText()).to.equal(expectedText);
+    }
+
+    it("should get the correct then statement", () => {
+      doTest(statement, thenStatement);
+    });
+  });
+
+  describe(nameof<IfStatement>("getElseStatement"), () => {
+    function doTest(text: string, expectedText: string | undefined) {
+      const ifStatement = getStatement(text);
+      const value = ifStatement.getElseStatement();
+      expect(value?.getText()).to.equal(expectedText);
+    }
+
+    it("should get the correct else statement", () => {
+      doTest(statement, elseStatement);
     });
 
-    describe(nameof<IfStatement>("getThenStatement"), () => {
-        function doTest(text: string, expectedText: string) {
-            const ifStatement = getStatement(text);
-            expect(ifStatement.getThenStatement().getText()).to.equal(expectedText);
-        }
-
-        it("should get the correct then statement", () => {
-            doTest(statement, thenStatement);
-        });
+    it("should get the correct undefined else statement", () => {
+      doTest("if (x) { x = 2 }", undefined);
     });
-
-    describe(nameof<IfStatement>("getElseStatement"), () => {
-        function doTest(text: string, expectedText: string | undefined) {
-            const ifStatement = getStatement(text);
-            const value = ifStatement.getElseStatement();
-            expect(value?.getText()).to.equal(expectedText);
-        }
-
-        it("should get the correct else statement", () => {
-            doTest(statement, elseStatement);
-        });
-
-        it("should get the correct undefined else statement", () => {
-            doTest("if (x) { x = 2 }", undefined);
-        });
-    });
+  });
 });

@@ -105,8 +105,8 @@ For example:
 
 ```ts
 classDeclaration.addDecorator({
-    name: "MyDecorator",
-    arguments: ["3", `"some string"`],
+  name: "MyDecorator",
+  arguments: ["3", `"some string"`],
 });
 ```
 

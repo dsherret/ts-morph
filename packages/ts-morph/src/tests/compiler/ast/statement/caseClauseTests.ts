@@ -4,29 +4,29 @@ import { CaseClause } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
 function getCaseClause(text: string) {
-    return getInfoFromTextWithDescendant<CaseClause>(text, SyntaxKind.CaseClause).descendant;
+  return getInfoFromTextWithDescendant<CaseClause>(text, SyntaxKind.CaseClause).descendant;
 }
 
 describe("CaseClause", () => {
-    describe(nameof<CaseClause>("getStatementsWithComments"), () => {
-        function doTest(text: string, expectedTexts: string[]) {
-            const caseClause = getCaseClause(text);
-            expect(caseClause.getStatementsWithComments().map(s => s.getText())).to.deep.equal(expectedTexts);
-        }
+  describe(nameof<CaseClause>("getStatementsWithComments"), () => {
+    function doTest(text: string, expectedTexts: string[]) {
+      const caseClause = getCaseClause(text);
+      expect(caseClause.getStatementsWithComments().map(s => s.getText())).to.deep.equal(expectedTexts);
+    }
 
-        it("should get the statements", () => {
-            doTest("switch (y) {\n  case 5:\n    let x = 1;\n    //a\n}", ["let x = 1;", "//a"]);
-        });
+    it("should get the statements", () => {
+      doTest("switch (y) {\n  case 5:\n    let x = 1;\n    //a\n}", ["let x = 1;", "//a"]);
     });
+  });
 
-    describe(nameof<CaseClause>("getExpression"), () => {
-        function doTest(text: string, expectedText: string) {
-            const caseClause = getCaseClause(text);
-            expect(caseClause.getExpression().getText()).to.equal(expectedText);
-        }
+  describe(nameof<CaseClause>("getExpression"), () => {
+    function doTest(text: string, expectedText: string) {
+      const caseClause = getCaseClause(text);
+      expect(caseClause.getExpression().getText()).to.equal(expectedText);
+    }
 
-        it("should get the expression", () => {
-            doTest("switch (y) { case 5: let x = 1; }", "5");
-        });
+    it("should get the expression", () => {
+      doTest("switch (y) { case 5: let x = 1; }", "5");
     });
+  });
 });

@@ -4,11 +4,11 @@ import { Node } from "../../common";
 import { ImportExpression } from "../ImportExpression";
 import { BaseExpressionedNode } from "./ExpressionedNode";
 
-export type ImportExpressionedNodeExtensionType = Node<ts.Node & { expression: ts.ImportExpression; }>;
+export type ImportExpressionedNodeExtensionType = Node<ts.Node & { expression: ts.ImportExpression }>;
 
 export interface ImportExpressionedNode extends BaseExpressionedNode<ImportExpression> {
 }
 
 export function ImportExpressionedNode<T extends Constructor<ImportExpressionedNodeExtensionType>>(Base: T): Constructor<ImportExpressionedNode> & T {
-    return BaseExpressionedNode(Base);
+  return BaseExpressionedNode(Base);
 }

@@ -19,7 +19,7 @@ In the example above, a class declaration like the following...
 
 ```ts
 export class MyClass {
-    myProp = 5;
+  myProp = 5;
 }
 ```
 
@@ -88,17 +88,17 @@ For example:
 import { forEachStructureChild, SourceFileStructure, Structure } from "ts-morph";
 
 const structure: SourceFileStructure = {
-    kind: StructureKind.SourceFile,
-    statements: [{
-        kind: StructureKind.Function,
-        name: "myFunction",
-        parameters: [{ name: "myParam" }],
-    }],
+  kind: StructureKind.SourceFile,
+  statements: [{
+    kind: StructureKind.Function,
+    name: "myFunction",
+    parameters: [{ name: "myParam" }],
+  }],
 };
 
 forEachStructureChild(structure, child => {
-    if (Structure.hasName(child))
-        console.log(child.name);
+  if (Structure.hasName(child))
+    console.log(child.name);
 });
 ```
 

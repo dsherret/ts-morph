@@ -5,5 +5,5 @@ import { Node } from "../common";
  * JS doc link code node.
  */
 export class JSDocLinkCode extends Node<ts.JSDocLinkCode> {
-    // todo: helper methods
+  // todo: helper methods
 }

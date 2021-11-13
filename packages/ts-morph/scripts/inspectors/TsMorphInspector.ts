@@ -5,171 +5,171 @@ import { KindToWrapperMapping, Mixin, Structure, WrappedNode } from "./tsMorph";
 import { WrapperFactory } from "./WrapperFactory";
 
 export interface DependencyNode {
-    node: WrappedNode;
-    childNodes: DependencyNode[];
-    parentNodes: DependencyNode[];
+  node: WrappedNode;
+  childNodes: DependencyNode[];
+  parentNodes: DependencyNode[];
 }
 
 export class TsMorphInspector {
-    constructor(private readonly wrapperFactory: WrapperFactory, private readonly project: tsMorph.Project) {
+  constructor(private readonly wrapperFactory: WrapperFactory, private readonly project: tsMorph.Project) {
+  }
+
+  getProject() {
+    return this.project;
+  }
+
+  @Memoize
+  getSrcDirectory(): tsMorph.Directory {
+    return this.project.getDirectoryOrThrow("./src");
+  }
+
+  @Memoize
+  getTestDirectory(): tsMorph.Directory {
+    return this.project.getDirectoryOrThrow("./src/tests");
+  }
+
+  @Memoize
+  getWrappedNodes(): WrappedNode[] {
+    const compilerSourceFiles = this.project.getSourceFiles("src/compiler/**/*.ts");
+    const classes = ArrayUtils.flatten(compilerSourceFiles.map(f => f.getClasses()));
+    return ArrayUtils.sortByProperty(
+      classes.filter(c => isNodeClass(c)).map(c => this.wrapperFactory.getWrappedNode(c)),
+      n => n.getName(),
+    );
+  }
+
+  @Memoize
+  getDependencyNodes() {
+    const nodes = new Map<WrappedNode, DependencyNode>();
+
+    for (const node of this.getWrappedNodes()) {
+      const dependencyNode = getDependencyNode(node);
+      const baseNode = node.getBase();
+
+      if (baseNode != null) {
+        const base = getDependencyNode(baseNode);
+        dependencyNode.parentNodes.push(base);
+        base.childNodes.push(dependencyNode);
+      }
     }
 
-    getProject() {
-        return this.project;
+    return Array.from(nodes.values());
+
+    function getDependencyNode(node: WrappedNode) {
+      if (nodes.has(node))
+        return nodes.get(node)!;
+
+      const dependencyNode: DependencyNode = {
+        node,
+        childNodes: [],
+        parentNodes: [],
+      };
+      nodes.set(node, dependencyNode);
+      return dependencyNode;
+    }
+  }
+
+  @Memoize
+  getMixins(): Mixin[] {
+    const mixins = new Set<Mixin>();
+    for (const wrappedNode of this.getWrappedNodes()) {
+      for (const mixin of wrappedNode.getMixins())
+        mixins.add(mixin);
+    }
+    return Array.from(mixins.values());
+  }
+
+  @Memoize
+  getPublicDeclarations(): tsMorph.ExportedDeclarations[] {
+    const entries = Array.from(this.project.getSourceFileOrThrow("src/main.ts").getExportedDeclarations().entries());
+    ArrayUtils.sortByProperty(entries, e => e[0]);
+    return ArrayUtils.flatten(entries.filter(([name]) => name !== "ts").map(([_, value]) => value));
+  }
+
+  @Memoize
+  getPublicClasses(): tsMorph.ClassDeclaration[] {
+    return this.getPublicDeclarations().filter(d => tsMorph.Node.isClassDeclaration(d)) as tsMorph.ClassDeclaration[];
+  }
+
+  @Memoize
+  getPublicInterfaces(): tsMorph.InterfaceDeclaration[] {
+    return this.getPublicDeclarations().filter(d => tsMorph.Node.isInterfaceDeclaration(d)) as tsMorph.InterfaceDeclaration[];
+  }
+
+  @Memoize
+  getStructures(): Structure[] {
+    const compilerSourceFiles = this.project.getSourceFiles("src/structures/**/*.ts");
+    const interfaces = ArrayUtils.flatten(compilerSourceFiles.map(f => f.getInterfaces()));
+    const result = interfaces.map(i => this.wrapperFactory.getStructure(i));
+    return ArrayUtils.sortByProperty(result, s => s.getName());
+  }
+
+  @Memoize
+  getOverloadStructures() {
+    return this.getStructures().filter(s => s.isOverloadStructure());
+  }
+
+  @Memoize
+  getKindToWrapperMappings(): KindToWrapperMapping[] {
+    const wrappedNodes = this.getWrappedNodes();
+    const sourceFile = this.project.getSourceFileOrThrow("kindToWrapperMappings.ts");
+    const kindToWrapperMappings = sourceFile.getVariableDeclaration("kindToWrapperMappings")!;
+    const initializer = kindToWrapperMappings.getInitializer()!;
+    const propertyAssignments = initializer.getDescendants().filter(d => tsMorph.Node.isPropertyAssignment(d)) as tsMorph.PropertyAssignment[];
+    const result: { [wrapperName: string]: KindToWrapperMapping } = {};
+
+    for (const assignment of propertyAssignments) {
+      const nameNode = (assignment.getInitializerOrThrow() as tsMorph.PropertyAccessExpression).getNameNode();
+      const wrapperName = nameNode.getText();
+      if (result[wrapperName] == null) {
+        const wrappedNode = wrappedNodes.find(n => n.getName() === wrapperName);
+        if (wrappedNode == null)
+          throw new Error(`Could not find the wrapped node for ${wrapperName}.`);
+        result[wrapperName] = { wrapperName, wrappedNode, syntaxKindNames: [] };
+      }
+
+      result[wrapperName].syntaxKindNames.push(getSyntaxKindName(assignment));
     }
 
-    @Memoize
-    getSrcDirectory(): tsMorph.Directory {
-        return this.project.getDirectoryOrThrow("./src");
+    return Object.keys(result).map(k => result[k]);
+
+    function getSyntaxKindName(assignment: tsMorph.PropertyAssignment) {
+      const computedPropertyName = assignment.getNameNode() as tsMorph.ComputedPropertyName;
+      const propAccessExpr = computedPropertyName.getExpression() as tsMorph.PropertyAccessExpression;
+      return propAccessExpr.getNameNode().getText();
     }
+  }
 
-    @Memoize
-    getTestDirectory(): tsMorph.Directory {
-        return this.project.getDirectoryOrThrow("./src/tests");
-    }
+  @Memoize
+  getImplementedKindToNodeMappingsNames(): Map<string, string> {
+    const sourceFile = this.project.getSourceFileOrThrow("kindToNodeMappings.ts");
+    const mappings = sourceFile.getInterfaceOrThrow("ImplementedKindToNodeMappings");
+    const result = new Map<string, string>();
 
-    @Memoize
-    getWrappedNodes(): WrappedNode[] {
-        const compilerSourceFiles = this.project.getSourceFiles("src/compiler/**/*.ts");
-        const classes = ArrayUtils.flatten(compilerSourceFiles.map(f => f.getClasses()));
-        return ArrayUtils.sortByProperty(
-            classes.filter(c => isNodeClass(c)).map(c => this.wrapperFactory.getWrappedNode(c)),
-            n => n.getName(),
-        );
-    }
+    const error = `Exepcted all ImplementedKindToNodeMappings members to be [SyntaxKind.xxx]: compiler.yyy.`;
 
-    @Memoize
-    getDependencyNodes() {
-        const nodes = new Map<WrappedNode, DependencyNode>();
+    mappings.getMembers().forEach(member => {
+      if (!tsMorph.Node.isPropertySignature(member))
+        throw new Error(error);
 
-        for (const node of this.getWrappedNodes()) {
-            const dependencyNode = getDependencyNode(node);
-            const baseNode = node.getBase();
+      const nameNode = member.getNameNode();
+      if (!tsMorph.Node.isComputedPropertyName(nameNode))
+        throw new Error(error);
+      const nameNodeExpression = nameNode.getExpression();
+      if (!tsMorph.Node.isPropertyAccessExpression(nameNodeExpression))
+        throw new Error(error);
+      const syntaxKind = nameNodeExpression.getName();
 
-            if (baseNode != null) {
-                const base = getDependencyNode(baseNode);
-                dependencyNode.parentNodes.push(base);
-                base.childNodes.push(dependencyNode);
-            }
-        }
+      const typeNode = member.getTypeNodeOrThrow();
+      if (!tsMorph.Node.isTypeReferenceNode(typeNode))
+        throw new Error(error);
+      const typeNodeName = typeNode.getTypeName();
+      if (!tsMorph.Node.isQualifiedName(typeNodeName))
+        throw new Error(error);
+      const compilerNodeName = typeNodeName.getRight().getText();
 
-        return Array.from(nodes.values());
-
-        function getDependencyNode(node: WrappedNode) {
-            if (nodes.has(node))
-                return nodes.get(node)!;
-
-            const dependencyNode: DependencyNode = {
-                node,
-                childNodes: [],
-                parentNodes: [],
-            };
-            nodes.set(node, dependencyNode);
-            return dependencyNode;
-        }
-    }
-
-    @Memoize
-    getMixins(): Mixin[] {
-        const mixins = new Set<Mixin>();
-        for (const wrappedNode of this.getWrappedNodes()) {
-            for (const mixin of wrappedNode.getMixins())
-                mixins.add(mixin);
-        }
-        return Array.from(mixins.values());
-    }
-
-    @Memoize
-    getPublicDeclarations(): tsMorph.ExportedDeclarations[] {
-        const entries = Array.from(this.project.getSourceFileOrThrow("src/main.ts").getExportedDeclarations().entries());
-        ArrayUtils.sortByProperty(entries, e => e[0]);
-        return ArrayUtils.flatten(entries.filter(([name]) => name !== "ts").map(([_, value]) => value));
-    }
-
-    @Memoize
-    getPublicClasses(): tsMorph.ClassDeclaration[] {
-        return this.getPublicDeclarations().filter(d => tsMorph.Node.isClassDeclaration(d)) as tsMorph.ClassDeclaration[];
-    }
-
-    @Memoize
-    getPublicInterfaces(): tsMorph.InterfaceDeclaration[] {
-        return this.getPublicDeclarations().filter(d => tsMorph.Node.isInterfaceDeclaration(d)) as tsMorph.InterfaceDeclaration[];
-    }
-
-    @Memoize
-    getStructures(): Structure[] {
-        const compilerSourceFiles = this.project.getSourceFiles("src/structures/**/*.ts");
-        const interfaces = ArrayUtils.flatten(compilerSourceFiles.map(f => f.getInterfaces()));
-        const result = interfaces.map(i => this.wrapperFactory.getStructure(i));
-        return ArrayUtils.sortByProperty(result, s => s.getName());
-    }
-
-    @Memoize
-    getOverloadStructures() {
-        return this.getStructures().filter(s => s.isOverloadStructure());
-    }
-
-    @Memoize
-    getKindToWrapperMappings(): KindToWrapperMapping[] {
-        const wrappedNodes = this.getWrappedNodes();
-        const sourceFile = this.project.getSourceFileOrThrow("kindToWrapperMappings.ts");
-        const kindToWrapperMappings = sourceFile.getVariableDeclaration("kindToWrapperMappings")!;
-        const initializer = kindToWrapperMappings.getInitializer()!;
-        const propertyAssignments = initializer.getDescendants().filter(d => tsMorph.Node.isPropertyAssignment(d)) as tsMorph.PropertyAssignment[];
-        const result: { [wrapperName: string]: KindToWrapperMapping; } = {};
-
-        for (const assignment of propertyAssignments) {
-            const nameNode = (assignment.getInitializerOrThrow() as tsMorph.PropertyAccessExpression).getNameNode();
-            const wrapperName = nameNode.getText();
-            if (result[wrapperName] == null) {
-                const wrappedNode = wrappedNodes.find(n => n.getName() === wrapperName);
-                if (wrappedNode == null)
-                    throw new Error(`Could not find the wrapped node for ${wrapperName}.`);
-                result[wrapperName] = { wrapperName, wrappedNode, syntaxKindNames: [] };
-            }
-
-            result[wrapperName].syntaxKindNames.push(getSyntaxKindName(assignment));
-        }
-
-        return Object.keys(result).map(k => result[k]);
-
-        function getSyntaxKindName(assignment: tsMorph.PropertyAssignment) {
-            const computedPropertyName = assignment.getNameNode() as tsMorph.ComputedPropertyName;
-            const propAccessExpr = computedPropertyName.getExpression() as tsMorph.PropertyAccessExpression;
-            return propAccessExpr.getNameNode().getText();
-        }
-    }
-
-    @Memoize
-    getImplementedKindToNodeMappingsNames(): Map<string, string> {
-        const sourceFile = this.project.getSourceFileOrThrow("kindToNodeMappings.ts");
-        const mappings = sourceFile.getInterfaceOrThrow("ImplementedKindToNodeMappings");
-        const result = new Map<string, string>();
-
-        const error = `Exepcted all ImplementedKindToNodeMappings members to be [SyntaxKind.xxx]: compiler.yyy.`;
-
-        mappings.getMembers().forEach(member => {
-            if (!tsMorph.Node.isPropertySignature(member))
-                throw new Error(error);
-
-            const nameNode = member.getNameNode();
-            if (!tsMorph.Node.isComputedPropertyName(nameNode))
-                throw new Error(error);
-            const nameNodeExpression = nameNode.getExpression();
-            if (!tsMorph.Node.isPropertyAccessExpression(nameNodeExpression))
-                throw new Error(error);
-            const syntaxKind = nameNodeExpression.getName();
-
-            const typeNode = member.getTypeNodeOrThrow();
-            if (!tsMorph.Node.isTypeReferenceNode(typeNode))
-                throw new Error(error);
-            const typeNodeName = typeNode.getTypeName();
-            if (!tsMorph.Node.isQualifiedName(typeNodeName))
-                throw new Error(error);
-            const compilerNodeName = typeNodeName.getRight().getText();
-
-            result.set(syntaxKind, compilerNodeName);
-        });
-        return result;
-    }
+      result.set(syntaxKind, compilerNodeName);
+    });
+    return result;
+  }
 }

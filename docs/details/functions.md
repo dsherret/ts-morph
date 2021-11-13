@@ -20,7 +20,7 @@ It's important to note that function declarations may not have a name. For examp
 
 ```ts
 export default function() {
-    // etc...
+  // etc...
 }
 ```
 
@@ -32,7 +32,7 @@ Add or insert enums to a source file, namespace, or function like declarations b
 
 ```ts
 const functionDeclaration = sourceFile.addFunction({
-    name: "FunctionName",
+  name: "FunctionName",
 });
 ```
 
@@ -91,10 +91,10 @@ Or alternatively, write the body text with [code-block-writer](https://github.co
 
 ```ts
 functionDeclaration.setBodyText(writer =>
-    writer.writeLine("const myNumber = 5;")
-        .write("if (myNumber === 5)").block(() => {
-            writer.writeLine("console.log('yes')");
-        })
+  writer.writeLine("const myNumber = 5;")
+    .write("if (myNumber === 5)").block(() => {
+      writer.writeLine("console.log('yes')");
+    })
 );
 ```
 
@@ -116,10 +116,10 @@ Given the following code:
 
 ```ts
 function someFunction() {
-    function innerFunction() {
-    }
+  function innerFunction() {
+  }
 
-    const someDeclaration = 5;
+  const someDeclaration = 5;
 }
 ```
 
@@ -138,7 +138,7 @@ They exist in an expression:
 
 ```ts
 const add = function(a: number, b: number) {
-    return a + b;
+  return a + b;
 };
 ```
 
@@ -146,5 +146,5 @@ In this case, it can be retrieved via the variable declaration's [initializer](i
 
 ```ts
 const functionExpression = sourceFile.getVariableDeclarationOrThrow("add")
-    .getInitializerIfKindOrThrow(SyntaxKind.FunctionExpression);
+  .getInitializerIfKindOrThrow(SyntaxKind.FunctionExpression);
 ```

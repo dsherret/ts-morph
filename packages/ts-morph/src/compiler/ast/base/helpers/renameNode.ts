@@ -5,24 +5,24 @@ import { Node } from "../../common";
 import { SourceFile } from "../../module";
 
 export function renameNode(node: Node, newName: string, options?: RenameOptions) {
-    errors.throwIfWhitespaceOrNotString(newName, "newName");
+  errors.throwIfWhitespaceOrNotString(newName, "newName");
 
-    if (node.getText() === newName)
-        return;
+  if (node.getText() === newName)
+    return;
 
-    const renameLocations = node._context.languageService.findRenameLocations(node, options);
-    const renameLocationsBySourceFile = new KeyValueCache<SourceFile, RenameLocation[]>();
+  const renameLocations = node._context.languageService.findRenameLocations(node, options);
+  const renameLocationsBySourceFile = new KeyValueCache<SourceFile, RenameLocation[]>();
 
-    for (const renameLocation of renameLocations) {
-        const locations = renameLocationsBySourceFile.getOrCreate<RenameLocation[]>(renameLocation.getSourceFile(), () => []);
-        locations.push(renameLocation);
-    }
+  for (const renameLocation of renameLocations) {
+    const locations = renameLocationsBySourceFile.getOrCreate<RenameLocation[]>(renameLocation.getSourceFile(), () => []);
+    locations.push(renameLocation);
+  }
 
-    for (const [sourceFile, locations] of renameLocationsBySourceFile.getEntries()) {
-        replaceSourceFileTextForRename({
-            sourceFile,
-            renameLocations: locations,
-            newName,
-        });
-    }
+  for (const [sourceFile, locations] of renameLocationsBySourceFile.getEntries()) {
+    replaceSourceFileTextForRename({
+      sourceFile,
+      renameLocations: locations,
+      newName,
+    });
+  }
 }

@@ -37,7 +37,7 @@ Add or insert namespaces to a source file, namespace, or function like declarati
 
 ```ts
 const moduleDeclaration = sourceFile.addModule({
-    name: "ModuleName",
+  name: "ModuleName",
 });
 ```
 
@@ -94,11 +94,11 @@ Given the following code:
 
 ```ts
 namespace MyNamespace {
-    function someFunction() {
-    }
+  function someFunction() {
+  }
 
-    class SomeClass {
-    }
+  class SomeClass {
+  }
 }
 ```
 

@@ -5,6 +5,6 @@ export interface ImportSpecifierStructure extends Structure, ImportSpecifierSpec
 }
 
 export interface ImportSpecifierSpecificStructure extends KindedStructure<StructureKind.ImportSpecifier> {
-    name: string;
-    alias?: string;
+  name: string;
+  alias?: string;
 }

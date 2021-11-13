@@ -4,40 +4,40 @@ import { CatchClause } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
 function getCatchClause(text: string) {
-    return getInfoFromTextWithDescendant<CatchClause>(text, SyntaxKind.CatchClause).descendant;
+  return getInfoFromTextWithDescendant<CatchClause>(text, SyntaxKind.CatchClause).descendant;
 }
 
 describe("CatchClause", () => {
-    const block = "{ let x = 0; }";
-    const variableDeclaration = "x";
-    const statement = `catch (${variableDeclaration}) ${block}`;
-    const emptyStatement = `catch ${block}`;
-    const catchClause = getCatchClause(statement);
-    const emptyCatchClause = getCatchClause(emptyStatement);
+  const block = "{ let x = 0; }";
+  const variableDeclaration = "x";
+  const statement = `catch (${variableDeclaration}) ${block}`;
+  const emptyStatement = `catch ${block}`;
+  const catchClause = getCatchClause(statement);
+  const emptyCatchClause = getCatchClause(emptyStatement);
 
-    describe(nameof<CatchClause>("getBlock"), () => {
-        it("should get the correct block", () => {
-            expect(catchClause.getBlock().getText()).to.equal(block);
-        });
+  describe(nameof<CatchClause>("getBlock"), () => {
+    it("should get the correct block", () => {
+      expect(catchClause.getBlock().getText()).to.equal(block);
+    });
+  });
+
+  describe(nameof<CatchClause>("getVariableDeclaration"), () => {
+    it("should get the correct variable declaration", () => {
+      expect(catchClause.getVariableDeclaration()!.getText()).to.equal(variableDeclaration);
     });
 
-    describe(nameof<CatchClause>("getVariableDeclaration"), () => {
-        it("should get the correct variable declaration", () => {
-            expect(catchClause.getVariableDeclaration()!.getText()).to.equal(variableDeclaration);
-        });
+    it("should get the correct undefined variable declaration", () => {
+      expect(emptyCatchClause.getVariableDeclaration()).to.be.undefined;
+    });
+  });
 
-        it("should get the correct undefined variable declaration", () => {
-            expect(emptyCatchClause.getVariableDeclaration()).to.be.undefined;
-        });
+  describe(nameof<CatchClause>("getVariableDeclarationOrThrow"), () => {
+    it("should should return the variable declaration", () => {
+      expect(catchClause.getVariableDeclarationOrThrow().getText()).to.equal(variableDeclaration);
     });
 
-    describe(nameof<CatchClause>("getVariableDeclarationOrThrow"), () => {
-        it("should should return the variable declaration", () => {
-            expect(catchClause.getVariableDeclarationOrThrow().getText()).to.equal(variableDeclaration);
-        });
-
-        it("should throw without a variable declaration", () => {
-            expect(() => emptyCatchClause.getVariableDeclarationOrThrow()).to.throw();
-        });
+    it("should throw without a variable declaration", () => {
+      expect(() => emptyCatchClause.getVariableDeclarationOrThrow()).to.throw();
     });
+  });
 });

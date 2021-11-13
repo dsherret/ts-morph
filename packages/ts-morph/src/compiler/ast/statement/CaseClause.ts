@@ -8,10 +8,10 @@ import { StatementedNode } from "./StatementedNode";
 const createBase = <T extends typeof Node>(ctor: T) => ExpressionedNode(TextInsertableNode(StatementedNode(ctor)));
 export const CaseClauseBase = createBase(Node);
 export class CaseClause extends CaseClauseBase<ts.CaseClause> {
-    /**
-     * Removes this case clause.
-     */
-    remove() {
-        removeClausedNodeChild(this);
-    }
+  /**
+   * Removes this case clause.
+   */
+  remove() {
+    removeClausedNodeChild(this);
+  }
 }

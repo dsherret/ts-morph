@@ -2,6 +2,6 @@ import { JSDocableNodeStructure, SignaturedDeclarationStructure, TypeParametered
 import { StatementedNodeStructure } from "../statement";
 
 export interface FunctionLikeDeclarationStructure
-    extends SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, StatementedNodeStructure
+  extends SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, StatementedNodeStructure
 {
 }

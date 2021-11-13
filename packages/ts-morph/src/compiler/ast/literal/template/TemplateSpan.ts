@@ -6,10 +6,10 @@ import { TemplateTail } from "./TemplateTail";
 
 export const TemplateSpanBase = ExpressionedNode(Node);
 export class TemplateSpan extends TemplateSpanBase<ts.TemplateSpan> {
-    /**
-     * Gets the template literal.
-     */
-    getLiteral(): TemplateMiddle | TemplateTail {
-        return this._getNodeFromCompilerNode(this.compilerNode.literal);
-    }
+  /**
+   * Gets the template literal.
+   */
+  getLiteral(): TemplateMiddle | TemplateTail {
+    return this._getNodeFromCompilerNode(this.compilerNode.literal);
+  }
 }

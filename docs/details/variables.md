@@ -28,15 +28,15 @@ Add or insert variable statements to a source file, namespace, or function like 
 import { Project, VariableDeclarationKind } from "ts-morph";
 
 const variableStatement = sourceFile.addVariableStatement({
-    declarationKind: VariableDeclarationKind.Const, // defaults to "let"
-    declarations: [{
-        name: "myNumber",
-        initializer: "5",
-    }, {
-        name: "myString",
-        type: "string",
-        initializer: `'my string'`,
-    }],
+  declarationKind: VariableDeclarationKind.Const, // defaults to "let"
+  declarations: [{
+    name: "myNumber",
+    initializer: "5",
+  }, {
+    name: "myString",
+    type: "string",
+    initializer: `'my string'`,
+  }],
 });
 ```
 

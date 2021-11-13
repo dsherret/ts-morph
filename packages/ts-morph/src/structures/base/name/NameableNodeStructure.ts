@@ -1,3 +1,3 @@
 export interface NameableNodeStructure {
-    name?: string;
+  name?: string;
 }

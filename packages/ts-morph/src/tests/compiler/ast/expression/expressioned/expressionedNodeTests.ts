@@ -4,60 +4,60 @@ import { ExpressionedNode, ParenthesizedExpression } from "../../../../../compil
 import { getInfoFromTextWithDescendant } from "../../../testHelpers";
 
 describe("ExpressionedNode", () => {
-    describe(nameof<ExpressionedNode>("getExpression"), () => {
-        function doTest(text: string, expectedText: string) {
-            const { descendant } = getInfoFromTextWithDescendant<ParenthesizedExpression>(text, SyntaxKind.ParenthesizedExpression);
-            expect(descendant.getExpression().getText()).to.equal(expectedText);
-        }
+  describe(nameof<ExpressionedNode>("getExpression"), () => {
+    function doTest(text: string, expectedText: string) {
+      const { descendant } = getInfoFromTextWithDescendant<ParenthesizedExpression>(text, SyntaxKind.ParenthesizedExpression);
+      expect(descendant.getExpression().getText()).to.equal(expectedText);
+    }
 
-        it("should get the correct expression", () => {
-            doTest("(x + 1)", "x + 1");
-        });
+    it("should get the correct expression", () => {
+      doTest("(x + 1)", "x + 1");
+    });
+  });
+
+  describe(nameof<ExpressionedNode>("getExpressionIfKind"), () => {
+    function doTest(text: string, kind: SyntaxKind, expectedText: string | undefined) {
+      const { descendant } = getInfoFromTextWithDescendant<ParenthesizedExpression>(text, SyntaxKind.ParenthesizedExpression);
+      const result = descendant.getExpressionIfKind(kind);
+      expect(result?.getText()).to.equal(expectedText);
+    }
+
+    it("should get the expression when providing the expected value", () => {
+      doTest("(x + 1)", SyntaxKind.BinaryExpression, "x + 1");
     });
 
-    describe(nameof<ExpressionedNode>("getExpressionIfKind"), () => {
-        function doTest(text: string, kind: SyntaxKind, expectedText: string | undefined) {
-            const { descendant } = getInfoFromTextWithDescendant<ParenthesizedExpression>(text, SyntaxKind.ParenthesizedExpression);
-            const result = descendant.getExpressionIfKind(kind);
-            expect(result?.getText()).to.equal(expectedText);
-        }
+    it("should not get the expression when providing something else", () => {
+      doTest("(x + 1)", SyntaxKind.CallExpression, undefined);
+    });
+  });
 
-        it("should get the expression when providing the expected value", () => {
-            doTest("(x + 1)", SyntaxKind.BinaryExpression, "x + 1");
-        });
+  describe(nameof<ExpressionedNode>("getExpressionIfKindOrThrow"), () => {
+    function doTest(text: string, kind: SyntaxKind, expectedText: string | undefined) {
+      const { descendant } = getInfoFromTextWithDescendant<ParenthesizedExpression>(text, SyntaxKind.ParenthesizedExpression);
+      if (expectedText == null)
+        expect(() => descendant.getExpressionIfKindOrThrow(kind)).to.throw();
+      else
+        expect(descendant.getExpressionIfKindOrThrow(kind).getText()).to.equal(expectedText);
+    }
 
-        it("should not get the expression when providing something else", () => {
-            doTest("(x + 1)", SyntaxKind.CallExpression, undefined);
-        });
+    it("should get the expression when providing the expected value", () => {
+      doTest("(x + 1)", SyntaxKind.BinaryExpression, "x + 1");
     });
 
-    describe(nameof<ExpressionedNode>("getExpressionIfKindOrThrow"), () => {
-        function doTest(text: string, kind: SyntaxKind, expectedText: string | undefined) {
-            const { descendant } = getInfoFromTextWithDescendant<ParenthesizedExpression>(text, SyntaxKind.ParenthesizedExpression);
-            if (expectedText == null)
-                expect(() => descendant.getExpressionIfKindOrThrow(kind)).to.throw();
-            else
-                expect(descendant.getExpressionIfKindOrThrow(kind).getText()).to.equal(expectedText);
-        }
-
-        it("should get the expression when providing the expected value", () => {
-            doTest("(x + 1)", SyntaxKind.BinaryExpression, "x + 1");
-        });
-
-        it("should not get the expression when providing something else", () => {
-            doTest("(x + 1)", SyntaxKind.CallExpression, undefined);
-        });
+    it("should not get the expression when providing something else", () => {
+      doTest("(x + 1)", SyntaxKind.CallExpression, undefined);
     });
+  });
 
-    describe(nameof<ExpressionedNode>("setExpression"), () => {
-        function doTest(text: string, newText: string, expected: string) {
-            const { descendant, sourceFile } = getInfoFromTextWithDescendant<ParenthesizedExpression>(text, SyntaxKind.ParenthesizedExpression);
-            descendant.setExpression(newText);
-            expect(sourceFile.getFullText()).to.equal(expected);
-        }
+  describe(nameof<ExpressionedNode>("setExpression"), () => {
+    function doTest(text: string, newText: string, expected: string) {
+      const { descendant, sourceFile } = getInfoFromTextWithDescendant<ParenthesizedExpression>(text, SyntaxKind.ParenthesizedExpression);
+      descendant.setExpression(newText);
+      expect(sourceFile.getFullText()).to.equal(expected);
+    }
 
-        it("should set", () => {
-            doTest("const v = (x + 1)", "y + 2", "const v = (y + 2)");
-        });
+    it("should set", () => {
+      doTest("const v = (x + 1)", "y + 2", "const v = (y + 2)");
     });
+  });
 });

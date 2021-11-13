@@ -13,6 +13,6 @@ export interface ModuleNamedNode extends ModuleNamedNodeSpecific, ReferenceFinda
 export type ModuleNamedNodeSpecific = NamedNodeSpecificBase<ModuleName>;
 
 export function ModuleNamedNode<T extends Constructor<ModuleNamedNodeExtensionType>>(Base: T): Constructor<ModuleNamedNode> & T {
-    const base = ReferenceFindableNode(RenameableNode(Base));
-    return NamedNodeBase<ts.ModuleName, typeof base>(base);
+  const base = ReferenceFindableNode(RenameableNode(Base));
+  return NamedNodeBase<ts.ModuleName, typeof base>(base);
 }

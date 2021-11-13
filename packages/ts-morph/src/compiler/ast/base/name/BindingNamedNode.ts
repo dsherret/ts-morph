@@ -13,6 +13,6 @@ export interface BindingNamedNode extends BindingNamedNodeSpecific, ReferenceFin
 export type BindingNamedNodeSpecific = NamedNodeSpecificBase<BindingName>;
 
 export function BindingNamedNode<T extends Constructor<BindingNamedNodeExtensionType>>(Base: T): Constructor<BindingNamedNode> & T {
-    const base = ReferenceFindableNode(RenameableNode(Base));
-    return NamedNodeBase<ts.BindingName, typeof base>(base);
+  const base = ReferenceFindableNode(RenameableNode(Base));
+  return NamedNodeBase<ts.BindingName, typeof base>(base);
 }

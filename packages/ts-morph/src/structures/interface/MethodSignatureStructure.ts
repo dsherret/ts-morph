@@ -1,11 +1,22 @@
-import { JSDocableNodeStructure, PropertyNamedNodeStructure, QuestionTokenableNodeStructure, SignaturedDeclarationStructure,
-    TypeParameteredNodeStructure } from "../base";
+import {
+  JSDocableNodeStructure,
+  PropertyNamedNodeStructure,
+  QuestionTokenableNodeStructure,
+  SignaturedDeclarationStructure,
+  TypeParameteredNodeStructure,
+} from "../base";
 import { KindedStructure, Structure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 
 export interface MethodSignatureStructure
-    extends Structure, PropertyNamedNodeStructure, MethodSignatureSpecificStructure, QuestionTokenableNodeStructure, JSDocableNodeStructure,
-        SignaturedDeclarationStructure, TypeParameteredNodeStructure
+  extends
+    Structure,
+    PropertyNamedNodeStructure,
+    MethodSignatureSpecificStructure,
+    QuestionTokenableNodeStructure,
+    JSDocableNodeStructure,
+    SignaturedDeclarationStructure,
+    TypeParameteredNodeStructure
 {
 }
 

@@ -142,8 +142,8 @@ Or specify the output directories (specify a path relative from the directory or
 
 ```ts
 directory.emit({
-    outDir: "out",
-    declarationDir: "declarations",
+  outDir: "out",
+  declarationDir: "declarations",
 });
 ```
 

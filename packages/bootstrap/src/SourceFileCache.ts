@@ -1,122 +1,135 @@
-import { CompilerOptionsContainer, DocumentRegistry, FileUtils, ScriptKind, StandardizedFilePath, StringUtils, TransactionalFileSystem, ts,
-    TsSourceFileContainer } from "@ts-morph/common";
+import {
+  CompilerOptionsContainer,
+  DocumentRegistry,
+  FileUtils,
+  ScriptKind,
+  StandardizedFilePath,
+  StringUtils,
+  TransactionalFileSystem,
+  ts,
+  TsSourceFileContainer,
+} from "@ts-morph/common";
 
 export class SourceFileCache implements TsSourceFileContainer {
-    private readonly sourceFilesByFilePath = new Map<StandardizedFilePath, ts.SourceFile>();
-    private projectVersion = 0;
+  private readonly sourceFilesByFilePath = new Map<StandardizedFilePath, ts.SourceFile>();
+  private projectVersion = 0;
 
-    readonly documentRegistry: DocumentRegistry;
+  readonly documentRegistry: DocumentRegistry;
 
-    constructor(
-        private readonly fileSystemWrapper: TransactionalFileSystem,
-        private readonly compilerOptions: CompilerOptionsContainer,
-    ) {
-        this.documentRegistry = new DocumentRegistry(fileSystemWrapper);
+  constructor(
+    private readonly fileSystemWrapper: TransactionalFileSystem,
+    private readonly compilerOptions: CompilerOptionsContainer,
+  ) {
+    this.documentRegistry = new DocumentRegistry(fileSystemWrapper);
+  }
+
+  containsSourceFileAtPath(filePath: StandardizedFilePath) {
+    return this.sourceFilesByFilePath.has(filePath);
+  }
+
+  getSourceFilePaths() {
+    return this.sourceFilesByFilePath.keys();
+  }
+
+  getSourceFiles() {
+    return this.sourceFilesByFilePath.values();
+  }
+
+  getProjectVersion() {
+    return this.projectVersion;
+  }
+
+  getSourceFileVersion(sourceFile: ts.SourceFile) {
+    return this.documentRegistry.getSourceFileVersion(sourceFile);
+  }
+
+  getSourceFileFromCacheFromFilePath(filePath: StandardizedFilePath) {
+    return this.sourceFilesByFilePath.get(filePath);
+  }
+
+  addLibFileToCacheByText(filePath: StandardizedFilePath, fileText: string, scriptKind: ScriptKind | undefined) {
+    return this.documentRegistry.createOrUpdateSourceFile(
+      filePath,
+      this.compilerOptions.get(),
+      ts.ScriptSnapshot.fromString(fileText),
+      scriptKind,
+    );
+  }
+
+  async addOrGetSourceFileFromFilePath(filePath: StandardizedFilePath, options: { scriptKind: ScriptKind | undefined }): Promise<ts.SourceFile | undefined> {
+    let sourceFile = this.sourceFilesByFilePath.get(filePath);
+    if (sourceFile == null && await this.fileSystemWrapper.fileExists(filePath)) {
+      sourceFile = this.createSourceFileFromText(
+        filePath,
+        await this.fileSystemWrapper.readFile(filePath, this.compilerOptions.getEncoding()),
+        options,
+      );
     }
 
-    containsSourceFileAtPath(filePath: StandardizedFilePath) {
-        return this.sourceFilesByFilePath.has(filePath);
+    return sourceFile;
+  }
+
+  addOrGetSourceFileFromFilePathSync(filePath: StandardizedFilePath, options: { scriptKind: ScriptKind | undefined }): ts.SourceFile | undefined {
+    let sourceFile = this.sourceFilesByFilePath.get(filePath);
+    if (sourceFile == null && this.fileSystemWrapper.fileExistsSync(filePath)) {
+      sourceFile = this.createSourceFileFromText(
+        filePath,
+        this.fileSystemWrapper.readFileSync(filePath, this.compilerOptions.getEncoding()),
+        options,
+      );
     }
 
-    getSourceFilePaths() {
-        return this.sourceFilesByFilePath.keys();
-    }
+    return sourceFile;
+  }
 
-    getSourceFiles() {
-        return this.sourceFilesByFilePath.values();
-    }
+  createSourceFileFromText(
+    filePath: StandardizedFilePath,
+    text: string,
+    options: { scriptKind: ScriptKind | undefined },
+  ): ts.SourceFile {
+    filePath = this.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
+    const hasBom = StringUtils.hasBom(text);
+    if (hasBom)
+      text = StringUtils.stripBom(text);
+    const sourceFile = this.documentRegistry.createOrUpdateSourceFile(
+      filePath,
+      this.compilerOptions.get(),
+      ts.ScriptSnapshot.fromString(text),
+      options.scriptKind,
+    );
+    this.setSourceFile(sourceFile);
+    return sourceFile;
+  }
 
-    getProjectVersion() {
-        return this.projectVersion;
-    }
+  setSourceFile(sourceFile: ts.SourceFile) {
+    const standardizedFilePath = this.fileSystemWrapper.getStandardizedAbsolutePath(sourceFile.fileName);
+    sourceFile.fileName = standardizedFilePath;
 
-    getSourceFileVersion(sourceFile: ts.SourceFile) {
-        return this.documentRegistry.getSourceFileVersion(sourceFile);
-    }
+    this.documentRegistry.updateDocument(
+      standardizedFilePath,
+      this.compilerOptions.get(),
+      ts.ScriptSnapshot.fromString(sourceFile.text),
+      this.getSourceFileVersion(sourceFile),
+      (sourceFile as any)["scriptKind"] as ts.ScriptKind,
+    );
 
-    getSourceFileFromCacheFromFilePath(filePath: StandardizedFilePath) {
-        return this.sourceFilesByFilePath.get(filePath);
-    }
+    const dirPath = FileUtils.getDirPath(standardizedFilePath);
+    if (!this.fileSystemWrapper.directoryExistsSync(dirPath))
+      this.fileSystemWrapper.queueMkdir(dirPath);
 
-    addLibFileToCacheByText(filePath: StandardizedFilePath, fileText: string, scriptKind: ScriptKind | undefined) {
-        return this.documentRegistry.createOrUpdateSourceFile(
-            filePath,
-            this.compilerOptions.get(),
-            ts.ScriptSnapshot.fromString(fileText),
-            scriptKind,
-        );
-    }
+    this.sourceFilesByFilePath.set(standardizedFilePath, sourceFile);
+    this.projectVersion++;
+  }
 
-    async addOrGetSourceFileFromFilePath(filePath: StandardizedFilePath, options: { scriptKind: ScriptKind | undefined; }): Promise<ts.SourceFile | undefined> {
-        let sourceFile = this.sourceFilesByFilePath.get(filePath);
-        if (sourceFile == null && await this.fileSystemWrapper.fileExists(filePath)) {
-            sourceFile = this.createSourceFileFromText(
-                filePath,
-                await this.fileSystemWrapper.readFile(filePath, this.compilerOptions.getEncoding()),
-                options,
-            );
-        }
+  removeSourceFile(filePath: StandardizedFilePath) {
+    this.sourceFilesByFilePath.delete(filePath);
+  }
 
-        return sourceFile;
-    }
+  containsDirectoryAtPath(dirPath: StandardizedFilePath) {
+    return this.fileSystemWrapper.directoryExistsSync(dirPath);
+  }
 
-    addOrGetSourceFileFromFilePathSync(filePath: StandardizedFilePath, options: { scriptKind: ScriptKind | undefined; }): ts.SourceFile | undefined {
-        let sourceFile = this.sourceFilesByFilePath.get(filePath);
-        if (sourceFile == null && this.fileSystemWrapper.fileExistsSync(filePath)) {
-            sourceFile = this.createSourceFileFromText(
-                filePath,
-                this.fileSystemWrapper.readFileSync(filePath, this.compilerOptions.getEncoding()),
-                options,
-            );
-        }
-
-        return sourceFile;
-    }
-
-    createSourceFileFromText(
-        filePath: StandardizedFilePath,
-        text: string,
-        options: { scriptKind: ScriptKind | undefined; },
-    ): ts.SourceFile {
-        filePath = this.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
-        const hasBom = StringUtils.hasBom(text);
-        if (hasBom)
-            text = StringUtils.stripBom(text);
-        const sourceFile = this.documentRegistry.createOrUpdateSourceFile(filePath, this.compilerOptions.get(), ts.ScriptSnapshot.fromString(text),
-            options.scriptKind);
-        this.setSourceFile(sourceFile);
-        return sourceFile;
-    }
-
-    setSourceFile(sourceFile: ts.SourceFile) {
-        const standardizedFilePath = this.fileSystemWrapper.getStandardizedAbsolutePath(sourceFile.fileName);
-        sourceFile.fileName = standardizedFilePath;
-
-        this.documentRegistry.updateDocument(
-            standardizedFilePath,
-            this.compilerOptions.get(),
-            ts.ScriptSnapshot.fromString(sourceFile.text),
-            this.getSourceFileVersion(sourceFile),
-            (sourceFile as any)["scriptKind"] as ts.ScriptKind,
-        );
-
-        const dirPath = FileUtils.getDirPath(standardizedFilePath);
-        if (!this.fileSystemWrapper.directoryExistsSync(dirPath))
-            this.fileSystemWrapper.queueMkdir(dirPath);
-
-        this.sourceFilesByFilePath.set(standardizedFilePath, sourceFile);
-        this.projectVersion++;
-    }
-
-    removeSourceFile(filePath: StandardizedFilePath) {
-        this.sourceFilesByFilePath.delete(filePath);
-    }
-
-    containsDirectoryAtPath(dirPath: StandardizedFilePath) {
-        return this.fileSystemWrapper.directoryExistsSync(dirPath);
-    }
-
-    getChildDirectoriesOfDirectory(dirPath: StandardizedFilePath) {
-        return this.fileSystemWrapper.getDirectories(dirPath);
-    }
+  getChildDirectoriesOfDirectory(dirPath: StandardizedFilePath) {
+    return this.fileSystemWrapper.getDirectories(dirPath);
+  }
 }

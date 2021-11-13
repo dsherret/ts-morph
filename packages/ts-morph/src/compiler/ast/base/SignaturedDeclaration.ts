@@ -10,5 +10,5 @@ export interface SignaturedDeclaration extends ParameteredNode, ReturnTypedNode 
 }
 
 export function SignaturedDeclaration<T extends Constructor<SignaturedDeclarationExtensionType>>(Base: T): Constructor<SignaturedDeclaration> & T {
-    return ReturnTypedNode(ParameteredNode(Base));
+  return ReturnTypedNode(ParameteredNode(Base));
 }

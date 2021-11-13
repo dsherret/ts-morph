@@ -11,48 +11,47 @@ import { TsMorphInspector } from "../inspectors";
 import { Problem } from "./Problem";
 
 export function validatePublicApiClassMemberNames(inspector: TsMorphInspector, addProblem: (problem: Problem) => void) {
-    for (const classDec of inspector.getPublicClasses().filter(c => isClassToAllow(c))) {
-        for (const member of classDec.getMembers())
-            validateNode(member);
-    }
+  for (const classDec of inspector.getPublicClasses().filter(c => isClassToAllow(c))) {
+    for (const member of classDec.getMembers())
+      validateNode(member);
+  }
 
-    function validateNode(node: tsMorph.ClassMemberTypes | tsMorph.ParameterDeclaration) {
-        if (tsMorph.Node.isConstructorDeclaration(node)) {
-            node.getParameters().forEach(validateNode);
-            return;
-        }
-        if (tsMorph.Node.isClassStaticBlockDeclaration(node))
-            return;
-
-        if (node.getScope() === tsMorph.Scope.Protected || node.getScope() === tsMorph.Scope.Private || hasInternalDocTag(node)) {
-            if (!node.getName().startsWith("_")) {
-                addProblem({
-                    filePath: node.getSourceFile().getFilePath(),
-                    lineNumber: node.getStartLineNumber(),
-                    message: `Class member "${node.getName()}" should have an underscore prefix because it is not public.`,
-                });
-            }
-        }
-        else if (node.getName().startsWith("_")) {
-            addProblem({
-                filePath: node.getSourceFile().getFilePath(),
-                lineNumber: node.getStartLineNumber(),
-                message: `Class member "${node.getName()}" should NOT have an underscore prefix because it is public.`,
-            });
-        }
+  function validateNode(node: tsMorph.ClassMemberTypes | tsMorph.ParameterDeclaration) {
+    if (tsMorph.Node.isConstructorDeclaration(node)) {
+      node.getParameters().forEach(validateNode);
+      return;
     }
+    if (tsMorph.Node.isClassStaticBlockDeclaration(node))
+      return;
 
-    function isClassToAllow(classDec: tsMorph.ClassDeclaration) {
-        switch (classDec.getName()) {
-            case "CodeBlockWriter":
-            case "CompilerCommentStatement":
-            case "CompilerCommentClassElement":
-            case "CompilerCommentTypeElement":
-            case "CompilerCommentObjectLiteralElement":
-            case "CompilerCommentEnumMember":
-                return false;
-            default:
-                return true;
-        }
+    if (node.getScope() === tsMorph.Scope.Protected || node.getScope() === tsMorph.Scope.Private || hasInternalDocTag(node)) {
+      if (!node.getName().startsWith("_")) {
+        addProblem({
+          filePath: node.getSourceFile().getFilePath(),
+          lineNumber: node.getStartLineNumber(),
+          message: `Class member "${node.getName()}" should have an underscore prefix because it is not public.`,
+        });
+      }
+    } else if (node.getName().startsWith("_")) {
+      addProblem({
+        filePath: node.getSourceFile().getFilePath(),
+        lineNumber: node.getStartLineNumber(),
+        message: `Class member "${node.getName()}" should NOT have an underscore prefix because it is public.`,
+      });
     }
+  }
+
+  function isClassToAllow(classDec: tsMorph.ClassDeclaration) {
+    switch (classDec.getName()) {
+      case "CodeBlockWriter":
+      case "CompilerCommentStatement":
+      case "CompilerCommentClassElement":
+      case "CompilerCommentTypeElement":
+      case "CompilerCommentObjectLiteralElement":
+      case "CompilerCommentEnumMember":
+        return false;
+      default:
+        return true;
+    }
+  }
 }

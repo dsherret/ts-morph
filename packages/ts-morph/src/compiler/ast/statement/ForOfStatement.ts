@@ -6,10 +6,10 @@ import { IterationStatement } from "./IterationStatement";
 
 export const ForOfStatementBase = ExpressionedNode(AwaitableNode(IterationStatement));
 export class ForOfStatement extends ForOfStatementBase<ts.ForOfStatement> {
-    /**
-     * Gets this for of statement's initializer.
-     */
-    getInitializer(): VariableDeclarationList | Expression {
-        return this._getNodeFromCompilerNode(this.compilerNode.initializer);
-    }
+  /**
+   * Gets this for of statement's initializer.
+   */
+  getInitializer(): VariableDeclarationList | Expression {
+    return this._getNodeFromCompilerNode(this.compilerNode.initializer);
+  }
 }

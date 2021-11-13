@@ -13,13 +13,13 @@ export const NamedTupleMemberBase = createBase(TypeNode);
  * Ex. `start: number` in `type Range = [start: number, end: number]`
  */
 export class NamedTupleMember extends NamedTupleMemberBase<ts.NamedTupleMember> {
-    /** Gets the named tuple type's type. */
-    getTypeNode() {
-        return super.getTypeNode()!; // will always have a value
-    }
+  /** Gets the named tuple type's type. */
+  getTypeNode() {
+    return super.getTypeNode()!; // will always have a value
+  }
 
-    /** Throws. This is not supported for NamedTupleMember. */
-    removeType(): never {
-        throw new errors.InvalidOperationError("Cannot remove the type of a named tuple member.");
-    }
+  /** Throws. This is not supported for NamedTupleMember. */
+  removeType(): never {
+    throw new errors.InvalidOperationError("Cannot remove the type of a named tuple member.");
+  }
 }

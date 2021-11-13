@@ -4,8 +4,8 @@ import { MetricsReaderWriter, PerformanceTestTemplate } from "./helpers";
 const args = process.argv.slice(2);
 const shouldSave = args.some(arg => arg === "--save");
 const testCases = ArrayUtils.sortByProperty(
-    Object.keys(cases).map(key => new (cases as any)[key]() as PerformanceTestTemplate<any>),
-    item => item.id,
+  Object.keys(cases).map(key => new (cases as any)[key]() as PerformanceTestTemplate<any>),
+  item => item.id,
 );
 
 console.log("Performance Tests");
@@ -15,14 +15,14 @@ console.log("");
 const testRunSaver = new MetricsReaderWriter();
 
 for (const testCase of testCases) {
-    testRunSaver.addTestRun({
-        id: testCase.id,
-        name: testCase.name,
-        duration: testCase.runTest(),
-    });
+  testRunSaver.addTestRun({
+    id: testCase.id,
+    name: testCase.name,
+    duration: testCase.runTest(),
+  });
 }
 
 if (shouldSave) {
-    console.log("");
-    testRunSaver.saveSync();
+  console.log("");
+  testRunSaver.saveSync();
 }

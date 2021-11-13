@@ -7,5 +7,5 @@ export interface PropertyAssignmentStructure extends Structure, PropertyAssignme
 }
 
 export interface PropertyAssignmentSpecificStructure extends KindedStructure<StructureKind.PropertyAssignment> {
-    initializer: string | WriterFunction;
+  initializer: string | WriterFunction;
 }

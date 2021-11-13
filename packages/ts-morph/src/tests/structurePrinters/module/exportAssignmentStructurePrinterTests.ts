@@ -6,27 +6,27 @@ import { ExportAssignmentStructure, OptionalKind } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
 
 describe("ExportAssignmentStructurePrinter", () => {
-    interface Options {
-        formatCodeSettings?: FormatCodeSettings;
-    }
+  interface Options {
+    formatCodeSettings?: FormatCodeSettings;
+  }
 
-    function doTest(structure: OptionalKind<ExportAssignmentStructure>, expectedOutput: string, options: Options = {}) {
-        const { writer, factory } = getStructureFactoryAndWriter(options.formatCodeSettings);
-        factory.forExportAssignment().printText(writer, structure);
-        expect(writer.toString()).to.equal(expectedOutput);
-    }
+  function doTest(structure: OptionalKind<ExportAssignmentStructure>, expectedOutput: string, options: Options = {}) {
+    const { writer, factory } = getStructureFactoryAndWriter(options.formatCodeSettings);
+    factory.forExportAssignment().printText(writer, structure);
+    expect(writer.toString()).to.equal(expectedOutput);
+  }
 
-    // todo: more tests
+  // todo: more tests
 
-    describe(nameof<ExportAssignmentStructurePrinter>("printText"), () => {
-        describe("expression", () => {
-            it("should write with a string", () => {
-                doTest({ expression: "testing" }, `export = testing;`);
-            });
+  describe(nameof<ExportAssignmentStructurePrinter>("printText"), () => {
+    describe("expression", () => {
+      it("should write with a string", () => {
+        doTest({ expression: "testing" }, `export = testing;`);
+      });
 
-            it("should write with a writer and use queued child indentation", () => {
-                doTest({ expression: writer => writer.writeLine("testing |").write("this") }, `export = testing |\n    this;`);
-            });
-        });
+      it("should write with a writer and use queued child indentation", () => {
+        doTest({ expression: writer => writer.writeLine("testing |").write("this") }, `export = testing |\n    this;`);
+      });
     });
+  });
 });

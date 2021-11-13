@@ -5,14 +5,14 @@ import { SyntaxKind } from "@ts-morph/common";
  * @param kind - Node kind.
  */
 export function isStringKind(kind: SyntaxKind) {
-    switch (kind) {
-        case SyntaxKind.StringLiteral:
-        case SyntaxKind.NoSubstitutionTemplateLiteral:
-        case SyntaxKind.TemplateHead:
-        case SyntaxKind.TemplateMiddle:
-        case SyntaxKind.TemplateTail:
-            return true;
-        default:
-            return false;
-    }
+  switch (kind) {
+    case SyntaxKind.StringLiteral:
+    case SyntaxKind.NoSubstitutionTemplateLiteral:
+    case SyntaxKind.TemplateHead:
+    case SyntaxKind.TemplateMiddle:
+    case SyntaxKind.TemplateTail:
+      return true;
+    default:
+      return false;
+  }
 }

@@ -5,6 +5,6 @@ export interface ExportSpecifierStructure extends Structure, ExportSpecifierSpec
 }
 
 export interface ExportSpecifierSpecificStructure extends KindedStructure<StructureKind.ExportSpecifier> {
-    name: string;
-    alias?: string;
+  name: string;
+  alias?: string;
 }

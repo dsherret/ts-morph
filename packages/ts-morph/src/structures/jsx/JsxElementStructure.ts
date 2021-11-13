@@ -9,8 +9,8 @@ export interface JsxElementStructure extends Structure, JsxElementSpecificStruct
 }
 
 export interface JsxElementSpecificStructure extends KindedStructure<StructureKind.JsxElement> {
-    name: string;
-    attributes?: (OptionalKind<JsxAttributeStructure> | JsxSpreadAttributeStructure)[];
-    children?: (OptionalKind<JsxElementStructure> | JsxSelfClosingElementStructure)[];
-    bodyText?: string;
+  name: string;
+  attributes?: (OptionalKind<JsxAttributeStructure> | JsxSpreadAttributeStructure)[];
+  children?: (OptionalKind<JsxElementStructure> | JsxSelfClosingElementStructure)[];
+  bodyText?: string;
 }

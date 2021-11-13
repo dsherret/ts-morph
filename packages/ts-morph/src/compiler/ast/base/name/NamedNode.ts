@@ -15,6 +15,6 @@ export interface NamedNode extends NamedNodeSpecific, ReferenceFindableNode, Ren
 export type NamedNodeSpecific = NamedNodeSpecificBase<Identifier>;
 
 export function NamedNode<T extends Constructor<NamedNodeExtensionType>>(Base: T): Constructor<NamedNode> & T {
-    const base = RenameableNode(ReferenceFindableNode(Base));
-    return NamedNodeBase<ts.Identifier, typeof base>(base);
+  const base = RenameableNode(ReferenceFindableNode(Base));
+  return NamedNodeBase<ts.Identifier, typeof base>(base);
 }

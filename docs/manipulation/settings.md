@@ -10,22 +10,22 @@ The manipulation settings can be set when creating the main `Project` object:
 import { IndentationText, NewLineKind, Project, QuoteKind } from "ts-morph";
 
 const project = new Project({
-    // these are the defaults
-    manipulationSettings: {
-        // TwoSpaces, FourSpaces, EightSpaces, or Tab
-        indentationText: IndentationText.FourSpaces,
-        // LineFeed or CarriageReturnLineFeed
-        newLineKind: NewLineKind.LineFeed,
-        // Single or Double
-        quoteKind: QuoteKind.Double,
-        // Whether to change shorthand property assignments to property assignments
-        // and add aliases to import & export specifiers (see more information in
-        // the renaming section of the documentation).
-        usePrefixAndSuffixTextForRename: false,
-        // Whether to use trailing commas in multi-line scenarios where trailing
-        // commas would be used.
-        useTrailingCommas: false,
-    },
+  // these are the defaults
+  manipulationSettings: {
+    // TwoSpaces, FourSpaces, EightSpaces, or Tab
+    indentationText: IndentationText.FourSpaces,
+    // LineFeed or CarriageReturnLineFeed
+    newLineKind: NewLineKind.LineFeed,
+    // Single or Double
+    quoteKind: QuoteKind.Double,
+    // Whether to change shorthand property assignments to property assignments
+    // and add aliases to import & export specifiers (see more information in
+    // the renaming section of the documentation).
+    usePrefixAndSuffixTextForRename: false,
+    // Whether to use trailing commas in multi-line scenarios where trailing
+    // commas would be used.
+    useTrailingCommas: false,
+  },
 });
 ```
 
@@ -33,7 +33,7 @@ You can only provide a partial of these settings if you wish:
 
 ```ts
 const project = new Project({
-    manipulationSettings: { indentationText: IndentationText.TwoSpaces },
+  manipulationSettings: { indentationText: IndentationText.TwoSpaces },
 });
 ```
 
@@ -58,8 +58,8 @@ project.manipulationSettings.set({ quoteKind: QuoteKind.Single });
 
 // or multiple
 project.manipulationSettings.set({
-    quoteKind: QuoteKind.Single,
-    indentationText: IndentationText.TwoSpaces,
+  quoteKind: QuoteKind.Single,
+  indentationText: IndentationText.TwoSpaces,
 });
 ```
 
@@ -70,7 +70,7 @@ They will slowly be supported and added to the manipulation settings. For exampl
 
 ```ts
 project.manipulationSettings.set({
-    // only one for now... will add more in the future
-    insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false, // default: true
+  // only one for now... will add more in the future
+  insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false, // default: true
 });
 ```

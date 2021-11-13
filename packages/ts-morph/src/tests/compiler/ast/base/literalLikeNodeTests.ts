@@ -4,18 +4,18 @@ import { LiteralLikeNode, Node } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
 describe("LiteralLikeNode", () => {
-    describe(nameof<LiteralLikeNode>("getLiteralText"), () => {
-        function doTest(text: string, kind: SyntaxKind, expectedValue: string) {
-            const { descendant } = getInfoFromTextWithDescendant<LiteralLikeNode & Node>(text, kind);
-            expect(descendant.getLiteralText()).to.equal(expectedValue);
-        }
+  describe(nameof<LiteralLikeNode>("getLiteralText"), () => {
+    function doTest(text: string, kind: SyntaxKind, expectedValue: string) {
+      const { descendant } = getInfoFromTextWithDescendant<LiteralLikeNode & Node>(text, kind);
+      expect(descendant.getLiteralText()).to.equal(expectedValue);
+    }
 
-        it("should get the correct literal value for a string", () => {
-            doTest(`const t: "test";`, SyntaxKind.StringLiteral, "test");
-        });
-
-        it("should get the correct literal value for a number", () => {
-            doTest(`const t: 5;`, SyntaxKind.NumericLiteral, "5");
-        });
+    it("should get the correct literal value for a string", () => {
+      doTest(`const t: "test";`, SyntaxKind.StringLiteral, "test");
     });
+
+    it("should get the correct literal value for a number", () => {
+      doTest(`const t: 5;`, SyntaxKind.NumericLiteral, "5");
+    });
+  });
 });

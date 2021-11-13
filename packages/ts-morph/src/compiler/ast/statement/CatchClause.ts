@@ -5,24 +5,24 @@ import { Block } from "./Block";
 
 export const CatchClauseBase = Node;
 export class CatchClause extends CatchClauseBase<ts.CatchClause> {
-    /**
-     * Gets this catch clause's block.
-     */
-    getBlock(): Block {
-        return this._getNodeFromCompilerNode(this.compilerNode.block);
-    }
+  /**
+   * Gets this catch clause's block.
+   */
+  getBlock(): Block {
+    return this._getNodeFromCompilerNode(this.compilerNode.block);
+  }
 
-    /**
-     * Gets this catch clause's variable declaration or undefined if none exists.
-     */
-    getVariableDeclaration(): VariableDeclaration | undefined {
-        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.variableDeclaration);
-    }
+  /**
+   * Gets this catch clause's variable declaration or undefined if none exists.
+   */
+  getVariableDeclaration(): VariableDeclaration | undefined {
+    return this._getNodeFromCompilerNodeIfExists(this.compilerNode.variableDeclaration);
+  }
 
-    /**
-     * Gets this catch clause's variable declaration or throws if none exists.
-     */
-    getVariableDeclarationOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getVariableDeclaration(), "Expected to find a variable declaration.");
-    }
+  /**
+   * Gets this catch clause's variable declaration or throws if none exists.
+   */
+  getVariableDeclarationOrThrow() {
+    return errors.throwIfNullOrUndefined(this.getVariableDeclaration(), "Expected to find a variable declaration.");
+  }
 }

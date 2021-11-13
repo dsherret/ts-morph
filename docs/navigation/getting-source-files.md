@@ -21,8 +21,8 @@ Or filter by glob:
 const testSourceFiles = project.getSourceFiles("src/test/**/*.ts");
 // or multiple
 const nonTestSourceFiles = project.getSourceFiles([
-    "src/**/*.ts",
-    "!src/test/**/*.ts",
+  "src/**/*.ts",
+  "!src/test/**/*.ts",
 ]);
 ```
 
@@ -32,7 +32,7 @@ For example, if you load a project from another directory...
 
 ```ts
 const project = new Project({
-    tsConfigFilePath: `/someDirectory/notCurrent/tsconfig.json`,
+  tsConfigFilePath: `/someDirectory/notCurrent/tsconfig.json`,
 });
 ```
 

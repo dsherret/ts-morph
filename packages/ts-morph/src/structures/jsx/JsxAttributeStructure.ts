@@ -6,5 +6,5 @@ export interface JsxAttributeStructure extends Structure, JsxAttributeSpecificSt
 }
 
 export interface JsxAttributeSpecificStructure extends KindedStructure<StructureKind.JsxAttribute> {
-    initializer?: string;
+  initializer?: string;
 }

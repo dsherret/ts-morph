@@ -4,19 +4,19 @@ import { NewLineFormattingStructuresPrinter } from "../formatting";
 import { NodePrinter } from "../NodePrinter";
 
 export class ExportAssignmentStructurePrinter extends NodePrinter<OptionalKind<ExportAssignmentStructure>> {
-    private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);
+  private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);
 
-    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<ExportAssignmentStructure>> | undefined) {
-        this.multipleWriter.printText(writer, structures);
-    }
+  printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<ExportAssignmentStructure>> | undefined) {
+    this.multipleWriter.printText(writer, structures);
+  }
 
-    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<ExportAssignmentStructure>) {
-        writer.write("export");
-        if (structure.isExportEquals !== false)
-            writer.write(" = ");
-        else
-            writer.write(" default ");
+  protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<ExportAssignmentStructure>) {
+    writer.write("export");
+    if (structure.isExportEquals !== false)
+      writer.write(" = ");
+    else
+      writer.write(" default ");
 
-        writer.write(this.getTextWithQueuedChildIndentation(writer, structure.expression)).write(";");
-    }
+    writer.write(this.getTextWithQueuedChildIndentation(writer, structure.expression)).write(";");
+  }
 }

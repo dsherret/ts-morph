@@ -3,8 +3,13 @@ import { KindedStructure, Structure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 
 export interface VariableDeclarationStructure
-    extends Structure, VariableDeclarationSpecificStructure, BindingNamedNodeStructure, InitializerExpressionableNodeStructure, TypedNodeStructure,
-        ExclamationTokenableNodeStructure
+  extends
+    Structure,
+    VariableDeclarationSpecificStructure,
+    BindingNamedNodeStructure,
+    InitializerExpressionableNodeStructure,
+    TypedNodeStructure,
+    ExclamationTokenableNodeStructure
 {
 }
 

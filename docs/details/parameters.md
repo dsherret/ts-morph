@@ -18,8 +18,8 @@ For example:
 
 ```ts
 const parameter = functionDeclaration.insertParameter(1, {
-    name: "param1",
-    type: "string",
+  name: "param1",
+  type: "string",
 });
 ```
 

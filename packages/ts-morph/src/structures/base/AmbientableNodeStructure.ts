@@ -1,3 +1,3 @@
 export interface AmbientableNodeStructure {
-    hasDeclareKeyword?: boolean;
+  hasDeclareKeyword?: boolean;
 }

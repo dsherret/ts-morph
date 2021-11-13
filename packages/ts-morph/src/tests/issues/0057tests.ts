@@ -10,15 +10,15 @@ export class Class {
 `;
 
 describe("tests for issue #57", () => {
-    const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
+  const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
 
-    it("should add the property", () => {
-        firstChild.addProperty({
-            isStatic: true,
-            name: "prop",
-            type: "string",
-        });
-        expect(sourceFile.getFullText()).to.equal(`
+  it("should add the property", () => {
+    firstChild.addProperty({
+      isStatic: true,
+      name: "prop",
+      type: "string",
+    });
+    expect(sourceFile.getFullText()).to.equal(`
 export class Class {
     constructor(private param: Class) {
     }
@@ -26,5 +26,5 @@ export class Class {
     static prop: string;
 }
 `);
-    });
+  });
 });

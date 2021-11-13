@@ -4,65 +4,65 @@ import { JSDocPropertyLikeTag, Node } from "../../../../../compiler";
 import { getInfoFromText } from "../../../testHelpers";
 
 describe("JSDocPropertyLikeTag", () => {
-    function getInfo(text: string) {
-        const info = getInfoFromText(text);
-        return { descendant: info.sourceFile.getFirstDescendantOrThrow(Node.isJSDocPropertyLikeTag), ...info };
+  function getInfo(text: string) {
+    const info = getInfoFromText(text);
+    return { descendant: info.sourceFile.getFirstDescendantOrThrow(Node.isJSDocPropertyLikeTag), ...info };
+  }
+
+  describe(nameof<JSDocPropertyLikeTag>("getTypeExpression"), () => {
+    it("should get undefined when there is no type given", () => {
+      const { descendant } = getInfo("/** @param t - String */\nfunction test() {}");
+      expect(descendant.getTypeExpression()).to.be.undefined;
+    });
+
+    it("should get when type is given", () => {
+      const { descendant } = getInfo("/** @param {boolean} t - String */\nfunction test() {}");
+      expect(descendant.getTypeExpression()!.getTypeNode().getText()).to.equal("boolean");
+    });
+  });
+
+  describe(nameof<JSDocPropertyLikeTag>("isBracketed"), () => {
+    function doTest(text: string, expected: boolean) {
+      const { descendant } = getInfo(text);
+      expect(descendant.isBracketed()).to.equal(expected);
     }
 
-    describe(nameof<JSDocPropertyLikeTag>("getTypeExpression"), () => {
-        it("should get undefined when there is no type given", () => {
-            const { descendant } = getInfo("/** @param t - String */\nfunction test() {}");
-            expect(descendant.getTypeExpression()).to.be.undefined;
-        });
-
-        it("should get when type is given", () => {
-            const { descendant } = getInfo("/** @param {boolean} t - String */\nfunction test() {}");
-            expect(descendant.getTypeExpression()!.getTypeNode().getText()).to.equal("boolean");
-        });
+    it("should return true when bracketed", () => {
+      doTest("/** @param {Object} [t] - String */\nfunction test() {}", true);
     });
 
-    describe(nameof<JSDocPropertyLikeTag>("isBracketed"), () => {
-        function doTest(text: string, expected: boolean) {
-            const { descendant } = getInfo(text);
-            expect(descendant.isBracketed()).to.equal(expected);
-        }
+    it("should return false when not bracketed", () => {
+      doTest("/** @param {Object} t - String */\nfunction test() {}", false);
+    });
+  });
 
-        it("should return true when bracketed", () => {
-            doTest("/** @param {Object} [t] - String */\nfunction test() {}", true);
-        });
+  describe(nameof<JSDocPropertyLikeTag>("getName"), () => {
+    function doTest(text: string, expected: string) {
+      const { descendant } = getInfo(text);
+      expect(descendant.getName()).to.equal(expected);
+    }
 
-        it("should return false when not bracketed", () => {
-            doTest("/** @param {Object} t - String */\nfunction test() {}", false);
-        });
+    it("should get when identifier", () => {
+      doTest("/** @param {boolean} t - String */\nfunction test() {}", "t");
     });
 
-    describe(nameof<JSDocPropertyLikeTag>("getName"), () => {
-        function doTest(text: string, expected: string) {
-            const { descendant } = getInfo(text);
-            expect(descendant.getName()).to.equal(expected);
-        }
+    it("should get when fully qualified name", () => {
+      doTest("/** @param {boolean} t.t.t - String */\nfunction test() {}", "t.t.t");
+    });
+  });
 
-        it("should get when identifier", () => {
-            doTest("/** @param {boolean} t - String */\nfunction test() {}", "t");
-        });
+  describe(nameof<JSDocPropertyLikeTag>("getNameNode"), () => {
+    function doTest(text: string, expected: string) {
+      const { descendant } = getInfo(text);
+      expect(descendant.getNameNode().getText()).to.equal(expected);
+    }
 
-        it("should get when fully qualified name", () => {
-            doTest("/** @param {boolean} t.t.t - String */\nfunction test() {}", "t.t.t");
-        });
+    it("should get when identifier", () => {
+      doTest("/** @param {boolean} t - String */\nfunction test() {}", "t");
     });
 
-    describe(nameof<JSDocPropertyLikeTag>("getNameNode"), () => {
-        function doTest(text: string, expected: string) {
-            const { descendant } = getInfo(text);
-            expect(descendant.getNameNode().getText()).to.equal(expected);
-        }
-
-        it("should get when identifier", () => {
-            doTest("/** @param {boolean} t - String */\nfunction test() {}", "t");
-        });
-
-        it("should get when fully qualified name", () => {
-            doTest("/** @param {boolean} t.t.t - String */\nfunction test() {}", "t.t.t");
-        });
+    it("should get when fully qualified name", () => {
+      doTest("/** @param {boolean} t.t.t - String */\nfunction test() {}", "t.t.t");
     });
+  });
 });

@@ -10,12 +10,12 @@ import { getProject } from "../common";
 const project = getProject();
 
 if (project.getSourceFiles().length === 0)
-    throw new Error("Could not find any source files.");
+  throw new Error("Could not find any source files.");
 
 const diagnostics = project.getPreEmitDiagnostics();
 
 if (diagnostics.length > 0) {
-    printDiagnostics(diagnostics);
-    console.error("There were project compile errors!");
-    process.exit(1);
+  printDiagnostics(diagnostics);
+  console.error("There were project compile errors!");
+  process.exit(1);
 }

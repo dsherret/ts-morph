@@ -12,9 +12,9 @@ import { createCompilerSourceFile } from "./createCompilerSourceFile";
  * @internal - Temporarily internal.
  */
 export interface DocumentCache {
-    __documentCacheBrand: undefined;
-    /** @internal */
-    _getCacheForFileSystem(fileSystem: TransactionalFileSystem): FileSystemSpecificDocumentCache;
+  __documentCacheBrand: undefined;
+  /** @internal */
+  _getCacheForFileSystem(fileSystem: TransactionalFileSystem): FileSystemSpecificDocumentCache;
 }
 
 /**
@@ -22,16 +22,16 @@ export interface DocumentCache {
  * @internal - Temporarily internal.
  */
 export interface DocumentCacheItem {
-    /**
-     * This may be a relative path (ex. `./node_modules/package/file.js`). The path
-     * will be resolved for each project based on its file system's current
-     * working directory.
-     */
-    fileName: string;
-    /**
-     * The text of the file.
-     */
-    text: string;
+  /**
+   * This may be a relative path (ex. `./node_modules/package/file.js`). The path
+   * will be resolved for each project based on its file system's current
+   * working directory.
+   */
+  fileName: string;
+  /**
+   * The text of the file.
+   */
+  text: string;
 }
 
 /**
@@ -40,103 +40,103 @@ export interface DocumentCacheItem {
  * @internal - Temporarily internal.
  */
 export function createDocumentCache(files: DocumentCacheItem[]): DocumentCache {
-    const cache = new InternalDocumentCache();
-    cache._addFiles(files);
-    return cache;
+  const cache = new InternalDocumentCache();
+  cache._addFiles(files);
+  return cache;
 }
 
 /** @internal */
 export interface FileSystemSpecificDocumentCache {
-    getDocumentIfMatch(
-        filePath: StandardizedFilePath,
-        scriptSnapshot: ts.IScriptSnapshot,
-        scriptTarget: ScriptTarget | undefined,
-        scriptKind: ScriptKind | undefined,
-    ): ts.SourceFile | undefined;
+  getDocumentIfMatch(
+    filePath: StandardizedFilePath,
+    scriptSnapshot: ts.IScriptSnapshot,
+    scriptTarget: ScriptTarget | undefined,
+    scriptKind: ScriptKind | undefined,
+  ): ts.SourceFile | undefined;
 }
 
-type DocumentKey = string & { _documentKeyBrand: undefined; };
+type DocumentKey = string & { _documentKeyBrand: undefined };
 
 class FileSystemDocumentCache implements FileSystemSpecificDocumentCache {
-    private readonly absoluteToOriginalPath = new Map<StandardizedFilePath, string>();
+  private readonly absoluteToOriginalPath = new Map<StandardizedFilePath, string>();
 
-    constructor(fileSystem: TransactionalFileSystem, private readonly documentCache: InternalDocumentCache) {
-        for (const filePath of documentCache._getFilePaths())
-            this.absoluteToOriginalPath.set(fileSystem.getStandardizedAbsolutePath(filePath), filePath);
-    }
+  constructor(fileSystem: TransactionalFileSystem, private readonly documentCache: InternalDocumentCache) {
+    for (const filePath of documentCache._getFilePaths())
+      this.absoluteToOriginalPath.set(fileSystem.getStandardizedAbsolutePath(filePath), filePath);
+  }
 
-    getDocumentIfMatch(
-        filePath: StandardizedFilePath,
-        scriptSnapshot: ts.IScriptSnapshot,
-        scriptTarget: ScriptTarget | undefined,
-        scriptKind: ScriptKind | undefined,
-    ) {
-        const originalFilePath = this.absoluteToOriginalPath.get(filePath);
-        if (originalFilePath == null)
-            return;
+  getDocumentIfMatch(
+    filePath: StandardizedFilePath,
+    scriptSnapshot: ts.IScriptSnapshot,
+    scriptTarget: ScriptTarget | undefined,
+    scriptKind: ScriptKind | undefined,
+  ) {
+    const originalFilePath = this.absoluteToOriginalPath.get(filePath);
+    if (originalFilePath == null)
+      return;
 
-        return this.documentCache._getDocumentIfMatch(originalFilePath, filePath, scriptSnapshot, scriptTarget, scriptKind);
-    }
+    return this.documentCache._getDocumentIfMatch(originalFilePath, filePath, scriptSnapshot, scriptTarget, scriptKind);
+  }
 }
 
 class InternalDocumentCache implements DocumentCache {
-    __documentCacheBrand: undefined;
+  __documentCacheBrand: undefined;
 
-    private readonly _fileTexts = new Map<string, string>();
-    private readonly _documents = new Map<DocumentKey, ts.SourceFile>();
+  private readonly _fileTexts = new Map<string, string>();
+  private readonly _documents = new Map<DocumentKey, ts.SourceFile>();
 
-    _addFiles(files: DocumentCacheItem[]) {
-        for (const file of files)
-            this._fileTexts.set(file.fileName, file.text);
+  _addFiles(files: DocumentCacheItem[]) {
+    for (const file of files)
+      this._fileTexts.set(file.fileName, file.text);
+  }
+
+  _getFilePaths() {
+    return this._fileTexts.keys();
+  }
+
+  _getCacheForFileSystem(fileSystem: TransactionalFileSystem) {
+    return new FileSystemDocumentCache(fileSystem, this);
+  }
+
+  _getDocumentIfMatch(
+    filePath: string,
+    absoluteFilePath: StandardizedFilePath,
+    scriptSnapshot: ts.IScriptSnapshot,
+    scriptTarget: ScriptTarget | undefined,
+    scriptKind: ScriptKind | undefined,
+  ) {
+    const fileText = this._fileTexts.get(filePath);
+    if (fileText == null)
+      return undefined; // doesn't exist in cache
+    if (fileText !== scriptSnapshot.getText(0, scriptSnapshot.getLength()))
+      return undefined; // not a match
+
+    return this._getDocument(filePath, absoluteFilePath, scriptSnapshot, scriptTarget, scriptKind);
+  }
+
+  private _getDocument(
+    filePath: string,
+    absoluteFilePath: StandardizedFilePath,
+    scriptSnapshot: ts.IScriptSnapshot,
+    scriptTarget: ScriptTarget | undefined,
+    scriptKind: ScriptKind | undefined,
+  ) {
+    const documentKey = this._getKey(filePath, scriptTarget, scriptKind);
+    let document = this._documents.get(documentKey);
+    if (document == null) {
+      document = createCompilerSourceFile(absoluteFilePath, scriptSnapshot, scriptTarget, "-1", false, scriptKind);
+      this._documents.set(documentKey, document);
     }
 
-    _getFilePaths() {
-        return this._fileTexts.keys();
-    }
+    // ensure a clean source file is stored in the cache by always cloning this before returning
+    document = deepClone(document);
+    document.fileName = absoluteFilePath;
 
-    _getCacheForFileSystem(fileSystem: TransactionalFileSystem) {
-        return new FileSystemDocumentCache(fileSystem, this);
-    }
+    return document;
+  }
 
-    _getDocumentIfMatch(
-        filePath: string,
-        absoluteFilePath: StandardizedFilePath,
-        scriptSnapshot: ts.IScriptSnapshot,
-        scriptTarget: ScriptTarget | undefined,
-        scriptKind: ScriptKind | undefined,
-    ) {
-        const fileText = this._fileTexts.get(filePath);
-        if (fileText == null)
-            return undefined; // doesn't exist in cache
-        if (fileText !== scriptSnapshot.getText(0, scriptSnapshot.getLength()))
-            return undefined; // not a match
-
-        return this._getDocument(filePath, absoluteFilePath, scriptSnapshot, scriptTarget, scriptKind);
-    }
-
-    private _getDocument(
-        filePath: string,
-        absoluteFilePath: StandardizedFilePath,
-        scriptSnapshot: ts.IScriptSnapshot,
-        scriptTarget: ScriptTarget | undefined,
-        scriptKind: ScriptKind | undefined,
-    ) {
-        const documentKey = this._getKey(filePath, scriptTarget, scriptKind);
-        let document = this._documents.get(documentKey);
-        if (document == null) {
-            document = createCompilerSourceFile(absoluteFilePath, scriptSnapshot, scriptTarget, "-1", false, scriptKind);
-            this._documents.set(documentKey, document);
-        }
-
-        // ensure a clean source file is stored in the cache by always cloning this before returning
-        document = deepClone(document);
-        document.fileName = absoluteFilePath;
-
-        return document;
-    }
-
-    /** @internal */
-    private _getKey(filePath: string, scriptTarget: ScriptTarget | undefined, scriptKind: ScriptKind | undefined): DocumentKey {
-        return (filePath + (scriptTarget?.toString() ?? "-1") + (scriptKind?.toString() ?? "-1")) as DocumentKey;
-    }
+  /** @internal */
+  private _getKey(filePath: string, scriptTarget: ScriptTarget | undefined, scriptKind: ScriptKind | undefined): DocumentKey {
+    return (filePath + (scriptTarget?.toString() ?? "-1") + (scriptKind?.toString() ?? "-1")) as DocumentKey;
+  }
 }

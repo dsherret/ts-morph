@@ -13,26 +13,25 @@ import { Mixin, TsMorphInspector, WrappedNode } from "../inspectors";
 import { Problem } from "./Problem";
 
 export function ensureMixinNotAppliedMultipleTimes(inspector: TsMorphInspector, addProblem: (problem: Problem) => void) {
-    for (const node of inspector.getWrappedNodes())
-        findDuplicateMixins(node);
+  for (const node of inspector.getWrappedNodes())
+    findDuplicateMixins(node);
 
-    function findDuplicateMixins(node: WrappedNode) {
-        const foundMixins = new Set<string>();
-        node.getMixins().forEach(inspectMixin);
+  function findDuplicateMixins(node: WrappedNode) {
+    const foundMixins = new Set<string>();
+    node.getMixins().forEach(inspectMixin);
 
-        function inspectMixin(mixin: Mixin) {
-            if (foundMixins.has(mixin.getName())) {
-                addProblem({
-                    filePath: node.getFilePath(),
-                    lineNumber: node.getStartLineNumber(),
-                    message: `Node ${node.getName()} has mixin ${mixin.getName()} applied multiple times.`,
-                });
-            }
-            else {
-                foundMixins.add(mixin.getName());
-            }
+    function inspectMixin(mixin: Mixin) {
+      if (foundMixins.has(mixin.getName())) {
+        addProblem({
+          filePath: node.getFilePath(),
+          lineNumber: node.getStartLineNumber(),
+          message: `Node ${node.getName()} has mixin ${mixin.getName()} applied multiple times.`,
+        });
+      } else {
+        foundMixins.add(mixin.getName());
+      }
 
-            mixin.getMixins().forEach(inspectMixin);
-        }
+      mixin.getMixins().forEach(inspectMixin);
     }
+  }
 }
