@@ -26,6 +26,11 @@ describe(nameof(Decorator), () => {
             const { firstDecorator } = getFirstClassDecorator("@decorator('str', 23)\nclass Identifier {}");
             expect(firstDecorator.isDecoratorFactory()).to.equal(true);
         });
+
+        it("should be even when surrounded in parens", () => {
+            const { firstDecorator } = getFirstClassDecorator("@(decorator('str', 23))\nclass Identifier {}");
+            expect(firstDecorator.isDecoratorFactory()).to.equal(true);
+        });
     });
 
     describe(nameof<Decorator>(d => d.setIsDecoratorFactory), () => {
@@ -82,6 +87,10 @@ describe(nameof(Decorator), () => {
 
         it("should get the name node for a decorator factory decorator with a namespace", () => {
             doTest("@namespaceTest.decorator()\nclass Identifier {}", "decorator");
+        });
+
+        it("should get the name node for a decorator wrapped in a paren expr", () => {
+            doTest("@(decorator())\nclass Identifier {}", "decorator");
         });
     });
 

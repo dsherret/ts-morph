@@ -21,25 +21,24 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
      * Gets the name node of the decorator.
      */
     getNameNode() {
-        if (this.isDecoratorFactory()) {
-            const callExpression = this.getCallExpression()!;
+        const callExpression = this.getCallExpression();
+        if (callExpression)
             return getIdentifierFromName(callExpression.getExpression());
-        }
-
-        return getIdentifierFromName(this.getExpression());
+        else
+            return getIdentifierFromName(this.#getInnerExpression());
 
         function getIdentifierFromName(expression: Expression) {
             const identifier = getNameFromExpression(expression);
             if (!Node.isIdentifier(identifier)) {
                 throw new errors.NotImplementedError(
-                    `Expected the decorator expression '${identifier.getText()}' to be an identifier, `
-                        + `but it wasn't. Please report this as a bug.`,
+                    `Expected the decorator expression '${identifier.getText()}' to be an identifier. `
+                        + `Please deal directly with 'getExpression()' on the decorator to handle more complex scenarios.`,
                 );
             }
             return identifier;
         }
 
-        function getNameFromExpression(expression: Expression) {
+        function getNameFromExpression(expression: Expression): Node {
             if (Node.isPropertyAccessExpression(expression))
                 return expression.getNameNode();
             return expression;
@@ -61,7 +60,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
      * Gets if the decorator is a decorator factory.
      */
     isDecoratorFactory() {
-        return this.compilerNode.expression.kind === SyntaxKind.CallExpression;
+        return Node.isCallExpression(this.#getInnerExpression());
     }
 
     /**
@@ -73,7 +72,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
             return this;
 
         if (isDecoratorFactory) {
-            const expression = this.getExpression();
+            const expression = this.#getInnerExpression();
             const expressionText = expression.getText();
             insertIntoParentTextRange({
                 parent: this,
@@ -121,10 +120,8 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
      * Gets the call expression if a decorator factory.
      */
     getCallExpression(): CallExpression | undefined {
-        if (!this.isDecoratorFactory())
-            return undefined;
-
-        return this.getExpression() as any as CallExpression;
+        const expression = this.#getInnerExpression();
+        return Node.isCallExpression(expression) ? expression : undefined;
     }
 
     /**
@@ -267,6 +264,13 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
                 getSiblingFormatting: (parent, sibling) => sibling.getStartLinePos() === thisStartLinePos ? FormattingKind.Space : FormattingKind.Newline,
             });
         }
+    }
+
+    #getInnerExpression() {
+        let expr: Expression = this.getExpression();
+        while (Node.isParenthesizedExpression(expr))
+            expr = expr.getExpression();
+        return expr;
     }
 
     /**
