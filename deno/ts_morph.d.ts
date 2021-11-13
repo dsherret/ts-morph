@@ -1,4 +1,4 @@
-import { errors, ts, StandardizedFilePath } from "./common/mod.ts";
+import { errors, StandardizedFilePath, ts } from "./common/mod.ts";
 
 /** Holds the compiler options. */
 export declare class CompilerOptionsContainer extends SettingsContainer<ts.CompilerOptions> {
@@ -131,6 +131,13 @@ export declare type ResolutionHostFactory = (moduleResolutionHost: ts.ModuleReso
 export declare const ResolutionHosts: {
         deno: ResolutionHostFactory;
     };
+
+export interface RuntimeDirEntry {
+    name: string;
+    isFile: boolean;
+    isDirectory: boolean;
+    isSymlink: boolean;
+}
 
 export declare abstract class SettingsContainer<T extends object> {
     protected _settings: T;
@@ -853,11 +860,7 @@ export declare class Writers {
     static returnStatement(value: WriterFunctionOrValue): WriterFunction;
 }
 
-/** @deprecated Use `Writers`. */
-declare const WriterFunctions: typeof Writers;
 export declare type WriterFunctionOrValue = string | number | WriterFunction;
-/** @deprecated Use static methods on `Node`. */
-export declare const TypeGuards: typeof Node;
 export declare type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName | PrivateIdentifier;
 export declare type ModuleName = Identifier | StringLiteral;
 export declare type AccessorDeclaration = GetAccessorDeclaration | SetAccessorDeclaration;

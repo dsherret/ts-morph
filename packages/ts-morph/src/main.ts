@@ -1,8 +1,8 @@
 /// <reference path="typings/index.d.ts" />
 import { errors } from "@ts-morph/common";
 export { CompilerOptions, CompilerOptionsContainer, DiagnosticCategory, EditorSettings, EmitHint, FileSystemHost, InMemoryFileSystemHost, LanguageVariant,
-    ModuleKind, ModuleResolutionKind, NewLineKind, NodeFlags, ObjectFlags, ResolutionHost, ResolutionHostFactory, ResolutionHosts, ScriptKind, ScriptTarget,
-    SettingsContainer, SymbolFlags, SyntaxKind, ts, TypeFlags, TypeFormatFlags } from "@ts-morph/common";
+    ModuleKind, ModuleResolutionKind, NewLineKind, NodeFlags, ObjectFlags, ResolutionHost, ResolutionHostFactory, ResolutionHosts, RuntimeDirEntry, ScriptKind,
+    ScriptTarget, SettingsContainer, SymbolFlags, SyntaxKind, ts, TypeFlags, TypeFormatFlags } from "@ts-morph/common";
 export * from "./codeBlockWriter";
 export * from "./compiler";
 const { InvalidOperationError, FileNotFoundError, ArgumentError, ArgumentNullOrWhitespaceError, ArgumentOutOfRangeError, ArgumentTypeError, BaseError,
@@ -21,12 +21,5 @@ export { SourceFileReferencingNodes } from "./utils/references/SourceFileReferen
 export { CompilerOptionsFromTsConfigOptions, CompilerOptionsFromTsConfigResult,
     getCompilerOptionsFromTsConfig } from "./utils/tsconfig/getCompilerOptionsFromTsConfig";
 import { Writers } from "./structurePrinters/Writers";
-/** @deprecated Use `Writers`. */
-const WriterFunctions = Writers;
 export { Writers };
-export { WriterFunctions };
 export { WriterFunctionOrValue } from "./structurePrinters/Writers";
-
-import { Node } from "./compiler";
-/** @deprecated Use static methods on `Node`. */
-export const TypeGuards = Node;
