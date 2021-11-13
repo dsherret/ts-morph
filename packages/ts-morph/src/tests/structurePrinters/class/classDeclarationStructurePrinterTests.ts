@@ -1,10 +1,11 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { FormatCodeSettings, Scope } from "../../../compiler";
 import { ClassDeclarationStructurePrinter } from "../../../structurePrinters";
 import { ClassDeclarationStructure, OptionalKind } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
 
-describe(nameof(ClassDeclarationStructurePrinter), () => {
+describe("ClassDeclarationStructurePrinter", () => {
     interface Options {
         formatCodeSettings?: FormatCodeSettings;
         isAmbient?: boolean;
@@ -18,7 +19,7 @@ describe(nameof(ClassDeclarationStructurePrinter), () => {
 
     // todo: more tests
 
-    describe(nameof<ClassDeclarationStructurePrinter>(p => p.printText), () => {
+    describe(nameof<ClassDeclarationStructurePrinter>("printText"), () => {
         describe("member order", () => {
             it("should write the members in the correct order", () => {
                 const structure: OptionalKind<ClassDeclarationStructure> = {

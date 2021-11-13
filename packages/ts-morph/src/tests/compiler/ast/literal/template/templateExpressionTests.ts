@@ -1,4 +1,4 @@
-import { SyntaxKind } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { TemplateExpression } from "../../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../../testHelpers";
@@ -7,8 +7,8 @@ function getExpression(text: string) {
     return getInfoFromTextWithDescendant<TemplateExpression>(text, SyntaxKind.TemplateExpression).descendant;
 }
 
-describe(nameof(TemplateExpression), () => {
-    describe(nameof<TemplateExpression>(n => n.getHead), () => {
+describe("TemplateExpression", () => {
+    describe(nameof<TemplateExpression>("getHead"), () => {
         function doTest(text: string, expectedText: string) {
             const expression = getExpression(text);
             expect(expression.getHead().getText()).to.equal(expectedText);
@@ -19,7 +19,7 @@ describe(nameof(TemplateExpression), () => {
         });
     });
 
-    describe(nameof<TemplateExpression>(n => n.getTemplateSpans), () => {
+    describe(nameof<TemplateExpression>("getTemplateSpans"), () => {
         function doTest(text: string, expectedText: string) {
             const expression = getExpression(text);
             expect(expression.getTemplateSpans()[0].getText()).to.equal(expectedText);
@@ -30,7 +30,7 @@ describe(nameof(TemplateExpression), () => {
         });
     });
 
-    describe(nameof<TemplateExpression>(n => n.setLiteralValue), () => {
+    describe(nameof<TemplateExpression>("setLiteralValue"), () => {
         function doTest(text: string, newText: string, expectedText: string) {
             const expression = getExpression(text);
             const sourceFile = expression._sourceFile;

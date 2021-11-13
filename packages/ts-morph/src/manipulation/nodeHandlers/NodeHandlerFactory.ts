@@ -97,9 +97,9 @@ export class NodeHandlerFactory {
     getForChildIndex(opts: ReplaceTreeWithChildIndexOptions) {
         const { parent, childIndex, childCount, replacingNodes, customMappings } = opts;
         const parentChildren = parent.getChildren();
-        errors.throwIfOutOfRange(childIndex, [0, parentChildren.length], nameof.full(opts.childIndex));
+        errors.throwIfOutOfRange(childIndex, [0, parentChildren.length], "opts.childIndex");
         if (childCount < 0)
-            errors.throwIfOutOfRange(childCount, [childIndex - parentChildren.length, 0], nameof.full(opts.childCount));
+            errors.throwIfOutOfRange(childCount, [childIndex - parentChildren.length, 0], "opts.childCount");
         let i = 0;
         const isFirstChild = () => i++ === childIndex;
 

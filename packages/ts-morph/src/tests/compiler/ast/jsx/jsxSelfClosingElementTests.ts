@@ -1,4 +1,4 @@
-import { SyntaxKind } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { JsxSelfClosingElement } from "../../../../compiler";
 import { JsxAttributeStructure, JsxSelfClosingElementStructure, StructureKind } from "../../../../structures";
@@ -8,8 +8,8 @@ function getInfo(text: string) {
     return getInfoFromTextWithDescendant<JsxSelfClosingElement>(text, SyntaxKind.JsxSelfClosingElement, { isJsx: true });
 }
 
-describe(nameof(JsxSelfClosingElement), () => {
-    describe(nameof<JsxSelfClosingElement>(n => n.getTagNameNode), () => {
+describe("JsxSelfClosingElement", () => {
+    describe(nameof<JsxSelfClosingElement>("getTagNameNode"), () => {
         function doTest(text: string, expected: string) {
             const { descendant } = getInfo(text);
             expect(descendant.getTagNameNode().getText()).to.equal(expected);
@@ -20,7 +20,7 @@ describe(nameof(JsxSelfClosingElement), () => {
         });
     });
 
-    describe(nameof<JsxSelfClosingElement>(n => n.getAttributes), () => {
+    describe(nameof<JsxSelfClosingElement>("getAttributes"), () => {
         function doTest(text: string, expected: string[]) {
             const { descendant } = getInfo(text);
             expect(descendant.getAttributes().map(c => c.getText())).to.deep.equal(expected);
@@ -31,7 +31,7 @@ describe(nameof(JsxSelfClosingElement), () => {
         });
     });
 
-    describe(nameof<JsxSelfClosingElement>(n => n.set), () => {
+    describe(nameof<JsxSelfClosingElement>("set"), () => {
         function doTest(text: string, structure: Partial<JsxSelfClosingElementStructure>, expected: string) {
             const { descendant, sourceFile } = getInfo(text);
             descendant.set(structure);
@@ -52,7 +52,7 @@ describe(nameof(JsxSelfClosingElement), () => {
         });
     });
 
-    describe(nameof<JsxSelfClosingElement>(n => n.getStructure), () => {
+    describe(nameof<JsxSelfClosingElement>("getStructure"), () => {
         function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<JsxSelfClosingElementStructure>>) {
             const { descendant } = getInfo(text);
             const structure = descendant.getStructure();

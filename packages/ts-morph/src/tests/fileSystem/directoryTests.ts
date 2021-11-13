@@ -1,4 +1,4 @@
-import { CompilerOptions, errors, FileSystemHost, FileUtils, ModuleResolutionKind, ScriptKind, ScriptTarget } from "@ts-morph/common";
+import { CompilerOptions, errors, FileSystemHost, FileUtils, ModuleResolutionKind, nameof, ScriptKind, ScriptTarget } from "@ts-morph/common";
 import { expect } from "chai";
 import { SourceFile } from "../../compiler";
 import { Directory, DirectoryCopyOptions, DirectoryEmitResult, DirectoryMoveOptions } from "../../fileSystem";
@@ -7,7 +7,7 @@ import { OptionalKind, SourceFileStructure, StructureKind } from "../../structur
 import { WriterFunction } from "../../types";
 import { CustomFileSystemProps, getFileSystemHostWithFiles, testDirectoryTree } from "../testHelpers";
 
-describe(nameof(Directory), () => {
+describe("Directory", () => {
     function getProject(initialFiles: { filePath: string; text: string; }[] = [], initialDirectories: string[] = []) {
         const project = new Project({ useInMemoryFileSystem: true });
         for (const dir of initialDirectories)
@@ -17,7 +17,7 @@ describe(nameof(Directory), () => {
         return project;
     }
 
-    describe(nameof<Directory>(d => d.getPath), () => {
+    describe(nameof<Directory>("getPath"), () => {
         function doTest(filePath: string, expectedDirPath: string) {
             const project = getProject();
             const sourceFile = project.createSourceFile(filePath);
@@ -34,7 +34,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(d => d.getDirectories), () => {
+    describe(nameof<Directory>("getDirectories"), () => {
         it("should return directories regardless of whether they are in the project", () => {
             const project = getProject();
             const dir = project.createDirectory("dir");
@@ -44,7 +44,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(d => d.getSourceFiles), () => {
+    describe(nameof<Directory>("getSourceFiles"), () => {
         it("should return source files regardless of whether they are in the project", () => {
             const project = getProject();
             const dir = project.createDirectory("dir");
@@ -96,7 +96,7 @@ describe(nameof(Directory), () => {
         const otherChild = project.createDirectory("otherChild");
         const rootSourceFile = project.createSourceFile("file.ts");
 
-        describe(nameof<Directory>(d => d.isAncestorOf), () => {
+        describe(nameof<Directory>("isAncestorOf"), () => {
             function doTest(ancestor: Directory, descendant: Directory | SourceFile, expectedValue: boolean) {
                 expect(ancestor.isAncestorOf(descendant)).to.equal(expectedValue);
             }
@@ -122,7 +122,7 @@ describe(nameof(Directory), () => {
             });
         });
 
-        describe(nameof<Directory>(d => d.isDescendantOf), () => {
+        describe(nameof<Directory>("isDescendantOf"), () => {
             function doTest(descendant: Directory, ancestor: Directory, expectedValue: boolean) {
                 expect(descendant.isDescendantOf(ancestor)).to.equal(expectedValue);
             }
@@ -248,7 +248,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(d => d.getParent), () => {
+    describe(nameof<Directory>("getParent"), () => {
         const project = getProject();
         const sourceFile = project.createSourceFile("/dir/file.ts");
         const dir = sourceFile.getDirectory();
@@ -262,7 +262,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(d => d.getParentOrThrow), () => {
+    describe(nameof<Directory>("getParentOrThrow"), () => {
         const project = getProject();
         const sourceFile = project.createSourceFile("/file.ts");
         const rootDir = sourceFile.getDirectory();
@@ -277,7 +277,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(d => d.getDescendantSourceFiles), () => {
+    describe(nameof<Directory>("getDescendantSourceFiles"), () => {
         it("should get all the descendant source files", () => {
             const project = getProject();
             const sourceFiles = [
@@ -294,7 +294,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(d => d.getDescendantDirectories), () => {
+    describe(nameof<Directory>("getDescendantDirectories"), () => {
         it("should get all the descendant directories", () => {
             const project = getProject();
             const rootDir = project.addDirectoryAtPath("");
@@ -312,7 +312,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(d => d.createSourceFile), () => {
+    describe(nameof<Directory>("createSourceFile"), () => {
         function doTest(input: string | OptionalKind<SourceFileStructure> | WriterFunction | undefined, expectedText: string) {
             const project = getProject();
             const directory = project.createDirectory("dir");
@@ -395,7 +395,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(d => d.addSourceFileAtPathIfExists), () => {
+    describe(nameof<Directory>("addSourceFileAtPathIfExists"), () => {
         it("should return undefined if adding a source file at a non-existent path", () => {
             const fileSystem = getFileSystemHostWithFiles([]);
             const project = new Project({ fileSystem });
@@ -413,7 +413,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(d => d.addSourceFileAtPath), () => {
+    describe(nameof<Directory>("addSourceFileAtPath"), () => {
         it("should throw an exception if adding a source file at a non-existent path", () => {
             const fileSystem = getFileSystemHostWithFiles([]);
             const project = new Project({ fileSystem });
@@ -433,7 +433,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(d => d.addSourceFilesAtPaths), () => {
+    describe(nameof<Directory>("addSourceFilesAtPaths"), () => {
         const fileSystem = getFileSystemHostWithFiles([{ filePath: "otherDir/file.ts", text: "" }, { filePath: "dir/dir1/dir1/file.ts", text: "" }],
             ["dir", "dir/dir1", "dir/dir2", "dir/dir1/dir1", "otherDir"]);
 
@@ -459,7 +459,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(d => d.createDirectory), () => {
+    describe(nameof<Directory>("createDirectory"), () => {
         describe("common", () => {
             const project = getProject([], ["childDir"]);
             const directory = project.createDirectory("some/path");
@@ -531,7 +531,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(d => d.addDirectoryAtPathIfExists), () => {
+    describe(nameof<Directory>("addDirectoryAtPathIfExists"), () => {
         it("should return undefined when the directory doesn't exist", () => {
             const fileSystem = getFileSystemHostWithFiles([], ["dir"]);
             const project = new Project({ fileSystem });
@@ -601,7 +601,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(d => d.addDirectoryAtPath), () => {
+    describe(nameof<Directory>("addDirectoryAtPath"), () => {
         it("should throw when the directory doesn't exist", () => {
             const fileSystem = getFileSystemHostWithFiles([], ["dir"]);
             const project = new Project({ fileSystem });
@@ -661,7 +661,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(d => d.getDirectory), () => {
+    describe(nameof<Directory>("getDirectory"), () => {
         const project = new Project({ useInMemoryFileSystem: true });
         const directory = project.createDirectory("dir");
         const child1 = directory.createDirectory("child1");
@@ -689,7 +689,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(d => d.getDirectoryOrThrow), () => {
+    describe(nameof<Directory>("getDirectoryOrThrow"), () => {
         const project = new Project({ useInMemoryFileSystem: true });
         const directory = project.createDirectory("dir");
         const child1 = directory.createDirectory("child1");
@@ -712,7 +712,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(d => d.getSourceFile), () => {
+    describe(nameof<Directory>("getSourceFile"), () => {
         const project = getProject();
         const directory = project.createDirectory("dir");
         const existingFile = directory.createSourceFile("existing-file.ts");
@@ -748,7 +748,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(d => d.getSourceFileOrThrow), () => {
+    describe(nameof<Directory>("getSourceFileOrThrow"), () => {
         const project = getProject();
         const directory = project.createDirectory("dir");
         const child1 = directory.createSourceFile("child1.ts");
@@ -777,7 +777,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(d => d.copy), () => {
+    describe(nameof<Directory>("copy"), () => {
         it("should copy a directory to a new directory", () => {
             const project = getProject();
             const mainDir = project.createDirectory("mainDir");
@@ -945,7 +945,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(dir => dir.copyToDirectory), () => {
+    describe(nameof<Directory>("copyToDirectory"), () => {
         it("should copy when specifying an absolute path", () => {
             const project = getProject();
             const dir = project.createDirectory("dir/temp");
@@ -975,7 +975,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(dir => dir.move), () => {
+    describe(nameof<Directory>("move"), () => {
         it("should move all the files and sub directories to a new directory", () => {
             const project = getProject();
             const fileSystem = project.getFileSystem();
@@ -1114,7 +1114,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(dir => dir.moveToDirectory), () => {
+    describe(nameof<Directory>("moveToDirectory"), () => {
         it("should move when specifying an absolute path", () => {
             const project = getProject();
             const dir = project.createDirectory("dir/temp");
@@ -1147,7 +1147,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(d => d.delete), () => {
+    describe(nameof<Directory>("delete"), () => {
         it("should delete the directory and remove all its descendants", () => {
             const fileSystem = getFileSystemHostWithFiles([], []);
             const project = new Project({ fileSystem });
@@ -1198,7 +1198,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(d => d.clear), () => {
+    describe(nameof<Directory>("clear"), () => {
         it("should clear the directory by removing all its descendants", () => {
             const fileSystem = getFileSystemHostWithFiles([], []);
             const project = new Project({ fileSystem });
@@ -1239,7 +1239,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(d => d.copyImmediately), () => {
+    describe(nameof<Directory>("copyImmediately"), () => {
         function doTests(
             copyImmediately: (
                 directory: Directory,
@@ -1401,7 +1401,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(d => d.moveImmediately), () => {
+    describe(nameof<Directory>("moveImmediately"), () => {
         function doTests(
             moveImmediately: (
                 directory: Directory,
@@ -1508,7 +1508,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(d => d.deleteImmediately), () => {
+    describe(nameof<Directory>("deleteImmediately"), () => {
         function doTests(deleteImmediately: (directory: Directory, doChecks: () => void) => void) {
             it("should delete the file and remove all its descendants", async () => {
                 const fileSystem = getFileSystemHostWithFiles([{ filePath: "dir/file.ts", text: "" }], ["dir"]);
@@ -1543,7 +1543,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(d => d.clearImmediately), () => {
+    describe(nameof<Directory>("clearImmediately"), () => {
         function doTests(clearImmediately: (directory: Directory, doChecks: () => void) => void) {
             it("should delete the file and remove all its descendants", async () => {
                 const fileSystem = getFileSystemHostWithFiles([{ filePath: "dir/file.ts", text: "" }]);
@@ -1581,7 +1581,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(d => d.forget), () => {
+    describe(nameof<Directory>("forget"), () => {
         it("should forget the directory and all its descendants", () => {
             const project = getProject();
             const directory = project.createDirectory("dir");
@@ -1599,7 +1599,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(dir => dir.save), () => {
+    describe(nameof<Directory>("save"), () => {
         it("should save all the unsaved source files asynchronously", async () => {
             const fileSystem = getFileSystemHostWithFiles([]);
             const project = new Project({ fileSystem });
@@ -1617,7 +1617,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(dir => dir.saveSync), () => {
+    describe(nameof<Directory>("saveSync"), () => {
         it("should save all the unsaved source files synchronously", () => {
             const fileSystem = getFileSystemHostWithFiles([]);
             const project = new Project({ fileSystem });
@@ -1635,7 +1635,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(dir => dir.emit), () => {
+    describe(nameof<Directory>("emit"), () => {
         function setup(compilerOptions: CompilerOptions) {
             const fileSystem = getFileSystemHostWithFiles([]);
             const project = new Project({ compilerOptions, fileSystem });
@@ -1719,7 +1719,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(dir => dir.emitSync), () => {
+    describe(nameof<Directory>("emitSync"), () => {
         function setup(compilerOptions: CompilerOptions) {
             const fileSystem = getFileSystemHostWithFiles([]);
             const project = new Project({ compilerOptions, fileSystem });
@@ -1784,7 +1784,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(s => s.getRelativePathTo), () => {
+    describe(nameof<Directory>("getRelativePathTo"), () => {
         function doSourceFileTest(from: string, to: string, expected: string) {
             const project = new Project({ useInMemoryFileSystem: true });
             const fromDir = project.createDirectory(from);
@@ -1812,7 +1812,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(s => s.getRelativePathAsModuleSpecifierTo), () => {
+    describe(nameof<Directory>("getRelativePathAsModuleSpecifierTo"), () => {
         function doSourceFileTest(from: string, to: string, expected: string, compilerOptions?: CompilerOptions) {
             const project = new Project({ useInMemoryFileSystem: true, compilerOptions });
             const fromDir = from === "/" ? project.addDirectoryAtPath(from) : project.createDirectory(from);

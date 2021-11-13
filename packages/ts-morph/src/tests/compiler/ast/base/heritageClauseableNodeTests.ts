@@ -1,9 +1,10 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, HeritageClauseableNode } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
-describe(nameof(HeritageClauseableNode), () => {
-    describe(nameof<HeritageClauseableNode>(n => n.getHeritageClauses), () => {
+describe("HeritageClauseableNode", () => {
+    describe(nameof<HeritageClauseableNode>("getHeritageClauses"), () => {
         const { firstChild } = getInfoFromText<ClassDeclaration>("export class Identifier extends Base implements IBase, IBase2 {}");
         const heritageClauses = firstChild.getHeritageClauses();
 

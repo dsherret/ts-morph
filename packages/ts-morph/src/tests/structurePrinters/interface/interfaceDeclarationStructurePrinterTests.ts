@@ -1,10 +1,11 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { FormatCodeSettings } from "../../../compiler";
 import { InterfaceDeclarationStructurePrinter } from "../../../structurePrinters";
 import { InterfaceDeclarationStructure, OptionalKind } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
 
-describe(nameof(InterfaceDeclarationStructurePrinter), () => {
+describe("InterfaceDeclarationStructurePrinter", () => {
     interface Options {
         formatCodeSettings?: FormatCodeSettings;
     }
@@ -17,7 +18,7 @@ describe(nameof(InterfaceDeclarationStructurePrinter), () => {
 
     // todo: more tests
 
-    describe(nameof<InterfaceDeclarationStructurePrinter>(p => p.printText), () => {
+    describe(nameof<InterfaceDeclarationStructurePrinter>("printText"), () => {
         describe("implements", () => {
             it("should write extends", () => {
                 doTest({ name: "I", extends: ["Base1", writer => writer.write("Base2")] }, `interface I extends Base1, Base2 {\n}`);

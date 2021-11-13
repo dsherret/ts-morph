@@ -1,4 +1,4 @@
-import { errors, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
+import { errors, nameof, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange, removeChildren } from "../../../manipulation";
 import { ModuleDeclarationSpecificStructure, ModuleDeclarationStructure, StructureKind } from "../../../structures";
 import { Constructor } from "../../../types";
@@ -75,7 +75,7 @@ export class ModuleDeclaration extends ModuleDeclarationBase<ts.ModuleDeclaratio
         if (nameNodes instanceof Array) {
             if (nameNodes.length > 1) {
                 throw new errors.NotSupportedError(
-                    `Cannot rename a namespace name that uses dot notation. Rename the individual nodes via .${nameof(this.getNameNodes)}()`,
+                    `Cannot rename a namespace name that uses dot notation. Rename the individual nodes via .${nameof(this, "getNameNodes")}()`,
                 );
             }
             if (newName !== "global")

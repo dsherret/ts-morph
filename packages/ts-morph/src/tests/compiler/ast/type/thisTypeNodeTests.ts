@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { ThisTypeNode } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
-describe(nameof(ThisTypeNode), () => {
+describe("ThisTypeNode", () => {
     function getNode(text: string) {
         return getInfoFromTextWithDescendant<ThisTypeNode>(text, SyntaxKind.ThisType);
     }

@@ -1,9 +1,10 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { CombinedCodeActions } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
-describe(nameof(CombinedCodeActions), () => {
-    describe(nameof<CombinedCodeActions>(a => a.applyChanges), () => {
+describe("CombinedCodeActions", () => {
+    describe(nameof<CombinedCodeActions>("applyChanges"), () => {
         it("should apply the combined code actions", () => {
             const { sourceFile, project } = getInfoFromText("export class T extends Node {}", { filePath: "/file.ts" });
             const languageService = project.getLanguageService();

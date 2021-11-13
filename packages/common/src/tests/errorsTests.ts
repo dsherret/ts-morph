@@ -1,9 +1,10 @@
 import { expect } from "chai";
 import { errors } from "../errors";
 import { ts } from "../typescript";
+import { nameof } from "../utils";
 
 describe("helpers", () => {
-    describe(nameof(errors.throwIfNotType), () => {
+    describe(nameof(errors, "throwIfNotType"), () => {
         it("should throw when not the same type", () => {
             expect(() => errors.throwIfNotType(4, "string", "argName")).to.throw(errors.ArgumentTypeError,
                 "Argument Error (argName): Expected type 'string', but was 'number'.");
@@ -14,7 +15,7 @@ describe("helpers", () => {
         });
     });
 
-    describe(nameof(errors.throwIfWhitespaceOrNotString), () => {
+    describe(nameof(errors, "throwIfWhitespaceOrNotString"), () => {
         it("should throw when not a string", () => {
             expect(() => errors.throwIfWhitespaceOrNotString(4 as any, "argName")).to.throw(errors.ArgumentTypeError,
                 "Argument Error (argName): Expected type 'string', but was 'number'.");
@@ -35,7 +36,7 @@ describe("helpers", () => {
         });
     });
 
-    describe(nameof(errors.throwIfOutOfRange), () => {
+    describe(nameof(errors, "throwIfOutOfRange"), () => {
         it("should not throw when inside the bounds", () => {
             expect(() => errors.throwIfOutOfRange(5, [1, 10], "arg")).to.not.throw();
         });
@@ -57,7 +58,7 @@ describe("helpers", () => {
         });
     });
 
-    describe(nameof(errors.throwIfRangeOutOfRange), () => {
+    describe(nameof(errors, "throwIfRangeOutOfRange"), () => {
         it("should throw when the range is flipped", () => {
             expect(() => errors.throwIfRangeOutOfRange([9, 2], [1, 10], "arg")).to.throw();
         });
@@ -79,7 +80,7 @@ describe("helpers", () => {
         });
     });
 
-    describe(nameof(errors.throwIfNegative), () => {
+    describe(nameof(errors, "throwIfNegative"), () => {
         it("should throw when negative", () => {
             expect(() => errors.throwIfNegative(-1, "arg")).to.throw();
         });
@@ -93,11 +94,11 @@ describe("helpers", () => {
         });
     });
 
-    describe(nameof(errors.throwNotImplementedForSyntaxKindError), () => {
+    describe(nameof(errors, "throwNotImplementedForSyntaxKindError"), () => {
         let result: Error;
         try {
             errors.throwNotImplementedForSyntaxKindError(ts.SyntaxKind.EnumDeclaration);
-        } catch (ex) {
+        } catch (ex: any) {
             result = ex;
         }
 
@@ -110,7 +111,7 @@ describe("helpers", () => {
         });
     });
 
-    describe(nameof(errors.throwIfNotEqual), () => {
+    describe(nameof(errors, "throwIfNotEqual"), () => {
         it("should throw when not equal", () => {
             expect(() => errors.throwIfNotEqual(1, 2, "New length should equal old length.")).to.throw(errors.InvalidOperationError,
                 "Expected 1 to equal 2. New length should equal old length.");
@@ -121,7 +122,7 @@ describe("helpers", () => {
         });
     });
 
-    describe(nameof(errors.throwIfTrue), () => {
+    describe(nameof(errors, "throwIfTrue"), () => {
         it("should throw when true", () => {
             expect(() => errors.throwIfTrue(true, "message")).to.throw(errors.InvalidOperationError, "message");
         });

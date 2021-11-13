@@ -1,10 +1,11 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import * as compiler from "../../compiler";
 import * as getMixinStructureFuncs from "../../manipulation/helpers/getMixinStructureFunctions";
 import * as structures from "../../structures";
 import { getInfoFromText } from "../compiler/testHelpers";
 
-describe(nameof(getMixinStructureFuncs.fromAbstractableNode), () => {
+describe(nameof(getMixinStructureFuncs, "fromAbstractableNode"), () => {
     function doTest(startingCode: string, expectedStructure: MakeRequired<structures.AbstractableNodeStructure>) {
         const { firstChild } = getInfoFromText<compiler.ClassDeclaration>(startingCode);
         expect(getMixinStructureFuncs.fromAbstractableNode(firstChild)).to.deep.equal(expectedStructure);
@@ -19,7 +20,7 @@ describe(nameof(getMixinStructureFuncs.fromAbstractableNode), () => {
     });
 });
 
-describe(nameof(getMixinStructureFuncs.fromAmbientableNode), () => {
+describe(nameof(getMixinStructureFuncs, "fromAmbientableNode"), () => {
     function doTest(startingCode: string, expectedStructure: MakeRequired<structures.AmbientableNodeStructure>) {
         const { firstChild } = getInfoFromText<compiler.ClassDeclaration>(startingCode);
         expect(getMixinStructureFuncs.fromAmbientableNode(firstChild)).to.deep.equal(expectedStructure);
@@ -34,7 +35,7 @@ describe(nameof(getMixinStructureFuncs.fromAmbientableNode), () => {
     });
 });
 
-describe(nameof(getMixinStructureFuncs.fromAsyncableNode), () => {
+describe(nameof(getMixinStructureFuncs, "fromAsyncableNode"), () => {
     function doTest(startingCode: string, expectedStructure: MakeRequired<structures.AsyncableNodeStructure>) {
         const { firstChild } = getInfoFromText<compiler.FunctionDeclaration>(startingCode);
         expect(getMixinStructureFuncs.fromAsyncableNode(firstChild)).to.deep.equal(expectedStructure);
@@ -49,7 +50,7 @@ describe(nameof(getMixinStructureFuncs.fromAsyncableNode), () => {
     });
 });
 
-describe(nameof(getMixinStructureFuncs.fromAwaitableNode), () => {
+describe(nameof(getMixinStructureFuncs, "fromAwaitableNode"), () => {
     function doTest(startingCode: string, expectedStructure: MakeRequired<structures.AwaitableNodeStructure>) {
         const { firstChild } = getInfoFromText<compiler.ForOfStatement>(startingCode);
         expect(getMixinStructureFuncs.fromAwaitableNode(firstChild)).to.deep.equal(expectedStructure);
@@ -64,7 +65,7 @@ describe(nameof(getMixinStructureFuncs.fromAwaitableNode), () => {
     });
 });
 
-describe(nameof(getMixinStructureFuncs.fromExportableNode), () => {
+describe(nameof(getMixinStructureFuncs, "fromExportableNode"), () => {
     function doTest(startingCode: string, expectedStructure: MakeRequired<structures.ExportableNodeStructure>) {
         const { firstChild } = getInfoFromText<compiler.FunctionDeclaration>(startingCode);
         expect(getMixinStructureFuncs.fromExportableNode(firstChild)).to.deep.equal(expectedStructure);
@@ -87,7 +88,7 @@ describe(nameof(getMixinStructureFuncs.fromExportableNode), () => {
     });
 });
 
-describe(nameof(getMixinStructureFuncs.fromGeneratorableNode), () => {
+describe(nameof(getMixinStructureFuncs, "fromGeneratorableNode"), () => {
     function doTest(startingCode: string, expectedStructure: MakeRequired<structures.GeneratorableNodeStructure>) {
         const { firstChild } = getInfoFromText<compiler.FunctionDeclaration>(startingCode);
         expect(getMixinStructureFuncs.fromGeneratorableNode(firstChild)).to.deep.equal(expectedStructure);
@@ -102,7 +103,7 @@ describe(nameof(getMixinStructureFuncs.fromGeneratorableNode), () => {
     });
 });
 
-describe(nameof(getMixinStructureFuncs.fromReturnTypedNode), () => {
+describe(nameof(getMixinStructureFuncs, "fromReturnTypedNode"), () => {
     function doTest(startingCode: string, expectedStructure: MakeRequired<structures.ReturnTypedNodeStructure>) {
         const { firstChild } = getInfoFromText<compiler.FunctionDeclaration>(startingCode);
         expect(getMixinStructureFuncs.fromReturnTypedNode(firstChild)).to.deep.equal(expectedStructure);
@@ -117,7 +118,7 @@ describe(nameof(getMixinStructureFuncs.fromReturnTypedNode), () => {
     });
 });
 
-describe(nameof(getMixinStructureFuncs.fromStaticableNode), () => {
+describe(nameof(getMixinStructureFuncs, "fromStaticableNode"), () => {
     function doTest(startingCode: string, expectedStructure: MakeRequired<structures.StaticableNodeStructure>) {
         const { firstChild } = getInfoFromText<compiler.ClassDeclaration>(startingCode);
         expect(getMixinStructureFuncs.fromStaticableNode(firstChild.getMembers()[0] as compiler.MethodDeclaration)).to.deep.equal(expectedStructure);
@@ -132,7 +133,7 @@ describe(nameof(getMixinStructureFuncs.fromStaticableNode), () => {
     });
 });
 
-describe(nameof(getMixinStructureFuncs.fromScopedNode), () => {
+describe(nameof(getMixinStructureFuncs, "fromScopedNode"), () => {
     function doTest(startingCode: string, expectedStructure: MakeRequired<structures.ScopedNodeStructure>) {
         const { firstChild } = getInfoFromText<compiler.ClassDeclaration>(startingCode);
         expect(getMixinStructureFuncs.fromScopedNode(firstChild.getMembers()[0] as compiler.MethodDeclaration)).to.deep.equal(expectedStructure);
@@ -147,7 +148,7 @@ describe(nameof(getMixinStructureFuncs.fromScopedNode), () => {
     });
 });
 
-describe(nameof(getMixinStructureFuncs.fromScopeableNode), () => {
+describe(nameof(getMixinStructureFuncs, "fromScopeableNode"), () => {
     function doTest(startingCode: string, expectedStructure: MakeRequired<structures.ScopeableNodeStructure>) {
         const { firstChild } = getInfoFromText<compiler.ClassDeclaration>(startingCode);
         expect(getMixinStructureFuncs.fromScopeableNode(firstChild.getConstructors()[0].getParameters()[0])).to.deep.equal(expectedStructure);
@@ -162,7 +163,7 @@ describe(nameof(getMixinStructureFuncs.fromScopeableNode), () => {
     });
 });
 
-describe(nameof(getMixinStructureFuncs.fromExtendsClauseableNode), () => {
+describe(nameof(getMixinStructureFuncs, "fromExtendsClauseableNode"), () => {
     function doTest(startingCode: string, expectedStructure: MakeRequired<structures.ExtendsClauseableNodeStructure>) {
         const { firstChild } = getInfoFromText<compiler.InterfaceDeclaration>(startingCode);
         expect(getMixinStructureFuncs.fromExtendsClauseableNode(firstChild)).to.deep.equal(expectedStructure);
@@ -177,7 +178,7 @@ describe(nameof(getMixinStructureFuncs.fromExtendsClauseableNode), () => {
     });
 });
 
-describe(nameof(getMixinStructureFuncs.fromImplementsClauseableNode), () => {
+describe(nameof(getMixinStructureFuncs, "fromImplementsClauseableNode"), () => {
     function doTest(startingCode: string, expectedStructure: MakeRequired<structures.ImplementsClauseableNodeStructure>) {
         const { firstChild } = getInfoFromText<compiler.ClassDeclaration>(startingCode);
         expect(getMixinStructureFuncs.fromImplementsClauseableNode(firstChild)).to.deep.equal(expectedStructure);
@@ -192,7 +193,7 @@ describe(nameof(getMixinStructureFuncs.fromImplementsClauseableNode), () => {
     });
 });
 
-describe(nameof(getMixinStructureFuncs.fromQuestionTokenableNode), () => {
+describe(nameof(getMixinStructureFuncs, "fromQuestionTokenableNode"), () => {
     function doTest(startingCode: string, expectedStructure: MakeRequired<structures.QuestionTokenableNodeStructure>) {
         const { firstChild } = getInfoFromText<compiler.ClassDeclaration>(startingCode);
         expect(getMixinStructureFuncs.fromQuestionTokenableNode(firstChild.getMembers()[0] as compiler.PropertyDeclaration)).to.deep.equal(expectedStructure);
@@ -207,7 +208,7 @@ describe(nameof(getMixinStructureFuncs.fromQuestionTokenableNode), () => {
     });
 });
 
-describe(nameof(getMixinStructureFuncs.fromReadonlyableNode), () => {
+describe(nameof(getMixinStructureFuncs, "fromReadonlyableNode"), () => {
     function doTest(startingCode: string, expectedStructure: MakeRequired<structures.ReadonlyableNodeStructure>) {
         const { firstChild } = getInfoFromText<compiler.ClassDeclaration>(startingCode);
         expect(getMixinStructureFuncs.fromReadonlyableNode(firstChild.getMembers()[0] as compiler.PropertyDeclaration)).to.deep.equal(expectedStructure);
@@ -222,7 +223,7 @@ describe(nameof(getMixinStructureFuncs.fromReadonlyableNode), () => {
     });
 });
 
-describe(nameof(getMixinStructureFuncs.fromTypedNode), () => {
+describe(nameof(getMixinStructureFuncs, "fromTypedNode"), () => {
     function doTest(startingCode: string, expectedStructure: MakeRequired<structures.TypedNodeStructure>) {
         const { firstChild } = getInfoFromText<compiler.ClassDeclaration>(startingCode);
         expect(getMixinStructureFuncs.fromTypedNode(firstChild.getMembers()[0] as compiler.PropertyDeclaration)).to.deep.equal(expectedStructure);
@@ -237,7 +238,7 @@ describe(nameof(getMixinStructureFuncs.fromTypedNode), () => {
     });
 });
 
-describe(nameof(getMixinStructureFuncs.fromInitializerExpressionableNode), () => {
+describe(nameof(getMixinStructureFuncs, "fromInitializerExpressionableNode"), () => {
     function doTest(startingCode: string, expectedStructure: MakeRequired<structures.InitializerExpressionableNodeStructure>) {
         const { firstChild } = getInfoFromText<compiler.ClassDeclaration>(startingCode);
         expect(getMixinStructureFuncs.fromInitializerExpressionableNode(firstChild.getMembers()[0] as compiler.PropertyDeclaration)).to.deep
@@ -253,7 +254,7 @@ describe(nameof(getMixinStructureFuncs.fromInitializerExpressionableNode), () =>
     });
 });
 
-describe(nameof(getMixinStructureFuncs.fromNamedNode), () => {
+describe(nameof(getMixinStructureFuncs, "fromNamedNode"), () => {
     function doTest(startingCode: string, expectedStructure: MakeRequired<structures.NamedNodeStructure>) {
         const { firstChild } = getInfoFromText<compiler.InterfaceDeclaration>(startingCode);
         expect(getMixinStructureFuncs.fromNamedNode(firstChild)).to.deep.equal(expectedStructure);

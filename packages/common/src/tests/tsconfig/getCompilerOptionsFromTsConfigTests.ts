@@ -6,7 +6,7 @@ import { CompilerOptions } from "../../typescript";
 
 // Remember, need this function because it's public
 
-describe(nameof(getCompilerOptionsFromTsConfig), () => {
+describe("getCompilerOptionsFromTsConfig", () => {
     it("should throw an error when the path doesn't exist", () => {
         const fileSystem = new InMemoryFileSystemHost();
         expect(() => getCompilerOptionsFromTsConfig("tsconfig.json", { fileSystem }))

@@ -1,4 +1,4 @@
-import { SyntaxKind } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { JsxExpression } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -7,8 +7,8 @@ function getInfo(text: string) {
     return getInfoFromTextWithDescendant<JsxExpression>(text, SyntaxKind.JsxExpression, { isJsx: true });
 }
 
-describe(nameof(JsxExpression), () => {
-    describe(nameof<JsxExpression>(n => n.getExpression), () => {
+describe("JsxExpression", () => {
+    describe(nameof<JsxExpression>("getExpression"), () => {
         function doTest(text: string, expected: string | undefined) {
             const { descendant } = getInfo(text);
             expect(descendant.getExpression()?.getText()).to.equal(expected);
@@ -23,7 +23,7 @@ describe(nameof(JsxExpression), () => {
         });
     });
 
-    describe(nameof<JsxExpression>(n => n.getExpressionOrThrow), () => {
+    describe(nameof<JsxExpression>("getExpressionOrThrow"), () => {
         function doTest(text: string, expected: string | undefined) {
             const { descendant } = getInfo(text);
             if (expected == null)
@@ -41,7 +41,7 @@ describe(nameof(JsxExpression), () => {
         });
     });
 
-    describe(nameof<JsxExpression>(n => n.getDotDotDotToken), () => {
+    describe(nameof<JsxExpression>("getDotDotDotToken"), () => {
         function doTest(text: string, expected: string | undefined) {
             const { descendant } = getInfo(text);
             expect(descendant.getDotDotDotToken()?.getText()).to.equal(expected);
@@ -56,7 +56,7 @@ describe(nameof(JsxExpression), () => {
         });
     });
 
-    describe(nameof<JsxExpression>(n => n.getDotDotDotTokenOrThrow), () => {
+    describe(nameof<JsxExpression>("getDotDotDotTokenOrThrow"), () => {
         function doTest(text: string, expected: string | undefined) {
             const { descendant } = getInfo(text);
             if (expected == null)

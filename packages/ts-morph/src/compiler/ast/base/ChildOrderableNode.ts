@@ -17,7 +17,7 @@ export function ChildOrderableNode<T extends Constructor<ChildOrderableNodeExten
         setOrder(order: number) {
             const childIndex = this.getChildIndex();
             const parent = this.getParentSyntaxList() || this.getParentSyntaxListOrThrow();
-            errors.throwIfOutOfRange(order, [0, parent.getChildCount() - 1], nameof(order));
+            errors.throwIfOutOfRange(order, [0, parent.getChildCount() - 1], "order");
 
             if (childIndex === order)
                 return this;

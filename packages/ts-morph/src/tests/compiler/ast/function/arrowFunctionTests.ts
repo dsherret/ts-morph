@@ -1,4 +1,4 @@
-import { SyntaxKind } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ArrowFunction } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -8,8 +8,8 @@ function getInfoFromTextWithExpression(text: string) {
     return { ...info, expression: info.descendant };
 }
 
-describe(nameof(ArrowFunction), () => {
-    describe(nameof<ArrowFunction>(n => n.getEqualsGreaterThan), () => {
+describe("ArrowFunction", () => {
+    describe(nameof<ArrowFunction>("getEqualsGreaterThan"), () => {
         function doTest(text: string, expectedText: string) {
             const { expression } = getInfoFromTextWithExpression(text);
             expect(expression.getEqualsGreaterThan().getText()).to.equal(expectedText);

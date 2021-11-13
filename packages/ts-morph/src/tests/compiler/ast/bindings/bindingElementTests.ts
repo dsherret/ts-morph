@@ -1,4 +1,4 @@
-import { SyntaxKind } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { BindingElement } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -8,8 +8,8 @@ function getInfoFromTextWithBindingElement(text: string) {
     return { ...info, bindingElement: info.descendant };
 }
 
-describe(nameof(BindingElement), () => {
-    describe(nameof<BindingElement>(n => n.getName), () => {
+describe("BindingElement", () => {
+    describe(nameof<BindingElement>("getName"), () => {
         function doTest(text: string, name: string) {
             const { bindingElement } = getInfoFromTextWithBindingElement(text);
             expect(bindingElement.getName()).to.equal(name);
@@ -32,7 +32,7 @@ describe(nameof(BindingElement), () => {
         });
     });
 
-    describe(nameof<BindingElement>(n => n.getDotDotDotTokenOrThrow), () => {
+    describe(nameof<BindingElement>("getDotDotDotTokenOrThrow"), () => {
         function doTest(text: string, shouldExist: boolean) {
             const { bindingElement } = getInfoFromTextWithBindingElement(text);
             if (shouldExist)
@@ -50,7 +50,7 @@ describe(nameof(BindingElement), () => {
         });
     });
 
-    describe(nameof<BindingElement>(n => n.getDotDotDotToken), () => {
+    describe(nameof<BindingElement>("getDotDotDotToken"), () => {
         function doTest(text: string, shouldExist: boolean) {
             const { bindingElement } = getInfoFromTextWithBindingElement(text);
             if (shouldExist)
@@ -68,7 +68,7 @@ describe(nameof(BindingElement), () => {
         });
     });
 
-    describe(nameof<BindingElement>(n => n.getPropertyNameNodeOrThrow), () => {
+    describe(nameof<BindingElement>("getPropertyNameNodeOrThrow"), () => {
         function doTest(text: string, expectedName: string | undefined) {
             const { bindingElement } = getInfoFromTextWithBindingElement(text);
             if (expectedName == null)
@@ -86,7 +86,7 @@ describe(nameof(BindingElement), () => {
         });
     });
 
-    describe(nameof<BindingElement>(n => n.getPropertyNameNode), () => {
+    describe(nameof<BindingElement>("getPropertyNameNode"), () => {
         function doTest(text: string, expectedName: string | undefined) {
             const { bindingElement } = getInfoFromTextWithBindingElement(text);
             expect(bindingElement.getPropertyNameNode()?.getText()).to.equal(expectedName);

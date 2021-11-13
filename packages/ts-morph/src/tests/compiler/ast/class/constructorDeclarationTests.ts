@@ -1,11 +1,12 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, ConstructorDeclaration, Scope } from "../../../../compiler";
 import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationSpecificStructure, ConstructorDeclarationStructure, OptionalKind,
     StructureKind } from "../../../../structures";
 import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
-describe(nameof(ConstructorDeclaration), () => {
-    describe(nameof<ConstructorDeclaration>(f => f.insertOverloads), () => {
+describe("ConstructorDeclaration", () => {
+    describe(nameof<ConstructorDeclaration>("insertOverloads"), () => {
         function doTest(startCode: string, index: number, structures: OptionalKind<ConstructorDeclarationOverloadStructure>[], expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             const methodDeclaration = firstChild.getConstructors()[0];
@@ -40,7 +41,7 @@ describe(nameof(ConstructorDeclaration), () => {
         });
     });
 
-    describe(nameof<ConstructorDeclaration>(f => f.insertOverload), () => {
+    describe(nameof<ConstructorDeclaration>("insertOverload"), () => {
         function doTest(startCode: string, index: number, structure: OptionalKind<ConstructorDeclarationOverloadStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             const methodDeclaration = firstChild.getMembers()[0] as ConstructorDeclaration;
@@ -55,7 +56,7 @@ describe(nameof(ConstructorDeclaration), () => {
         });
     });
 
-    describe(nameof<ConstructorDeclaration>(f => f.addOverloads), () => {
+    describe(nameof<ConstructorDeclaration>("addOverloads"), () => {
         function doTest(startCode: string, structures: OptionalKind<ConstructorDeclarationOverloadStructure>[], expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             const methodDeclaration = firstChild.getMembers()[0] as ConstructorDeclaration;
@@ -71,7 +72,7 @@ describe(nameof(ConstructorDeclaration), () => {
         });
     });
 
-    describe(nameof<ConstructorDeclaration>(f => f.addOverload), () => {
+    describe(nameof<ConstructorDeclaration>("addOverload"), () => {
         function doTest(startCode: string, structure: OptionalKind<ConstructorDeclarationOverloadStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             const methodDeclaration = firstChild.getMembers()[0] as ConstructorDeclaration;
@@ -86,7 +87,7 @@ describe(nameof(ConstructorDeclaration), () => {
         });
     });
 
-    describe(nameof<ConstructorDeclaration>(d => d.remove), () => {
+    describe(nameof<ConstructorDeclaration>("remove"), () => {
         function doTest(startCode: string, expectedCode: string) {
             const { sourceFile, firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             firstChild.getConstructors()[0].remove();
@@ -122,7 +123,7 @@ describe(nameof(ConstructorDeclaration), () => {
         });
     });
 
-    describe(nameof<ConstructorDeclaration>(n => n.set), () => {
+    describe(nameof<ConstructorDeclaration>("set"), () => {
         function doTest(startingCode: string, structure: OptionalKind<ConstructorDeclarationSpecificStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             const ctor = firstChild.getConstructors()[0];
@@ -151,7 +152,7 @@ describe(nameof(ConstructorDeclaration), () => {
         });
     });
 
-    describe(nameof<ConstructorDeclaration>(n => n.getStructure), () => {
+    describe(nameof<ConstructorDeclaration>("getStructure"), () => {
         function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<ConstructorDeclarationStructure>>) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
             const structure = firstChild.getConstructors()[0].getStructure();

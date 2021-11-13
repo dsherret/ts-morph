@@ -78,7 +78,7 @@ export function TextInsertableNode<T extends Constructor<TextInsertableNodeExten
                 verifyInRange(end);
 
                 if (pos > end)
-                    throw new errors.ArgumentError(nameof(range), "Cannot specify a start position greater than the end position.");
+                    throw new errors.ArgumentError("range", "Cannot specify a start position greater than the end position.");
             }
 
             function verifyInRange(i: number) {

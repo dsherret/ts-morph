@@ -12,7 +12,7 @@ export class TryOrForgetNodeHandler implements NodeHandler {
     handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
         /* istanbul ignore next */
         if (!Node.isSourceFile(currentNode))
-            throw new errors.InvalidOperationError(`Can only use a ${nameof(TryOrForgetNodeHandler)} with a source file.`);
+            throw new errors.InvalidOperationError(`Can only use a TryOrForgetNodeHandler with a source file.`);
 
         try {
             this.handler.handleNode(currentNode, newNode, newSourceFile);

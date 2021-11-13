@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { isBlankLineAtPos } from "../../../manipulation/textChecks";
 import { Project } from "../../../Project";
 
-describe(nameof(isBlankLineAtPos), () => {
+describe("isBlankLineAtPos", () => {
     function doTest(fileText: string, pos: number, expected: boolean) {
         const project = new Project();
         const sourceFile = project.createSourceFile("file.ts", fileText);

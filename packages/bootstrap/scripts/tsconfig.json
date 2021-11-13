@@ -4,8 +4,7 @@
     "outDir": "../dist-scripts",
     "rootDir": "../",
     "noEmit": true,
-    "module": "commonjs",
-    "plugins": [{ "transform": "ts-nameof", "type": "raw" }]
+    "module": "commonjs"
   },
   "include": [
     "../**/*.ts"

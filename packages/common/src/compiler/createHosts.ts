@@ -4,6 +4,7 @@ import { getLibFiles, libFolderInMemoryPath } from "../getLibFiles";
 import { CompilerOptionsContainer } from "../options";
 import { runtime } from "../runtimes";
 import { ScriptTarget, ts } from "../typescript";
+import { nameof } from "../utils";
 import { ResolutionHost } from "./ResolutionHost";
 import { TsSourceFileContainer } from "./TsSourceFileContainer";
 
@@ -161,7 +162,7 @@ export function createHosts(options: CreateHostsOptions) {
         if (options.libFolderPath != null) {
             if (options.skipLoadingLibFiles === true) {
                 throw new errors.InvalidOperationError(
-                    `Cannot set ${nameof(options.skipLoadingLibFiles)} to true when ${nameof(options.libFolderPath)} is provided.`,
+                    `Cannot set ${nameof(options, "skipLoadingLibFiles")} to true when ${nameof(options, "libFolderPath")} is provided.`,
                 );
             }
             return options.libFolderPath;

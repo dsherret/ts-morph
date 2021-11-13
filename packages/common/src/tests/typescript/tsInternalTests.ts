@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { getEmitModuleResolutionKind, ModuleKind, ModuleResolutionKind, ScriptTarget } from "../../typescript";
 
 describe("tsInternal", () => {
-    describe(nameof(getEmitModuleResolutionKind), () => {
+    describe("getEmitModuleResolutionKind", () => {
         function doTest(
             moduleResolution: ModuleResolutionKind | undefined,
             module: ModuleKind | undefined,

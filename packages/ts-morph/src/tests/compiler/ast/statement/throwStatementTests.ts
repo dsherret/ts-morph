@@ -1,4 +1,4 @@
-import { SyntaxKind } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ThrowStatement } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -7,8 +7,8 @@ function getStatement(text: string) {
     return getInfoFromTextWithDescendant<ThrowStatement>(text, SyntaxKind.ThrowStatement).descendant;
 }
 
-describe(nameof(ThrowStatement), () => {
-    describe(nameof<ThrowStatement>(n => n.getExpression), () => {
+describe("ThrowStatement", () => {
+    describe(nameof<ThrowStatement>("getExpression"), () => {
         function doTest(text: string, expectedText: string | undefined) {
             const statement = getStatement(text);
             expect(statement.getExpression().getText()).to.equal(expectedText);

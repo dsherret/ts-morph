@@ -1,5 +1,5 @@
 import { Expression } from "../../../../compiler";
 
-describe(nameof(Expression), () => {
+describe("Expression", () => {
     // todo: tests
 });

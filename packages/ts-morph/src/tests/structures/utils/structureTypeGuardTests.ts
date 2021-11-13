@@ -1,11 +1,12 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { assert, IsExact } from "conditional-type-checks";
 import { AbstractableNodeStructure, ClassDeclarationStructure, Structure, StructureKind } from "../../../structures";
 
 // most of this code is not worth testing because it's auto generated
 
-describe(nameof(Structure), () => {
-    describe(nameof(Structure.hasName), () => {
+describe("Structure", () => {
+    describe(nameof(Structure, "hasName"), () => {
         it("should be true when it has a name", () => {
             const structure: ClassDeclarationStructure = { kind: StructureKind.Class, name: "test" };
             if (Structure.hasName(structure))

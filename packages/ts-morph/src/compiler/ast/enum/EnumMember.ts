@@ -1,4 +1,4 @@
-import { StringUtils, SyntaxKind, ts } from "@ts-morph/common";
+import { nameof, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
 import { FormattingKind, removeChildrenWithFormatting } from "../../../manipulation";
 import { EnumMemberSpecificStructure, EnumMemberStructure, StructureKind } from "../../../structures";
 import { InitializerExpressionableNode, JSDocableNode, PropertyNamedNode } from "../base";
@@ -60,7 +60,7 @@ export class EnumMember extends EnumMemberBase<ts.EnumMember> {
 
         if (structure.value != null)
             this.setValue(structure.value);
-        else if (structure.hasOwnProperty(nameof(structure.value)) && structure.initializer == null)
+        else if (structure.hasOwnProperty(nameof(structure, "value")) && structure.initializer == null)
             this.removeInitializer();
 
         return this;

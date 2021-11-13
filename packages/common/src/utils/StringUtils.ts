@@ -84,7 +84,7 @@ export class StringUtils {
 
     static getLineNumberAtPos(str: string, pos: number) {
         // do not allocate a string in this method
-        errors.throwIfOutOfRange(pos, [0, str.length], nameof(pos));
+        errors.throwIfOutOfRange(pos, [0, str.length], "pos");
         let count = 0;
 
         for (let i = 0; i < pos; i++) {
@@ -96,12 +96,12 @@ export class StringUtils {
     }
 
     static getLengthFromLineStartAtPos(str: string, pos: number) {
-        errors.throwIfOutOfRange(pos, [0, str.length], nameof(pos));
+        errors.throwIfOutOfRange(pos, [0, str.length], "pos");
         return pos - StringUtils.getLineStartFromPos(str, pos);
     }
 
     static getLineStartFromPos(str: string, pos: number) {
-        errors.throwIfOutOfRange(pos, [0, str.length], nameof(pos));
+        errors.throwIfOutOfRange(pos, [0, str.length], "pos");
 
         while (pos > 0) {
             const previousCharCode = str.charCodeAt(pos - 1);
@@ -114,7 +114,7 @@ export class StringUtils {
     }
 
     static getLineEndFromPos(str: string, pos: number) {
-        errors.throwIfOutOfRange(pos, [0, str.length], nameof(pos));
+        errors.throwIfOutOfRange(pos, [0, str.length], "pos");
 
         while (pos < str.length) {
             const currentChar = str.charCodeAt(pos);

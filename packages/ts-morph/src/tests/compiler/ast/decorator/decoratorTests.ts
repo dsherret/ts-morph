@@ -1,17 +1,18 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, Decorator } from "../../../../compiler";
 import { DecoratorStructure, StructureKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
-describe(nameof(Decorator), () => {
+describe("Decorator", () => {
     function getFirstClassDecorator(code: string) {
         const result = getInfoFromText<ClassDeclaration>(code);
         const firstDecorator = result.firstChild.getDecorators()[0];
         return { ...result, firstDecorator };
     }
 
-    describe(nameof<Decorator>(d => d.isDecoratorFactory), () => {
+    describe(nameof<Decorator>("isDecoratorFactory"), () => {
         it("should not be a decorator factory when has no call expression", () => {
             const { firstDecorator } = getFirstClassDecorator("@decorator\nclass Identifier {}");
             expect(firstDecorator.isDecoratorFactory()).to.equal(false);
@@ -33,7 +34,7 @@ describe(nameof(Decorator), () => {
         });
     });
 
-    describe(nameof<Decorator>(d => d.setIsDecoratorFactory), () => {
+    describe(nameof<Decorator>("setIsDecoratorFactory"), () => {
         function doSettingTest(startText: string, expectedText: string) {
             const { firstDecorator, sourceFile } = getFirstClassDecorator(startText);
             const expr = firstDecorator.getExpression();
@@ -67,7 +68,7 @@ describe(nameof(Decorator), () => {
         });
     });
 
-    describe(nameof<Decorator>(d => d.getNameNode), () => {
+    describe(nameof<Decorator>("getNameNode"), () => {
         function doTest(text: string, expectedName: string) {
             const { firstDecorator } = getFirstClassDecorator(text);
             expect(firstDecorator.getNameNode().getText()).to.equal(expectedName);
@@ -94,7 +95,7 @@ describe(nameof(Decorator), () => {
         });
     });
 
-    describe(nameof<Decorator>(d => d.getName), () => {
+    describe(nameof<Decorator>("getName"), () => {
         function doTest(text: string, expectedName: string) {
             const { firstDecorator } = getFirstClassDecorator(text);
             expect(firstDecorator.getName()).to.equal(expectedName);
@@ -117,7 +118,7 @@ describe(nameof(Decorator), () => {
         });
     });
 
-    describe(nameof<Decorator>(d => d.getFullName), () => {
+    describe(nameof<Decorator>("getFullName"), () => {
         function doTest(text: string, expectedName: string) {
             const { firstDecorator } = getFirstClassDecorator(text);
             expect(firstDecorator.getFullName()).to.equal(expectedName);
@@ -140,7 +141,7 @@ describe(nameof(Decorator), () => {
         });
     });
 
-    describe(nameof<Decorator>(d => d.getCallExpression), () => {
+    describe(nameof<Decorator>("getCallExpression"), () => {
         it("should return undefined when not a decorator factory", () => {
             const { firstDecorator } = getFirstClassDecorator("@decorator\nclass Identifier {}");
             expect(firstDecorator.getCallExpression()).to.be.undefined;
@@ -152,7 +153,7 @@ describe(nameof(Decorator), () => {
         });
     });
 
-    describe(nameof<Decorator>(d => d.getCallExpressionOrThrow), () => {
+    describe(nameof<Decorator>("getCallExpressionOrThrow"), () => {
         it("should return undefined when not a decorator factory", () => {
             const { firstDecorator } = getFirstClassDecorator("@decorator\nclass Identifier {}");
             expect(() => firstDecorator.getCallExpressionOrThrow()).to.throw();
@@ -164,7 +165,7 @@ describe(nameof(Decorator), () => {
         });
     });
 
-    describe(nameof<Decorator>(d => d.getArguments), () => {
+    describe(nameof<Decorator>("getArguments"), () => {
         it("should return an empty array when not a decorator factory", () => {
             const { firstDecorator } = getFirstClassDecorator("@decorator\nclass Identifier {}");
             expect(firstDecorator.getArguments()).to.deep.equal([]);
@@ -176,7 +177,7 @@ describe(nameof(Decorator), () => {
         });
     });
 
-    describe(nameof<Decorator>(n => n.insertArguments), () => {
+    describe(nameof<Decorator>("insertArguments"), () => {
         function doTest(code: string, index: number, texts: (string | WriterFunction)[] | WriterFunction, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
             const decorator = firstChild.getDecorators()[0];
@@ -216,7 +217,7 @@ describe(nameof(Decorator), () => {
         });
     });
 
-    describe(nameof<Decorator>(n => n.insertArgument), () => {
+    describe(nameof<Decorator>("insertArgument"), () => {
         function doTest(code: string, index: number, text: string, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
             const result = firstChild.getDecorators()[0].insertArgument(index, text);
@@ -233,7 +234,7 @@ describe(nameof(Decorator), () => {
         });
     });
 
-    describe(nameof<Decorator>(n => n.addArguments), () => {
+    describe(nameof<Decorator>("addArguments"), () => {
         function doTest(code: string, texts: string[], expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
             const result = firstChild.getDecorators()[0].addArguments(texts);
@@ -250,7 +251,7 @@ describe(nameof(Decorator), () => {
         });
     });
 
-    describe(nameof<Decorator>(n => n.addArgument), () => {
+    describe(nameof<Decorator>("addArgument"), () => {
         function doTest(code: string, text: string, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
             const result = firstChild.getDecorators()[0].addArgument(text);
@@ -267,7 +268,7 @@ describe(nameof(Decorator), () => {
         });
     });
 
-    describe(nameof<Decorator>(d => d.getTypeArguments), () => {
+    describe(nameof<Decorator>("getTypeArguments"), () => {
         it("should return an empty array when not a decorator factory", () => {
             const { firstDecorator } = getFirstClassDecorator("@decorator\nclass Identifier {}");
             expect(firstDecorator.getTypeArguments()).to.deep.equal([]);
@@ -279,7 +280,7 @@ describe(nameof(Decorator), () => {
         });
     });
 
-    describe(nameof<Decorator>(n => n.insertTypeArguments), () => {
+    describe(nameof<Decorator>("insertTypeArguments"), () => {
         function doTest(code: string, index: number, texts: string[], expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
             const result = firstChild.getDecorators()[0].insertTypeArguments(index, texts);
@@ -293,7 +294,7 @@ describe(nameof(Decorator), () => {
         });
     });
 
-    describe(nameof<Decorator>(n => n.insertTypeArgument), () => {
+    describe(nameof<Decorator>("insertTypeArgument"), () => {
         function doTest(code: string, index: number, text: string, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
             const result = firstChild.getDecorators()[0].insertTypeArgument(index, text);
@@ -306,7 +307,7 @@ describe(nameof(Decorator), () => {
         });
     });
 
-    describe(nameof<Decorator>(n => n.addTypeArguments), () => {
+    describe(nameof<Decorator>("addTypeArguments"), () => {
         function doTest(code: string, texts: string[], expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
             const result = firstChild.getDecorators()[0].addTypeArguments(texts);
@@ -319,7 +320,7 @@ describe(nameof(Decorator), () => {
         });
     });
 
-    describe(nameof<Decorator>(n => n.addTypeArgument), () => {
+    describe(nameof<Decorator>("addTypeArgument"), () => {
         function doTest(code: string, text: string, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
             const result = firstChild.getDecorators()[0].addTypeArgument(text);
@@ -332,7 +333,7 @@ describe(nameof(Decorator), () => {
         });
     });
 
-    describe(nameof<Decorator>(n => n.removeTypeArgument), () => {
+    describe(nameof<Decorator>("removeTypeArgument"), () => {
         function doRemoveTypeArgTest(code: string, argIndexToRemove: number, expectedText: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
             firstChild.getDecorators()[0].removeTypeArgument(argIndexToRemove);
@@ -349,7 +350,7 @@ describe(nameof(Decorator), () => {
         });
     });
 
-    describe(nameof<Decorator>(d => d.remove), () => {
+    describe(nameof<Decorator>("remove"), () => {
         describe("class decorators", () => {
             function doTest(code: string, index: number, expectedText: string) {
                 const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
@@ -411,7 +412,7 @@ describe(nameof(Decorator), () => {
         });
     });
 
-    describe(nameof<Decorator>(d => d.removeArgument), () => {
+    describe(nameof<Decorator>("removeArgument"), () => {
         function doTest(text: string, removeIndex: number, expectedText: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(text);
             firstChild.getDecorators()[0].removeArgument(removeIndex);
@@ -429,7 +430,7 @@ describe(nameof(Decorator), () => {
         });
     });
 
-    describe(nameof<Decorator>(n => n.set), () => {
+    describe(nameof<Decorator>("set"), () => {
         function doTest(text: string, structure: Partial<DecoratorStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText<ClassDeclaration>(text);
             sourceFile.getClasses()[0].getDecorators()[0].set(structure);
@@ -465,7 +466,7 @@ describe(nameof(Decorator), () => {
         });
     });
 
-    describe(nameof<Decorator>(n => n.getStructure), () => {
+    describe(nameof<Decorator>("getStructure"), () => {
         function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<DecoratorStructure>>) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(text);
             const structure = firstChild.getDecorators()[0].getStructure();

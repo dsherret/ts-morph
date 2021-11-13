@@ -1,9 +1,10 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, TypeArgumentedNode } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
-describe(nameof(TypeArgumentedNode), () => {
-    describe(nameof<TypeArgumentedNode>(n => n.getTypeArguments), () => {
+describe("TypeArgumentedNode", () => {
+    describe(nameof<TypeArgumentedNode>("getTypeArguments"), () => {
         function doTest(code: string, expectedArgs: string[]) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
             const args = firstChild.getDecorators()[0].getCallExpressionOrThrow().getTypeArguments();
@@ -19,7 +20,7 @@ describe(nameof(TypeArgumentedNode), () => {
         });
     });
 
-    describe(nameof<TypeArgumentedNode>(n => n.insertTypeArguments), () => {
+    describe(nameof<TypeArgumentedNode>("insertTypeArguments"), () => {
         function doTest(code: string, index: number, texts: string[], expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
             const callExpr = firstChild.getDecorators()[0].getCallExpressionOrThrow();
@@ -45,7 +46,7 @@ describe(nameof(TypeArgumentedNode), () => {
         });
     });
 
-    describe(nameof<TypeArgumentedNode>(n => n.insertTypeArgument), () => {
+    describe(nameof<TypeArgumentedNode>("insertTypeArgument"), () => {
         function doTest(code: string, index: number, text: string, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
             const callExpr = firstChild.getDecorators()[0].getCallExpressionOrThrow();
@@ -59,7 +60,7 @@ describe(nameof(TypeArgumentedNode), () => {
         });
     });
 
-    describe(nameof<TypeArgumentedNode>(n => n.addTypeArguments), () => {
+    describe(nameof<TypeArgumentedNode>("addTypeArguments"), () => {
         function doTest(code: string, texts: string[], expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
             const callExpr = firstChild.getDecorators()[0].getCallExpressionOrThrow();
@@ -73,7 +74,7 @@ describe(nameof(TypeArgumentedNode), () => {
         });
     });
 
-    describe(nameof<TypeArgumentedNode>(n => n.addTypeArgument), () => {
+    describe(nameof<TypeArgumentedNode>("addTypeArgument"), () => {
         function doTest(code: string, text: string, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
             const callExpr = firstChild.getDecorators()[0].getCallExpressionOrThrow();
@@ -87,7 +88,7 @@ describe(nameof(TypeArgumentedNode), () => {
         });
     });
 
-    describe(nameof<TypeArgumentedNode>(n => n.removeTypeArgument), () => {
+    describe(nameof<TypeArgumentedNode>("removeTypeArgument"), () => {
         it("should throw when there are no current type arguments", () => {
             const { firstChild } = getInfoFromText<ClassDeclaration>("@decorator(arg1, arg2)\nclass MyClass {}");
             expect(() => firstChild.getDecorators()[0].getCallExpression()!.removeTypeArgument(0)).to.throw();

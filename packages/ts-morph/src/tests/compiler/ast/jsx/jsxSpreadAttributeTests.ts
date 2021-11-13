@@ -1,4 +1,4 @@
-import { errors, SyntaxKind } from "@ts-morph/common";
+import { errors, nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { JsxSelfClosingElement, JsxSpreadAttribute } from "../../../../compiler";
 import { JsxSpreadAttributeStructure, StructureKind } from "../../../../structures";
@@ -12,8 +12,8 @@ function getInfoForSelfClosingElement(text: string) {
     return getInfoFromTextWithDescendant<JsxSelfClosingElement>(text, SyntaxKind.JsxSelfClosingElement, { isJsx: true });
 }
 
-describe(nameof(JsxSpreadAttribute), () => {
-    describe(nameof<JsxSpreadAttribute>(n => n.getExpression), () => {
+describe("JsxSpreadAttribute", () => {
+    describe(nameof<JsxSpreadAttribute>("getExpression"), () => {
         function doTest(text: string, expected: string) {
             const { descendant } = getInfo(text);
             expect(descendant.getExpression().getText()).to.equal(expected);
@@ -24,7 +24,7 @@ describe(nameof(JsxSpreadAttribute), () => {
         });
     });
 
-    describe(nameof<JsxSpreadAttribute>(n => n.setExpression), () => {
+    describe(nameof<JsxSpreadAttribute>("setExpression"), () => {
         function doTest(text: string, expression: string, expected: string) {
             const { descendant, sourceFile } = getInfo(text);
             descendant.setExpression(expression);
@@ -36,7 +36,7 @@ describe(nameof(JsxSpreadAttribute), () => {
         });
     });
 
-    describe(nameof<JsxSpreadAttribute>(n => n.remove), () => {
+    describe(nameof<JsxSpreadAttribute>("remove"), () => {
         function doTest(text: string, index: number, expected: string) {
             const { descendant, sourceFile } = getInfoForSelfClosingElement(text);
             (descendant.getAttributes()[index] as JsxSpreadAttribute).remove();
@@ -64,7 +64,7 @@ describe(nameof(JsxSpreadAttribute), () => {
         });
     });
 
-    describe(nameof<JsxSpreadAttribute>(n => n.set), () => {
+    describe(nameof<JsxSpreadAttribute>("set"), () => {
         function doTest(text: string, structure: Partial<JsxSpreadAttributeStructure>, expected: string) {
             const { descendant, sourceFile } = getInfo(text);
             descendant.set(structure);
@@ -84,7 +84,7 @@ describe(nameof(JsxSpreadAttribute), () => {
         });
     });
 
-    describe(nameof<JsxSpreadAttribute>(n => n.getStructure), () => {
+    describe(nameof<JsxSpreadAttribute>("getStructure"), () => {
         function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<JsxSpreadAttributeStructure>>) {
             const { descendant } = getInfo(text);
             const structure = descendant.getStructure();

@@ -1,4 +1,4 @@
-import { SyntaxKind } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ElementAccessExpression } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -8,12 +8,12 @@ function getInfoFromTextWithElementAccessExpression(text: string) {
     return { ...info, elementAccessExpression: info.descendant };
 }
 
-describe(nameof(ElementAccessExpression), () => {
+describe("ElementAccessExpression", () => {
     const emptyExpr = "x[]";
     const { elementAccessExpression } = getInfoFromTextWithElementAccessExpression("x[1]");
     const { elementAccessExpression: emptyElementAccessExpression } = getInfoFromTextWithElementAccessExpression(emptyExpr);
 
-    describe(nameof<ElementAccessExpression>(n => n.getArgumentExpression), () => {
+    describe(nameof<ElementAccessExpression>("getArgumentExpression"), () => {
         it("should get the correct argument expression", () => {
             expect(elementAccessExpression.getArgumentExpression()!.getText()).to.equal("1");
         });
@@ -24,7 +24,7 @@ describe(nameof(ElementAccessExpression), () => {
         });
     });
 
-    describe(nameof<ElementAccessExpression>(n => n.getArgumentExpressionOrThrow), () => {
+    describe(nameof<ElementAccessExpression>("getArgumentExpressionOrThrow"), () => {
         it("should should return the argument expression", () => {
             expect(elementAccessExpression.getArgumentExpressionOrThrow().getText()).to.equal("1");
         });

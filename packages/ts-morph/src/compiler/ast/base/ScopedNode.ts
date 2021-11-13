@@ -1,3 +1,4 @@
+import { nameof } from "@ts-morph/common";
 import { ScopedNodeStructure } from "../../../structures";
 import { Constructor } from "../../../types";
 import { callBaseGetStructure } from "../callBaseGetStructure";
@@ -43,7 +44,7 @@ export function ScopedNode<T extends Constructor<ScopedNodeExtensionType>>(Base:
         set(structure: Partial<ScopedNodeStructure>) {
             callBaseSet(Base.prototype, this, structure);
 
-            if (structure.hasOwnProperty(nameof(structure.scope)))
+            if (structure.hasOwnProperty(nameof(structure, "scope")))
                 this.setScope(structure.scope);
 
             return this;

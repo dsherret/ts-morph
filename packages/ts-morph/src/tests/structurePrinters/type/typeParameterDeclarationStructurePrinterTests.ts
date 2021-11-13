@@ -1,16 +1,17 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { FormatCodeSettings } from "../../../compiler";
 import { TypeParameterDeclarationStructurePrinter } from "../../../structurePrinters";
 import { OptionalKind, TypeParameterDeclarationStructure } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
 
-describe(nameof(TypeParameterDeclarationStructurePrinter), () => {
+describe("TypeParameterDeclarationStructurePrinter", () => {
     interface Options {
         formatCodeSettings?: FormatCodeSettings;
     }
 
     // todo: more tests
-    describe(nameof<TypeParameterDeclarationStructurePrinter>(p => p.printTextsWithBrackets), () => {
+    describe(nameof<TypeParameterDeclarationStructurePrinter>("printTextsWithBrackets"), () => {
         function doTest(structures: (OptionalKind<TypeParameterDeclarationStructure> | string)[], expectedOutput: string, options: Options = {}) {
             const { writer, factory } = getStructureFactoryAndWriter(options.formatCodeSettings);
             factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structures);
@@ -27,7 +28,7 @@ describe(nameof(TypeParameterDeclarationStructurePrinter), () => {
         });
     });
 
-    describe(nameof<TypeParameterDeclarationStructurePrinter>(p => p.printText), () => {
+    describe(nameof<TypeParameterDeclarationStructurePrinter>("printText"), () => {
         function doTest(structure: OptionalKind<TypeParameterDeclarationStructure> | string, expectedOutput: string, options: Options = {}) {
             const { writer, factory } = getStructureFactoryAndWriter(options.formatCodeSettings);
             factory.forTypeParameterDeclaration().printText(writer, structure);

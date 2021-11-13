@@ -1,5 +1,5 @@
 import { CodeBlockWriter } from "../../../codeBlockWriter";
-import { errors, ArrayUtils, StoredComparer, getSyntaxKindName, StringUtils, ts, SyntaxKind, SymbolFlags } from "@ts-morph/common";
+import { errors, ArrayUtils, StoredComparer, getSyntaxKindName, StringUtils, ts, SyntaxKind, SymbolFlags, nameof } from "@ts-morph/common";
 import { ProjectContext } from "../../../ProjectContext";
 import { Project } from "../../../Project";
 import * as compiler from "../../../compiler";
@@ -337,7 +337,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param pos - Position.
      */
     isInStringAtPos(pos: number) {
-        errors.throwIfOutOfRange(pos, [this.getPos(), this.getEnd()], nameof(pos));
+        errors.throwIfOutOfRange(pos, [this.getPos(), this.getEnd()], "pos");
 
         if (this._childStringRanges == null) {
             this._childStringRanges = [];
@@ -1410,7 +1410,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param textOrWriterFunction - Text or writer function.
      */
     prependWhitespace(textOrWriterFunction: string | WriterFunction) {
-        insertWhiteSpaceTextAtPos(this, this.getStart(true), textOrWriterFunction, nameof(this.prependWhitespace));
+        insertWhiteSpaceTextAtPos(this, this.getStart(true), textOrWriterFunction, nameof(this, "prependWhitespace"));
     }
 
     /**
@@ -1418,7 +1418,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param textOrWriterFunction - Text or writer function.
      */
     appendWhitespace(textOrWriterFunction: string | WriterFunction) {
-        insertWhiteSpaceTextAtPos(this, this.getEnd(), textOrWriterFunction, nameof(this.appendWhitespace));
+        insertWhiteSpaceTextAtPos(this, this.getEnd(), textOrWriterFunction, nameof(this, "appendWhitespace"));
     }
 
     /**
@@ -2001,7 +2001,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     _getCompilerChildAtIndex(index: number) {
         const children = this._getCompilerChildren();
-        errors.throwIfOutOfRange(index, [0, children.length - 1], nameof(index));
+        errors.throwIfOutOfRange(index, [0, children.length - 1], "index");
         return children[index];
     }
 

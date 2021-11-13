@@ -1,10 +1,11 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { VariableDeclaration, VariableDeclarationKind, VariableStatement } from "../../../../compiler";
 import { OptionalKind, StructureKind, VariableDeclarationStructure, VariableStatementStructure } from "../../../../structures";
 import { fillStructures, getInfoFromText } from "../../testHelpers";
 
-describe(nameof(VariableStatement), () => {
-    describe(nameof<VariableStatement>(d => d.getDeclarationKind), () => {
+describe("VariableStatement", () => {
+    describe(nameof<VariableStatement>("getDeclarationKind"), () => {
         function doTest(code: string, expectedType: VariableDeclarationKind) {
             const { firstChild } = getInfoFromText<VariableStatement>(code);
             expect(firstChild.getDeclarationKind()).to.equal(expectedType);
@@ -23,7 +24,7 @@ describe(nameof(VariableStatement), () => {
         });
     });
 
-    describe(nameof<VariableStatement>(d => d.getDeclarationKindKeyword), () => {
+    describe(nameof<VariableStatement>("getDeclarationKindKeyword"), () => {
         function doTest(code: string, expectedType: VariableDeclarationKind) {
             const { firstChild } = getInfoFromText<VariableStatement>(code);
             expect(firstChild.getDeclarationKindKeyword().getText()).to.equal(expectedType);
@@ -42,7 +43,7 @@ describe(nameof(VariableStatement), () => {
         });
     });
 
-    describe(nameof<VariableStatement>(d => d.setDeclarationKind), () => {
+    describe(nameof<VariableStatement>("setDeclarationKind"), () => {
         function doTest(code: string, newType: VariableDeclarationKind, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<VariableStatement>(code);
             firstChild.setDeclarationKind(newType);
@@ -66,7 +67,7 @@ describe(nameof(VariableStatement), () => {
         });
     });
 
-    describe(nameof<VariableStatement>(d => d.insertDeclarations), () => {
+    describe(nameof<VariableStatement>("insertDeclarations"), () => {
         function doTest(startText: string, index: number, structures: OptionalKind<VariableDeclarationStructure>[], expectedText: string) {
             const { firstChild, sourceFile } = getInfoFromText<VariableStatement>(startText);
             const result = firstChild.insertDeclarations(index, structures);
@@ -88,7 +89,7 @@ describe(nameof(VariableStatement), () => {
         });
     });
 
-    describe(nameof<VariableStatement>(d => d.insertDeclaration), () => {
+    describe(nameof<VariableStatement>("insertDeclaration"), () => {
         function doTest(startText: string, index: number, structure: OptionalKind<VariableDeclarationStructure>, expectedText: string) {
             const { firstChild, sourceFile } = getInfoFromText<VariableStatement>(startText);
             const result = firstChild.insertDeclaration(index, structure);
@@ -101,7 +102,7 @@ describe(nameof(VariableStatement), () => {
         });
     });
 
-    describe(nameof<VariableStatement>(d => d.addDeclarations), () => {
+    describe(nameof<VariableStatement>("addDeclarations"), () => {
         function doTest(startText: string, structures: OptionalKind<VariableDeclarationStructure>[], expectedText: string) {
             const { firstChild, sourceFile } = getInfoFromText<VariableStatement>(startText);
             const result = firstChild.addDeclarations(structures);
@@ -114,7 +115,7 @@ describe(nameof(VariableStatement), () => {
         });
     });
 
-    describe(nameof<VariableStatement>(d => d.addDeclaration), () => {
+    describe(nameof<VariableStatement>("addDeclaration"), () => {
         function doTest(startText: string, structure: OptionalKind<VariableDeclarationStructure>, expectedText: string) {
             const { firstChild, sourceFile } = getInfoFromText<VariableStatement>(startText);
             const result = firstChild.addDeclaration(structure);
@@ -127,7 +128,7 @@ describe(nameof(VariableStatement), () => {
         });
     });
 
-    describe(nameof<VariableStatement>(d => d.remove), () => {
+    describe(nameof<VariableStatement>("remove"), () => {
         function doTest(text: string, index: number, expectedText: string) {
             const { sourceFile } = getInfoFromText(text);
             sourceFile.getVariableStatements()[index].remove();
@@ -139,7 +140,7 @@ describe(nameof(VariableStatement), () => {
         });
     });
 
-    describe(nameof<VariableStatement>(d => d.set), () => {
+    describe(nameof<VariableStatement>("set"), () => {
         function doTest(text: string, fillStructure: Partial<VariableStatementStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(text);
             sourceFile.getVariableStatements()[0].set(fillStructure);
@@ -159,7 +160,7 @@ describe(nameof(VariableStatement), () => {
         });
     });
 
-    describe(nameof<VariableStatement>(d => d.getStructure), () => {
+    describe(nameof<VariableStatement>("getStructure"), () => {
         function doTest(text: string, expected: VariableStatementStructure) {
             const structure = getInfoFromText(text).sourceFile.getVariableStatements()[0].getStructure();
             expect(structure).to.deep.equal(fillStructures.variableStatement(expected));

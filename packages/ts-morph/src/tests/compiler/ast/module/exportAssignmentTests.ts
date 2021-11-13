@@ -1,11 +1,12 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ExportAssignment } from "../../../../compiler";
 import { ExportAssignmentStructure, StructureKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
-describe(nameof(ExportAssignment), () => {
-    describe(nameof<ExportAssignment>(n => n.isExportEquals), () => {
+describe("ExportAssignment", () => {
+    describe(nameof<ExportAssignment>("isExportEquals"), () => {
         function doTest(text: string, expected: boolean) {
             const { firstChild } = getInfoFromText<ExportAssignment>(text);
             expect(firstChild.isExportEquals()).to.equal(expected);
@@ -20,7 +21,7 @@ describe(nameof(ExportAssignment), () => {
         });
     });
 
-    describe(nameof<ExportAssignment>(n => n.setIsExportEquals), () => {
+    describe(nameof<ExportAssignment>("setIsExportEquals"), () => {
         function doTest(text: string, value: boolean, expected: string) {
             const { firstChild, sourceFile } = getInfoFromText<ExportAssignment>(text);
             firstChild.setIsExportEquals(value);
@@ -40,7 +41,7 @@ describe(nameof(ExportAssignment), () => {
         });
     });
 
-    describe(nameof<ExportAssignment>(n => n.getExpression), () => {
+    describe(nameof<ExportAssignment>("getExpression"), () => {
         function doTest(text: string, expected: string) {
             const { firstChild } = getInfoFromText<ExportAssignment>(text);
             expect(firstChild.getExpression().getText()).to.equal(expected);
@@ -55,7 +56,7 @@ describe(nameof(ExportAssignment), () => {
         });
     });
 
-    describe(nameof<ExportAssignment>(n => n.setExpression), () => {
+    describe(nameof<ExportAssignment>("setExpression"), () => {
         function doTest(text: string, textOrWriterFunction: string | WriterFunction, expected: string) {
             const { firstChild, sourceFile } = getInfoFromText<ExportAssignment>(text);
             firstChild.setExpression(textOrWriterFunction);
@@ -75,7 +76,7 @@ describe(nameof(ExportAssignment), () => {
         });
     });
 
-    describe(nameof<ExportAssignment>(n => n.getStructure), () => {
+    describe(nameof<ExportAssignment>("getStructure"), () => {
         function doTest(text: string, structure: Partial<ExportAssignmentStructure>, expected: string) {
             const { firstChild, sourceFile } = getInfoFromText<ExportAssignment>(text);
             firstChild.set(structure);
@@ -95,7 +96,7 @@ describe(nameof(ExportAssignment), () => {
         });
     });
 
-    describe(nameof<ExportAssignment>(n => n.getStructure), () => {
+    describe(nameof<ExportAssignment>("getStructure"), () => {
         function doTest(text: string, expected: OptionalTrivia<MakeRequired<ExportAssignmentStructure>>) {
             const structure = getInfoFromText<ExportAssignment>(text).firstChild.getStructure();
             expect(structure).to.deep.equals(expected);

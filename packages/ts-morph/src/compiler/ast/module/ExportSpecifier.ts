@@ -1,4 +1,4 @@
-import { errors, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
+import { errors, nameof, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange, removeChildren, removeCommaSeparatedChild } from "../../../manipulation";
 import { ExportSpecifierSpecificStructure, ExportSpecifierStructure, StructureKind } from "../../../structures";
 import { Symbol } from "../../symbols";
@@ -179,7 +179,7 @@ export class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecifier> {
 
         if (structure.alias != null)
             this.setAlias(structure.alias);
-        else if (structure.hasOwnProperty(nameof(structure.alias)))
+        else if (structure.hasOwnProperty(nameof(structure, "alias")))
             this.removeAlias();
 
         return this;

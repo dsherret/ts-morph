@@ -1,4 +1,4 @@
-import { errors, ObjectUtils, StringUtils } from "@ts-morph/common";
+import { errors, nameof, ObjectUtils, StringUtils } from "@ts-morph/common";
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { ModuleDeclarationKind } from "../../compiler";
 import { StructurePrinterFactory } from "../../factories";
@@ -29,7 +29,7 @@ export class ModuleDeclarationStructurePrinter extends NodePrinter<OptionalKind<
             writer.write("global");
 
         if (structure.hasDeclareKeyword && StringUtils.isQuoted(structure.name.trim())
-            && structure.hasOwnProperty(nameof(structure.statements)) && structure.statements == null)
+            && structure.hasOwnProperty(nameof(structure, "statements")) && structure.statements == null)
         {
             writer.write(";");
         }
@@ -47,7 +47,7 @@ export class ModuleDeclarationStructurePrinter extends NodePrinter<OptionalKind<
         if (StringUtils.isQuoted(structure.name.trim())) {
             if (structure.declarationKind === ModuleDeclarationKind.Namespace) {
                 throw new errors.InvalidOperationError(`Cannot print a namespace with quotes for namespace with name ${structure.name}. `
-                    + `Use ${nameof.full(ModuleDeclarationKind.Module)} instead.`);
+                    + `Use ModuleDeclarationKind.Module instead.`);
             }
 
             structure = ObjectUtils.clone(structure);

@@ -1,4 +1,4 @@
-import { CompilerOptions, errors, LanguageVariant, ModuleResolutionKind, NewLineKind, ScriptTarget, SyntaxKind } from "@ts-morph/common";
+import { CompilerOptions, errors, LanguageVariant, ModuleResolutionKind, nameof, NewLineKind, ScriptTarget, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { EmitResult, FileSystemRefreshResult, FormatCodeSettings, SourceFile, TextChange, VariableDeclarationKind } from "../../../../compiler";
 import { IndentationText, ManipulationSettings } from "../../../../options";
@@ -7,8 +7,8 @@ import { SourceFileStructure, StructureKind } from "../../../../structures";
 import { getFileSystemHostWithFiles } from "../../../testHelpers";
 import { fillStructures, getInfoFromText, OptionalKindAndTrivia } from "../../testHelpers";
 
-describe(nameof(SourceFile), () => {
-    describe(nameof<SourceFile>(n => n.copy), () => {
+describe("SourceFile", () => {
+    describe(nameof<SourceFile>("copy"), () => {
         describe("general", () => {
             const fileText = "    interface Identifier {}    ";
             const { sourceFile, project } = getInfoFromText(fileText, { filePath: "Folder/File.ts" });
@@ -30,7 +30,7 @@ describe(nameof(SourceFile), () => {
                 expect(testFile.getFullText()).to.equal(newText);
             });
 
-            describe(nameof(project), () => {
+            describe("project", () => {
                 it("should include the copied source files", () => {
                     expect(project.getSourceFiles().length).to.equal(4);
                 });
@@ -140,7 +140,7 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.copyToDirectory), () => {
+    describe(nameof<SourceFile>("copyToDirectory"), () => {
         it("should copy when passing in an absolute path", () => {
             const { sourceFile } = getInfoFromText("", { filePath: "/File.ts" });
             const newSourceFile = sourceFile.copyToDirectory("newDir");
@@ -166,7 +166,7 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.copyImmediately), () => {
+    describe(nameof<SourceFile>("copyImmediately"), () => {
         it("should copy the source file and update the file system", async () => {
             const { sourceFile, project } = getInfoFromText("", { filePath: "/File.ts" });
             const fileSystem = project.getFileSystem();
@@ -179,7 +179,7 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.copyImmediatelySync), () => {
+    describe(nameof<SourceFile>("copyImmediatelySync"), () => {
         it("should copy the source file and update the file system", () => {
             const { sourceFile, project } = getInfoFromText("", { filePath: "/File.ts" });
             const fileSystem = project.getFileSystem();
@@ -192,7 +192,7 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.move), () => {
+    describe(nameof<SourceFile>("move"), () => {
         function doTest(filePath: string, newFilePath: string, absoluteNewFilePath?: string, overwrite?: boolean) {
             const fileText = "    interface Identifier {}    ";
             const { sourceFile, project } = getInfoFromText(fileText, { filePath });
@@ -390,7 +390,7 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.moveToDirectory), () => {
+    describe(nameof<SourceFile>("moveToDirectory"), () => {
         it("should move when passing in an absolute path", () => {
             const { sourceFile } = getInfoFromText("", { filePath: "/File.ts" });
             sourceFile.moveToDirectory("newDir");
@@ -419,7 +419,7 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.moveImmediately), () => {
+    describe(nameof<SourceFile>("moveImmediately"), () => {
         it("should move the source file and update the file system", async () => {
             const { sourceFile, project } = getInfoFromText("", { filePath: "/File.ts" });
             const fileSystem = project.getFileSystem();
@@ -441,7 +441,7 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.moveImmediatelySync), () => {
+    describe(nameof<SourceFile>("moveImmediatelySync"), () => {
         it("should move the source file and update the file system", () => {
             const { sourceFile, project } = getInfoFromText("", { filePath: "/File.ts" });
             const fileSystem = project.getFileSystem();
@@ -463,7 +463,7 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.save), () => {
+    describe(nameof<SourceFile>("save"), () => {
         it("should save the file", async () => {
             const fileText = "    interface Identifier {}    ";
             const filePath = "/Folder/File.ts";
@@ -491,7 +491,7 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.saveSync), () => {
+    describe(nameof<SourceFile>("saveSync"), () => {
         it("should save the file", () => {
             const fileText = "    interface Identifier {}    ";
             const filePath = "/Folder/File.ts";
@@ -520,7 +520,7 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.delete), () => {
+    describe(nameof<SourceFile>("delete"), () => {
         it("should delete the file once save changes is called", async () => {
             const filePath = "/Folder/File.ts";
             const host = getFileSystemHostWithFiles([]);
@@ -538,7 +538,7 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.deleteImmediately), () => {
+    describe(nameof<SourceFile>("deleteImmediately"), () => {
         const filePath = "/Folder/File.ts";
         const host = getFileSystemHostWithFiles([]);
         const { sourceFile } = getInfoFromText("", { filePath, host });
@@ -555,7 +555,7 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.deleteImmediatelySync), () => {
+    describe(nameof<SourceFile>("deleteImmediatelySync"), () => {
         const filePath = "/Folder/File.ts";
         const host = getFileSystemHostWithFiles([]);
         const { sourceFile } = getInfoFromText("", { filePath, host });
@@ -572,7 +572,7 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.isSaved), () => {
+    describe(nameof<SourceFile>("isSaved"), () => {
         const filePath = "/Folder/File.ts";
 
         it("should not be saved after doing an action that will replace the tree", () => {
@@ -596,7 +596,7 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.isDeclarationFile), () => {
+    describe(nameof<SourceFile>("isDeclarationFile"), () => {
         it("should be a source file when the file name ends with .d.ts", () => {
             const project = new Project({ useInMemoryFileSystem: true });
             const sourceFile = project.createSourceFile("MyFile.d.ts", "");
@@ -610,7 +610,7 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.isFromExternalLibrary), () => {
+    describe(nameof<SourceFile>("isFromExternalLibrary"), () => {
         it("should not be when not", () => {
             const { sourceFile } = getInfoFromText("");
             expect(sourceFile.isFromExternalLibrary()).to.be.false;
@@ -654,7 +654,7 @@ describe(nameof(SourceFile), () => {
         }
     });
 
-    describe(nameof<SourceFile>(n => n.isInNodeModules), () => {
+    describe(nameof<SourceFile>("isInNodeModules"), () => {
         it("should not be when not", () => {
             const { sourceFile } = getInfoFromText("", { filePath: "/main.ts" });
             expect(sourceFile.isInNodeModules()).to.be.false;
@@ -666,7 +666,7 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.getLanguageVariant), () => {
+    describe(nameof<SourceFile>("getLanguageVariant"), () => {
         it("should return standard when in a ts file", () => {
             const { sourceFile } = getInfoFromText("");
             expect(sourceFile.getLanguageVariant()).to.equal(LanguageVariant.Standard);
@@ -678,7 +678,7 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.emit), () => {
+    describe(nameof<SourceFile>("emit"), () => {
         async function doTest(emit: (sourceFile: SourceFile) => Promise<EmitResult>) {
             const fileSystem = getFileSystemHostWithFiles([]);
             const project = new Project({ compilerOptions: { noLib: true, outDir: "dist" }, fileSystem });
@@ -702,7 +702,7 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.getEmitOutput), () => {
+    describe(nameof<SourceFile>("getEmitOutput"), () => {
         it("should get the emit output for the source file", () => {
             const project = new Project({ compilerOptions: { noLib: true, outDir: "dist", target: ScriptTarget.ES5 }, useInMemoryFileSystem: true });
             const sourceFile = project.createSourceFile("file1.ts", "const num1 = 1;");
@@ -730,7 +730,7 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.set), () => {
+    describe(nameof<SourceFile>("set"), () => {
         function doTest(startingCode: string, structure: Partial<SourceFileStructure>, expectedCode: string) {
             const { sourceFile } = getInfoFromText(startingCode);
             sourceFile.set(structure);
@@ -756,7 +756,7 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.formatText), () => {
+    describe(nameof<SourceFile>("formatText"), () => {
         function doTest(
             startingCode: string,
             expectedCode: string,
@@ -874,7 +874,7 @@ function myFunction(param: MyClass) {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.indent), () => {
+    describe(nameof<SourceFile>("indent"), () => {
         function doTest(startingCode: string, rangeOrPos: [number, number] | number, times: number, expectedCode: string) {
             const { sourceFile } = getInfoFromText(startingCode);
             sourceFile.indent(rangeOrPos, times);
@@ -955,7 +955,7 @@ function myFunction(param: MyClass) {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.unindent), () => {
+    describe(nameof<SourceFile>("unindent"), () => {
         // most of the tests are in indent
         function doTest(startingCode: string, rangeOrPos: [number, number] | number, times: number, expectedCode: string) {
             const { sourceFile } = getInfoFromText(startingCode);
@@ -990,7 +990,7 @@ function myFunction(param: MyClass) {
         });
     });
 
-    describe(nameof<SourceFile>(s => s.refreshFromFileSystemSync), () => {
+    describe(nameof<SourceFile>("refreshFromFileSystemSync"), () => {
         it("should update the text", () => {
             const filePath = "/File.ts";
             const newText = "let t: string;";
@@ -1021,7 +1021,7 @@ function myFunction(param: MyClass) {
         });
     });
 
-    describe(nameof<SourceFile>(s => s.refreshFromFileSystem), () => {
+    describe(nameof<SourceFile>("refreshFromFileSystem"), () => {
         it("should update the text", async () => {
             const filePath = "/File.ts";
             const newText = "let t: string;";
@@ -1059,7 +1059,7 @@ function myFunction(param: MyClass) {
         });
     });
 
-    describe(nameof<SourceFile>(s => s.getRelativePathTo), () => {
+    describe(nameof<SourceFile>("getRelativePathTo"), () => {
         function doSourceFileTest(from: string, to: string, expected: string) {
             const project = new Project({ useInMemoryFileSystem: true });
             const fromFile = project.createSourceFile(from);
@@ -1087,7 +1087,7 @@ function myFunction(param: MyClass) {
         });
     });
 
-    describe(nameof<SourceFile>(s => s.getRelativePathAsModuleSpecifierTo), () => {
+    describe(nameof<SourceFile>("getRelativePathAsModuleSpecifierTo"), () => {
         function doSourceFileTest(from: string, to: string, expected: string, compilerOptions?: CompilerOptions) {
             const project = new Project({ useInMemoryFileSystem: true, compilerOptions });
             const fromFile = project.createSourceFile(from);
@@ -1165,7 +1165,7 @@ function myFunction(param: MyClass) {
         });
     });
 
-    describe(nameof<SourceFile>(s => s.getReferencingNodesInOtherSourceFiles), () => {
+    describe(nameof<SourceFile>("getReferencingNodesInOtherSourceFiles"), () => {
         it("should get the imports, exports, import equals, and dynamic imports that reference this source file", () => {
             const fileText = "export interface MyInterface {}\nexport class MyClass {}";
             const { sourceFile, project } = getInfoFromText(fileText, { filePath: "/MyInterface.ts" });
@@ -1211,7 +1211,7 @@ function myFunction(param: MyClass) {
         });
     });
 
-    describe(nameof<SourceFile>(s => s.getReferencingLiteralsInOtherSourceFiles), () => {
+    describe(nameof<SourceFile>("getReferencingLiteralsInOtherSourceFiles"), () => {
         // the tests in getReferencingNodesInOtherSourceFiles cover most of the testing here
 
         it("should get the imports, exports, import equals, and dynamic imports that reference this source file", () => {
@@ -1235,7 +1235,7 @@ function myFunction(param: MyClass) {
         });
     });
 
-    describe(nameof<SourceFile>(s => s.getReferencingSourceFiles), () => {
+    describe(nameof<SourceFile>("getReferencingSourceFiles"), () => {
         it("should get the source files that reference this source file", () => {
             const fileText = "export interface MyInterface {}";
             const { sourceFile, project } = getInfoFromText(fileText, { filePath: "/MyInterface.ts" });
@@ -1249,7 +1249,7 @@ function myFunction(param: MyClass) {
         });
     });
 
-    describe(nameof<SourceFile>(s => s.getReferencedSourceFiles), () => {
+    describe(nameof<SourceFile>("getReferencedSourceFiles"), () => {
         function expectResult(file: SourceFile, expectedSourceFiles: SourceFile[]) {
             expect(file.getReferencedSourceFiles().map(r => r.getFilePath()).sort())
                 .to.deep.equal(expectedSourceFiles.map(s => s.getFilePath()).sort());
@@ -1271,7 +1271,7 @@ function myFunction(param: MyClass) {
         });
     });
 
-    describe(nameof<SourceFile>(s => s.getNodesReferencingOtherSourceFiles), () => {
+    describe(nameof<SourceFile>("getNodesReferencingOtherSourceFiles"), () => {
         function expectResult(file: SourceFile, expectedNodes: string[]) {
             expect(file.getNodesReferencingOtherSourceFiles().map(n => n.getText()).sort())
                 .to.deep.equal(expectedNodes.sort());
@@ -1293,7 +1293,7 @@ function myFunction(param: MyClass) {
         });
     });
 
-    describe(nameof<SourceFile>(s => s.getLiteralsReferencingOtherSourceFiles), () => {
+    describe(nameof<SourceFile>("getLiteralsReferencingOtherSourceFiles"), () => {
         function expectResult(file: SourceFile, expectedNodes: string[]) {
             expect(file.getLiteralsReferencingOtherSourceFiles().map(n => n.getText()).sort())
                 .to.deep.equal(expectedNodes.sort());
@@ -1315,7 +1315,7 @@ function myFunction(param: MyClass) {
         });
     });
 
-    describe(nameof<SourceFile>(s => s.getExtension), () => {
+    describe(nameof<SourceFile>("getExtension"), () => {
         function doTest(filePath: string, extension: string) {
             const { sourceFile } = getInfoFromText("", { filePath });
             expect(sourceFile.getExtension()).to.equal(extension);
@@ -1335,7 +1335,7 @@ function myFunction(param: MyClass) {
         });
     });
 
-    describe(nameof<SourceFile>(s => s.getBaseNameWithoutExtension), () => {
+    describe(nameof<SourceFile>("getBaseNameWithoutExtension"), () => {
         function doTest(filePath: string, baseNameWithoutExtension: string) {
             const { sourceFile } = getInfoFromText("", { filePath });
             expect(sourceFile.getBaseNameWithoutExtension()).to.equal(baseNameWithoutExtension);
@@ -1354,7 +1354,7 @@ function myFunction(param: MyClass) {
         });
     });
 
-    describe(nameof<SourceFile>(s => s.organizeImports), () => {
+    describe(nameof<SourceFile>("organizeImports"), () => {
         function doTest(fileText: string, otherFiles: { path: string; text: string; }[], expectedText: string) {
             const { sourceFile, project } = getInfoFromText(fileText, { filePath: "/main.ts" });
             otherFiles.forEach(f => project.createSourceFile(f.path, f.text));
@@ -1376,7 +1376,7 @@ function myFunction(param: MyClass) {
         });
     });
 
-    describe(nameof<SourceFile>(s => s.fixMissingImports), () => {
+    describe(nameof<SourceFile>("fixMissingImports"), () => {
         function doTest(fileText: string, otherFiles: { path: string; text: string; }[], expectedText: string, formatSettings?: FormatCodeSettings) {
             const { sourceFile, project } = getInfoFromText(fileText, { filePath: "./main.ts" });
             otherFiles.forEach(f => project.createSourceFile(f.path, f.text));
@@ -1451,7 +1451,7 @@ function myFunction(param: MyClass) {
         });
     });
 
-    describe(nameof<SourceFile>(s => s.getImportStringLiterals), () => {
+    describe(nameof<SourceFile>("getImportStringLiterals"), () => {
         function doTest(fileText: string, expectedLiterals: string[], importHelpers = false) {
             const { sourceFile } = getInfoFromText(fileText, { filePath: "/main.ts", compilerOptions: { importHelpers } });
             expect(sourceFile.getImportStringLiterals().map(l => l.getText())).to.deep.equal(expectedLiterals);
@@ -1470,7 +1470,7 @@ function myFunction(param: MyClass) {
         });
     });
 
-    describe(nameof<SourceFile>(s => s.getPathReferenceDirectives), () => {
+    describe(nameof<SourceFile>("getPathReferenceDirectives"), () => {
         it("should get when they exist", () => {
             const { sourceFile } = getInfoFromText("/// <reference path='file.d.ts' />");
             const referencedFiles = sourceFile.getPathReferenceDirectives();
@@ -1486,7 +1486,7 @@ function myFunction(param: MyClass) {
         });
     });
 
-    describe(nameof<SourceFile>(s => s.getTypeReferenceDirectives), () => {
+    describe(nameof<SourceFile>("getTypeReferenceDirectives"), () => {
         it("should get when they exist", () => {
             const { sourceFile } = getInfoFromText("/// <reference types='file.d.ts' />");
             const typeReferenceDirectives = sourceFile.getTypeReferenceDirectives();
@@ -1502,7 +1502,7 @@ function myFunction(param: MyClass) {
         });
     });
 
-    describe(nameof<SourceFile>(s => s.applyTextChanges), () => {
+    describe(nameof<SourceFile>("applyTextChanges"), () => {
         // there are more tests for this functionality elsewhere... this is just testing the applyTextChanges api
 
         it("should apply the file text change when using a wrapped object", () => {
@@ -1522,7 +1522,7 @@ function myFunction(param: MyClass) {
         });
     });
 
-    describe(nameof<SourceFile>(s => s.getLibReferenceDirectives), () => {
+    describe(nameof<SourceFile>("getLibReferenceDirectives"), () => {
         it("should get when they exist", () => {
             const { sourceFile } = getInfoFromText("/// <reference lib='es2017.string' />");
             const directives = sourceFile.getLibReferenceDirectives();
@@ -1538,7 +1538,7 @@ function myFunction(param: MyClass) {
         });
     });
 
-    describe(nameof<SourceFile>(s => s.getStructure), () => {
+    describe(nameof<SourceFile>("getStructure"), () => {
         function doTest(fileText: string, expected: SourceFileStructure) {
             const { sourceFile } = getInfoFromText(fileText);
             expect(sourceFile.getStructure()).to.deep.equal(expected);
@@ -1608,7 +1608,7 @@ const t = 5;`;
         });
     });
 
-    describe(nameof<SourceFile>(n => n.getLineAndColumnAtPos), () => {
+    describe(nameof<SourceFile>("getLineAndColumnAtPos"), () => {
         function doTest(code: string, pos: number, expected: { line: number; column: number; } | "throw") {
             const { sourceFile } = getInfoFromText(code);
             if (expected === "throw")
@@ -1657,7 +1657,7 @@ interface I {
         });
     });
 
-    describe(nameof<SourceFile>(l => l.fixUnusedIdentifiers), () => {
+    describe(nameof<SourceFile>("fixUnusedIdentifiers"), () => {
         it("should remove unused import declarations, import names, and default imports", () => {
             const project = new Project({ useInMemoryFileSystem: true });
             project.createSourceFile("test.d.ts", `

@@ -1,7 +1,8 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { AdvancedIterator } from "../../utils";
 
-describe(nameof(AdvancedIterator), () => {
+describe("AdvancedIterator", () => {
     function* getNumIterator() {
         for (let i = 0; i < 10; i++)
             yield i;
@@ -14,7 +15,7 @@ describe(nameof(AdvancedIterator), () => {
         return iterator;
     }
 
-    describe(nameof<AdvancedIterator<any>>(i => i.done), () => {
+    describe(nameof<AdvancedIterator<any>>("done"), () => {
         it("should not be done when not done", () => {
             const iterator = new AdvancedIterator(getNumIterator());
             expect(iterator.done).to.be.false;
@@ -25,7 +26,7 @@ describe(nameof(AdvancedIterator), () => {
         });
     });
 
-    describe(nameof<AdvancedIterator<any>>(i => i.next), () => {
+    describe(nameof<AdvancedIterator<any>>("next"), () => {
         it("should get the next until it runs out", () => {
             const iterator = new AdvancedIterator(getNumIterator());
             const nums: number[] = [];
@@ -40,7 +41,7 @@ describe(nameof(AdvancedIterator), () => {
         });
     });
 
-    describe(nameof<AdvancedIterator<any>>(i => i.current), () => {
+    describe(nameof<AdvancedIterator<any>>("current"), () => {
         it("should throw if called before anything else", () => {
             const iterator = new AdvancedIterator(getNumIterator());
             expect(() => iterator.current).to.throw();
@@ -66,7 +67,7 @@ describe(nameof(AdvancedIterator), () => {
         });
     });
 
-    describe(nameof<AdvancedIterator<any>>(i => i.previous), () => {
+    describe(nameof<AdvancedIterator<any>>("previous"), () => {
         it("should throw if called before anything else", () => {
             const iterator = new AdvancedIterator(getNumIterator());
             expect(() => iterator.previous).to.throw();
@@ -94,7 +95,7 @@ describe(nameof(AdvancedIterator), () => {
         });
     });
 
-    describe(nameof<AdvancedIterator<any>>(i => i.peek), () => {
+    describe(nameof<AdvancedIterator<any>>("peek"), () => {
         it("should peek the value if called before anything else", () => {
             const iterator = new AdvancedIterator(getNumIterator());
             expect(iterator.peek).to.equal(0);
@@ -113,7 +114,7 @@ describe(nameof(AdvancedIterator), () => {
         });
     });
 
-    describe(nameof<AdvancedIterator<any>>(i => i.rest), () => {
+    describe(nameof<AdvancedIterator<any>>("rest"), () => {
         it("should iterate through the rest of the values", () => {
             const iterator = new AdvancedIterator(getNumIterator());
             iterator.next();

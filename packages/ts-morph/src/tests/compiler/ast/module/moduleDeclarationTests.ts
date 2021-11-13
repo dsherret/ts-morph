@@ -1,12 +1,12 @@
-import { errors, SyntaxKind } from "@ts-morph/common";
+import { errors, nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ModuleDeclaration, ModuleDeclarationKind, VariableDeclarationKind } from "../../../../compiler";
 import { Project } from "../../../../main";
 import { ModuleDeclarationSpecificStructure, ModuleDeclarationStructure, OptionalKind, StructureKind } from "../../../../structures";
 import { fillStructures, getInfoFromText, OptionalTrivia } from "../../testHelpers";
 
-describe(nameof(ModuleDeclaration), () => {
-    describe(nameof<ModuleDeclaration>(d => d.getName), () => {
+describe("ModuleDeclaration", () => {
+    describe(nameof<ModuleDeclaration>("getName"), () => {
         function doTest(text: string, expectedName: string) {
             const { firstChild } = getInfoFromText<ModuleDeclaration>(text);
             expect(firstChild.getName()).to.equal(expectedName);
@@ -29,7 +29,7 @@ describe(nameof(ModuleDeclaration), () => {
         });
     });
 
-    describe(nameof<ModuleDeclaration>(d => d.getNameNodes), () => {
+    describe(nameof<ModuleDeclaration>("getNameNodes"), () => {
         function doTest(text: string, expectedNames: string[] | string) {
             const { firstChild } = getInfoFromText<ModuleDeclaration>(text);
             const names = firstChild.getNameNodes();
@@ -52,7 +52,7 @@ describe(nameof(ModuleDeclaration), () => {
         });
     });
 
-    describe(nameof<ModuleDeclaration>(d => d.rename), () => {
+    describe(nameof<ModuleDeclaration>("rename"), () => {
         function doTest(text: string, newName: string, expectedText: string) {
             const { sourceFile, firstChild } = getInfoFromText<ModuleDeclaration>(text);
             firstChild.rename(newName);
@@ -98,7 +98,7 @@ describe(nameof(ModuleDeclaration), () => {
         });
     });
 
-    describe(nameof<ModuleDeclaration>(d => d.setName), () => {
+    describe(nameof<ModuleDeclaration>("setName"), () => {
         function doTest(text: string, newName: string, expectedText: string) {
             const { sourceFile, firstChild } = getInfoFromText<ModuleDeclaration>(text);
             firstChild.setName(newName);
@@ -140,7 +140,7 @@ describe(nameof(ModuleDeclaration), () => {
         });
     });
 
-    describe(nameof<ModuleDeclaration>(d => d.hasNamespaceKeyword), () => {
+    describe(nameof<ModuleDeclaration>("hasNamespaceKeyword"), () => {
         function doTest(text: string, expected: boolean) {
             const { firstChild } = getInfoFromText<ModuleDeclaration>(text);
             expect(firstChild.hasNamespaceKeyword()).to.equal(expected);
@@ -159,7 +159,7 @@ describe(nameof(ModuleDeclaration), () => {
         });
     });
 
-    describe(nameof<ModuleDeclaration>(d => d.hasModuleKeyword), () => {
+    describe(nameof<ModuleDeclaration>("hasModuleKeyword"), () => {
         function doTest(text: string, expected: boolean) {
             const { firstChild } = getInfoFromText<ModuleDeclaration>(text);
             expect(firstChild.hasModuleKeyword()).to.equal(expected);
@@ -178,7 +178,7 @@ describe(nameof(ModuleDeclaration), () => {
         });
     });
 
-    describe(nameof<ModuleDeclaration>(d => d.getDeclarationKind), () => {
+    describe(nameof<ModuleDeclaration>("getDeclarationKind"), () => {
         function doTest(text: string, expected: ModuleDeclarationKind) {
             const { firstChild } = getInfoFromText<ModuleDeclaration>(text);
             expect(firstChild.getDeclarationKind()).to.equal(expected);
@@ -197,7 +197,7 @@ describe(nameof(ModuleDeclaration), () => {
         });
     });
 
-    describe(nameof<ModuleDeclaration>(d => d.getDeclarationKindKeyword), () => {
+    describe(nameof<ModuleDeclaration>("getDeclarationKindKeyword"), () => {
         function doTest(text: string, expected: string | undefined) {
             const { firstChild } = getInfoFromText<ModuleDeclaration>(text);
             const keyword = firstChild.getDeclarationKindKeyword();
@@ -217,7 +217,7 @@ describe(nameof(ModuleDeclaration), () => {
         });
     });
 
-    describe(nameof<ModuleDeclaration>(d => d.setDeclarationKind), () => {
+    describe(nameof<ModuleDeclaration>("setDeclarationKind"), () => {
         function doTest(text: string, kind: ModuleDeclarationKind, expectedText: string) {
             const { firstChild, sourceFile } = getInfoFromText<ModuleDeclaration>(text);
             firstChild.setDeclarationKind(kind);
@@ -249,7 +249,7 @@ describe(nameof(ModuleDeclaration), () => {
         });
     });
 
-    describe(nameof<ModuleDeclaration>(n => n.set), () => {
+    describe(nameof<ModuleDeclaration>("set"), () => {
         function doTest(startingCode: string, structure: Partial<ModuleDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ModuleDeclaration>(startingCode);
             firstChild.set(structure);
@@ -280,7 +280,7 @@ describe(nameof(ModuleDeclaration), () => {
         });
     });
 
-    describe(nameof<ModuleDeclaration>(n => n.getStructure), () => {
+    describe(nameof<ModuleDeclaration>("getStructure"), () => {
         function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<ModuleDeclarationStructure>>) {
             const { firstChild } = getInfoFromText<ModuleDeclaration>(text);
             const structure = firstChild.getStructure();
@@ -351,7 +351,7 @@ export declare module Identifier {
         });
     });
 
-    describe(nameof<ModuleDeclaration>(d => d.remove), () => {
+    describe(nameof<ModuleDeclaration>("remove"), () => {
         function doTest(text: string, index: number, expectedText: string) {
             const { sourceFile } = getInfoFromText(text);
             sourceFile.getModules()[index].remove();

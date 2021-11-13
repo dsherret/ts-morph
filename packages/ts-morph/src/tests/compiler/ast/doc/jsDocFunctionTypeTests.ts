@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { JSDocFunctionType } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
-describe(nameof(JSDocFunctionType), () => {
+describe("JSDocFunctionType", () => {
     function getInfo(text: string) {
         return getInfoFromTextWithDescendant<JSDocFunctionType>(text, SyntaxKind.JSDocFunctionType);
     }

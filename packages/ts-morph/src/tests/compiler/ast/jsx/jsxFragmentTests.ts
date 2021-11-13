@@ -1,4 +1,4 @@
-import { SyntaxKind } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { JsxFragment } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -7,8 +7,8 @@ function getInfo(text: string) {
     return getInfoFromTextWithDescendant<JsxFragment>(text, SyntaxKind.JsxFragment, { isJsx: true });
 }
 
-describe(nameof(JsxFragment), () => {
-    describe(nameof<JsxFragment>(n => n.getOpeningFragment), () => {
+describe("JsxFragment", () => {
+    describe(nameof<JsxFragment>("getOpeningFragment"), () => {
         function doTest(text: string, expected: string) {
             const { descendant } = getInfo(text);
             expect(descendant.getOpeningFragment().getText()).to.equal(expected);
@@ -19,7 +19,7 @@ describe(nameof(JsxFragment), () => {
         });
     });
 
-    describe(nameof<JsxFragment>(n => n.getClosingFragment), () => {
+    describe(nameof<JsxFragment>("getClosingFragment"), () => {
         function doTest(text: string, expected: string) {
             const { descendant } = getInfo(text);
             expect(descendant.getClosingFragment().getText()).to.equal(expected);
@@ -30,7 +30,7 @@ describe(nameof(JsxFragment), () => {
         });
     });
 
-    describe(nameof<JsxFragment>(n => n.getJsxChildren), () => {
+    describe(nameof<JsxFragment>("getJsxChildren"), () => {
         function doTest(text: string, expected: string[]) {
             const { descendant } = getInfo(text);
             expect(descendant.getJsxChildren().map(c => c.getText())).to.deep.equal(expected);

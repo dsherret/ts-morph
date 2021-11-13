@@ -1,4 +1,4 @@
-import { ArrayUtils, KeyValueCache, StringUtils, ts } from "@ts-morph/common";
+import { ArrayUtils, KeyValueCache, nameof, StringUtils, ts } from "@ts-morph/common";
 import { ClassDeclarationSpecificStructure, ClassDeclarationStructure, ClassLikeDeclarationBaseSpecificStructure, ConstructorDeclarationStructure,
     InterfaceDeclarationStructure, JSDocStructure, MethodDeclarationStructure, MethodSignatureStructure, ParameterDeclarationStructure,
     PropertySignatureStructure, StructureKind } from "../../../structures";
@@ -31,7 +31,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
 
         if (structure.extends != null)
             this.setExtends(structure.extends);
-        else if (structure.hasOwnProperty(nameof(structure.extends)))
+        else if (structure.hasOwnProperty(nameof(structure, "extends")))
             this.removeExtends();
 
         if (structure.ctors != null) {

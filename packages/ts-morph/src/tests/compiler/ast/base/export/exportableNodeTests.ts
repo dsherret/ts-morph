@@ -1,11 +1,11 @@
-import { errors } from "@ts-morph/common";
+import { errors, nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, ExportableNode, FunctionDeclaration, ModuleDeclaration } from "../../../../../compiler";
 import { ExportableNodeStructure } from "../../../../../structures";
 import { getInfoFromText } from "../../../testHelpers";
 
-describe(nameof(ExportableNode), () => {
-    describe(nameof<ExportableNode>(n => n.setIsDefaultExport), () => {
+describe("ExportableNode", () => {
+    describe(nameof<ExportableNode>("setIsDefaultExport"), () => {
         function doTest(text: string, value: boolean, expectedText: string) {
             const { sourceFile, firstChild } = getInfoFromText<ClassDeclaration>(text);
             firstChild.setIsDefaultExport(value);
@@ -67,7 +67,7 @@ describe(nameof(ExportableNode), () => {
         });
     });
 
-    describe(nameof<ExportableNode>(n => n.setIsExported), () => {
+    describe(nameof<ExportableNode>("setIsExported"), () => {
         function doTest(text: string, value: boolean, expected: string) {
             const { sourceFile, firstChild } = getInfoFromText<ClassDeclaration>(text);
             firstChild.setIsExported(value);
@@ -146,7 +146,7 @@ describe(nameof(ExportableNode), () => {
         });
     });
 
-    describe(nameof<FunctionDeclaration>(f => f.set), () => {
+    describe(nameof<FunctionDeclaration>("set"), () => {
         function doTest(startingCode: string, structure: ExportableNodeStructure, expectedCode: string) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startingCode);
             firstChild.set(structure);
@@ -174,7 +174,7 @@ describe(nameof(ExportableNode), () => {
         });
     });
 
-    describe(nameof<FunctionDeclaration>(f => f.getStructure), () => {
+    describe(nameof<FunctionDeclaration>("getStructure"), () => {
         function doTest(startingCode: string, expectedStructure: { isDefaultExport: boolean; isExported: boolean; }) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startingCode);
             const structure = firstChild.getStructure();

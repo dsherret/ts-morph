@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { appendCommaToText } from "../../../manipulation/helpers";
 
-describe(nameof(appendCommaToText), () => {
+describe("appendCommaToText", () => {
     function runTest(inputText: string, expectedText: string) {
         const result = appendCommaToText(inputText);
         expect(result).to.equal(expectedText);

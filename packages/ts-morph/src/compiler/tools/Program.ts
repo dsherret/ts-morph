@@ -1,4 +1,4 @@
-import { errors, getEmitModuleResolutionKind, ModuleResolutionKind, ts } from "@ts-morph/common";
+import { errors, getEmitModuleResolutionKind, ModuleResolutionKind, nameof, ts } from "@ts-morph/common";
 import { ProjectContext } from "../../ProjectContext";
 import { SourceFile } from "../ast/module";
 import { Diagnostic, DiagnosticWithLocation, EmitResult, MemoryEmitResult, MemoryEmitResultFile } from "./results";
@@ -124,8 +124,8 @@ export class Program {
      */
     async emit(options: ProgramEmitOptions = {}) {
         if (options.writeFile) {
-            const message = `Cannot specify a ${nameof(options.writeFile)} option when emitting asynchrously. `
-                + `Use ${nameof(this.emitSync)}() instead.`;
+            const message = `Cannot specify a ${nameof(options, "writeFile")} option when emitting asynchrously. `
+                + `Use ${nameof(this, "emitSync")}() instead.`;
             throw new errors.InvalidOperationError(message);
         }
 

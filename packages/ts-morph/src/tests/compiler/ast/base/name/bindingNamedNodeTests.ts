@@ -1,3 +1,4 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { AssertTrue, IsExact } from "conditional-type-checks";
 import { BindingName, BindingNamedNode, Node, VariableStatement } from "../../../../../compiler";
@@ -9,8 +10,8 @@ function getInfoFromTextWithFirstVariableDeclaration(text: string) {
     return { ...obj, firstDeclaration };
 }
 
-describe(nameof(BindingNamedNode), () => {
-    describe(nameof<BindingNamedNode>(n => n.getName), () => {
+describe("BindingNamedNode", () => {
+    describe(nameof<BindingNamedNode>("getName"), () => {
         function doTest(text: string, expectedName: string) {
             const { sourceFile } = getInfoFromText(text);
             const node = sourceFile.getDescendants().find(Node.isBindingNamedNode)!;
@@ -30,7 +31,7 @@ describe(nameof(BindingNamedNode), () => {
         });
     });
 
-    describe(nameof<BindingNamedNode>(n => n.getNameNode), () => {
+    describe(nameof<BindingNamedNode>("getNameNode"), () => {
         it("should get the name", () => {
             const { firstDeclaration } = getInfoFromTextWithFirstVariableDeclaration("const { a: b } = { a: 1 }");
             const nameNode = firstDeclaration.getNameNode();
@@ -39,7 +40,7 @@ describe(nameof(BindingNamedNode), () => {
         });
     });
 
-    describe(nameof<BindingNamedNode>(n => n.rename), () => {
+    describe(nameof<BindingNamedNode>("rename"), () => {
         function throwTest(text: string, renameText: string) {
             const { firstDeclaration } = getInfoFromTextWithFirstVariableDeclaration(text);
             expect(() => firstDeclaration.rename(renameText)).to.throw();

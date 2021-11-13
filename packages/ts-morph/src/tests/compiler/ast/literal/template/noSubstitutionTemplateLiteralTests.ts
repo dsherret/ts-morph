@@ -1,4 +1,4 @@
-import { SyntaxKind } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { NoSubstitutionTemplateLiteral } from "../../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../../testHelpers";
@@ -7,8 +7,8 @@ function getLiteral(text: string) {
     return getInfoFromTextWithDescendant<NoSubstitutionTemplateLiteral>(text, SyntaxKind.NoSubstitutionTemplateLiteral).descendant;
 }
 
-describe(nameof(NoSubstitutionTemplateLiteral), () => {
-    describe(nameof<NoSubstitutionTemplateLiteral>(n => n.getLiteralValue), () => {
+describe("NoSubstitutionTemplateLiteral", () => {
+    describe(nameof<NoSubstitutionTemplateLiteral>("getLiteralValue"), () => {
         function doTest(text: string, expectedValue: string) {
             const literal = getLiteral(text);
             expect(literal.getLiteralValue()).to.equal(expectedValue);
@@ -19,7 +19,7 @@ describe(nameof(NoSubstitutionTemplateLiteral), () => {
         });
     });
 
-    describe(nameof<NoSubstitutionTemplateLiteral>(n => n.setLiteralValue), () => {
+    describe(nameof<NoSubstitutionTemplateLiteral>("setLiteralValue"), () => {
         function doTest(text: string, newValue: string, expectedText: string) {
             const literal = getLiteral(text);
             const sourceFile = literal._sourceFile;

@@ -1,4 +1,4 @@
-import { errors, NewLineKind, SymbolFlags, SyntaxKind, ts } from "@ts-morph/common";
+import { errors, nameof, NewLineKind, SymbolFlags, SyntaxKind, ts } from "@ts-morph/common";
 import { expect } from "chai";
 import { assert, IsExact, IsNullable } from "conditional-type-checks";
 import { CodeBlockWriter } from "../../../../codeBlockWriter";
@@ -11,7 +11,7 @@ import { WriterFunction } from "../../../../types";
 import { createWrappedNode } from "../../../../utils/compiler/createWrappedNode";
 import { getInfoFromText } from "../../testHelpers";
 
-describe(nameof(Node), () => {
+describe("Node", () => {
     describe("constructor", () => {
         it("should throw if constructing a node outside the library", () => {
             const ctor = Node as any;
@@ -24,7 +24,7 @@ describe(nameof(Node), () => {
         });
     });
 
-    describe(nameof<Node>(n => n.compilerNode), () => {
+    describe(nameof<Node>("compilerNode"), () => {
         it("should get the underlying compiler node", () => {
             const { sourceFile } = getInfoFromText("enum MyEnum {}\n");
             // just compare that the texts are the same
@@ -55,21 +55,21 @@ describe(nameof(Node), () => {
         });
     });
 
-    describe(nameof<Node>(n => n.getKind), () => {
+    describe(nameof<Node>("getKind"), () => {
         it("should return the syntax kind", () => {
             const { firstChild } = getInfoFromText("enum MyEnum {}");
             expect(firstChild.getKind()).to.equal(SyntaxKind.EnumDeclaration);
         });
     });
 
-    describe(nameof<Node>(n => n.getKindName), () => {
+    describe(nameof<Node>("getKindName"), () => {
         it("should return the syntax kind name", () => {
             const { firstChild } = getInfoFromText("enum MyEnum {}");
             expect(firstChild.getKindName()).to.equal("EnumDeclaration");
         });
     });
 
-    describe(nameof<Node>(n => n.containsRange), () => {
+    describe(nameof<Node>("containsRange"), () => {
         const { firstChild } = getInfoFromText("enum MyEnum {}");
         it("should contain the range when equal to the pos and end", () => {
             expect(firstChild.containsRange(firstChild.getPos(), firstChild.getEnd())).to.be.true;
@@ -88,7 +88,7 @@ describe(nameof(Node), () => {
         });
     });
 
-    describe(nameof<Node>(n => n.isInStringAtPos), () => {
+    describe(nameof<Node>("isInStringAtPos"), () => {
         function doTest(text: string, isInStringAtPos: boolean[]) {
             expect(text.length + 1).to.equal(isInStringAtPos.length);
             const { sourceFile } = getInfoFromText(text);
@@ -145,7 +145,7 @@ describe(nameof(Node), () => {
         });
     });
 
-    describe(nameof<Node>(n => n.getText), () => {
+    describe(nameof<Node>("getText"), () => {
         it("should get without jsdoc text when not specifying to", () => {
             const { firstChild } = getInfoFromText("/**\n * Testing\n */\nclass MyClass {}");
             const expectedText = "class MyClass {}";
@@ -188,7 +188,7 @@ describe(nameof(Node), () => {
         });
     });
 
-    describe(nameof<Node>(n => n._hasWrappedChildren), () => {
+    describe(nameof<Node>("_hasWrappedChildren"), () => {
         it("should have wrapped children after calling getChildren()", () => {
             const project = new Project({ useInMemoryFileSystem: true });
             const sourceFile = project.createSourceFile("/test.ts", "class C { prop: string; }");
@@ -231,7 +231,7 @@ describe(nameof(Node), () => {
         });
     });
 
-    describe(nameof<Node>(n => n.getParentSyntaxList), () => {
+    describe(nameof<Node>("getParentSyntaxList"), () => {
         it("should return undefined for an end of file token", () => {
             const { sourceFile } = getInfoFromText("class C {}");
             const endOfFileToken = sourceFile.getFirstChildByKindOrThrow(SyntaxKind.EndOfFileToken);
@@ -239,7 +239,7 @@ describe(nameof(Node), () => {
         });
     });
 
-    describe(nameof<Node>(n => n._getParentSyntaxListIfWrapped), () => {
+    describe(nameof<Node>("_getParentSyntaxListIfWrapped"), () => {
         it("should return undefined when not wrapped", () => {
             const { firstChild } = getInfoFromText("class C {}");
             expect(firstChild._getParentSyntaxListIfWrapped()).to.be.undefined;
@@ -252,7 +252,7 @@ describe(nameof(Node), () => {
         });
     });
 
-    describe(nameof<Node>(n => n.getFirstChildIfKind), () => {
+    describe(nameof<Node>("getFirstChildIfKind"), () => {
         const { firstChild } = getInfoFromText("enum MyEnum {}");
 
         it("should return the first node if its the specified syntax kind", () => {
@@ -264,7 +264,7 @@ describe(nameof(Node), () => {
         });
     });
 
-    describe(nameof<Node>(n => n.getFirstChildIfKindOrThrow), () => {
+    describe(nameof<Node>("getFirstChildIfKindOrThrow"), () => {
         const { firstChild } = getInfoFromText("enum MyEnum {}");
 
         it("should return the first node if its the specified syntax kind", () => {
@@ -276,7 +276,7 @@ describe(nameof(Node), () => {
         });
     });
 
-    describe(nameof<Node>(n => n.getFirstChildByKind), () => {
+    describe(nameof<Node>("getFirstChildByKind"), () => {
         const { sourceFile, firstChild } = getInfoFromText("enum MyEnum {}");
 
         it("should return the first node of the specified syntax kind for a token", () => {
@@ -292,7 +292,7 @@ describe(nameof(Node), () => {
         });
     });
 
-    describe(nameof<Node>(n => n.getChildAtPos), () => {
+    describe(nameof<Node>("getChildAtPos"), () => {
         const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>("function myFunction() { const v = 5; }");
         const syntaxList = sourceFile.getChildSyntaxList()!;
         const variableStatement = firstChild.getVariableStatements()[0];
@@ -314,7 +314,7 @@ describe(nameof(Node), () => {
         });
     });
 
-    describe(nameof<Node>(n => n.getChildAtIndex), () => {
+    describe(nameof<Node>("getChildAtIndex"), () => {
         const { sourceFile } = getInfoFromText("class Class { } interface Interface {}");
         const syntaxList = sourceFile.getChildSyntaxListOrThrow();
 
@@ -335,7 +335,7 @@ describe(nameof(Node), () => {
         });
     });
 
-    describe(nameof<Node>(n => n.getChildAtIndexIfKind), () => {
+    describe(nameof<Node>("getChildAtIndexIfKind"), () => {
         const { sourceFile } = getInfoFromText("class Class { }");
         const syntaxList = sourceFile.getChildSyntaxListOrThrow();
 
@@ -348,7 +348,7 @@ describe(nameof(Node), () => {
         });
     });
 
-    describe(nameof<Node>(n => n.getChildAtIndexIfKindOrThrow), () => {
+    describe(nameof<Node>("getChildAtIndexIfKindOrThrow"), () => {
         const { sourceFile } = getInfoFromText("class Class { }");
         const syntaxList = sourceFile.getChildSyntaxListOrThrow();
 
@@ -361,7 +361,7 @@ describe(nameof(Node), () => {
         });
     });
 
-    describe(nameof<Node>(n => n.getDescendantAtPos), () => {
+    describe(nameof<Node>("getDescendantAtPos"), () => {
         const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>("function myFunction() { const v = 5; }");
         const variableStatement = firstChild.getVariableStatements()[0];
 
@@ -386,7 +386,7 @@ describe(nameof(Node), () => {
         });
     });
 
-    describe(nameof<Node>(n => n.getDescendantStatements), () => {
+    describe(nameof<Node>("getDescendantStatements"), () => {
         function doTest(text: string, expectedStatements: string[]) {
             const { sourceFile } = getInfoFromText(text);
             expect(sourceFile.getDescendantStatements().map(s => s.getText())).to.deep.equal(expectedStatements);
@@ -422,7 +422,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getStartLinePos), () => {
+    describe(nameof<Node>("getStartLinePos"), () => {
         function doTest(text: string, expectedPos: number, includeJsDocComment?: boolean) {
             const { firstChild } = getInfoFromText(text);
             expect(firstChild.getStartLinePos(includeJsDocComment)).to.equal(expectedPos);
@@ -455,7 +455,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getStartLineNumber), () => {
+    describe(nameof<Node>("getStartLineNumber"), () => {
         it("should get the start line number of the node", () => {
             const { firstChild } = getInfoFromText<ClassDeclaration>("\n\nclass MyClass {\n\n    prop: string;\n}");
             expect(firstChild.getInstanceProperties()[0].getStartLineNumber()).to.equal(5);
@@ -472,14 +472,14 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getEndLineNumber), () => {
+    describe(nameof<Node>("getEndLineNumber"), () => {
         it("should get the end line number of the node", () => {
             const { firstChild } = getInfoFromText<ClassDeclaration>("\n\nclass MyClass {\n\n    prop: string;\n}");
             expect(firstChild.getEndLineNumber()).to.equal(6);
         });
     });
 
-    describe(nameof<Node>(n => n.getStart), () => {
+    describe(nameof<Node>("getStart"), () => {
         function doTest(text: string, expectedPos: number, includeJsDocComment?: boolean) {
             const { firstChild } = getInfoFromText(text);
             expect(firstChild.getStart(includeJsDocComment)).to.equal(expectedPos);
@@ -494,7 +494,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getWidth), () => {
+    describe(nameof<Node>("getWidth"), () => {
         function doTest(text: string, expectedWidth: number, includeJsDocComment?: boolean) {
             const { firstChild } = getInfoFromText(text);
             expect(firstChild.getWidth(includeJsDocComment)).to.equal(expectedWidth);
@@ -510,14 +510,14 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getCombinedModifierFlags), () => {
+    describe(nameof<Node>("getCombinedModifierFlags"), () => {
         const { firstChild } = getInfoFromText<ClassDeclaration>("export class Identifier {}");
         it("should get the combined modifier flags", () => {
             expect(firstChild.getCombinedModifierFlags()).to.equal(ts.ModifierFlags.Export);
         });
     });
 
-    describe(nameof<NodeParentType<any>>(), () => {
+    describe("NodeParentType", () => {
         it("should have the correct type when it will have a parent", () => {
             assert<IsExact<NodeParentType<ts.VariableDeclarationList>, VariableStatement | ForStatement | ForOfStatement | ForInStatement>>(true);
         });
@@ -531,7 +531,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getParentIf), () => {
+    describe(nameof<Node>("getParentIf"), () => {
         const { firstChild } = getInfoFromText<ClassDeclaration>("export class Identifier { prop: string; }");
         const child = firstChild.getInstanceProperty("prop")!;
 
@@ -544,7 +544,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getParentIfOrThrow), () => {
+    describe(nameof<Node>("getParentIfOrThrow"), () => {
         const { firstChild } = getInfoFromText<ClassDeclaration>("export class Identifier { prop: string; }");
         const child = firstChild.getInstanceProperty("prop")!;
 
@@ -557,7 +557,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getParentIfKind), () => {
+    describe(nameof<Node>("getParentIfKind"), () => {
         const { firstChild } = getInfoFromText<ClassDeclaration>("export class Identifier { prop: string; }");
         const child = firstChild.getInstanceProperty("prop")!;
 
@@ -570,7 +570,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getParentIfKindOrThrow), () => {
+    describe(nameof<Node>("getParentIfKindOrThrow"), () => {
         const { firstChild } = getInfoFromText<ClassDeclaration>("export class Identifier { prop: string; }");
         const child = firstChild.getInstanceProperty("prop")!;
 
@@ -583,7 +583,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getParentWhile), () => {
+    describe(nameof<Node>("getParentWhile"), () => {
         it("should keep getting the parent until a condition is no longer matched", () => {
             const { sourceFile } = getInfoFromText("const t = Test.Test2.Test3.Test4;");
             const deepestNode = sourceFile.getFirstDescendantOrThrow(n => n.getText() === "Test");
@@ -614,7 +614,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getParentWhileOrThrow), () => {
+    describe(nameof<Node>("getParentWhileOrThrow"), () => {
         it("should keep getting the parent until a condition is no longer matched", () => {
             const { sourceFile } = getInfoFromText("const t = Test.Test2.Test3.Test4;");
             const deepestNode = sourceFile.getFirstDescendantOrThrow(n => n.getText() === "Test");
@@ -638,7 +638,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getParentWhileKind), () => {
+    describe(nameof<Node>("getParentWhileKind"), () => {
         it("should keep getting the parent until a condition is no longer matched", () => {
             const { sourceFile } = getInfoFromText("const t = Test.Test2.Test3.Test4;");
             const deepestNode = sourceFile.getFirstDescendantOrThrow(n => n.getText() === "Test");
@@ -653,7 +653,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getParentWhileKindOrThrow), () => {
+    describe(nameof<Node>("getParentWhileKindOrThrow"), () => {
         it("should keep getting the parent until a condition is no longer matched", () => {
             const { sourceFile } = getInfoFromText("const t = Test.Test2.Test3.Test4;");
             const deepestNode = sourceFile.getFirstDescendantOrThrow(n => n.getText() === "Test");
@@ -668,7 +668,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getFirstChild), () => {
+    describe(nameof<Node>("getFirstChild"), () => {
         const { sourceFile, firstChild } = getInfoFromText<ClassDeclaration>("class Identifier { prop: string; }\ninterface MyInterface {}");
         const syntaxList = sourceFile.getChildSyntaxListOrThrow();
 
@@ -687,7 +687,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getFirstChildOrThrow), () => {
+    describe(nameof<Node>("getFirstChildOrThrow"), () => {
         const { sourceFile } = getInfoFromText<ClassDeclaration>("class Identifier { prop: string; }\ninterface MyInterface {}");
         const syntaxList = sourceFile.getChildSyntaxListOrThrow();
 
@@ -706,7 +706,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getLastChild), () => {
+    describe(nameof<Node>("getLastChild"), () => {
         const { sourceFile } = getInfoFromText<ClassDeclaration>("interface Identifier { prop: string; }\ninterface MyInterface {}");
         const syntaxList = sourceFile.getChildSyntaxListOrThrow();
 
@@ -726,7 +726,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getLastChildOrThrow), () => {
+    describe(nameof<Node>("getLastChildOrThrow"), () => {
         const { sourceFile } = getInfoFromText<ClassDeclaration>("interface Identifier { prop: string; }\ninterface MyInterface {}");
         const syntaxList = sourceFile.getChildSyntaxListOrThrow();
 
@@ -746,7 +746,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getFirstAncestor), () => {
+    describe(nameof<Node>("getFirstAncestor"), () => {
         const { sourceFile } = getInfoFromText<ClassDeclaration>("interface Identifier { prop: string; }\n");
         const interfaceDec = sourceFile.getInterfaceOrThrow("Identifier");
         const propDec = interfaceDec.getPropertyOrThrow("prop");
@@ -768,7 +768,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getFirstAncestorOrThrow), () => {
+    describe(nameof<Node>("getFirstAncestorOrThrow"), () => {
         const { sourceFile } = getInfoFromText<ClassDeclaration>("interface Identifier { prop: string; }\n");
         const interfaceDec = sourceFile.getInterfaceOrThrow("Identifier");
         const propDec = interfaceDec.getPropertyOrThrow("prop");
@@ -789,7 +789,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getFirstDescendant), () => {
+    describe(nameof<Node>("getFirstDescendant"), () => {
         const { sourceFile } = getInfoFromText<ClassDeclaration>("interface Identifier { prop: string; }\ninterface MyInterface { nextProp: string; }");
 
         it("should get the first descendant by a condition", () => {
@@ -810,7 +810,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getFirstDescendantOrThrow), () => {
+    describe(nameof<Node>("getFirstDescendantOrThrow"), () => {
         const { sourceFile } = getInfoFromText<ClassDeclaration>("interface Identifier { prop: string; }\ninterface MyInterface { nextProp: string; }");
 
         it("should get the first descendant by a condition", () => {
@@ -830,7 +830,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getChildrenOfKind), () => {
+    describe(nameof<Node>("getChildrenOfKind"), () => {
         function doTest(text: string, selectNode: (sourceFile: SourceFile) => Node, kind: SyntaxKind, childTexts: string[]) {
             const { sourceFile } = getInfoFromText(text);
             const node = selectNode(sourceFile);
@@ -855,7 +855,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getDescendantsOfKind), () => {
+    describe(nameof<Node>("getDescendantsOfKind"), () => {
         it("should get the descendant by a kind", () => {
             const { sourceFile } = getInfoFromText("interface Identifier { prop: string; }\ninterface MyInterface { nextProp: string; }");
             const properties = sourceFile.getDescendantsOfKind(SyntaxKind.PropertySignature);
@@ -915,7 +915,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getFirstDescendantByKind), () => {
+    describe(nameof<Node>("getFirstDescendantByKind"), () => {
         function getSourceFile() {
             return getInfoFromText<ClassDeclaration>("interface Identifier { prop: string; }\ninterface MyInterface { nextProp: string; }").sourceFile;
         }
@@ -992,7 +992,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getFirstDescendantByKindOrThrow), () => {
+    describe(nameof<Node>("getFirstDescendantByKindOrThrow"), () => {
         const { sourceFile } = getInfoFromText("interface Identifier { prop: string; }\ninterface MyInterface { nextProp: string; }");
 
         it("should get the first descendant by a condition", () => {
@@ -1006,7 +1006,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getPreviousSibling), () => {
+    describe(nameof<Node>("getPreviousSibling"), () => {
         const { sourceFile } = getInfoFromText("interface Interface1 {}\ninterface Interface2 {}\ninterface Interface3 {}");
 
         it("should get the previous sibling based on a condition", () => {
@@ -1033,7 +1033,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getPreviousSiblingOrThrow), () => {
+    describe(nameof<Node>("getPreviousSiblingOrThrow"), () => {
         const { sourceFile } = getInfoFromText("interface Interface1 {}\ninterface Interface2 {}\ninterface Interface3 {}");
 
         it("should get the previous sibling based on a condition", () => {
@@ -1063,7 +1063,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getNextSibling), () => {
+    describe(nameof<Node>("getNextSibling"), () => {
         const { sourceFile } = getInfoFromText("interface Interface1 {}\ninterface Interface2 {}\ninterface Interface3 {}");
 
         it("should get the next sibling based on a condition", () => {
@@ -1090,7 +1090,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getNextSiblingOrThrow), () => {
+    describe(nameof<Node>("getNextSiblingOrThrow"), () => {
         const { sourceFile } = getInfoFromText("interface Interface1 {}\ninterface Interface2 {}\ninterface Interface3 {}");
 
         it("should get the next sibling based on a condition", () => {
@@ -1117,7 +1117,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getPreviousSiblings), () => {
+    describe(nameof<Node>("getPreviousSiblings"), () => {
         const { sourceFile } = getInfoFromText("interface Interface1 {}\ninterface Interface2 {}\ninterface Interface3 {}");
 
         it("should get the previous siblings going away in order", () => {
@@ -1126,7 +1126,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getNextSiblings), () => {
+    describe(nameof<Node>("getNextSiblings"), () => {
         const { sourceFile } = getInfoFromText("interface Interface1 {}\ninterface Interface2 {}\ninterface Interface3 {}");
 
         it("should get the previous siblings going away in order", () => {
@@ -1135,7 +1135,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.isFirstNodeOnLine), () => {
+    describe(nameof<Node>("isFirstNodeOnLine"), () => {
         function doTest(text: string, index: number, expected: boolean) {
             const { sourceFile } = getInfoFromText(text);
             expect(sourceFile.getFirstChildIfKindOrThrow(SyntaxKind.SyntaxList).getChildren()[index].isFirstNodeOnLine()).to.equal(expected);
@@ -1158,7 +1158,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.replaceWithText), () => {
+    describe(nameof<Node>("replaceWithText"), () => {
         function doTest(startText: string, replaceText: string | WriterFunction, expectedText: string) {
             const { sourceFile } = getInfoFromText(startText);
             const varDeclaration = sourceFile.getVariableDeclarations()[0];
@@ -1236,7 +1236,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.print), () => {
+    describe(nameof<Node>("print"), () => {
         const nodeText = "class MyClass {\n    // comment\n    prop: string;\n}";
         const { sourceFile, firstChild } = getInfoFromText(nodeText);
 
@@ -1253,7 +1253,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.formatText), () => {
+    describe(nameof<Node>("formatText"), () => {
         function doTest(text: string, getNode: (sourceFile: SourceFile) => Node, expectedText: string, settings: FormatCodeSettings = {}) {
             const { sourceFile } = getInfoFromText(text);
             getNode(sourceFile).formatText(settings);
@@ -1278,7 +1278,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.prependWhitespace), () => {
+    describe(nameof<Node>("prependWhitespace"), () => {
         function doTest(text: string, getNode: (sourceFile: SourceFile) => Node, newText: string | WriterFunction, expectedText: string) {
             const { sourceFile } = getInfoFromText(text);
             const node = getNode(sourceFile);
@@ -1311,7 +1311,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.appendWhitespace), () => {
+    describe(nameof<Node>("appendWhitespace"), () => {
         function doTest(text: string, getNode: (sourceFile: SourceFile) => Node, newText: string | WriterFunction, expectedText: string) {
             const { sourceFile } = getInfoFromText(text);
             const node = getNode(sourceFile);
@@ -1344,7 +1344,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getLeadingCommentRanges), () => {
+    describe(nameof<Node>("getLeadingCommentRanges"), () => {
         it("should return nothing for a source file", () => {
             const { sourceFile } = getInfoFromText("// before1\nvar t = 5;");
             expect(sourceFile.getLeadingCommentRanges().length).to.equal(0);
@@ -1375,7 +1375,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getTrailingCommentRanges), () => {
+    describe(nameof<Node>("getTrailingCommentRanges"), () => {
         it("should get the trailing comment ranges", () => {
             const { firstChild } = getInfoFromText("// before\nvar t = 5; // after1\n// after2\n/* after3 */");
             expect(firstChild.getTrailingCommentRanges().map(r => r.getText())).to.deep.equal(["// after1"]);
@@ -1411,7 +1411,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getTrailingTriviaEnd), () => {
+    describe(nameof<Node>("getTrailingTriviaEnd"), () => {
         function doTest(text: string, expected: number) {
             const { firstChild } = getInfoFromText(text);
             expect(firstChild.getTrailingTriviaEnd()).to.equal(expected);
@@ -1438,7 +1438,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getTrailingTriviaWidth), () => {
+    describe(nameof<Node>("getTrailingTriviaWidth"), () => {
         function doTest(text: string, expected: number) {
             const { firstChild } = getInfoFromText(text);
             expect(firstChild.getTrailingTriviaWidth()).to.equal(expected);
@@ -1451,7 +1451,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.forEachChild), () => {
+    describe(nameof<Node>("forEachChild"), () => {
         function doNodeCbSyntaxKindTest(node: Node, expectedKinds: SyntaxKind[], callback?: (child: Node) => unknown, expectedReturnValue?: Node) {
             const foundKinds: SyntaxKind[] = [];
             const returnValue = node.forEachChild<unknown>(child => {
@@ -1567,7 +1567,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.forEachDescendant), () => {
+    describe(nameof<Node>("forEachDescendant"), () => {
         function doNodeCbSyntaxKindTest(
             node: Node,
             expectedKinds: SyntaxKind[],
@@ -1832,7 +1832,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.forEachChildAsArray), () => {
+    describe(nameof<Node>("forEachChildAsArray"), () => {
         function runTest(startText: string, selectNode: (sourceFile: SourceFile) => Node, expectedKinds: SyntaxKind[]) {
             const { sourceFile } = getInfoFromText(startText);
             const node = selectNode(sourceFile);
@@ -1865,7 +1865,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.forEachDescendantAsArray), () => {
+    describe(nameof<Node>("forEachDescendantAsArray"), () => {
         function runTest(startText: string, selectNode: (sourceFile: SourceFile) => Node, expectedKinds: SyntaxKind[]) {
             const { sourceFile } = getInfoFromText(startText);
             const node = selectNode(sourceFile);
@@ -1882,7 +1882,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getNodeProperty), () => {
+    describe(nameof<Node>("getNodeProperty"), () => {
         const fileText = "class MyClass<T, U> { prop: string; otherProp: number; } interface MyInterface {} export default class { prop: Date; }";
         const { firstChild: classDec, sourceFile } = getInfoFromText<ClassDeclaration>(fileText);
         const interfaceDec = sourceFile.getInterfaceOrThrow("MyInterface");
@@ -1924,7 +1924,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n._getTrailingTriviaNonWhitespaceEnd), () => {
+    describe(nameof<Node>("_getTrailingTriviaNonWhitespaceEnd"), () => {
         it("should get the non whitespace end for a jsx child syntax list", () => {
             let code = "const v = (<div>\n    <div />";
             const expectedNonWhitepsaceEnd = code.length;
@@ -1940,7 +1940,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.forget), () => {
+    describe(nameof<Node>("forget"), () => {
         it("should throw an error when using a forgotten node", () => {
             const { firstChild } = getInfoFromText<EnumDeclaration>("enum MyEnum { member }");
             const member = firstChild.getMembers()[0];
@@ -1950,7 +1950,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.forgetDescendants), () => {
+    describe(nameof<Node>("forgetDescendants"), () => {
         it("should only forget the descendants", () => {
             const { firstChild } = getInfoFromText<EnumDeclaration>("enum MyEnum { member }");
             const member = firstChild.getMembers()[0];
@@ -1965,7 +1965,7 @@ class MyClass {
         return `Attempted to get information from a node that was removed or forgotten.\n\nNode text: ${nodeText}`;
     }
 
-    describe(nameof<Node>(n => n.getNonWhitespaceStart), () => {
+    describe(nameof<Node>("getNonWhitespaceStart"), () => {
         function doTest(text: string, selectNode: (sourceFile: SourceFile) => Node, expected: number) {
             const { sourceFile } = getInfoFromText(text);
             const node = selectNode(sourceFile);
@@ -1995,7 +1995,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.transform), () => {
+    describe(nameof<Node>("transform"), () => {
         function doTest(
             text: string,
             selectNode: (sourceFile: SourceFile) => Node,
@@ -2115,7 +2115,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getLocals), () => {
+    describe(nameof<Node>("getLocals"), () => {
         function doTest(text: string, expectedLocalNames: string[]) {
             const { sourceFile } = getInfoFromText(text);
             expect(sourceFile.getLocals().map(l => l.getName())).to.deep.equal(expectedLocalNames);
@@ -2126,7 +2126,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getLocal), () => {
+    describe(nameof<Node>("getLocal"), () => {
         function doTest(text: string, name: string, expectedName: string | undefined) {
             const { sourceFile } = getInfoFromText(text);
             const result = sourceFile.getLocal(name);
@@ -2142,7 +2142,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getLocalOrThrow), () => {
+    describe(nameof<Node>("getLocalOrThrow"), () => {
         function doTest(text: string, name: string, expectedName: string | undefined) {
             const { sourceFile } = getInfoFromText(text);
             if (expectedName == null)
@@ -2160,7 +2160,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getSymbolsInScope), () => {
+    describe(nameof<Node>("getSymbolsInScope"), () => {
         function doTest(text: string, selectNode: (sourceFile: SourceFile) => Node, meaning: SymbolFlags, expectedSymbolNames: string[]) {
             const { sourceFile } = getInfoFromText(text);
             const node = selectNode(sourceFile);
@@ -2178,7 +2178,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getProject), () => {
+    describe(nameof<Node>("getProject"), () => {
         it("should get the project", () => {
             const project = new Project({ useInMemoryFileSystem: true });
             const sourceFile = project.createSourceFile("test.ts", "");
@@ -2193,7 +2193,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.asKind), () => {
+    describe(nameof<Node>("asKind"), () => {
         it("should get the node if it's the specified syntax kind", () => {
             const project = new Project({ useInMemoryFileSystem: true });
             const sourceFile = project.createSourceFile("test.ts", "class Test {}");

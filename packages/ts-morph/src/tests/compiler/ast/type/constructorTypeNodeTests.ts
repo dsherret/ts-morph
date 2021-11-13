@@ -1,28 +1,28 @@
-import { SyntaxKind } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ConstructorTypeNode } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
-describe(nameof(ConstructorTypeNode), () => {
+describe("ConstructorTypeNode", () => {
     function getNode(text: string) {
         return getInfoFromTextWithDescendant<ConstructorTypeNode>(text, SyntaxKind.ConstructorType);
     }
 
-    describe(nameof<ConstructorTypeNode>(d => d.getReturnTypeNodeOrThrow), () => {
+    describe(nameof<ConstructorTypeNode>("getReturnTypeNodeOrThrow"), () => {
         it("should get the return type", () => {
             const { descendant } = getNode("var t: new() => SomeClass;");
             expect(descendant.getReturnTypeNodeOrThrow().getText()).to.equal("SomeClass");
         });
     });
 
-    describe(nameof<ConstructorTypeNode>(d => d.getParameters), () => {
+    describe(nameof<ConstructorTypeNode>("getParameters"), () => {
         it("should get the parameters", () => {
             const { descendant } = getNode("var t: new(param1, param2) => SomeClass;");
             expect(descendant.getParameters().map(p => p.getText())).to.deep.equal(["param1", "param2"]);
         });
     });
 
-    describe(nameof<ConstructorTypeNode>(d => d.isAbstract), () => {
+    describe(nameof<ConstructorTypeNode>("isAbstract"), () => {
         function doTest(text: string, value: boolean) {
             const { descendant } = getNode(text);
             expect(descendant.isAbstract()).to.equal(value);
@@ -37,7 +37,7 @@ describe(nameof(ConstructorTypeNode), () => {
         });
     });
 
-    describe(nameof<ConstructorTypeNode>(d => d.setIsAbstract), () => {
+    describe(nameof<ConstructorTypeNode>("setIsAbstract"), () => {
         function doTest(text: string, value: boolean, expectedText: string) {
             const { sourceFile, descendant } = getNode(text);
             descendant.setIsAbstract(value);

@@ -1,4 +1,4 @@
-import { errors, SyntaxKind, ts } from "@ts-morph/common";
+import { errors, nameof, SyntaxKind, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange, removeChildren } from "../../../../manipulation";
 import { InitializerExpressionableNodeStructure } from "../../../../structures";
 import { Constructor, WriterFunction } from "../../../../types";
@@ -45,7 +45,7 @@ function apply<T extends Constructor<InitializerExpressionableNodeExtensionType 
 
         setInitializer(textOrWriterFunction: string | WriterFunction) {
             const text = getTextFromStringOrWriter(this._getWriterWithQueuedChildIndentation(), textOrWriterFunction);
-            errors.throwIfWhitespaceOrNotString(text, nameof(textOrWriterFunction));
+            errors.throwIfWhitespaceOrNotString(text, "textOrWriterFunction");
 
             if (this.hasInitializer())
                 this.removeInitializer();
@@ -65,7 +65,7 @@ function apply<T extends Constructor<InitializerExpressionableNodeExtensionType 
 
             if (structure.initializer != null)
                 this.setInitializer(structure.initializer);
-            else if (structure.hasOwnProperty(nameof(structure.initializer)))
+            else if (structure.hasOwnProperty(nameof(structure, "initializer")))
                 this.removeInitializer();
 
             return this;

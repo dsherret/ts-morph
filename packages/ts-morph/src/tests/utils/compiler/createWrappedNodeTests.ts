@@ -4,7 +4,7 @@ import { SourceFile } from "../../../compiler";
 import { Project } from "../../../Project";
 import { createWrappedNode } from "../../../utils/compiler/createWrappedNode";
 
-describe(nameof(createWrappedNode), () => {
+describe("createWrappedNode", () => {
     it("should throw an exception if passing in a node not created with setParentNodes set to true.", () => {
         const sourceFile = ts.createSourceFile("file.ts", "class MyClass {}", ScriptTarget.ES2016, false);
         let child: ts.Node;

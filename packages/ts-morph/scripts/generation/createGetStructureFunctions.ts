@@ -37,7 +37,7 @@ export function createGetStructureFunctions(structures: Structure[]) {
 
 // todo: make this better... good enough for now
 // for example, it would be better to be able to get the structure from a node and specify what structures to ignore when calling it... that way the logic could be kept inside
-// the application and not here (basically... have a fromFunctionDeclaration(node, [nameof(ParameteredNodeStructure)]);)
+// the application and not here (basically... have a fromFunctionDeclaration(node, ["ParameteredNodeStructure"]);)
 function write(writer: tsMorph.CodeBlockWriter, structure: Structure) {
     const className = structure.getName().replace(/Structure$/, "");
     const functionHeader = `export function from${className}(node: compiler.${className.replace("Overload", "")}): structures.${structure.getName()}`;

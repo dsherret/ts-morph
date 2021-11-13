@@ -1,10 +1,10 @@
-import { SymbolFlags, SyntaxKind } from "@ts-morph/common";
+import { nameof, SymbolFlags, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { CallExpression, NamedNode, Node, SourceFile, TypeChecker } from "../../../compiler";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../testHelpers";
 
-describe(nameof(TypeChecker), () => {
-    describe(nameof<TypeChecker>(p => p.getAmbientModules), () => {
+describe("TypeChecker", () => {
+    describe(nameof<TypeChecker>("getAmbientModules"), () => {
         it("should get the ambient modules when they exist", () => {
             const { project } = getInfoFromText("");
             const fileSystem = project.getFileSystem();
@@ -33,7 +33,7 @@ describe(nameof(TypeChecker), () => {
         });
     });
 
-    describe(nameof<TypeChecker>(p => p.getResolvedSignature), () => {
+    describe(nameof<TypeChecker>("getResolvedSignature"), () => {
         function doTest(text: string, declarationName: string | undefined) {
             const { descendant, project } = getInfoFromTextWithDescendant<CallExpression>(text, SyntaxKind.CallExpression);
             const result = project.getTypeChecker().getResolvedSignature(descendant);
@@ -49,7 +49,7 @@ describe(nameof(TypeChecker), () => {
         });
     });
 
-    describe(nameof<TypeChecker>(p => p.getResolvedSignatureOrThrow), () => {
+    describe(nameof<TypeChecker>("getResolvedSignatureOrThrow"), () => {
         function doTest(text: string, declarationName: string | undefined) {
             const { descendant, project } = getInfoFromTextWithDescendant<CallExpression>(text, SyntaxKind.CallExpression);
             if (declarationName == null)
@@ -69,7 +69,7 @@ describe(nameof(TypeChecker), () => {
         });
     });
 
-    describe(nameof<TypeChecker>(p => p.getSymbolsInScope), () => {
+    describe(nameof<TypeChecker>("getSymbolsInScope"), () => {
         function doTest(text: string, selectNode: (sourceFile: SourceFile) => Node, meaning: SymbolFlags, expectedSymbolNames: string[]) {
             const { sourceFile, project } = getInfoFromText(text);
             const node = selectNode(sourceFile);

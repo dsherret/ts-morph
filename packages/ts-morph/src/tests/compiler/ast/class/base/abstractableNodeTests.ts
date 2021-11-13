@@ -1,10 +1,11 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { AbstractableNode, ClassDeclaration } from "../../../../../compiler";
 import { AbstractableNodeStructure } from "../../../../../structures";
 import { getInfoFromText } from "../../../testHelpers";
 
-describe(nameof(AbstractableNode), () => {
-    describe(nameof<AbstractableNode>(d => d.getAbstractKeyword), () => {
+describe("AbstractableNode", () => {
+    describe(nameof<AbstractableNode>("getAbstractKeyword"), () => {
         it("should get the abstract keyword when abstract", () => {
             const { firstChild } = getInfoFromText<ClassDeclaration>("abstract class Identifier {}");
             expect(firstChild.getAbstractKeyword()!.getText()).to.be.equal("abstract");
@@ -16,7 +17,7 @@ describe(nameof(AbstractableNode), () => {
         });
     });
 
-    describe(nameof<AbstractableNode>(d => d.getAbstractKeywordOrThrow), () => {
+    describe(nameof<AbstractableNode>("getAbstractKeywordOrThrow"), () => {
         it("should get the abstract keyword when abstract", () => {
             const { firstChild } = getInfoFromText<ClassDeclaration>("abstract class Identifier {}");
             expect(firstChild.getAbstractKeywordOrThrow().getText()).to.be.equal("abstract");
@@ -28,7 +29,7 @@ describe(nameof(AbstractableNode), () => {
         });
     });
 
-    describe(nameof<AbstractableNode>(d => d.isAbstract), () => {
+    describe(nameof<AbstractableNode>("isAbstract"), () => {
         it("should be abstract when abstract", () => {
             const { firstChild } = getInfoFromText<ClassDeclaration>("abstract class Identifier {}");
             expect(firstChild.isAbstract()).to.be.true;
@@ -40,7 +41,7 @@ describe(nameof(AbstractableNode), () => {
         });
     });
 
-    describe(nameof<AbstractableNode>(d => d.setIsAbstract), () => {
+    describe(nameof<AbstractableNode>("setIsAbstract"), () => {
         it("should be set to abstract", () => {
             const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier {}");
             firstChild.setIsAbstract(true);
@@ -54,7 +55,7 @@ describe(nameof(AbstractableNode), () => {
         });
     });
 
-    describe(nameof<ClassDeclaration>(d => d.set), () => {
+    describe(nameof<ClassDeclaration>("set"), () => {
         function doTest(startingCode: string, structure: AbstractableNodeStructure, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             firstChild.set(structure);

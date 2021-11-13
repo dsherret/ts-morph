@@ -3,7 +3,7 @@ import { NodePrinter } from "../../structurePrinters";
 import { Structure } from "../../structures";
 import { getInfoFromText } from "../compiler/testHelpers";
 
-describe(nameof(NodePrinter), () => {
+describe("NodePrinter", () => {
     describe("leading trivia", () => {
         function doTest(leadingTrivia: Structure["leadingTrivia"], expectedText: string) {
             const { sourceFile } = getInfoFromText("");

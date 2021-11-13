@@ -1,10 +1,10 @@
-import { SyntaxKind } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { Node, SyntaxList } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
-describe(nameof(SyntaxList), () => {
-    describe(nameof<SyntaxList>(s => s.insertChildText), () => {
+describe("SyntaxList", () => {
+    describe(nameof<SyntaxList>("insertChildText"), () => {
         // most of these tests are in StatementedNode
         it("should insert a class member", () => {
             const { sourceFile, firstChild } = getInfoFromText("class MyClass {\n}\n");
@@ -49,7 +49,7 @@ describe(nameof(SyntaxList), () => {
         });
     });
 
-    describe(nameof<SyntaxList>(s => s.addChildText), () => {
+    describe(nameof<SyntaxList>("addChildText"), () => {
         function doSourceFileTest(code: string, statements: string, expectedLength: number, expectedCode: string) {
             const { sourceFile } = getInfoFromText(code);
             const nodes = sourceFile.getChildSyntaxListOrThrow().addChildText(statements);

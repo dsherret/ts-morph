@@ -1,4 +1,4 @@
-import { SyntaxKind } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { IfStatement } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -7,13 +7,13 @@ function getStatement(text: string) {
     return getInfoFromTextWithDescendant<IfStatement>(text, SyntaxKind.IfStatement).descendant;
 }
 
-describe(nameof(IfStatement), () => {
+describe("IfStatement", () => {
     const expression = "1 + 2 === 3";
     const thenStatement = "{ x = 1; }";
     const elseStatement = "{ x = 2; }";
     const statement = `if (${expression}) ${thenStatement} else ${elseStatement}`;
 
-    describe(nameof<IfStatement>(n => n.getExpression), () => {
+    describe(nameof<IfStatement>("getExpression"), () => {
         function doTest(text: string, expectedText: string) {
             const ifStatement = getStatement(text);
             expect(ifStatement.getExpression().getText()).to.equal(expectedText);
@@ -24,7 +24,7 @@ describe(nameof(IfStatement), () => {
         });
     });
 
-    describe(nameof<IfStatement>(n => n.getThenStatement), () => {
+    describe(nameof<IfStatement>("getThenStatement"), () => {
         function doTest(text: string, expectedText: string) {
             const ifStatement = getStatement(text);
             expect(ifStatement.getThenStatement().getText()).to.equal(expectedText);
@@ -35,7 +35,7 @@ describe(nameof(IfStatement), () => {
         });
     });
 
-    describe(nameof<IfStatement>(n => n.getElseStatement), () => {
+    describe(nameof<IfStatement>("getElseStatement"), () => {
         function doTest(text: string, expectedText: string | undefined) {
             const ifStatement = getStatement(text);
             const value = ifStatement.getElseStatement();

@@ -1,12 +1,12 @@
-import { SyntaxKind } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, MethodDeclaration, Scope } from "../../../../compiler";
 import { MethodDeclarationOverloadStructure, MethodDeclarationSpecificStructure, MethodDeclarationStructure, OptionalKind,
     StructureKind } from "../../../../structures";
 import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
-describe(nameof(MethodDeclaration), () => {
-    describe(nameof<MethodDeclaration>(f => f.insertOverloads), () => {
+describe("MethodDeclaration", () => {
+    describe(nameof<MethodDeclaration>("insertOverloads"), () => {
         function doTest(
             startCode: string,
             index: number,
@@ -52,7 +52,7 @@ describe(nameof(MethodDeclaration), () => {
         });
     });
 
-    describe(nameof<MethodDeclaration>(f => f.insertOverload), () => {
+    describe(nameof<MethodDeclaration>("insertOverload"), () => {
         function doTest(startCode: string, index: number, structure: OptionalKind<MethodDeclarationOverloadStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             const methodDeclaration = firstChild.getMembers()[0] as MethodDeclaration;
@@ -67,7 +67,7 @@ describe(nameof(MethodDeclaration), () => {
         });
     });
 
-    describe(nameof<MethodDeclaration>(f => f.addOverloads), () => {
+    describe(nameof<MethodDeclaration>("addOverloads"), () => {
         function doTest(startCode: string, structures: OptionalKind<MethodDeclarationOverloadStructure>[], expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             const methodDeclaration = firstChild.getMembers()[0] as MethodDeclaration;
@@ -82,7 +82,7 @@ describe(nameof(MethodDeclaration), () => {
         });
     });
 
-    describe(nameof<MethodDeclaration>(f => f.addOverload), () => {
+    describe(nameof<MethodDeclaration>("addOverload"), () => {
         function doTest(startCode: string, structure: OptionalKind<MethodDeclarationOverloadStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             const methodDeclaration = firstChild.getMembers()[0] as MethodDeclaration;
@@ -97,7 +97,7 @@ describe(nameof(MethodDeclaration), () => {
         });
     });
 
-    describe(nameof<MethodDeclaration>(m => m.remove), () => {
+    describe(nameof<MethodDeclaration>("remove"), () => {
         describe("no overload", () => {
             function doTest(code: string, nameToRemove: string, expectedCode: string) {
                 const { sourceFile } = getInfoFromText<ClassDeclaration>(code);
@@ -198,7 +198,7 @@ describe(nameof(MethodDeclaration), () => {
         });
     });
 
-    describe(nameof<MethodDeclaration>(m => m.set), () => {
+    describe(nameof<MethodDeclaration>("set"), () => {
         function doTest(startingCode: string, structure: OptionalKind<MethodDeclarationSpecificStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             const method = firstChild.getInstanceMethods()[0];
@@ -226,7 +226,7 @@ describe(nameof(MethodDeclaration), () => {
         });
     });
 
-    describe(nameof<MethodDeclaration>(d => d.getStructure), () => {
+    describe(nameof<MethodDeclaration>("getStructure"), () => {
         function doTest(code: string, expectedStructures: OptionalProperties<OptionalTrivia<MakeRequired<MethodDeclarationStructure>>, "overloads">[]) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
             const methods = firstChild.getMethods();

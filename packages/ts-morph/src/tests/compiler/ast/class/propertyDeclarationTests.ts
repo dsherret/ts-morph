@@ -1,15 +1,16 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, PropertyDeclaration, Scope } from "../../../../compiler";
 import { PropertyDeclarationStructure, StructureKind } from "../../../../structures";
 import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
-describe(nameof(PropertyDeclaration), () => {
+describe("PropertyDeclaration", () => {
     function getFirstPropertyWithInfo(code: string) {
         const opts = getInfoFromText<ClassDeclaration>(code);
         return { ...opts, firstProperty: opts.firstChild.getInstanceProperties()[0] as PropertyDeclaration };
     }
 
-    describe(nameof<PropertyDeclaration>(n => n.set), () => {
+    describe(nameof<PropertyDeclaration>("set"), () => {
         function doTest(code: string, structure: Partial<PropertyDeclarationStructure>, expectedCode: string) {
             const { firstProperty, sourceFile } = getFirstPropertyWithInfo(code);
             firstProperty.set(structure);
@@ -46,7 +47,7 @@ describe(nameof(PropertyDeclaration), () => {
         });
     });
 
-    describe(nameof<PropertyDeclaration>(n => n.getStructure), () => {
+    describe(nameof<PropertyDeclaration>("getStructure"), () => {
         function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<PropertyDeclarationStructure>>) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
             const structure = firstChild.getProperties()[0].getStructure();
@@ -117,7 +118,7 @@ class T {
         });
     });
 
-    describe(nameof<PropertyDeclaration>(n => n.remove), () => {
+    describe(nameof<PropertyDeclaration>("remove"), () => {
         function doTest(code: string, nameToRemove: string, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
             (firstChild.getInstanceProperty(nameToRemove)! as PropertyDeclaration).remove();

@@ -1,15 +1,16 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { CallSignatureDeclaration, InterfaceDeclaration } from "../../../../compiler";
 import { CallSignatureDeclarationStructure, StructureKind, TypeParameterDeclarationStructure } from "../../../../structures";
 import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
-describe(nameof(CallSignatureDeclaration), () => {
+describe("CallSignatureDeclaration", () => {
     function getFirstCallSignatureWithInfo(code: string) {
         const opts = getInfoFromText<InterfaceDeclaration>(code);
         return { ...opts, firstCallSignature: opts.firstChild.getCallSignatures()[0] };
     }
 
-    describe(nameof<CallSignatureDeclaration>(n => n.set), () => {
+    describe(nameof<CallSignatureDeclaration>("set"), () => {
         function doTest(code: string, structure: Partial<CallSignatureDeclarationStructure>, expectedCode: string) {
             const { firstCallSignature, sourceFile } = getFirstCallSignatureWithInfo(code);
             firstCallSignature.set(structure);
@@ -35,7 +36,7 @@ describe(nameof(CallSignatureDeclaration), () => {
         });
     });
 
-    describe(nameof<CallSignatureDeclaration>(n => n.getStructure), () => {
+    describe(nameof<CallSignatureDeclaration>("getStructure"), () => {
         function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<CallSignatureDeclarationStructure>>) {
             const { firstCallSignature } = getFirstCallSignatureWithInfo(text);
             const structure = firstCallSignature.getStructure();
@@ -69,7 +70,7 @@ interface Identifier {
         });
     });
 
-    describe(nameof<CallSignatureDeclaration>(n => n.remove), () => {
+    describe(nameof<CallSignatureDeclaration>("remove"), () => {
         function doTest(code: string, indexToRemove: number, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<InterfaceDeclaration>(code);
             firstChild.getCallSignatures()[indexToRemove].remove();

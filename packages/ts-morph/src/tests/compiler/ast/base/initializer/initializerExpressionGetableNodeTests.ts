@@ -1,15 +1,15 @@
-import { SyntaxKind } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { EnumDeclaration, Expression, InitializerExpressionGetableNode } from "../../../../../compiler";
 import { getInfoFromText } from "../../../testHelpers";
 
-describe(nameof(InitializerExpressionGetableNode), () => {
+describe("InitializerExpressionGetableNode", () => {
     function getEnumMemberFromText(text: string) {
         const result = getInfoFromText<EnumDeclaration>(text);
         return { member: result.firstChild.getMembers()[0], ...result };
     }
 
-    describe(nameof<InitializerExpressionGetableNode>(n => n.hasInitializer), () => {
+    describe(nameof<InitializerExpressionGetableNode>("hasInitializer"), () => {
         function doTest(code: string, expectedResult: boolean) {
             const { member } = getEnumMemberFromText(code);
             expect(member.hasInitializer()).to.equal(expectedResult);
@@ -24,7 +24,7 @@ describe(nameof(InitializerExpressionGetableNode), () => {
         });
     });
 
-    describe(nameof<InitializerExpressionGetableNode>(n => n.getInitializer), () => {
+    describe(nameof<InitializerExpressionGetableNode>("getInitializer"), () => {
         describe("having initializer", () => {
             const { member } = getEnumMemberFromText("enum MyEnum { myMember = 4 }");
             const initializer = member.getInitializer()!;
@@ -46,7 +46,7 @@ describe(nameof(InitializerExpressionGetableNode), () => {
         });
     });
 
-    describe(nameof<InitializerExpressionGetableNode>(n => n.getInitializerOrThrow), () => {
+    describe(nameof<InitializerExpressionGetableNode>("getInitializerOrThrow"), () => {
         it("should get when the initializer exists", () => {
             const { member } = getEnumMemberFromText("enum MyEnum { myMember = 4 }");
             expect(member.getInitializerOrThrow().getText()).to.equal("4");
@@ -58,7 +58,7 @@ describe(nameof(InitializerExpressionGetableNode), () => {
         });
     });
 
-    describe(nameof<InitializerExpressionGetableNode>(n => n.getInitializerIfKind), () => {
+    describe(nameof<InitializerExpressionGetableNode>("getInitializerIfKind"), () => {
         it("should get when the initializer of kind exists", () => {
             const { member } = getEnumMemberFromText("enum MyEnum { myMember = 4 }");
             expect(member.getInitializerIfKind(SyntaxKind.NumericLiteral)!.getText()).to.equal("4");
@@ -75,7 +75,7 @@ describe(nameof(InitializerExpressionGetableNode), () => {
         });
     });
 
-    describe(nameof<InitializerExpressionGetableNode>(n => n.getInitializerIfKindOrThrow), () => {
+    describe(nameof<InitializerExpressionGetableNode>("getInitializerIfKindOrThrow"), () => {
         it("should get when the initializer of kind exists", () => {
             const { member } = getEnumMemberFromText("enum MyEnum { myMember = 4 }");
             expect(member.getInitializerIfKindOrThrow(SyntaxKind.NumericLiteral).getText()).to.equal("4");

@@ -1,17 +1,18 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { FormatCodeSettings } from "../../../compiler";
 import { NamedImportExportSpecifierStructurePrinter } from "../../../structurePrinters";
 import { ExportSpecifierStructure, ImportSpecifierStructure, OptionalKind } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
 
-describe(nameof(NamedImportExportSpecifierStructurePrinter), () => {
+describe("NamedImportExportSpecifierStructurePrinter", () => {
     interface Options {
         formatCodeSettings?: FormatCodeSettings;
     }
 
     // todo: more tests
 
-    describe(nameof<NamedImportExportSpecifierStructurePrinter>(p => p.printText), () => {
+    describe(nameof<NamedImportExportSpecifierStructurePrinter>("printText"), () => {
         function doTest(
             structure: OptionalKind<ImportSpecifierStructure> | OptionalKind<ExportSpecifierStructure>,
             expectedOutput: string,
@@ -35,7 +36,7 @@ describe(nameof(NamedImportExportSpecifierStructurePrinter), () => {
         });
     });
 
-    describe(nameof<NamedImportExportSpecifierStructurePrinter>(p => p.printTextsWithBraces), () => {
+    describe(nameof<NamedImportExportSpecifierStructurePrinter>("printTextsWithBraces"), () => {
         function doTest(
             structures: (OptionalKind<ImportSpecifierStructure> | OptionalKind<ExportSpecifierStructure>)[],
             expectedOutput: string,

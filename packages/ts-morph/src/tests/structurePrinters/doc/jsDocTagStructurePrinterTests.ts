@@ -1,10 +1,11 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { FormatCodeSettings } from "../../../compiler";
 import { JSDocTagStructurePrinter } from "../../../structurePrinters";
 import { JSDocTagStructure, OptionalKind } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
 
-describe(nameof(JSDocTagStructurePrinter), () => {
+describe("JSDocTagStructurePrinter", () => {
     interface Options {
         formatCodeSettings?: FormatCodeSettings;
         printStarsOnNewLine?: boolean;
@@ -16,7 +17,7 @@ describe(nameof(JSDocTagStructurePrinter), () => {
         expect(writer.toString()).to.equal(expectedOutput);
     }
 
-    describe(nameof<JSDocTagStructurePrinter>(p => p.printText), () => {
+    describe(nameof<JSDocTagStructurePrinter>("printText"), () => {
         it("should write with only tag name", () => {
             doTest(
                 { tagName: "param" },

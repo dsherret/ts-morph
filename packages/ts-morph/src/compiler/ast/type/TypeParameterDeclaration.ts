@@ -1,4 +1,4 @@
-import { errors, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
+import { errors, nameof, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange, removeChildren, removeCommaSeparatedChild } from "../../../manipulation";
 import { StructureKind, TypeParameterDeclarationSpecificStructure, TypeParameterDeclarationStructure } from "../../../structures";
 import { WriterFunction } from "../../../types";
@@ -140,12 +140,12 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
 
         if (structure.constraint != null)
             this.setConstraint(structure.constraint);
-        else if (structure.hasOwnProperty(nameof(structure.constraint)))
+        else if (structure.hasOwnProperty(nameof(structure, "constraint")))
             this.removeConstraint();
 
         if (structure.default != null)
             this.setDefault(structure.default);
-        else if (structure.hasOwnProperty(nameof(structure.default)))
+        else if (structure.hasOwnProperty(nameof(structure, "default")))
             this.removeDefault();
 
         return this;

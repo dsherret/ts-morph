@@ -1,4 +1,4 @@
-import { CompilerOptions, errors, getLibFiles, InMemoryFileSystemHost, ScriptKind, ScriptTarget, SyntaxKind, ts } from "@ts-morph/common";
+import { CompilerOptions, errors, getLibFiles, InMemoryFileSystemHost, nameof, ScriptKind, ScriptTarget, SyntaxKind, ts } from "@ts-morph/common";
 import { expect } from "chai";
 import { assert, IsExact } from "conditional-type-checks";
 import { EOL } from "os";
@@ -13,7 +13,7 @@ import * as testHelpers from "./testHelpers";
 console.log("");
 console.log("TypeScript version: " + ts.version);
 
-describe(nameof(Project), () => {
+describe("Project", () => {
     describe("constructor", () => {
         it("should set the manipulation settings if provided", () => {
             const project = new Project({
@@ -60,7 +60,7 @@ describe(nameof(Project), () => {
             expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal([...initialFiles, ...resolvedFiles]);
         });
 
-        describe(nameof<ProjectOptions>(o => o.skipFileDependencyResolution), () => {
+        describe(nameof<ProjectOptions>("skipFileDependencyResolution"), () => {
             it("should not skip dependency resolution when false", () => {
                 const { project, initialFiles, resolvedFiles } = fileDependencyResolutionSetup({ skipFileDependencyResolution: false });
                 expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal([...initialFiles, ...resolvedFiles]);
@@ -212,7 +212,7 @@ describe(nameof(Project), () => {
             });
         });
 
-        describe(nameof<ProjectOptions>(o => o.skipLoadingLibFiles), () => {
+        describe(nameof<ProjectOptions>("skipLoadingLibFiles"), () => {
             it("should not skip loading lib files when empty", () => {
                 const project = new Project({ useInMemoryFileSystem: true });
                 const sourceFile = project.createSourceFile("test.ts", "const t: String = '';");
@@ -238,7 +238,7 @@ describe(nameof(Project), () => {
             });
         });
 
-        describe(nameof<ProjectOptions>(o => o.libFolderPath), () => {
+        describe(nameof<ProjectOptions>("libFolderPath"), () => {
             it("should support specifying a different folder for the lib files", () => {
                 const fileSystem = new InMemoryFileSystemHost();
                 for (const file of getLibFiles())
@@ -254,7 +254,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(p => p.resolveSourceFileDependencies), () => {
+    describe(nameof<Project>("resolveSourceFileDependencies"), () => {
         it("should resolve file dependencies once specified", () => {
             const { project, initialFiles, resolvedFiles } = fileDependencyResolutionSetup({ skipFileDependencyResolution: true });
             expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal([...initialFiles]);
@@ -379,7 +379,7 @@ describe(nameof(Project), () => {
         };
     }
 
-    describe(nameof<Project>(project => project.getCompilerOptions), () => {
+    describe(nameof<Project>("getCompilerOptions"), () => {
         it(`should get the default compiler options when not providing anything and no tsconfig exists`, () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
             const project = new Project({ fileSystem });
@@ -427,7 +427,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(project => project.addDirectoryAtPathIfExists), () => {
+    describe(nameof<Project>("addDirectoryAtPathIfExists"), () => {
         it("should throw if the directory doesn't exist", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
             const project = new Project({ fileSystem });
@@ -476,7 +476,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(project => project.addDirectoryAtPath), () => {
+    describe(nameof<Project>("addDirectoryAtPath"), () => {
         it("should throw if the directory doesn't exist", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
             const project = new Project({ fileSystem });
@@ -527,7 +527,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(project => project.createDirectory), () => {
+    describe(nameof<Project>("createDirectory"), () => {
         it("should create the directory when it doesn't exist", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
             const project = new Project({ fileSystem });
@@ -578,7 +578,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(project => project.getDirectory), () => {
+    describe(nameof<Project>("getDirectory"), () => {
         const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
         const project = new Project({ fileSystem });
         project.createSourceFile("dir/file.ts");
@@ -592,7 +592,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(project => project.getDirectoryOrThrow), () => {
+    describe(nameof<Project>("getDirectoryOrThrow"), () => {
         const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
         const project = new Project({ fileSystem });
         project.createSourceFile("dir/file.ts");
@@ -606,7 +606,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(project => project.getRootDirectories), () => {
+    describe(nameof<Project>("getRootDirectories"), () => {
         function getProject() {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
             const project = new Project({ fileSystem });
@@ -649,7 +649,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(project => project.getDirectories), () => {
+    describe(nameof<Project>("getDirectories"), () => {
         it("should get all the directories in the order based on the directory structure", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
             const project = new Project({ fileSystem });
@@ -688,7 +688,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(project => project.addSourceFilesFromTsConfig), () => {
+    describe(nameof<Project>("addSourceFilesFromTsConfig"), () => {
         it("should throw if the tsconfig doesn't exist", () => {
             const fileSystem = new InMemoryFileSystemHost();
             const project = new Project({ fileSystem, skipLoadingLibFiles: true });
@@ -719,7 +719,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(project => project.addSourceFileAtPath), () => {
+    describe(nameof<Project>("addSourceFileAtPath"), () => {
         it("should throw an exception if adding a source file at a non-existent path", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
             const project = new Project({ fileSystem });
@@ -737,7 +737,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(project => project.addSourceFileAtPathIfExists), () => {
+    describe(nameof<Project>("addSourceFileAtPathIfExists"), () => {
         it("should return undefined if adding a source file at a non-existent path", () => {
             const project = new Project({ useInMemoryFileSystem: true });
             expect(project.addSourceFileAtPathIfExists("non-existent-file.ts")).to.be.undefined;
@@ -752,7 +752,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(project => project.addSourceFilesAtPaths), () => {
+    describe(nameof<Project>("addSourceFilesAtPaths"), () => {
         it("should add based on a string file glob", () => {
             const project = new Project({ useInMemoryFileSystem: true });
             const fs = project.getFileSystem();
@@ -823,7 +823,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(project => project.createSourceFile), () => {
+    describe(nameof<Project>("createSourceFile"), () => {
         it("should throw an exception if creating a source file at an existing path", () => {
             const project = new Project({ useInMemoryFileSystem: true });
             project.createSourceFile("file.ts", "");
@@ -945,7 +945,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(project => project.removeSourceFile), () => {
+    describe(nameof<Project>("removeSourceFile"), () => {
         it("should remove the source file", () => {
             const project = new Project({ useInMemoryFileSystem: true });
             const sourceFile = project.createSourceFile("myFile.ts", ``);
@@ -956,7 +956,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(project => project.save), () => {
+    describe(nameof<Project>("save"), () => {
         it("should save all the unsaved source files asynchronously", async () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
             const project = new Project({ fileSystem });
@@ -989,7 +989,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(project => project.saveSync), () => {
+    describe(nameof<Project>("saveSync"), () => {
         it("should save all the unsaved source files synchronously", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
             const project = new Project({ fileSystem });
@@ -1011,7 +1011,7 @@ describe(nameof(Project), () => {
         return { fileSystem, project };
     }
 
-    describe(nameof<Project>(project => project.emit), () => {
+    describe(nameof<Project>("emit"), () => {
         it("should emit multiple files when not specifying any options", async () => {
             const { project, fileSystem } = emitSetup({ noLib: true, outDir: "dist" });
             const result = await project.emit();
@@ -1085,7 +1085,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(project => project.emitSync), () => {
+    describe(nameof<Project>("emitSync"), () => {
         it("should emit synchronously", () => {
             const { project, fileSystem } = emitSetup({ noLib: true, outDir: "dist" });
             const result = project.emitSync();
@@ -1106,7 +1106,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(project => project.emitToMemory), () => {
+    describe(nameof<Project>("emitToMemory"), () => {
         it("should emit multiple files to memory", () => {
             const { project, fileSystem } = emitSetup({ noLib: true, outDir: "dist" });
             const result = project.emitToMemory();
@@ -1124,7 +1124,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(project => project.getSourceFile), () => {
+    describe(nameof<Project>("getSourceFile"), () => {
         it("should get the first match based on the directory structure", () => {
             const project = new Project({ useInMemoryFileSystem: true });
             project.createSourceFile("dir/file.ts");
@@ -1168,7 +1168,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(project => project.getSourceFileOrThrow), () => {
+    describe(nameof<Project>("getSourceFileOrThrow"), () => {
         it("should throw when it can't find the source file based on a provided file name", () => {
             const project = new Project({ useInMemoryFileSystem: true });
             expect(() => project.getSourceFileOrThrow("fileName.ts")).to.throw(
@@ -1205,7 +1205,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(project => project.getSourceFiles), () => {
+    describe(nameof<Project>("getSourceFiles"), () => {
         it("should get all the source files added to the project sorted by directory structure", () => {
             const project = new Project({ useInMemoryFileSystem: true });
             project.createSourceFile("dir/child/file.ts");
@@ -1277,7 +1277,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(t => t.forgetNodesCreatedInBlock), () => {
+    describe(nameof<Project>("forgetNodesCreatedInBlock"), () => {
         it("should work for a synchronous block", () => {
             const project = new Project({ useInMemoryFileSystem: true });
             let sourceFile: SourceFile;
@@ -1378,7 +1378,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(p => p.compilerOptions), () => {
+    describe(nameof<Project>("compilerOptions"), () => {
         it("should reparse after modifying the compiler options", () => {
             const project = new Project({ useInMemoryFileSystem: true });
             const sourceFile = project.createSourceFile("myFile.ts", `function myFunction(param: string) {}`);
@@ -1410,7 +1410,7 @@ describe(nameof(Project), () => {
             return project;
         }
 
-        describe(nameof<Project>(p => p.getAmbientModules), () => {
+        describe(nameof<Project>("getAmbientModules"), () => {
             it("should get when exist", () => {
                 const project = getProject();
                 expect(project.getAmbientModules().map(m => m.getName())).to.deep.equal([`"jquery"`]);
@@ -1422,7 +1422,7 @@ describe(nameof(Project), () => {
             });
         });
 
-        describe(nameof<Project>(p => p.getAmbientModule), () => {
+        describe(nameof<Project>("getAmbientModule"), () => {
             function doTest(moduleName: string, expectedName: string | undefined) {
                 const project = getProject();
                 const ambientModule = project.getAmbientModule(moduleName);
@@ -1435,7 +1435,7 @@ describe(nameof(Project), () => {
             it("should not find when does not exist", () => doTest("other-module", undefined));
         });
 
-        describe(nameof<Project>(p => p.getAmbientModuleOrThrow), () => {
+        describe(nameof<Project>("getAmbientModuleOrThrow"), () => {
             function doTest(moduleName: string, expectedName: string | undefined) {
                 const project = getProject();
 
@@ -1463,7 +1463,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(p => p.formatDiagnosticsWithColorAndContext), () => {
+    describe(nameof<Project>("formatDiagnosticsWithColorAndContext"), () => {
         function setup() {
             const project = new Project({ useInMemoryFileSystem: true });
             project.createSourceFile("test.ts", "const t; const u;");
@@ -1500,7 +1500,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(p => p.getModuleResolutionHost), () => {
+    describe(nameof<Project>("getModuleResolutionHost"), () => {
         function setup() {
             const project = new Project({ useInMemoryFileSystem: true });
             const moduleResolutionHost = project.getModuleResolutionHost();
@@ -1599,7 +1599,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(p => p.getConfigFileParsingDiagnostics), () => {
+    describe(nameof<Project>("getConfigFileParsingDiagnostics"), () => {
         it("should get the diagnostics found when parsing the tsconfig.json file", () => {
             const fileSystem = new InMemoryFileSystemHost();
             fileSystem.writeFileSync("/tsconfig.json", `{ "fies": [] }`);

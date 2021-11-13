@@ -1,4 +1,4 @@
-import { errors, SyntaxKind, ts, NewLineKind, EmitHint, ScriptKind, ScriptTarget, SettingsContainer, KeyValueCache, getCompilerOptionsFromTsConfig as getCompilerOptionsFromTsConfig$1, ObjectUtils, StringUtils, getSyntaxKindName, ArrayUtils, EventContainer, FileUtils, Memoize, SymbolFlags, TypeFormatFlags, getEmitModuleResolutionKind, createHosts, ObjectFlags, TypeFlags, matchGlobs, ModuleResolutionKind, SortedKeyValueArray, LocaleStringComparer, WeakCache, DocumentRegistry, CompilerOptionsContainer, TransactionalFileSystem, RealFileSystemHost, createModuleResolutionHost, TsConfigResolver, InMemoryFileSystemHost, IterableUtils, runtime } from './common/mod.ts';
+import { errors, SyntaxKind, ts, NewLineKind, EmitHint, ScriptKind, ScriptTarget, SettingsContainer, KeyValueCache, getCompilerOptionsFromTsConfig as getCompilerOptionsFromTsConfig$1, ObjectUtils, StringUtils, getSyntaxKindName, ArrayUtils, nameof, EventContainer, FileUtils, Memoize, SymbolFlags, TypeFormatFlags, getEmitModuleResolutionKind, createHosts, ObjectFlags, TypeFlags, matchGlobs, ModuleResolutionKind, SortedKeyValueArray, LocaleStringComparer, WeakCache, DocumentRegistry, createModuleResolutionHost, TransactionalFileSystem, TsConfigResolver, CompilerOptionsContainer, InMemoryFileSystemHost, RealFileSystemHost, IterableUtils, runtime } from './common/mod.ts';
 export { CompilerOptionsContainer, DiagnosticCategory, EmitHint, InMemoryFileSystemHost, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, NodeFlags, ObjectFlags, ResolutionHosts, ScriptKind, ScriptTarget, SettingsContainer, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags, ts } from './common/mod.ts';
 import CodeBlockWriter from 'https://deno.land/x/code_block_writer@10.1.1/mod.ts';
 export { default as CodeBlockWriter } from 'https://deno.land/x/code_block_writer@10.1.1/mod.ts';
@@ -1750,7 +1750,7 @@ class TryOrForgetNodeHandler {
     }
     handleNode(currentNode, newNode, newSourceFile) {
         if (!Node.isSourceFile(currentNode))
-            throw new errors.InvalidOperationError(`Can only use a ${"TryOrForgetNodeHandler"} with a source file.`);
+            throw new errors.InvalidOperationError(`Can only use a TryOrForgetNodeHandler with a source file.`);
         try {
             this.handler.handleNode(currentNode, newNode, newSourceFile);
         }
@@ -3636,10 +3636,10 @@ class Node {
         return parent.getChildren()[childIndex];
     }
     prependWhitespace(textOrWriterFunction) {
-        insertWhiteSpaceTextAtPos(this, this.getStart(true), textOrWriterFunction, "prependWhitespace");
+        insertWhiteSpaceTextAtPos(this, this.getStart(true), textOrWriterFunction, nameof(this, "prependWhitespace"));
     }
     appendWhitespace(textOrWriterFunction) {
-        insertWhiteSpaceTextAtPos(this, this.getEnd(), textOrWriterFunction, "appendWhitespace");
+        insertWhiteSpaceTextAtPos(this, this.getEnd(), textOrWriterFunction, nameof(this, "appendWhitespace"));
     }
     formatText(settings = {}) {
         const formattingEdits = this._context.languageService.getFormattingEditsForRange(this._sourceFile.getFilePath(), [this.getStart(true), this.getEnd()], settings);
@@ -5904,129 +5904,6 @@ function ExclamationTokenableNode(Base) {
     };
 }
 
-function ModifierableNode(Base) {
-    return class extends Base {
-        getModifiers() {
-            return this.getCompilerModifiers().map(m => this._getNodeFromCompilerNode(m));
-        }
-        getFirstModifierByKindOrThrow(kind) {
-            return errors.throwIfNullOrUndefined(this.getFirstModifierByKind(kind), `Expected a modifier of syntax kind: ${getSyntaxKindName(kind)}`);
-        }
-        getFirstModifierByKind(kind) {
-            for (const modifier of this.getCompilerModifiers()) {
-                if (modifier.kind === kind)
-                    return this._getNodeFromCompilerNode(modifier);
-            }
-            return undefined;
-        }
-        hasModifier(textOrKind) {
-            if (typeof textOrKind === "string")
-                return this.getModifiers().some(m => m.getText() === textOrKind);
-            else
-                return this.getCompilerModifiers().some(m => m.kind === textOrKind);
-        }
-        toggleModifier(text, value) {
-            if (value == null)
-                value = !this.hasModifier(text);
-            if (value)
-                this.addModifier(text);
-            else
-                this.removeModifier(text);
-            return this;
-        }
-        addModifier(text) {
-            const modifiers = this.getModifiers();
-            const existingModifier = modifiers.find(m => m.getText() === text);
-            if (existingModifier != null)
-                return existingModifier;
-            const insertPos = getInsertPos(this);
-            let startPos;
-            let newText;
-            const isFirstModifier = modifiers.length === 0 || insertPos === modifiers[0].getStart();
-            if (isFirstModifier) {
-                newText = text + " ";
-                startPos = insertPos;
-            }
-            else {
-                newText = " " + text;
-                startPos = insertPos + 1;
-            }
-            insertIntoParentTextRange({
-                parent: modifiers.length === 0 ? this : modifiers[0].getParentSyntaxListOrThrow(),
-                insertPos,
-                newText,
-            });
-            return this.getModifiers().find(m => m.getStart() === startPos);
-            function getInsertPos(node) {
-                let pos = getInitialInsertPos();
-                for (const addAfterText of getAddAfterModifierTexts(text)) {
-                    for (let i = 0; i < modifiers.length; i++) {
-                        const modifier = modifiers[i];
-                        if (modifier.getText() === addAfterText) {
-                            if (pos < modifier.getEnd())
-                                pos = modifier.getEnd();
-                            break;
-                        }
-                    }
-                }
-                return pos;
-                function getInitialInsertPos() {
-                    if (modifiers.length > 0)
-                        return modifiers[0].getStart();
-                    for (const child of node._getChildrenIterator()) {
-                        if (child.getKind() === SyntaxKind.SyntaxList || ts.isJSDocCommentContainingNode(child.compilerNode))
-                            continue;
-                        return child.getStart();
-                    }
-                    return node.getStart();
-                }
-            }
-        }
-        removeModifier(text) {
-            const modifiers = this.getModifiers();
-            const modifier = modifiers.find(m => m.getText() === text);
-            if (modifier == null)
-                return false;
-            removeChildren({
-                children: [modifiers.length === 1 ? modifier.getParentSyntaxListOrThrow() : modifier],
-                removeFollowingSpaces: true,
-            });
-            return true;
-        }
-        getCompilerModifiers() {
-            return this.compilerNode.modifiers || [];
-        }
-    };
-}
-function getAddAfterModifierTexts(text) {
-    switch (text) {
-        case "export":
-            return [];
-        case "public":
-        case "protected":
-        case "private":
-            return [];
-        case "default":
-            return ["export"];
-        case "const":
-            return ["export"];
-        case "declare":
-            return ["export", "default"];
-        case "static":
-            return ["public", "protected", "private"];
-        case "override":
-            return ["public", "private", "protected", "static"];
-        case "abstract":
-            return ["export", "default", "declare", "public", "private", "protected", "static", "override"];
-        case "async":
-            return ["export", "default", "declare", "public", "private", "protected", "static", "override", "abstract"];
-        case "readonly":
-            return ["export", "default", "declare", "public", "private", "protected", "static", "override", "abstract"];
-        default:
-            errors.throwNotImplementedForNeverValueError(text);
-    }
-}
-
 function ExportGetableNode(Base) {
     return class extends Base {
         hasExportKeyword() {
@@ -6098,7 +5975,7 @@ function ExportGetableNode(Base) {
     };
 }
 function throwForNotModifierableNode() {
-    throw new errors.NotImplementedError(`Not implemented situation where node was not a ${"ModifierableNode"}.`);
+    throw new errors.NotImplementedError(`Not implemented situation where node was not a ModifierableNode.`);
 }
 
 function ExportableNode(Base) {
@@ -8360,7 +8237,7 @@ class ModuleDeclarationStructurePrinter extends NodePrinter {
         else
             writer.write("global");
         if (structure.hasDeclareKeyword && StringUtils.isQuoted(structure.name.trim())
-            && structure.hasOwnProperty("statements") && structure.statements == null) {
+            && structure.hasOwnProperty(nameof(structure, "statements")) && structure.statements == null) {
             writer.write(";");
         }
         else {
@@ -8376,7 +8253,7 @@ class ModuleDeclarationStructurePrinter extends NodePrinter {
         if (StringUtils.isQuoted(structure.name.trim())) {
             if (structure.declarationKind === ModuleDeclarationKind.Namespace) {
                 throw new errors.InvalidOperationError(`Cannot print a namespace with quotes for namespace with name ${structure.name}. `
-                    + `Use ${"ModuleDeclarationKind.Module"} instead.`);
+                    + `Use ModuleDeclarationKind.Module instead.`);
             }
             structure = ObjectUtils.clone(structure);
             setValueIfUndefined(structure, "hasDeclareKeyword", true);
@@ -8891,7 +8768,7 @@ function apply(Base) {
             callBaseSet(Base.prototype, this, structure);
             if (structure.initializer != null)
                 this.setInitializer(structure.initializer);
-            else if (structure.hasOwnProperty("initializer"))
+            else if (structure.hasOwnProperty(nameof(structure, "initializer")))
                 this.removeInitializer();
             return this;
         }
@@ -8966,6 +8843,129 @@ function LiteralLikeNode(Base) {
             return this.compilerNode.hasExtendedUnicodeEscape || false;
         }
     };
+}
+
+function ModifierableNode(Base) {
+    return class extends Base {
+        getModifiers() {
+            return this.getCompilerModifiers().map(m => this._getNodeFromCompilerNode(m));
+        }
+        getFirstModifierByKindOrThrow(kind) {
+            return errors.throwIfNullOrUndefined(this.getFirstModifierByKind(kind), `Expected a modifier of syntax kind: ${getSyntaxKindName(kind)}`);
+        }
+        getFirstModifierByKind(kind) {
+            for (const modifier of this.getCompilerModifiers()) {
+                if (modifier.kind === kind)
+                    return this._getNodeFromCompilerNode(modifier);
+            }
+            return undefined;
+        }
+        hasModifier(textOrKind) {
+            if (typeof textOrKind === "string")
+                return this.getModifiers().some(m => m.getText() === textOrKind);
+            else
+                return this.getCompilerModifiers().some(m => m.kind === textOrKind);
+        }
+        toggleModifier(text, value) {
+            if (value == null)
+                value = !this.hasModifier(text);
+            if (value)
+                this.addModifier(text);
+            else
+                this.removeModifier(text);
+            return this;
+        }
+        addModifier(text) {
+            const modifiers = this.getModifiers();
+            const existingModifier = modifiers.find(m => m.getText() === text);
+            if (existingModifier != null)
+                return existingModifier;
+            const insertPos = getInsertPos(this);
+            let startPos;
+            let newText;
+            const isFirstModifier = modifiers.length === 0 || insertPos === modifiers[0].getStart();
+            if (isFirstModifier) {
+                newText = text + " ";
+                startPos = insertPos;
+            }
+            else {
+                newText = " " + text;
+                startPos = insertPos + 1;
+            }
+            insertIntoParentTextRange({
+                parent: modifiers.length === 0 ? this : modifiers[0].getParentSyntaxListOrThrow(),
+                insertPos,
+                newText,
+            });
+            return this.getModifiers().find(m => m.getStart() === startPos);
+            function getInsertPos(node) {
+                let pos = getInitialInsertPos();
+                for (const addAfterText of getAddAfterModifierTexts(text)) {
+                    for (let i = 0; i < modifiers.length; i++) {
+                        const modifier = modifiers[i];
+                        if (modifier.getText() === addAfterText) {
+                            if (pos < modifier.getEnd())
+                                pos = modifier.getEnd();
+                            break;
+                        }
+                    }
+                }
+                return pos;
+                function getInitialInsertPos() {
+                    if (modifiers.length > 0)
+                        return modifiers[0].getStart();
+                    for (const child of node._getChildrenIterator()) {
+                        if (child.getKind() === SyntaxKind.SyntaxList || ts.isJSDocCommentContainingNode(child.compilerNode))
+                            continue;
+                        return child.getStart();
+                    }
+                    return node.getStart();
+                }
+            }
+        }
+        removeModifier(text) {
+            const modifiers = this.getModifiers();
+            const modifier = modifiers.find(m => m.getText() === text);
+            if (modifier == null)
+                return false;
+            removeChildren({
+                children: [modifiers.length === 1 ? modifier.getParentSyntaxListOrThrow() : modifier],
+                removeFollowingSpaces: true,
+            });
+            return true;
+        }
+        getCompilerModifiers() {
+            return this.compilerNode.modifiers || [];
+        }
+    };
+}
+function getAddAfterModifierTexts(text) {
+    switch (text) {
+        case "export":
+            return [];
+        case "public":
+        case "protected":
+        case "private":
+            return [];
+        case "default":
+            return ["export"];
+        case "const":
+            return ["export"];
+        case "declare":
+            return ["export", "default"];
+        case "static":
+            return ["public", "protected", "private"];
+        case "override":
+            return ["public", "private", "protected", "static"];
+        case "abstract":
+            return ["export", "default", "declare", "public", "private", "protected", "static", "override"];
+        case "async":
+            return ["export", "default", "declare", "public", "private", "protected", "static", "override", "abstract"];
+        case "readonly":
+            return ["export", "default", "declare", "public", "private", "protected", "static", "override", "abstract"];
+        default:
+            errors.throwNotImplementedForNeverValueError(text);
+    }
 }
 
 function ModuledNode(Base) {
@@ -9312,7 +9312,7 @@ function NameableNodeInternal(Base) {
                 else
                     nameNode.replaceWithText(structure.name);
             }
-            else if (structure.hasOwnProperty("name")) {
+            else if (structure.hasOwnProperty(nameof(structure, "name"))) {
                 this.removeName();
             }
             return this;
@@ -9627,7 +9627,7 @@ function ReturnTypedNode(Base) {
             callBaseSet(Base.prototype, this, structure);
             if (structure.returnType != null)
                 this.setReturnType(structure.returnType);
-            else if (structure.hasOwnProperty("returnType"))
+            else if (structure.hasOwnProperty(nameof(structure, "returnType")))
                 this.removeReturnType();
             return this;
         }
@@ -9665,7 +9665,7 @@ function ScopeableNode(Base) {
         }
         set(structure) {
             callBaseSet(Base.prototype, this, structure);
-            if (structure.hasOwnProperty("scope"))
+            if (structure.hasOwnProperty(nameof(structure, "scope")))
                 this.setScope(structure.scope);
             return this;
         }
@@ -9707,7 +9707,7 @@ function ScopedNode(Base) {
         }
         set(structure) {
             callBaseSet(Base.prototype, this, structure);
-            if (structure.hasOwnProperty("scope"))
+            if (structure.hasOwnProperty(nameof(structure, "scope")))
                 this.setScope(structure.scope);
             return this;
         }
@@ -9930,13 +9930,13 @@ function TypedNode(Base) {
             callBaseSet(Base.prototype, this, structure);
             if (structure.type != null)
                 this.setType(structure.type);
-            else if (structure.hasOwnProperty("type"))
+            else if (structure.hasOwnProperty(nameof(structure, "type")))
                 this.removeType();
             return this;
         }
         removeType() {
             if (this.getKind() === SyntaxKind.TypeAliasDeclaration)
-                throw new errors.NotSupportedError(`Cannot remove the type of a type alias. Use ${"setType"} instead.`);
+                throw new errors.NotSupportedError(`Cannot remove the type of a type alias. Use ${nameof("setType")} instead.`);
             const typeNode = this.getTypeNode();
             if (typeNode == null)
                 return this;
@@ -10602,7 +10602,7 @@ class ObjectLiteralExpression extends ObjectLiteralExpressionBase {
         let findFunc;
         if (typeof nameOrFindFunction === "string") {
             findFunc = prop => {
-                if (prop["getName"] == null)
+                if (prop[nameof("getName")] == null)
                     return false;
                 return prop.getName() === nameOrFindFunction;
             };
@@ -10775,7 +10775,7 @@ class PropertyAssignment extends PropertyAssignmentBase {
         callBaseSet(PropertyAssignmentBase.prototype, this, structure);
         if (structure.initializer != null)
             this.setInitializer(structure.initializer);
-        else if (structure.hasOwnProperty("initializer"))
+        else if (structure.hasOwnProperty(nameof(structure, "initializer")))
             return this.removeInitializer();
         return this;
     }
@@ -11253,7 +11253,7 @@ function StatementedNode(Base) {
             return callBaseGetStructure(Base.prototype, this, structure);
         }
         set(structure) {
-            if (Node.isBodyableNode(this) && structure.statements == null && structure.hasOwnProperty("statements"))
+            if (Node.isBodyableNode(this) && structure.statements == null && structure.hasOwnProperty(nameof(structure, "statements")))
                 this.removeBody();
             else if (structure.statements != null) {
                 const statementCount = this._getCompilerStatementsWithComments().length;
@@ -11780,14 +11780,14 @@ class ExportDeclaration extends ExportDeclarationBase {
             setEmptyNamedExport(this);
             this.addNamedExports(structure.namedExports);
         }
-        else if (structure.hasOwnProperty("namedExports") && structure.moduleSpecifier == null) {
+        else if (structure.hasOwnProperty(nameof(structure, "namedExports")) && structure.moduleSpecifier == null) {
             this.toNamespaceExport();
         }
         if (structure.moduleSpecifier != null)
             this.setModuleSpecifier(structure.moduleSpecifier);
-        else if (structure.hasOwnProperty("moduleSpecifier"))
+        else if (structure.hasOwnProperty(nameof(structure, "moduleSpecifier")))
             this.removeModuleSpecifier();
-        if (structure.namedExports == null && structure.hasOwnProperty("namedExports"))
+        if (structure.namedExports == null && structure.hasOwnProperty(nameof(structure, "namedExports")))
             this.toNamespaceExport();
         if (structure.namespaceExport != null)
             this.setNamespaceExport(structure.namespaceExport);
@@ -11927,7 +11927,7 @@ class ExportSpecifier extends ExportSpecifierBase {
             this.setName(structure.name);
         if (structure.alias != null)
             this.setAlias(structure.alias);
-        else if (structure.hasOwnProperty("alias"))
+        else if (structure.hasOwnProperty(nameof(structure, "alias")))
             this.removeAlias();
         return this;
     }
@@ -12271,13 +12271,13 @@ class ImportDeclaration extends ImportDeclarationBase {
         callBaseSet(ImportDeclarationBase.prototype, this, structure);
         if (structure.defaultImport != null)
             this.setDefaultImport(structure.defaultImport);
-        else if (structure.hasOwnProperty("defaultImport"))
+        else if (structure.hasOwnProperty(nameof(structure, "defaultImport")))
             this.removeDefaultImport();
-        if (structure.hasOwnProperty("namedImports"))
+        if (structure.hasOwnProperty(nameof(structure, "namedImports")))
             this.removeNamedImports();
         if (structure.namespaceImport != null)
             this.setNamespaceImport(structure.namespaceImport);
-        else if (structure.hasOwnProperty("namespaceImport"))
+        else if (structure.hasOwnProperty(nameof(structure, "namespaceImport")))
             this.removeNamespaceImport();
         if (structure.namedImports != null) {
             setEmptyNamedImport(this);
@@ -12487,7 +12487,7 @@ class ImportSpecifier extends ImportSpecifierBase {
             this.setName(structure.name);
         if (structure.alias != null)
             this.setAlias(structure.alias);
-        else if (structure.hasOwnProperty("alias"))
+        else if (structure.hasOwnProperty(nameof(structure, "alias")))
             this.removeAlias();
         return this;
     }
@@ -12562,7 +12562,7 @@ class ModuleDeclaration extends ModuleDeclarationBase {
         const nameNodes = this.getNameNodes();
         if (nameNodes instanceof Array) {
             if (nameNodes.length > 1) {
-                throw new errors.NotSupportedError(`Cannot rename a namespace name that uses dot notation. Rename the individual nodes via .${"getNameNodes"}()`);
+                throw new errors.NotSupportedError(`Cannot rename a namespace name that uses dot notation. Rename the individual nodes via .${nameof(this, "getNameNodes")}()`);
             }
             if (newName !== "global")
                 addNamespaceKeywordIfNecessary(this);
@@ -14130,7 +14130,7 @@ class ClassDeclaration extends ClassDeclarationBase {
         callBaseSet(ClassDeclarationBase.prototype, this, structure);
         if (structure.extends != null)
             this.setExtends(structure.extends);
-        else if (structure.hasOwnProperty("extends"))
+        else if (structure.hasOwnProperty(nameof(structure, "extends")))
             this.removeExtends();
         if (structure.ctors != null) {
             this.getConstructors().forEach(c => c.remove());
@@ -14444,16 +14444,16 @@ class Decorator extends DecoratorBase {
         return this.getNameNode().getText();
     }
     getNameNode() {
-        if (this.isDecoratorFactory()) {
-            const callExpression = this.getCallExpression();
+        const callExpression = this.getCallExpression();
+        if (callExpression)
             return getIdentifierFromName(callExpression.getExpression());
-        }
-        return getIdentifierFromName(this.getExpression());
+        else
+            return getIdentifierFromName(this._getInnerExpression());
         function getIdentifierFromName(expression) {
             const identifier = getNameFromExpression(expression);
             if (!Node.isIdentifier(identifier)) {
-                throw new errors.NotImplementedError(`Expected the decorator expression '${identifier.getText()}' to be an identifier, `
-                    + `but it wasn't. Please report this as a bug.`);
+                throw new errors.NotImplementedError(`Expected the decorator expression '${identifier.getText()}' to be an identifier. `
+                    + `Please deal directly with 'getExpression()' on the decorator to handle more complex scenarios.`);
             }
             return identifier;
         }
@@ -14470,13 +14470,13 @@ class Decorator extends DecoratorBase {
         return this.compilerNode.expression.getText(sourceFile.compilerNode);
     }
     isDecoratorFactory() {
-        return this.compilerNode.expression.kind === SyntaxKind.CallExpression;
+        return Node.isCallExpression(this._getInnerExpression());
     }
     setIsDecoratorFactory(isDecoratorFactory) {
         if (this.isDecoratorFactory() === isDecoratorFactory)
             return this;
         if (isDecoratorFactory) {
-            const expression = this.getExpression();
+            const expression = this._getInnerExpression();
             const expressionText = expression.getText();
             insertIntoParentTextRange({
                 parent: this,
@@ -14512,9 +14512,8 @@ class Decorator extends DecoratorBase {
         return errors.throwIfNullOrUndefined(this.getCallExpression(), "Expected to find a call expression.");
     }
     getCallExpression() {
-        if (!this.isDecoratorFactory())
-            return undefined;
-        return this.getExpression();
+        const expression = this._getInnerExpression();
+        return Node.isCallExpression(expression) ? expression : undefined;
     }
     getArguments() {
         var _a, _b;
@@ -14578,6 +14577,12 @@ class Decorator extends DecoratorBase {
                 getSiblingFormatting: (parent, sibling) => sibling.getStartLinePos() === thisStartLinePos ? FormattingKind.Space : FormattingKind.Newline,
             });
         }
+    }
+    _getInnerExpression() {
+        let expr = this.getExpression();
+        while (Node.isParenthesizedExpression(expr))
+            expr = expr.getExpression();
+        return expr;
     }
     set(structure) {
         callBaseSet(DecoratorBase.prototype, this, structure);
@@ -15235,11 +15240,11 @@ class TypeParameterDeclaration extends TypeParameterDeclarationBase {
         callBaseSet(TypeParameterDeclarationBase.prototype, this, structure);
         if (structure.constraint != null)
             this.setConstraint(structure.constraint);
-        else if (structure.hasOwnProperty("constraint"))
+        else if (structure.hasOwnProperty(nameof(structure, "constraint")))
             this.removeConstraint();
         if (structure.default != null)
             this.setDefault(structure.default);
-        else if (structure.hasOwnProperty("default"))
+        else if (structure.hasOwnProperty(nameof(structure, "default")))
             this.removeDefault();
         return this;
     }
@@ -15537,7 +15542,7 @@ class EnumMember extends EnumMemberBase {
         callBaseSet(EnumMemberBase.prototype, this, structure);
         if (structure.value != null)
             this.setValue(structure.value);
-        else if (structure.hasOwnProperty("value") && structure.initializer == null)
+        else if (structure.hasOwnProperty(nameof(structure, "value")) && structure.initializer == null)
             this.removeInitializer();
         return this;
     }
@@ -15836,7 +15841,7 @@ class JsxAttribute extends JsxAttributeBase {
         callBaseSet(JsxAttributeBase.prototype, this, structure);
         if (structure.initializer != null)
             this.setInitializer(structure.initializer);
-        else if (structure.hasOwnProperty("initializer"))
+        else if (structure.hasOwnProperty(nameof(structure, "initializer")))
             this.removeInitializer();
         return this;
     }
@@ -15894,7 +15899,7 @@ class JsxElement extends JsxElementBase {
             throw new errors.NotImplementedError("Setting JSX children is currently not implemented. Please open an issue if you need this.");
         if (structure.bodyText != null)
             this.setBodyText(structure.bodyText);
-        else if (structure.hasOwnProperty("bodyText"))
+        else if (structure.hasOwnProperty(nameof(structure, "bodyText")))
             this.setBodyTextInline("");
         if (structure.name != null) {
             this.getOpeningElement().getTagNameNode().replaceWithText(structure.name);
@@ -17166,8 +17171,8 @@ class Program {
     emit(options = {}) {
         return __awaiter(this, void 0, void 0, function* () {
             if (options.writeFile) {
-                const message = `Cannot specify a ${"writeFile"} option when emitting asynchrously. `
-                    + `Use ${"emitSync"}() instead.`;
+                const message = `Cannot specify a ${nameof(options, "writeFile")} option when emitting asynchrously. `
+                    + `Use ${nameof(this, "emitSync")}() instead.`;
                 throw new errors.InvalidOperationError(message);
             }
             const { fileSystemWrapper } = this._context;
@@ -19445,39 +19450,6 @@ __decorate([
     Memoize
 ], StructurePrinterFactory.prototype, "forVariableDeclaration", null);
 
-function createWrappedNode(node, opts = {}) {
-    const { compilerOptions = {}, sourceFile, typeChecker } = opts;
-    const compilerOptionsContainer = new CompilerOptionsContainer();
-    compilerOptionsContainer.set(compilerOptions);
-    const projectContext = new ProjectContext({
-        project: undefined,
-        fileSystemWrapper: new TransactionalFileSystem(new RealFileSystemHost()),
-        compilerOptionsContainer,
-        createLanguageService: false,
-        typeChecker,
-        configFileParsingDiagnostics: [],
-        skipLoadingLibFiles: true,
-        libFolderPath: undefined,
-    });
-    const wrappedSourceFile = projectContext.compilerFactory.getSourceFile(getSourceFileNode(), { markInProject: true });
-    return projectContext.compilerFactory.getNodeFromCompilerNode(node, wrappedSourceFile);
-    function getSourceFileNode() {
-        return sourceFile !== null && sourceFile !== void 0 ? sourceFile : getSourceFileFromNode(node);
-    }
-    function getSourceFileFromNode(compilerNode) {
-        if (compilerNode.kind === SyntaxKind.SourceFile)
-            return compilerNode;
-        if (compilerNode.parent == null)
-            throw new errors.InvalidOperationError("Please ensure the node was created from a source file with 'setParentNodes' set to 'true'.");
-        let parent = compilerNode;
-        while (parent.parent != null)
-            parent = parent.parent;
-        if (parent.kind !== SyntaxKind.SourceFile)
-            throw new errors.NotImplementedError("For some reason the top parent was not a source file.");
-        return parent;
-    }
-}
-
 class ProjectContext {
     constructor(params) {
         this.logger = new ConsoleLogger();
@@ -19597,7 +19569,7 @@ class ProjectContext {
     getToolRequiredError(name) {
         return new errors.InvalidOperationError(`A ${name} is required for this operation. `
             + "This might occur when manipulating or getting type information from a node that was not added "
-            + `to a Project object and created via ${"createWrappedNode"}. `
+            + `to a Project object and created via createWrappedNode. `
             + `Please submit a bug report if you don't believe a ${name} should be required for this operation.`);
     }
 }
@@ -19906,6 +19878,39 @@ function normalizeAmbientModuleName(moduleName) {
     return `"${moduleName}"`;
     function isQuote(char) {
         return char === `"` || char === "'";
+    }
+}
+
+function createWrappedNode(node, opts = {}) {
+    const { compilerOptions = {}, sourceFile, typeChecker } = opts;
+    const compilerOptionsContainer = new CompilerOptionsContainer();
+    compilerOptionsContainer.set(compilerOptions);
+    const projectContext = new ProjectContext({
+        project: undefined,
+        fileSystemWrapper: new TransactionalFileSystem(new RealFileSystemHost()),
+        compilerOptionsContainer,
+        createLanguageService: false,
+        typeChecker,
+        configFileParsingDiagnostics: [],
+        skipLoadingLibFiles: true,
+        libFolderPath: undefined,
+    });
+    const wrappedSourceFile = projectContext.compilerFactory.getSourceFile(getSourceFileNode(), { markInProject: true });
+    return projectContext.compilerFactory.getNodeFromCompilerNode(node, wrappedSourceFile);
+    function getSourceFileNode() {
+        return sourceFile !== null && sourceFile !== void 0 ? sourceFile : getSourceFileFromNode(node);
+    }
+    function getSourceFileFromNode(compilerNode) {
+        if (compilerNode.kind === SyntaxKind.SourceFile)
+            return compilerNode;
+        if (compilerNode.parent == null)
+            throw new errors.InvalidOperationError("Please ensure the node was created from a source file with 'setParentNodes' set to 'true'.");
+        let parent = compilerNode;
+        while (parent.parent != null)
+            parent = parent.parent;
+        if (parent.kind !== SyntaxKind.SourceFile)
+            throw new errors.NotImplementedError("For some reason the top parent was not a source file.");
+        return parent;
     }
 }
 

@@ -1,11 +1,12 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { FunctionDeclaration } from "../../../../compiler";
 import { FunctionDeclarationOverloadStructure, FunctionDeclarationSpecificStructure, FunctionDeclarationStructure, OptionalKind,
     StructureKind } from "../../../../structures";
 import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
-describe(nameof(FunctionDeclaration), () => {
-    describe(nameof<FunctionDeclaration>(f => f.getName), () => {
+describe("FunctionDeclaration", () => {
+    describe(nameof<FunctionDeclaration>("getName"), () => {
         function doTest(startCode: string, name: string | undefined) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
             expect(firstChild.getName()).to.equal(name);
@@ -20,7 +21,7 @@ describe(nameof(FunctionDeclaration), () => {
         });
     });
 
-    describe(nameof<FunctionDeclaration>(f => f.insertOverloads), () => {
+    describe(nameof<FunctionDeclaration>("insertOverloads"), () => {
         function doTest(startCode: string, index: number, structures: OptionalKind<FunctionDeclarationOverloadStructure>[], expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.insertOverloads(index, structures);
@@ -54,7 +55,7 @@ describe(nameof(FunctionDeclaration), () => {
         });
     });
 
-    describe(nameof<FunctionDeclaration>(f => f.insertOverload), () => {
+    describe(nameof<FunctionDeclaration>("insertOverload"), () => {
         function doTest(startCode: string, index: number, structure: OptionalKind<FunctionDeclarationOverloadStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.insertOverload(index, structure);
@@ -68,7 +69,7 @@ describe(nameof(FunctionDeclaration), () => {
         });
     });
 
-    describe(nameof<FunctionDeclaration>(f => f.addOverloads), () => {
+    describe(nameof<FunctionDeclaration>("addOverloads"), () => {
         function doTest(startCode: string, structures: OptionalKind<FunctionDeclarationOverloadStructure>[], expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.addOverloads(structures);
@@ -82,7 +83,7 @@ describe(nameof(FunctionDeclaration), () => {
         });
     });
 
-    describe(nameof<FunctionDeclaration>(f => f.addOverload), () => {
+    describe(nameof<FunctionDeclaration>("addOverload"), () => {
         function doTest(startCode: string, structure: OptionalKind<FunctionDeclarationOverloadStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.addOverload(structure);
@@ -96,7 +97,7 @@ describe(nameof(FunctionDeclaration), () => {
         });
     });
 
-    describe(nameof<FunctionDeclaration>(d => d.remove), () => {
+    describe(nameof<FunctionDeclaration>("remove"), () => {
         function doTest(text: string, index: number, expectedText: string) {
             const { sourceFile } = getInfoFromText(text);
             sourceFile.getFunctions()[index].remove();
@@ -144,7 +145,7 @@ describe(nameof(FunctionDeclaration), () => {
         });
     });
 
-    describe(nameof<FunctionDeclaration>(f => f.set), () => {
+    describe(nameof<FunctionDeclaration>("set"), () => {
         function doTest(startingCode: string, structure: OptionalKind<FunctionDeclarationSpecificStructure>, expectedCode: string) {
             const { sourceFile } = getInfoFromText(startingCode);
             sourceFile.getFunctions()[0].set(structure);
@@ -179,7 +180,7 @@ describe(nameof(FunctionDeclaration), () => {
         });
     });
 
-    describe(nameof<FunctionDeclaration>(d => d.getStructure), () => {
+    describe(nameof<FunctionDeclaration>("getStructure"), () => {
         function doTest(text: string, expectedStructures: OptionalProperties<OptionalTrivia<MakeRequired<FunctionDeclarationStructure>>, "overloads">[]) {
             const { sourceFile } = getInfoFromText<any>(text);
             const functionDecs = sourceFile.getFunctions();

@@ -1,4 +1,4 @@
-import { errors, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
+import { errors, nameof, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange, removeChildren } from "../../../manipulation";
 import { TypedNodeStructure } from "../../../structures";
 import { Constructor, WriterFunction } from "../../../types";
@@ -98,7 +98,7 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
 
             if (structure.type != null)
                 this.setType(structure.type);
-            else if (structure.hasOwnProperty(nameof(structure.type)))
+            else if (structure.hasOwnProperty(nameof(structure, "type")))
                 this.removeType();
 
             return this;
@@ -106,7 +106,7 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
 
         removeType() {
             if (this.getKind() === SyntaxKind.TypeAliasDeclaration)
-                throw new errors.NotSupportedError(`Cannot remove the type of a type alias. Use ${nameof<TypedNode>(t => t.setType)} instead.`);
+                throw new errors.NotSupportedError(`Cannot remove the type of a type alias. Use ${nameof<TypedNode>("setType")} instead.`);
 
             const typeNode = this.getTypeNode();
             if (typeNode == null)

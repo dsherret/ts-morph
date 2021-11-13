@@ -4,7 +4,7 @@ import { ExportDeclarationStructurePrinter } from "../../../structurePrinters";
 import { ExportDeclarationStructure, OptionalKind } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
 
-describe(nameof(ExportDeclarationStructurePrinter), () => {
+describe("ExportDeclarationStructurePrinter", () => {
     function doTest(structure: OptionalKind<ExportDeclarationStructure>, expectedOutput: string, formatCodeSettings?: FormatCodeSettings) {
         const { writer, factory } = getStructureFactoryAndWriter(formatCodeSettings);
         factory.forExportDeclaration().printText(writer, structure);

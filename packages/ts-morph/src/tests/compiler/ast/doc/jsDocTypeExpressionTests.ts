@@ -1,14 +1,15 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { JSDocTypeExpression, Node } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
-describe(nameof(JSDocTypeExpression), () => {
+describe("JSDocTypeExpression", () => {
     function getInfo(text: string) {
         const info = getInfoFromText(text);
         return { descendant: info.sourceFile.getFirstDescendantOrThrow(Node.isJSDocTypeExpression), ...info };
     }
 
-    describe(nameof<JSDocTypeExpression>(d => d.getTypeNode), () => {
+    describe(nameof<JSDocTypeExpression>("getTypeNode"), () => {
         function doTest(text: string, expected: string) {
             const { descendant } = getInfo(text);
             expect(descendant.getTypeNode().getText()).to.equal(expected);

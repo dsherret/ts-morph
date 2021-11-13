@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { ForgetfulNodeCache } from "../../factories/ForgetfulNodeCache";
 import { getInfoFromText } from "../compiler/testHelpers";
 
-describe(nameof(ForgetfulNodeCache), () => {
+describe("ForgetfulNodeCache", () => {
     it("should forget nodes created after a forget point", () => {
         const { firstChild } = getInfoFromText("class MyClass { prop: string; }");
         const cache = new ForgetfulNodeCache();

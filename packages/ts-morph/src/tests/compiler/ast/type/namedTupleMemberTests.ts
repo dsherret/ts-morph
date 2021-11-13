@@ -1,14 +1,14 @@
-import { SyntaxKind } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { NamedTupleMember } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
-describe(nameof(NamedTupleMember), () => {
+describe("NamedTupleMember", () => {
     function getNode(text: string) {
         return getInfoFromTextWithDescendant<NamedTupleMember>(text, SyntaxKind.NamedTupleMember);
     }
 
-    describe(nameof<NamedTupleMember>(d => d.getDotDotDotToken), () => {
+    describe(nameof<NamedTupleMember>("getDotDotDotToken"), () => {
         function doTest(text: string, expected: string | undefined) {
             const { descendant } = getNode(text);
             expect(descendant.getDotDotDotToken()?.getText()).to.equal(expected);
@@ -23,7 +23,7 @@ describe(nameof(NamedTupleMember), () => {
         });
     });
 
-    describe(nameof<NamedTupleMember>(d => d.getName), () => {
+    describe(nameof<NamedTupleMember>("getName"), () => {
         function doTest(text: string, expected: string) {
             const { descendant } = getNode(text);
             expect(descendant.getName()).to.equal(expected);
@@ -34,7 +34,7 @@ describe(nameof(NamedTupleMember), () => {
         });
     });
 
-    describe(nameof<NamedTupleMember>(d => d.getType), () => {
+    describe(nameof<NamedTupleMember>("getType"), () => {
         function doTest(text: string, expected: string) {
             const { descendant } = getNode(text);
             expect(descendant.getTypeNode()!.getText()).to.equal(expected); // todo: should be required
@@ -45,7 +45,7 @@ describe(nameof(NamedTupleMember), () => {
         });
     });
 
-    describe(nameof<NamedTupleMember>(d => d.getQuestionTokenNode), () => {
+    describe(nameof<NamedTupleMember>("getQuestionTokenNode"), () => {
         function doTest(text: string, expected: string | undefined) {
             const { descendant } = getNode(text);
             expect(descendant.getQuestionTokenNode()?.getText()).to.equal(expected);

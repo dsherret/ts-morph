@@ -1,10 +1,11 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { TypeAliasDeclaration } from "../../../../compiler";
 import { StructureKind, TypeAliasDeclarationStructure, TypeParameterDeclarationStructure } from "../../../../structures";
 import { fillStructures, getInfoFromText, OptionalTrivia } from "../../testHelpers";
 
-describe(nameof(TypeAliasDeclaration), () => {
-    describe(nameof<TypeAliasDeclaration>(n => n.set), () => {
+describe("TypeAliasDeclaration", () => {
+    describe(nameof<TypeAliasDeclaration>("set"), () => {
         function doTest(code: string, structure: Partial<TypeAliasDeclarationStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<TypeAliasDeclaration>(code);
             firstChild.set(structure);
@@ -24,7 +25,7 @@ describe(nameof(TypeAliasDeclaration), () => {
         });
     });
 
-    describe(nameof<TypeAliasDeclaration>(d => d.remove), () => {
+    describe(nameof<TypeAliasDeclaration>("remove"), () => {
         function doTest(text: string, index: number, expectedText: string) {
             const { sourceFile } = getInfoFromText(text);
             sourceFile.getTypeAliases()[index].remove();
@@ -36,7 +37,7 @@ describe(nameof(TypeAliasDeclaration), () => {
         });
     });
 
-    describe(nameof<TypeAliasDeclaration>(n => n.getStructure), () => {
+    describe(nameof<TypeAliasDeclaration>("getStructure"), () => {
         function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<TypeAliasDeclarationStructure>>) {
             const { firstChild } = getInfoFromText<TypeAliasDeclaration>(text);
             const structure = firstChild.getStructure();

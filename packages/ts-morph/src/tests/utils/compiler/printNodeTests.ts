@@ -2,7 +2,7 @@ import { NewLineKind, ScriptKind, ScriptTarget, SyntaxKind, ts } from "@ts-morph
 import { expect } from "chai";
 import { printNode } from "../../../utils";
 
-describe(nameof(printNode), () => {
+describe("printNode", () => {
     const nodeText = "class MyClass {\n    // comment\n    prop: string;\n}";
     const nodeTextNoComment = nodeText.replace("    // comment\n", "");
     const tsSourceFile = ts.createSourceFile("file.tsx", nodeText, ScriptTarget.Latest, false, ScriptKind.TSX);

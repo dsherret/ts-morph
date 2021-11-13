@@ -2,7 +2,7 @@ import { SyntaxKind, ts } from "@ts-morph/common";
 import { expect } from "chai";
 import { CompilerCommentNode, CompilerCommentStatement } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
-describe(nameof(CompilerCommentNode), () => {
+describe("CompilerCommentNode", () => {
     interface ExpectedResult {
         pos: number;
         end: number;

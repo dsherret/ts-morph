@@ -3,7 +3,6 @@
   "compilerOptions": {
     "module": "es2015",
     "moduleResolution": "node",
-    "removeComments": true,
-    "plugins": [{ "transform": "ts-nameof", "type": "raw" }]
+    "removeComments": true
   }
 }

@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { getPosAtNextNonBlankLine } from "../../../manipulation/textSeek";
 
-describe(nameof(getPosAtNextNonBlankLine), () => {
+describe("getPosAtNextNonBlankLine", () => {
     function doTest(fileText: string, pos: number, expectedPos: number) {
         expect(getPosAtNextNonBlankLine(fileText, pos)).to.equal(expectedPos);
     }

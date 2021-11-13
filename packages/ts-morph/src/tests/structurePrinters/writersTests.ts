@@ -1,10 +1,11 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { Writers } from "../../structurePrinters/Writers";
 import { TypeElementMemberedNodeStructure } from "../../structures";
 import { WriterFunction } from "../../types";
 
-describe(nameof<Writers>(), () => {
+describe("Writers", () => {
     function getWriter() {
         return new CodeBlockWriter();
     }
@@ -15,7 +16,7 @@ describe(nameof<Writers>(), () => {
         expect(writer.toString()).to.equal(expected);
     }
 
-    describe(nameof(Writers.object), () => {
+    describe(nameof(Writers, "object"), () => {
         function doTest(obj: { [key: string]: string | number | WriterFunction | undefined; }, expected: string) {
             doWriterTest((writer, { object }) => object(obj)(writer), expected);
         }
@@ -41,7 +42,7 @@ describe(nameof<Writers>(), () => {
         });
     });
 
-    describe(nameof(Writers.objectType), () => {
+    describe(nameof(Writers, "objectType"), () => {
         function doTest(obj: TypeElementMemberedNodeStructure, expected: string) {
             doWriterTest((writer, { objectType }) => objectType(obj)(writer), expected);
         }
@@ -109,7 +110,7 @@ describe(nameof<Writers>(), () => {
         });
     });
 
-    describe(nameof(Writers.unionType), () => {
+    describe(nameof(Writers, "unionType"), () => {
         it("should write when only specifying two types", () => {
             doWriterTest((writer, { unionType }) => unionType("C", "A")(writer), "C | A");
         });
@@ -119,7 +120,7 @@ describe(nameof<Writers>(), () => {
         });
     });
 
-    describe(nameof(Writers.intersectionType), () => {
+    describe(nameof(Writers, "intersectionType"), () => {
         it("should write when only specifying two types", () => {
             doWriterTest((writer, { intersectionType }) => intersectionType("C", "A")(writer), "C & A");
         });
@@ -129,7 +130,7 @@ describe(nameof<Writers>(), () => {
         });
     });
 
-    describe(nameof(Writers.assertion), () => {
+    describe(nameof(Writers, "assertion"), () => {
         it("should write when specifying writer functions", () => {
             doWriterTest((writer, { assertion }) => assertion(w => w.write("a"), w => w.write("b"))(writer), "a as b");
         });
@@ -139,7 +140,7 @@ describe(nameof<Writers>(), () => {
         });
     });
 
-    describe(nameof(Writers.returnStatement), () => {
+    describe(nameof(Writers, "returnStatement"), () => {
         it("should write when specifying some value", () => {
             doWriterTest((writer, { returnStatement }) => returnStatement("A")(writer), "return A;");
         });

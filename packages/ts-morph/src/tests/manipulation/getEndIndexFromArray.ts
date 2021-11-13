@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { getEndIndexFromArray } from "../../manipulation";
 
-describe(nameof(getEndIndexFromArray), () => {
+describe("getEndIndexFromArray", () => {
     it("should return 0 when undefined", () => {
         expect(getEndIndexFromArray(undefined)).to.equal(0);
     });

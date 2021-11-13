@@ -1,4 +1,4 @@
-import { SyntaxKind } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { CatchClause } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -7,7 +7,7 @@ function getCatchClause(text: string) {
     return getInfoFromTextWithDescendant<CatchClause>(text, SyntaxKind.CatchClause).descendant;
 }
 
-describe(nameof(CatchClause), () => {
+describe("CatchClause", () => {
     const block = "{ let x = 0; }";
     const variableDeclaration = "x";
     const statement = `catch (${variableDeclaration}) ${block}`;
@@ -15,13 +15,13 @@ describe(nameof(CatchClause), () => {
     const catchClause = getCatchClause(statement);
     const emptyCatchClause = getCatchClause(emptyStatement);
 
-    describe(nameof<CatchClause>(n => n.getBlock), () => {
+    describe(nameof<CatchClause>("getBlock"), () => {
         it("should get the correct block", () => {
             expect(catchClause.getBlock().getText()).to.equal(block);
         });
     });
 
-    describe(nameof<CatchClause>(n => n.getVariableDeclaration), () => {
+    describe(nameof<CatchClause>("getVariableDeclaration"), () => {
         it("should get the correct variable declaration", () => {
             expect(catchClause.getVariableDeclaration()!.getText()).to.equal(variableDeclaration);
         });
@@ -31,7 +31,7 @@ describe(nameof(CatchClause), () => {
         });
     });
 
-    describe(nameof<CatchClause>(n => n.getVariableDeclarationOrThrow), () => {
+    describe(nameof<CatchClause>("getVariableDeclarationOrThrow"), () => {
         it("should should return the variable declaration", () => {
             expect(catchClause.getVariableDeclarationOrThrow().getText()).to.equal(variableDeclaration);
         });

@@ -1,9 +1,10 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ExpressionStatement } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
-describe(nameof(ExpressionStatement), () => {
-    describe(nameof<ExpressionStatement>(d => d.getExpression), () => {
+describe("ExpressionStatement", () => {
+    describe(nameof<ExpressionStatement>("getExpression"), () => {
         it("should get the expression", () => {
             const { firstChild } = getInfoFromText<ExpressionStatement>("hello();");
             expect(firstChild.getText()).to.equal("hello();");
@@ -11,7 +12,7 @@ describe(nameof(ExpressionStatement), () => {
         });
     });
 
-    describe(nameof<ExpressionStatement>(d => d.remove), () => {
+    describe(nameof<ExpressionStatement>("remove"), () => {
         function doTest(text: string, index: number, expectedText: string) {
             const { sourceFile } = getInfoFromText(text);
             (sourceFile.getChildSyntaxListOrThrow().getChildren()[index] as ExpressionStatement).remove();

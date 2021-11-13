@@ -1,10 +1,11 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { Node, StatementedNode, VariableDeclaration, VariableDeclarationKind, VariableStatement } from "../../../../../compiler";
 import { VariableDeclarationStructure, VariableStatementStructure } from "../../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia } from "../../../testHelpers";
 
-describe(nameof(StatementedNode), () => {
-    describe(nameof<StatementedNode>(n => n.insertVariableStatements), () => {
+describe("StatementedNode", () => {
+    describe(nameof<StatementedNode>("insertVariableStatements"), () => {
         function doTest(startCode: string, index: number, structures: OptionalKindAndTrivia<VariableStatementStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertVariableStatements(index, structures);
@@ -78,7 +79,7 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<StatementedNode>(n => n.insertVariableStatement), () => {
+    describe(nameof<StatementedNode>("insertVariableStatement"), () => {
         function doTest(startCode: string, index: number, structure: OptionalKindAndTrivia<VariableStatementStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertVariableStatement(index, structure);
@@ -91,7 +92,7 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<StatementedNode>(n => n.addVariableStatements), () => {
+    describe(nameof<StatementedNode>("addVariableStatements"), () => {
         function doTest(startCode: string, structures: OptionalKindAndTrivia<VariableStatementStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addVariableStatements(structures);
@@ -105,7 +106,7 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<StatementedNode>(n => n.addVariableStatement), () => {
+    describe(nameof<StatementedNode>("addVariableStatement"), () => {
         function doTest(startCode: string, structure: OptionalKindAndTrivia<VariableStatementStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addVariableStatement(structure);
@@ -119,7 +120,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     const { sourceFile: variablesSourceFile } = getInfoFromText("var Identifier1;\nvar Identifier2, Identifier3;");
-    describe(nameof<StatementedNode>(n => n.getVariableStatements), () => {
+    describe(nameof<StatementedNode>("getVariableStatements"), () => {
         const statements = variablesSourceFile.getVariableStatements();
         it("should have the expected number of statements", () => {
             expect(statements.length).to.equal(2);
@@ -135,7 +136,7 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<StatementedNode>(n => n.getVariableStatement), () => {
+    describe(nameof<StatementedNode>("getVariableStatement"), () => {
         function doTest(nameOrFindFunction: string | ((declaration: VariableStatement) => boolean), expectedFirstDeclarationName: string | undefined) {
             const statement = variablesSourceFile.getVariableStatement(nameOrFindFunction);
             expect(statement?.getDeclarations()[0].getName()).to.equal(expectedFirstDeclarationName);
@@ -178,7 +179,7 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<StatementedNode>(n => n.getVariableStatementOrThrow), () => {
+    describe(nameof<StatementedNode>("getVariableStatementOrThrow"), () => {
         function doTrueTest(nameOrFindFunction: string | ((declaration: VariableStatement) => boolean), expectedFirstDeclarationName: string) {
             const statement = variablesSourceFile.getVariableStatementOrThrow(nameOrFindFunction);
             expect(statement.getDeclarations()[0].getName()).to.equal(expectedFirstDeclarationName);
@@ -205,7 +206,7 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<StatementedNode>(n => n.getVariableDeclarations), () => {
+    describe(nameof<StatementedNode>("getVariableDeclarations"), () => {
         const declarations = variablesSourceFile.getVariableDeclarations();
         it("should have the expected number of variable declarations", () => {
             expect(declarations.length).to.equal(3);
@@ -221,7 +222,7 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<StatementedNode>(n => n.getVariableDeclaration), () => {
+    describe(nameof<StatementedNode>("getVariableDeclaration"), () => {
         it("should get a variable declaration by a name", () => {
             expect(variablesSourceFile.getVariableDeclaration("Identifier2")!.getName()).to.equal("Identifier2");
         });
@@ -285,7 +286,7 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<StatementedNode>(n => n.getVariableDeclarationOrThrow), () => {
+    describe(nameof<StatementedNode>("getVariableDeclarationOrThrow"), () => {
         it("should get a variable declaration by a name", () => {
             expect(variablesSourceFile.getVariableDeclarationOrThrow("Identifier2").getName()).to.equal("Identifier2");
         });

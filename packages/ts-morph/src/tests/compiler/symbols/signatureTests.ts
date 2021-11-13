@@ -1,15 +1,16 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { Signature } from "../../../compiler";
 import { getInfoFromText } from "../testHelpers";
 
-describe(nameof(Signature), () => {
+describe("Signature", () => {
     function getSignature(text: string) {
         const { sourceFile } = getInfoFromText(text);
         const type = sourceFile.getVariableDeclarations()[0].getType();
         return type.getCallSignatures()[0];
     }
 
-    describe(nameof<Signature>(s => s.getTypeParameters), () => {
+    describe(nameof<Signature>("getTypeParameters"), () => {
         it("should return an empty array when there are none", () => {
             const signature = getSignature("let t: () => void;");
             expect(signature.getTypeParameters().length).to.equal(0);
@@ -21,7 +22,7 @@ describe(nameof(Signature), () => {
         });
     });
 
-    describe(nameof<Signature>(s => s.getParameters), () => {
+    describe(nameof<Signature>("getParameters"), () => {
         it("should return an empty array when there are none", () => {
             const signature = getSignature("let t: () => void;");
             expect(signature.getParameters().length).to.deep.equal(0);
@@ -33,14 +34,14 @@ describe(nameof(Signature), () => {
         });
     });
 
-    describe(nameof<Signature>(s => s.getReturnType), () => {
+    describe(nameof<Signature>("getReturnType"), () => {
         it("should get the return type", () => {
             const signature = getSignature("let t: (a) => void;");
             expect(signature.getReturnType().getText()).to.equal("void");
         });
     });
 
-    describe(nameof<Signature>(s => s.getDocumentationComments), () => {
+    describe(nameof<Signature>("getDocumentationComments"), () => {
         it("should be empty when they don't exist", () => {
             const signature = getSignature("let t: (a) => void;");
             expect(signature.getDocumentationComments().length).to.equal(0);
@@ -63,7 +64,7 @@ let t: MyInterface;
         });
     });
 
-    describe(nameof<Signature>(s => s.getJsDocTags), () => {
+    describe(nameof<Signature>("getJsDocTags"), () => {
         it("should be empty when they don't exist", () => {
             const signature = getSignature(`
 interface MyInterface {
@@ -101,7 +102,7 @@ let t: MyInterface;
         });
     });
 
-    describe(nameof<Signature>(s => s.getDeclaration), () => {
+    describe(nameof<Signature>("getDeclaration"), () => {
         it("signature<->declaration should match", () => {
             const signature = getSignature("let t: () => void;");
             const declaration = signature.getDeclaration();

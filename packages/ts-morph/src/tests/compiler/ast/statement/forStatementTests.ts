@@ -1,4 +1,4 @@
-import { SyntaxKind } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ForStatement } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -7,7 +7,7 @@ function getStatement(text: string) {
     return getInfoFromTextWithDescendant<ForStatement>(text, SyntaxKind.ForStatement).descendant;
 }
 
-describe(nameof(ForStatement), () => {
+describe("ForStatement", () => {
     const initializer = "let x = 0";
     const condition = "x <= 10";
     const incrementor = "x += 1";
@@ -16,7 +16,7 @@ describe(nameof(ForStatement), () => {
     const forStatement = getStatement(statement);
     const emptyForStatement = getStatement(emptyStatement);
 
-    describe(nameof<ForStatement>(n => n.getInitializer), () => {
+    describe(nameof<ForStatement>("getInitializer"), () => {
         it("should get the correct initializer", () => {
             expect(forStatement.getInitializer()!.getText()).to.equal(initializer);
         });
@@ -26,7 +26,7 @@ describe(nameof(ForStatement), () => {
         });
     });
 
-    describe(nameof<ForStatement>(n => n.getInitializerOrThrow), () => {
+    describe(nameof<ForStatement>("getInitializerOrThrow"), () => {
         it("should should return the initializer", () => {
             expect(forStatement.getInitializerOrThrow().getText()).to.equal(initializer);
         });
@@ -36,7 +36,7 @@ describe(nameof(ForStatement), () => {
         });
     });
 
-    describe(nameof<ForStatement>(n => n.getCondition), () => {
+    describe(nameof<ForStatement>("getCondition"), () => {
         it("should get the correct condition", () => {
             expect(forStatement.getCondition()!.getText()).to.equal(condition);
         });
@@ -46,7 +46,7 @@ describe(nameof(ForStatement), () => {
         });
     });
 
-    describe(nameof<ForStatement>(n => n.getConditionOrThrow), () => {
+    describe(nameof<ForStatement>("getConditionOrThrow"), () => {
         it("should should return the condition", () => {
             expect(forStatement.getConditionOrThrow().getText()).to.equal(condition);
         });
@@ -56,7 +56,7 @@ describe(nameof(ForStatement), () => {
         });
     });
 
-    describe(nameof<ForStatement>(n => n.getInitializer), () => {
+    describe(nameof<ForStatement>("getInitializer"), () => {
         it("should get the correct incrementor", () => {
             expect(forStatement.getIncrementor()!.getText()).to.equal(incrementor);
         });
@@ -66,7 +66,7 @@ describe(nameof(ForStatement), () => {
         });
     });
 
-    describe(nameof<ForStatement>(n => n.getIncrementorOrThrow), () => {
+    describe(nameof<ForStatement>("getIncrementorOrThrow"), () => {
         it("should should return the incrementor", () => {
             expect(forStatement.getIncrementorOrThrow().getText()).to.equal(incrementor);
         });

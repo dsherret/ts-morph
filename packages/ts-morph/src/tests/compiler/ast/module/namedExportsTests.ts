@@ -1,8 +1,9 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { NamedExports, Node } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
-describe(nameof(NamedExports), () => {
+describe("NamedExports", () => {
     function getInfo(text: string) {
         const info = getInfoFromText(text);
         return {
@@ -11,7 +12,7 @@ describe(nameof(NamedExports), () => {
         };
     }
 
-    describe(nameof<NamedExports>(n => n.getElements), () => {
+    describe(nameof<NamedExports>("getElements"), () => {
         function doTest(text: string, elements: string[]) {
             const { descendant } = getInfo(text);
             expect(descendant.getElements().map(e => e.getText())).to.deep.equal(elements);

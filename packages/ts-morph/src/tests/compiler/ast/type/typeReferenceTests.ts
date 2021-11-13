@@ -1,15 +1,15 @@
-import { SyntaxKind } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { TypeReferenceNode } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
-describe(nameof(TypeReferenceNode), () => {
+describe("TypeReferenceNode", () => {
     function getTypeReferenceNode(text: string) {
         const { sourceFile } = getInfoFromText(text);
         return sourceFile.getVariableDeclarations()[0].getTypeNodeOrThrow() as TypeReferenceNode;
     }
 
-    describe(nameof<TypeReferenceNode>(t => t.getTypeName), () => {
+    describe(nameof<TypeReferenceNode>("getTypeName"), () => {
         function doTest(text: string, expectedSyntaxKind: SyntaxKind, expectedTypeName: string) {
             const typeRefNode = getTypeReferenceNode(text);
             expect(typeRefNode.getTypeName().getKind()).to.equal(expectedSyntaxKind);
@@ -25,7 +25,7 @@ describe(nameof(TypeReferenceNode), () => {
         });
     });
 
-    describe(nameof<TypeReferenceNode>(t => t.getTypeArguments), () => {
+    describe(nameof<TypeReferenceNode>("getTypeArguments"), () => {
         function doTest(text: string, expectedArgs: string[]) {
             const typeRefNode = getTypeReferenceNode(text);
             expect(typeRefNode.getTypeArguments().map(t => t.getText())).to.deep.equal(expectedArgs);

@@ -1,21 +1,21 @@
-import { SyntaxKind } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { TypePredicateNode } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
-describe(nameof(TypePredicateNode), () => {
+describe("TypePredicateNode", () => {
     function getTypePredicateNode(text: string) {
         const { sourceFile } = getInfoFromText(text);
         return sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.TypePredicate);
     }
 
-    describe(nameof<TypePredicateNode>(n => n.getParameterNameNode), () => {
+    describe(nameof<TypePredicateNode>("getParameterNameNode"), () => {
         it("should get", () => {
             expect(getTypePredicateNode("function test(asdf): asdf is string {}").getParameterNameNode().getText(), "asdf");
         });
     });
 
-    describe(nameof<TypePredicateNode>(n => n.getTypeNode), () => {
+    describe(nameof<TypePredicateNode>("getTypeNode"), () => {
         function doTest(text: string, expectedText: string | undefined) {
             const node = getTypePredicateNode(text).getTypeNode();
             expect(node?.getText()).to.equal(expectedText);
@@ -30,7 +30,7 @@ describe(nameof(TypePredicateNode), () => {
         });
     });
 
-    describe(nameof<TypePredicateNode>(n => n.getTypeNodeOrThrow), () => {
+    describe(nameof<TypePredicateNode>("getTypeNodeOrThrow"), () => {
         function doTest(text: string, expectedText: string | undefined) {
             const typePredicate = getTypePredicateNode(text);
             if (expectedText == null)
@@ -48,7 +48,7 @@ describe(nameof(TypePredicateNode), () => {
         });
     });
 
-    describe(nameof<TypePredicateNode>(n => n.hasAssertsModifier), () => {
+    describe(nameof<TypePredicateNode>("hasAssertsModifier"), () => {
         function doTest(text: string, expectedValue: boolean) {
             const typePredicate = getTypePredicateNode(text);
             expect(typePredicate.hasAssertsModifier()).to.equal(expectedValue);
@@ -63,7 +63,7 @@ describe(nameof(TypePredicateNode), () => {
         });
     });
 
-    describe(nameof<TypePredicateNode>(n => n.getAssertsModifier), () => {
+    describe(nameof<TypePredicateNode>("getAssertsModifier"), () => {
         function doTest(text: string, expectedValue: boolean) {
             const node = getTypePredicateNode(text).getAssertsModifier();
             expect(node?.getText()).to.equal(expectedValue ? "asserts" : undefined);
@@ -78,7 +78,7 @@ describe(nameof(TypePredicateNode), () => {
         });
     });
 
-    describe(nameof<TypePredicateNode>(n => n.getAssertsModifierOrThrow), () => {
+    describe(nameof<TypePredicateNode>("getAssertsModifierOrThrow"), () => {
         function doTest(text: string, expectedValue: boolean) {
             const typePredicate = getTypePredicateNode(text);
             if (expectedValue)

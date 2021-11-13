@@ -1,4 +1,4 @@
-import { ArrayUtils, errors, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
+import { ArrayUtils, errors, nameof, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, removeChildren, verifyAndGetIndex } from "../../../manipulation";
 import { ImportDeclarationSpecificStructure, ImportDeclarationStructure, ImportSpecifierStructure, OptionalKind, StructureKind } from "../../../structures";
 import { WriterFunction } from "../../../types";
@@ -409,15 +409,15 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
 
         if (structure.defaultImport != null)
             this.setDefaultImport(structure.defaultImport);
-        else if (structure.hasOwnProperty(nameof(structure.defaultImport)))
+        else if (structure.hasOwnProperty(nameof(structure, "defaultImport")))
             this.removeDefaultImport();
 
-        if (structure.hasOwnProperty(nameof(structure.namedImports)))
+        if (structure.hasOwnProperty(nameof(structure, "namedImports")))
             this.removeNamedImports();
 
         if (structure.namespaceImport != null)
             this.setNamespaceImport(structure.namespaceImport);
-        else if (structure.hasOwnProperty(nameof(structure.namespaceImport)))
+        else if (structure.hasOwnProperty(nameof(structure, "namespaceImport")))
             this.removeNamespaceImport();
 
         if (structure.namedImports != null) {

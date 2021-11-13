@@ -1,10 +1,10 @@
-import { SyntaxKind } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ObjectLiteralExpression, SpreadAssignment } from "../../../../../compiler";
 import { SpreadAssignmentStructure, StructureKind } from "../../../../../structures";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia } from "../../../testHelpers";
 
-describe(nameof(SpreadAssignment), () => {
+describe("SpreadAssignment", () => {
     function getSpreadAssignment(text: string) {
         const opts = getInfoFromText(text);
         const spreadAssignment = opts.sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.SpreadAssignment);
@@ -14,14 +14,14 @@ describe(nameof(SpreadAssignment), () => {
         };
     }
 
-    describe(nameof<SpreadAssignment>(a => a.getExpression), () => {
+    describe(nameof<SpreadAssignment>("getExpression"), () => {
         it("should get the spread assignment expression", () => {
             const { spreadAssignment } = getSpreadAssignment("const t = { ...obj }");
             expect(spreadAssignment.getExpression().getText()).to.equal("obj");
         });
     });
 
-    describe(nameof<SpreadAssignment>(p => p.remove), () => {
+    describe(nameof<SpreadAssignment>("remove"), () => {
         function doTest(code: string, index: number, expectedCode: string) {
             const { sourceFile, descendant } = getInfoFromTextWithDescendant<ObjectLiteralExpression>(code, SyntaxKind.ObjectLiteralExpression);
 
@@ -54,7 +54,7 @@ describe(nameof(SpreadAssignment), () => {
         });
     });
 
-    describe(nameof<SpreadAssignment>(p => p.set), () => {
+    describe(nameof<SpreadAssignment>("set"), () => {
         function test(code: string, structure: Partial<SpreadAssignmentStructure>, expected: string) {
             const { descendant, sourceFile } = getInfoFromTextWithDescendant<SpreadAssignment>(code, SyntaxKind.SpreadAssignment);
             descendant.set(structure);
@@ -74,7 +74,7 @@ describe(nameof(SpreadAssignment), () => {
         });
     });
 
-    describe(nameof<SpreadAssignment>(n => n.getStructure), () => {
+    describe(nameof<SpreadAssignment>("getStructure"), () => {
         function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<SpreadAssignmentStructure>>) {
             const { descendant } = getInfoFromTextWithDescendant<SpreadAssignment>(text, SyntaxKind.SpreadAssignment);
             const structure = descendant.getStructure();

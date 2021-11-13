@@ -1,14 +1,14 @@
-import { SyntaxKind } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { NamespaceImport } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
-describe(nameof(NamespaceImport), () => {
+describe("NamespaceImport", () => {
     function getNamespaceImport(text: string) {
         return getInfoFromTextWithDescendant<NamespaceImport>(text, SyntaxKind.NamespaceImport);
     }
 
-    describe(nameof<NamespaceImport>(n => n.setName), () => {
+    describe(nameof<NamespaceImport>("setName"), () => {
         it("should only change what's imported", () => {
             const { descendant, sourceFile, project } = getNamespaceImport("import * as ts from './file'; const t = ts;");
             const otherSourceFile = project.createSourceFile("file.ts", "export class name {}\nexport class newName {}");
@@ -18,7 +18,7 @@ describe(nameof(NamespaceImport), () => {
         });
     });
 
-    describe(nameof<NamespaceImport>(n => n.rename), () => {
+    describe(nameof<NamespaceImport>("rename"), () => {
         it("should rename what's imported", () => {
             const { descendant, sourceFile, project } = getNamespaceImport("import * as ts from './file'; const t = ts;");
             const otherSourceFile = project.createSourceFile("file.ts", "export class name {}\nexport class newName {}");
@@ -28,7 +28,7 @@ describe(nameof(NamespaceImport), () => {
         });
     });
 
-    describe(nameof<NamespaceImport>(n => n.getNameNode), () => {
+    describe(nameof<NamespaceImport>("getNameNode"), () => {
         function doTest(text: string, name: string) {
             const { descendant } = getNamespaceImport(text);
             expect(descendant.getNameNode().getText()).to.equal(name);
@@ -39,7 +39,7 @@ describe(nameof(NamespaceImport), () => {
         });
     });
 
-    describe(nameof<NamespaceImport>(n => n.getName), () => {
+    describe(nameof<NamespaceImport>("getName"), () => {
         function doTest(text: string, name: string) {
             const { descendant } = getNamespaceImport(text);
             expect(descendant.getName()).to.equal(name);

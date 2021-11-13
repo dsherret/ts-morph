@@ -1,15 +1,16 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, PropertyDeclaration, ReadonlyableNode } from "../../../../compiler";
 import { ReadonlyableNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
-describe(nameof(ReadonlyableNode), () => {
+describe("ReadonlyableNode", () => {
     function getInfoWithFirstPropertyFromText(text: string) {
         const result = getInfoFromText<ClassDeclaration>(text);
         return { ...result, firstProperty: result.firstChild.getInstanceProperties()[0] as PropertyDeclaration };
     }
 
-    describe(nameof<ReadonlyableNode>(d => d.isReadonly), () => {
+    describe(nameof<ReadonlyableNode>("isReadonly"), () => {
         it("should be readonly when readonly", () => {
             const { firstProperty } = getInfoWithFirstPropertyFromText("class MyClass {\nreadonly prop: string;}\n");
             expect(firstProperty.isReadonly()).to.be.true;
@@ -21,7 +22,7 @@ describe(nameof(ReadonlyableNode), () => {
         });
     });
 
-    describe(nameof<ReadonlyableNode>(d => d.getReadonlyKeyword), () => {
+    describe(nameof<ReadonlyableNode>("getReadonlyKeyword"), () => {
         it("should be get the readonly keyword when readonly", () => {
             const { firstProperty } = getInfoWithFirstPropertyFromText("class MyClass {\nreadonly prop: string;}\n");
             expect(firstProperty.getReadonlyKeyword()!.getText()).to.equal("readonly");
@@ -33,7 +34,7 @@ describe(nameof(ReadonlyableNode), () => {
         });
     });
 
-    describe(nameof<ReadonlyableNode>(d => d.getReadonlyKeywordOrThrow), () => {
+    describe(nameof<ReadonlyableNode>("getReadonlyKeywordOrThrow"), () => {
         it("should be get the readonly keyword when readonly", () => {
             const { firstProperty } = getInfoWithFirstPropertyFromText("class MyClass {\nreadonly prop: string;}\n");
             expect(firstProperty.getReadonlyKeywordOrThrow().getText()).to.equal("readonly");
@@ -45,7 +46,7 @@ describe(nameof(ReadonlyableNode), () => {
         });
     });
 
-    describe(nameof<ReadonlyableNode>(n => n.setIsReadonly), () => {
+    describe(nameof<ReadonlyableNode>("setIsReadonly"), () => {
         it("should set as readonly when not readonly", () => {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>("class MyClass { prop: string; }");
             (firstChild.getInstanceProperties()[0] as PropertyDeclaration).setIsReadonly(true);
@@ -59,7 +60,7 @@ describe(nameof(ReadonlyableNode), () => {
         });
     });
 
-    describe(nameof<PropertyDeclaration>(n => n.set), () => {
+    describe(nameof<PropertyDeclaration>("set"), () => {
         function doTest(startCode: string, structure: ReadonlyableNodeStructure, expectedCode: string) {
             const { firstProperty, sourceFile } = getInfoWithFirstPropertyFromText(startCode);
             firstProperty.set(structure);
@@ -79,7 +80,7 @@ describe(nameof(ReadonlyableNode), () => {
         });
     });
 
-    describe(nameof<PropertyDeclaration>(p => p.getStructure), () => {
+    describe(nameof<PropertyDeclaration>("getStructure"), () => {
         function doTest(startCode: string, isReadonly: boolean) {
             const { firstProperty, sourceFile } = getInfoWithFirstPropertyFromText(startCode);
             expect(firstProperty.getStructure().isReadonly).to.equal(isReadonly);

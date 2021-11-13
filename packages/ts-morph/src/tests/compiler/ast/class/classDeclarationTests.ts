@@ -1,19 +1,19 @@
-import { SyntaxKind } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration } from "../../../../compiler";
 import { ClassDeclarationSpecificStructure, ClassDeclarationStructure, ClassLikeDeclarationBaseSpecificStructure, InterfaceDeclarationStructure, OptionalKind,
     StructureKind } from "../../../../structures";
 import { fillStructures, getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
-describe(nameof(ClassDeclaration), () => {
-    describe(nameof<ClassDeclaration>(d => d.getType), () => {
+describe("ClassDeclaration", () => {
+    describe(nameof<ClassDeclaration>("getType"), () => {
         it("should get the class' type", () => {
             const { sourceFile } = getInfoFromText("class Identifier { prop: string; }");
             expect(sourceFile.getClassOrThrow("Identifier").getType().getText()).to.deep.equal("Identifier");
         });
     });
 
-    describe(nameof<ClassDeclaration>(d => d.remove), () => {
+    describe(nameof<ClassDeclaration>("remove"), () => {
         function doTest(text: string, index: number, expectedText: string) {
             const { sourceFile } = getInfoFromText(text);
             sourceFile.getClasses()[index].remove();
@@ -25,7 +25,7 @@ describe(nameof(ClassDeclaration), () => {
         });
     });
 
-    describe(nameof<ClassDeclaration>(c => c.set), () => {
+    describe(nameof<ClassDeclaration>("set"), () => {
         function doTest(
             startingCode: string,
             structure: OptionalKind<ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure>,
@@ -113,7 +113,7 @@ class Identifier {
         });
     });
 
-    describe(nameof<ClassDeclaration>(d => d.getStructure), () => {
+    describe(nameof<ClassDeclaration>("getStructure"), () => {
         function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<ClassDeclarationStructure>>) {
             const { descendant } = getInfoFromTextWithDescendant<ClassDeclaration>(code, SyntaxKind.ClassDeclaration);
             const structure = descendant.getStructure();
@@ -205,7 +205,7 @@ declare class Identifier {
         });
     });
 
-    describe(nameof<ClassDeclaration>(d => d.extractInterface), () => {
+    describe(nameof<ClassDeclaration>("extractInterface"), () => {
         function doTest(code: string, name: string | undefined, expectedStructure: InterfaceDeclarationStructure, filePath?: string) {
             const { descendant } = getInfoFromTextWithDescendant<ClassDeclaration>(code, SyntaxKind.ClassDeclaration, { filePath });
             const structure = descendant.extractInterface(name);
@@ -474,7 +474,7 @@ class Test {
         });
     });
 
-    describe(nameof<ClassDeclaration>(d => d.extractStaticInterface), () => {
+    describe(nameof<ClassDeclaration>("extractStaticInterface"), () => {
         function doTest(code: string, name: string, expectedStructure: InterfaceDeclarationStructure, filePath?: string) {
             const { descendant } = getInfoFromTextWithDescendant<ClassDeclaration>(code, SyntaxKind.ClassDeclaration, { filePath });
             const structure = descendant.extractStaticInterface(name);

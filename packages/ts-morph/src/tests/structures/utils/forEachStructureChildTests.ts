@@ -4,7 +4,7 @@ import { ClassDeclarationStructure, forEachStructureChild, InterfaceDeclarationS
     Structures } from "../../../structures";
 import { getInfoFromText } from "../../compiler/testHelpers";
 
-describe(nameof(forEachStructureChild), () => {
+describe("forEachStructureChild", () => {
     it("should return a child in a child array of unknown structures", () => {
         const structure = getInfoFromText("class C {} interface I {} class T {}").sourceFile.getStructure();
         const interfaceStructure = forEachStructureChild(structure, child => {

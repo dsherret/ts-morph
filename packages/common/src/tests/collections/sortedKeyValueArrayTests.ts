@@ -1,8 +1,9 @@
 import { expect } from "chai";
 import { SortedKeyValueArray } from "../../collections";
 import { Comparer } from "../../comparers";
+import { nameof } from "../../utils";
 
-describe(nameof(SortedKeyValueArray), () => {
+describe("SortedKeyValueArray", () => {
     class NumberComparer implements Comparer<number> {
         compareTo(a: number, b: number) {
             if (a < b)
@@ -13,7 +14,7 @@ describe(nameof(SortedKeyValueArray), () => {
         }
     }
 
-    describe(nameof<SortedKeyValueArray<any, any>>(a => a.set), () => {
+    describe(nameof<SortedKeyValueArray<any, any>>("set"), () => {
         function doTest(startItems: number[], settingItem: number, expected: number[]) {
             const array = new SortedKeyValueArray<number, number>(value => value, new NumberComparer());
             startItems.forEach(item => array.set(item));
@@ -63,15 +64,15 @@ describe(nameof(SortedKeyValueArray), () => {
         });
     }
 
-    describe(nameof<SortedKeyValueArray<any, any>>(a => a.removeByKey), () => {
+    describe(nameof<SortedKeyValueArray<any, any>>("removeByKey"), () => {
         doRemoveTests((array, keyOrValue) => array.removeByKey(keyOrValue));
     });
 
-    describe(nameof<SortedKeyValueArray<any, any>>(a => a.removeByValue), () => {
+    describe(nameof<SortedKeyValueArray<any, any>>("removeByValue"), () => {
         doRemoveTests((array, keyOrValue) => array.removeByValue(keyOrValue));
     });
 
-    describe(nameof<SortedKeyValueArray<any, any>>(a => a.hasItems), () => {
+    describe(nameof<SortedKeyValueArray<any, any>>("hasItems"), () => {
         function doTest(startItems: number[], expected: boolean) {
             const array = new SortedKeyValueArray<number, number>(value => value, new NumberComparer());
             startItems.forEach(item => array.set(item));
@@ -87,7 +88,7 @@ describe(nameof(SortedKeyValueArray), () => {
         });
     });
 
-    describe(nameof<SortedKeyValueArray<any, any>>(a => a.entries), () => {
+    describe(nameof<SortedKeyValueArray<any, any>>("entries"), () => {
         function doTest(startItems: number[]) {
             const array = new SortedKeyValueArray<number, number>(value => value, new NumberComparer());
             startItems.forEach(item => array.set(item));

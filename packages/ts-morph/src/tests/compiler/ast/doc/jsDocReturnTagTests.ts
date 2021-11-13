@@ -1,14 +1,14 @@
-import { SyntaxKind } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { JSDocReturnTag } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
-describe(nameof(JSDocReturnTag), () => {
+describe("JSDocReturnTag", () => {
     function getInfo(text: string) {
         return getInfoFromTextWithDescendant<JSDocReturnTag>(text, SyntaxKind.JSDocReturnTag);
     }
 
-    describe(nameof<JSDocReturnTag>(d => d.getTypeExpression), () => {
+    describe(nameof<JSDocReturnTag>("getTypeExpression"), () => {
         function doTest(text: string, expectedValue: string | undefined) {
             const { descendant } = getInfo(text);
             expect(descendant.getTypeExpression()?.getTypeNode().getText()).to.equal(expectedValue);

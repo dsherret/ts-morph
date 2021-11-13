@@ -266,7 +266,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
         }
     }
 
-    _getInnerExpression() {
+    private _getInnerExpression() {
         let expr: Expression = this.getExpression();
         while (Node.isParenthesizedExpression(expr))
             expr = expr.getExpression();

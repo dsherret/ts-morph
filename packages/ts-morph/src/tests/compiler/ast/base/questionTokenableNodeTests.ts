@@ -1,15 +1,16 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, PropertyDeclaration, QuestionTokenableNode } from "../../../../compiler";
 import { QuestionTokenableNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
-describe(nameof(QuestionTokenableNode), () => {
+describe("QuestionTokenableNode", () => {
     function getInfoWithFirstMember(text: string) {
         const result = getInfoFromText<ClassDeclaration>(text);
         return { ...result, firstMember: result.firstChild.getMembers()[0] as QuestionTokenableNode };
     }
 
-    describe(nameof<QuestionTokenableNode>(d => d.hasQuestionToken), () => {
+    describe(nameof<QuestionTokenableNode>("hasQuestionToken"), () => {
         function doTest(text: string, value: boolean) {
             const { firstMember } = getInfoWithFirstMember(text);
             expect(firstMember.hasQuestionToken()).to.equal(value);
@@ -28,7 +29,7 @@ describe(nameof(QuestionTokenableNode), () => {
         });
     });
 
-    describe(nameof<QuestionTokenableNode>(d => d.getQuestionTokenNode), () => {
+    describe(nameof<QuestionTokenableNode>("getQuestionTokenNode"), () => {
         it("should be get the question token node", () => {
             const { firstMember } = getInfoWithFirstMember("class MyClass { prop?: string; }");
             expect(firstMember.getQuestionTokenNode()!.getText()).to.equal("?");
@@ -40,7 +41,7 @@ describe(nameof(QuestionTokenableNode), () => {
         });
     });
 
-    describe(nameof<QuestionTokenableNode>(d => d.getQuestionTokenNodeOrThrow), () => {
+    describe(nameof<QuestionTokenableNode>("getQuestionTokenNodeOrThrow"), () => {
         it("should be get the question token node", () => {
             const { firstMember } = getInfoWithFirstMember("class MyClass {\nprop?: string;}\n");
             expect(firstMember.getQuestionTokenNodeOrThrow().getText()).to.equal("?");
@@ -52,7 +53,7 @@ describe(nameof(QuestionTokenableNode), () => {
         });
     });
 
-    describe(nameof<QuestionTokenableNode>(d => d.setHasQuestionToken), () => {
+    describe(nameof<QuestionTokenableNode>("setHasQuestionToken"), () => {
         function doTest(startText: string, value: boolean, expected: string) {
             const { firstMember, sourceFile } = getInfoWithFirstMember(startText);
             firstMember.setHasQuestionToken(value);
@@ -96,7 +97,7 @@ describe(nameof(QuestionTokenableNode), () => {
         });
     });
 
-    describe(nameof<PropertyDeclaration>(p => p.set), () => {
+    describe(nameof<PropertyDeclaration>("set"), () => {
         function doTest(startCode: string, structure: QuestionTokenableNodeStructure, expectedCode: string) {
             const { firstMember, sourceFile } = getInfoWithFirstMember(startCode);
             (firstMember as PropertyDeclaration).set(structure);
@@ -116,7 +117,7 @@ describe(nameof(QuestionTokenableNode), () => {
         });
     });
 
-    describe(nameof<PropertyDeclaration>(p => p.getStructure), () => {
+    describe(nameof<PropertyDeclaration>("getStructure"), () => {
         function doTest(startCode: string, hasToken: boolean) {
             const { firstMember } = getInfoWithFirstMember(startCode);
             expect((firstMember as PropertyDeclaration).getStructure().hasQuestionToken).to.equal(hasToken);

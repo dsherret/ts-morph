@@ -1,9 +1,9 @@
-import { SyntaxKind } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { QualifiedName, TypeReferenceNode } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
-describe(nameof(QualifiedName), () => {
+describe("QualifiedName", () => {
     function getQualifiedName(text: string) {
         const { sourceFile } = getInfoFromText(text);
         const typeRefNode = sourceFile.getVariableDeclarations()[0].getTypeNodeOrThrow() as TypeReferenceNode;
@@ -12,14 +12,14 @@ describe(nameof(QualifiedName), () => {
         return qualifiedName;
     }
 
-    describe(nameof<QualifiedName>(q => q.getRight), () => {
+    describe(nameof<QualifiedName>("getRight"), () => {
         it("should get the identifier on the right", () => {
             const qualifiedName = getQualifiedName("const t: Some.Qualified.Name<string>");
             expect(qualifiedName.getRight().getText()).to.equal("Name");
         });
     });
 
-    describe(nameof<QualifiedName>(q => q.getLeft), () => {
+    describe(nameof<QualifiedName>("getLeft"), () => {
         it("should get the qualified name on the left while it lasts", () => {
             const qualifiedName = getQualifiedName("const t: Some.Qualified.Name<string>");
             expect(qualifiedName.getLeft().getText()).to.equal("Some.Qualified");

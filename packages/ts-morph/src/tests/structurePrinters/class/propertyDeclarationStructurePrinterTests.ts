@@ -1,3 +1,4 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { FormatCodeSettings, Scope } from "../../../compiler";
 import { PropertyDeclarationStructurePrinter } from "../../../structurePrinters";
@@ -5,7 +6,7 @@ import { OptionalKind, PropertyDeclarationStructure } from "../../../structures"
 import { OptionalKindAndTrivia } from "../../compiler/testHelpers";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
 
-describe(nameof(PropertyDeclarationStructurePrinter), () => {
+describe("PropertyDeclarationStructurePrinter", () => {
     interface Options {
         formatCodeSettings?: FormatCodeSettings;
         isAmbient?: boolean;
@@ -19,7 +20,7 @@ describe(nameof(PropertyDeclarationStructurePrinter), () => {
 
     // todo: more tests
 
-    describe(nameof<PropertyDeclarationStructurePrinter>(p => p.printText), () => {
+    describe(nameof<PropertyDeclarationStructurePrinter>("printText"), () => {
         it("should write a property when the structure has everything", () => {
             const structure: OptionalKindAndTrivia<MakeRequired<PropertyDeclarationStructure>> = {
                 decorators: [{ name: "dec" }],

@@ -1,3 +1,4 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { CommentStatement } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
@@ -11,7 +12,7 @@ describe("general comment node tests", () => {
         expect(statements.some(s => s.wasForgotten())).to.be.false;
     });
 
-    describe(nameof<CommentStatement>(c => c.getLeadingCommentRanges), () => {
+    describe(nameof<CommentStatement>("getLeadingCommentRanges"), () => {
         function doTest(text: string, index: number, expectedComments: string[]) {
             const { sourceFile } = getInfoFromText(text);
             const secondComment = sourceFile.getStatementsWithComments()[index];
@@ -28,7 +29,7 @@ describe("general comment node tests", () => {
         });
     });
 
-    describe(nameof<CommentStatement>(c => c.getTrailingCommentRanges), () => {
+    describe(nameof<CommentStatement>("getTrailingCommentRanges"), () => {
         function doTest(text: string, index: number, expectedComments: string[]) {
             const { sourceFile } = getInfoFromText(text);
             const secondComment = sourceFile.getStatementsWithComments()[index];

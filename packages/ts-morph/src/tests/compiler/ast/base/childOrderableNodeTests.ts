@@ -1,9 +1,10 @@
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ChildOrderableNode, EnumDeclaration } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
-describe(nameof(ChildOrderableNode), () => {
-    describe(nameof<ChildOrderableNode>(n => n.setOrder), () => {
+describe("ChildOrderableNode", () => {
+    describe(nameof<ChildOrderableNode>("setOrder"), () => {
         describe("enum", () => {
             function doThrowTest(startCode: string, newIndex: number) {
                 const { sourceFile } = getInfoFromText(startCode);

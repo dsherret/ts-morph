@@ -1,10 +1,10 @@
-import { SyntaxKind } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { LiteralLikeNode, Node } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
-describe(nameof(LiteralLikeNode), () => {
-    describe(nameof<LiteralLikeNode>(n => n.getLiteralText), () => {
+describe("LiteralLikeNode", () => {
+    describe(nameof<LiteralLikeNode>("getLiteralText"), () => {
         function doTest(text: string, kind: SyntaxKind, expectedValue: string) {
             const { descendant } = getInfoFromTextWithDescendant<LiteralLikeNode & Node>(text, kind);
             expect(descendant.getLiteralText()).to.equal(expectedValue);
