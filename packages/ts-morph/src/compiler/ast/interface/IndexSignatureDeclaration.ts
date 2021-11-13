@@ -26,7 +26,7 @@ export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.
      * @param name - New name.
      */
     setKeyName(name: string) {
-        errors.throwIfWhitespaceOrNotString(name, nameof(name));
+        errors.throwIfWhitespaceOrNotString(name, "name");
         if (this.getKeyName() === name)
             return;
 
@@ -53,7 +53,7 @@ export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.
      * @param type - Type.
      */
     setKeyType(type: string) {
-        errors.throwIfWhitespaceOrNotString(type, nameof(type));
+        errors.throwIfWhitespaceOrNotString(type, "type");
         const keyTypeNode = this.getKeyTypeNode();
         if (keyTypeNode.getText() === type)
             return this;

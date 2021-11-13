@@ -45,7 +45,7 @@ function apply<T extends Constructor<InitializerExpressionableNodeExtensionType 
 
         setInitializer(textOrWriterFunction: string | WriterFunction) {
             const text = getTextFromStringOrWriter(this._getWriterWithQueuedChildIndentation(), textOrWriterFunction);
-            errors.throwIfWhitespaceOrNotString(text, nameof(textOrWriterFunction));
+            errors.throwIfWhitespaceOrNotString(text, "textOrWriterFunction");
 
             if (this.hasInitializer())
                 this.removeInitializer();

@@ -132,5 +132,5 @@ export function ExportGetableNode<T extends Constructor<ExportGetableNodeExtensi
 }
 
 function throwForNotModifierableNode(): never {
-    throw new errors.NotImplementedError(`Not implemented situation where node was not a ${nameof(ModifierableNode)}.`);
+    throw new errors.NotImplementedError(`Not implemented situation where node was not a ModifierableNode.`);
 }

@@ -337,7 +337,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param pos - Position.
      */
     isInStringAtPos(pos: number) {
-        errors.throwIfOutOfRange(pos, [this.getPos(), this.getEnd()], nameof(pos));
+        errors.throwIfOutOfRange(pos, [this.getPos(), this.getEnd()], "pos");
 
         if (this._childStringRanges == null) {
             this._childStringRanges = [];
@@ -2001,7 +2001,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     _getCompilerChildAtIndex(index: number) {
         const children = this._getCompilerChildren();
-        errors.throwIfOutOfRange(index, [0, children.length - 1], nameof(index));
+        errors.throwIfOutOfRange(index, [0, children.length - 1], "index");
         return children[index];
     }
 

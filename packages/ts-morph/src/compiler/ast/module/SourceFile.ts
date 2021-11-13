@@ -705,7 +705,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             return this;
         const sourceFileText = this.getFullText();
         const positionRange = typeof positionRangeOrPos === "number" ? [positionRangeOrPos, positionRangeOrPos] as [number, number] : positionRangeOrPos;
-        errors.throwIfRangeOutOfRange(positionRange, [0, sourceFileText.length], nameof(positionRange));
+        errors.throwIfRangeOutOfRange(positionRange, [0, sourceFileText.length], "positionRange");
 
         const startLinePos = getPreviousMatchingPos(sourceFileText, positionRange[0], char => char === CharCodes.NEWLINE);
         const endLinePos = getNextMatchingPos(sourceFileText, positionRange[1], char => char === CharCodes.CARRIAGE_RETURN || char === CharCodes.NEWLINE);

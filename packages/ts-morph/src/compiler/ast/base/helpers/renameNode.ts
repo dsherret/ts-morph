@@ -5,7 +5,7 @@ import { Node } from "../../common";
 import { SourceFile } from "../../module";
 
 export function renameNode(node: Node, newName: string, options?: RenameOptions) {
-    errors.throwIfWhitespaceOrNotString(newName, nameof(newName));
+    errors.throwIfWhitespaceOrNotString(newName, "newName");
 
     if (node.getText() === newName)
         return;

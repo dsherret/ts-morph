@@ -98,7 +98,7 @@ describe("helpers", () => {
         let result: Error;
         try {
             errors.throwNotImplementedForSyntaxKindError(ts.SyntaxKind.EnumDeclaration);
-        } catch (ex) {
+        } catch (ex: any) {
             result = ex;
         }
 

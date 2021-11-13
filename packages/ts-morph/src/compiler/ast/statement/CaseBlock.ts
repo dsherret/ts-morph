@@ -29,7 +29,7 @@ export class CaseBlock extends CaseBlockBase<ts.CaseBlock> {
      */
     removeClauses(indexRange: [number, number]) {
         const clauses = this.getClauses();
-        errors.throwIfRangeOutOfRange(indexRange, [0, clauses.length], nameof(indexRange));
+        errors.throwIfRangeOutOfRange(indexRange, [0, clauses.length], "indexRange");
 
         removeClausedNodeChildren(clauses.slice(indexRange[0], indexRange[1] + 1));
 

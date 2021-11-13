@@ -71,7 +71,7 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
             const wasStringInput = typeof texts === "string";
 
             if (typeof texts === "string") {
-                errors.throwIfWhitespaceOrNotString(texts, nameof(texts));
+                errors.throwIfWhitespaceOrNotString(texts, "texts");
                 texts = [texts];
             }
             else if (texts.length === 0) {

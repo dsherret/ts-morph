@@ -25,7 +25,7 @@ export class BigIntLiteral extends BigIntLiteralBase<ts.BigIntLiteral> {
      */
     setLiteralValue(value: unknown) {
         if (typeof value !== "bigint")
-            throw new errors.ArgumentTypeError(nameof(value), "bigint", typeof value);
+            throw new errors.ArgumentTypeError("value", "bigint", typeof value);
 
         replaceNodeText({
             sourceFile: this._sourceFile,

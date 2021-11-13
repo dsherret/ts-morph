@@ -485,8 +485,8 @@ describe(nameof(Project), () => {
             `{ "name": "library2", "version": "0.0.1", "main": "index.js", "typings": "index.d.ts", "typescript": { "definition": "index.d.ts" } }`);
         fileSystem.writeFileSync("/node_modules/library2/index.js", "export class Library2 {}");
         fileSystem.writeFileSync("/node_modules/library2/index.d.ts", "export class Library2 {}");
-        fileSystem.writeFileSync("/src/main.ts", "/// <reference path='../other/referenced-file.d.ts' />\n\nimport { Test } from 'library'; nameof();");
-        fileSystem.writeFileSync("/other/referenced-file.d.ts", "declare function nameof(): void;");
+        fileSystem.writeFileSync("/src/main.ts", "/// <reference path='../other/referenced-file.d.ts' />\n\nimport { Test } from 'library'; something();");
+        fileSystem.writeFileSync("/other/referenced-file.d.ts", "declare function something(): void;");
         fileSystem.writeFileSync("/tsconfig.json", `{ "files": ["src/main.ts"] }`);
 
         const project = await create({ tsConfigFilePath: "tsconfig.json", fileSystem, ...options, skipLoadingLibFiles: true });

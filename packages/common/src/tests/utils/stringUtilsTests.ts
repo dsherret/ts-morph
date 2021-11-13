@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { errors } from "../../errors";
-import { StringUtils } from "../../utils";
+import { nameof, StringUtils } from "../../utils";
 
 describe(nameof(StringUtils), () => {
     describe(nameof.property(StringUtils, "getLineNumberAtPos"), () => {
