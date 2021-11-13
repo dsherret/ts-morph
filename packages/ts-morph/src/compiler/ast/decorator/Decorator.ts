@@ -25,7 +25,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
         if (callExpression)
             return getIdentifierFromName(callExpression.getExpression());
         else
-            return getIdentifierFromName(this.#getInnerExpression());
+            return getIdentifierFromName(this._getInnerExpression());
 
         function getIdentifierFromName(expression: Expression) {
             const identifier = getNameFromExpression(expression);
@@ -60,7 +60,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
      * Gets if the decorator is a decorator factory.
      */
     isDecoratorFactory() {
-        return Node.isCallExpression(this.#getInnerExpression());
+        return Node.isCallExpression(this._getInnerExpression());
     }
 
     /**
@@ -72,7 +72,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
             return this;
 
         if (isDecoratorFactory) {
-            const expression = this.#getInnerExpression();
+            const expression = this._getInnerExpression();
             const expressionText = expression.getText();
             insertIntoParentTextRange({
                 parent: this,
@@ -120,7 +120,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
      * Gets the call expression if a decorator factory.
      */
     getCallExpression(): CallExpression | undefined {
-        const expression = this.#getInnerExpression();
+        const expression = this._getInnerExpression();
         return Node.isCallExpression(expression) ? expression : undefined;
     }
 
@@ -266,7 +266,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
         }
     }
 
-    #getInnerExpression() {
+    _getInnerExpression() {
         let expr: Expression = this.getExpression();
         while (Node.isParenthesizedExpression(expr))
             expr = expr.getExpression();
