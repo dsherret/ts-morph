@@ -4106,8 +4106,8 @@ class Node {
             case SyntaxKind.CallSignature:
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassStaticBlockDeclaration:
-            case SyntaxKind.ConstructSignature:
             case SyntaxKind.Constructor:
+            case SyntaxKind.ConstructSignature:
             case SyntaxKind.ContinueStatement:
             case SyntaxKind.DebuggerStatement:
             case SyntaxKind.DoStatement:
@@ -4160,14 +4160,14 @@ class Node {
     static isConditionalTypeNode(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.ConditionalType;
     }
-    static isConstructSignatureDeclaration(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.ConstructSignature;
-    }
     static isConstructorDeclaration(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.Constructor;
     }
     static isConstructorTypeNode(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.ConstructorType;
+    }
+    static isConstructSignatureDeclaration(node) {
+        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.ConstructSignature;
     }
     static isDecoratableNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
@@ -4203,6 +4203,20 @@ class Node {
                 return false;
         }
     }
+    static isExportableNode(node) {
+        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+            case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.EnumDeclaration:
+            case SyntaxKind.FunctionDeclaration:
+            case SyntaxKind.InterfaceDeclaration:
+            case SyntaxKind.ModuleDeclaration:
+            case SyntaxKind.TypeAliasDeclaration:
+            case SyntaxKind.VariableStatement:
+                return true;
+            default:
+                return false;
+        }
+    }
     static isExportGetableNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.ClassDeclaration:
@@ -4212,20 +4226,6 @@ class Node {
             case SyntaxKind.ModuleDeclaration:
             case SyntaxKind.TypeAliasDeclaration:
             case SyntaxKind.VariableDeclaration:
-            case SyntaxKind.VariableStatement:
-                return true;
-            default:
-                return false;
-        }
-    }
-    static isExportableNode(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
-            case SyntaxKind.ClassDeclaration:
-            case SyntaxKind.EnumDeclaration:
-            case SyntaxKind.FunctionDeclaration:
-            case SyntaxKind.InterfaceDeclaration:
-            case SyntaxKind.ModuleDeclaration:
-            case SyntaxKind.TypeAliasDeclaration:
             case SyntaxKind.VariableStatement:
                 return true;
             default:
@@ -4266,8 +4266,8 @@ class Node {
             case SyntaxKind.JsxSelfClosingElement:
             case SyntaxKind.MetaProperty:
             case SyntaxKind.NewExpression:
-            case SyntaxKind.NoSubstitutionTemplateLiteral:
             case SyntaxKind.NonNullExpression:
+            case SyntaxKind.NoSubstitutionTemplateLiteral:
             case SyntaxKind.NullKeyword:
             case SyntaxKind.NumericLiteral:
             case SyntaxKind.ObjectLiteralExpression:
@@ -4393,14 +4393,27 @@ class Node {
     static isImportTypeNode(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.ImportType;
     }
-    static isIndexSignatureDeclaration(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.IndexSignature;
-    }
     static isIndexedAccessTypeNode(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.IndexedAccessType;
     }
+    static isIndexSignatureDeclaration(node) {
+        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.IndexSignature;
+    }
     static isInferTypeNode(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.InferType;
+    }
+    static isInitializerExpressionableNode(node) {
+        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+            case SyntaxKind.BindingElement:
+            case SyntaxKind.EnumMember:
+            case SyntaxKind.Parameter:
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.PropertySignature:
+            case SyntaxKind.VariableDeclaration:
+                return true;
+            default:
+                return false;
+        }
     }
     static isInitializerExpressionGetableNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
@@ -4411,19 +4424,6 @@ class Node {
             case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.PropertySignature:
             case SyntaxKind.ShorthandPropertyAssignment:
-            case SyntaxKind.VariableDeclaration:
-                return true;
-            default:
-                return false;
-        }
-    }
-    static isInitializerExpressionableNode(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
-            case SyntaxKind.BindingElement:
-            case SyntaxKind.EnumMember:
-            case SyntaxKind.Parameter:
-            case SyntaxKind.PropertyDeclaration:
-            case SyntaxKind.PropertySignature:
             case SyntaxKind.VariableDeclaration:
                 return true;
             default:
@@ -4447,6 +4447,39 @@ class Node {
     }
     static isJSDoc(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.JSDocComment;
+    }
+    static isJSDocableNode(node) {
+        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+            case SyntaxKind.ArrowFunction:
+            case SyntaxKind.CallSignature:
+            case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.ClassExpression:
+            case SyntaxKind.ClassStaticBlockDeclaration:
+            case SyntaxKind.Constructor:
+            case SyntaxKind.ConstructSignature:
+            case SyntaxKind.EnumDeclaration:
+            case SyntaxKind.EnumMember:
+            case SyntaxKind.ExpressionStatement:
+            case SyntaxKind.FunctionDeclaration:
+            case SyntaxKind.FunctionExpression:
+            case SyntaxKind.GetAccessor:
+            case SyntaxKind.ImportEqualsDeclaration:
+            case SyntaxKind.IndexSignature:
+            case SyntaxKind.InterfaceDeclaration:
+            case SyntaxKind.LabeledStatement:
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.MethodSignature:
+            case SyntaxKind.ModuleDeclaration:
+            case SyntaxKind.NamedTupleMember:
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.PropertySignature:
+            case SyntaxKind.SetAccessor:
+            case SyntaxKind.TypeAliasDeclaration:
+            case SyntaxKind.VariableStatement:
+                return true;
+            default:
+                return false;
+        }
     }
     static isJSDocPropertyLikeTag(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
@@ -4477,8 +4510,8 @@ class Node {
             case SyntaxKind.JSDocSeeTag:
             case SyntaxKind.JSDocTemplateTag:
             case SyntaxKind.JSDocThisTag:
-            case SyntaxKind.JSDocTypeTag:
             case SyntaxKind.JSDocTypedefTag:
+            case SyntaxKind.JSDocTypeTag:
             case SyntaxKind.JSDocTag:
                 return true;
             default:
@@ -4509,39 +4542,6 @@ class Node {
     }
     static isJSDocUnknownTag(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.JSDocTag;
-    }
-    static isJSDocableNode(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
-            case SyntaxKind.ArrowFunction:
-            case SyntaxKind.CallSignature:
-            case SyntaxKind.ClassDeclaration:
-            case SyntaxKind.ClassExpression:
-            case SyntaxKind.ClassStaticBlockDeclaration:
-            case SyntaxKind.ConstructSignature:
-            case SyntaxKind.Constructor:
-            case SyntaxKind.EnumDeclaration:
-            case SyntaxKind.EnumMember:
-            case SyntaxKind.ExpressionStatement:
-            case SyntaxKind.FunctionDeclaration:
-            case SyntaxKind.FunctionExpression:
-            case SyntaxKind.GetAccessor:
-            case SyntaxKind.ImportEqualsDeclaration:
-            case SyntaxKind.IndexSignature:
-            case SyntaxKind.InterfaceDeclaration:
-            case SyntaxKind.LabeledStatement:
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.MethodSignature:
-            case SyntaxKind.ModuleDeclaration:
-            case SyntaxKind.NamedTupleMember:
-            case SyntaxKind.PropertyDeclaration:
-            case SyntaxKind.PropertySignature:
-            case SyntaxKind.SetAccessor:
-            case SyntaxKind.TypeAliasDeclaration:
-            case SyntaxKind.VariableStatement:
-                return true;
-            default:
-                return false;
-        }
     }
     static isJsxAttributedNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
@@ -4578,8 +4578,8 @@ class Node {
             case SyntaxKind.JsxSelfClosingElement:
             case SyntaxKind.MetaProperty:
             case SyntaxKind.NewExpression:
-            case SyntaxKind.NoSubstitutionTemplateLiteral:
             case SyntaxKind.NonNullExpression:
+            case SyntaxKind.NoSubstitutionTemplateLiteral:
             case SyntaxKind.NullKeyword:
             case SyntaxKind.NumericLiteral:
             case SyntaxKind.ObjectLiteralExpression:
@@ -4715,9 +4715,6 @@ class Node {
                 return false;
         }
     }
-    static isModuleNamedNode(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.ModuleDeclaration;
-    }
     static isModuledNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.ModuleDeclaration:
@@ -4726,6 +4723,9 @@ class Node {
             default:
                 return false;
         }
+    }
+    static isModuleNamedNode(node) {
+        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.ModuleDeclaration;
     }
     static isNameableNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
@@ -4785,9 +4785,9 @@ class Node {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.CallSignature:
-            case SyntaxKind.ConstructSignature:
             case SyntaxKind.Constructor:
             case SyntaxKind.ConstructorType:
+            case SyntaxKind.ConstructSignature:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
             case SyntaxKind.FunctionType:
@@ -4961,9 +4961,9 @@ class Node {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.CallSignature:
-            case SyntaxKind.ConstructSignature:
             case SyntaxKind.Constructor:
             case SyntaxKind.ConstructorType:
+            case SyntaxKind.ConstructSignature:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
             case SyntaxKind.FunctionType:
@@ -5000,9 +5000,9 @@ class Node {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.CallSignature:
-            case SyntaxKind.ConstructSignature:
             case SyntaxKind.Constructor:
             case SyntaxKind.ConstructorType:
+            case SyntaxKind.ConstructSignature:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
             case SyntaxKind.FunctionType:
@@ -5142,6 +5142,21 @@ class Node {
     static isTypeAssertion(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.TypeAssertionExpression;
     }
+    static isTypedNode(node) {
+        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+            case SyntaxKind.AsExpression:
+            case SyntaxKind.NamedTupleMember:
+            case SyntaxKind.Parameter:
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.PropertySignature:
+            case SyntaxKind.TypeAliasDeclaration:
+            case SyntaxKind.TypeAssertionExpression:
+            case SyntaxKind.VariableDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
     static isTypeElement(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.CallSignature:
@@ -5210,8 +5225,8 @@ class Node {
             case SyntaxKind.CallSignature:
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
-            case SyntaxKind.ConstructSignature:
             case SyntaxKind.Constructor:
+            case SyntaxKind.ConstructSignature:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
             case SyntaxKind.FunctionType:
@@ -5235,21 +5250,6 @@ class Node {
     static isTypeReferenceNode(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.TypeReference;
     }
-    static isTypedNode(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
-            case SyntaxKind.AsExpression:
-            case SyntaxKind.NamedTupleMember:
-            case SyntaxKind.Parameter:
-            case SyntaxKind.PropertyDeclaration:
-            case SyntaxKind.PropertySignature:
-            case SyntaxKind.TypeAliasDeclaration:
-            case SyntaxKind.TypeAssertionExpression:
-            case SyntaxKind.VariableDeclaration:
-                return true;
-            default:
-                return false;
-        }
-    }
     static isUnaryExpression(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.ArrayLiteralExpression:
@@ -5268,8 +5268,8 @@ class Node {
             case SyntaxKind.JsxSelfClosingElement:
             case SyntaxKind.MetaProperty:
             case SyntaxKind.NewExpression:
-            case SyntaxKind.NoSubstitutionTemplateLiteral:
             case SyntaxKind.NonNullExpression:
+            case SyntaxKind.NoSubstitutionTemplateLiteral:
             case SyntaxKind.NullKeyword:
             case SyntaxKind.NumericLiteral:
             case SyntaxKind.ObjectLiteralExpression:
@@ -5331,8 +5331,8 @@ class Node {
             case SyntaxKind.JsxSelfClosingElement:
             case SyntaxKind.MetaProperty:
             case SyntaxKind.NewExpression:
-            case SyntaxKind.NoSubstitutionTemplateLiteral:
             case SyntaxKind.NonNullExpression:
+            case SyntaxKind.NoSubstitutionTemplateLiteral:
             case SyntaxKind.NullKeyword:
             case SyntaxKind.NumericLiteral:
             case SyntaxKind.ObjectLiteralExpression:
@@ -5354,8 +5354,8 @@ class Node {
             case SyntaxKind.CallSignature:
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassStaticBlockDeclaration:
-            case SyntaxKind.ConstructSignature:
             case SyntaxKind.Constructor:
+            case SyntaxKind.ConstructSignature:
             case SyntaxKind.Decorator:
             case SyntaxKind.EnumDeclaration:
             case SyntaxKind.EnumMember:
@@ -5471,9 +5471,9 @@ Node.isJSDocSignature = Node.is(SyntaxKind.JSDocSignature);
 Node.isJSDocTemplateTag = Node.is(SyntaxKind.JSDocTemplateTag);
 Node.isJSDocText = Node.is(SyntaxKind.JSDocText);
 Node.isJSDocThisTag = Node.is(SyntaxKind.JSDocThisTag);
+Node.isJSDocTypedefTag = Node.is(SyntaxKind.JSDocTypedefTag);
 Node.isJSDocTypeExpression = Node.is(SyntaxKind.JSDocTypeExpression);
 Node.isJSDocTypeTag = Node.is(SyntaxKind.JSDocTypeTag);
-Node.isJSDocTypedefTag = Node.is(SyntaxKind.JSDocTypedefTag);
 Node.isJsxAttribute = Node.is(SyntaxKind.JsxAttribute);
 Node.isJsxClosingElement = Node.is(SyntaxKind.JsxClosingElement);
 Node.isJsxClosingFragment = Node.is(SyntaxKind.JsxClosingFragment);
@@ -5498,8 +5498,8 @@ Node.isNamespaceExport = Node.is(SyntaxKind.NamespaceExport);
 Node.isNamespaceImport = Node.is(SyntaxKind.NamespaceImport);
 Node.isNeverKeyword = Node.is(SyntaxKind.NeverKeyword);
 Node.isNewExpression = Node.is(SyntaxKind.NewExpression);
-Node.isNoSubstitutionTemplateLiteral = Node.is(SyntaxKind.NoSubstitutionTemplateLiteral);
 Node.isNonNullExpression = Node.is(SyntaxKind.NonNullExpression);
+Node.isNoSubstitutionTemplateLiteral = Node.is(SyntaxKind.NoSubstitutionTemplateLiteral);
 Node.isNotEmittedStatement = Node.is(SyntaxKind.NotEmittedStatement);
 Node.isNumberKeyword = Node.is(SyntaxKind.NumberKeyword);
 Node.isNumericLiteral = Node.is(SyntaxKind.NumericLiteral);
@@ -6418,9 +6418,9 @@ const Structure = {
             case StructureKind.CallSignature:
             case StructureKind.Class:
             case StructureKind.ClassStaticBlock:
-            case StructureKind.ConstructSignature:
             case StructureKind.ConstructorOverload:
             case StructureKind.Constructor:
+            case StructureKind.ConstructSignature:
             case StructureKind.Enum:
             case StructureKind.EnumMember:
             case StructureKind.FunctionOverload:
@@ -6445,9 +6445,9 @@ const Structure = {
     isSignatured(structure) {
         switch (structure.kind) {
             case StructureKind.CallSignature:
-            case StructureKind.ConstructSignature:
             case StructureKind.ConstructorOverload:
             case StructureKind.Constructor:
+            case StructureKind.ConstructSignature:
             case StructureKind.FunctionOverload:
             case StructureKind.Function:
             case StructureKind.GetAccessor:
@@ -6463,9 +6463,9 @@ const Structure = {
     isParametered(structure) {
         switch (structure.kind) {
             case StructureKind.CallSignature:
-            case StructureKind.ConstructSignature:
             case StructureKind.ConstructorOverload:
             case StructureKind.Constructor:
+            case StructureKind.ConstructSignature:
             case StructureKind.FunctionOverload:
             case StructureKind.Function:
             case StructureKind.GetAccessor:
@@ -6481,9 +6481,9 @@ const Structure = {
     isReturnTyped(structure) {
         switch (structure.kind) {
             case StructureKind.CallSignature:
-            case StructureKind.ConstructSignature:
             case StructureKind.ConstructorOverload:
             case StructureKind.Constructor:
+            case StructureKind.ConstructSignature:
             case StructureKind.FunctionOverload:
             case StructureKind.Function:
             case StructureKind.GetAccessor:
@@ -6501,9 +6501,9 @@ const Structure = {
         switch (structure.kind) {
             case StructureKind.CallSignature:
             case StructureKind.Class:
-            case StructureKind.ConstructSignature:
             case StructureKind.ConstructorOverload:
             case StructureKind.Constructor:
+            case StructureKind.ConstructSignature:
             case StructureKind.FunctionOverload:
             case StructureKind.Function:
             case StructureKind.GetAccessor:
@@ -6611,9 +6611,6 @@ const Structure = {
                 return false;
         }
     },
-    isConstructSignature(structure) {
-        return structure.kind === StructureKind.ConstructSignature;
-    },
     isConstructorDeclarationOverload(structure) {
         return structure.kind === StructureKind.ConstructorOverload;
     },
@@ -6645,6 +6642,9 @@ const Structure = {
             default:
                 return false;
         }
+    },
+    isConstructSignature(structure) {
+        return structure.kind === StructureKind.ConstructSignature;
     },
     isDecorator(structure) {
         return structure.kind === StructureKind.Decorator;
@@ -6929,12 +6929,12 @@ function forEachStructureChild(structure, callback) {
             return forClassDeclaration(structure, callback);
         case StructureKind.ClassStaticBlock:
             return forClassStaticBlockDeclaration(structure, callback);
-        case StructureKind.ConstructSignature:
-            return forConstructSignatureDeclaration(structure, callback);
         case StructureKind.ConstructorOverload:
             return forConstructorDeclarationOverload(structure, callback);
         case StructureKind.Constructor:
             return forConstructorDeclaration(structure, callback);
+        case StructureKind.ConstructSignature:
+            return forConstructSignatureDeclaration(structure, callback);
         case StructureKind.Enum:
             return forEnumDeclaration(structure, callback);
         case StructureKind.EnumMember:
@@ -7025,11 +7025,6 @@ function forClassStaticBlockDeclaration(structure, callback) {
 function forStatementedNode(structure, callback) {
     return forAllUnknownKindIfStructure(structure.statements, callback);
 }
-function forConstructSignatureDeclaration(structure, callback) {
-    return forJSDocableNode(structure, callback)
-        || forSignaturedDeclaration(structure, callback)
-        || forTypeParameteredNode(structure, callback);
-}
 function forConstructorDeclarationOverload(structure, callback) {
     return forSignaturedDeclaration(structure, callback)
         || forTypeParameteredNode(structure, callback)
@@ -7044,6 +7039,11 @@ function forFunctionLikeDeclaration(structure, callback) {
         || forTypeParameteredNode(structure, callback)
         || forJSDocableNode(structure, callback)
         || forStatementedNode(structure, callback);
+}
+function forConstructSignatureDeclaration(structure, callback) {
+    return forJSDocableNode(structure, callback)
+        || forSignaturedDeclaration(structure, callback)
+        || forTypeParameteredNode(structure, callback);
 }
 function forEnumDeclaration(structure, callback) {
     return forJSDocableNode(structure, callback)

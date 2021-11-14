@@ -1,7 +1,6 @@
 /.vs
 /.github
 /node_modules
-/coverage
 /.vscode
 /scripts
 /dist-deno
@@ -13,8 +12,6 @@
 /obj
 /temp
 /bin
-/.nyc_output
-azure-pipelines.yml
 .mocharc.yml
 *.suo
 *.csproj

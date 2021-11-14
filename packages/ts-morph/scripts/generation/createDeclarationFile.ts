@@ -183,13 +183,13 @@ export async function createDeclarationFile() {
   function log(message: string) {
     if (lastDateTime != null)
       finishLog(lastDateTime);
-    process.stdout.write(`  * ${message}`);
+    console.log(`  * ${message}`);
     lastDateTime = new Date();
   }
 
   function finishLog(dateTime: Date) {
     const differenceMs = new Date().getTime() - dateTime.getTime();
     const differenceSeconds = Math.round(differenceMs / 100) / 10;
-    process.stdout.write(` [${differenceSeconds}s]\n`);
+    console.log(`    [${differenceSeconds}s]`);
   }
 }

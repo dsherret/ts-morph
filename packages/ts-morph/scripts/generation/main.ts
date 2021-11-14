@@ -8,7 +8,7 @@ import { createNodeTypeGuards } from "./createNodeTypeGuards.ts";
 import { createStructurePrinterFactory } from "./createStructurePrinterFactory.ts";
 import { createStructureTypeGuards } from "./createStructureTypeGuards.ts";
 
-const args = Deno.args;
+const args = [...Deno.args];
 const originalArgs = [...args];
 const factory = new InspectorFactory();
 const inspector = factory.getTsMorphInspector();
