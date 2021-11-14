@@ -1,4 +1,4 @@
-import { tsMorph } from "../../../scripts/mod.ts";
+import { tsMorph } from "../deps.ts";
 import { TsNode, TsNodeProperty } from "./ts/mod.ts";
 import { Mixin, Structure, WrappedNode } from "./tsMorph/mod.ts";
 

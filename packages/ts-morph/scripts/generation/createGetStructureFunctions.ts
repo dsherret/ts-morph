@@ -7,7 +7,7 @@
  * might be used to implement issue #45 (if it's decided that should be implemented).
  * -------------------------------------------------
  */
-import { folders, path, tsMorph } from "../../../scripts/mod.ts";
+import { folders, path, tsMorph } from "../deps.ts";
 import { Structure } from "../inspectors/mod.ts";
 
 // todo: a lot of this code was written before this library supported manipulation

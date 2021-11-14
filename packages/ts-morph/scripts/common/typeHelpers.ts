@@ -1,4 +1,4 @@
-import { tsMorph } from "../../../scripts/mod.ts";
+import { tsMorph } from "../deps.ts";
 
 export function isNodeType(type: tsMorph.Type) {
   return type.getText().endsWith("Node<NodeType>");

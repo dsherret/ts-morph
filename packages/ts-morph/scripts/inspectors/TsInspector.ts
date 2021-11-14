@@ -1,5 +1,5 @@
-import { Memoize, tsMorph } from "../../../scripts/mod.ts";
 import { hasDescendantBaseType } from "../common/mod.ts";
+import { Memoize, tsMorph } from "../deps.ts";
 import { WrapperFactory } from "./WrapperFactory.ts";
 
 export class TsInspector {

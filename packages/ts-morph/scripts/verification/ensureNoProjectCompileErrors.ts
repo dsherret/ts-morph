@@ -4,8 +4,8 @@
  * Ensures there are no compile errors in the src directory.
  * ---------------------------------------------------
  */
-import { printDiagnostics } from "../../../scripts/mod.ts";
 import { getProject } from "../common/mod.ts";
+import { printDiagnostics } from "../deps.ts";
 
 const project = getProject();
 

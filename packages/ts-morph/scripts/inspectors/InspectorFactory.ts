@@ -1,5 +1,5 @@
-import { tsMorph } from "../../../scripts/mod.ts";
 import { getProject } from "../common/mod.ts";
+import { tsMorph } from "../deps.ts";
 import { TsInspector } from "./TsInspector.ts";
 import { TsMorphInspector } from "./TsMorphInspector.ts";
 import { WrapperFactory } from "./WrapperFactory.ts";

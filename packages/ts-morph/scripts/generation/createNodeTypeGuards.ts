@@ -11,7 +11,7 @@
  * 3. Forward support: Features we add in the future will be auto-implemented.
  * ------------------------------------------
  */
-import { tsMorph } from "../../../scripts/mod.ts";
+import { tsMorph } from "../deps.ts";
 import { Mixin, TsInspector, TsMorphInspector, WrappedNode } from "../inspectors/mod.ts";
 
 // todo: this should be cleaned up as it's a mess

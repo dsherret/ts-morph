@@ -5,8 +5,8 @@
  * the getDescendantsOfKind, getChildrenOfKind, etc... methods.
  * ----------------------------------------------
  */
-import { tsMorph } from "../../../scripts/mod.ts";
 import { hasDescendantBaseType } from "../common/mod.ts";
+import { tsMorph } from "../deps.ts";
 import { TsInspector, TsMorphInspector } from "../inspectors/mod.ts";
 
 export function createKindToNodeMappings(inspector: TsMorphInspector, tsInspector: TsInspector) {

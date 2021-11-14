@@ -1,5 +1,5 @@
-import { Memoize, tsMorph } from "../../../../scripts/mod.ts";
 import { hasDescendantNodeType } from "../../common/mod.ts";
+import { Memoize, tsMorph } from "../../deps.ts";
 import { TsNode } from "../ts/mod.ts";
 import { WrapperFactory } from "../WrapperFactory.ts";
 import { Mixin } from "./Mixin.ts";

@@ -1,4 +1,4 @@
-import { tsMorph } from "../../scripts/mod.ts";
+import { tsMorph } from "./deps.ts";
 const { Node, Project } = tsMorph;
 
 const project = new Project();

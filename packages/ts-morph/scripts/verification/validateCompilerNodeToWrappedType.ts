@@ -6,7 +6,7 @@
  * wrapped node type.
  * ------------------------------------------------------
  */
-import { tsMorph } from "../../../scripts/mod.ts";
+import { tsMorph } from "../deps.ts";
 import { TsMorphInspector } from "../inspectors/mod.ts";
 import { Problem } from "./Problem.ts";
 

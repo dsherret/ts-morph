@@ -5,7 +5,7 @@
  * is used for iterating over a structure's structures.
  * -------------------------------------------------
  */
-import { tsMorph } from "../../../scripts/mod.ts";
+import { tsMorph } from "../deps.ts";
 import { Structure, TsMorphInspector } from "../inspectors/mod.ts";
 
 // very messy first pass... needs cleanup

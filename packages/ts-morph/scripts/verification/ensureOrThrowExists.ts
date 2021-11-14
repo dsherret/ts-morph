@@ -8,7 +8,7 @@
  * unexpected happens. They also work nicely with strict null checking.
  * --------------------------------------------
  */
-import { tsMorph } from "../../../scripts/mod.ts";
+import { tsMorph } from "../deps.ts";
 import { TsMorphInspector } from "../inspectors.ts";
 import { Problem } from "./Problem.ts";
 

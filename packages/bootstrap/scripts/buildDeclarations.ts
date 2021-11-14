@@ -1,4 +1,4 @@
-import { createDeclarationProject, folders, makeConstructorsPrivate, path, tsMorph } from "../../scripts/mod.ts";
+import { createDeclarationProject, folders, makeConstructorsPrivate, path, tsMorph } from "./deps.ts";
 
 const declarationProject = createDeclarationProject({
   tsConfigFilePath: path.join(folders.bootstrap, "tsconfig.json"),

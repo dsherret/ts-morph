@@ -1,5 +1,5 @@
-import { Memoize, tsMorph } from "../../../scripts/mod.ts";
 import { isNodeClass } from "../common/mod.ts";
+import { Memoize, tsMorph } from "../deps.ts";
 import { KindToWrapperMapping, Mixin, Structure, WrappedNode } from "./tsMorph.ts";
 import { WrapperFactory } from "./WrapperFactory.ts";
 

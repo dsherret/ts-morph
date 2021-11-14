@@ -7,7 +7,7 @@
  * all the compiler node properties.
  * ------------------------------------------
  */
-import { folders, path } from "../../../scripts/mod.ts";
+import { folders, path } from "../deps.ts";
 import { InspectorFactory, TsNode, TsNodeProperty } from "../inspectors/mod.ts";
 
 // setup

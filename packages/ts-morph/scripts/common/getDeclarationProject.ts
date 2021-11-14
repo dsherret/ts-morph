@@ -1,4 +1,4 @@
-import { createDeclarationProject as scriptsCreateDeclarationProject, folders, path, tsMorph } from "../../../scripts/mod.ts";
+import { createDeclarationProject as scriptsCreateDeclarationProject, folders, path, tsMorph } from "../deps.ts";
 
 export function getDeclarationProject() {
   const project = new tsMorph.Project({

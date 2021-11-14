@@ -1,4 +1,4 @@
-import { tsMorph } from "../../../scripts/mod.ts";
+import { tsMorph } from "../deps.ts";
 
 export function cloneNamespaces(node: tsMorph.StatementedNode, cloningNamespaces: tsMorph.ModuleDeclaration[]) {
   const namespaces = node.addModules(cloningNamespaces.map(n => ({

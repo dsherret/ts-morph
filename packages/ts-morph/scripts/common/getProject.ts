@@ -1,4 +1,4 @@
-import { folders, path, tsMorph } from "../../../scripts/mod.ts";
+import { folders, path, tsMorph } from "../deps.ts";
 
 export function getProject() {
   return new tsMorph.Project({

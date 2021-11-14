@@ -6,7 +6,7 @@
  * comment in the form `// @code-fence-allow(name): <reason>`
  * ------------------------------------------------------
  */
-import { tsMorph } from "../../../scripts/mod.ts";
+import { tsMorph } from "../deps.ts";
 import { TsInspector, TsMorphInspector } from "../inspectors/mod.ts";
 import { Problem } from "./Problem.ts";
 

@@ -5,8 +5,8 @@
  * and hides any declarations that should be internal.
  * -------------------------------------------
  */
-import { forEachTypeText, makeConstructorsPrivate, tsMorph } from "../../../scripts/mod.ts";
 import { createDeclarationProject } from "../common/mod.ts";
+import { forEachTypeText, makeConstructorsPrivate, tsMorph } from "../deps.ts";
 import { getCodeBlockWriterStatements, getDeclarationFileStatements } from "./declarationFile/mod.ts";
 
 // todo: remove this once this code's performance is improved.

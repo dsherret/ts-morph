@@ -8,8 +8,8 @@
  * declaration file doesn't have errors.
  * ---------------------------------------------------
  */
-import { printDiagnostics } from "../../../scripts/mod.ts";
 import { getDeclarationProject } from "../common/mod.ts";
+import { printDiagnostics } from "../deps.ts";
 
 const project = getDeclarationProject();
 

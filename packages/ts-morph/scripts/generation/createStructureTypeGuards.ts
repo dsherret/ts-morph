@@ -5,7 +5,7 @@
  * for doing type guards on structures.
  * -------------------------------------------------
  */
-import { tsMorph } from "../../../scripts/mod.ts";
+import { tsMorph } from "../deps.ts";
 import { Structure, TsMorphInspector } from "../inspectors/mod.ts";
 
 export function createStructureTypeGuards(inspector: TsMorphInspector) {

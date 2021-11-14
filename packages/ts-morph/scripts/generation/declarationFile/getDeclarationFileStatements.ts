@@ -1,4 +1,4 @@
-import { tsMorph } from "../../../../scripts/mod.ts";
+import { tsMorph } from "../../deps.ts";
 
 export function getDeclarationFileStatements(mainFile: tsMorph.SourceFile) {
   const tsNames: string[] = [];

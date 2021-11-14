@@ -1,4 +1,4 @@
-import { tsMorph } from "../../../scripts/mod.ts";
+import { tsMorph } from "../deps.ts";
 import { InspectorFactory } from "../inspectors/mod.ts";
 import { createDeclarationFile } from "./createDeclarationFile.ts";
 import { createForEachStructureChild } from "./createForEachStructureChild.ts";

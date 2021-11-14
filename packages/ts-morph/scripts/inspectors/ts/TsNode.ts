@@ -1,4 +1,4 @@
-import { Memoize, tsMorph } from "../../../../scripts/mod.ts";
+import { Memoize, tsMorph } from "../../deps.ts";
 import { WrappedNode } from "../tsMorph/mod.ts";
 import { WrapperFactory } from "../WrapperFactory.ts";
 import { TsNodeProperty } from "./TsNodeProperty.ts";

@@ -1,4 +1,4 @@
-import { tsMorph } from "../../../scripts/mod.ts";
+import { tsMorph } from "../deps.ts";
 
 export function hasInternalDocTag(node: tsMorph.Node) {
   return tsMorph.Node.isJSDocableNode(node)

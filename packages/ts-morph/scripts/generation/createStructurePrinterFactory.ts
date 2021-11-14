@@ -4,7 +4,7 @@
  * Automatically maintains this class based on changes in the application.
  * --------------------------------------------------------
  */
-import { tsMorph } from "../../../scripts/mod.ts";
+import { tsMorph } from "../deps.ts";
 import { TsMorphInspector } from "../inspectors/mod";
 
 export function createStructurePrinterFactory(inspector: TsMorphInspector) {

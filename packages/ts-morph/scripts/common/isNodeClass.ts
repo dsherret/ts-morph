@@ -1,4 +1,4 @@
-import { tsMorph } from "../../../scripts/mod.ts";
+import { tsMorph } from "../deps.ts";
 import { hasDescendantNodeType } from "./typeHelpers.ts";
 
 export function isNodeClass(classDec: tsMorph.ClassDeclaration) {

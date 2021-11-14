@@ -1,4 +1,4 @@
-import { changeTypeScriptVersion, execNpmScript, folders, getDevCompilerVersions, resetTypeScriptVersion } from "../../../scripts/mod.ts";
+import { changeTypeScriptVersion, execNpmScript, folders, getDevCompilerVersions, resetTypeScriptVersion } from "../deps.ts";
 
 async function run() {
   try {

@@ -5,8 +5,8 @@
  * only accept readonly arrays.
  * ------------------------------------------------
  */
-import { tsMorph } from "../../../scripts/mod.ts";
 import { hasInternalDocTag } from "../common/mod.ts";
+import { tsMorph } from "../deps.ts";
 import { TsMorphInspector } from "../inspectors/mod.ts";
 import { Problem } from "./Problem.ts";
 

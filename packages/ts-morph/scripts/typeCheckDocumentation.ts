@@ -1,5 +1,5 @@
-import { tsMorph } from "../../scripts/mod.ts";
 import { getProject } from "./common/mod.ts";
+import { tsMorph } from "./deps.ts";
 import { CodeBlock, MarkDownFile } from "./markdown/mod.ts";
 
 const errorCodes = {
