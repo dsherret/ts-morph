@@ -21,5 +21,5 @@ const diagnostics = project.getPreEmitDiagnostics();
 if (diagnostics.length > 0) {
   printDiagnostics(diagnostics);
   console.error("There were declaration file issues!");
-  process.exit(1);
+  Deno.exit(1);
 }

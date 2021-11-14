@@ -20,7 +20,7 @@ async function run() {
   } catch (err) {
     console.log(err);
     resetTypeScriptVersion();
-    process.exit(1);
+    Deno.exit(1);
   }
 }
 

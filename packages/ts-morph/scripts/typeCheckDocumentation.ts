@@ -73,7 +73,7 @@ if (errors.length > 0) {
     );
   }
 
-  process.exit(1);
+  Deno.exit(1);
 }
 
 function getInitializedSetupText(text: string) {

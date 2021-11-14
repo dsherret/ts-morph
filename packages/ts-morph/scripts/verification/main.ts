@@ -11,7 +11,7 @@ import { validateCodeFences } from "./validateCodeFences.ts";
 import { validateCompilerNodeToWrappedType } from "./validateCompilerNodeToWrappedType.ts";
 import { validatePublicApiClassMemberNames } from "./validatePublicApiClassMemberNames.ts";
 
-const args = process.argv.slice(2);
+const args = [...Deno.args];
 const factory = new InspectorFactory();
 let problemsCount = 0;
 
@@ -46,7 +46,7 @@ if (args.length > 0)
 
 if (problemsCount > 0) {
   console.error(`\nFound ${problemsCount} code verification issues.`);
-  process.exit(1);
+  Deno.exit(1);
 }
 
 function checkHasArg(argName: string) {

@@ -9,4 +9,4 @@ printDiagnostics(diagnostics);
 console.log(`Found ${diagnostics.length} diagnostics.`);
 
 if (diagnostics.length > 0)
-  process.exit(1);
+  Deno.exit(1);

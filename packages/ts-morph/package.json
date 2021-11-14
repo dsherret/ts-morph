@@ -8,7 +8,7 @@
     "dopublish": "npm run type-check-docs && npm run package && npm run publish-code-verification && echo \"Run: npm publish --otp\"",
     "build": "npm run build:declarations && npm run build:deno && npm run build:node",
     "build:node": "rimraf dist && rollup -c ",
-    "build:deno": "rimraf dist-deno && rollup -c --environment BUILD:deno && ts-node scripts/buildDeno.ts",
+    "build:deno": "rimraf dist-deno && rollup -c --environment BUILD:deno && deno run -A scripts/buildDeno.ts",
     "build:declarations": "deno run -A scripts/generation/main.ts create-declaration-file",
     "test": "cross-env TS_NODE_TRANSPILE_ONLY=\"true\" mocha",
     "test:debug": "npm run test --inspect-brk",

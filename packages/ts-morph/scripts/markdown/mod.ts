@@ -1,2 +1,2 @@
-export * from "./CodeBlock";
-export * from "./MarkDownFile";
+export * from "./CodeBlock.ts";
+export * from "./MarkDownFile.ts";
