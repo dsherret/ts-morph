@@ -9,15 +9,10 @@ const commonFile = project.addSourceFileAtPath(`${folderPath}/ts-morph-common.js
 
 updateTypeScriptImportsExports(commonFile);
 
-// make the lib file import an ES import
 commonFile.insertImportDeclarations(0, [{
-  moduleSpecifier: "./data/libFiles.js",
-  namedImports: ["libFiles"],
-}, {
   moduleSpecifier: "./DenoRuntime.ts",
   namedImports: ["DenoRuntime"],
 }]);
-commonFile.getFunctionOrThrow("getLibFiles").setBodyText("return libFiles;");
 commonFile.getClassOrThrow("NodeRuntime").remove();
 commonFile.getClassOrThrow("NodeRuntimeFileSystem").remove();
 commonFile.getClassOrThrow("NodeRuntimePath").remove();
@@ -49,7 +44,6 @@ fileSystem.mkdirSync(copyDirPath);
 fileSystem.mkdirSync(`${copyDirPath}/data`);
 fileSystem.copySync(`${folderPath}/ts-morph-common.js`, `${copyDirPath}/ts_morph_common.js`);
 fileSystem.copySync(`${folderPath}/DenoRuntime.ts`, `${copyDirPath}/DenoRuntime.ts`);
-fileSystem.copySync(`${folderPath}/data/libFiles.js`, `${copyDirPath}/data/libFiles.js`);
 
 const typeScriptSourceFile = fileSystem.readFileSync("node_modules/typescript/lib/typescript.js");
 fileSystem.writeFileSync(`${copyDirPath}/typescript.js`, typeScriptSourceFile + "\nexport { ts };\n");

@@ -15,15 +15,4 @@ export default [{
       tsconfig: "tsconfig.rollup.json",
     }),
   ],
-}, {
-  input: ["./src/data/libFiles.ts"],
-  output: {
-    file: outputFolder + "/data/libFiles.js",
-    format: moduleKind,
-  },
-  plugins: [
-    typescript({
-      tsconfig: "tsconfig.rollup.json",
-    }),
-  ],
 }];

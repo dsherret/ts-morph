@@ -831,7 +831,7 @@ export declare class TransactionalFileSystem {
     private removeMkDirOperationsForDir;
 }
 
-/** Loads the lib files that are stored in a separate module. */
+/** Gets the TypeScript lib files (.d.ts files). */
 export declare function getLibFiles(): {
     fileName: string;
     text: string;

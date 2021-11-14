@@ -1,9 +1,9 @@
+import { libFiles } from "./data/libFiles";
 import { StandardizedFilePath } from "./fileSystem";
 
-/** Loads the lib files that are stored in a separate module. */
+/** Gets the TypeScript lib files (.d.ts files). */
 export function getLibFiles() {
-  const libFiles: typeof import("./data/libFiles") = require("./data/libFiles");
-  return libFiles.libFiles;
+  return libFiles;
 }
 
 /** The folder to use to "store" the lib files. @internal */
