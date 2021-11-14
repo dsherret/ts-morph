@@ -1,7 +1,6 @@
-import { Memoize } from "@ts-morph/common";
-import { tsMorph } from "@ts-morph/scripts";
-import { isOverloadStructure } from "../../config";
-import { WrapperFactory } from "../WrapperFactory";
+import { Memoize, tsMorph } from "../../../../scripts/mod.ts";
+import { isOverloadStructure } from "../../config/mod.ts";
+import { WrapperFactory } from "../WrapperFactory.ts";
 
 export class Structure {
   constructor(private readonly wrapperFactory: WrapperFactory, readonly node: tsMorph.InterfaceDeclaration) {

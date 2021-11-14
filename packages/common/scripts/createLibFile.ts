@@ -1,32 +1,33 @@
-import { createMinifier } from "dts-minify";
-import fastGlob from "fast-glob";
-import * as fs from "fs";
-import * as path from "path";
-import * as ts from "typescript";
+import { createMinifier } from "https://deno.land/x/dts_minify@0.3.0/mod.ts";
+import { folders, path, tsMorph } from "../../scripts/mod.ts";
+const { ts } = tsMorph;
 
-const rootDir = path.resolve(__dirname, "../");
-const libFilesFilePath = path.join(rootDir, "src/data/libFiles.ts");
+const libFilesFilePath = path.join(folders.common, "src/data/libFiles.ts");
+// todo: grab this from the TypeScript repo's tag
+const libFolderPath = path.join(folders.common, "node_modules/typescript/lib");
 const minifier = createMinifier(ts);
 
-fastGlob(`${rootDir.replace(/\\/g, "/")}/node_modules/typescript/lib/lib*.d.ts`).then(filePaths => {
-  let libFileText = "// dprint-ignore-file\nexport const libFiles: { fileName: string; text: string; }[] = [";
-  for (const filePath of filePaths) {
-    const fileText = fs.readFileSync(filePath).toString("utf8");
+let libFileText = "// dprint-ignore-file\nexport const libFiles: { fileName: string; text: string; }[] = [";
 
-    if (libFileText.endsWith("}"))
-      libFileText += ", ";
+for (const entry of Deno.readDirSync(libFolderPath)) {
+  const isLibFile = entry.isFile && entry.name.startsWith("lib") && entry.name.endsWith(".d.ts");
+  if (!isLibFile)
+    continue;
+  const filePath = path.join(libFolderPath, entry.name);
+  const fileText = Deno.readTextFileSync(filePath);
 
-    libFileText += `{\n`
-      + `    fileName: "${path.basename(filePath)}",\n`
-      + `    text: \`${minifier.minify(fileText).replace(/\r?\n/g, "\\n").replace(/`/g, "\\`")}\`\n`
-      + `}`;
-  }
+  if (libFileText.endsWith("}"))
+    libFileText += ", ";
 
-  libFileText += "];\n";
+  libFileText += `{\n`
+    + `    fileName: "${entry.name}",\n`
+    + `    text: \`${minifier.minify(fileText).replace(/\r?\n/g, "\\n").replace(/`/g, "\\`")}\`\n`
+    + `}`;
+}
 
-  fs.writeFileSync(
-    libFilesFilePath,
-    libFileText,
-    { encoding: "utf8" },
-  );
-});
+libFileText += "];\n";
+
+Deno.writeTextFileSync(
+  libFilesFilePath,
+  libFileText,
+);

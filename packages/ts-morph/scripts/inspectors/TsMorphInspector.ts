@@ -1,8 +1,7 @@
-import { ArrayUtils, Memoize } from "@ts-morph/common";
-import { tsMorph } from "@ts-morph/scripts";
-import { isNodeClass } from "../common";
-import { KindToWrapperMapping, Mixin, Structure, WrappedNode } from "./tsMorph";
-import { WrapperFactory } from "./WrapperFactory";
+import { Memoize, tsMorph } from "../../../scripts/mod.ts";
+import { isNodeClass } from "../common/mod.ts";
+import { KindToWrapperMapping, Mixin, Structure, WrappedNode } from "./tsMorph.ts";
+import { WrapperFactory } from "./WrapperFactory.ts";
 
 export interface DependencyNode {
   node: WrappedNode;
@@ -31,11 +30,9 @@ export class TsMorphInspector {
   @Memoize
   getWrappedNodes(): WrappedNode[] {
     const compilerSourceFiles = this.project.getSourceFiles("src/compiler/**/*.ts");
-    const classes = ArrayUtils.flatten(compilerSourceFiles.map(f => f.getClasses()));
-    return ArrayUtils.sortByProperty(
-      classes.filter(c => isNodeClass(c)).map(c => this.wrapperFactory.getWrappedNode(c)),
-      n => n.getName(),
-    );
+    const classes = compilerSourceFiles.map(f => f.getClasses()).flat();
+    return classes.filter(c => isNodeClass(c)).map(c => this.wrapperFactory.getWrappedNode(c))
+      .sort((a, b) => a.getName().localeCompare(b.getName(), "en-us-u-kf-upper"));
   }
 
   @Memoize
@@ -82,8 +79,8 @@ export class TsMorphInspector {
   @Memoize
   getPublicDeclarations(): tsMorph.ExportedDeclarations[] {
     const entries = Array.from(this.project.getSourceFileOrThrow("src/main.ts").getExportedDeclarations().entries());
-    ArrayUtils.sortByProperty(entries, e => e[0]);
-    return ArrayUtils.flatten(entries.filter(([name]) => name !== "ts").map(([_, value]) => value));
+    entries.sort((a, b) => a[0].localeCompare(b[0], "en-us-u-kf-upper"));
+    return entries.filter(([name]) => name !== "ts").map(([_, value]) => value).flat();
   }
 
   @Memoize
@@ -99,9 +96,9 @@ export class TsMorphInspector {
   @Memoize
   getStructures(): Structure[] {
     const compilerSourceFiles = this.project.getSourceFiles("src/structures/**/*.ts");
-    const interfaces = ArrayUtils.flatten(compilerSourceFiles.map(f => f.getInterfaces()));
+    const interfaces = compilerSourceFiles.map(f => f.getInterfaces()).flat();
     const result = interfaces.map(i => this.wrapperFactory.getStructure(i));
-    return ArrayUtils.sortByProperty(result, s => s.getName());
+    return result.sort((a, b) => a.getName().localeCompare(b.getName(), "en-us-u-kf-upper"));
   }
 
   @Memoize

@@ -5,8 +5,8 @@
  * implements .getStructure and .set method.
  * --------------------------------------------------------------
  */
-import { TsMorphInspector, WrappedNode } from "../inspectors";
-import { Problem } from "./Problem";
+import { TsMorphInspector, WrappedNode } from "../inspectors/mod.ts";
+import { Problem } from "./Problem.ts";
 
 export function ensureClassesImplementStructureMethods(inspector: TsMorphInspector, addProblem: (problem: Problem) => void) {
   const nodes = inspector.getWrappedNodes();

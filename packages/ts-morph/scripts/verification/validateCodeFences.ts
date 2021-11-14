@@ -6,9 +6,9 @@
  * comment in the form `// @code-fence-allow(name): <reason>`
  * ------------------------------------------------------
  */
-import { tsMorph } from "@ts-morph/scripts";
-import { TsInspector, TsMorphInspector } from "../inspectors";
-import { Problem } from "./Problem";
+import { tsMorph } from "../../../scripts/mod.ts";
+import { TsInspector, TsMorphInspector } from "../inspectors/mod.ts";
+import { Problem } from "./Problem.ts";
 
 export function validateCodeFences(
   tsMorphInspector: TsMorphInspector,

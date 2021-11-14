@@ -1,8 +1,8 @@
-import * as fs from "fs";
-import * as path from "path";
+import { path } from "./deps.ts";
+import { folders } from "./folders.ts";
 
 export function getDevCompilerVersions() {
-  const fileData = JSON.parse(fs.readFileSync(path.join(__dirname, "../../common/package.json"), "utf-8"));
+  const fileData = JSON.parse(Deno.readTextFileSync(path.join(folders.common, "package.json")));
   const dependencies = fileData["devDependencies"];
   const keyRegEx = /^typescript(-[0-9]+\.[0-9]+\.[0-9]+)$/;
   const versionRegEx = /[0-9]+\.[0-9]+\.[0-9]+/;

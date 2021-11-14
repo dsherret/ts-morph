@@ -7,11 +7,8 @@
  * might be used to implement issue #45 (if it's decided that should be implemented).
  * -------------------------------------------------
  */
-import { tsMorph } from "@ts-morph/scripts";
-import * as fs from "fs";
-import * as path from "path";
-import { rootFolder } from "../config";
-import { Structure } from "../inspectors";
+import { folders, path, tsMorph } from "../../../scripts/mod.ts";
+import { Structure } from "../inspectors/mod.ts";
 
 // todo: a lot of this code was written before this library supported manipulation
 
@@ -32,7 +29,7 @@ export function createGetStructureFunctions(structures: Structure[]) {
 
   writer.newLineIfLastNot();
 
-  fs.writeFileSync(path.join(rootFolder, "src/manipulation/helpers/getStructureFunctions.ts"), writer.toString(), { encoding: "utf-8" });
+  Deno.writeTextFileSync(path.join(folders.tsMorph, "src/manipulation/helpers/getStructureFunctions.ts"), writer.toString());
 }
 
 // todo: make this better... good enough for now

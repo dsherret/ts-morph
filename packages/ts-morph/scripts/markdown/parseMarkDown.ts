@@ -1,6 +1,6 @@
 /* barrel:ignore */
-import { CodeBlock } from "./CodeBlock";
-import { MarkDownFile } from "./MarkDownFile";
+import { CodeBlock } from "./CodeBlock.ts";
+import { MarkDownFile } from "./MarkDownFile.ts";
 
 export function parseMarkDown(markDownFile: MarkDownFile) {
   // simple markdown parser based on some assumptions

@@ -1,24 +1,24 @@
-import { ClassDeclaration, Node, Scope, SourceFile } from "ts-morph";
+import { tsMorph } from "../deps.ts";
 
-export function makeConstructorsPrivate(mainFile: SourceFile) {
+export function makeConstructorsPrivate(mainFile: tsMorph.SourceFile) {
   forEachDescendant(mainFile);
 
-  function forEachDescendant(node: Node) {
+  function forEachDescendant(node: tsMorph.Node) {
     node.forEachChild(forEachDescendant);
 
-    if (Node.isClassDeclaration(node))
+    if (tsMorph.Node.isClassDeclaration(node))
       withClass(node);
 
-    if (!Node.isSourceFile(node))
+    if (!tsMorph.Node.isSourceFile(node))
       node.forget();
 
-    function withClass(classDec: ClassDeclaration) {
+    function withClass(classDec: tsMorph.ClassDeclaration) {
       for (const ctor of classDec.getConstructors()) {
         const hasPrivateTag = ctor.getJsDocs().some(doc => doc.getTags().some(tag => tag.getTagName() === "private"));
         if (hasPrivateTag) {
           ctor.getParameters().forEach(p => p.remove());
           ctor.getJsDocs().forEach(d => d.remove());
-          ctor.setScope(classDec.getDerivedClasses().length > 0 ? Scope.Protected : Scope.Private);
+          ctor.setScope(classDec.getDerivedClasses().length > 0 ? tsMorph.Scope.Protected : tsMorph.Scope.Private);
         }
       }
     }

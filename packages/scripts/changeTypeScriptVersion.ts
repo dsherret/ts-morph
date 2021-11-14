@@ -1,5 +1,6 @@
-import * as path from "path";
-import { Project, SyntaxKind } from "ts-morph";
+import { path, tsMorph } from "./deps.ts";
+import { folders } from "./folders.ts";
+const { Project, SyntaxKind } = tsMorph;
 
 export function changeTypeScriptVersion(version: string) {
   setModuleSpecifierValue(`typescript-${version}`);
@@ -11,8 +12,8 @@ export function resetTypeScriptVersion() {
 
 function setModuleSpecifierValue(value: string) {
   const project = new Project();
-  const declarationFile = project.addSourceFileAtPath(path.join(__dirname, "../../common/lib/ts-morph-common.d.ts"));
-  const jsFile = project.addSourceFileAtPath(path.join(__dirname, "../../common/dist/ts-morph-common.js"));
+  const declarationFile = project.addSourceFileAtPath(path.join(folders.common, "lib/ts-morph-common.d.ts"));
+  const jsFile = project.addSourceFileAtPath(path.join(folders.common, "dist/ts-morph-common.js"));
 
   for (const importDec of declarationFile.getImportDeclarations()) {
     const moduleSpecifierValue = importDec.getModuleSpecifierValue();

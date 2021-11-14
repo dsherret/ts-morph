@@ -1,10 +1,8 @@
-import { tsMorph } from "@ts-morph/scripts";
-import * as path from "path";
-import { rootFolder } from "../config";
+import { folders, path, tsMorph } from "../../../scripts/mod.ts";
 
 export function getProject() {
   return new tsMorph.Project({
-    tsConfigFilePath: path.join(rootFolder, "tsconfig.json"),
+    tsConfigFilePath: path.join(folders.tsMorph, "tsconfig.json"),
     skipAddingFilesFromTsConfig: false,
     manipulationSettings: {
       indentationText: tsMorph.IndentationText.TwoSpaces,

@@ -1,7 +1,6 @@
-import { ArrayUtils, Memoize } from "@ts-morph/common";
-import { tsMorph } from "@ts-morph/scripts";
-import { WrapperFactory } from "../WrapperFactory";
-import { TsNode } from "./TsNode";
+import { Memoize, tsMorph } from "../../../../scripts/mod.ts";
+import { WrapperFactory } from "../WrapperFactory.ts";
+import { TsNode } from "./TsNode.ts";
 
 export class TsNodeProperty {
   constructor(private readonly wrapperFactory: WrapperFactory, private readonly node: tsMorph.PropertySignature | tsMorph.PropertyDeclaration) {
@@ -30,7 +29,7 @@ export class TsNodeProperty {
     const referencedNodes: tsMorph.Node[] = [];
     const references = (this.node.getNameNode() as tsMorph.Identifier).findReferences();
 
-    for (const reference of ArrayUtils.flatten(references.map(r => r.getReferences()))) {
+    for (const reference of references.map(r => r.getReferences()).flat()) {
       const sourceFile = reference.getSourceFile();
       if (sourceFile.getFilePath().indexOf("compiler") === -1)
         continue;

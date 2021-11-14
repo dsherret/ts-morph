@@ -6,9 +6,9 @@
  * wrapped node type.
  * ------------------------------------------------------
  */
-import { tsMorph } from "@ts-morph/scripts";
-import { TsMorphInspector } from "../inspectors";
-import { Problem } from "./Problem";
+import { tsMorph } from "../../../scripts/mod.ts";
+import { TsMorphInspector } from "../inspectors/mod.ts";
+import { Problem } from "./Problem.ts";
 
 export function validateCompilerNodeToWrappedType(inspector: TsMorphInspector, addProblem: (problem: Problem) => void) {
   const wrappedNodes = inspector.getWrappedNodes();

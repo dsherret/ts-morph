@@ -7,8 +7,8 @@
  * This code verification ensures that an overload structure matches its "implementation" structure.
  * -----------------------------------------------------
  */
-import { Structure, TsMorphInspector } from "../inspectors";
-import { Problem } from "./Problem";
+import { Structure, TsMorphInspector } from "../inspectors/mod.ts";
+import { Problem } from "./Problem.ts";
 
 export function ensureOverloadStructuresMatch(inspector: TsMorphInspector, addProblem: (problem: Problem) => void) {
   // get structures

@@ -1,7 +1,6 @@
-import { ArrayUtils, Memoize } from "@ts-morph/common";
-import { tsMorph } from "@ts-morph/scripts";
-import { hasDescendantBaseType } from "../common";
-import { WrapperFactory } from "./WrapperFactory";
+import { Memoize, tsMorph } from "../../../scripts/mod.ts";
+import { hasDescendantBaseType } from "../common/mod.ts";
+import { WrapperFactory } from "./WrapperFactory.ts";
 
 export class TsInspector {
   constructor(private readonly wrapperFactory: WrapperFactory, private readonly project: tsMorph.Project) {
@@ -30,7 +29,7 @@ export class TsInspector {
       }
     }
 
-    return ArrayUtils.sortByProperty(interfaces.map(i => this.wrapperFactory.getTsNode(i)), item => item.getName());
+    return interfaces.map(i => this.wrapperFactory.getTsNode(i)).sort((a, b) => a.getName().localeCompare(b.getName(), "en-us-u-kf-upper"));
   }
 
   getNamesFromKind(kind: number) {

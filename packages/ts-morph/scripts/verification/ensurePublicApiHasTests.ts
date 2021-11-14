@@ -5,10 +5,10 @@
  * in the public api appear in the tests.
  * -----------------------------------------------
  */
-import { tsMorph } from "@ts-morph/scripts";
-import { hasInternalDocTag } from "../common";
-import { TsMorphInspector } from "../inspectors";
-import { Problem } from "./Problem";
+import { tsMorph } from "../../../scripts/mod.ts";
+import { hasInternalDocTag } from "../common/mod.ts";
+import { TsMorphInspector } from "../inspectors/mod.ts";
+import { Problem } from "./Problem.ts";
 
 export function ensurePublicApiHasTests(inspector: TsMorphInspector, addProblem: (problem: Problem) => void) {
   const nodes: (tsMorph.Node & tsMorph.ReferenceFindableNode)[] = [];

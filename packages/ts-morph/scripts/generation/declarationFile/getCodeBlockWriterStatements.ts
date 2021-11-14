@@ -4,7 +4,7 @@
  * This creates a file that contains the typings for code-block-writer.
  * ----------------------------------------------
  */
-import { tsMorph } from "@ts-morph/scripts";
+import { tsMorph } from "../../../../scripts/mod.ts";
 
 export function getCodeBlockWriterStatements(project: tsMorph.Project): tsMorph.StatementStructures[] {
   const sourceFile = project.createSourceFile("lib/____temp______.ts", "import CodeBlockWriter from 'code-block-writer';");

@@ -11,8 +11,8 @@
   "scripts": {
     "build": "npm run build:declarations && npm run build:node && npm run build:deno",
     "build:node": "rimraf dist && npm run rollup",
-    "build:deno": "rimraf dist-deno && npm run rollup -- --environment BUILD:deno && ts-node scripts/buildDeno.ts",
-    "build:declarations": "ts-node --project scripts/tsconfig.json --transpile-only scripts/buildDeclarations.ts",
+    "build:deno": "rimraf dist-deno && npm run rollup -- --environment BUILD:deno && deno run -A scripts/buildDeno.ts",
+    "build:declarations": "deno run -A scripts/buildDeclarations.ts",
     "test": "cross-env TS_NODE_TRANSPILE_ONLY=\"true\" mocha",
     "test:ci": "npm run test",
     "test:debug": "npm run test --inspect-brk",
@@ -25,7 +25,6 @@
   "devDependencies": {
     "@types/chai": "^4.2.22",
     "@types/mocha": "^9.0.0",
-    "@ts-morph/scripts": "~0.2.0",
     "chai": "^4.3.4",
     "cross-env": "^7.0.3",
     "mocha": "^9.1.3",

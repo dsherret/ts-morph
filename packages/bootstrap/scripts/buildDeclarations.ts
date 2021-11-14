@@ -1,8 +1,7 @@
-import { createDeclarationProject, makeConstructorsPrivate, tsMorph } from "@ts-morph/scripts";
-import * as path from "path";
+import { createDeclarationProject, folders, makeConstructorsPrivate, path, tsMorph } from "../../scripts/mod.ts";
 
 const declarationProject = createDeclarationProject({
-  tsConfigFilePath: path.join(__dirname, "../tsconfig.json"),
+  tsConfigFilePath: path.join(folders.bootstrap, "tsconfig.json"),
 });
 const emitMainFile = declarationProject.getSourceFileOrThrow("./dist/index.d.ts");
 const writeProject = new tsMorph.Project({
@@ -47,5 +46,5 @@ declarationFile.saveSync();
 const diagnostics = writeProject.getPreEmitDiagnostics();
 if (diagnostics.length > 0) {
   console.log(writeProject.formatDiagnosticsWithColorAndContext(diagnostics));
-  process.exit(1);
+  Deno.exit(1);
 }

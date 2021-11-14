@@ -1,4 +1,4 @@
-import { WrappedNode } from "./WrappedNode";
+import { WrappedNode } from "./WrappedNode.ts";
 
 export interface KindToWrapperMapping {
   wrapperName: string;
