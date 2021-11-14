@@ -7,9 +7,9 @@
  * This code verification ensures the equivalent class' mixins match the equivalent structure's base structures.
  * ----------------------------------------------------
  */
-import { isAllowedMixin, isAllowedMixinForStructure } from "../config";
-import { TsMorphInspector } from "../inspectors";
-import { Problem } from "./Problem";
+import { isAllowedMixin, isAllowedMixinForStructure } from "../config/mod.ts";
+import { TsMorphInspector } from "../inspectors/mod.ts";
+import { Problem } from "./Problem.ts";
 
 export function ensureStructuresMatchClasses(inspector: TsMorphInspector, addProblem: (problem: Problem) => void) {
   const nodes = inspector.getWrappedNodes();

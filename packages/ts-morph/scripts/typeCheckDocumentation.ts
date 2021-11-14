@@ -1,6 +1,6 @@
-import { tsMorph } from "@ts-morph/scripts";
-import { getProject } from "./common";
-import { CodeBlock, MarkDownFile } from "./markdown";
+import { tsMorph } from "../../scripts/mod.ts";
+import { getProject } from "./common/mod.ts";
+import { CodeBlock, MarkDownFile } from "./markdown/mod.ts";
 
 const errorCodes = {
   CannotRedeclareVariable: 2451,
@@ -73,7 +73,7 @@ if (errors.length > 0) {
     );
   }
 
-  process.exit(1);
+  Deno.exit(1);
 }
 
 function getInitializedSetupText(text: string) {

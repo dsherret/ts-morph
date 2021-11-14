@@ -4,9 +4,8 @@
  * Automatically maintains this class based on changes in the application.
  * --------------------------------------------------------
  */
-import { ArrayUtils } from "@ts-morph/common";
-import { tsMorph } from "@ts-morph/scripts";
-import { TsMorphInspector } from "../inspectors";
+import { tsMorph } from "../../../scripts/mod.ts";
+import { TsMorphInspector } from "../inspectors/mod";
 
 export function createStructurePrinterFactory(inspector: TsMorphInspector) {
   const project = inspector.getProject();
@@ -42,11 +41,11 @@ export function createStructurePrinterFactory(inspector: TsMorphInspector) {
   sourceFile.insertText(0, writer => writer.writeLine("// DO NOT EDIT - Automatically maintained by createStructurePrinterFactory.ts"));
 
   function getMethods() {
-    const structurePrinters = ArrayUtils.flatten(Array.from(
+    const structurePrinters = Array.from(
       project.getSourceFileOrThrow("./src/structurePrinters/index.ts")
         .getExportedDeclarations()
         .values(),
-    ))
+    ).flat()
       .filter(tsMorph.Node.isClassDeclaration)
       .filter(c => isAllowedStructurePrinter(c.getNameOrThrow()));
     const methods: tsMorph.MethodDeclarationStructure[] = [];

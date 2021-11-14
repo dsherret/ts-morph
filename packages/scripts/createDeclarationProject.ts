@@ -1,5 +1,6 @@
-import { IndentationText, NewLineKind, Project } from "ts-morph";
-import { printDiagnostics } from "./utils";
+import { tsMorph } from "./deps.ts";
+import { printDiagnostics } from "./utils/mod.ts";
+const { IndentationText, NewLineKind, Project } = tsMorph;
 
 export interface CreateDeclarationProjectOptions {
   tsConfigFilePath: string;
@@ -21,7 +22,7 @@ export function createDeclarationProject(opts: CreateDeclarationProjectOptions) 
 
   if (emitResult.getDiagnostics().length > 0) {
     printDiagnostics(emitResult.getDiagnostics());
-    process.exit(1);
+    Deno.exit(1);
   }
 
   const declarationProject = new Project({

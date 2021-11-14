@@ -1,8 +1,7 @@
-import { Memoize } from "@ts-morph/common";
-import { tsMorph } from "@ts-morph/scripts";
-import { WrappedNode } from "../tsMorph";
-import { WrapperFactory } from "../WrapperFactory";
-import { TsNodeProperty } from "./TsNodeProperty";
+import { Memoize, tsMorph } from "../../../../scripts/mod.ts";
+import { WrappedNode } from "../tsMorph/mod.ts";
+import { WrapperFactory } from "../WrapperFactory.ts";
+import { TsNodeProperty } from "./TsNodeProperty.ts";
 
 export class TsNode {
   constructor(private readonly wrapperFactory: WrapperFactory, private readonly node: tsMorph.InterfaceDeclaration | tsMorph.ClassDeclaration) {

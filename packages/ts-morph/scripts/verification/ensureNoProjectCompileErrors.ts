@@ -4,8 +4,8 @@
  * Ensures there are no compile errors in the src directory.
  * ---------------------------------------------------
  */
-import { printDiagnostics } from "@ts-morph/scripts";
-import { getProject } from "../common";
+import { printDiagnostics } from "../../../scripts/mod.ts";
+import { getProject } from "../common/mod.ts";
 
 const project = getProject();
 
@@ -17,5 +17,5 @@ const diagnostics = project.getPreEmitDiagnostics();
 if (diagnostics.length > 0) {
   printDiagnostics(diagnostics);
   console.error("There were project compile errors!");
-  process.exit(1);
+  Deno.exit(1);
 }

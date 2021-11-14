@@ -1,6 +1,5 @@
-import { ArrayUtils, Memoize } from "@ts-morph/common";
-import { tsMorph } from "@ts-morph/scripts";
-import { WrapperFactory } from "../WrapperFactory";
+import { Memoize, tsMorph } from "../../../../scripts/mod.ts";
+import { WrapperFactory } from "../WrapperFactory.ts";
 
 export class Mixin {
   constructor(private readonly wrapperFactory: WrapperFactory, private readonly node: tsMorph.InterfaceDeclaration) {
@@ -32,6 +31,6 @@ export class Mixin {
       names.push(parent.getName());
     }
 
-    return [...names, ...ArrayUtils.flatten(this.getMixins().map(m => m.getCoveredTsNodePropertyNames()))];
+    return [...names, ...this.getMixins().map(m => m.getCoveredTsNodePropertyNames()).flat()];
   }
 }

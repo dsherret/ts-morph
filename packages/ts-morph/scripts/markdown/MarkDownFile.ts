@@ -1,5 +1,5 @@
-import { CodeBlock } from "./CodeBlock";
-import { parseMarkDown } from "./parseMarkDown";
+import { CodeBlock } from "./CodeBlock.ts";
+import { parseMarkDown } from "./parseMarkDown.ts";
 
 export class MarkDownFile {
   constructor(private readonly filePath: string, private readonly text: string) {

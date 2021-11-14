@@ -8,32 +8,28 @@
     "dopublish": "npm run type-check-docs && npm run package && npm run publish-code-verification && echo \"Run: npm publish --otp\"",
     "build": "npm run build:declarations && npm run build:deno && npm run build:node",
     "build:node": "rimraf dist && rollup -c ",
-    "build:deno": "rimraf dist-deno && rollup -c --environment BUILD:deno && ts-node scripts/buildDeno.ts",
-    "build:declarations": "ts-node --transpile-only scripts/generation/main create-declaration-file",
+    "build:deno": "rimraf dist-deno && rollup -c --environment BUILD:deno && deno run -A scripts/buildDeno.ts",
+    "build:declarations": "deno run -A scripts/generation/main.ts create-declaration-file",
     "test": "cross-env TS_NODE_TRANSPILE_ONLY=\"true\" mocha",
     "test:debug": "npm run test --inspect-brk",
     "test:watch": "npm run test --watch-extensions ts --watch",
     "test:ci": "npm run test",
-    "test:ts-versions": "ts-node --transpile-only scripts/test/testTypeScriptVersions",
-    "test:coverage": "cross-env TS_NODE_TRANSPILE_ONLY=\"true\" nyc --reporter=lcov mocha",
-    "test:performance": "npm run build && node ./dist/tests/performance/run.js",
-    "test:performance-save": "npm run test:performance --save",
+    "test:ts-versions": "deno run -A scripts/test/testTypeScriptVersions.ts",
     "type-check": "npm run type-check:library && npm run type-check:scripts",
-    "type-check:library": "ts-node --transpile-only scripts/typeCheckLibrary",
+    "type-check:library": "deno run -A scripts/typeCheckLibrary.ts",
     "type-check:scripts": "tsc --noEmit --project scripts/tsconfig.json",
-    "code-generate": "ts-node --transpile-only scripts/generation/main",
-    "refactor": "ts-node --transpile-only scripts/refactor",
-    "output-wrapped-nodes": "ts-node --transpile-only scripts/generation/outputWrappedNodesInfo",
+    "code-generate": "deno run -A scripts/generation/main.ts",
+    "output-wrapped-nodes": "deno run -A scripts/generation/outputWrappedNodesInfo.ts",
     "package": "npm run build",
     "publish-code-verification": "npm run code-verification && npm run ensure-no-declaration-file-errors",
-    "code-verification": "ts-node --transpile-only scripts/verification/main ensure-structures-match-classes ensure-overload-structures-match ensure-array-inputs-readonly ensure-classes-implement-structure-methods ensure-mixin-not-applied-multiple-times validate-public-api-class-member-names validate-compiler-node-to-wrapped-type validate-code-fences",
-    "ensure-structures-match-classes": "ts-node --transpile-only scripts/verification/main ensure-structures-match-classes",
-    "ensure-overload-structures-match": "ts-node --transpile-only scripts/verification/main ensure-overload-structures-match",
-    "ensure-no-project-compile-errors": "ts-node --transpile-only scripts/verification/ensureNoProjectCompileErrors",
-    "ensure-no-declaration-file-errors": "ts-node --transpile-only scripts/verification/ensureNoDeclarationFileErrors",
-    "ensure-array-inputs-readonly": "ts-node --transpile-only scripts/verification/main ensure-array-inputs-readonly",
-    "ensure-or-throw-exists": "ts-node --transpile-only scripts/verification/main ensure-or-throw-exists",
-    "type-check-docs": "ts-node --transpile-only scripts/typeCheckDocumentation.ts"
+    "code-verification": "deno run -A scripts/verification/main.ts ensure-structures-match-classes ensure-overload-structures-match ensure-array-inputs-readonly ensure-classes-implement-structure-methods ensure-mixin-not-applied-multiple-times validate-public-api-class-member-names validate-compiler-node-to-wrapped-type validate-code-fences",
+    "ensure-structures-match-classes": "deno run -A scripts/verification/main.ts ensure-structures-match-classes",
+    "ensure-overload-structures-match": "deno run -A scripts/verification/main.ts ensure-overload-structures-match",
+    "ensure-no-project-compile-errors": "deno run -A scripts/verification/ensureNoProjectCompileErrors.ts",
+    "ensure-no-declaration-file-errors": "deno run -A scripts/verification/ensureNoDeclarationFileErrors.ts",
+    "ensure-array-inputs-readonly": "deno run -A scripts/verification/main ensure-array-inputs-readonly.ts",
+    "ensure-or-throw-exists": "deno run -A scripts/verification/main ensure-or-throw-exists.ts",
+    "type-check-docs": "deno run -A scripts/typeCheckDocumentation.ts"
   },
   "repository": "git+https://github.com/dsherret/ts-morph.git",
   "keywords": [
@@ -49,21 +45,6 @@
     "url": "https://github.com/dsherret/ts-morph/issues"
   },
   "homepage": "https://github.com/dsherret/ts-morph#readme",
-  "nyc": {
-    "extension": [
-      ".ts",
-      ".tsx"
-    ],
-    "include": [
-      "src/**/*.ts",
-      "!src/tests/**/*.ts",
-      "!src/structures/utils/forEachStructureChild.ts"
-    ],
-    "reporter": [
-      "html"
-    ],
-    "all": true
-  },
   "dependencies": {
     "@ts-morph/common": "~0.12.0",
     "code-block-writer": "^10.1.1"
@@ -73,13 +54,11 @@
     "@types/diff": "^5.0.1",
     "@types/mocha": "^9.0.0",
     "@types/node": "^16.11.6",
-    "@ts-morph/scripts": "~0.2.0",
     "chai": "^4.3.4",
     "conditional-type-checks": "^1.0.5",
     "cross-env": "^7.0.3",
     "diff": "^5.0.0",
     "mocha": "9.1.3",
-    "nyc": "15.1.0",
     "rimraf": "^3.0.2",
     "rollup": "^2.58.3",
     "rollup-plugin-typescript2": "^0.30.0",

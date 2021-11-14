@@ -1,9 +1,0 @@
-{
-  "extends": "../tsconfig.common.json",
-  "compilerOptions": {
-    "noEmit": true,
-    "declaration": false,
-    "rootDirs": ["../scripts", "../src"],
-    "outDir": "../dist-scripts"
-  }
-}

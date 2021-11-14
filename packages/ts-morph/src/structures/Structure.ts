@@ -60,9 +60,9 @@ export const Structure = {
       case StructureKind.CallSignature:
       case StructureKind.Class:
       case StructureKind.ClassStaticBlock:
-      case StructureKind.ConstructSignature:
       case StructureKind.ConstructorOverload:
       case StructureKind.Constructor:
+      case StructureKind.ConstructSignature:
       case StructureKind.Enum:
       case StructureKind.EnumMember:
       case StructureKind.FunctionOverload:
@@ -88,9 +88,9 @@ export const Structure = {
   isSignatured<T extends Structure & { kind: StructureKind; }>(structure: T): structure is T & SignaturedDeclarationStructure {
     switch (structure.kind) {
       case StructureKind.CallSignature:
-      case StructureKind.ConstructSignature:
       case StructureKind.ConstructorOverload:
       case StructureKind.Constructor:
+      case StructureKind.ConstructSignature:
       case StructureKind.FunctionOverload:
       case StructureKind.Function:
       case StructureKind.GetAccessor:
@@ -107,9 +107,9 @@ export const Structure = {
   isParametered<T extends Structure & { kind: StructureKind; }>(structure: T): structure is T & ParameteredNodeStructure {
     switch (structure.kind) {
       case StructureKind.CallSignature:
-      case StructureKind.ConstructSignature:
       case StructureKind.ConstructorOverload:
       case StructureKind.Constructor:
+      case StructureKind.ConstructSignature:
       case StructureKind.FunctionOverload:
       case StructureKind.Function:
       case StructureKind.GetAccessor:
@@ -126,9 +126,9 @@ export const Structure = {
   isReturnTyped<T extends Structure & { kind: StructureKind; }>(structure: T): structure is T & ReturnTypedNodeStructure {
     switch (structure.kind) {
       case StructureKind.CallSignature:
-      case StructureKind.ConstructSignature:
       case StructureKind.ConstructorOverload:
       case StructureKind.Constructor:
+      case StructureKind.ConstructSignature:
       case StructureKind.FunctionOverload:
       case StructureKind.Function:
       case StructureKind.GetAccessor:
@@ -147,9 +147,9 @@ export const Structure = {
     switch (structure.kind) {
       case StructureKind.CallSignature:
       case StructureKind.Class:
-      case StructureKind.ConstructSignature:
       case StructureKind.ConstructorOverload:
       case StructureKind.Constructor:
+      case StructureKind.ConstructSignature:
       case StructureKind.FunctionOverload:
       case StructureKind.Function:
       case StructureKind.GetAccessor:
@@ -267,10 +267,6 @@ export const Structure = {
         return false;
     }
   },
-  /** Gets if the provided structure is a ConstructSignatureDeclarationStructure. */
-  isConstructSignature(structure: Structure & { kind: StructureKind; }): structure is ConstructSignatureDeclarationStructure {
-    return structure.kind === StructureKind.ConstructSignature;
-  },
   /** Gets if the provided structure is a ConstructorDeclarationOverloadStructure. */
   isConstructorDeclarationOverload(structure: Structure & { kind: StructureKind; }): structure is ConstructorDeclarationOverloadStructure {
     return structure.kind === StructureKind.ConstructorOverload;
@@ -306,6 +302,10 @@ export const Structure = {
       default:
         return false;
     }
+  },
+  /** Gets if the provided structure is a ConstructSignatureDeclarationStructure. */
+  isConstructSignature(structure: Structure & { kind: StructureKind; }): structure is ConstructSignatureDeclarationStructure {
+    return structure.kind === StructureKind.ConstructSignature;
   },
   /** Gets if the provided structure is a DecoratorStructure. */
   isDecorator(structure: Structure & { kind: StructureKind; }): structure is DecoratorStructure {

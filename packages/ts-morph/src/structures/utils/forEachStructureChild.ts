@@ -48,12 +48,12 @@ export function forEachStructureChild<TStructure>(structure: Structures | Readon
       return forClassDeclaration(structure, callback);
     case StructureKind.ClassStaticBlock:
       return forClassStaticBlockDeclaration(structure, callback);
-    case StructureKind.ConstructSignature:
-      return forConstructSignatureDeclaration(structure, callback);
     case StructureKind.ConstructorOverload:
       return forConstructorDeclarationOverload(structure, callback);
     case StructureKind.Constructor:
       return forConstructorDeclaration(structure, callback);
+    case StructureKind.ConstructSignature:
+      return forConstructSignatureDeclaration(structure, callback);
     case StructureKind.Enum:
       return forEnumDeclaration(structure, callback);
     case StructureKind.EnumMember:
@@ -166,13 +166,6 @@ function forStatementedNode<TStructure>(structure: StatementedNodeStructure, cal
 }
 
 /** @generated */
-function forConstructSignatureDeclaration<TStructure>(structure: ConstructSignatureDeclarationStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-  return forJSDocableNode(structure, callback)
-    || forSignaturedDeclaration(structure, callback)
-    || forTypeParameteredNode(structure, callback);
-}
-
-/** @generated */
 function forConstructorDeclarationOverload<TStructure>(structure: ConstructorDeclarationOverloadStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
   return forSignaturedDeclaration(structure, callback)
     || forTypeParameteredNode(structure, callback)
@@ -191,6 +184,13 @@ function forFunctionLikeDeclaration<TStructure>(structure: FunctionLikeDeclarati
     || forTypeParameteredNode(structure, callback)
     || forJSDocableNode(structure, callback)
     || forStatementedNode(structure, callback);
+}
+
+/** @generated */
+function forConstructSignatureDeclaration<TStructure>(structure: ConstructSignatureDeclarationStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
+  return forJSDocableNode(structure, callback)
+    || forSignaturedDeclaration(structure, callback)
+    || forTypeParameteredNode(structure, callback);
 }
 
 /** @generated */

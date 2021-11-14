@@ -5,10 +5,10 @@
  * only accept readonly arrays.
  * ------------------------------------------------
  */
-import { tsMorph } from "@ts-morph/scripts";
-import { hasInternalDocTag } from "../common";
-import { TsMorphInspector } from "../inspectors";
-import { Problem } from "./Problem";
+import { tsMorph } from "../../../scripts/mod.ts";
+import { hasInternalDocTag } from "../common/mod.ts";
+import { TsMorphInspector } from "../inspectors/mod.ts";
+import { Problem } from "./Problem.ts";
 
 export function ensureArrayInputsReadonly(inspector: TsMorphInspector, addProblem: (problem: Problem) => void) {
   const declarations = inspector.getPublicDeclarations();

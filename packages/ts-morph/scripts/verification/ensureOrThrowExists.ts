@@ -8,9 +8,9 @@
  * unexpected happens. They also work nicely with strict null checking.
  * --------------------------------------------
  */
-import { tsMorph } from "@ts-morph/scripts";
-import { TsMorphInspector } from "../inspectors";
-import { Problem } from "./Problem";
+import { tsMorph } from "../../../scripts/mod.ts";
+import { TsMorphInspector } from "../inspectors.ts";
+import { Problem } from "./Problem.ts";
 
 export function ensureOrThrowExists(inspector: TsMorphInspector, addProblem: (problem: Problem) => void) {
   for (const c of inspector.getPublicClasses()) {

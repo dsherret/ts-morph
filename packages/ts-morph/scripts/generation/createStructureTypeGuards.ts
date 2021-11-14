@@ -5,8 +5,8 @@
  * for doing type guards on structures.
  * -------------------------------------------------
  */
-import { tsMorph } from "@ts-morph/scripts";
-import { Structure, TsMorphInspector } from "../inspectors";
+import { tsMorph } from "../../../scripts/mod.ts";
+import { Structure, TsMorphInspector } from "../inspectors/mod.ts";
 
 export function createStructureTypeGuards(inspector: TsMorphInspector) {
   const structureTypeGuardsFile = inspector.getProject().getSourceFileOrThrow("Structure.ts");

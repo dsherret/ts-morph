@@ -5,10 +5,10 @@
  * and internal members of a class have a underscore prefix.
  * ----------------------------------------------------------
  */
-import { tsMorph } from "@ts-morph/scripts";
-import { hasInternalDocTag } from "../common";
-import { TsMorphInspector } from "../inspectors";
-import { Problem } from "./Problem";
+import { tsMorph } from "../../../scripts/mod.ts";
+import { hasInternalDocTag } from "../common/mod.ts";
+import { TsMorphInspector } from "../inspectors/mod.ts";
+import { Problem } from "./Problem.ts";
 
 export function validatePublicApiClassMemberNames(inspector: TsMorphInspector, addProblem: (problem: Problem) => void) {
   for (const classDec of inspector.getPublicClasses().filter(c => isClassToAllow(c))) {

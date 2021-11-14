@@ -1,5 +1,4 @@
-import { changeTypeScriptVersion, execNpmScript, getDevCompilerVersions, resetTypeScriptVersion } from "@ts-morph/scripts";
-import { rootFolder } from "../config";
+import { changeTypeScriptVersion, execNpmScript, folders, getDevCompilerVersions, resetTypeScriptVersion } from "../../../scripts/mod.ts";
 
 async function run() {
   try {
@@ -13,8 +12,8 @@ async function run() {
       console.log(`Type checking declaration files and running tests...`);
 
       await Promise.all([
-        execNpmScript("ensure-no-declaration-file-errors", rootFolder),
-        execNpmScript("test", rootFolder),
+        execNpmScript("ensure-no-declaration-file-errors", folders.tsMorph),
+        execNpmScript("test", folders.tsMorph),
       ]);
     }
 
@@ -22,7 +21,7 @@ async function run() {
   } catch (err) {
     console.log(err);
     resetTypeScriptVersion();
-    process.exit(1);
+    Deno.exit(1);
   }
 }
 

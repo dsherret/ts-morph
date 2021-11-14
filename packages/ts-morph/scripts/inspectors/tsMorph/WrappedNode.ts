@@ -1,9 +1,8 @@
-import { ArrayUtils, Memoize } from "@ts-morph/common";
-import { tsMorph } from "@ts-morph/scripts";
-import { hasDescendantNodeType } from "../../common";
-import { TsNode } from "../ts";
-import { WrapperFactory } from "../WrapperFactory";
-import { Mixin } from "./Mixin";
+import { Memoize, tsMorph } from "../../../../scripts/mod.ts";
+import { hasDescendantNodeType } from "../../common/mod.ts";
+import { TsNode } from "../ts/mod.ts";
+import { WrapperFactory } from "../WrapperFactory.ts";
+import { Mixin } from "./Mixin.ts";
 
 export class WrappedNode {
   constructor(private readonly wrapperFactory: WrapperFactory, private readonly node: tsMorph.ClassDeclaration) {
@@ -53,7 +52,7 @@ export class WrappedNode {
   getMixins() {
     const mixins: Mixin[] = [];
     const baseTypes = this.node.getBaseTypes();
-    for (const intersectionType of ArrayUtils.flatten(baseTypes.map(t => t.getIntersectionTypes()))) {
+    for (const intersectionType of baseTypes.map(t => t.getIntersectionTypes()).flat()) {
       const interfaces = intersectionType.getSymbolOrThrow().getDeclarations()
         .filter(d => tsMorph.Node.isInterfaceDeclaration(d)) as tsMorph.InterfaceDeclaration[];
       mixins.push(...interfaces.map(i => this.wrapperFactory.getMixin(i)));

@@ -5,10 +5,9 @@
  * and hides any declarations that should be internal.
  * -------------------------------------------
  */
-import { forEachTypeText, makeConstructorsPrivate, tsMorph } from "@ts-morph/scripts";
-import * as os from "os";
-import { createDeclarationProject } from "../common";
-import { getCodeBlockWriterStatements, getDeclarationFileStatements } from "./declarationFile";
+import { forEachTypeText, makeConstructorsPrivate, tsMorph } from "../../../scripts/mod.ts";
+import { createDeclarationProject } from "../common/mod.ts";
+import { getCodeBlockWriterStatements, getDeclarationFileStatements } from "./declarationFile/mod.ts";
 
 // todo: remove this once this code's performance is improved.
 // Basic idea here is to change this code to modify the structures rather than the source file
@@ -184,13 +183,13 @@ export async function createDeclarationFile() {
   function log(message: string) {
     if (lastDateTime != null)
       finishLog(lastDateTime);
-    process.stdout.write(`  * ${message}`);
+    console.log(`  * ${message}`);
     lastDateTime = new Date();
   }
 
   function finishLog(dateTime: Date) {
     const differenceMs = new Date().getTime() - dateTime.getTime();
     const differenceSeconds = Math.round(differenceMs / 100) / 10;
-    process.stdout.write(` [${differenceSeconds}s] ${os.EOL}`);
+    console.log(`    [${differenceSeconds}s]`);
   }
 }

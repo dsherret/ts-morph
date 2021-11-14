@@ -11,9 +11,8 @@
  * 3. Forward support: Features we add in the future will be auto-implemented.
  * ------------------------------------------
  */
-import { ArrayUtils, KeyValueCache } from "@ts-morph/common";
-import { tsMorph } from "@ts-morph/scripts";
-import { Mixin, TsInspector, TsMorphInspector, WrappedNode } from "../inspectors";
+import { tsMorph } from "../../../scripts/mod.ts";
+import { Mixin, TsInspector, TsMorphInspector, WrappedNode } from "../inspectors/mod.ts";
 
 // todo: this should be cleaned up as it's a mess
 
@@ -104,7 +103,7 @@ export function createNodeTypeGuards(inspector: TsMorphInspector, tsInspector: T
   }
 
   function getMethodInfos() {
-    const methodInfos = new KeyValueCache<string, MethodInfo>();
+    const methodInfos = new Map<string, MethodInfo>();
 
     for (const node of inspector.getWrappedNodes()) {
       // todo: what is going on here? Why does this need to be filled
@@ -127,7 +126,7 @@ export function createNodeTypeGuards(inspector: TsMorphInspector, tsInspector: T
       }
     }
 
-    return ArrayUtils.sortByProperty(methodInfos.getValuesAsArray(), info => info.name);
+    return Array.from(methodInfos.values()).sort((a, b) => a.name.localeCompare(b.name, "en-us-u-kf-upper"));
 
     function fillBase(node: WrappedNode, nodeBase: WrappedNode) {
       if (!isAllowedName(nodeBase.getName()))
@@ -198,7 +197,7 @@ export function createNodeTypeGuards(inspector: TsMorphInspector, tsInspector: T
       statements: writer => {
         writeSyntaxKinds(
           writer,
-          ArrayUtils.flatten(nodesWithGetStructure.map(n => {
+          nodesWithGetStructure.map(n => {
             const item = kindToWrapperMappings.find(m => m.wrapperName === n.getName());
             if (item == null) {
               // supress for JSDocTag as this will never be used for that
@@ -207,7 +206,7 @@ export function createNodeTypeGuards(inspector: TsMorphInspector, tsInspector: T
               return [];
             }
             return item.syntaxKindNames;
-          })),
+          }).flat(),
         );
       },
     });

@@ -7,10 +7,8 @@
  * all the compiler node properties.
  * ------------------------------------------
  */
-import * as fs from "fs";
-import * as path from "path";
-import { rootFolder } from "../config";
-import { InspectorFactory, TsNode, TsNodeProperty } from "../inspectors";
+import { folders, path } from "../../../scripts/mod.ts";
+import { InspectorFactory, TsNode, TsNodeProperty } from "../inspectors/mod.ts";
 
 // setup
 const inspectorFactory = new InspectorFactory();
@@ -34,7 +32,7 @@ let output = "# Wrapped Nodes\n\n"
 outputCoverage("Exist", wrappedTsNodes);
 output += "\n";
 outputCoverage("Not Exist", notWrappedTsNodes);
-fs.writeFileSync(path.join(rootFolder, "wrapped-nodes.md"), output);
+Deno.writeTextFileSync(path.join(folders.tsMorph, "wrapped-nodes.md"), output);
 
 // play a tone to indicate it's done
 console.log("\x07");

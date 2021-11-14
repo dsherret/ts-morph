@@ -1,56 +1,54 @@
-import { tsMorph } from "@ts-morph/scripts";
-import { InspectorFactory } from "../inspectors";
-import { createDeclarationFile } from "./createDeclarationFile";
-import { createForEachStructureChild } from "./createForEachStructureChild";
-import { createGetStructureFunctions } from "./createGetStructureFunctions";
-import { createKindToNodeMappings } from "./createKindToNodeMappings";
-import { createNodeTypeGuards } from "./createNodeTypeGuards";
-import { createStructurePrinterFactory } from "./createStructurePrinterFactory";
-import { createStructureTypeGuards } from "./createStructureTypeGuards";
+import { tsMorph } from "../../../scripts/mod.ts";
+import { InspectorFactory } from "../inspectors/mod.ts";
+import { createDeclarationFile } from "./createDeclarationFile.ts";
+import { createForEachStructureChild } from "./createForEachStructureChild.ts";
+import { createGetStructureFunctions } from "./createGetStructureFunctions.ts";
+import { createKindToNodeMappings } from "./createKindToNodeMappings.ts";
+import { createNodeTypeGuards } from "./createNodeTypeGuards.ts";
+import { createStructurePrinterFactory } from "./createStructurePrinterFactory.ts";
+import { createStructureTypeGuards } from "./createStructureTypeGuards.ts";
 
-const args = process.argv.slice(2);
+const args = [...Deno.args];
 const originalArgs = [...args];
 const factory = new InspectorFactory();
 const inspector = factory.getTsMorphInspector();
 const tsInspector = factory.getTsInspector();
 
-(async () => {
-  console.log(`TypeScript version: ${tsMorph.ts.version}`);
+console.log(`TypeScript version: ${tsMorph.ts.version}`);
 
-  if (checkHasArg("create-get-structure-functions")) {
-    console.log("Creating get structure functions...");
-    createGetStructureFunctions(inspector.getStructures());
-  }
-  if (checkHasArg("create-type-guards")) {
-    console.log("Creating node type guards...");
-    createNodeTypeGuards(inspector, tsInspector);
-  }
-  if (checkHasArg("create-structure-printer-factory")) {
-    console.log("Creating structure printer factory...");
-    createStructurePrinterFactory(inspector);
-  }
-  if (checkHasArg("create-kind-to-node-mappings")) {
-    console.log("Creating kind to node mappings...");
-    createKindToNodeMappings(inspector, tsInspector);
-  }
-  if (checkHasExplicitArg("create-declaration-file")) {
-    console.log("Creating declaration file...");
-    await createDeclarationFile();
-  }
-  if (checkHasArg("create-for-each-structure-child")) {
-    console.log("Creating for each structure child...");
-    createForEachStructureChild(inspector);
-  }
-  if (checkHasArg("create-structure-type-guards")) {
-    console.log("Creating structure type guards utility class...");
-    createStructureTypeGuards(inspector);
-  }
+if (checkHasArg("create-get-structure-functions")) {
+  console.log("Creating get structure functions...");
+  createGetStructureFunctions(inspector.getStructures());
+}
+if (checkHasArg("create-type-guards")) {
+  console.log("Creating node type guards...");
+  createNodeTypeGuards(inspector, tsInspector);
+}
+if (checkHasArg("create-structure-printer-factory")) {
+  console.log("Creating structure printer factory...");
+  createStructurePrinterFactory(inspector);
+}
+if (checkHasArg("create-kind-to-node-mappings")) {
+  console.log("Creating kind to node mappings...");
+  createKindToNodeMappings(inspector, tsInspector);
+}
+if (checkHasExplicitArg("create-declaration-file")) {
+  console.log("Creating declaration file...");
+  await createDeclarationFile();
+}
+if (checkHasArg("create-for-each-structure-child")) {
+  console.log("Creating for each structure child...");
+  createForEachStructureChild(inspector);
+}
+if (checkHasArg("create-structure-type-guards")) {
+  console.log("Creating structure type guards utility class...");
+  createStructureTypeGuards(inspector);
+}
 
-  if (args.length > 0)
-    console.error(`Unknown args: ${args}`);
+if (args.length > 0)
+  console.error(`Unknown args: ${args}`);
 
-  inspector.getProject().save();
-})();
+await inspector.getProject().save();
 
 function checkHasArg(argName: string) {
   if (originalArgs.length === 0)

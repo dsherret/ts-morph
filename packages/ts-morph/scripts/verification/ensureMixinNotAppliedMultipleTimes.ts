@@ -9,8 +9,8 @@
  * could cause the statements to be written multiple times.
  * -----------------------------------------------------------
  */
-import { Mixin, TsMorphInspector, WrappedNode } from "../inspectors";
-import { Problem } from "./Problem";
+import { Mixin, TsMorphInspector, WrappedNode } from "../inspectors.ts";
+import { Problem } from "./Problem.ts";
 
 export function ensureMixinNotAppliedMultipleTimes(inspector: TsMorphInspector, addProblem: (problem: Problem) => void) {
   for (const node of inspector.getWrappedNodes())

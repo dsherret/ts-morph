@@ -1,17 +1,17 @@
-import { InspectorFactory } from "../inspectors";
-import { ensureArrayInputsReadonly } from "./ensureArrayInputsReadonly";
-import { ensureClassesImplementStructureMethods } from "./ensureClassesImplementStructureMethods";
-import { ensureMixinNotAppliedMultipleTimes } from "./ensureMixinNotAppliedMultipleTimes";
-import { ensureOrThrowExists } from "./ensureOrThrowExists";
-import { ensureOverloadStructuresMatch } from "./ensureOverloadStructuresMatch";
-import { ensurePublicApiHasTests } from "./ensurePublicApiHasTests";
-import { ensureStructuresMatchClasses } from "./ensureStructuresMatchClasses";
-import { Problem } from "./Problem";
-import { validateCodeFences } from "./validateCodeFences";
-import { validateCompilerNodeToWrappedType } from "./validateCompilerNodeToWrappedType";
-import { validatePublicApiClassMemberNames } from "./validatePublicApiClassMemberNames";
+import { InspectorFactory } from "../inspectors/mod.ts";
+import { ensureArrayInputsReadonly } from "./ensureArrayInputsReadonly.ts";
+import { ensureClassesImplementStructureMethods } from "./ensureClassesImplementStructureMethods.ts";
+import { ensureMixinNotAppliedMultipleTimes } from "./ensureMixinNotAppliedMultipleTimes.ts";
+import { ensureOrThrowExists } from "./ensureOrThrowExists.ts";
+import { ensureOverloadStructuresMatch } from "./ensureOverloadStructuresMatch.ts";
+import { ensurePublicApiHasTests } from "./ensurePublicApiHasTests.ts";
+import { ensureStructuresMatchClasses } from "./ensureStructuresMatchClasses.ts";
+import { Problem } from "./Problem.ts";
+import { validateCodeFences } from "./validateCodeFences.ts";
+import { validateCompilerNodeToWrappedType } from "./validateCompilerNodeToWrappedType.ts";
+import { validatePublicApiClassMemberNames } from "./validatePublicApiClassMemberNames.ts";
 
-const args = process.argv.slice(2);
+const args = [...Deno.args];
 const factory = new InspectorFactory();
 let problemsCount = 0;
 
@@ -46,7 +46,7 @@ if (args.length > 0)
 
 if (problemsCount > 0) {
   console.error(`\nFound ${problemsCount} code verification issues.`);
-  process.exit(1);
+  Deno.exit(1);
 }
 
 function checkHasArg(argName: string) {

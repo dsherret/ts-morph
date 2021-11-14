@@ -8,8 +8,8 @@
  * declaration file doesn't have errors.
  * ---------------------------------------------------
  */
-import { printDiagnostics } from "@ts-morph/scripts";
-import { getDeclarationProject } from "../common";
+import { printDiagnostics } from "../../../scripts/mod.ts";
+import { getDeclarationProject } from "../common/mod.ts";
 
 const project = getDeclarationProject();
 
@@ -21,5 +21,5 @@ const diagnostics = project.getPreEmitDiagnostics();
 if (diagnostics.length > 0) {
   printDiagnostics(diagnostics);
   console.error("There were declaration file issues!");
-  process.exit(1);
+  Deno.exit(1);
 }

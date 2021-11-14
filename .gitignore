@@ -5,10 +5,8 @@ packages/*/temp
 packages/*/dist-cg
 packages/*/dist
 packages/*/dist-deno
-packages/*/coverage
 packages/*/dist-scripts
 packages/*/dist-declarations
-packages/*/.nyc_output
 node_modules
 *.js.map
 npm-debug.log

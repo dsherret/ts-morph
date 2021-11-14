@@ -1,21 +1,19 @@
-import { createDeclarationProject as scriptsCreateDeclarationProject, tsMorph } from "@ts-morph/scripts";
-import * as path from "path";
-import { rootFolder } from "../config";
+import { createDeclarationProject as scriptsCreateDeclarationProject, folders, path, tsMorph } from "../../../scripts/mod.ts";
 
 export function getDeclarationProject() {
   const project = new tsMorph.Project({
-    tsConfigFilePath: path.join(rootFolder, "tsconfig.json"),
+    tsConfigFilePath: path.join(folders.tsMorph, "tsconfig.json"),
     manipulationSettings: {
       newLineKind: tsMorph.NewLineKind.LineFeed,
     },
     skipAddingFilesFromTsConfig: true,
   });
-  project.addSourceFilesAtPaths(path.join(rootFolder, "lib/**/*.d.ts"));
+  project.addSourceFilesAtPaths(path.join(folders.tsMorph, "lib/**/*.d.ts"));
   return project;
 }
 
 export function createDeclarationProject() {
   return scriptsCreateDeclarationProject({
-    tsConfigFilePath: path.join(rootFolder, "tsconfig.declarations.json"),
+    tsConfigFilePath: path.join(folders.tsMorph, "tsconfig.declarations.json"),
   });
 }
