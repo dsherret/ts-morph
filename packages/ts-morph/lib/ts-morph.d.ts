@@ -4112,6 +4112,36 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    */
   static isJSDocableNode<T extends Node>(node: T | undefined): node is JSDocableNode & JSDocableNodeExtensionType & T;
   /**
+   * Gets if the node is a JSDocAllType.
+   * @param node - Node to check.
+   */
+  static isJSDocAllType(node: Node | undefined): node is JSDocAllType;
+  /**
+   * Gets if the node is a JSDocNamepathType.
+   * @param node - Node to check.
+   */
+  static isJSDocNamepathType(node: Node | undefined): node is JSDocNamepathType;
+  /**
+   * Gets if the node is a JSDocNameReference.
+   * @param node - Node to check.
+   */
+  static isJSDocNameReference(node: Node | undefined): node is JSDocNameReference;
+  /**
+   * Gets if the node is a JSDocNonNullableType.
+   * @param node - Node to check.
+   */
+  static isJSDocNonNullableType(node: Node | undefined): node is JSDocNonNullableType;
+  /**
+   * Gets if the node is a JSDocNullableType.
+   * @param node - Node to check.
+   */
+  static isJSDocNullableType(node: Node | undefined): node is JSDocNullableType;
+  /**
+   * Gets if the node is a JSDocOptionalType.
+   * @param node - Node to check.
+   */
+  static isJSDocOptionalType(node: Node | undefined): node is JSDocOptionalType;
+  /**
    * Gets if the node is a JSDocPropertyLikeTag.
    * @param node - Node to check.
    */
@@ -4132,6 +4162,11 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    */
   static isJSDocTypeExpressionableTag<T extends Node>(node: T | undefined): node is JSDocTypeExpressionableTag & JSDocTypeExpressionableTagExtensionType & T;
   /**
+   * Gets if the node is a JSDocTypeLiteral.
+   * @param node - Node to check.
+   */
+  static isJSDocTypeLiteral(node: Node | undefined): node is JSDocTypeLiteral;
+  /**
    * Gets if the node is a JSDocTypeParameteredTag.
    * @param node - Node to check.
    */
@@ -4141,6 +4176,16 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * @param node - Node to check.
    */
   static isJSDocUnknownTag(node: Node | undefined): node is JSDocUnknownTag;
+  /**
+   * Gets if the node is a JSDocUnknownType.
+   * @param node - Node to check.
+   */
+  static isJSDocUnknownType(node: Node | undefined): node is JSDocUnknownType;
+  /**
+   * Gets if the node is a JSDocVariadicType.
+   * @param node - Node to check.
+   */
+  static isJSDocVariadicType(node: Node | undefined): node is JSDocVariadicType;
   /**
    * Gets if the node is a JsxAttributedNode.
    * @param node - Node to check.
@@ -4719,6 +4764,14 @@ export declare class JSDoc extends JSDocBase<ts.JSDoc> {
   getParentOrThrow(): NonNullable<NodeParentType<ts.JSDoc>>;
 }
 
+/** JS doc all type. */
+export declare class JSDocAllType extends JSDocType<ts.JSDocAllType> {
+  /** @inheritdoc **/
+  getParent(): NodeParentType<ts.JSDocAllType>;
+  /** @inheritdoc **/
+  getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocAllType>>;
+}
+
 /** JS doc augments tag node. */
 export declare class JSDocAugmentsTag extends JSDocTag<ts.JSDocAugmentsTag> {
   /** @inheritdoc **/
@@ -4815,6 +4868,56 @@ export declare class JSDocMemberName extends Node<ts.JSDocMemberName> {
   getParent(): NodeParentType<ts.JSDocMemberName>;
   /** @inheritdoc **/
   getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocMemberName>>;
+}
+
+/** JS doc namepath type. */
+export declare class JSDocNamepathType extends JSDocType<ts.JSDocNamepathType> {
+  /** Gets the type node of the JS doc namepath node. */
+  getTypeNode(): TypeNode<ts.TypeNode>;
+  /** @inheritdoc **/
+  getParent(): NodeParentType<ts.JSDocNamepathType>;
+  /** @inheritdoc **/
+  getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocNamepathType>>;
+}
+
+/** JS doc name reference. */
+export declare class JSDocNameReference extends Node<ts.JSDocNameReference> {
+  /** Gets the name of the JS doc name reference. */
+  getName(): Identifier | QualifiedName | JSDocMemberName;
+  /** @inheritdoc **/
+  getParent(): NodeParentType<ts.JSDocNameReference>;
+  /** @inheritdoc **/
+  getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocNameReference>>;
+}
+
+/** JS doc non-nullable type. */
+export declare class JSDocNonNullableType extends JSDocType<ts.JSDocNonNullableType> {
+  /** Gets the type node of the JS doc non-nullable type node. */
+  getTypeNode(): TypeNode<ts.TypeNode>;
+  /** @inheritdoc **/
+  getParent(): NodeParentType<ts.JSDocNonNullableType>;
+  /** @inheritdoc **/
+  getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocNonNullableType>>;
+}
+
+/** JS doc nullable type. */
+export declare class JSDocNullableType extends JSDocType<ts.JSDocNullableType> {
+  /** Gets the type node of the JS doc nullable type node. */
+  getTypeNode(): TypeNode<ts.TypeNode>;
+  /** @inheritdoc **/
+  getParent(): NodeParentType<ts.JSDocNullableType>;
+  /** @inheritdoc **/
+  getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocNullableType>>;
+}
+
+/** JS doc optional type. */
+export declare class JSDocOptionalType extends JSDocType<ts.JSDocOptionalType> {
+  /** Gets the type node of the JS doc optional type node. */
+  getTypeNode(): TypeNode<ts.TypeNode>;
+  /** @inheritdoc **/
+  getParent(): NodeParentType<ts.JSDocOptionalType>;
+  /** @inheritdoc **/
+  getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocOptionalType>>;
 }
 
 /** JS doc override tag node. */
@@ -5005,6 +5108,18 @@ export declare class JSDocTypeExpression extends TypeNode<ts.JSDocTypeExpression
   getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocTypeExpression>>;
 }
 
+/** JS doc type literal. */
+export declare class JSDocTypeLiteral extends JSDocType<ts.JSDocTypeLiteral> {
+  /** Gets if it's an array type. */
+  isArrayType(): boolean;
+  /** Gets the JS doc property tags if they exist. */
+  getPropertyTags(): JSDocTag<ts.JSDocTag>[] | undefined;
+  /** @inheritdoc **/
+  getParent(): NodeParentType<ts.JSDocTypeLiteral>;
+  /** @inheritdoc **/
+  getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocTypeLiteral>>;
+}
+
 /** JS doc type tag node. */
 export declare class JSDocTypeTag extends JSDocTag<ts.JSDocTypeTag> {
   /** Gets the type expression node of the JS doc property type tag. */
@@ -5021,6 +5136,24 @@ export declare class JSDocUnknownTag extends JSDocTag<ts.JSDocUnknownTag> {
   getParent(): NodeParentType<ts.JSDocUnknownTag>;
   /** @inheritdoc **/
   getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocUnknownTag>>;
+}
+
+/** JS doc unknown type. */
+export declare class JSDocUnknownType extends JSDocType<ts.JSDocUnknownType> {
+  /** @inheritdoc **/
+  getParent(): NodeParentType<ts.JSDocUnknownType>;
+  /** @inheritdoc **/
+  getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocUnknownType>>;
+}
+
+/** JS doc variadic type. */
+export declare class JSDocVariadicType extends JSDocType<ts.JSDocVariadicType> {
+  /** Gets the type node of the JS doc variadic type node. */
+  getTypeNode(): TypeNode<ts.TypeNode>;
+  /** @inheritdoc **/
+  getParent(): NodeParentType<ts.JSDocVariadicType>;
+  /** @inheritdoc **/
+  getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocVariadicType>>;
 }
 
 export declare class CommentEnumMember extends Node<CompilerCommentEnumMember> {
@@ -6432,6 +6565,7 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.InferType]: InferTypeNode;
   [SyntaxKind.InterfaceDeclaration]: InterfaceDeclaration;
   [SyntaxKind.IntersectionType]: IntersectionTypeNode;
+  [SyntaxKind.JSDocAllType]: JSDocAllType;
   [SyntaxKind.JSDocAugmentsTag]: JSDocAugmentsTag;
   [SyntaxKind.JSDocAuthorTag]: JSDocAuthorTag;
   [SyntaxKind.JSDocCallbackTag]: JSDocCallbackTag;
@@ -6444,6 +6578,11 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.JSDocLinkCode]: JSDocLinkCode;
   [SyntaxKind.JSDocLinkPlain]: JSDocLinkPlain;
   [SyntaxKind.JSDocMemberName]: JSDocMemberName;
+  [SyntaxKind.JSDocNamepathType]: JSDocNamepathType;
+  [SyntaxKind.JSDocNameReference]: JSDocNameReference;
+  [SyntaxKind.JSDocNonNullableType]: JSDocNonNullableType;
+  [SyntaxKind.JSDocNullableType]: JSDocNullableType;
+  [SyntaxKind.JSDocOptionalType]: JSDocOptionalType;
   [SyntaxKind.JSDocOverrideTag]: JSDocOverrideTag;
   [SyntaxKind.JSDocParameterTag]: JSDocParameterTag;
   [SyntaxKind.JSDocPrivateTag]: JSDocPrivateTag;
@@ -6459,8 +6598,11 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.JSDocText]: JSDocText;
   [SyntaxKind.JSDocThisTag]: JSDocThisTag;
   [SyntaxKind.JSDocTypeExpression]: JSDocTypeExpression;
+  [SyntaxKind.JSDocTypeLiteral]: JSDocTypeLiteral;
   [SyntaxKind.JSDocTypeTag]: JSDocTypeTag;
   [SyntaxKind.JSDocTypedefTag]: JSDocTypedefTag;
+  [SyntaxKind.JSDocUnknownType]: JSDocUnknownType;
+  [SyntaxKind.JSDocVariadicType]: JSDocVariadicType;
   [SyntaxKind.JsxAttribute]: JsxAttribute;
   [SyntaxKind.JsxClosingElement]: JsxClosingElement;
   [SyntaxKind.JsxClosingFragment]: JsxClosingFragment;

@@ -6,7 +6,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Exist
 
-**Total:** 205
+**Total:** 214
 
 * [ArrayBindingPattern](src/compiler/ast/binding/ArrayBindingPattern.ts)
     * :heavy_check_mark: elements
@@ -78,10 +78,10 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: extendsType
     * :heavy_check_mark: trueType
     * :heavy_check_mark: falseType
-* [ConstructSignatureDeclaration](src/compiler/ast/interface/ConstructSignatureDeclaration.ts)
 * [ConstructorDeclaration](src/compiler/ast/class/ConstructorDeclaration.ts)
     * :heavy_check_mark: body
 * [ConstructorTypeNode](src/compiler/ast/type/ConstructorTypeNode.ts)
+* [ConstructSignatureDeclaration](src/compiler/ast/interface/ConstructSignatureDeclaration.ts)
 * [ContinueStatement](src/compiler/ast/statement/ContinueStatement.ts)
     * :heavy_check_mark: label
 * [DebuggerStatement](src/compiler/ast/statement/DebuggerStatement.ts)
@@ -148,11 +148,11 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: token
     * :heavy_check_mark: types
 * [Identifier](src/compiler/ast/name/Identifier.ts)
-    * :heavy_check_mark: text
-* [Identifier](src/compiler/ast/name/Identifier.ts)
     * :x: escapedText
     * :x: originalKeywordKind
     * :x: isInJSDocNamespace
+* [Identifier](src/compiler/ast/name/Identifier.ts)
+    * :heavy_check_mark: text
 * [IfStatement](src/compiler/ast/statement/IfStatement.ts)
     * :heavy_check_mark: expression
     * :heavy_check_mark: thenStatement
@@ -176,11 +176,11 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :x: isTypeOf
     * :heavy_check_mark: argument
     * :heavy_check_mark: qualifier
-* [IndexSignatureDeclaration](src/compiler/ast/interface/IndexSignatureDeclaration.ts)
-    * :heavy_check_mark: type
 * [IndexedAccessTypeNode](src/compiler/ast/type/IndexedAccessTypeNode.ts)
     * :heavy_check_mark: objectType
     * :heavy_check_mark: indexType
+* [IndexSignatureDeclaration](src/compiler/ast/interface/IndexSignatureDeclaration.ts)
+    * :heavy_check_mark: type
 * [InferTypeNode](src/compiler/ast/type/InferTypeNode.ts)
     * :heavy_check_mark: typeParameter
 * [InterfaceDeclaration](src/compiler/ast/interface/InterfaceDeclaration.ts)
@@ -195,6 +195,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [JSDoc](src/compiler/ast/doc/JSDoc.ts)
     * :heavy_check_mark: tags
     * :heavy_check_mark: comment
+* [JSDocAllType](src/compiler/ast/doc/JSDocAllType.ts)
 * [JSDocAugmentsTag](src/compiler/ast/doc/JSDocAugmentsTag.ts)
     * :x: class
 * [JSDocAuthorTag](src/compiler/ast/doc/JSDocAuthorTag.ts)
@@ -221,6 +222,16 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [JSDocMemberName](src/compiler/ast/doc/JSDocMemberName.ts)
     * :x: left
     * :x: right
+* [JSDocNamepathType](src/compiler/ast/doc/JSDocNamepathType.ts)
+    * :heavy_check_mark: type
+* [JSDocNameReference](src/compiler/ast/doc/JSDocNameReference.ts)
+    * :heavy_check_mark: name
+* [JSDocNonNullableType](src/compiler/ast/doc/JSDocNonNullableType.ts)
+    * :heavy_check_mark: type
+* [JSDocNullableType](src/compiler/ast/doc/JSDocNullableType.ts)
+    * :heavy_check_mark: type
+* [JSDocOptionalType](src/compiler/ast/doc/JSDocOptionalType.ts)
+    * :heavy_check_mark: type
 * [JSDocOverrideTag](src/compiler/ast/doc/JSDocOverrideTag.ts)
 * [JSDocParameterTag](src/compiler/ast/doc/JSDocParameterTag.ts)
 * [JSDocPrivateTag](src/compiler/ast/doc/JSDocPrivateTag.ts)
@@ -247,15 +258,21 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [JSDocThisTag](src/compiler/ast/doc/JSDocThisTag.ts)
     * :heavy_check_mark: typeExpression
 * [JSDocType](src/compiler/ast/doc/JSDocType.ts)
-* [JSDocTypeExpression](src/compiler/ast/doc/JSDocTypeExpression.ts)
-    * :heavy_check_mark: type
-* [JSDocTypeTag](src/compiler/ast/doc/JSDocTypeTag.ts)
-    * :heavy_check_mark: typeExpression
 * [JSDocTypedefTag](src/compiler/ast/doc/JSDocTypedefTag.ts)
     * :x: fullName
     * :heavy_check_mark: name
     * :x: typeExpression
+* [JSDocTypeExpression](src/compiler/ast/doc/JSDocTypeExpression.ts)
+    * :heavy_check_mark: type
+* [JSDocTypeLiteral](src/compiler/ast/doc/JSDocTypeLiteral.ts)
+    * :heavy_check_mark: jsDocPropertyTags
+    * :heavy_check_mark: isArrayType
+* [JSDocTypeTag](src/compiler/ast/doc/JSDocTypeTag.ts)
+    * :heavy_check_mark: typeExpression
 * [JSDocUnknownTag](src/compiler/ast/doc/JSDocUnknownTag.ts)
+* [JSDocUnknownType](src/compiler/ast/doc/JSDocUnknownType.ts)
+* [JSDocVariadicType](src/compiler/ast/doc/JSDocVariadicType.ts)
+    * :heavy_check_mark: type
 * [JsxAttribute](src/compiler/ast/jsx/JsxAttribute.ts)
     * :heavy_check_mark: name
     * :heavy_check_mark: initializer
@@ -331,9 +348,9 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: expression
     * :heavy_check_mark: typeArguments
     * :heavy_check_mark: arguments
-* [NoSubstitutionTemplateLiteral](src/compiler/ast/literal/template/NoSubstitutionTemplateLiteral.ts)
 * [NonNullExpression](src/compiler/ast/expression/NonNullExpression.ts)
     * :heavy_check_mark: expression
+* [NoSubstitutionTemplateLiteral](src/compiler/ast/literal/template/NoSubstitutionTemplateLiteral.ts)
 * [NotEmittedStatement](src/compiler/ast/statement/NotEmittedStatement.ts)
 * [NullLiteral](src/compiler/ast/literal/NullLiteral.ts)
 * [NumericLiteral](src/compiler/ast/literal/NumericLiteral.ts)
@@ -365,9 +382,9 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: operand
 * [PrimaryExpression](src/compiler/ast/expression/PrimaryExpression.ts)
 * [PrivateIdentifier](src/compiler/ast/name/PrivateIdentifier.ts)
-    * :heavy_check_mark: text
-* [PrivateIdentifier](src/compiler/ast/name/PrivateIdentifier.ts)
     * :x: escapedText
+* [PrivateIdentifier](src/compiler/ast/name/PrivateIdentifier.ts)
+    * :heavy_check_mark: text
 * [PropertyAccessExpression](src/compiler/ast/expression/PropertyAccessExpression.ts)
     * :heavy_check_mark: expression
     * :heavy_check_mark: questionDotToken
@@ -405,7 +422,6 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: objectAssignmentInitializer
 * SignatureDeclarationBase - Implemented via mixin.
 * [SourceFile](src/compiler/ast/module/SourceFile.ts)
-* [SourceFile](src/compiler/ast/module/SourceFile.ts)
     * :heavy_check_mark: statements
     * :x: endOfFileToken
     * :heavy_check_mark: fileName
@@ -419,6 +435,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: isDeclarationFile
     * :x: hasNoDefaultLib
     * :heavy_check_mark: languageVersion
+* [SourceFile](src/compiler/ast/module/SourceFile.ts)
 * [SpreadAssignment](src/compiler/ast/expression/object/SpreadAssignment.ts)
     * :heavy_check_mark: expression
 * [SpreadElement](src/compiler/ast/expression/SpreadElement.ts)
@@ -516,30 +533,8 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Not Exist
 
-**Total:** 55
+**Total:** 21
 
-* Bundle
-* CallChain
-* ClassLikeDeclarationBase
-* DeclarationStatement
-* ElementAccessChain
-* FunctionOrConstructorTypeNodeBase
-* ImportCall
-* InputFiles
-* JSDocAllType
-* JSDocNameReference
-* JSDocNamepathType
-* JSDocNamespaceDeclaration
-* JSDocNonNullableType
-* JSDocNullableType
-* JSDocOptionalType
-* JSDocPropertyLikeTag
-* JSDocTypeLiteral
-* JSDocUnknownType
-* JSDocVariadicType
-* JsonMinusNumericLiteral
-* JsonObjectExpressionStatement
-* JsonSourceFile
 * JsxAttributes
 * JsxTagNamePropertyAccess
 * KeywordToken
@@ -549,27 +544,15 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * ModifierToken
 * NamespaceDeclaration
 * NamespaceExportDeclaration
-* NodeWithTypeArguments
-* NonNullChain
 * ObjectLiteralExpressionBase
 * OptionalTypeNode
-* PropertyAccessChain
 * PropertyAccessEntityNameExpression
-* PropertyLikeDeclaration
 * PunctuationToken
 * RestTypeNode
 * SemicolonClassElement
-* SuperCall
 * SyntheticExpression
 * TemplateLiteralLikeNode
 * TemplateLiteralTypeSpan
 * Token
 * TransientIdentifier
-* TsConfigSourceFile
 * TypeOperatorNode
-* UnparsedPrepend
-* UnparsedPrologue
-* UnparsedSection
-* UnparsedSource
-* UnparsedSyntheticReference
-* UnparsedTextLike

@@ -4481,6 +4481,24 @@ class Node {
                 return false;
         }
     }
+    static isJSDocAllType(node) {
+        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.JSDocAllType;
+    }
+    static isJSDocNamepathType(node) {
+        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.JSDocNamepathType;
+    }
+    static isJSDocNameReference(node) {
+        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.JSDocNameReference;
+    }
+    static isJSDocNonNullableType(node) {
+        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.JSDocNonNullableType;
+    }
+    static isJSDocNullableType(node) {
+        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.JSDocNullableType;
+    }
+    static isJSDocOptionalType(node) {
+        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.JSDocOptionalType;
+    }
     static isJSDocPropertyLikeTag(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.JSDocParameterTag:
@@ -4520,8 +4538,16 @@ class Node {
     }
     static isJSDocType(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+            case SyntaxKind.JSDocAllType:
             case SyntaxKind.JSDocFunctionType:
+            case SyntaxKind.JSDocNamepathType:
+            case SyntaxKind.JSDocNonNullableType:
+            case SyntaxKind.JSDocNullableType:
+            case SyntaxKind.JSDocOptionalType:
             case SyntaxKind.JSDocSignature:
+            case SyntaxKind.JSDocTypeLiteral:
+            case SyntaxKind.JSDocUnknownType:
+            case SyntaxKind.JSDocVariadicType:
                 return true;
             default:
                 return false;
@@ -4537,11 +4563,20 @@ class Node {
                 return false;
         }
     }
+    static isJSDocTypeLiteral(node) {
+        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.JSDocTypeLiteral;
+    }
     static isJSDocTypeParameteredTag(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.JSDocTemplateTag;
     }
     static isJSDocUnknownTag(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.JSDocTag;
+    }
+    static isJSDocUnknownType(node) {
+        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.JSDocUnknownType;
+    }
+    static isJSDocVariadicType(node) {
+        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.JSDocVariadicType;
     }
     static isJsxAttributedNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
@@ -5192,9 +5227,17 @@ class Node {
             case SyntaxKind.IndexedAccessType:
             case SyntaxKind.InferType:
             case SyntaxKind.IntersectionType:
+            case SyntaxKind.JSDocAllType:
             case SyntaxKind.JSDocFunctionType:
+            case SyntaxKind.JSDocNamepathType:
+            case SyntaxKind.JSDocNonNullableType:
+            case SyntaxKind.JSDocNullableType:
+            case SyntaxKind.JSDocOptionalType:
             case SyntaxKind.JSDocSignature:
             case SyntaxKind.JSDocTypeExpression:
+            case SyntaxKind.JSDocTypeLiteral:
+            case SyntaxKind.JSDocUnknownType:
+            case SyntaxKind.JSDocVariadicType:
             case SyntaxKind.LiteralType:
             case SyntaxKind.MappedType:
             case SyntaxKind.NamedTupleMember:
@@ -14829,135 +14872,6 @@ class JSDoc extends JSDocBase {
     }
 }
 
-const JSDocTagBase = Node;
-class JSDocTag extends JSDocTagBase {
-    getTagName() {
-        return this.getTagNameNode().getText();
-    }
-    getTagNameNode() {
-        return this._getNodeFromCompilerNode(this.compilerNode.tagName);
-    }
-    setTagName(tagName) {
-        return this.set({ tagName });
-    }
-    getComment() {
-        if (this.compilerNode.comment == null)
-            return undefined;
-        else if (typeof this.compilerNode.comment === "string")
-            return this.compilerNode.comment;
-        else
-            return this.compilerNode.comment.map(n => this._getNodeFromCompilerNodeIfExists(n));
-    }
-    getCommentText() {
-        if (typeof this.compilerNode.comment === "string")
-            return this.compilerNode.comment;
-        else
-            return ts.getTextOfJSDocComment(this.compilerNode.comment);
-    }
-    remove() {
-        const jsDocBodyStart = this.getParentOrThrow().getStart() + 3;
-        const nextJsDocTag = getNextJsDocTag(this);
-        const isLastJsDoc = nextJsDocTag == null;
-        const removalStart = getRemovalStart.call(this);
-        removeChildren({
-            children: [this],
-            customRemovalPos: removalStart,
-            customRemovalEnd: getNextTagStartOrDocEnd(this, nextJsDocTag),
-            replaceTrivia: getReplaceTrivia.call(this),
-        });
-        function getRemovalStart() {
-            return Math.max(jsDocBodyStart, getPreviousNonWhiteSpacePos(this, this.getStart()));
-        }
-        function getReplaceTrivia() {
-            if (removalStart === jsDocBodyStart && isLastJsDoc)
-                return "";
-            const newLineKind = this._context.manipulationSettings.getNewLineKindAsString();
-            const indentationText = this.getParentOrThrow().getIndentationText();
-            return `${newLineKind}${indentationText} ` + (isLastJsDoc ? "" : "* ");
-        }
-    }
-    set(structure) {
-        callBaseSet(JSDocTagBase.prototype, this, structure);
-        if (structure.text != null || structure.tagName != null) {
-            return this.replaceWithText(writer => {
-                var _a;
-                this._context.structurePrinterFactory.forJSDocTag({ printStarsOnNewLine: true }).printText(writer, {
-                    tagName: (_a = structure.tagName) !== null && _a !== void 0 ? _a : this.getTagName(),
-                    text: structure.text != null ? structure.text : getText(this),
-                });
-            });
-        }
-        return this;
-    }
-    replaceWithText(textOrWriterFunction) {
-        const newText = getTextFromStringOrWriter(this._getWriterWithQueuedIndentation(), textOrWriterFunction);
-        const parent = this.getParentOrThrow();
-        const childIndex = this.getChildIndex();
-        const start = this.getStart();
-        insertIntoParentTextRange({
-            parent,
-            insertPos: start,
-            newText,
-            replacing: {
-                textLength: getTagEnd(this) - start,
-            },
-        });
-        return parent.getChildren()[childIndex];
-    }
-    getStructure() {
-        const text = getText(this);
-        return callBaseGetStructure(JSDocTagBase.prototype, this, {
-            kind: StructureKind.JSDocTag,
-            tagName: this.getTagName(),
-            text: text.length === 0 ? undefined : text,
-        });
-    }
-}
-function getText(jsDocTag) {
-    const text = jsDocTag.getSourceFile().getFullText();
-    const nameEnd = jsDocTag.getTagNameNode().getEnd();
-    const tagEnd = getTagEnd(jsDocTag);
-    const startPos = Math.min(text.charCodeAt(nameEnd) === CharCodes.SPACE ? nameEnd + 1 : nameEnd, tagEnd);
-    return getTextWithoutStars(text.substring(startPos, tagEnd));
-}
-function getTagEnd(jsDocTag) {
-    return getPreviousNonWhiteSpacePos(jsDocTag, getNextTagStartOrDocEnd(jsDocTag));
-}
-function getNextTagStartOrDocEnd(jsDocTag, nextJsDocTag) {
-    nextJsDocTag = nextJsDocTag !== null && nextJsDocTag !== void 0 ? nextJsDocTag : getNextJsDocTag(jsDocTag);
-    return nextJsDocTag != null
-        ? nextJsDocTag.getStart()
-        : jsDocTag.getParentOrThrow().getEnd() - 2;
-}
-function getNextJsDocTag(jsDocTag) {
-    const parent = jsDocTag.getParentIfKindOrThrow(SyntaxKind.JSDocComment);
-    const tags = parent.getTags();
-    const thisIndex = tags.indexOf(jsDocTag);
-    return tags[thisIndex + 1];
-}
-function getPreviousNonWhiteSpacePos(jsDocTag, pos) {
-    const sourceFileText = jsDocTag.getSourceFile().getFullText();
-    return getPreviousMatchingPos(sourceFileText, pos, charCode => charCode !== CharCodes.ASTERISK && !StringUtils.isWhitespaceCharCode(charCode));
-}
-
-class JSDocAugmentsTag extends JSDocTag {
-}
-
-class JSDocAuthorTag extends JSDocTag {
-}
-
-class JSDocCallbackTag extends JSDocTag {
-}
-
-class JSDocClassTag extends JSDocTag {
-}
-
-class JSDocDeprecatedTag extends JSDocTag {
-}
-
-class JSDocEnumTag extends JSDocTag {
-}
-
 class TypeNode extends Node {
 }
 
@@ -15314,6 +15228,138 @@ class UnionTypeNode extends TypeNode {
 class JSDocType extends TypeNode {
 }
 
+class JSDocAllType extends JSDocType {
+}
+
+const JSDocTagBase = Node;
+class JSDocTag extends JSDocTagBase {
+    getTagName() {
+        return this.getTagNameNode().getText();
+    }
+    getTagNameNode() {
+        return this._getNodeFromCompilerNode(this.compilerNode.tagName);
+    }
+    setTagName(tagName) {
+        return this.set({ tagName });
+    }
+    getComment() {
+        if (this.compilerNode.comment == null)
+            return undefined;
+        else if (typeof this.compilerNode.comment === "string")
+            return this.compilerNode.comment;
+        else
+            return this.compilerNode.comment.map(n => this._getNodeFromCompilerNodeIfExists(n));
+    }
+    getCommentText() {
+        if (typeof this.compilerNode.comment === "string")
+            return this.compilerNode.comment;
+        else
+            return ts.getTextOfJSDocComment(this.compilerNode.comment);
+    }
+    remove() {
+        const jsDocBodyStart = this.getParentOrThrow().getStart() + 3;
+        const nextJsDocTag = getNextJsDocTag(this);
+        const isLastJsDoc = nextJsDocTag == null;
+        const removalStart = getRemovalStart.call(this);
+        removeChildren({
+            children: [this],
+            customRemovalPos: removalStart,
+            customRemovalEnd: getNextTagStartOrDocEnd(this, nextJsDocTag),
+            replaceTrivia: getReplaceTrivia.call(this),
+        });
+        function getRemovalStart() {
+            return Math.max(jsDocBodyStart, getPreviousNonWhiteSpacePos(this, this.getStart()));
+        }
+        function getReplaceTrivia() {
+            if (removalStart === jsDocBodyStart && isLastJsDoc)
+                return "";
+            const newLineKind = this._context.manipulationSettings.getNewLineKindAsString();
+            const indentationText = this.getParentOrThrow().getIndentationText();
+            return `${newLineKind}${indentationText} ` + (isLastJsDoc ? "" : "* ");
+        }
+    }
+    set(structure) {
+        callBaseSet(JSDocTagBase.prototype, this, structure);
+        if (structure.text != null || structure.tagName != null) {
+            return this.replaceWithText(writer => {
+                var _a;
+                this._context.structurePrinterFactory.forJSDocTag({ printStarsOnNewLine: true }).printText(writer, {
+                    tagName: (_a = structure.tagName) !== null && _a !== void 0 ? _a : this.getTagName(),
+                    text: structure.text != null ? structure.text : getText(this),
+                });
+            });
+        }
+        return this;
+    }
+    replaceWithText(textOrWriterFunction) {
+        const newText = getTextFromStringOrWriter(this._getWriterWithQueuedIndentation(), textOrWriterFunction);
+        const parent = this.getParentOrThrow();
+        const childIndex = this.getChildIndex();
+        const start = this.getStart();
+        insertIntoParentTextRange({
+            parent,
+            insertPos: start,
+            newText,
+            replacing: {
+                textLength: getTagEnd(this) - start,
+            },
+        });
+        return parent.getChildren()[childIndex];
+    }
+    getStructure() {
+        const text = getText(this);
+        return callBaseGetStructure(JSDocTagBase.prototype, this, {
+            kind: StructureKind.JSDocTag,
+            tagName: this.getTagName(),
+            text: text.length === 0 ? undefined : text,
+        });
+    }
+}
+function getText(jsDocTag) {
+    const text = jsDocTag.getSourceFile().getFullText();
+    const nameEnd = jsDocTag.getTagNameNode().getEnd();
+    const tagEnd = getTagEnd(jsDocTag);
+    const startPos = Math.min(text.charCodeAt(nameEnd) === CharCodes.SPACE ? nameEnd + 1 : nameEnd, tagEnd);
+    return getTextWithoutStars(text.substring(startPos, tagEnd));
+}
+function getTagEnd(jsDocTag) {
+    return getPreviousNonWhiteSpacePos(jsDocTag, getNextTagStartOrDocEnd(jsDocTag));
+}
+function getNextTagStartOrDocEnd(jsDocTag, nextJsDocTag) {
+    nextJsDocTag = nextJsDocTag !== null && nextJsDocTag !== void 0 ? nextJsDocTag : getNextJsDocTag(jsDocTag);
+    return nextJsDocTag != null
+        ? nextJsDocTag.getStart()
+        : jsDocTag.getParentOrThrow().getEnd() - 2;
+}
+function getNextJsDocTag(jsDocTag) {
+    const parent = jsDocTag.getParentIfKindOrThrow(SyntaxKind.JSDocComment);
+    const tags = parent.getTags();
+    const thisIndex = tags.indexOf(jsDocTag);
+    return tags[thisIndex + 1];
+}
+function getPreviousNonWhiteSpacePos(jsDocTag, pos) {
+    const sourceFileText = jsDocTag.getSourceFile().getFullText();
+    return getPreviousMatchingPos(sourceFileText, pos, charCode => charCode !== CharCodes.ASTERISK && !StringUtils.isWhitespaceCharCode(charCode));
+}
+
+class JSDocAugmentsTag extends JSDocTag {
+}
+
+class JSDocAuthorTag extends JSDocTag {
+}
+
+class JSDocCallbackTag extends JSDocTag {
+}
+
+class JSDocClassTag extends JSDocTag {
+}
+
+class JSDocDeprecatedTag extends JSDocTag {
+}
+
+class JSDocEnumTag extends JSDocTag {
+}
+
 const JSDocFunctionTypeBase = SignaturedDeclaration(JSDocType);
 class JSDocFunctionType extends JSDocFunctionTypeBase {
 }
@@ -15331,6 +15377,36 @@ class JSDocLinkPlain extends Node {
 }
 
 class JSDocMemberName extends Node {
+}
+
+class JSDocNamepathType extends JSDocType {
+    getTypeNode() {
+        return this._getNodeFromCompilerNode(this.compilerNode.type);
+    }
+}
+
+class JSDocNameReference extends Node {
+    getName() {
+        return this._getNodeFromCompilerNode(this.compilerNode.name);
+    }
+}
+
+class JSDocNonNullableType extends JSDocType {
+    getTypeNode() {
+        return this._getNodeFromCompilerNode(this.compilerNode.type);
+    }
+}
+
+class JSDocNullableType extends JSDocType {
+    getTypeNode() {
+        return this._getNodeFromCompilerNode(this.compilerNode.type);
+    }
+}
+
+class JSDocOptionalType extends JSDocType {
+    getTypeNode() {
+        return this._getNodeFromCompilerNode(this.compilerNode.type);
+    }
 }
 
 class JSDocOverrideTag extends JSDocTag {
@@ -15412,6 +15488,15 @@ class JSDocTypeExpression extends TypeNode {
     }
 }
 
+class JSDocTypeLiteral extends JSDocType {
+    isArrayType() {
+        return this.compilerNode.isArrayType;
+    }
+    getPropertyTags() {
+        return this.compilerNode.jsDocPropertyTags ? this.compilerNode.jsDocPropertyTags.map(t => this._getNodeFromCompilerNode(t)) : undefined;
+    }
+}
+
 class JSDocTypeTag extends JSDocTag {
     getTypeExpression() {
         const node = this.compilerNode.typeExpression;
@@ -15422,6 +15507,15 @@ class JSDocTypeTag extends JSDocTag {
 }
 
 class JSDocUnknownTag extends JSDocTag {
+}
+
+class JSDocUnknownType extends JSDocType {
+}
+
+class JSDocVariadicType extends JSDocType {
+    getTypeNode() {
+        return this._getNodeFromCompilerNode(this.compilerNode.type);
+    }
 }
 
 class CommentEnumMember extends Node {
@@ -18560,6 +18654,7 @@ const kindToWrapperMappings = {
     [SyntaxKind.InferType]: InferTypeNode,
     [SyntaxKind.InterfaceDeclaration]: InterfaceDeclaration,
     [SyntaxKind.IntersectionType]: IntersectionTypeNode,
+    [SyntaxKind.JSDocAllType]: JSDocAllType,
     [SyntaxKind.JSDocAugmentsTag]: JSDocAugmentsTag,
     [SyntaxKind.JSDocAuthorTag]: JSDocAuthorTag,
     [SyntaxKind.JSDocCallbackTag]: JSDocCallbackTag,
@@ -18572,6 +18667,11 @@ const kindToWrapperMappings = {
     [SyntaxKind.JSDocLinkCode]: JSDocLinkCode,
     [SyntaxKind.JSDocLinkPlain]: JSDocLinkPlain,
     [SyntaxKind.JSDocMemberName]: JSDocMemberName,
+    [SyntaxKind.JSDocNamepathType]: JSDocNamepathType,
+    [SyntaxKind.JSDocNameReference]: JSDocNameReference,
+    [SyntaxKind.JSDocNonNullableType]: JSDocNonNullableType,
+    [SyntaxKind.JSDocNullableType]: JSDocNullableType,
+    [SyntaxKind.JSDocOptionalType]: JSDocOptionalType,
     [SyntaxKind.JSDocOverrideTag]: JSDocOverrideTag,
     [SyntaxKind.JSDocParameterTag]: JSDocParameterTag,
     [SyntaxKind.JSDocPrivateTag]: JSDocPrivateTag,
@@ -18587,8 +18687,11 @@ const kindToWrapperMappings = {
     [SyntaxKind.JSDocText]: JSDocText,
     [SyntaxKind.JSDocThisTag]: JSDocThisTag,
     [SyntaxKind.JSDocTypeExpression]: JSDocTypeExpression,
+    [SyntaxKind.JSDocTypeLiteral]: JSDocTypeLiteral,
     [SyntaxKind.JSDocTypeTag]: JSDocTypeTag,
     [SyntaxKind.JSDocTypedefTag]: JSDocTypedefTag,
+    [SyntaxKind.JSDocUnknownType]: JSDocUnknownType,
+    [SyntaxKind.JSDocVariadicType]: JSDocVariadicType,
     [SyntaxKind.JsxAttribute]: JsxAttribute,
     [SyntaxKind.JsxClosingElement]: JsxClosingElement,
     [SyntaxKind.JsxClosingFragment]: JsxClosingFragment,
@@ -20014,4 +20117,4 @@ function writeValue(writer, value) {
 
 const { InvalidOperationError, FileNotFoundError, ArgumentError, ArgumentNullOrWhitespaceError, ArgumentOutOfRangeError, ArgumentTypeError, BaseError, DirectoryNotFoundError, NotImplementedError, NotSupportedError, PathNotFoundError, } = errors;
 
-export { AbstractableNode, AmbientableNode, ArgumentError, ArgumentNullOrWhitespaceError, ArgumentOutOfRangeError, ArgumentTypeError, ArgumentedNode, ArrayBindingPattern, ArrayDestructuringAssignment, ArrayDestructuringAssignmentBase, ArrayLiteralExpression, ArrayTypeNode, ArrowFunction, ArrowFunctionBase, AsExpression, AsExpressionBase, AssignmentExpression, AssignmentExpressionBase, AsyncableNode, AwaitExpression, AwaitExpressionBase, AwaitableNode, BaseError, BaseExpressionedNode, BigIntLiteral, BigIntLiteralBase, BinaryExpression, BinaryExpressionBase, BindingElement, BindingElementBase, BindingNamedNode, Block, BlockBase, BodiedNode, BodyableNode, BreakStatement, CallExpression, CallExpressionBase, CallSignatureDeclaration, CallSignatureDeclarationBase, CaseBlock, CaseBlockBase, CaseClause, CaseClauseBase, CatchClause, CatchClauseBase, ChildOrderableNode, ClassDeclaration, ClassDeclarationBase, ClassElement, ClassExpression, ClassExpressionBase, ClassLikeDeclarationBase, ClassLikeDeclarationBaseSpecific, ClassStaticBlockDeclaration, ClassStaticBlockDeclarationBase, CodeAction, CodeFixAction, CombinedCodeActions, CommaListExpression, CommaListExpressionBase, CommentClassElement, CommentEnumMember, CommentNodeKind, CommentObjectLiteralElement, CommentRange, CommentStatement, CommentTypeElement, CommonIdentifierBase, CompilerCommentClassElement, CompilerCommentEnumMember, CompilerCommentNode, CompilerCommentObjectLiteralElement, CompilerCommentStatement, CompilerCommentTypeElement, ComputedPropertyName, ComputedPropertyNameBase, ConditionalExpression, ConditionalExpressionBase, ConditionalTypeNode, ConstructSignatureDeclaration, ConstructSignatureDeclarationBase, ConstructorDeclaration, ConstructorDeclarationBase, ConstructorDeclarationOverloadBase, ConstructorTypeNode, ConstructorTypeNodeBase, ContinueStatement, DebuggerStatement, DebuggerStatementBase, DecoratableNode, Decorator, DecoratorBase, DefaultClause, DefaultClauseBase, DefinitionInfo, DeleteExpression, DeleteExpressionBase, Diagnostic, DiagnosticMessageChain, DiagnosticWithLocation, Directory, DirectoryEmitResult, DirectoryNotFoundError, DoStatement, DoStatementBase, DocumentSpan, DotDotDotTokenableNode, ElementAccessExpression, ElementAccessExpressionBase, EmitOutput, EmitResult, EmptyStatement, EmptyStatementBase, EnumDeclaration, EnumDeclarationBase, EnumMember, EnumMemberBase, ExclamationTokenableNode, ExportAssignment, ExportAssignmentBase, ExportDeclaration, ExportDeclarationBase, ExportGetableNode, ExportSpecifier, ExportSpecifierBase, ExportableNode, Expression, ExpressionStatement, ExpressionStatementBase, ExpressionWithTypeArguments, ExpressionWithTypeArgumentsBase, ExpressionableNode, ExpressionedNode, ExtendsClauseableNode, ExternalModuleReference, ExternalModuleReferenceBase, FalseLiteral, FalseLiteralBase, FileNotFoundError, FileReference, FileSystemRefreshResult, FileTextChanges, ForInStatement, ForInStatementBase, ForOfStatement, ForOfStatementBase, ForStatement, ForStatementBase, FunctionDeclaration, FunctionDeclarationBase, FunctionDeclarationOverloadBase, FunctionExpression, FunctionExpressionBase, FunctionLikeDeclaration, FunctionOrConstructorTypeNodeBase, FunctionOrConstructorTypeNodeBaseBase, FunctionTypeNode, FunctionTypeNodeBase, GeneratorableNode, GetAccessorDeclaration, GetAccessorDeclarationBase, HeritageClause, HeritageClauseableNode, Identifier, IdentifierBase, IfStatement, IfStatementBase, ImplementationLocation, ImplementsClauseableNode, ImportClause, ImportClauseBase, ImportDeclaration, ImportDeclarationBase, ImportEqualsDeclaration, ImportEqualsDeclarationBase, ImportExpression, ImportExpressionBase, ImportExpressionedNode, ImportSpecifier, ImportSpecifierBase, ImportTypeNode, ImportTypeNodeBase, IndentationText, IndexSignatureDeclaration, IndexSignatureDeclarationBase, IndexedAccessTypeNode, InferTypeNode, InitializerExpressionGetableNode, InitializerExpressionableNode, InterfaceDeclaration, InterfaceDeclarationBase, IntersectionTypeNode, InvalidOperationError, IterationStatement, JSDoc, JSDocAugmentsTag, JSDocAuthorTag, JSDocBase, JSDocCallbackTag, JSDocClassTag, JSDocDeprecatedTag, JSDocEnumTag, JSDocFunctionType, JSDocFunctionTypeBase, JSDocImplementsTag, JSDocLink, JSDocLinkCode, JSDocLinkPlain, JSDocMemberName, JSDocOverrideTag, JSDocParameterTag, JSDocParameterTagBase, JSDocPrivateTag, JSDocPropertyLikeTag, JSDocPropertyTag, JSDocPropertyTagBase, JSDocProtectedTag, JSDocPublicTag, JSDocReadonlyTag, JSDocReturnTag, JSDocReturnTagBase, JSDocSeeTag, JSDocSeeTagBase, JSDocSignature, JSDocTag, JSDocTagBase, JSDocTagInfo, JSDocTemplateTag, JSDocTemplateTagBase, JSDocText, JSDocThisTag, JSDocThisTagBase, JSDocType, JSDocTypeExpression, JSDocTypeExpressionableTag, JSDocTypeParameteredTag, JSDocTypeTag, JSDocTypedefTag, JSDocUnknownTag, JSDocableNode, JsxAttribute, JsxAttributeBase, JsxAttributedNode, JsxClosingElement, JsxClosingElementBase, JsxClosingFragment, JsxElement, JsxElementBase, JsxExpression, JsxExpressionBase, JsxFragment, JsxOpeningElement, JsxOpeningElementBase, JsxOpeningFragment, JsxSelfClosingElement, JsxSelfClosingElementBase, JsxSpreadAttribute, JsxSpreadAttributeBase, JsxTagNamedNode, JsxText, JsxTextBase, LabeledStatement, LabeledStatementBase, LanguageService, LeftHandSideExpression, LeftHandSideExpressionedNode, LiteralExpression, LiteralExpressionBase, LiteralLikeNode, LiteralTypeNode, ManipulationError, ManipulationSettingsContainer, MappedTypeNode, MemberExpression, MemoryEmitResult, MetaProperty, MetaPropertyBase, MethodDeclaration, MethodDeclarationBase, MethodDeclarationOverloadBase, MethodSignature, MethodSignatureBase, ModifierableNode, ModuleBlock, ModuleBlockBase, ModuleChildableNode, ModuleDeclaration, ModuleDeclarationBase, ModuleDeclarationKind, ModuleNamedNode, ModuledNode, NameableNode, NamedExports, NamedExportsBase, NamedImports, NamedImportsBase, NamedNode, NamedNodeBase, NamedTupleMember, NamedTupleMemberBase, NamespaceExport, NamespaceExportBase, NamespaceImport, NamespaceImportBase, NewExpression, NewExpressionBase, NoSubstitutionTemplateLiteral, NoSubstitutionTemplateLiteralBase, Node, NonNullExpression, NonNullExpressionBase, NotEmittedStatement, NotEmittedStatementBase, NotImplementedError, NotSupportedError, NullLiteral, NullLiteralBase, NumericLiteral, NumericLiteralBase, ObjectBindingPattern, ObjectDestructuringAssignment, ObjectDestructuringAssignmentBase, ObjectLiteralElement, ObjectLiteralExpression, ObjectLiteralExpressionBase, OmittedExpression, OmittedExpressionBase, OutputFile, OverloadableNode, OverrideableNode, ParameterDeclaration, ParameterDeclarationBase, ParameteredNode, ParenthesizedExpression, ParenthesizedExpressionBase, ParenthesizedTypeNode, PartiallyEmittedExpression, PartiallyEmittedExpressionBase, PathNotFoundError, PostfixUnaryExpression, PostfixUnaryExpressionBase, PrefixUnaryExpression, PrefixUnaryExpressionBase, PrimaryExpression, PrivateIdentifier, PrivateIdentifierBase, Program, Project, PropertyAccessExpression, PropertyAccessExpressionBase, PropertyAssignment, PropertyAssignmentBase, PropertyDeclaration, PropertyDeclarationBase, PropertyNamedNode, PropertySignature, PropertySignatureBase, QualifiedName, QuestionDotTokenableNode, QuestionTokenableNode, QuoteKind, ReadonlyableNode, RefactorEditInfo, ReferenceEntry, ReferenceFindableNode, ReferencedSymbol, ReferencedSymbolDefinitionInfo, RegularExpressionLiteral, RegularExpressionLiteralBase, RenameLocation, RenameableNode, ReturnStatement, ReturnStatementBase, ReturnTypedNode, Scope, ScopeableNode, ScopedNode, SetAccessorDeclaration, SetAccessorDeclarationBase, ShorthandPropertyAssignment, ShorthandPropertyAssignmentBase, Signature, SignaturedDeclaration, SourceFile, SourceFileBase, SpreadAssignment, SpreadAssignmentBase, SpreadElement, SpreadElementBase, Statement, StatementBase, StatementedNode, StaticableNode, StringLiteral, StringLiteralBase, Structure, StructureKind, SuperElementAccessExpression, SuperElementAccessExpressionBase, SuperExpression, SuperExpressionBase, SuperExpressionedNode, SuperPropertyAccessExpression, SuperPropertyAccessExpressionBase, SwitchStatement, SwitchStatementBase, Symbol, SymbolDisplayPart, SyntaxList, TaggedTemplateExpression, TemplateExpression, TemplateExpressionBase, TemplateHead, TemplateHeadBase, TemplateLiteralTypeNode, TemplateMiddle, TemplateMiddleBase, TemplateSpan, TemplateSpanBase, TemplateTail, TemplateTailBase, TextChange, TextInsertableNode, TextRange, TextSpan, ThisExpression, ThisExpressionBase, ThisTypeNode, ThrowStatement, ThrowStatementBase, TrueLiteral, TrueLiteralBase, TryStatement, TryStatementBase, TupleTypeNode, Type, TypeAliasDeclaration, TypeAliasDeclarationBase, TypeArgumentedNode, TypeAssertion, TypeAssertionBase, TypeChecker, TypeElement, TypeElementMemberedNode, TypeLiteralNode, TypeLiteralNodeBase, TypeNode, TypeOfExpression, TypeOfExpressionBase, TypeOperatorTypeNode, TypeParameter, TypeParameterDeclaration, TypeParameterDeclarationBase, TypeParameteredNode, TypePredicateNode, TypeQueryNode, TypeReferenceNode, TypedNode, UnaryExpression, UnaryExpressionedNode, UnionTypeNode, UnwrappableNode, UpdateExpression, VariableDeclaration, VariableDeclarationBase, VariableDeclarationKind, VariableDeclarationList, VariableDeclarationListBase, VariableStatement, VariableStatementBase, VoidExpression, VoidExpressionBase, WhileStatement, WhileStatementBase, WithStatement, WithStatementBase, Writers, YieldExpression, YieldExpressionBase, createWrappedNode, forEachStructureChild, getCompilerOptionsFromTsConfig, getScopeForNode, insertOverloads, printNode, setScopeForNode };
+export { AbstractableNode, AmbientableNode, ArgumentError, ArgumentNullOrWhitespaceError, ArgumentOutOfRangeError, ArgumentTypeError, ArgumentedNode, ArrayBindingPattern, ArrayDestructuringAssignment, ArrayDestructuringAssignmentBase, ArrayLiteralExpression, ArrayTypeNode, ArrowFunction, ArrowFunctionBase, AsExpression, AsExpressionBase, AssignmentExpression, AssignmentExpressionBase, AsyncableNode, AwaitExpression, AwaitExpressionBase, AwaitableNode, BaseError, BaseExpressionedNode, BigIntLiteral, BigIntLiteralBase, BinaryExpression, BinaryExpressionBase, BindingElement, BindingElementBase, BindingNamedNode, Block, BlockBase, BodiedNode, BodyableNode, BreakStatement, CallExpression, CallExpressionBase, CallSignatureDeclaration, CallSignatureDeclarationBase, CaseBlock, CaseBlockBase, CaseClause, CaseClauseBase, CatchClause, CatchClauseBase, ChildOrderableNode, ClassDeclaration, ClassDeclarationBase, ClassElement, ClassExpression, ClassExpressionBase, ClassLikeDeclarationBase, ClassLikeDeclarationBaseSpecific, ClassStaticBlockDeclaration, ClassStaticBlockDeclarationBase, CodeAction, CodeFixAction, CombinedCodeActions, CommaListExpression, CommaListExpressionBase, CommentClassElement, CommentEnumMember, CommentNodeKind, CommentObjectLiteralElement, CommentRange, CommentStatement, CommentTypeElement, CommonIdentifierBase, CompilerCommentClassElement, CompilerCommentEnumMember, CompilerCommentNode, CompilerCommentObjectLiteralElement, CompilerCommentStatement, CompilerCommentTypeElement, ComputedPropertyName, ComputedPropertyNameBase, ConditionalExpression, ConditionalExpressionBase, ConditionalTypeNode, ConstructSignatureDeclaration, ConstructSignatureDeclarationBase, ConstructorDeclaration, ConstructorDeclarationBase, ConstructorDeclarationOverloadBase, ConstructorTypeNode, ConstructorTypeNodeBase, ContinueStatement, DebuggerStatement, DebuggerStatementBase, DecoratableNode, Decorator, DecoratorBase, DefaultClause, DefaultClauseBase, DefinitionInfo, DeleteExpression, DeleteExpressionBase, Diagnostic, DiagnosticMessageChain, DiagnosticWithLocation, Directory, DirectoryEmitResult, DirectoryNotFoundError, DoStatement, DoStatementBase, DocumentSpan, DotDotDotTokenableNode, ElementAccessExpression, ElementAccessExpressionBase, EmitOutput, EmitResult, EmptyStatement, EmptyStatementBase, EnumDeclaration, EnumDeclarationBase, EnumMember, EnumMemberBase, ExclamationTokenableNode, ExportAssignment, ExportAssignmentBase, ExportDeclaration, ExportDeclarationBase, ExportGetableNode, ExportSpecifier, ExportSpecifierBase, ExportableNode, Expression, ExpressionStatement, ExpressionStatementBase, ExpressionWithTypeArguments, ExpressionWithTypeArgumentsBase, ExpressionableNode, ExpressionedNode, ExtendsClauseableNode, ExternalModuleReference, ExternalModuleReferenceBase, FalseLiteral, FalseLiteralBase, FileNotFoundError, FileReference, FileSystemRefreshResult, FileTextChanges, ForInStatement, ForInStatementBase, ForOfStatement, ForOfStatementBase, ForStatement, ForStatementBase, FunctionDeclaration, FunctionDeclarationBase, FunctionDeclarationOverloadBase, FunctionExpression, FunctionExpressionBase, FunctionLikeDeclaration, FunctionOrConstructorTypeNodeBase, FunctionOrConstructorTypeNodeBaseBase, FunctionTypeNode, FunctionTypeNodeBase, GeneratorableNode, GetAccessorDeclaration, GetAccessorDeclarationBase, HeritageClause, HeritageClauseableNode, Identifier, IdentifierBase, IfStatement, IfStatementBase, ImplementationLocation, ImplementsClauseableNode, ImportClause, ImportClauseBase, ImportDeclaration, ImportDeclarationBase, ImportEqualsDeclaration, ImportEqualsDeclarationBase, ImportExpression, ImportExpressionBase, ImportExpressionedNode, ImportSpecifier, ImportSpecifierBase, ImportTypeNode, ImportTypeNodeBase, IndentationText, IndexSignatureDeclaration, IndexSignatureDeclarationBase, IndexedAccessTypeNode, InferTypeNode, InitializerExpressionGetableNode, InitializerExpressionableNode, InterfaceDeclaration, InterfaceDeclarationBase, IntersectionTypeNode, InvalidOperationError, IterationStatement, JSDoc, JSDocAllType, JSDocAugmentsTag, JSDocAuthorTag, JSDocBase, JSDocCallbackTag, JSDocClassTag, JSDocDeprecatedTag, JSDocEnumTag, JSDocFunctionType, JSDocFunctionTypeBase, JSDocImplementsTag, JSDocLink, JSDocLinkCode, JSDocLinkPlain, JSDocMemberName, JSDocNameReference, JSDocNamepathType, JSDocNonNullableType, JSDocNullableType, JSDocOptionalType, JSDocOverrideTag, JSDocParameterTag, JSDocParameterTagBase, JSDocPrivateTag, JSDocPropertyLikeTag, JSDocPropertyTag, JSDocPropertyTagBase, JSDocProtectedTag, JSDocPublicTag, JSDocReadonlyTag, JSDocReturnTag, JSDocReturnTagBase, JSDocSeeTag, JSDocSeeTagBase, JSDocSignature, JSDocTag, JSDocTagBase, JSDocTagInfo, JSDocTemplateTag, JSDocTemplateTagBase, JSDocText, JSDocThisTag, JSDocThisTagBase, JSDocType, JSDocTypeExpression, JSDocTypeExpressionableTag, JSDocTypeLiteral, JSDocTypeParameteredTag, JSDocTypeTag, JSDocTypedefTag, JSDocUnknownTag, JSDocUnknownType, JSDocVariadicType, JSDocableNode, JsxAttribute, JsxAttributeBase, JsxAttributedNode, JsxClosingElement, JsxClosingElementBase, JsxClosingFragment, JsxElement, JsxElementBase, JsxExpression, JsxExpressionBase, JsxFragment, JsxOpeningElement, JsxOpeningElementBase, JsxOpeningFragment, JsxSelfClosingElement, JsxSelfClosingElementBase, JsxSpreadAttribute, JsxSpreadAttributeBase, JsxTagNamedNode, JsxText, JsxTextBase, LabeledStatement, LabeledStatementBase, LanguageService, LeftHandSideExpression, LeftHandSideExpressionedNode, LiteralExpression, LiteralExpressionBase, LiteralLikeNode, LiteralTypeNode, ManipulationError, ManipulationSettingsContainer, MappedTypeNode, MemberExpression, MemoryEmitResult, MetaProperty, MetaPropertyBase, MethodDeclaration, MethodDeclarationBase, MethodDeclarationOverloadBase, MethodSignature, MethodSignatureBase, ModifierableNode, ModuleBlock, ModuleBlockBase, ModuleChildableNode, ModuleDeclaration, ModuleDeclarationBase, ModuleDeclarationKind, ModuleNamedNode, ModuledNode, NameableNode, NamedExports, NamedExportsBase, NamedImports, NamedImportsBase, NamedNode, NamedNodeBase, NamedTupleMember, NamedTupleMemberBase, NamespaceExport, NamespaceExportBase, NamespaceImport, NamespaceImportBase, NewExpression, NewExpressionBase, NoSubstitutionTemplateLiteral, NoSubstitutionTemplateLiteralBase, Node, NonNullExpression, NonNullExpressionBase, NotEmittedStatement, NotEmittedStatementBase, NotImplementedError, NotSupportedError, NullLiteral, NullLiteralBase, NumericLiteral, NumericLiteralBase, ObjectBindingPattern, ObjectDestructuringAssignment, ObjectDestructuringAssignmentBase, ObjectLiteralElement, ObjectLiteralExpression, ObjectLiteralExpressionBase, OmittedExpression, OmittedExpressionBase, OutputFile, OverloadableNode, OverrideableNode, ParameterDeclaration, ParameterDeclarationBase, ParameteredNode, ParenthesizedExpression, ParenthesizedExpressionBase, ParenthesizedTypeNode, PartiallyEmittedExpression, PartiallyEmittedExpressionBase, PathNotFoundError, PostfixUnaryExpression, PostfixUnaryExpressionBase, PrefixUnaryExpression, PrefixUnaryExpressionBase, PrimaryExpression, PrivateIdentifier, PrivateIdentifierBase, Program, Project, PropertyAccessExpression, PropertyAccessExpressionBase, PropertyAssignment, PropertyAssignmentBase, PropertyDeclaration, PropertyDeclarationBase, PropertyNamedNode, PropertySignature, PropertySignatureBase, QualifiedName, QuestionDotTokenableNode, QuestionTokenableNode, QuoteKind, ReadonlyableNode, RefactorEditInfo, ReferenceEntry, ReferenceFindableNode, ReferencedSymbol, ReferencedSymbolDefinitionInfo, RegularExpressionLiteral, RegularExpressionLiteralBase, RenameLocation, RenameableNode, ReturnStatement, ReturnStatementBase, ReturnTypedNode, Scope, ScopeableNode, ScopedNode, SetAccessorDeclaration, SetAccessorDeclarationBase, ShorthandPropertyAssignment, ShorthandPropertyAssignmentBase, Signature, SignaturedDeclaration, SourceFile, SourceFileBase, SpreadAssignment, SpreadAssignmentBase, SpreadElement, SpreadElementBase, Statement, StatementBase, StatementedNode, StaticableNode, StringLiteral, StringLiteralBase, Structure, StructureKind, SuperElementAccessExpression, SuperElementAccessExpressionBase, SuperExpression, SuperExpressionBase, SuperExpressionedNode, SuperPropertyAccessExpression, SuperPropertyAccessExpressionBase, SwitchStatement, SwitchStatementBase, Symbol, SymbolDisplayPart, SyntaxList, TaggedTemplateExpression, TemplateExpression, TemplateExpressionBase, TemplateHead, TemplateHeadBase, TemplateLiteralTypeNode, TemplateMiddle, TemplateMiddleBase, TemplateSpan, TemplateSpanBase, TemplateTail, TemplateTailBase, TextChange, TextInsertableNode, TextRange, TextSpan, ThisExpression, ThisExpressionBase, ThisTypeNode, ThrowStatement, ThrowStatementBase, TrueLiteral, TrueLiteralBase, TryStatement, TryStatementBase, TupleTypeNode, Type, TypeAliasDeclaration, TypeAliasDeclarationBase, TypeArgumentedNode, TypeAssertion, TypeAssertionBase, TypeChecker, TypeElement, TypeElementMemberedNode, TypeLiteralNode, TypeLiteralNodeBase, TypeNode, TypeOfExpression, TypeOfExpressionBase, TypeOperatorTypeNode, TypeParameter, TypeParameterDeclaration, TypeParameterDeclarationBase, TypeParameteredNode, TypePredicateNode, TypeQueryNode, TypeReferenceNode, TypedNode, UnaryExpression, UnaryExpressionedNode, UnionTypeNode, UnwrappableNode, UpdateExpression, VariableDeclaration, VariableDeclarationBase, VariableDeclarationKind, VariableDeclarationList, VariableDeclarationListBase, VariableStatement, VariableStatementBase, VoidExpression, VoidExpressionBase, WhileStatement, WhileStatementBase, WithStatement, WithStatementBase, Writers, YieldExpression, YieldExpressionBase, createWrappedNode, forEachStructureChild, getCompilerOptionsFromTsConfig, getScopeForNode, insertOverloads, printNode, setScopeForNode };

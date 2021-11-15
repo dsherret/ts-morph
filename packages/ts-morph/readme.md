@@ -18,7 +18,7 @@ Formerly `ts-simple-ast`.
 1. Wraps the compiler API objects to provide helper methods for getting information and programmatically changing files.
 2. Allows falling back to the compiler API objects if necessary (ex. `classDeclaration.compilerNode` or `typeChecker.compilerObject`).
 3. All changes are kept in memory (including file and directory moves) until specifying to save to the underlying file system.
-4. Changes are made to the text and wrapped nodes can be held onto between manipulations.
+4. Changes are made to the text and wrapped nodes can be held on to between manipulations.
 
 ## Getting Started
 

@@ -78,6 +78,40 @@ function isIgnoredNode(node: TsNode) {
   switch (node.getName()) {
     // this would be implemented via a mixin
     case "Declaration":
+    // No node kind and implemented by CallExpression
+    case "ImportCall":
+    case "SuperCall":
+    case "CallChain":
+    // No node kind and implemented by PropertyAccessExpression
+    case "PropertyAccessChain":
+    // No node kind and implemented by ElementAccessExpression
+    case "ElementAccessChain":
+    // No node kind and implemented by NonNullExpression
+    case "NonNullChain":
+    // Not bothering since this is multiple files
+    case "Bundle":
+    case "InputFiles":
+    // Don't really do anything with Json
+    case "JsonSourceFile":
+    case "JsonMinusNumericLiteral":
+    case "JsonObjectExpressionStatement":
+    case "TsConfigSourceFile":
+    // Not bothering with unparsed
+    case "UnparsedPrepend":
+    case "UnparsedPrologue":
+    case "UnparsedSection":
+    case "UnparsedSource":
+    case "UnparsedSyntheticReference":
+    case "UnparsedTextLike":
+    // Seems implemented as ModuleDeclaration (but not really... perhaps this one could be wrapped somehow in the future)
+    case "JSDocNamespaceDeclaration":
+    // Handled in implementations
+    case "ClassLikeDeclarationBase":
+    case "DeclarationStatement":
+    case "FunctionOrConstructorTypeNodeBase":
+    case "NodeWithTypeArguments":
+    case "PropertyLikeDeclaration":
+    case "JSDocPropertyLikeTag":
       return true;
     default:
       return false;

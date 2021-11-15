@@ -68,6 +68,7 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.InferType]: compiler.InferTypeNode;
   [SyntaxKind.InterfaceDeclaration]: compiler.InterfaceDeclaration;
   [SyntaxKind.IntersectionType]: compiler.IntersectionTypeNode;
+  [SyntaxKind.JSDocAllType]: compiler.JSDocAllType;
   [SyntaxKind.JSDocAugmentsTag]: compiler.JSDocAugmentsTag;
   [SyntaxKind.JSDocAuthorTag]: compiler.JSDocAuthorTag;
   [SyntaxKind.JSDocCallbackTag]: compiler.JSDocCallbackTag;
@@ -80,6 +81,11 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.JSDocLinkCode]: compiler.JSDocLinkCode;
   [SyntaxKind.JSDocLinkPlain]: compiler.JSDocLinkPlain;
   [SyntaxKind.JSDocMemberName]: compiler.JSDocMemberName;
+  [SyntaxKind.JSDocNamepathType]: compiler.JSDocNamepathType;
+  [SyntaxKind.JSDocNameReference]: compiler.JSDocNameReference;
+  [SyntaxKind.JSDocNonNullableType]: compiler.JSDocNonNullableType;
+  [SyntaxKind.JSDocNullableType]: compiler.JSDocNullableType;
+  [SyntaxKind.JSDocOptionalType]: compiler.JSDocOptionalType;
   [SyntaxKind.JSDocOverrideTag]: compiler.JSDocOverrideTag;
   [SyntaxKind.JSDocParameterTag]: compiler.JSDocParameterTag;
   [SyntaxKind.JSDocPrivateTag]: compiler.JSDocPrivateTag;
@@ -95,8 +101,11 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.JSDocText]: compiler.JSDocText;
   [SyntaxKind.JSDocThisTag]: compiler.JSDocThisTag;
   [SyntaxKind.JSDocTypeExpression]: compiler.JSDocTypeExpression;
+  [SyntaxKind.JSDocTypeLiteral]: compiler.JSDocTypeLiteral;
   [SyntaxKind.JSDocTypeTag]: compiler.JSDocTypeTag;
   [SyntaxKind.JSDocTypedefTag]: compiler.JSDocTypedefTag;
+  [SyntaxKind.JSDocUnknownType]: compiler.JSDocUnknownType;
+  [SyntaxKind.JSDocVariadicType]: compiler.JSDocVariadicType;
   [SyntaxKind.JsxAttribute]: compiler.JsxAttribute;
   [SyntaxKind.JsxClosingElement]: compiler.JsxClosingElement;
   [SyntaxKind.JsxClosingFragment]: compiler.JsxClosingFragment;

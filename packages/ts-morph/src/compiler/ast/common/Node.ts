@@ -2987,6 +2987,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
   }
 
+  /**
+   * Gets if the node is a JSDocAllType.
+   * @param node - Node to check.
+   */
+  static isJSDocAllType(node: compiler.Node | undefined): node is compiler.JSDocAllType {
+    return node?.getKind() === SyntaxKind.JSDocAllType;
+  }
+
   /** Gets if the node is a JSDocAugmentsTag. */
   static readonly isJSDocAugmentsTag: (node: compiler.Node | undefined) => node is compiler.JSDocAugmentsTag = Node.is(SyntaxKind.JSDocAugmentsTag);
   /** Gets if the node is a JSDocAuthorTag. */
@@ -3011,6 +3019,47 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isJSDocLinkPlain: (node: compiler.Node | undefined) => node is compiler.JSDocLinkPlain = Node.is(SyntaxKind.JSDocLinkPlain);
   /** Gets if the node is a JSDocMemberName. */
   static readonly isJSDocMemberName: (node: compiler.Node | undefined) => node is compiler.JSDocMemberName = Node.is(SyntaxKind.JSDocMemberName);
+
+  /**
+   * Gets if the node is a JSDocNamepathType.
+   * @param node - Node to check.
+   */
+  static isJSDocNamepathType(node: compiler.Node | undefined): node is compiler.JSDocNamepathType {
+    return node?.getKind() === SyntaxKind.JSDocNamepathType;
+  }
+
+  /**
+   * Gets if the node is a JSDocNameReference.
+   * @param node - Node to check.
+   */
+  static isJSDocNameReference(node: compiler.Node | undefined): node is compiler.JSDocNameReference {
+    return node?.getKind() === SyntaxKind.JSDocNameReference;
+  }
+
+  /**
+   * Gets if the node is a JSDocNonNullableType.
+   * @param node - Node to check.
+   */
+  static isJSDocNonNullableType(node: compiler.Node | undefined): node is compiler.JSDocNonNullableType {
+    return node?.getKind() === SyntaxKind.JSDocNonNullableType;
+  }
+
+  /**
+   * Gets if the node is a JSDocNullableType.
+   * @param node - Node to check.
+   */
+  static isJSDocNullableType(node: compiler.Node | undefined): node is compiler.JSDocNullableType {
+    return node?.getKind() === SyntaxKind.JSDocNullableType;
+  }
+
+  /**
+   * Gets if the node is a JSDocOptionalType.
+   * @param node - Node to check.
+   */
+  static isJSDocOptionalType(node: compiler.Node | undefined): node is compiler.JSDocOptionalType {
+    return node?.getKind() === SyntaxKind.JSDocOptionalType;
+  }
+
   /** Gets if the node is a JSDocOverrideTag. */
   static readonly isJSDocOverrideTag: (node: compiler.Node | undefined) => node is compiler.JSDocOverrideTag = Node.is(SyntaxKind.JSDocOverrideTag);
   /** Gets if the node is a JSDocParameterTag. */
@@ -3093,8 +3142,16 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    */
   static isJSDocType(node: compiler.Node | undefined): node is compiler.JSDocType {
     switch (node?.getKind()) {
+      case SyntaxKind.JSDocAllType:
       case SyntaxKind.JSDocFunctionType:
+      case SyntaxKind.JSDocNamepathType:
+      case SyntaxKind.JSDocNonNullableType:
+      case SyntaxKind.JSDocNullableType:
+      case SyntaxKind.JSDocOptionalType:
       case SyntaxKind.JSDocSignature:
+      case SyntaxKind.JSDocTypeLiteral:
+      case SyntaxKind.JSDocUnknownType:
+      case SyntaxKind.JSDocVariadicType:
         return true;
       default:
         return false;
@@ -3122,6 +3179,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   }
 
   /**
+   * Gets if the node is a JSDocTypeLiteral.
+   * @param node - Node to check.
+   */
+  static isJSDocTypeLiteral(node: compiler.Node | undefined): node is compiler.JSDocTypeLiteral {
+    return node?.getKind() === SyntaxKind.JSDocTypeLiteral;
+  }
+
+  /**
    * Gets if the node is a JSDocTypeParameteredTag.
    * @param node - Node to check.
    */
@@ -3138,6 +3203,22 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    */
   static isJSDocUnknownTag(node: compiler.Node | undefined): node is compiler.JSDocUnknownTag {
     return node?.getKind() === SyntaxKind.JSDocTag;
+  }
+
+  /**
+   * Gets if the node is a JSDocUnknownType.
+   * @param node - Node to check.
+   */
+  static isJSDocUnknownType(node: compiler.Node | undefined): node is compiler.JSDocUnknownType {
+    return node?.getKind() === SyntaxKind.JSDocUnknownType;
+  }
+
+  /**
+   * Gets if the node is a JSDocVariadicType.
+   * @param node - Node to check.
+   */
+  static isJSDocVariadicType(node: compiler.Node | undefined): node is compiler.JSDocVariadicType {
+    return node?.getKind() === SyntaxKind.JSDocVariadicType;
   }
 
   /** Gets if the node is a JsxAttribute. */
@@ -4190,9 +4271,17 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.IndexedAccessType:
       case SyntaxKind.InferType:
       case SyntaxKind.IntersectionType:
+      case SyntaxKind.JSDocAllType:
       case SyntaxKind.JSDocFunctionType:
+      case SyntaxKind.JSDocNamepathType:
+      case SyntaxKind.JSDocNonNullableType:
+      case SyntaxKind.JSDocNullableType:
+      case SyntaxKind.JSDocOptionalType:
       case SyntaxKind.JSDocSignature:
       case SyntaxKind.JSDocTypeExpression:
+      case SyntaxKind.JSDocTypeLiteral:
+      case SyntaxKind.JSDocUnknownType:
+      case SyntaxKind.JSDocVariadicType:
       case SyntaxKind.LiteralType:
       case SyntaxKind.MappedType:
       case SyntaxKind.NamedTupleMember:
