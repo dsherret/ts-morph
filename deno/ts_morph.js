@@ -1,7 +1,7 @@
 import { errors, SyntaxKind, ts, NewLineKind, EmitHint, ScriptKind, ScriptTarget, SettingsContainer, KeyValueCache, getCompilerOptionsFromTsConfig as getCompilerOptionsFromTsConfig$1, ObjectUtils, StringUtils, getSyntaxKindName, ArrayUtils, nameof, EventContainer, FileUtils, Memoize, SymbolFlags, TypeFormatFlags, getEmitModuleResolutionKind, createHosts, ObjectFlags, TypeFlags, matchGlobs, ModuleResolutionKind, SortedKeyValueArray, LocaleStringComparer, WeakCache, DocumentRegistry, createModuleResolutionHost, TransactionalFileSystem, TsConfigResolver, CompilerOptionsContainer, InMemoryFileSystemHost, RealFileSystemHost, IterableUtils, runtime } from './common/mod.ts';
 export { CompilerOptionsContainer, DiagnosticCategory, EmitHint, InMemoryFileSystemHost, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, NodeFlags, ObjectFlags, ResolutionHosts, ScriptKind, ScriptTarget, SettingsContainer, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags, ts } from './common/mod.ts';
-import CodeBlockWriter from 'https://deno.land/x/code_block_writer@10.1.1/mod.ts';
-export { default as CodeBlockWriter } from 'https://deno.land/x/code_block_writer@10.1.1/mod.ts';
+import CodeBlockWriter from 'https://deno.land/x/code_block_writer@11.0.0/mod.ts';
+export { default as CodeBlockWriter } from 'https://deno.land/x/code_block_writer@11.0.0/mod.ts';
 
 class AdvancedIterator {
     constructor(iterator) {
@@ -18260,6 +18260,8 @@ class Directory {
                             return FileUtils.pathJoin(dir.getPath(), "index.ts");
                         return dir.getPath();
                     case ModuleResolutionKind.Classic:
+                    case ModuleResolutionKind.Node12:
+                    case ModuleResolutionKind.NodeNext:
                         return FileUtils.pathJoin(dir.getPath(), "index.ts");
                     default:
                         return errors.throwNotImplementedForNeverValueError(moduleResolution);
@@ -18273,6 +18275,8 @@ class Directory {
                             return filePath;
                         return filePath.replace(/\/index?(\.d\.ts|\.ts|\.js)$/i, "");
                     case ModuleResolutionKind.Classic:
+                    case ModuleResolutionKind.Node12:
+                    case ModuleResolutionKind.NodeNext:
                         return filePath;
                     default:
                         return errors.throwNotImplementedForNeverValueError(moduleResolution);

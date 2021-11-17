@@ -180,7 +180,7 @@ describe("LanguageService", () => {
   });
 
   describe(nameof<LanguageService>("getCodeFixesAtPosition"), () => {
-    it("should get code fixes at position for known code fixes convertToEs6Module (error code 80001)", () => {
+    it("should get code fixes at position for known code fixes convertToEsModule (error code 80001)", () => {
       const { sourceFile, project } = getInfoFromText("const moment = require('moment'); moment(); ", { filePath: "/file.ts" });
       const variableDeclaration = sourceFile.getVariableDeclarationOrThrow("moment");
       const results = project.getLanguageService().getCodeFixesAtPosition(
@@ -191,8 +191,8 @@ describe("LanguageService", () => {
       );
 
       expect(results).to.lengthOf(1);
-      expect(results[0]!.getFixName()).to.equal("convertToEs6Module");
-      expect(results[0]!.getDescription()).to.equal("Convert to ES6 module");
+      expect(results[0]!.getFixName()).to.equal("convertToEsModule");
+      expect(results[0]!.getDescription()).to.equal("Convert to ES module");
 
       expect(results[0]!.getFixId()).to.be.undefined;
       expect(results[0]!.getFixAllDescription()).to.be.undefined;
