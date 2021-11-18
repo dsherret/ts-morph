@@ -122,6 +122,30 @@ export class ImportSpecifier extends ImportSpecifierBase<ts.ImportSpecifier> {
     return this._getNodeFromCompilerNode(this.compilerNode.name);
   }
 
+  /** Gets if this is a type only import specifier. */
+  isTypeOnly() {
+    return this.compilerNode.isTypeOnly;
+  }
+
+  /** Sets if this is a type only import specifier. */
+  setIsTypeOnly(value: boolean) {
+    if (this.isTypeOnly() === value)
+      return this;
+    if (value) {
+      insertIntoParentTextRange({
+        insertPos: this.getStart(),
+        parent: this,
+        newText: `type `,
+      });
+    } else {
+      removeChildren({
+        children: [this.getFirstChildByKindOrThrow(ts.SyntaxKind.TypeKeyword)],
+        removeFollowingSpaces: true,
+      });
+    }
+    return this;
+  }
+
   /**
    * Gets the import declaration associated with this import specifier.
    */

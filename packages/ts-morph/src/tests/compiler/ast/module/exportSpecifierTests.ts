@@ -203,6 +203,23 @@ describe("ExportSpecifier", () => {
     });
   });
 
+  describe(nameof<ExportSpecifier>("setIsTypeOnly"), () => {
+    it("should set if type only", () => {
+      const { firstChild, sourceFile } = getInfoFromText<ExportDeclaration>("export { name } from './file';");
+      const namedExport = firstChild.getNamedExports()[0];
+      expect(namedExport.isTypeOnly()).to.be.false;
+      namedExport.setIsTypeOnly(true);
+      expect(namedExport.isTypeOnly()).to.be.true;
+      expect(sourceFile.getText()).to.equal("export { type name } from './file';");
+      namedExport.setIsTypeOnly(true);
+      expect(sourceFile.getText()).to.equal("export { type name } from './file';");
+      namedExport.setIsTypeOnly(false);
+      expect(sourceFile.getText()).to.equal("export { name } from './file';");
+      namedExport.setIsTypeOnly(false);
+      expect(sourceFile.getText()).to.equal("export { name } from './file';");
+    });
+  });
+
   function setupLocalTargetSymbolTest() {
     const project = getProject();
     const mainFile = project.createSourceFile("main.ts", `export { MyClass, OtherClass } from "./MyClass";`);

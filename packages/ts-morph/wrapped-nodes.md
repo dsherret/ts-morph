@@ -111,7 +111,9 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: isTypeOnly
     * :heavy_check_mark: exportClause
     * :heavy_check_mark: moduleSpecifier
+    * :x: assertClause
 * [ExportSpecifier](src/compiler/ast/module/ExportSpecifier.ts)
+    * :heavy_check_mark: isTypeOnly
     * :heavy_check_mark: propertyName
     * :heavy_check_mark: name
 * [Expression](src/compiler/ast/expression/Expression.ts)
@@ -164,6 +166,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [ImportDeclaration](src/compiler/ast/module/ImportDeclaration.ts)
     * :heavy_check_mark: importClause
     * :heavy_check_mark: moduleSpecifier
+    * :x: assertClause
 * [ImportEqualsDeclaration](src/compiler/ast/module/ImportEqualsDeclaration.ts)
     * :heavy_check_mark: name
     * :heavy_check_mark: isTypeOnly
@@ -172,6 +175,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [ImportSpecifier](src/compiler/ast/module/ImportSpecifier.ts)
     * :heavy_check_mark: propertyName
     * :heavy_check_mark: name
+    * :heavy_check_mark: isTypeOnly
 * [ImportTypeNode](src/compiler/ast/type/ImportTypeNode.ts)
     * :x: isTypeOf
     * :heavy_check_mark: argument
@@ -316,6 +320,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: nameType
     * :heavy_check_mark: questionToken
     * :heavy_check_mark: type
+    * :x: members
 * [MemberExpression](src/compiler/ast/expression/MemberExpression.ts)
 * [MetaProperty](src/compiler/ast/expression/MetaProperty.ts)
     * :heavy_check_mark: keywordToken
@@ -435,6 +440,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: isDeclarationFile
     * :x: hasNoDefaultLib
     * :heavy_check_mark: languageVersion
+    * :x: impliedNodeFormat
 * [SourceFile](src/compiler/ast/module/SourceFile.ts)
 * [SpreadAssignment](src/compiler/ast/expression/object/SpreadAssignment.ts)
     * :heavy_check_mark: expression
@@ -533,8 +539,10 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Not Exist
 
-**Total:** 21
+**Total:** 23
 
+* AssertClause
+* AssertEntry
 * JsxAttributes
 * JsxTagNamePropertyAccess
 * KeywordToken

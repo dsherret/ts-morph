@@ -7127,6 +7127,10 @@ export declare class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecif
   removeAliasWithRename(): this;
   /** Gets the alias identifier, if it exists. */
   getAliasNode(): Identifier | undefined;
+  /** Gets if this is a type only import specifier. */
+  isTypeOnly(): boolean;
+  /** Sets if this is a type only import specifier. */
+  setIsTypeOnly(value: boolean): this;
   /** Gets the export declaration associated with this export specifier. */
   getExportDeclaration(): ExportDeclaration;
   /** Gets the local target symbol of the export specifier or throws if it doesn't exist. */
@@ -7356,6 +7360,10 @@ export declare class ImportSpecifier extends ImportSpecifierBase<ts.ImportSpecif
   removeAliasWithRename(): this;
   /** Gets the alias identifier, if it exists. */
   getAliasNode(): Identifier | undefined;
+  /** Gets if this is a type only import specifier. */
+  isTypeOnly(): boolean;
+  /** Sets if this is a type only import specifier. */
+  setIsTypeOnly(value: boolean): this;
   /** Gets the import declaration associated with this import specifier. */
   getImportDeclaration(): ImportDeclaration;
   /** Remove the import specifier. */

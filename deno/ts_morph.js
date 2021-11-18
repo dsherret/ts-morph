@@ -11941,6 +11941,27 @@ class ExportSpecifier extends ExportSpecifierBase {
             return undefined;
         return this._getNodeFromCompilerNode(this.compilerNode.name);
     }
+    isTypeOnly() {
+        return this.compilerNode.isTypeOnly;
+    }
+    setIsTypeOnly(value) {
+        if (this.isTypeOnly() === value)
+            return this;
+        if (value) {
+            insertIntoParentTextRange({
+                insertPos: this.getStart(),
+                parent: this,
+                newText: `type `,
+            });
+        }
+        else {
+            removeChildren({
+                children: [this.getFirstChildByKindOrThrow(ts.SyntaxKind.TypeKeyword)],
+                removeFollowingSpaces: true,
+            });
+        }
+        return this;
+    }
     getExportDeclaration() {
         return this.getFirstAncestorByKindOrThrow(SyntaxKind.ExportDeclaration);
     }
@@ -12512,6 +12533,27 @@ class ImportSpecifier extends ImportSpecifierBase {
         if (this.compilerNode.propertyName == null)
             return undefined;
         return this._getNodeFromCompilerNode(this.compilerNode.name);
+    }
+    isTypeOnly() {
+        return this.compilerNode.isTypeOnly;
+    }
+    setIsTypeOnly(value) {
+        if (this.isTypeOnly() === value)
+            return this;
+        if (value) {
+            insertIntoParentTextRange({
+                insertPos: this.getStart(),
+                parent: this,
+                newText: `type `,
+            });
+        }
+        else {
+            removeChildren({
+                children: [this.getFirstChildByKindOrThrow(ts.SyntaxKind.TypeKeyword)],
+                removeFollowingSpaces: true,
+            });
+        }
+        return this;
     }
     getImportDeclaration() {
         return this.getFirstAncestorByKindOrThrow(SyntaxKind.ImportDeclaration);

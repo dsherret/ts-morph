@@ -1,4 +1,4 @@
-import { ArrayUtils, nameof } from "@ts-morph/common";
+import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ImportDeclaration, ImportSpecifier } from "../../../../compiler";
 import { ImportSpecifierStructure, StructureKind } from "../../../../structures";
@@ -174,6 +174,23 @@ describe("ImportSpecifier", () => {
       const { firstChild } = getInfoFromText<ImportDeclaration>(`import {name} from "./test";`);
       const namedImport = firstChild.getNamedImports()[0];
       expect(namedImport.getImportDeclaration()).to.equal(firstChild);
+    });
+  });
+
+  describe(nameof<ImportSpecifier>("setIsTypeOnly"), () => {
+    it("should set if type only", () => {
+      const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>("import { name } from './file';");
+      const namedImport = firstChild.getNamedImports()[0];
+      expect(namedImport.isTypeOnly()).to.be.false;
+      namedImport.setIsTypeOnly(true);
+      expect(namedImport.isTypeOnly()).to.be.true;
+      expect(sourceFile.getText()).to.equal("import { type name } from './file';");
+      namedImport.setIsTypeOnly(true);
+      expect(sourceFile.getText()).to.equal("import { type name } from './file';");
+      namedImport.setIsTypeOnly(false);
+      expect(sourceFile.getText()).to.equal("import { name } from './file';");
+      namedImport.setIsTypeOnly(false);
+      expect(sourceFile.getText()).to.equal("import { name } from './file';");
     });
   });
 
