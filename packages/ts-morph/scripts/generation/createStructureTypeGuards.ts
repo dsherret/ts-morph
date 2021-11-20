@@ -1,7 +1,7 @@
 /**
  * Code Manipulation - Create type guards on `Structure`
  * -------------------------------------------------
- * This modifies the Structure.ts file that is used
+ * This modifies the Structure.generated.ts file that is used
  * for doing type guards on structures.
  * -------------------------------------------------
  */
@@ -9,7 +9,7 @@ import { tsMorph } from "../deps.ts";
 import { Structure, TsMorphInspector } from "../inspectors/mod.ts";
 
 export function createStructureTypeGuards(inspector: TsMorphInspector) {
-  const structureTypeGuardsFile = inspector.getProject().getSourceFileOrThrow("Structure.ts");
+  const structureTypeGuardsFile = inspector.getProject().getSourceFileOrThrow("Structure.generated.ts");
   const typeGuardsExpr = structureTypeGuardsFile
     .getVariableDeclarationOrThrow("Structure")
     .getInitializerIfKindOrThrow(tsMorph.SyntaxKind.AsExpression)
@@ -86,9 +86,9 @@ function addNewMethods(typeGuardsExpr: tsMorph.ObjectLiteralExpression, structur
     typeParameters: getTypeParameters(info),
     statements: writer => {
       if (info.kinds.size === 1)
-        writer.write(`return structure.kind === StructureKind.${Array.from(info.kinds)[0]};`);
+        writer.write(`return (structure as any)?.kind === StructureKind.${Array.from(info.kinds)[0]};`);
       else {
-        writer.write("switch (structure.kind)").block(() => {
+        writer.write("switch ((structure as any)?.kind)").block(() => {
           for (const kind of info.kinds)
             writer.writeLine(`case StructureKind.${kind}:`);
 
@@ -102,14 +102,14 @@ function addNewMethods(typeGuardsExpr: tsMorph.ObjectLiteralExpression, structur
 
   function getTypeParameters(info: StructureInfo): tsMorph.OptionalKind<tsMorph.TypeParameterDeclarationStructure>[] {
     if (info.kind == null)
-      return [{ name: "T", constraint: "Structure & { kind: StructureKind; }" }];
+      return [{ name: "T" }];
     return [];
   }
 
   function getParameterType(info: StructureInfo) {
     if (info.kind == null)
       return "T";
-    return "Structure & { kind: StructureKind; }";
+    return "unknown";
   }
 
   function getReturnType(info: StructureInfo) {

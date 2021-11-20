@@ -10,7 +10,7 @@ export * from "./interface";
 export * from "./jsx";
 export * from "./module";
 export * from "./statement";
-export * from "./Structure";
+export * from "./Structure.generated";
 export * from "./StructureKind";
 export * from "./type";
 export * from "./types";

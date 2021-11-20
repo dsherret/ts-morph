@@ -1,4 +1,4 @@
-import { KindedStructure, Structure } from "../../Structure";
+import { KindedStructure, Structure } from "../../Structure.generated";
 import { StructureKind } from "../../StructureKind";
 import { ExpressionedNodeStructure } from "../expressioned";
 

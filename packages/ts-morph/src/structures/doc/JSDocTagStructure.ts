@@ -1,5 +1,5 @@
 import { WriterFunction } from "../../types";
-import { KindedStructure, Structure } from "../Structure";
+import { KindedStructure, Structure } from "../Structure.generated";
 import { StructureKind } from "../StructureKind";
 
 export interface JSDocTagStructure extends Structure, JSDocTagSpecificStructure {

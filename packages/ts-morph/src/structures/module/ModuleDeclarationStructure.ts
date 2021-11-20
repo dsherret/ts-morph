@@ -1,7 +1,7 @@
 import { ModuleDeclarationKind } from "../../compiler";
 import { AmbientableNodeStructure, ExportableNodeStructure, JSDocableNodeStructure, ModuleNamedNodeStructure } from "../base";
 import { StatementedNodeStructure } from "../statement";
-import { KindedStructure, Structure } from "../Structure";
+import { KindedStructure, Structure } from "../Structure.generated";
 import { StructureKind } from "../StructureKind";
 
 export interface ModuleDeclarationStructure

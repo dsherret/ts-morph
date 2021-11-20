@@ -1,5 +1,5 @@
 import { AmbientableNodeStructure, ExportableNodeStructure } from "../base";
-import { KindedStructure, Structure } from "../Structure";
+import { KindedStructure, Structure } from "../Structure.generated";
 import { StructureKind } from "../StructureKind";
 import { ClassLikeDeclarationBaseStructure } from "./base";
 

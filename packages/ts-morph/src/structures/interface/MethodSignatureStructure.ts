@@ -5,7 +5,7 @@ import {
   SignaturedDeclarationStructure,
   TypeParameteredNodeStructure,
 } from "../base";
-import { KindedStructure, Structure } from "../Structure";
+import { KindedStructure, Structure } from "../Structure.generated";
 import { StructureKind } from "../StructureKind";
 
 export interface MethodSignatureStructure

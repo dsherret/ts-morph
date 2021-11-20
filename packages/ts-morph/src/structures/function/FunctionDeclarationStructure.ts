@@ -8,7 +8,7 @@ import {
   SignaturedDeclarationStructure,
   TypeParameteredNodeStructure,
 } from "../base";
-import { KindedStructure, Structure } from "../Structure";
+import { KindedStructure, Structure } from "../Structure.generated";
 import { StructureKind } from "../StructureKind";
 import { OptionalKind } from "../types";
 import { FunctionLikeDeclarationStructure } from "./FunctionLikeDeclarationStructure";
