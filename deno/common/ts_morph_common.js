@@ -1008,54 +1008,6 @@ function getLibFiles() {
     return libFiles;
 }
 const libFolderInMemoryPath = "/node_modules/typescript/lib";
-/*! *****************************************************************************
-Copyright (c) Microsoft Corporation.
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
-AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
-LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
-OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-PERFORMANCE OF THIS SOFTWARE.
-***************************************************************************** */
-
-function __decorate(decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-}
-
-function __awaiter(thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-}
-
-function __await(v) {
-    return this instanceof __await ? (this.v = v, this) : new __await(v);
-}
-
-function __asyncGenerator(thisArg, _arguments, generator) {
-    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-    var g = generator.apply(thisArg, _arguments || []), i, q = [];
-    return i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i;
-    function verb(n) { if (g[n]) i[n] = function (v) { return new Promise(function (a, b) { q.push([n, v, a, b]) > 1 || resume(n, v); }); }; }
-    function resume(n, v) { try { step(g[n](v)); } catch (e) { settle(q[0][3], e); } }
-    function step(r) { r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r); }
-    function fulfill(value) { resume("next", value); }
-    function reject(value) { resume("throw", value); }
-    function settle(f, v) { if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]); }
-}
-
 const runtime = getRuntime();
 function getRuntime() {
     return new DenoRuntime();
@@ -1281,17 +1233,15 @@ class FileUtils {
         }
         return finalPaths;
     }
-    static readFileOrNotExists(fileSystem, filePath, encoding) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                return yield fileSystem.readFile(filePath, encoding);
-            }
-            catch (err) {
-                if (!FileUtils.isNotExistsError(err))
-                    throw err;
-                return false;
-            }
-        });
+    static async readFileOrNotExists(fileSystem, filePath, encoding) {
+        try {
+            return await fileSystem.readFile(filePath, encoding);
+        }
+        catch (err) {
+            if (!FileUtils.isNotExistsError(err))
+                throw err;
+            return false;
+        }
     }
     static readFileOrNotExistsSync(fileSystem, filePath, encoding) {
         try {
@@ -1609,15 +1559,13 @@ function* getDescendantDirectories(directoryPaths, dirPath) {
 
 const fs = runtime.fs;
 class RealFileSystemHost {
-    delete(path) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                yield fs.delete(path);
-            }
-            catch (err) {
-                throw this.getFileNotFoundErrorIfNecessary(err, path);
-            }
-        });
+    async delete(path) {
+        try {
+            await fs.delete(path);
+        }
+        catch (err) {
+            throw this.getFileNotFoundErrorIfNecessary(err, path);
+        }
     }
     deleteSync(path) {
         try {
@@ -1638,15 +1586,13 @@ class RealFileSystemHost {
             throw this.getDirectoryNotFoundErrorIfNecessary(err, dirPath);
         }
     }
-    readFile(filePath, encoding = "utf-8") {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                return yield fs.readFile(filePath, encoding);
-            }
-            catch (err) {
-                throw this.getFileNotFoundErrorIfNecessary(err, filePath);
-            }
-        });
+    async readFile(filePath, encoding = "utf-8") {
+        try {
+            return await fs.readFile(filePath, encoding);
+        }
+        catch (err) {
+            throw this.getFileNotFoundErrorIfNecessary(err, filePath);
+        }
     }
     readFileSync(filePath, encoding = "utf-8") {
         try {
@@ -1656,10 +1602,8 @@ class RealFileSystemHost {
             throw this.getFileNotFoundErrorIfNecessary(err, filePath);
         }
     }
-    writeFile(filePath, fileText) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return fs.writeFile(filePath, fileText);
-        });
+    async writeFile(filePath, fileText) {
+        return fs.writeFile(filePath, fileText);
     }
     writeFileSync(filePath, fileText) {
         fs.writeFileSync(filePath, fileText);
@@ -1924,26 +1868,22 @@ class TransactionalFileSystem {
         parentDir.operations.push(copyOperation);
         (destinationDir.getParent() || destinationDir).inboundOperations.push(copyOperation);
     }
-    flush() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const operations = this.getAndClearOperations();
-            for (const operation of operations)
-                yield this.executeOperation(operation);
-        });
+    async flush() {
+        const operations = this.getAndClearOperations();
+        for (const operation of operations)
+            await this.executeOperation(operation);
     }
     flushSync() {
         for (const operation of this.getAndClearOperations())
             this.executeOperationSync(operation);
     }
-    saveForDirectory(dirPath) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const dir = this.getOrCreateDirectory(dirPath);
-            this.throwIfHasExternalOperations(dir, "save directory");
-            const operations = this.getAndClearOperationsForDir(dir);
-            yield this.ensureDirectoryExists(dir);
-            for (const operation of operations)
-                yield this.executeOperation(operation);
-        });
+    async saveForDirectory(dirPath) {
+        const dir = this.getOrCreateDirectory(dirPath);
+        this.throwIfHasExternalOperations(dir, "save directory");
+        const operations = this.getAndClearOperationsForDir(dir);
+        await this.ensureDirectoryExists(dir);
+        for (const operation of operations)
+            await this.executeOperation(operation);
     }
     saveForDirectorySync(dirPath) {
         const dir = this.getOrCreateDirectory(dirPath);
@@ -1966,28 +1906,26 @@ class TransactionalFileSystem {
             return [...parentOperations, ...getAndClearParentMkDirOperations(parentDir.getParent(), parentDir)];
         }
     }
-    executeOperation(operation) {
-        return __awaiter(this, void 0, void 0, function* () {
-            switch (operation.kind) {
-                case "deleteDir":
-                    yield this.deleteSuppressNotFound(operation.dir.path);
-                    break;
-                case "deleteFile":
-                    yield this.deleteSuppressNotFound(operation.filePath);
-                    break;
-                case "move":
-                    yield this.fileSystem.move(operation.oldDir.path, operation.newDir.path);
-                    break;
-                case "copy":
-                    yield this.fileSystem.copy(operation.oldDir.path, operation.newDir.path);
-                    break;
-                case "mkdir":
-                    yield this.fileSystem.mkdir(operation.dir.path);
-                    break;
-                default:
-                    errors.throwNotImplementedForNeverValueError(operation);
-            }
-        });
+    async executeOperation(operation) {
+        switch (operation.kind) {
+            case "deleteDir":
+                await this.deleteSuppressNotFound(operation.dir.path);
+                break;
+            case "deleteFile":
+                await this.deleteSuppressNotFound(operation.filePath);
+                break;
+            case "move":
+                await this.fileSystem.move(operation.oldDir.path, operation.newDir.path);
+                break;
+            case "copy":
+                await this.fileSystem.copy(operation.oldDir.path, operation.newDir.path);
+                break;
+            case "mkdir":
+                await this.fileSystem.mkdir(operation.dir.path);
+                break;
+            default:
+                errors.throwNotImplementedForNeverValueError(operation);
+        }
     }
     executeOperationSync(operation) {
         switch (operation.kind) {
@@ -2018,13 +1956,11 @@ class TransactionalFileSystem {
         this.directories.clear();
         return operations;
     }
-    moveFileImmediately(oldFilePath, newFilePath, fileText) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.throwIfHasExternalOperations(this.getOrCreateParentDirectory(oldFilePath), "move file");
-            this.throwIfHasExternalOperations(this.getOrCreateParentDirectory(newFilePath), "move file");
-            yield this.writeFile(newFilePath, fileText);
-            yield this.deleteFileImmediately(oldFilePath);
-        });
+    async moveFileImmediately(oldFilePath, newFilePath, fileText) {
+        this.throwIfHasExternalOperations(this.getOrCreateParentDirectory(oldFilePath), "move file");
+        this.throwIfHasExternalOperations(this.getOrCreateParentDirectory(newFilePath), "move file");
+        await this.writeFile(newFilePath, fileText);
+        await this.deleteFileImmediately(oldFilePath);
     }
     moveFileImmediatelySync(oldFilePath, newFilePath, fileText) {
         this.throwIfHasExternalOperations(this.getOrCreateParentDirectory(oldFilePath), "move file");
@@ -2032,20 +1968,18 @@ class TransactionalFileSystem {
         this.writeFileSync(newFilePath, fileText);
         this.deleteFileImmediatelySync(oldFilePath);
     }
-    deleteFileImmediately(filePath) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const dir = this.getOrCreateParentDirectory(filePath);
-            this.throwIfHasExternalOperations(dir, "delete file");
-            dir.dequeueFileDelete(filePath);
-            this.pathCasingMaintainer.removePath(filePath);
-            try {
-                yield this.deleteSuppressNotFound(filePath);
-            }
-            catch (err) {
-                this.queueFileDelete(filePath);
-                throw err;
-            }
-        });
+    async deleteFileImmediately(filePath) {
+        const dir = this.getOrCreateParentDirectory(filePath);
+        this.throwIfHasExternalOperations(dir, "delete file");
+        dir.dequeueFileDelete(filePath);
+        this.pathCasingMaintainer.removePath(filePath);
+        try {
+            await this.deleteSuppressNotFound(filePath);
+        }
+        catch (err) {
+            this.queueFileDelete(filePath);
+            throw err;
+        }
     }
     deleteFileImmediatelySync(filePath) {
         const dir = this.getOrCreateParentDirectory(filePath);
@@ -2060,17 +1994,15 @@ class TransactionalFileSystem {
             throw err;
         }
     }
-    copyDirectoryImmediately(srcDirPath, destDirPath) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const srcDir = this.getOrCreateDirectory(srcDirPath);
-            const destDir = this.getOrCreateDirectory(destDirPath);
-            this.throwIfHasExternalOperations(srcDir, "copy directory");
-            this.throwIfHasExternalOperations(destDir, "copy directory");
-            const saveTask = Promise.all([this.saveForDirectory(srcDirPath), this.saveForDirectory(destDirPath)]);
-            this.removeDirAndSubDirs(srcDir);
-            yield saveTask;
-            yield this.fileSystem.copy(srcDirPath, destDirPath);
-        });
+    async copyDirectoryImmediately(srcDirPath, destDirPath) {
+        const srcDir = this.getOrCreateDirectory(srcDirPath);
+        const destDir = this.getOrCreateDirectory(destDirPath);
+        this.throwIfHasExternalOperations(srcDir, "copy directory");
+        this.throwIfHasExternalOperations(destDir, "copy directory");
+        const saveTask = Promise.all([this.saveForDirectory(srcDirPath), this.saveForDirectory(destDirPath)]);
+        this.removeDirAndSubDirs(srcDir);
+        await saveTask;
+        await this.fileSystem.copy(srcDirPath, destDirPath);
     }
     copyDirectoryImmediatelySync(srcDirPath, destDirPath) {
         const srcDir = this.getOrCreateDirectory(srcDirPath);
@@ -2082,18 +2014,16 @@ class TransactionalFileSystem {
         this.removeDirAndSubDirs(srcDir);
         this.fileSystem.copySync(srcDirPath, destDirPath);
     }
-    moveDirectoryImmediately(srcDirPath, destDirPath) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const srcDir = this.getOrCreateDirectory(srcDirPath);
-            const destDir = this.getOrCreateDirectory(destDirPath);
-            this.throwIfHasExternalOperations(srcDir, "move directory");
-            this.throwIfHasExternalOperations(destDir, "move directory");
-            const saveTask = Promise.all([this.saveForDirectory(srcDirPath), this.saveForDirectory(destDirPath)]);
-            this.removeDirAndSubDirs(srcDir);
-            this.pathCasingMaintainer.removePath(srcDirPath);
-            yield saveTask;
-            yield this.fileSystem.move(srcDirPath, destDirPath);
-        });
+    async moveDirectoryImmediately(srcDirPath, destDirPath) {
+        const srcDir = this.getOrCreateDirectory(srcDirPath);
+        const destDir = this.getOrCreateDirectory(destDirPath);
+        this.throwIfHasExternalOperations(srcDir, "move directory");
+        this.throwIfHasExternalOperations(destDir, "move directory");
+        const saveTask = Promise.all([this.saveForDirectory(srcDirPath), this.saveForDirectory(destDirPath)]);
+        this.removeDirAndSubDirs(srcDir);
+        this.pathCasingMaintainer.removePath(srcDirPath);
+        await saveTask;
+        await this.fileSystem.move(srcDirPath, destDirPath);
     }
     moveDirectoryImmediatelySync(srcDirPath, destDirPath) {
         const srcDir = this.getOrCreateDirectory(srcDirPath);
@@ -2106,27 +2036,23 @@ class TransactionalFileSystem {
         this.pathCasingMaintainer.removePath(srcDirPath);
         this.fileSystem.moveSync(srcDirPath, destDirPath);
     }
-    deleteDirectoryImmediately(dirPath) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const dir = this.getOrCreateDirectory(dirPath);
-            this.throwIfHasExternalOperations(dir, "delete");
-            this.removeDirAndSubDirs(dir);
-            this.pathCasingMaintainer.removePath(dirPath);
-            try {
-                yield this.deleteSuppressNotFound(dirPath);
-            }
-            catch (err) {
-                this.addBackDirAndSubDirs(dir);
-                this.queueDirectoryDelete(dirPath);
-            }
-        });
+    async deleteDirectoryImmediately(dirPath) {
+        const dir = this.getOrCreateDirectory(dirPath);
+        this.throwIfHasExternalOperations(dir, "delete");
+        this.removeDirAndSubDirs(dir);
+        this.pathCasingMaintainer.removePath(dirPath);
+        try {
+            await this.deleteSuppressNotFound(dirPath);
+        }
+        catch (err) {
+            this.addBackDirAndSubDirs(dir);
+            this.queueDirectoryDelete(dirPath);
+        }
     }
-    clearDirectoryImmediately(dirPath) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.deleteDirectoryImmediately(dirPath);
-            this.getOrCreateDirectory(dirPath).setIsDeleted(false);
-            yield this.fileSystem.mkdir(dirPath);
-        });
+    async clearDirectoryImmediately(dirPath) {
+        await this.deleteDirectoryImmediately(dirPath);
+        this.getOrCreateDirectory(dirPath).setIsDeleted(false);
+        await this.fileSystem.mkdir(dirPath);
     }
     clearDirectoryImmediatelySync(dirPath) {
         this.deleteDirectoryImmediatelySync(dirPath);
@@ -2146,16 +2072,14 @@ class TransactionalFileSystem {
             this.queueDirectoryDelete(dirPath);
         }
     }
-    deleteSuppressNotFound(path) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                yield this.fileSystem.delete(path);
-            }
-            catch (err) {
-                if (!FileUtils.isNotExistsError(err))
-                    throw err;
-            }
-        });
+    async deleteSuppressNotFound(path) {
+        try {
+            await this.fileSystem.delete(path);
+        }
+        catch (err) {
+            if (!FileUtils.isNotExistsError(err))
+                throw err;
+        }
     }
     deleteSuppressNotFoundSync(path) {
         try {
@@ -2230,15 +2154,13 @@ class TransactionalFileSystem {
         }
         return ArrayUtils.sortByProperty(Array.from(uniqueDirPaths.values()), e => e.path);
     }
-    glob(patterns) {
-        return __asyncGenerator(this, arguments, function* glob_1() {
-            const filePaths = yield __await(this.fileSystem.glob(patterns));
-            for (const filePath of filePaths) {
-                const standardizedFilePath = this.getStandardizedAbsolutePath(filePath);
-                if (!this.isPathQueuedForDeletion(standardizedFilePath))
-                    yield yield __await(standardizedFilePath);
-            }
-        });
+    async *glob(patterns) {
+        const filePaths = await this.fileSystem.glob(patterns);
+        for (const filePath of filePaths) {
+            const standardizedFilePath = this.getStandardizedAbsolutePath(filePath);
+            if (!this.isPathQueuedForDeletion(standardizedFilePath))
+                yield standardizedFilePath;
+        }
     }
     *globSync(patterns) {
         const filePaths = this.fileSystem.globSync(patterns);
@@ -2279,14 +2201,12 @@ class TransactionalFileSystem {
             return false;
         return FileUtils.readFileOrNotExistsSync(this.fileSystem, filePath, encoding);
     }
-    writeFile(filePath, fileText) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const parentDir = this.getOrCreateParentDirectory(filePath);
-            this.throwIfHasExternalOperations(parentDir, "write file");
-            parentDir.dequeueFileDelete(filePath);
-            yield this.ensureDirectoryExists(parentDir);
-            yield this.fileSystem.writeFile(filePath, fileText);
-        });
+    async writeFile(filePath, fileText) {
+        const parentDir = this.getOrCreateParentDirectory(filePath);
+        this.throwIfHasExternalOperations(parentDir, "write file");
+        parentDir.dequeueFileDelete(filePath);
+        await this.ensureDirectoryExists(parentDir);
+        await this.fileSystem.writeFile(filePath, fileText);
     }
     writeFileSync(filePath, fileText) {
         const parentDir = this.getOrCreateParentDirectory(filePath);
@@ -2380,13 +2300,11 @@ class TransactionalFileSystem {
             return errorText;
         }
     }
-    ensureDirectoryExists(dir) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (dir.isRootDir())
-                return;
-            this.removeMkDirOperationsForDir(dir);
-            yield this.fileSystem.mkdir(dir.path);
-        });
+    async ensureDirectoryExists(dir) {
+        if (dir.isRootDir())
+            return;
+        this.removeMkDirOperationsForDir(dir);
+        await this.fileSystem.mkdir(dir.path);
     }
     ensureDirectoryExistsSync(dir) {
         if (dir.isRootDir())
@@ -2618,6 +2536,28 @@ class CompilerOptionsContainer extends SettingsContainer {
     }
 }
 
+/*! *****************************************************************************
+Copyright (c) Microsoft Corporation.
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+PERFORMANCE OF THIS SOFTWARE.
+***************************************************************************** */
+
+function __decorate(decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+}
+
 function readDirectory(fileSystemWrapper, useCaseSensitiveFileNames, rootDir, extensions, excludes, includes, depth) {
     const currentDir = fileSystemWrapper.getCurrentDirectory();
     const directories = [];
@@ -2720,7 +2660,7 @@ class TsConfigResolver {
     parseJsonConfigFileContent() {
         this.host.clearDirectories();
         const result = ts.parseJsonConfigFileContent(this.getTsConfigFileJson(), this.host, this.tsConfigDirPath, undefined, this.tsConfigFilePath);
-        return Object.assign(Object.assign({}, result), { directories: this.host.getDirectories() });
+        return { ...result, directories: this.host.getDirectories() };
     }
     getTsConfigFileJson() {
         const text = this.fileSystem.readFileSync(this.tsConfigFilePath, this.encoding);

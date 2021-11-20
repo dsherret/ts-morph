@@ -226,13 +226,16 @@ class ManipulationSettingsContainer extends SettingsContainer {
             this._editorSettings = {};
             fillDefaultEditorSettings(this._editorSettings, this);
         }
-        return Object.assign({}, this._editorSettings);
+        return { ...this._editorSettings };
     }
     getFormatCodeSettings() {
         if (this._formatCodeSettings == null) {
-            this._formatCodeSettings = Object.assign(Object.assign({}, this.getEditorSettings()), { insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: this._settings.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces });
+            this._formatCodeSettings = {
+                ...this.getEditorSettings(),
+                insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: this._settings.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces,
+            };
         }
-        return Object.assign({}, this._formatCodeSettings);
+        return { ...this._formatCodeSettings };
     }
     getUserPreferences() {
         if (this._userPreferences == null) {
@@ -241,7 +244,7 @@ class ManipulationSettingsContainer extends SettingsContainer {
                 providePrefixAndSuffixTextForRename: this.getUsePrefixAndSuffixTextForRename(),
             };
         }
-        return Object.assign({}, this._userPreferences);
+        return { ...this._userPreferences };
     }
     getQuoteKind() {
         return this._settings.quoteKind;
@@ -3249,7 +3252,10 @@ class Node {
             if (stop)
                 return stopReturnValue;
             let skip = false;
-            const returnValue = cbNode(node, Object.assign(Object.assign({}, traversal), { skip: () => skip = true }));
+            const returnValue = cbNode(node, {
+                ...traversal,
+                skip: () => skip = true,
+            });
             if (returnValue)
                 return returnValue;
             if (stop)
@@ -3264,7 +3270,10 @@ class Node {
             if (stop)
                 return stopReturnValue;
             let skip = false;
-            const returnValue = cbNodeArray(nodes, Object.assign(Object.assign({}, traversal), { skip: () => skip = true }));
+            const returnValue = cbNodeArray(nodes, {
+                ...traversal,
+                skip: () => skip = true,
+            });
             if (returnValue)
                 return returnValue;
             if (skip)
@@ -13044,16 +13053,6 @@ function __decorate(decorators, target, key, desc) {
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 }
 
-function __awaiter(thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-}
-
 const SourceFileBase = ModuledNode(TextInsertableNode(StatementedNode(Node)));
 class SourceFile extends SourceFileBase {
     constructor(context, node) {
@@ -13166,12 +13165,10 @@ class SourceFile extends SourceFileBase {
             reference[0] = this.getChildSyntaxListOrThrow().getDescendantAtStartWithWidth(reference[0].getStart(), reference[0].getWidth());
         updateStringLiteralReferences(literalReferences);
     }
-    copyImmediately(filePath, options) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const newSourceFile = this.copy(filePath, options);
-            yield newSourceFile.save();
-            return newSourceFile;
-        });
+    async copyImmediately(filePath, options) {
+        const newSourceFile = this.copy(filePath, options);
+        await newSourceFile.save();
+        return newSourceFile;
     }
     copyImmediatelySync(filePath, options) {
         const newSourceFile = this.copy(filePath, options);
@@ -13232,20 +13229,18 @@ class SourceFile extends SourceFileBase {
             updateStringLiteralReferences(literalReferences);
         updateStringLiteralReferences(referencingLiterals.map(node => [node, this]));
     }
-    moveImmediately(filePath, options) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const oldFilePath = this.getFilePath();
-            const newFilePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(filePath, this.getDirectoryPath());
-            this.move(filePath, options);
-            if (oldFilePath !== newFilePath) {
-                yield this._context.fileSystemWrapper.moveFileImmediately(oldFilePath, newFilePath, this.getFullText());
-                this._isSaved = true;
-            }
-            else {
-                yield this.save();
-            }
-            return this;
-        });
+    async moveImmediately(filePath, options) {
+        const oldFilePath = this.getFilePath();
+        const newFilePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(filePath, this.getDirectoryPath());
+        this.move(filePath, options);
+        if (oldFilePath !== newFilePath) {
+            await this._context.fileSystemWrapper.moveFileImmediately(oldFilePath, newFilePath, this.getFullText());
+            this._isSaved = true;
+        }
+        else {
+            await this.save();
+        }
+        return this;
     }
     moveImmediatelySync(filePath, options) {
         const oldFilePath = this.getFilePath();
@@ -13265,23 +13260,19 @@ class SourceFile extends SourceFileBase {
         this.forget();
         this._context.fileSystemWrapper.queueFileDelete(filePath);
     }
-    deleteImmediately() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const filePath = this.getFilePath();
-            this.forget();
-            yield this._context.fileSystemWrapper.deleteFileImmediately(filePath);
-        });
+    async deleteImmediately() {
+        const filePath = this.getFilePath();
+        this.forget();
+        await this._context.fileSystemWrapper.deleteFileImmediately(filePath);
     }
     deleteImmediatelySync() {
         const filePath = this.getFilePath();
         this.forget();
         this._context.fileSystemWrapper.deleteFileImmediatelySync(filePath);
     }
-    save() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this._context.fileSystemWrapper.writeFile(this.getFilePath(), this._getTextForSave());
-            this._isSaved = true;
-        });
+    async save() {
+        await this._context.fileSystemWrapper.writeFile(this.getFilePath(), this._getTextForSave());
+        this._isSaved = true;
     }
     saveSync() {
         this._context.fileSystemWrapper.writeFileSync(this.getFilePath(), this._getTextForSave());
@@ -13408,10 +13399,10 @@ class SourceFile extends SourceFileBase {
         return this;
     }
     emit(options) {
-        return this._context.program.emit(Object.assign({ targetSourceFile: this }, options));
+        return this._context.program.emit({ targetSourceFile: this, ...options });
     }
     emitSync(options) {
-        return this._context.program.emitSync(Object.assign({ targetSourceFile: this }, options));
+        return this._context.program.emitSync({ targetSourceFile: this, ...options });
     }
     getEmitOutput(options = {}) {
         return this._context.languageService.getEmitOutput(this, options.emitOnlyDtsFiles || false);
@@ -13422,11 +13413,9 @@ class SourceFile extends SourceFileBase {
             newText: this._context.languageService.getFormattedDocumentText(this.getFilePath(), settings),
         });
     }
-    refreshFromFileSystem() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const fileReadResult = yield this._context.fileSystemWrapper.readFileOrNotExists(this.getFilePath(), this._context.getEncoding());
-            return this._refreshFromFileSystemInternal(fileReadResult);
-        });
+    async refreshFromFileSystem() {
+        const fileReadResult = await this._context.fileSystemWrapper.readFileOrNotExists(this.getFilePath(), this._context.getEncoding());
+        return this._refreshFromFileSystemInternal(fileReadResult);
     }
     refreshFromFileSystemSync() {
         const fileReadResult = this._context.fileSystemWrapper.readFileOrNotExistsSync(this.getFilePath(), this._context.getEncoding());
@@ -14186,7 +14175,7 @@ function ClassLikeDeclarationBaseSpecific(Base) {
         }
         insertMethods(index, structures) {
             const isAmbient = isNodeAmbientOrInAmbientContext(this);
-            structures = structures.map(s => (Object.assign({}, s)));
+            structures = structures.map(s => ({ ...s }));
             return insertChildren(this, {
                 index,
                 write: (writer, info) => {
@@ -14413,7 +14402,11 @@ function isSupportedClassMember(m) {
         || Node.isClassStaticBlockDeclaration(m);
 }
 function insertChildren(classDeclaration, opts) {
-    return insertIntoBracesOrSourceFileWithGetChildren(Object.assign({ getIndexedChildren: () => classDeclaration.getMembersWithComments(), parent: classDeclaration }, opts));
+    return insertIntoBracesOrSourceFileWithGetChildren({
+        getIndexedChildren: () => classDeclaration.getMembersWithComments(),
+        parent: classDeclaration,
+        ...opts,
+    });
 }
 
 const createBase$j = (ctor) => ModuleChildableNode(AmbientableNode(ExportableNode(ClassLikeDeclarationBase(ctor))));
@@ -14504,7 +14497,11 @@ class ClassDeclaration extends ClassDeclarationBase {
             constructSignatures: constructors.map(c => ({
                 kind: StructureKind.ConstructSignature,
                 docs: c.getJsDocs().map(d => d.getStructure()),
-                parameters: c.getParameters().map(p => (Object.assign(Object.assign({}, getExtractedInterfaceParameterStructure(p)), { scope: undefined, isReadonly: false }))),
+                parameters: c.getParameters().map(p => ({
+                    ...getExtractedInterfaceParameterStructure(p),
+                    scope: undefined,
+                    isReadonly: false,
+                })),
                 returnType: instanceName,
             })),
         };
@@ -14562,7 +14559,10 @@ function getExtractedInterfaceMethodStructure(method) {
     };
 }
 function getExtractedInterfaceParameterStructure(param) {
-    return Object.assign(Object.assign({}, param.getStructure()), { decorators: [] });
+    return {
+        ...param.getStructure(),
+        decorators: [],
+    };
 }
 
 const ClassExpressionBase = ClassLikeDeclarationBase(PrimaryExpression);
@@ -17512,22 +17512,23 @@ class Program {
     getTypeChecker() {
         return this._typeChecker;
     }
-    emit(options = {}) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (options.writeFile) {
-                const message = `Cannot specify a ${nameof(options, "writeFile")} option when emitting asynchrously. `
-                    + `Use ${nameof(this, "emitSync")}() instead.`;
-                throw new errors.InvalidOperationError(message);
-            }
-            const { fileSystemWrapper } = this._context;
-            const promises = [];
-            const emitResult = this._emit(Object.assign({ writeFile: (filePath, text, writeByteOrderMark) => {
-                    promises
-                        .push(fileSystemWrapper.writeFile(fileSystemWrapper.getStandardizedAbsolutePath(filePath), writeByteOrderMark ? "\uFEFF" + text : text));
-                } }, options));
-            yield Promise.all(promises);
-            return new EmitResult(this._context, emitResult);
+    async emit(options = {}) {
+        if (options.writeFile) {
+            const message = `Cannot specify a ${nameof(options, "writeFile")} option when emitting asynchrously. `
+                + `Use ${nameof(this, "emitSync")}() instead.`;
+            throw new errors.InvalidOperationError(message);
+        }
+        const { fileSystemWrapper } = this._context;
+        const promises = [];
+        const emitResult = this._emit({
+            writeFile: (filePath, text, writeByteOrderMark) => {
+                promises
+                    .push(fileSystemWrapper.writeFile(fileSystemWrapper.getStandardizedAbsolutePath(filePath), writeByteOrderMark ? "\uFEFF" + text : text));
+            },
+            ...options,
         });
+        await Promise.all(promises);
+        return new EmitResult(this._context, emitResult);
     }
     emitSync(options = {}) {
         return new EmitResult(this._context, this._emit(options));
@@ -17535,13 +17536,16 @@ class Program {
     emitToMemory(options = {}) {
         const sourceFiles = [];
         const { fileSystemWrapper } = this._context;
-        const emitResult = this._emit(Object.assign({ writeFile: (filePath, text, writeByteOrderMark) => {
+        const emitResult = this._emit({
+            writeFile: (filePath, text, writeByteOrderMark) => {
                 sourceFiles.push({
                     filePath: fileSystemWrapper.getStandardizedAbsolutePath(filePath),
                     text,
                     writeByteOrderMark: writeByteOrderMark || false,
                 });
-            } }, options));
+            },
+            ...options,
+        });
         return new MemoryEmitResult(this._context, emitResult, sourceFiles);
     }
     _emit(options = {}) {
@@ -18175,11 +18179,11 @@ class Directory {
     }
     addDirectoryAtPathIfExists(relativeOrAbsoluteDirPath, options = {}) {
         const dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(relativeOrAbsoluteDirPath, this.getPath());
-        return this._context.directoryCoordinator.addDirectoryAtPathIfExists(dirPath, Object.assign(Object.assign({}, options), { markInProject: this._isInProject() }));
+        return this._context.directoryCoordinator.addDirectoryAtPathIfExists(dirPath, { ...options, markInProject: this._isInProject() });
     }
     addDirectoryAtPath(relativeOrAbsoluteDirPath, options = {}) {
         const dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(relativeOrAbsoluteDirPath, this.getPath());
-        return this._context.directoryCoordinator.addDirectoryAtPath(dirPath, Object.assign(Object.assign({}, options), { markInProject: this._isInProject() }));
+        return this._context.directoryCoordinator.addDirectoryAtPath(dirPath, { ...options, markInProject: this._isInProject() });
     }
     createDirectory(relativeOrAbsoluteDirPath) {
         const dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(relativeOrAbsoluteDirPath, this.getPath());
@@ -18187,7 +18191,7 @@ class Directory {
     }
     createSourceFile(relativeFilePath, sourceFileText, options) {
         const filePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath());
-        return this._context.compilerFactory.createSourceFile(filePath, sourceFileText || "", Object.assign(Object.assign({}, (options || {})), { markInProject: this._isInProject() }));
+        return this._context.compilerFactory.createSourceFile(filePath, sourceFileText || "", { ...(options || {}), markInProject: this._isInProject() });
     }
     addSourceFileAtPathIfExists(relativeFilePath) {
         const filePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath());
@@ -18197,23 +18201,21 @@ class Directory {
         const filePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath());
         return this._context.directoryCoordinator.addSourceFileAtPath(filePath, { markInProject: this._isInProject() });
     }
-    emit(options = {}) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { fileSystemWrapper } = this._context;
-            const writeTasks = [];
-            const outputFilePaths = [];
-            const skippedFilePaths = [];
-            for (const emitResult of this._emitInternal(options)) {
-                if (isStandardizedFilePath(emitResult))
-                    skippedFilePaths.push(emitResult);
-                else {
-                    writeTasks.push(fileSystemWrapper.writeFile(emitResult.filePath, emitResult.fileText));
-                    outputFilePaths.push(emitResult.filePath);
-                }
+    async emit(options = {}) {
+        const { fileSystemWrapper } = this._context;
+        const writeTasks = [];
+        const outputFilePaths = [];
+        const skippedFilePaths = [];
+        for (const emitResult of this._emitInternal(options)) {
+            if (isStandardizedFilePath(emitResult))
+                skippedFilePaths.push(emitResult);
+            else {
+                writeTasks.push(fileSystemWrapper.writeFile(emitResult.filePath, emitResult.fileText));
+                outputFilePaths.push(emitResult.filePath);
             }
-            yield Promise.all(writeTasks);
-            return new DirectoryEmitResult(skippedFilePaths, outputFilePaths);
-        });
+        }
+        await Promise.all(writeTasks);
+        return new DirectoryEmitResult(skippedFilePaths, outputFilePaths);
     }
     emitSync(options = {}) {
         const { fileSystemWrapper } = this._context;
@@ -18278,22 +18280,20 @@ class Directory {
             fileSystem.queueCopyDirectory(originalPath, newPath);
         return this._copyInternal(newPath, options);
     }
-    copyImmediately(relativeOrAbsolutePath, options) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const fileSystem = this._context.fileSystemWrapper;
-            const originalPath = this.getPath();
-            const newPath = fileSystem.getStandardizedAbsolutePath(relativeOrAbsolutePath, originalPath);
-            if (originalPath === newPath) {
-                yield this.save();
-                return this;
-            }
-            options = getDirectoryCopyOptions(options);
-            const newDir = this._copyInternal(newPath, options);
-            if (options.includeUntrackedFiles)
-                yield fileSystem.copyDirectoryImmediately(originalPath, newPath);
-            yield newDir.save();
-            return newDir;
-        });
+    async copyImmediately(relativeOrAbsolutePath, options) {
+        const fileSystem = this._context.fileSystemWrapper;
+        const originalPath = this.getPath();
+        const newPath = fileSystem.getStandardizedAbsolutePath(relativeOrAbsolutePath, originalPath);
+        if (originalPath === newPath) {
+            await this.save();
+            return this;
+        }
+        options = getDirectoryCopyOptions(options);
+        const newDir = this._copyInternal(newPath, options);
+        if (options.includeUntrackedFiles)
+            await fileSystem.copyDirectoryImmediately(originalPath, newPath);
+        await newDir.save();
+        return newDir;
     }
     copyImmediatelySync(relativeOrAbsolutePath, options) {
         const fileSystem = this._context.fileSystemWrapper;
@@ -18343,20 +18343,18 @@ class Directory {
             return this;
         return this._moveInternal(newPath, options, () => fileSystem.queueMoveDirectory(originalPath, newPath));
     }
-    moveImmediately(relativeOrAbsolutePath, options) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const fileSystem = this._context.fileSystemWrapper;
-            const originalPath = this.getPath();
-            const newPath = fileSystem.getStandardizedAbsolutePath(relativeOrAbsolutePath, originalPath);
-            if (originalPath === newPath) {
-                yield this.save();
-                return this;
-            }
-            this._moveInternal(newPath, options);
-            yield fileSystem.moveDirectoryImmediately(originalPath, newPath);
-            yield this.save();
+    async moveImmediately(relativeOrAbsolutePath, options) {
+        const fileSystem = this._context.fileSystemWrapper;
+        const originalPath = this.getPath();
+        const newPath = fileSystem.getStandardizedAbsolutePath(relativeOrAbsolutePath, originalPath);
+        if (originalPath === newPath) {
+            await this.save();
             return this;
-        });
+        }
+        this._moveInternal(newPath, options);
+        await fileSystem.moveDirectoryImmediately(originalPath, newPath);
+        await this.save();
+        return this;
     }
     moveImmediatelySync(relativeOrAbsolutePath, options) {
         const fileSystem = this._context.fileSystemWrapper;
@@ -18413,12 +18411,10 @@ class Directory {
         this._context.fileSystemWrapper.queueDirectoryDelete(path);
         this._context.fileSystemWrapper.queueMkdir(path);
     }
-    clearImmediately() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const path = this.getPath();
-            this._deleteDescendants();
-            yield this._context.fileSystemWrapper.clearDirectoryImmediately(path);
-        });
+    async clearImmediately() {
+        const path = this.getPath();
+        this._deleteDescendants();
+        await this._context.fileSystemWrapper.clearDirectoryImmediately(path);
     }
     clearImmediatelySync() {
         const path = this.getPath();
@@ -18437,13 +18433,11 @@ class Directory {
         for (const dir of this.getDirectories())
             dir.delete();
     }
-    deleteImmediately() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { fileSystemWrapper } = this._context;
-            const path = this.getPath();
-            this.forget();
-            yield fileSystemWrapper.deleteDirectoryImmediately(path);
-        });
+    async deleteImmediately() {
+        const { fileSystemWrapper } = this._context;
+        const path = this.getPath();
+        this.forget();
+        await fileSystemWrapper.deleteDirectoryImmediately(path);
     }
     deleteImmediatelySync() {
         const { fileSystemWrapper } = this._context;
@@ -18466,12 +18460,10 @@ class Directory {
         this._context.compilerFactory.removeDirectoryFromCache(this.getPath());
         this.__context = undefined;
     }
-    save() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this._context.fileSystemWrapper.saveForDirectory(this.getPath());
-            const unsavedSourceFiles = this.getDescendantSourceFiles().filter(s => !s.isSaved());
-            yield Promise.all(unsavedSourceFiles.map(s => s.save()));
-        });
+    async save() {
+        await this._context.fileSystemWrapper.saveForDirectory(this.getPath());
+        const unsavedSourceFiles = this.getDescendantSourceFiles().filter(s => !s.isSaved());
+        await Promise.all(unsavedSourceFiles.map(s => s.save()));
     }
     saveSync() {
         this._context.fileSystemWrapper.saveForDirectorySync(this.getPath());
@@ -19986,7 +19978,10 @@ class Project {
         }
         function getCompilerOptions() {
             var _a;
-            return Object.assign(Object.assign({}, getTsConfigCompilerOptions()), ((_a = options.compilerOptions) !== null && _a !== void 0 ? _a : {}));
+            return {
+                ...getTsConfigCompilerOptions(),
+                ...((_a = options.compilerOptions) !== null && _a !== void 0 ? _a : {}),
+            };
         }
         function getTsConfigCompilerOptions() {
             var _a;
@@ -20025,10 +20020,10 @@ class Project {
         return Array.from(sourceFiles.values());
     }
     addDirectoryAtPathIfExists(dirPath, options = {}) {
-        return this._context.directoryCoordinator.addDirectoryAtPathIfExists(this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath), Object.assign(Object.assign({}, options), { markInProject: true }));
+        return this._context.directoryCoordinator.addDirectoryAtPathIfExists(this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath), { ...options, markInProject: true });
     }
     addDirectoryAtPath(dirPath, options = {}) {
-        return this._context.directoryCoordinator.addDirectoryAtPath(this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath), Object.assign(Object.assign({}, options), { markInProject: true }));
+        return this._context.directoryCoordinator.addDirectoryAtPath(this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath), { ...options, markInProject: true });
     }
     createDirectory(dirPath) {
         return this._context.directoryCoordinator.createDirectoryOrAddIfExists(this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath), { markInProject: true });
@@ -20085,7 +20080,7 @@ class Project {
         return addedSourceFiles;
     }
     createSourceFile(filePath, sourceFileText, options) {
-        return this._context.compilerFactory.createSourceFile(this._context.fileSystemWrapper.getStandardizedAbsolutePath(filePath), sourceFileText !== null && sourceFileText !== void 0 ? sourceFileText : "", Object.assign(Object.assign({}, (options !== null && options !== void 0 ? options : {})), { markInProject: true }));
+        return this._context.compilerFactory.createSourceFile(this._context.fileSystemWrapper.getStandardizedAbsolutePath(filePath), sourceFileText !== null && sourceFileText !== void 0 ? sourceFileText : "", { ...(options !== null && options !== void 0 ? options : {}), markInProject: true });
     }
     removeSourceFile(sourceFile) {
         const previouslyForgotten = sourceFile.wasForgotten();
@@ -20171,11 +20166,9 @@ class Project {
     getAmbientModules() {
         return this.getTypeChecker().getAmbientModules();
     }
-    save() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this._context.fileSystemWrapper.flush();
-            yield Promise.all(this._getUnsavedSourceFiles().map(f => f.save()));
-        });
+    async save() {
+        await this._context.fileSystemWrapper.flush();
+        await Promise.all(this._getUnsavedSourceFiles().map(f => f.save()));
     }
     saveSync() {
         this._context.fileSystemWrapper.flushSync();

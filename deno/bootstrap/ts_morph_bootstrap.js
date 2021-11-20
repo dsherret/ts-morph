@@ -23,36 +23,6 @@ function __decorate(decorators, target, key, desc) {
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 }
 
-function __awaiter(thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-}
-
-function __values(o) {
-    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
-    if (m) return m.call(o);
-    if (o && typeof o.length === "number") return {
-        next: function () {
-            if (o && i >= o.length) o = void 0;
-            return { value: o && o[i++], done: !o };
-        }
-    };
-    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
-}
-
-function __asyncValues(o) {
-    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-    var m = o[Symbol.asyncIterator], i;
-    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
-    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
-    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
-}
-
 class SourceFileCache {
     constructor(fileSystemWrapper, compilerOptions) {
         this.fileSystemWrapper = fileSystemWrapper;
@@ -82,14 +52,12 @@ class SourceFileCache {
     addLibFileToCacheByText(filePath, fileText, scriptKind) {
         return this.documentRegistry.createOrUpdateSourceFile(filePath, this.compilerOptions.get(), ts.ScriptSnapshot.fromString(fileText), scriptKind);
     }
-    addOrGetSourceFileFromFilePath(filePath, options) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let sourceFile = this.sourceFilesByFilePath.get(filePath);
-            if (sourceFile == null && (yield this.fileSystemWrapper.fileExists(filePath))) {
-                sourceFile = this.createSourceFileFromText(filePath, yield this.fileSystemWrapper.readFile(filePath, this.compilerOptions.getEncoding()), options);
-            }
-            return sourceFile;
-        });
+    async addOrGetSourceFileFromFilePath(filePath, options) {
+        let sourceFile = this.sourceFilesByFilePath.get(filePath);
+        if (sourceFile == null && await this.fileSystemWrapper.fileExists(filePath)) {
+            sourceFile = this.createSourceFileFromText(filePath, await this.fileSystemWrapper.readFile(filePath, this.compilerOptions.getEncoding()), options);
+        }
+        return sourceFile;
     }
     addOrGetSourceFileFromFilePathSync(filePath, options) {
         let sourceFile = this.sourceFilesByFilePath.get(filePath);
@@ -128,16 +96,14 @@ class SourceFileCache {
     }
 }
 
-function createProject(options = {}) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const { project, tsConfigResolver } = createProjectCommon(options);
-        if (tsConfigResolver != null && options.skipAddingFilesFromTsConfig !== true) {
-            yield project._addSourceFilesForTsConfigResolver(tsConfigResolver, project.compilerOptions.get());
-            if (!options.skipFileDependencyResolution)
-                project.resolveSourceFileDependencies();
-        }
-        return project;
-    });
+async function createProject(options = {}) {
+    const { project, tsConfigResolver } = createProjectCommon(options);
+    if (tsConfigResolver != null && options.skipAddingFilesFromTsConfig !== true) {
+        await project._addSourceFilesForTsConfigResolver(tsConfigResolver, project.compilerOptions.get());
+        if (!options.skipFileDependencyResolution)
+            project.resolveSourceFileDependencies();
+    }
+    return project;
 }
 function createProjectSync(options = {}) {
     const { project, tsConfigResolver } = createProjectCommon(options);
@@ -207,7 +173,10 @@ class Project {
         this.compilerHost = compilerHost;
         this.configFileParsingDiagnostics = (_a = tsConfigResolver === null || tsConfigResolver === void 0 ? void 0 : tsConfigResolver.getErrors()) !== null && _a !== void 0 ? _a : [];
         function getCompilerOptions() {
-            return Object.assign(Object.assign({}, getTsConfigCompilerOptions()), (options.compilerOptions || {}));
+            return {
+                ...getTsConfigCompilerOptions(),
+                ...(options.compilerOptions || {}),
+            };
         }
         function getTsConfigCompilerOptions() {
             if (tsConfigResolver == null)
@@ -215,13 +184,11 @@ class Project {
             return tsConfigResolver.getCompilerOptions();
         }
     }
-    addSourceFileAtPath(filePath, options) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const sourceFile = yield this.addSourceFileAtPathIfExists(filePath, options);
-            if (sourceFile == null)
-                throw new errors.FileNotFoundError(this._fileSystemWrapper.getStandardizedAbsolutePath(filePath));
-            return sourceFile;
-        });
+    async addSourceFileAtPath(filePath, options) {
+        const sourceFile = await this.addSourceFileAtPathIfExists(filePath, options);
+        if (sourceFile == null)
+            throw new errors.FileNotFoundError(this._fileSystemWrapper.getStandardizedAbsolutePath(filePath));
+        return sourceFile;
     }
     addSourceFileAtPathSync(filePath, options) {
         const sourceFile = this.addSourceFileAtPathIfExistsSync(filePath, options);
@@ -239,32 +206,19 @@ class Project {
             scriptKind: options && options.scriptKind,
         });
     }
-    addSourceFilesByPaths(fileGlobs) {
-        var e_1, _a;
-        return __awaiter(this, void 0, void 0, function* () {
-            if (typeof fileGlobs === "string")
-                fileGlobs = [fileGlobs];
-            const sourceFilePromises = [];
-            const sourceFiles = [];
-            try {
-                for (var _b = __asyncValues(this._fileSystemWrapper.glob(fileGlobs)), _c; _c = yield _b.next(), !_c.done;) {
-                    const filePath = _c.value;
-                    sourceFilePromises.push(this.addSourceFileAtPathIfExists(filePath).then(sourceFile => {
-                        if (sourceFile != null)
-                            sourceFiles.push(sourceFile);
-                    }));
-                }
-            }
-            catch (e_1_1) { e_1 = { error: e_1_1 }; }
-            finally {
-                try {
-                    if (_c && !_c.done && (_a = _b.return)) yield _a.call(_b);
-                }
-                finally { if (e_1) throw e_1.error; }
-            }
-            yield Promise.all(sourceFilePromises);
-            return sourceFiles;
-        });
+    async addSourceFilesByPaths(fileGlobs) {
+        if (typeof fileGlobs === "string")
+            fileGlobs = [fileGlobs];
+        const sourceFilePromises = [];
+        const sourceFiles = [];
+        for await (const filePath of this._fileSystemWrapper.glob(fileGlobs)) {
+            sourceFilePromises.push(this.addSourceFileAtPathIfExists(filePath).then(sourceFile => {
+                if (sourceFile != null)
+                    sourceFiles.push(sourceFile);
+            }));
+        }
+        await Promise.all(sourceFilePromises);
+        return sourceFiles;
     }
     addSourceFilesByPathsSync(fileGlobs) {
         if (typeof fileGlobs === "string")
@@ -318,20 +272,25 @@ class Project {
     resolveSourceFileDependencies() {
         this.createProgram();
     }
-    _addSourceFilesForTsConfigResolver(tsConfigResolver, compilerOptions) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const sourceFiles = [];
-            yield Promise.all(tsConfigResolver.getPaths(compilerOptions).filePaths
-                .map(p => this.addSourceFileAtPath(p).then(s => sourceFiles.push(s))));
-            return sourceFiles;
-        });
+    async _addSourceFilesForTsConfigResolver(tsConfigResolver, compilerOptions) {
+        const sourceFiles = [];
+        await Promise.all(tsConfigResolver.getPaths(compilerOptions).filePaths
+            .map(p => this.addSourceFileAtPath(p).then(s => sourceFiles.push(s))));
+        return sourceFiles;
     }
     _addSourceFilesForTsConfigResolverSync(tsConfigResolver, compilerOptions) {
         return tsConfigResolver.getPaths(compilerOptions).filePaths.map(p => this.addSourceFileAtPathSync(p));
     }
     createProgram(options) {
         const oldProgram = this._oldProgram;
-        const program = ts.createProgram(Object.assign({ rootNames: Array.from(this._sourceFileCache.getSourceFilePaths()), options: this.compilerOptions.get(), host: this.compilerHost, oldProgram, configFileParsingDiagnostics: this.configFileParsingDiagnostics }, options));
+        const program = ts.createProgram({
+            rootNames: Array.from(this._sourceFileCache.getSourceFilePaths()),
+            options: this.compilerOptions.get(),
+            host: this.compilerHost,
+            oldProgram,
+            configFileParsingDiagnostics: this.configFileParsingDiagnostics,
+            ...options,
+        });
         this._oldProgram = program;
         return program;
     }
