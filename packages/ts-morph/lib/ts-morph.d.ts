@@ -6988,7 +6988,7 @@ declare const AssertClauseBase: typeof Node;
 
 export declare class AssertClause extends AssertClauseBase<ts.AssertClause> {
   /** Sets the elements in the assert clause */
-  setElements(elements: OptionalKind<AssertEntryStructure>[]): this;
+  setElements(elements: ReadonlyArray<OptionalKind<AssertEntryStructure>>): this;
   /** Gets the elements of the assert clause. */
   getElements(): AssertEntry[];
   /** Removes the assert clause. */
@@ -7004,6 +7004,8 @@ declare const AssertEntryBase: Constructor<AssertionKeyNamedNode> & typeof Node;
 export declare class AssertEntry extends AssertEntryBase<ts.AssertEntry> {
   /** Gets the value of the assert entry. */
   getValue(): StringLiteral;
+  /** Sets the name and value. */
+  set(structure: Partial<AssertEntryStructure>): this;
   /** Gets the structure equivalent to this node. */
   getStructure(): AssertEntryStructure;
   /** @inheritdoc **/
@@ -7107,7 +7109,7 @@ export declare class ExportDeclaration extends ExportDeclarationBase<ts.ExportDe
   /** Changes the export declaration to namespace export. Removes all the named exports. */
   toNamespaceExport(): this;
   /** Sets the elements in an assert clause. */
-  setAssertElements(elements: OptionalKind<AssertEntryStructure>[] | undefined): this;
+  setAssertElements(elements: ReadonlyArray<OptionalKind<AssertEntryStructure>> | undefined): this;
   /** Gets the assert clause or returns undefined if it doesn't exist. */
   getAssertClause(): AssertClause | undefined;
   /**
@@ -7310,7 +7312,7 @@ export declare class ImportDeclaration extends ImportDeclarationBase<ts.ImportDe
   /** Gets the import clause or returns undefined if it doesn't exist. */
   getImportClause(): ImportClause | undefined;
   /** Sets the elements in an assert clause. */
-  setAssertElements(elements: OptionalKind<AssertEntryStructure>[] | undefined): this;
+  setAssertElements(elements: ReadonlyArray<OptionalKind<AssertEntryStructure>> | undefined): this;
   /** Gets the assert clause or returns undefined if it doesn't exist. */
   getAssertClause(): AssertClause | undefined;
   /**

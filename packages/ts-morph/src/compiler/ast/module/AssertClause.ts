@@ -6,7 +6,7 @@ import { Node } from "../common";
 export const AssertClauseBase = Node;
 export class AssertClause extends AssertClauseBase<ts.AssertClause> {
   /** Sets the elements in the assert clause */
-  setElements(elements: OptionalKind<AssertEntryStructure>[]) {
+  setElements(elements: ReadonlyArray<OptionalKind<AssertEntryStructure>>) {
     this.replaceWithText(writer => {
       const structurePrinter = this._context.structurePrinterFactory.forAssertEntry();
       structurePrinter.printAssertClause(writer, elements);

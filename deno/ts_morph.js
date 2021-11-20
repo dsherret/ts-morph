@@ -11636,6 +11636,12 @@ class AssertEntry extends AssertEntryBase {
     getValue() {
         return this._getNodeFromCompilerNode(this.compilerNode.value);
     }
+    set(structure) {
+        callBaseSet(AssertEntryBase.prototype, this, structure);
+        if (structure.value)
+            this.getValue().setLiteralValue(structure.value);
+        return this;
+    }
     getStructure() {
         return callBaseGetStructure(AssertEntryBase.prototype, this, {
             kind: StructureKind.AssertEntry,

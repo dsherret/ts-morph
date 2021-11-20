@@ -324,7 +324,7 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
   }
 
   /** Sets the elements in an assert clause. */
-  setAssertElements(elements: OptionalKind<AssertEntryStructure>[] | undefined) {
+  setAssertElements(elements: ReadonlyArray<OptionalKind<AssertEntryStructure>> | undefined) {
     let assertClause = this.getAssertClause();
     if (assertClause) {
       if (elements)
