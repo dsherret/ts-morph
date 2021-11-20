@@ -2,6 +2,17 @@
 
 View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only a high level overview of breaking changes.
 
+## Version 13
+
+- Upgraded to TS 4.5
+- Node type guards like `Node.isXNode(node)` have dropped the `Node` suffix because it was overly verbose—use `Node.isX(node)` now (ex. `Node.isAmbientable(node)`).
+- The already deprecated `WriterFunctions` and `TypeGuards` exports were removed. Use `Writers` and `Node`.
+- `FileSystemHost#readDirSync` returns directory entries instead of file and dir path names.
+
+## Version 12
+
+- Upgraded to TS 4.4
+
 ## Version 11
 
 - Upgraded to TS 4.3
