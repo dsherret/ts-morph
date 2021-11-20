@@ -44,6 +44,9 @@ import { VariableDeclaration } from "./variable";
 
 type WrappedToCompilerNodeType<T extends Node> = T["compilerNode"];
 
+export type AssertionKey = Identifier | StringLiteral;
+type _AssertionKeyTest = AssertTrue<IsExact<WrappedToCompilerNodeType<AssertionKey>, ts.AssertionKey>>;
+
 export type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName | PrivateIdentifier;
 type _PropertyNameTest = AssertTrue<IsExact<WrappedToCompilerNodeType<PropertyName>, ts.PropertyName>>;
 

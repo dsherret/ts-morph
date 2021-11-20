@@ -1,6 +1,13 @@
 import { ArrayUtils, errors, nameof, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, removeChildren, verifyAndGetIndex } from "../../../manipulation";
-import { ImportDeclarationSpecificStructure, ImportDeclarationStructure, ImportSpecifierStructure, OptionalKind, StructureKind } from "../../../structures";
+import {
+  AssertEntryStructure,
+  ImportDeclarationSpecificStructure,
+  ImportDeclarationStructure,
+  ImportSpecifierStructure,
+  OptionalKind,
+  StructureKind,
+} from "../../../structures";
 import { WriterFunction } from "../../../types";
 import { ModuleUtils } from "../../../utils";
 import { callBaseGetStructure } from "../callBaseGetStructure";
@@ -396,6 +403,33 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
     return this._getNodeFromCompilerNodeIfExists(this.compilerNode.importClause);
   }
 
+  /** Sets the elements in an assert clause. */
+  setAssertElements(elements: ReadonlyArray<OptionalKind<AssertEntryStructure>> | undefined) {
+    let assertClause = this.getAssertClause();
+    if (assertClause) {
+      if (elements)
+        assertClause.setElements(elements);
+      else
+        assertClause.remove();
+    } else if (elements) {
+      const printer = this._context.structurePrinterFactory.forAssertEntry();
+      const writer = this._context.createWriter();
+      writer.space();
+      printer.printAssertClause(writer, elements);
+      insertIntoParentTextRange({
+        parent: this,
+        newText: writer.toString(),
+        insertPos: this.getSourceFile().getFullText()[this.getEnd() - 1] === ";" ? this.getEnd() - 1 : this.getEnd(),
+      });
+    }
+    return this;
+  }
+
+  /** Gets the assert clause or returns undefined if it doesn't exist. */
+  getAssertClause() {
+    return this._getNodeFromCompilerNodeIfExists(this.compilerNode.assertClause);
+  }
+
   /**
    * Sets the node from a structure.
    * @param structure - Structure to set the node with.
@@ -427,6 +461,9 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
     if (structure.isTypeOnly != null)
       this.setIsTypeOnly(structure.isTypeOnly);
 
+    if (structure.hasOwnProperty(nameof(structure, "assertElements")))
+      this.setAssertElements(structure.assertElements);
+
     return this;
   }
 
@@ -436,6 +473,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
   getStructure(): ImportDeclarationStructure {
     const namespaceImport = this.getNamespaceImport();
     const defaultImport = this.getDefaultImport();
+    const assertClause = this.getAssertClause();
 
     return callBaseGetStructure<ImportDeclarationSpecificStructure>(ImportDeclarationBase.prototype, this, {
       kind: StructureKind.ImportDeclaration,
@@ -444,6 +482,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
       moduleSpecifier: this.getModuleSpecifier().getLiteralText(),
       namedImports: this.getNamedImports().map(node => node.getStructure()),
       namespaceImport: namespaceImport ? namespaceImport.getText() : undefined,
+      assertElements: assertClause ? assertClause.getElements().map(e => e.getStructure()) : undefined,
     });
   }
 }

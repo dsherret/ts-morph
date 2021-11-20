@@ -198,6 +198,11 @@ export class StructurePrinterFactory {
   }
 
   @Memoize
+  forAssertEntry(): structurePrinters.AssertEntryStructurePrinter {
+    return new structurePrinters.AssertEntryStructurePrinter(this);
+  }
+
+  @Memoize
   forExportAssignment(): structurePrinters.ExportAssignmentStructurePrinter {
     return new structurePrinters.ExportAssignmentStructurePrinter(this);
   }

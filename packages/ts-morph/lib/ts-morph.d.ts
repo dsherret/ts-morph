@@ -861,6 +861,7 @@ export declare class Writers {
 }
 
 export declare type WriterFunctionOrValue = string | number | WriterFunction;
+export declare type AssertionKey = Identifier | StringLiteral;
 export declare type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName | PrivateIdentifier;
 export declare type ModuleName = Identifier | StringLiteral;
 export declare type AccessorDeclaration = GetAccessorDeclaration | SetAccessorDeclaration;
@@ -1535,6 +1536,13 @@ export interface ModuledNode {
 }
 
 declare type ModuledNodeExtensionType = Node<ts.SourceFile | ts.ModuleDeclaration> & StatementedNode;
+export declare function AssertionKeyNamedNode<T extends Constructor<AssertionKeyNamedNodeExtensionType>>(Base: T): Constructor<AssertionKeyNamedNode> & T;
+
+export interface AssertionKeyNamedNode extends AssertionKeyNamedNodeSpecific, ReferenceFindableNode, RenameableNode {
+}
+
+declare type AssertionKeyNamedNodeExtensionType = NamedNodeBaseExtensionType<ts.AssertionKey>;
+export declare type AssertionKeyNamedNodeSpecific = NamedNodeSpecificBase<AssertionKey>;
 export declare function BindingNamedNode<T extends Constructor<BindingNamedNodeExtensionType>>(Base: T): Constructor<BindingNamedNode> & T;
 
 export interface BindingNamedNode extends BindingNamedNodeSpecific, ReferenceFindableNode, RenameableNode {
@@ -2983,6 +2991,10 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isArrowFunction: (node: Node | undefined) => node is ArrowFunction;
   /** Gets if the node is an AsExpression. */
   static readonly isAsExpression: (node: Node | undefined) => node is AsExpression;
+  /** Gets if the node is an AssertClause. */
+  static readonly isAssertClause: (node: Node | undefined) => node is AssertClause;
+  /** Gets if the node is an AssertEntry. */
+  static readonly isAssertEntry: (node: Node | undefined) => node is AssertEntry;
   /** Gets if the node is an AwaitExpression. */
   static readonly isAwaitExpression: (node: Node | undefined) => node is AwaitExpression;
   /** Gets if the node is a BigIntLiteral. */
@@ -3077,6 +3089,8 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isInferKeyword: (node: Node | undefined) => node is Node<ts.Token<SyntaxKind.InferKeyword>>;
   /** Gets if the node is a InterfaceDeclaration. */
   static readonly isInterfaceDeclaration: (node: Node | undefined) => node is InterfaceDeclaration;
+  /** Gets if the node is a JSDocAllType. */
+  static readonly isJSDocAllType: (node: Node | undefined) => node is JSDocAllType;
   /** Gets if the node is a JSDocAugmentsTag. */
   static readonly isJSDocAugmentsTag: (node: Node | undefined) => node is JSDocAugmentsTag;
   /** Gets if the node is a JSDocAuthorTag. */
@@ -3101,6 +3115,16 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isJSDocLinkPlain: (node: Node | undefined) => node is JSDocLinkPlain;
   /** Gets if the node is a JSDocMemberName. */
   static readonly isJSDocMemberName: (node: Node | undefined) => node is JSDocMemberName;
+  /** Gets if the node is a JSDocNamepathType. */
+  static readonly isJSDocNamepathType: (node: Node | undefined) => node is JSDocNamepathType;
+  /** Gets if the node is a JSDocNameReference. */
+  static readonly isJSDocNameReference: (node: Node | undefined) => node is JSDocNameReference;
+  /** Gets if the node is a JSDocNonNullableType. */
+  static readonly isJSDocNonNullableType: (node: Node | undefined) => node is JSDocNonNullableType;
+  /** Gets if the node is a JSDocNullableType. */
+  static readonly isJSDocNullableType: (node: Node | undefined) => node is JSDocNullableType;
+  /** Gets if the node is a JSDocOptionalType. */
+  static readonly isJSDocOptionalType: (node: Node | undefined) => node is JSDocOptionalType;
   /** Gets if the node is a JSDocOverrideTag. */
   static readonly isJSDocOverrideTag: (node: Node | undefined) => node is JSDocOverrideTag;
   /** Gets if the node is a JSDocParameterTag. */
@@ -3131,8 +3155,14 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isJSDocTypedefTag: (node: Node | undefined) => node is JSDocTypedefTag;
   /** Gets if the node is a JSDocTypeExpression. */
   static readonly isJSDocTypeExpression: (node: Node | undefined) => node is JSDocTypeExpression;
+  /** Gets if the node is a JSDocTypeLiteral. */
+  static readonly isJSDocTypeLiteral: (node: Node | undefined) => node is JSDocTypeLiteral;
   /** Gets if the node is a JSDocTypeTag. */
   static readonly isJSDocTypeTag: (node: Node | undefined) => node is JSDocTypeTag;
+  /** Gets if the node is a JSDocUnknownType. */
+  static readonly isJSDocUnknownType: (node: Node | undefined) => node is JSDocUnknownType;
+  /** Gets if the node is a JSDocVariadicType. */
+  static readonly isJSDocVariadicType: (node: Node | undefined) => node is JSDocVariadicType;
   /** Gets if the node is a JsxAttribute. */
   static readonly isJsxAttribute: (node: Node | undefined) => node is JsxAttribute;
   /** Gets if the node is a JsxClosingElement. */
@@ -3917,6 +3947,11 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    */
   static isArrayTypeNode(node: Node | undefined): node is ArrayTypeNode;
   /**
+   * Gets if the node is an AssertionKeyNamedNode.
+   * @param node - Node to check.
+   */
+  static isAssertionKeyNamedNode<T extends Node>(node: T | undefined): node is AssertionKeyNamedNode & AssertionKeyNamedNodeExtensionType & T;
+  /**
    * Gets if the node is an AsyncableNode.
    * @param node - Node to check.
    */
@@ -4112,36 +4147,6 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    */
   static isJSDocableNode<T extends Node>(node: T | undefined): node is JSDocableNode & JSDocableNodeExtensionType & T;
   /**
-   * Gets if the node is a JSDocAllType.
-   * @param node - Node to check.
-   */
-  static isJSDocAllType(node: Node | undefined): node is JSDocAllType;
-  /**
-   * Gets if the node is a JSDocNamepathType.
-   * @param node - Node to check.
-   */
-  static isJSDocNamepathType(node: Node | undefined): node is JSDocNamepathType;
-  /**
-   * Gets if the node is a JSDocNameReference.
-   * @param node - Node to check.
-   */
-  static isJSDocNameReference(node: Node | undefined): node is JSDocNameReference;
-  /**
-   * Gets if the node is a JSDocNonNullableType.
-   * @param node - Node to check.
-   */
-  static isJSDocNonNullableType(node: Node | undefined): node is JSDocNonNullableType;
-  /**
-   * Gets if the node is a JSDocNullableType.
-   * @param node - Node to check.
-   */
-  static isJSDocNullableType(node: Node | undefined): node is JSDocNullableType;
-  /**
-   * Gets if the node is a JSDocOptionalType.
-   * @param node - Node to check.
-   */
-  static isJSDocOptionalType(node: Node | undefined): node is JSDocOptionalType;
-  /**
    * Gets if the node is a JSDocPropertyLikeTag.
    * @param node - Node to check.
    */
@@ -4162,11 +4167,6 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    */
   static isJSDocTypeExpressionableTag<T extends Node>(node: T | undefined): node is JSDocTypeExpressionableTag & JSDocTypeExpressionableTagExtensionType & T;
   /**
-   * Gets if the node is a JSDocTypeLiteral.
-   * @param node - Node to check.
-   */
-  static isJSDocTypeLiteral(node: Node | undefined): node is JSDocTypeLiteral;
-  /**
    * Gets if the node is a JSDocTypeParameteredTag.
    * @param node - Node to check.
    */
@@ -4176,16 +4176,6 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * @param node - Node to check.
    */
   static isJSDocUnknownTag(node: Node | undefined): node is JSDocUnknownTag;
-  /**
-   * Gets if the node is a JSDocUnknownType.
-   * @param node - Node to check.
-   */
-  static isJSDocUnknownType(node: Node | undefined): node is JSDocUnknownType;
-  /**
-   * Gets if the node is a JSDocVariadicType.
-   * @param node - Node to check.
-   */
-  static isJSDocVariadicType(node: Node | undefined): node is JSDocVariadicType;
   /**
    * Gets if the node is a JsxAttributedNode.
    * @param node - Node to check.
@@ -6507,6 +6497,8 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.ArrayType]: ArrayTypeNode;
   [SyntaxKind.ArrowFunction]: ArrowFunction;
   [SyntaxKind.AsExpression]: AsExpression;
+  [SyntaxKind.AssertClause]: AssertClause;
+  [SyntaxKind.AssertEntry]: AssertEntry;
   [SyntaxKind.AwaitExpression]: AwaitExpression;
   [SyntaxKind.BigIntLiteral]: BigIntLiteral;
   [SyntaxKind.BindingElement]: BindingElement;
@@ -6992,6 +6984,36 @@ export declare class TemplateTail extends TemplateTailBase<ts.TemplateTail> {
   getParentOrThrow(): NonNullable<NodeParentType<ts.TemplateTail>>;
 }
 
+declare const AssertClauseBase: typeof Node;
+
+export declare class AssertClause extends AssertClauseBase<ts.AssertClause> {
+  /** Sets the elements in the assert clause */
+  setElements(elements: ReadonlyArray<OptionalKind<AssertEntryStructure>>): this;
+  /** Gets the elements of the assert clause. */
+  getElements(): AssertEntry[];
+  /** Removes the assert clause. */
+  remove(): void;
+  /** @inheritdoc **/
+  getParent(): NodeParentType<ts.AssertClause>;
+  /** @inheritdoc **/
+  getParentOrThrow(): NonNullable<NodeParentType<ts.AssertClause>>;
+}
+
+declare const AssertEntryBase: Constructor<AssertionKeyNamedNode> & typeof Node;
+
+export declare class AssertEntry extends AssertEntryBase<ts.AssertEntry> {
+  /** Gets the value of the assert entry. */
+  getValue(): StringLiteral;
+  /** Sets the name and value. */
+  set(structure: Partial<AssertEntryStructure>): this;
+  /** Gets the structure equivalent to this node. */
+  getStructure(): AssertEntryStructure;
+  /** @inheritdoc **/
+  getParent(): NodeParentType<ts.AssertEntry>;
+  /** @inheritdoc **/
+  getParentOrThrow(): NonNullable<NodeParentType<ts.AssertEntry>>;
+}
+
 declare const ExportAssignmentBase: Constructor<ExpressionedNode> & typeof Statement;
 
 export declare class ExportAssignment extends ExportAssignmentBase<ts.ExportAssignment> {
@@ -7086,6 +7108,10 @@ export declare class ExportDeclaration extends ExportDeclarationBase<ts.ExportDe
   getNamedExports(): ExportSpecifier[];
   /** Changes the export declaration to namespace export. Removes all the named exports. */
   toNamespaceExport(): this;
+  /** Sets the elements in an assert clause. */
+  setAssertElements(elements: ReadonlyArray<OptionalKind<AssertEntryStructure>> | undefined): this;
+  /** Gets the assert clause or returns undefined if it doesn't exist. */
+  getAssertClause(): AssertClause | undefined;
   /**
    * Sets the node from a structure.
    * @param structure - Structure to set the node with.
@@ -7285,6 +7311,10 @@ export declare class ImportDeclaration extends ImportDeclarationBase<ts.ImportDe
   getImportClauseOrThrow(): ImportClause;
   /** Gets the import clause or returns undefined if it doesn't exist. */
   getImportClause(): ImportClause | undefined;
+  /** Sets the elements in an assert clause. */
+  setAssertElements(elements: ReadonlyArray<OptionalKind<AssertEntryStructure>> | undefined): this;
+  /** Gets the assert clause or returns undefined if it doesn't exist. */
+  getAssertClause(): AssertClause | undefined;
   /**
    * Sets the node from a structure.
    * @param structure - Structure to set the node with.
@@ -10168,7 +10198,7 @@ export declare type TypeElementMemberStructures = CallSignatureDeclarationStruct
 export declare type InterfaceMemberStructures = TypeElementMemberStructures;
 export declare type ObjectLiteralExpressionPropertyStructures = PropertyAssignmentStructure | ShorthandPropertyAssignmentStructure | SpreadAssignmentStructure | GetAccessorDeclarationStructure | SetAccessorDeclarationStructure | MethodDeclarationStructure;
 export declare type JsxStructures = JsxAttributeStructure | JsxSpreadAttributeStructure | JsxElementStructure | JsxSelfClosingElementStructure;
-export declare type Structures = StatementStructures | ClassMemberStructures | EnumMemberStructure | InterfaceMemberStructures | ObjectLiteralExpressionPropertyStructures | JsxStructures | FunctionDeclarationOverloadStructure | MethodDeclarationOverloadStructure | ConstructorDeclarationOverloadStructure | ParameterDeclarationStructure | TypeParameterDeclarationStructure | SourceFileStructure | ExportSpecifierStructure | ImportSpecifierStructure | VariableDeclarationStructure | JSDocStructure | JSDocTagStructure | DecoratorStructure;
+export declare type Structures = AssertEntryStructure | StatementStructures | ClassMemberStructures | EnumMemberStructure | InterfaceMemberStructures | ObjectLiteralExpressionPropertyStructures | JsxStructures | FunctionDeclarationOverloadStructure | MethodDeclarationOverloadStructure | ConstructorDeclarationOverloadStructure | ParameterDeclarationStructure | TypeParameterDeclarationStructure | SourceFileStructure | ExportSpecifierStructure | ImportSpecifierStructure | VariableDeclarationStructure | JSDocStructure | JSDocTagStructure | DecoratorStructure;
 
 export interface AbstractableNodeStructure {
   isAbstract?: boolean;
@@ -10217,6 +10247,10 @@ export interface InitializerExpressionableNodeStructure {
 
 export interface JSDocableNodeStructure {
   docs?: (OptionalKind<JSDocStructure> | string)[];
+}
+
+export interface AssertionKeyNamedNodeStructure {
+  name: string;
 }
 
 export interface BindingNamedNodeStructure {
@@ -10545,6 +10579,14 @@ interface JsxSpreadAttributeSpecificStructure extends KindedStructure<StructureK
   expression: string;
 }
 
+export interface AssertEntryStructure extends Structure, AssertEntryStructureSpecificStructure, AssertionKeyNamedNodeStructure {
+}
+
+interface AssertEntryStructureSpecificStructure extends KindedStructure<StructureKind.AssertEntry> {
+  /** String literal value. */
+  value: string;
+}
+
 export interface ExportAssignmentStructure extends Structure, ExportAssignmentSpecificStructure {
 }
 
@@ -10561,6 +10603,7 @@ interface ExportDeclarationSpecificStructure extends KindedStructure<StructureKi
   namespaceExport?: string;
   namedExports?: (string | OptionalKind<ExportSpecifierStructure> | WriterFunction)[] | WriterFunction;
   moduleSpecifier?: string;
+  assertElements?: OptionalKind<AssertEntryStructure>[] | undefined;
 }
 
 export interface ExportSpecifierStructure extends Structure, ExportSpecifierSpecificStructure {
@@ -10580,6 +10623,7 @@ interface ImportDeclarationSpecificStructure extends KindedStructure<StructureKi
   namespaceImport?: string;
   namedImports?: (OptionalKind<ImportSpecifierStructure> | string | WriterFunction)[] | WriterFunction;
   moduleSpecifier: string;
+  assertElements?: OptionalKind<AssertEntryStructure>[] | undefined;
 }
 
 export interface ImportSpecifierStructure extends Structure, ImportSpecifierSpecificStructure {
@@ -10642,86 +10686,94 @@ export declare const Structure: {
       readonly hasName: <T extends Structure>(structure: T) => structure is T & {
           name: string;
       };
+      /** Gets if the provided structure is a AssertEntryStructure. */
+      readonly isAssertEntry: (structure: Structure & {
+          kind: StructureKind;
+      }) => structure is AssertEntryStructure;
+      /** Gets if the provided structure is a AssertionKeyNamedNodeStructure. */
+      readonly isAssertionKeyNamed: <T_1 extends Structure & {
+          kind: StructureKind;
+      }>(structure: T_1) => structure is T_1 & AssertionKeyNamedNodeStructure;
       /** Gets if the provided structure is a CallSignatureDeclarationStructure. */
       readonly isCallSignature: (structure: Structure & {
           kind: StructureKind;
       }) => structure is CallSignatureDeclarationStructure;
       /** Gets if the provided structure is a JSDocableNodeStructure. */
-      readonly isJSDocable: <T_1 extends Structure & {
+      readonly isJSDocable: <T_2 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_1) => structure is T_1 & JSDocableNodeStructure;
+      }>(structure: T_2) => structure is T_2 & JSDocableNodeStructure;
       /** Gets if the provided structure is a SignaturedDeclarationStructure. */
-      readonly isSignatured: <T_2 extends Structure & {
+      readonly isSignatured: <T_3 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_2) => structure is T_2 & SignaturedDeclarationStructure;
+      }>(structure: T_3) => structure is T_3 & SignaturedDeclarationStructure;
       /** Gets if the provided structure is a ParameteredNodeStructure. */
-      readonly isParametered: <T_3 extends Structure & {
+      readonly isParametered: <T_4 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_3) => structure is T_3 & ParameteredNodeStructure;
+      }>(structure: T_4) => structure is T_4 & ParameteredNodeStructure;
       /** Gets if the provided structure is a ReturnTypedNodeStructure. */
-      readonly isReturnTyped: <T_4 extends Structure & {
+      readonly isReturnTyped: <T_5 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_4) => structure is T_4 & ReturnTypedNodeStructure;
+      }>(structure: T_5) => structure is T_5 & ReturnTypedNodeStructure;
       /** Gets if the provided structure is a TypeParameteredNodeStructure. */
-      readonly isTypeParametered: <T_5 extends Structure & {
+      readonly isTypeParametered: <T_6 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_5) => structure is T_5 & TypeParameteredNodeStructure;
+      }>(structure: T_6) => structure is T_6 & TypeParameteredNodeStructure;
       /** Gets if the provided structure is a ClassDeclarationStructure. */
       readonly isClass: (structure: Structure & {
           kind: StructureKind;
       }) => structure is ClassDeclarationStructure;
       /** Gets if the provided structure is a ClassLikeDeclarationBaseStructure. */
-      readonly isClassLikeDeclarationBase: <T_6 extends Structure & {
+      readonly isClassLikeDeclarationBase: <T_7 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_6) => structure is T_6 & ClassLikeDeclarationBaseStructure;
+      }>(structure: T_7) => structure is T_7 & ClassLikeDeclarationBaseStructure;
       /** Gets if the provided structure is a NameableNodeStructure. */
-      readonly isNameable: <T_7 extends Structure & {
+      readonly isNameable: <T_8 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_7) => structure is T_7 & NameableNodeStructure;
+      }>(structure: T_8) => structure is T_8 & NameableNodeStructure;
       /** Gets if the provided structure is a ImplementsClauseableNodeStructure. */
-      readonly isImplementsClauseable: <T_8 extends Structure & {
+      readonly isImplementsClauseable: <T_9 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_8) => structure is T_8 & ImplementsClauseableNodeStructure;
+      }>(structure: T_9) => structure is T_9 & ImplementsClauseableNodeStructure;
       /** Gets if the provided structure is a DecoratableNodeStructure. */
-      readonly isDecoratable: <T_9 extends Structure & {
+      readonly isDecoratable: <T_10 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_9) => structure is T_9 & DecoratableNodeStructure;
+      }>(structure: T_10) => structure is T_10 & DecoratableNodeStructure;
       /** Gets if the provided structure is a AbstractableNodeStructure. */
-      readonly isAbstractable: <T_10 extends Structure & {
+      readonly isAbstractable: <T_11 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_10) => structure is T_10 & AbstractableNodeStructure;
+      }>(structure: T_11) => structure is T_11 & AbstractableNodeStructure;
       /** Gets if the provided structure is a AmbientableNodeStructure. */
-      readonly isAmbientable: <T_11 extends Structure & {
+      readonly isAmbientable: <T_12 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_11) => structure is T_11 & AmbientableNodeStructure;
+      }>(structure: T_12) => structure is T_12 & AmbientableNodeStructure;
       /** Gets if the provided structure is a ExportableNodeStructure. */
-      readonly isExportable: <T_12 extends Structure & {
+      readonly isExportable: <T_13 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_12) => structure is T_12 & ExportableNodeStructure;
+      }>(structure: T_13) => structure is T_13 & ExportableNodeStructure;
       /** Gets if the provided structure is a ClassStaticBlockDeclarationStructure. */
       readonly isClassStaticBlock: (structure: Structure & {
           kind: StructureKind;
       }) => structure is ClassStaticBlockDeclarationStructure;
       /** Gets if the provided structure is a StatementedNodeStructure. */
-      readonly isStatemented: <T_13 extends Structure & {
+      readonly isStatemented: <T_14 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_13) => structure is T_13 & StatementedNodeStructure;
+      }>(structure: T_14) => structure is T_14 & StatementedNodeStructure;
       /** Gets if the provided structure is a ConstructorDeclarationOverloadStructure. */
       readonly isConstructorDeclarationOverload: (structure: Structure & {
           kind: StructureKind;
       }) => structure is ConstructorDeclarationOverloadStructure;
       /** Gets if the provided structure is a ScopedNodeStructure. */
-      readonly isScoped: <T_14 extends Structure & {
+      readonly isScoped: <T_15 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_14) => structure is T_14 & ScopedNodeStructure;
+      }>(structure: T_15) => structure is T_15 & ScopedNodeStructure;
       /** Gets if the provided structure is a ConstructorDeclarationStructure. */
       readonly isConstructor: (structure: Structure & {
           kind: StructureKind;
       }) => structure is ConstructorDeclarationStructure;
       /** Gets if the provided structure is a FunctionLikeDeclarationStructure. */
-      readonly isFunctionLike: <T_15 extends Structure & {
+      readonly isFunctionLike: <T_16 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_15) => structure is T_15 & FunctionLikeDeclarationStructure;
+      }>(structure: T_16) => structure is T_16 & FunctionLikeDeclarationStructure;
       /** Gets if the provided structure is a ConstructSignatureDeclarationStructure. */
       readonly isConstructSignature: (structure: Structure & {
           kind: StructureKind;
@@ -10735,21 +10787,21 @@ export declare const Structure: {
           kind: StructureKind;
       }) => structure is EnumDeclarationStructure;
       /** Gets if the provided structure is a NamedNodeStructure. */
-      readonly isNamed: <T_16 extends Structure & {
+      readonly isNamed: <T_17 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_16) => structure is T_16 & NamedNodeStructure;
+      }>(structure: T_17) => structure is T_17 & NamedNodeStructure;
       /** Gets if the provided structure is a EnumMemberStructure. */
       readonly isEnumMember: (structure: Structure & {
           kind: StructureKind;
       }) => structure is EnumMemberStructure;
       /** Gets if the provided structure is a PropertyNamedNodeStructure. */
-      readonly isPropertyNamed: <T_17 extends Structure & {
+      readonly isPropertyNamed: <T_18 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_17) => structure is T_17 & PropertyNamedNodeStructure;
+      }>(structure: T_18) => structure is T_18 & PropertyNamedNodeStructure;
       /** Gets if the provided structure is a InitializerExpressionableNodeStructure. */
-      readonly isInitializerExpressionable: <T_18 extends Structure & {
+      readonly isInitializerExpressionable: <T_19 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_18) => structure is T_18 & InitializerExpressionableNodeStructure;
+      }>(structure: T_19) => structure is T_19 & InitializerExpressionableNodeStructure;
       /** Gets if the provided structure is a ExportAssignmentStructure. */
       readonly isExportAssignment: (structure: Structure & {
           kind: StructureKind;
@@ -10767,13 +10819,13 @@ export declare const Structure: {
           kind: StructureKind;
       }) => structure is FunctionDeclarationOverloadStructure;
       /** Gets if the provided structure is a AsyncableNodeStructure. */
-      readonly isAsyncable: <T_19 extends Structure & {
+      readonly isAsyncable: <T_20 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_19) => structure is T_19 & AsyncableNodeStructure;
+      }>(structure: T_20) => structure is T_20 & AsyncableNodeStructure;
       /** Gets if the provided structure is a GeneratorableNodeStructure. */
-      readonly isGeneratorable: <T_20 extends Structure & {
+      readonly isGeneratorable: <T_21 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_20) => structure is T_20 & GeneratorableNodeStructure;
+      }>(structure: T_21) => structure is T_21 & GeneratorableNodeStructure;
       /** Gets if the provided structure is a FunctionDeclarationStructure. */
       readonly isFunction: (structure: Structure & {
           kind: StructureKind;
@@ -10783,9 +10835,9 @@ export declare const Structure: {
           kind: StructureKind;
       }) => structure is GetAccessorDeclarationStructure;
       /** Gets if the provided structure is a StaticableNodeStructure. */
-      readonly isStaticable: <T_21 extends Structure & {
+      readonly isStaticable: <T_22 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_21) => structure is T_21 & StaticableNodeStructure;
+      }>(structure: T_22) => structure is T_22 & StaticableNodeStructure;
       /** Gets if the provided structure is a ImportDeclarationStructure. */
       readonly isImportDeclaration: (structure: Structure & {
           kind: StructureKind;
@@ -10799,21 +10851,21 @@ export declare const Structure: {
           kind: StructureKind;
       }) => structure is IndexSignatureDeclarationStructure;
       /** Gets if the provided structure is a ReadonlyableNodeStructure. */
-      readonly isReadonlyable: <T_22 extends Structure & {
+      readonly isReadonlyable: <T_23 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_22) => structure is T_22 & ReadonlyableNodeStructure;
+      }>(structure: T_23) => structure is T_23 & ReadonlyableNodeStructure;
       /** Gets if the provided structure is a InterfaceDeclarationStructure. */
       readonly isInterface: (structure: Structure & {
           kind: StructureKind;
       }) => structure is InterfaceDeclarationStructure;
       /** Gets if the provided structure is a ExtendsClauseableNodeStructure. */
-      readonly isExtendsClauseable: <T_23 extends Structure & {
+      readonly isExtendsClauseable: <T_24 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_23) => structure is T_23 & ExtendsClauseableNodeStructure;
+      }>(structure: T_24) => structure is T_24 & ExtendsClauseableNodeStructure;
       /** Gets if the provided structure is a TypeElementMemberedNodeStructure. */
-      readonly isTypeElementMembered: <T_24 extends Structure & {
+      readonly isTypeElementMembered: <T_25 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_24) => structure is T_24 & TypeElementMemberedNodeStructure;
+      }>(structure: T_25) => structure is T_25 & TypeElementMemberedNodeStructure;
       /** Gets if the provided structure is a JSDocStructure. */
       readonly isJSDoc: (structure: Structure & {
           kind: StructureKind;
@@ -10835,13 +10887,13 @@ export declare const Structure: {
           kind: StructureKind;
       }) => structure is JsxSelfClosingElementStructure;
       /** Gets if the provided structure is a JsxTagNamedNodeStructure. */
-      readonly isJsxTagNamed: <T_25 extends Structure & {
+      readonly isJsxTagNamed: <T_26 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_25) => structure is T_25 & JsxTagNamedNodeStructure;
+      }>(structure: T_26) => structure is T_26 & JsxTagNamedNodeStructure;
       /** Gets if the provided structure is a JsxAttributedNodeStructure. */
-      readonly isJsxAttributed: <T_26 extends Structure & {
+      readonly isJsxAttributed: <T_27 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_26) => structure is T_26 & JsxAttributedNodeStructure;
+      }>(structure: T_27) => structure is T_27 & JsxAttributedNodeStructure;
       /** Gets if the provided structure is a JsxSpreadAttributeStructure. */
       readonly isJsxSpreadAttribute: (structure: Structure & {
           kind: StructureKind;
@@ -10851,13 +10903,13 @@ export declare const Structure: {
           kind: StructureKind;
       }) => structure is MethodDeclarationOverloadStructure;
       /** Gets if the provided structure is a QuestionTokenableNodeStructure. */
-      readonly isQuestionTokenable: <T_27 extends Structure & {
+      readonly isQuestionTokenable: <T_28 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_27) => structure is T_27 & QuestionTokenableNodeStructure;
+      }>(structure: T_28) => structure is T_28 & QuestionTokenableNodeStructure;
       /** Gets if the provided structure is a OverrideableNodeStructure. */
-      readonly isOverrideable: <T_28 extends Structure & {
+      readonly isOverrideable: <T_29 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_28) => structure is T_28 & OverrideableNodeStructure;
+      }>(structure: T_29) => structure is T_29 & OverrideableNodeStructure;
       /** Gets if the provided structure is a MethodDeclarationStructure. */
       readonly isMethod: (structure: Structure & {
           kind: StructureKind;
@@ -10871,25 +10923,25 @@ export declare const Structure: {
           kind: StructureKind;
       }) => structure is ModuleDeclarationStructure;
       /** Gets if the provided structure is a ModuleNamedNodeStructure. */
-      readonly isModuleNamed: <T_29 extends Structure & {
+      readonly isModuleNamed: <T_30 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_29) => structure is T_29 & ModuleNamedNodeStructure;
+      }>(structure: T_30) => structure is T_30 & ModuleNamedNodeStructure;
       /** Gets if the provided structure is a ParameterDeclarationStructure. */
       readonly isParameter: (structure: Structure & {
           kind: StructureKind;
       }) => structure is ParameterDeclarationStructure;
       /** Gets if the provided structure is a BindingNamedNodeStructure. */
-      readonly isBindingNamed: <T_30 extends Structure & {
+      readonly isBindingNamed: <T_31 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_30) => structure is T_30 & BindingNamedNodeStructure;
+      }>(structure: T_31) => structure is T_31 & BindingNamedNodeStructure;
       /** Gets if the provided structure is a TypedNodeStructure. */
-      readonly isTyped: <T_31 extends Structure & {
+      readonly isTyped: <T_32 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_31) => structure is T_31 & TypedNodeStructure;
+      }>(structure: T_32) => structure is T_32 & TypedNodeStructure;
       /** Gets if the provided structure is a ScopeableNodeStructure. */
-      readonly isScopeable: <T_32 extends Structure & {
+      readonly isScopeable: <T_33 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_32) => structure is T_32 & ScopeableNodeStructure;
+      }>(structure: T_33) => structure is T_33 & ScopeableNodeStructure;
       /** Gets if the provided structure is a PropertyAssignmentStructure. */
       readonly isPropertyAssignment: (structure: Structure & {
           kind: StructureKind;
@@ -10899,9 +10951,9 @@ export declare const Structure: {
           kind: StructureKind;
       }) => structure is PropertyDeclarationStructure;
       /** Gets if the provided structure is a ExclamationTokenableNodeStructure. */
-      readonly isExclamationTokenable: <T_33 extends Structure & {
+      readonly isExclamationTokenable: <T_34 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_33) => structure is T_33 & ExclamationTokenableNodeStructure;
+      }>(structure: T_34) => structure is T_34 & ExclamationTokenableNodeStructure;
       /** Gets if the provided structure is a PropertySignatureStructure. */
       readonly isPropertySignature: (structure: Structure & {
           kind: StructureKind;
@@ -10923,9 +10975,9 @@ export declare const Structure: {
           kind: StructureKind;
       }) => structure is SpreadAssignmentStructure;
       /** Gets if the provided structure is a ExpressionedNodeStructure. */
-      readonly isExpressioned: <T_34 extends Structure & {
+      readonly isExpressioned: <T_35 extends Structure & {
           kind: StructureKind;
-      }>(structure: T_34) => structure is T_34 & ExpressionedNodeStructure;
+      }>(structure: T_35) => structure is T_35 & ExpressionedNodeStructure;
       /** Gets if the provided structure is a TypeAliasDeclarationStructure. */
       readonly isTypeAlias: (structure: Structure & {
           kind: StructureKind;
@@ -10949,47 +11001,48 @@ export interface KindedStructure<TKind extends StructureKind> {
 }
 
 export declare enum StructureKind {
-  CallSignature = 0,
-  Class = 1,
-  ClassStaticBlock = 2,
-  ConstructSignature = 3,
-  Constructor = 4,
-  ConstructorOverload = 5,
-  Decorator = 6,
-  Enum = 7,
-  EnumMember = 8,
-  ExportAssignment = 9,
-  ExportDeclaration = 10,
-  ExportSpecifier = 11,
-  Function = 12,
-  FunctionOverload = 13,
-  GetAccessor = 14,
-  ImportDeclaration = 15,
-  ImportSpecifier = 16,
-  IndexSignature = 17,
-  Interface = 18,
-  JsxAttribute = 19,
-  JsxSpreadAttribute = 20,
-  JsxElement = 21,
-  JsxSelfClosingElement = 22,
-  JSDoc = 23,
-  JSDocTag = 24,
-  Method = 25,
-  MethodOverload = 26,
-  MethodSignature = 27,
-  Module = 28,
-  Parameter = 29,
-  Property = 30,
-  PropertyAssignment = 31,
-  PropertySignature = 32,
-  SetAccessor = 33,
-  ShorthandPropertyAssignment = 34,
-  SourceFile = 35,
-  SpreadAssignment = 36,
-  TypeAlias = 37,
-  TypeParameter = 38,
-  VariableDeclaration = 39,
-  VariableStatement = 40
+  AssertEntry = 0,
+  CallSignature = 1,
+  Class = 2,
+  ClassStaticBlock = 3,
+  ConstructSignature = 4,
+  Constructor = 5,
+  ConstructorOverload = 6,
+  Decorator = 7,
+  Enum = 8,
+  EnumMember = 9,
+  ExportAssignment = 10,
+  ExportDeclaration = 11,
+  ExportSpecifier = 12,
+  Function = 13,
+  FunctionOverload = 14,
+  GetAccessor = 15,
+  ImportDeclaration = 16,
+  ImportSpecifier = 17,
+  IndexSignature = 18,
+  Interface = 19,
+  JsxAttribute = 20,
+  JsxSpreadAttribute = 21,
+  JsxElement = 22,
+  JsxSelfClosingElement = 23,
+  JSDoc = 24,
+  JSDocTag = 25,
+  Method = 26,
+  MethodOverload = 27,
+  MethodSignature = 28,
+  Module = 29,
+  Parameter = 30,
+  Property = 31,
+  PropertyAssignment = 32,
+  PropertySignature = 33,
+  SetAccessor = 34,
+  ShorthandPropertyAssignment = 35,
+  SourceFile = 36,
+  SpreadAssignment = 37,
+  TypeAlias = 38,
+  TypeParameter = 39,
+  VariableDeclaration = 40,
+  VariableStatement = 41
 }
 
 export interface TypeAliasDeclarationStructure extends Structure, TypeAliasDeclarationSpecificStructure, NamedNodeStructure, TypedNodeStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {

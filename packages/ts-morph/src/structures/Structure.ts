@@ -8,7 +8,8 @@ import { NameableNodeStructure, AsyncableNodeStructure, ImplementsClauseableNode
     BindingNamedNodeStructure, ScopeableNodeStructure, ExtendsClauseableNodeStructure, TypeElementMemberedNodeStructure,
     DecoratableNodeStructure, 
     ModuleNamedNodeStructure,
-    OverrideableNodeStructure} from "./base";
+    OverrideableNodeStructure,
+    AssertionKeyNamedNodeStructure} from "./base";
 import { ClassDeclarationStructure, ClassLikeDeclarationBaseStructure, ConstructorDeclarationStructure, ConstructorDeclarationOverloadStructure,
     GetAccessorDeclarationStructure, MethodDeclarationStructure, MethodDeclarationOverloadStructure, PropertyDeclarationStructure,
     SetAccessorDeclarationStructure, 
@@ -23,7 +24,7 @@ import { InterfaceDeclarationStructure, CallSignatureDeclarationStructure, Const
     MethodSignatureStructure, PropertySignatureStructure } from "./interface";
 import { JsxAttributeStructure, JsxElementStructure, JsxSelfClosingElementStructure, JsxTagNamedNodeStructure, JsxAttributedNodeStructure,
     JsxSpreadAttributeStructure } from "./jsx";
-import { ExportAssignmentStructure, ExportDeclarationStructure, ExportSpecifierStructure, ImportDeclarationStructure, ImportSpecifierStructure,
+import { AssertEntryStructure, ExportAssignmentStructure, ExportDeclarationStructure, ExportSpecifierStructure, ImportDeclarationStructure, ImportSpecifierStructure,
     ModuleDeclarationStructure, SourceFileStructure } from "./module";
 import { VariableDeclarationStructure, StatementedNodeStructure, VariableStatementStructure } from "./statement";
 import { TypeAliasDeclarationStructure, TypeParameterDeclarationStructure } from "./type";
@@ -50,6 +51,14 @@ export const Structure = {
     hasName<T extends Structure>(structure: T): structure is T & { name: string; } {
         return typeof (structure as any).name === "string";
     },
+  /** Gets if the provided structure is a AssertEntryStructure. */
+  isAssertEntry(structure: Structure & { kind: StructureKind; }): structure is AssertEntryStructure {
+    return structure.kind === StructureKind.AssertEntry;
+  },
+  /** Gets if the provided structure is a AssertionKeyNamedNodeStructure. */
+  isAssertionKeyNamed<T extends Structure & { kind: StructureKind; }>(structure: T): structure is T & AssertionKeyNamedNodeStructure {
+    return structure.kind === StructureKind.AssertEntry;
+  },
   /** Gets if the provided structure is a CallSignatureDeclarationStructure. */
   isCallSignature(structure: Structure & { kind: StructureKind; }): structure is CallSignatureDeclarationStructure {
     return structure.kind === StructureKind.CallSignature;

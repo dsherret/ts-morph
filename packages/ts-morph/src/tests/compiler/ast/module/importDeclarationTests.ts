@@ -2,7 +2,7 @@ import { errors, ModuleResolutionKind, nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ImportDeclaration } from "../../../../compiler";
 import { Project } from "../../../../Project";
-import { ImportDeclarationStructure, ImportSpecifierStructure, OptionalKind, StructureKind } from "../../../../structures";
+import { AssertEntryStructure, ImportDeclarationStructure, ImportSpecifierStructure, OptionalKind, StructureKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
@@ -635,6 +635,46 @@ describe("ImportDeclaration", () => {
     });
   });
 
+  describe(nameof<ImportDeclaration>("setAssertElements"), () => {
+    function doTest(text: string, structure: OptionalKind<AssertEntryStructure>[] | undefined, expected: string) {
+      const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
+      firstChild.setAssertElements(structure);
+      expect(sourceFile.getText()).to.equal(expected);
+    }
+
+    it("should add", () => {
+      doTest(
+        `import {} from "./test";`,
+        [{ name: "type", value: "value" }],
+        `import {} from "./test" assert {\n    type: "value"\n};`,
+      );
+    });
+
+    it("should add when no semi-colon", () => {
+      doTest(
+        `import {} from "./test"`,
+        [{ name: "type", value: "value" }],
+        `import {} from "./test" assert {\n    type: "value"\n}`,
+      );
+    });
+
+    it("should remove for undefined", () => {
+      doTest(
+        `import {} from "./test" assert { type: "value" };`,
+        undefined,
+        `import {} from "./test";`,
+      );
+    });
+
+    it("should set", () => {
+      doTest(
+        `import {} from "./test" assert { something: "asdf" };`,
+        [{ name: "type", value: "value" }, { name: "other", value: "test" }],
+        `import {} from "./test" assert {\n    type: "value",\n    other: "test"\n};`,
+      );
+    });
+  });
+
   describe(nameof<ImportDeclaration>("set"), () => {
     function doTest(text: string, structure: Partial<ImportDeclarationStructure>, expectedText: string) {
       const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
@@ -714,8 +754,16 @@ describe("ImportDeclaration", () => {
         moduleSpecifier: "new",
         namedImports: undefined,
         namespaceImport: "test",
+        assertElements: [{
+          name: "type",
+          value: "asdf",
+        }],
       };
-      doTest("import 'test';", structure, "import type asdf, * as test from 'new';");
+      doTest(
+        "import 'test';",
+        structure,
+        `import type asdf, * as test from 'new' assert {\n    type: "asdf"\n};`,
+      );
     });
 
     function doThrowTest(text: string, structure: Partial<ImportDeclarationStructure>) {
@@ -739,13 +787,18 @@ describe("ImportDeclaration", () => {
     }
 
     it("should work when is type only", () => {
-      doTest(`import type { } from 'foo'`, {
+      doTest(`import type { } from 'foo' assert { type: 'asdf' }`, {
         kind: StructureKind.ImportDeclaration,
         isTypeOnly: true,
         defaultImport: undefined,
         moduleSpecifier: "foo",
         namedImports: [],
         namespaceImport: undefined,
+        assertElements: [{
+          kind: StructureKind.AssertEntry,
+          name: "type",
+          value: "asdf",
+        }],
       });
     });
 
@@ -761,6 +814,7 @@ describe("ImportDeclaration", () => {
           alias: undefined,
         }],
         namespaceImport: undefined,
+        assertElements: undefined,
       });
     });
 
@@ -772,6 +826,7 @@ describe("ImportDeclaration", () => {
         moduleSpecifier: "typescript",
         namedImports: [],
         namespaceImport: "ts",
+        assertElements: undefined,
       });
     });
 
@@ -783,6 +838,7 @@ describe("ImportDeclaration", () => {
         moduleSpecifier: "foo",
         namedImports: [],
         namespaceImport: undefined,
+        assertElements: undefined,
       });
     });
 
@@ -798,6 +854,7 @@ describe("ImportDeclaration", () => {
           alias: undefined,
         }],
         namespaceImport: undefined,
+        assertElements: undefined,
       });
     });
   });

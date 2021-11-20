@@ -76,6 +76,7 @@ export namespace fillStructures {
     setIfNull(structure, "isTypeOnly", false);
     setIfNull(structure, "defaultImport", undefined);
     setIfNull(structure, "namespaceImport", undefined);
+    setIfNull(structure, "assertElements", undefined);
 
     setIfNull(structure, "kind", StructureKind.ImportDeclaration);
     return structure as ImportDeclarationStructure;

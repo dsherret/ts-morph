@@ -1,6 +1,5 @@
 import { expect } from "chai";
 import { FormatCodeSettings } from "../../../compiler";
-import { ExportDeclarationStructurePrinter } from "../../../structurePrinters";
 import { ExportDeclarationStructure, OptionalKind } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
 
@@ -56,6 +55,15 @@ describe("ExportDeclarationStructurePrinter", () => {
 
     it("should not write empty named exports with surrounding spaces by when providing setting as false", () => {
       doTest({}, "export {};", { insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false });
+    });
+  });
+
+  describe("asserts clause", () => {
+    it("should write", () => {
+      doTest(
+        { namedExports: ["test"], assertElements: [{ name: "type", value: "test" }] },
+        "export { test } assert {\n    type: \"test\"\n};",
+      );
     });
   });
 });

@@ -2,6 +2,7 @@ import { WriterFunction } from "../../types";
 import { KindedStructure, Structure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 import { OptionalKind } from "../types";
+import { AssertEntryStructure } from "./AssertEntryStructure";
 import { ImportSpecifierStructure } from "./ImportSpecifierStructure";
 
 export interface ImportDeclarationStructure extends Structure, ImportDeclarationSpecificStructure {
@@ -13,4 +14,5 @@ export interface ImportDeclarationSpecificStructure extends KindedStructure<Stru
   namespaceImport?: string;
   namedImports?: (OptionalKind<ImportSpecifierStructure> | string | WriterFunction)[] | WriterFunction;
   moduleSpecifier: string;
+  assertElements?: OptionalKind<AssertEntryStructure>[] | undefined;
 }
