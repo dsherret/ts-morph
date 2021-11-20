@@ -1,6 +1,5 @@
 import { expect } from "chai";
 import { FormatCodeSettings } from "../../../compiler";
-import { ImportDeclarationStructurePrinter } from "../../../structurePrinters";
 import { ImportDeclarationStructure, OptionalKind } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
 
@@ -43,6 +42,15 @@ describe("ImportDeclarationStructurePrinter", () => {
         { namedImports: ["test"], moduleSpecifier: "test" },
         `import {test} from "test";`,
         { insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false },
+      );
+    });
+  });
+
+  describe("asserts clause", () => {
+    it("should write", () => {
+      doTest(
+        { namedImports: ["test"], assertElements: [{ name: "type", value: "test" }], moduleSpecifier: "test" },
+        "import { test } from \"test\" assert {\n    type: \"test\"\n};",
       );
     });
   });

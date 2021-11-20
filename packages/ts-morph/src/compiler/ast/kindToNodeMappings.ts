@@ -10,6 +10,8 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.ArrayType]: compiler.ArrayTypeNode;
   [SyntaxKind.ArrowFunction]: compiler.ArrowFunction;
   [SyntaxKind.AsExpression]: compiler.AsExpression;
+  [SyntaxKind.AssertClause]: compiler.AssertClause;
+  [SyntaxKind.AssertEntry]: compiler.AssertEntry;
   [SyntaxKind.AwaitExpression]: compiler.AwaitExpression;
   [SyntaxKind.BigIntLiteral]: compiler.BigIntLiteral;
   [SyntaxKind.BindingElement]: compiler.BindingElement;

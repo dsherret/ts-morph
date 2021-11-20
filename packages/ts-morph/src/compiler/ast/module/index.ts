@@ -1,3 +1,5 @@
+export * from "./AssertClause";
+export * from "./AssertEntry";
 export * from "./ExportAssignment";
 export * from "./ExportDeclaration";
 export * from "./ExportSpecifier";

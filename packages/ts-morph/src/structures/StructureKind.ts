@@ -1,4 +1,5 @@
 export enum StructureKind {
+  AssertEntry,
   CallSignature,
   Class,
   ClassStaticBlock,

@@ -2245,6 +2245,18 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isArrowFunction: (node: compiler.Node | undefined) => node is compiler.ArrowFunction = Node.is(SyntaxKind.ArrowFunction);
   /** Gets if the node is an AsExpression. */
   static readonly isAsExpression: (node: compiler.Node | undefined) => node is compiler.AsExpression = Node.is(SyntaxKind.AsExpression);
+  /** Gets if the node is an AssertClause. */
+  static readonly isAssertClause: (node: compiler.Node | undefined) => node is compiler.AssertClause = Node.is(SyntaxKind.AssertClause);
+  /** Gets if the node is an AssertEntry. */
+  static readonly isAssertEntry: (node: compiler.Node | undefined) => node is compiler.AssertEntry = Node.is(SyntaxKind.AssertEntry);
+
+  /**
+   * Gets if the node is an AssertionKeyNamedNode.
+   * @param node - Node to check.
+   */
+  static isAssertionKeyNamedNode<T extends compiler.Node>(node: T | undefined): node is compiler.AssertionKeyNamedNode & compiler.AssertionKeyNamedNodeExtensionType & T {
+    return node?.getKind() === SyntaxKind.AssertEntry;
+  }
 
   /**
    * Gets if the node is an AsyncableNode.
@@ -2987,14 +2999,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
   }
 
-  /**
-   * Gets if the node is a JSDocAllType.
-   * @param node - Node to check.
-   */
-  static isJSDocAllType(node: compiler.Node | undefined): node is compiler.JSDocAllType {
-    return node?.getKind() === SyntaxKind.JSDocAllType;
-  }
-
+  /** Gets if the node is a JSDocAllType. */
+  static readonly isJSDocAllType: (node: compiler.Node | undefined) => node is compiler.JSDocAllType = Node.is(SyntaxKind.JSDocAllType);
   /** Gets if the node is a JSDocAugmentsTag. */
   static readonly isJSDocAugmentsTag: (node: compiler.Node | undefined) => node is compiler.JSDocAugmentsTag = Node.is(SyntaxKind.JSDocAugmentsTag);
   /** Gets if the node is a JSDocAuthorTag. */
@@ -3019,47 +3025,16 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isJSDocLinkPlain: (node: compiler.Node | undefined) => node is compiler.JSDocLinkPlain = Node.is(SyntaxKind.JSDocLinkPlain);
   /** Gets if the node is a JSDocMemberName. */
   static readonly isJSDocMemberName: (node: compiler.Node | undefined) => node is compiler.JSDocMemberName = Node.is(SyntaxKind.JSDocMemberName);
-
-  /**
-   * Gets if the node is a JSDocNamepathType.
-   * @param node - Node to check.
-   */
-  static isJSDocNamepathType(node: compiler.Node | undefined): node is compiler.JSDocNamepathType {
-    return node?.getKind() === SyntaxKind.JSDocNamepathType;
-  }
-
-  /**
-   * Gets if the node is a JSDocNameReference.
-   * @param node - Node to check.
-   */
-  static isJSDocNameReference(node: compiler.Node | undefined): node is compiler.JSDocNameReference {
-    return node?.getKind() === SyntaxKind.JSDocNameReference;
-  }
-
-  /**
-   * Gets if the node is a JSDocNonNullableType.
-   * @param node - Node to check.
-   */
-  static isJSDocNonNullableType(node: compiler.Node | undefined): node is compiler.JSDocNonNullableType {
-    return node?.getKind() === SyntaxKind.JSDocNonNullableType;
-  }
-
-  /**
-   * Gets if the node is a JSDocNullableType.
-   * @param node - Node to check.
-   */
-  static isJSDocNullableType(node: compiler.Node | undefined): node is compiler.JSDocNullableType {
-    return node?.getKind() === SyntaxKind.JSDocNullableType;
-  }
-
-  /**
-   * Gets if the node is a JSDocOptionalType.
-   * @param node - Node to check.
-   */
-  static isJSDocOptionalType(node: compiler.Node | undefined): node is compiler.JSDocOptionalType {
-    return node?.getKind() === SyntaxKind.JSDocOptionalType;
-  }
-
+  /** Gets if the node is a JSDocNamepathType. */
+  static readonly isJSDocNamepathType: (node: compiler.Node | undefined) => node is compiler.JSDocNamepathType = Node.is(SyntaxKind.JSDocNamepathType);
+  /** Gets if the node is a JSDocNameReference. */
+  static readonly isJSDocNameReference: (node: compiler.Node | undefined) => node is compiler.JSDocNameReference = Node.is(SyntaxKind.JSDocNameReference);
+  /** Gets if the node is a JSDocNonNullableType. */
+  static readonly isJSDocNonNullableType: (node: compiler.Node | undefined) => node is compiler.JSDocNonNullableType = Node.is(SyntaxKind.JSDocNonNullableType);
+  /** Gets if the node is a JSDocNullableType. */
+  static readonly isJSDocNullableType: (node: compiler.Node | undefined) => node is compiler.JSDocNullableType = Node.is(SyntaxKind.JSDocNullableType);
+  /** Gets if the node is a JSDocOptionalType. */
+  static readonly isJSDocOptionalType: (node: compiler.Node | undefined) => node is compiler.JSDocOptionalType = Node.is(SyntaxKind.JSDocOptionalType);
   /** Gets if the node is a JSDocOverrideTag. */
   static readonly isJSDocOverrideTag: (node: compiler.Node | undefined) => node is compiler.JSDocOverrideTag = Node.is(SyntaxKind.JSDocOverrideTag);
   /** Gets if the node is a JSDocParameterTag. */
@@ -3178,13 +3153,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
   }
 
-  /**
-   * Gets if the node is a JSDocTypeLiteral.
-   * @param node - Node to check.
-   */
-  static isJSDocTypeLiteral(node: compiler.Node | undefined): node is compiler.JSDocTypeLiteral {
-    return node?.getKind() === SyntaxKind.JSDocTypeLiteral;
-  }
+  /** Gets if the node is a JSDocTypeLiteral. */
+  static readonly isJSDocTypeLiteral: (node: compiler.Node | undefined) => node is compiler.JSDocTypeLiteral = Node.is(SyntaxKind.JSDocTypeLiteral);
 
   /**
    * Gets if the node is a JSDocTypeParameteredTag.
@@ -3205,22 +3175,10 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     return node?.getKind() === SyntaxKind.JSDocTag;
   }
 
-  /**
-   * Gets if the node is a JSDocUnknownType.
-   * @param node - Node to check.
-   */
-  static isJSDocUnknownType(node: compiler.Node | undefined): node is compiler.JSDocUnknownType {
-    return node?.getKind() === SyntaxKind.JSDocUnknownType;
-  }
-
-  /**
-   * Gets if the node is a JSDocVariadicType.
-   * @param node - Node to check.
-   */
-  static isJSDocVariadicType(node: compiler.Node | undefined): node is compiler.JSDocVariadicType {
-    return node?.getKind() === SyntaxKind.JSDocVariadicType;
-  }
-
+  /** Gets if the node is a JSDocUnknownType. */
+  static readonly isJSDocUnknownType: (node: compiler.Node | undefined) => node is compiler.JSDocUnknownType = Node.is(SyntaxKind.JSDocUnknownType);
+  /** Gets if the node is a JSDocVariadicType. */
+  static readonly isJSDocVariadicType: (node: compiler.Node | undefined) => node is compiler.JSDocVariadicType = Node.is(SyntaxKind.JSDocVariadicType);
   /** Gets if the node is a JsxAttribute. */
   static readonly isJsxAttribute: (node: compiler.Node | undefined) => node is compiler.JsxAttribute = Node.is(SyntaxKind.JsxAttribute);
 
@@ -3797,6 +3755,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    */
   static isReferenceFindableNode<T extends compiler.Node>(node: T | undefined): node is compiler.ReferenceFindableNode & compiler.ReferenceFindableNodeExtensionType & T {
     switch (node?.getKind()) {
+      case SyntaxKind.AssertEntry:
       case SyntaxKind.BindingElement:
       case SyntaxKind.ClassDeclaration:
       case SyntaxKind.ClassExpression:
@@ -3841,6 +3800,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    */
   static isRenameableNode<T extends compiler.Node>(node: T | undefined): node is compiler.RenameableNode & compiler.RenameableNodeExtensionType & T {
     switch (node?.getKind()) {
+      case SyntaxKind.AssertEntry:
       case SyntaxKind.BindingElement:
       case SyntaxKind.ClassDeclaration:
       case SyntaxKind.ClassExpression:
@@ -4516,6 +4476,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   /** @internal */
   static _hasStructure(node: compiler.Node | undefined): node is compiler.Node & { getStructure(): Structure; } {
     switch (node?.getKind()) {
+      case SyntaxKind.AssertEntry:
       case SyntaxKind.CallSignature:
       case SyntaxKind.ClassDeclaration:
       case SyntaxKind.ClassStaticBlockDeclaration:

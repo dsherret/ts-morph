@@ -24,6 +24,7 @@ import {
 } from "./interface";
 import { JsxAttributeStructure, JsxElementStructure, JsxSelfClosingElementStructure, JsxSpreadAttributeStructure } from "./jsx";
 import {
+  AssertEntryStructure,
   ExportAssignmentStructure,
   ExportDeclarationStructure,
   ExportSpecifierStructure,
@@ -75,6 +76,7 @@ export type ObjectLiteralExpressionPropertyStructures =
 export type JsxStructures = JsxAttributeStructure | JsxSpreadAttributeStructure | JsxElementStructure | JsxSelfClosingElementStructure;
 
 export type Structures =
+  | AssertEntryStructure
   | StatementStructures
   | ClassMemberStructures
   | EnumMemberStructure

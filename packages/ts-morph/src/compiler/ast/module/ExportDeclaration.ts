@@ -1,6 +1,13 @@
 import { ArrayUtils, errors, nameof, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, removeChildren, verifyAndGetIndex } from "../../../manipulation";
-import { ExportDeclarationSpecificStructure, ExportDeclarationStructure, ExportSpecifierStructure, OptionalKind, StructureKind } from "../../../structures";
+import {
+  AssertEntryStructure,
+  ExportDeclarationSpecificStructure,
+  ExportDeclarationStructure,
+  ExportSpecifierStructure,
+  OptionalKind,
+  StructureKind,
+} from "../../../structures";
 import { WriterFunction } from "../../../types";
 import { ModuleUtils } from "../../../utils";
 import { callBaseGetStructure } from "../callBaseGetStructure";
@@ -316,6 +323,33 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
     return this;
   }
 
+  /** Sets the elements in an assert clause. */
+  setAssertElements(elements: OptionalKind<AssertEntryStructure>[] | undefined) {
+    let assertClause = this.getAssertClause();
+    if (assertClause) {
+      if (elements)
+        assertClause.setElements(elements);
+      else
+        assertClause.remove();
+    } else if (elements) {
+      const printer = this._context.structurePrinterFactory.forAssertEntry();
+      const writer = this._context.createWriter();
+      writer.space();
+      printer.printAssertClause(writer, elements);
+      insertIntoParentTextRange({
+        parent: this,
+        newText: writer.toString(),
+        insertPos: this.getSourceFile().getFullText()[this.getEnd() - 1] === ";" ? this.getEnd() - 1 : this.getEnd(),
+      });
+    }
+    return this;
+  }
+
+  /** Gets the assert clause or returns undefined if it doesn't exist. */
+  getAssertClause() {
+    return this._getNodeFromCompilerNodeIfExists(this.compilerNode.assertClause);
+  }
+
   /**
    * Sets the node from a structure.
    * @param structure - Structure to set the node with.
@@ -344,6 +378,9 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
     if (structure.isTypeOnly != null)
       this.setIsTypeOnly(structure.isTypeOnly);
 
+    if (structure.hasOwnProperty(nameof(structure, "assertElements")))
+      this.setAssertElements(structure.assertElements);
+
     return this;
   }
 
@@ -352,12 +389,14 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
    */
   getStructure(): ExportDeclarationStructure {
     const moduleSpecifier = this.getModuleSpecifier();
+    const assertClause = this.getAssertClause();
     return callBaseGetStructure<ExportDeclarationSpecificStructure>(ExportDeclarationBase.prototype, this, {
       kind: StructureKind.ExportDeclaration,
       isTypeOnly: this.isTypeOnly(),
       moduleSpecifier: moduleSpecifier?.getLiteralText(),
       namedExports: this.getNamedExports().map(node => node.getStructure()),
       namespaceExport: this.getNamespaceExport()?.getName(),
+      assertElements: assertClause ? assertClause.getElements().map(e => e.getStructure()) : undefined,
     });
   }
 }

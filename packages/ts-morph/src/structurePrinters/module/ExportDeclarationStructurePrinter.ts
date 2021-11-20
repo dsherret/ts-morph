@@ -42,6 +42,11 @@ export class ExportDeclarationStructurePrinter extends NodePrinter<OptionalKind<
       writer.write(" from ");
       writer.quote(structure.moduleSpecifier!);
     }
+    // assert clause
+    if (structure.assertElements) {
+      writer.space();
+      this.factory.forAssertEntry().printAssertClause(writer, structure.assertElements);
+    }
     writer.write(";");
   }
 }

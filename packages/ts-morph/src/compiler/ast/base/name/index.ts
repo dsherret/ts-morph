@@ -1,3 +1,4 @@
+export * from "./AssertionKeyNamedNode";
 export * from "./BindingNamedNode";
 export * from "./ModuleNamedNode";
 export * from "./NameableNode";

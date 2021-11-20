@@ -1,3 +1,4 @@
+export * from "./AssertEntryStructurePrinter";
 export * from "./ExportAssignmentStructurePrinter";
 export * from "./ExportDeclarationStructurePrinter";
 export * from "./ImportDeclarationStructurePrinter";

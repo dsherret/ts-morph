@@ -39,6 +39,11 @@ export class ImportDeclarationStructurePrinter extends NodePrinter<OptionalKind<
     writer.conditionalWrite(structure.defaultImport != null || hasNamedImport || structure.namespaceImport != null, " from");
     writer.write(" ");
     writer.quote(structure.moduleSpecifier);
+    // assert clause
+    if (structure.assertElements) {
+      writer.space();
+      this.factory.forAssertEntry().printAssertClause(writer, structure.assertElements);
+    }
     writer.write(";");
   }
 }
