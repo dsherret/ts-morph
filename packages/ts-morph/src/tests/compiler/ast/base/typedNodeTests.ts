@@ -195,7 +195,7 @@ describe("TypedNode", () => {
   describe(nameof<TypeAliasDeclaration>("set"), () => {
     function doTest(startingCode: string, structure: TypedNodeStructure, expectedCode: string) {
       const { sourceFile } = getInfoFromText(startingCode);
-      const firstTyped = sourceFile.getFirstDescendant(Node.isTypedNode);
+      const firstTyped = sourceFile.getFirstDescendant(Node.isTyped);
       (firstTyped as TypeAliasDeclaration).set(structure);
       expect(sourceFile.getText()).to.equal(expectedCode);
     }

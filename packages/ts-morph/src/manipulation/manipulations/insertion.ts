@@ -291,7 +291,7 @@ export function insertIntoBracesOrSourceFile(opts: InsertIntoBracesOrSourceFileO
       // ensure it passes the implementation
       if (child == null)
         return child;
-      else if (Node.isOverloadableNode(child))
+      else if (Node.isOverloadable(child))
         return child.getImplementation() || child;
       else
         return child;

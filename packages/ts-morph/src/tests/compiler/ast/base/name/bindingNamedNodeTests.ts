@@ -14,7 +14,7 @@ describe("BindingNamedNode", () => {
   describe(nameof<BindingNamedNode>("getName"), () => {
     function doTest(text: string, expectedName: string) {
       const { sourceFile } = getInfoFromText(text);
-      const node = sourceFile.getDescendants().find(Node.isBindingNamedNode)!;
+      const node = sourceFile.getDescendants().find(Node.isBindingNamed)!;
       expect(node.getName()).to.equal(expectedName);
     }
 

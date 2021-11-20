@@ -229,7 +229,7 @@ export class ModuleDeclaration extends ModuleDeclarationBase<ts.ModuleDeclaratio
   /** @internal */
   _getInnerBody() {
     let node = this.getBody();
-    while (node != null && Node.isBodyableNode(node) && (node.compilerNode as ts.Node as ts.Block).statements == null)
+    while (node != null && Node.isBodyable(node) && (node.compilerNode as ts.Node as ts.Block).statements == null)
       node = node.getBody();
     return node;
   }

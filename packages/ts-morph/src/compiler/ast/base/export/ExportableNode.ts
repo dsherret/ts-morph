@@ -66,7 +66,7 @@ function apply<T extends Constructor<ExportableNodeExtensionType & ExportGetable
       function shouldWriteAsSeparateStatement(this: Node) {
         if (Node.isEnumDeclaration(this) || Node.isModuleDeclaration(this) || Node.isTypeAliasDeclaration(this))
           return true;
-        if (Node.isAmbientableNode(this) && this.isAmbient())
+        if (Node.isAmbientable(this) && this.isAmbient())
           return true;
         return false;
       }

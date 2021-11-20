@@ -585,16 +585,16 @@ var FormattingKind;
 })(FormattingKind || (FormattingKind = {}));
 
 function getClassMemberFormatting(parent, member) {
-    if (Node.isAmbientableNode(parent) && parent.isAmbient())
+    if (Node.isAmbientable(parent) && parent.isAmbient())
         return FormattingKind.Newline;
     if (hasBody$1(member))
         return FormattingKind.Blankline;
     return FormattingKind.Newline;
 }
 function hasBody$1(node) {
-    if (Node.isBodyableNode(node) && node.getBody() != null)
+    if (Node.isBodyable(node) && node.getBody() != null)
         return true;
-    if (Node.isBodiedNode(node))
+    if (Node.isBodied(node))
         return true;
     return false;
 }
@@ -619,9 +619,9 @@ function getInterfaceMemberFormatting(parent, member) {
 }
 
 function hasBody(node) {
-    if (Node.isBodyableNode(node) && node.hasBody())
+    if (Node.isBodyable(node) && node.hasBody())
         return true;
-    if (Node.isBodiedNode(node))
+    if (Node.isBodied(node))
         return true;
     return Node.isInterfaceDeclaration(node) || Node.isClassDeclaration(node) || Node.isEnumDeclaration(node);
 }
@@ -846,9 +846,9 @@ function getParentContainerOrThrow(parent) {
             throw new errors.InvalidOperationError("This operation requires the module to have a body.");
         return innerBody;
     }
-    else if (Node.isBodiedNode(parent))
+    else if (Node.isBodied(parent))
         return parent.getBody();
-    else if (Node.isBodyableNode(parent))
+    else if (Node.isBodyable(parent))
         return parent.getBodyOrThrow();
     else
         return parent;
@@ -2250,9 +2250,9 @@ function getReplacementText(node) {
                     throw new errors.InvalidOperationError("This operation requires the module to have a body.");
                 return bodyNode;
             }
-            else if (Node.isBodiedNode(node))
+            else if (Node.isBodied(node))
                 return node.getBody();
-            else if (Node.isBodyableNode(node))
+            else if (Node.isBodyable(node))
                 return node.getBodyOrThrow();
             else
                 throw new errors.NotImplementedError(`Not implemented unwrap scenario for ${node.getKindName()}.`);
@@ -2496,7 +2496,7 @@ function insertIntoBracesOrSourceFile(opts) {
         function getChild(child) {
             if (child == null)
                 return child;
-            else if (Node.isOverloadableNode(child))
+            else if (Node.isOverloadable(child))
                 return child.getImplementation() || child;
             else
                 return child;
@@ -2601,12 +2601,12 @@ function removeChildrenWithFormatting(opts) {
     }));
 }
 function removeClassMember(classMember) {
-    if (Node.isOverloadableNode(classMember)) {
+    if (Node.isOverloadable(classMember)) {
         if (classMember.isImplementation())
             removeClassMembers([...classMember.getOverloads(), classMember]);
         else {
             const parent = classMember.getParentOrThrow();
-            if (Node.isAmbientableNode(parent) && parent.isAmbient())
+            if (Node.isAmbientable(parent) && parent.isAmbient())
                 removeClassMembers([classMember]);
             else
                 removeChildren({ children: [classMember], removeFollowingSpaces: true, removeFollowingNewLines: true });
@@ -3189,17 +3189,17 @@ class Node {
     }
     getChildSyntaxList() {
         let node = this;
-        if (Node.isBodyableNode(node) || Node.isBodiedNode(node)) {
+        if (Node.isBodyable(node) || Node.isBodied(node)) {
             do {
-                const bodyNode = Node.isBodyableNode(node) ? node.getBody() : node.getBody();
+                const bodyNode = Node.isBodyable(node) ? node.getBody() : node.getBody();
                 if (bodyNode == null)
                     return undefined;
                 node = bodyNode;
-            } while ((Node.isBodyableNode(node) || Node.isBodiedNode(node)) && node.compilerNode.statements == null);
+            } while ((Node.isBodyable(node) || Node.isBodied(node)) && node.compilerNode.statements == null);
         }
         if (Node.isSourceFile(node)
-            || Node.isBodyableNode(this)
-            || Node.isBodiedNode(this)
+            || Node.isBodyable(this)
+            || Node.isBodied(this)
             || Node.isCaseBlock(this)
             || Node.isCaseClause(this)
             || Node.isDefaultClause(this)
@@ -4017,7 +4017,7 @@ class Node {
     static isCommentEnumMember(node) {
         return (node === null || node === void 0 ? void 0 : node.compilerNode)._commentKind == CommentNodeKind.EnumMember;
     }
-    static isAbstractableNode(node) {
+    static isAbstractable(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
@@ -4031,7 +4031,7 @@ class Node {
                 return false;
         }
     }
-    static isAmbientableNode(node) {
+    static isAmbientable(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.EnumDeclaration:
@@ -4046,7 +4046,7 @@ class Node {
                 return false;
         }
     }
-    static isArgumentedNode(node) {
+    static isArgumented(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.CallExpression:
             case SyntaxKind.NewExpression:
@@ -4058,10 +4058,10 @@ class Node {
     static isArrayTypeNode(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.ArrayType;
     }
-    static isAssertionKeyNamedNode(node) {
+    static isAssertionKeyNamed(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.AssertEntry;
     }
-    static isAsyncableNode(node) {
+    static isAsyncable(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.FunctionDeclaration:
@@ -4072,10 +4072,10 @@ class Node {
                 return false;
         }
     }
-    static isAwaitableNode(node) {
+    static isAwaitable(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.ForOfStatement;
     }
-    static isBindingNamedNode(node) {
+    static isBindingNamed(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.BindingElement:
             case SyntaxKind.Parameter:
@@ -4085,7 +4085,7 @@ class Node {
                 return false;
         }
     }
-    static isBodiedNode(node) {
+    static isBodied(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.ClassStaticBlockDeclaration:
@@ -4095,7 +4095,7 @@ class Node {
                 return false;
         }
     }
-    static isBodyableNode(node) {
+    static isBodyable(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.Constructor:
             case SyntaxKind.FunctionDeclaration:
@@ -4111,7 +4111,7 @@ class Node {
     static isCallSignatureDeclaration(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.CallSignature;
     }
-    static isChildOrderableNode(node) {
+    static isChildOrderable(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.Block:
             case SyntaxKind.BreakStatement:
@@ -4181,7 +4181,7 @@ class Node {
     static isConstructSignatureDeclaration(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.ConstructSignature;
     }
-    static isDecoratableNode(node) {
+    static isDecoratable(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
@@ -4195,7 +4195,7 @@ class Node {
                 return false;
         }
     }
-    static isDotDotDotTokenableNode(node) {
+    static isDotDotDotTokenable(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.BindingElement:
             case SyntaxKind.JsxExpression:
@@ -4206,7 +4206,7 @@ class Node {
                 return false;
         }
     }
-    static isExclamationTokenableNode(node) {
+    static isExclamationTokenable(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.VariableDeclaration:
@@ -4215,7 +4215,7 @@ class Node {
                 return false;
         }
     }
-    static isExportableNode(node) {
+    static isExportable(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.EnumDeclaration:
@@ -4229,7 +4229,7 @@ class Node {
                 return false;
         }
     }
-    static isExportGetableNode(node) {
+    static isExportGetable(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.EnumDeclaration:
@@ -4306,7 +4306,7 @@ class Node {
                 return false;
         }
     }
-    static isExpressionableNode(node) {
+    static isExpressionable(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.ExternalModuleReference:
             case SyntaxKind.JsxExpression:
@@ -4317,7 +4317,7 @@ class Node {
                 return false;
         }
     }
-    static isExpressionedNode(node) {
+    static isExpressioned(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.AsExpression:
             case SyntaxKind.CaseClause:
@@ -4344,7 +4344,7 @@ class Node {
                 return false;
         }
     }
-    static isExtendsClauseableNode(node) {
+    static isExtendsClauseable(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.InterfaceDeclaration;
     }
     static isFalseLiteral(node) {
@@ -4366,7 +4366,7 @@ class Node {
     static isFunctionTypeNode(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.FunctionType;
     }
-    static isGeneratorableNode(node) {
+    static isGeneratorable(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
@@ -4380,7 +4380,7 @@ class Node {
     static isGetAccessorDeclaration(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.GetAccessor;
     }
-    static isHeritageClauseableNode(node) {
+    static isHeritageClauseable(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
@@ -4390,7 +4390,7 @@ class Node {
                 return false;
         }
     }
-    static isImplementsClauseableNode(node) {
+    static isImplementsClauseable(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
@@ -4414,7 +4414,7 @@ class Node {
     static isInferTypeNode(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.InferType;
     }
-    static isInitializerExpressionableNode(node) {
+    static isInitializerExpressionable(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.BindingElement:
             case SyntaxKind.EnumMember:
@@ -4427,7 +4427,7 @@ class Node {
                 return false;
         }
     }
-    static isInitializerExpressionGetableNode(node) {
+    static isInitializerExpressionGetable(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.BindingElement:
             case SyntaxKind.EnumMember:
@@ -4460,7 +4460,7 @@ class Node {
     static isJSDoc(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.JSDocComment;
     }
-    static isJSDocableNode(node) {
+    static isJSDocable(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.CallSignature:
@@ -4563,7 +4563,7 @@ class Node {
     static isJSDocUnknownTag(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.JSDocTag;
     }
-    static isJsxAttributedNode(node) {
+    static isJsxAttributed(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.JsxOpeningElement:
             case SyntaxKind.JsxSelfClosingElement:
@@ -4572,7 +4572,7 @@ class Node {
                 return false;
         }
     }
-    static isJsxTagNamedNode(node) {
+    static isJsxTagNamed(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.JsxClosingElement:
             case SyntaxKind.JsxOpeningElement:
@@ -4616,7 +4616,7 @@ class Node {
                 return false;
         }
     }
-    static isLeftHandSideExpressionedNode(node) {
+    static isLeftHandSideExpressioned(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.CallExpression:
             case SyntaxKind.Decorator:
@@ -4641,7 +4641,7 @@ class Node {
                 return false;
         }
     }
-    static isLiteralLikeNode(node) {
+    static isLiteralLike(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.BigIntLiteral:
             case SyntaxKind.JsxText:
@@ -4695,7 +4695,7 @@ class Node {
                 return false;
         }
     }
-    static isModifierableNode(node) {
+    static isModifierable(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.ClassDeclaration:
@@ -4722,7 +4722,7 @@ class Node {
                 return false;
         }
     }
-    static isModuleChildableNode(node) {
+    static isModuleChildable(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.EnumDeclaration:
@@ -4735,7 +4735,7 @@ class Node {
                 return false;
         }
     }
-    static isModuledNode(node) {
+    static isModuled(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.ModuleDeclaration:
             case SyntaxKind.SourceFile:
@@ -4744,10 +4744,10 @@ class Node {
                 return false;
         }
     }
-    static isModuleNamedNode(node) {
+    static isModuleNamed(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.ModuleDeclaration;
     }
-    static isNameableNode(node) {
+    static isNameable(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
@@ -4758,7 +4758,7 @@ class Node {
                 return false;
         }
     }
-    static isNamedNode(node) {
+    static isNamed(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.EnumDeclaration:
             case SyntaxKind.ImportEqualsDeclaration:
@@ -4778,7 +4778,7 @@ class Node {
     static isNullLiteral(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.NullKeyword;
     }
-    static isOverloadableNode(node) {
+    static isOverloadable(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.Constructor:
             case SyntaxKind.FunctionDeclaration:
@@ -4788,7 +4788,7 @@ class Node {
                 return false;
         }
     }
-    static isOverrideableNode(node) {
+    static isOverrideable(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.MethodDeclaration:
             case SyntaxKind.Parameter:
@@ -4801,7 +4801,7 @@ class Node {
     static isParameterDeclaration(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.Parameter;
     }
-    static isParameteredNode(node) {
+    static isParametered(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.CallSignature:
@@ -4853,7 +4853,7 @@ class Node {
                 return false;
         }
     }
-    static isPropertyNamedNode(node) {
+    static isPropertyNamed(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.EnumMember:
             case SyntaxKind.GetAccessor:
@@ -4868,7 +4868,7 @@ class Node {
                 return false;
         }
     }
-    static isQuestionDotTokenableNode(node) {
+    static isQuestionDotTokenable(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.CallExpression:
             case SyntaxKind.ElementAccessExpression:
@@ -4878,7 +4878,7 @@ class Node {
                 return false;
         }
     }
-    static isQuestionTokenableNode(node) {
+    static isQuestionTokenable(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.MethodDeclaration:
             case SyntaxKind.MethodSignature:
@@ -4893,7 +4893,7 @@ class Node {
                 return false;
         }
     }
-    static isReadonlyableNode(node) {
+    static isReadonlyable(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.IndexSignature:
             case SyntaxKind.Parameter:
@@ -4904,7 +4904,7 @@ class Node {
                 return false;
         }
     }
-    static isReferenceFindableNode(node) {
+    static isReferenceFindable(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.AssertEntry:
             case SyntaxKind.BindingElement:
@@ -4941,7 +4941,7 @@ class Node {
                 return false;
         }
     }
-    static isRenameableNode(node) {
+    static isRenameable(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.AssertEntry:
             case SyntaxKind.BindingElement:
@@ -4979,7 +4979,7 @@ class Node {
                 return false;
         }
     }
-    static isReturnTypedNode(node) {
+    static isReturnTyped(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.CallSignature:
@@ -5000,10 +5000,10 @@ class Node {
                 return false;
         }
     }
-    static isScopeableNode(node) {
+    static isScopeable(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.Parameter;
     }
-    static isScopedNode(node) {
+    static isScoped(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.Constructor:
             case SyntaxKind.GetAccessor:
@@ -5076,7 +5076,7 @@ class Node {
                 return false;
         }
     }
-    static isStatementedNode(node) {
+    static isStatemented(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.Block:
@@ -5097,7 +5097,7 @@ class Node {
                 return false;
         }
     }
-    static isStaticableNode(node) {
+    static isStaticable(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
@@ -5114,7 +5114,7 @@ class Node {
     static isTemplateLiteralTypeNode(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.TemplateLiteralType;
     }
-    static isTextInsertableNode(node) {
+    static isTextInsertable(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.Block:
@@ -5151,7 +5151,7 @@ class Node {
     static isTupleTypeNode(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.TupleType;
     }
-    static isTypeArgumentedNode(node) {
+    static isTypeArgumented(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.CallExpression:
             case SyntaxKind.ImportType:
@@ -5164,7 +5164,7 @@ class Node {
     static isTypeAssertion(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.TypeAssertionExpression;
     }
-    static isTypedNode(node) {
+    static isTyped(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.AsExpression:
             case SyntaxKind.NamedTupleMember:
@@ -5191,7 +5191,7 @@ class Node {
                 return false;
         }
     }
-    static isTypeElementMemberedNode(node) {
+    static isTypeElementMembered(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.TypeLiteral:
@@ -5200,7 +5200,7 @@ class Node {
                 return false;
         }
     }
-    static isTypeLiteralNode(node) {
+    static isTypeLiteral(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.TypeLiteral;
     }
     static isTypeNode(node) {
@@ -5249,7 +5249,7 @@ class Node {
     static isTypeParameterDeclaration(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.TypeParameter;
     }
-    static isTypeParameteredNode(node) {
+    static isTypeParametered(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.CallSignature:
@@ -5271,13 +5271,13 @@ class Node {
                 return false;
         }
     }
-    static isTypePredicateNode(node) {
+    static isTypePredicate(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.TypePredicate;
     }
-    static isTypeQueryNode(node) {
+    static isTypeQuery(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.TypeQuery;
     }
-    static isTypeReferenceNode(node) {
+    static isTypeReference(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.TypeReference;
     }
     static isUnaryExpression(node) {
@@ -5321,7 +5321,7 @@ class Node {
                 return false;
         }
     }
-    static isUnaryExpressionedNode(node) {
+    static isUnaryExpressioned(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.AwaitExpression:
             case SyntaxKind.DeleteExpression:
@@ -5336,7 +5336,7 @@ class Node {
     static isUnionTypeNode(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.UnionType;
     }
-    static isUnwrappableNode(node) {
+    static isUnwrappable(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.ModuleDeclaration:
@@ -5916,7 +5916,7 @@ function ExclamationTokenableNode(Base) {
             if (value === hasExclamationToken)
                 return this;
             if (value) {
-                if (Node.isQuestionTokenableNode(this))
+                if (Node.isQuestionTokenable(this))
                     this.setHasQuestionToken(false);
                 const colonNode = this.getFirstChildByKind(SyntaxKind.ColonToken);
                 if (colonNode == null)
@@ -5956,7 +5956,7 @@ function ExportGetableNode(Base) {
                 const variableStatement = this.getVariableStatement();
                 return variableStatement === null || variableStatement === void 0 ? void 0 : variableStatement.getExportKeyword();
             }
-            if (!Node.isModifierableNode(this))
+            if (!Node.isModifierable(this))
                 return throwForNotModifierableNode();
             return this.getFirstModifierByKind(SyntaxKind.ExportKeyword);
         }
@@ -5971,7 +5971,7 @@ function ExportGetableNode(Base) {
                 const variableStatement = this.getVariableStatement();
                 return variableStatement === null || variableStatement === void 0 ? void 0 : variableStatement.getDefaultKeyword();
             }
-            if (!Node.isModifierableNode(this))
+            if (!Node.isModifierable(this))
                 return throwForNotModifierableNode();
             return this.getFirstModifierByKind(SyntaxKind.DefaultKeyword);
         }
@@ -6051,7 +6051,7 @@ function apply$1(Base) {
             function shouldWriteAsSeparateStatement() {
                 if (Node.isEnumDeclaration(this) || Node.isModuleDeclaration(this) || Node.isTypeAliasDeclaration(this))
                     return true;
-                if (Node.isAmbientableNode(this) && this.isAmbient())
+                if (Node.isAmbientable(this) && this.isAmbient())
                     return true;
                 return false;
             }
@@ -9337,7 +9337,7 @@ function ModuledNode(Base) {
             const declaration = defaultExportSymbol.getDeclarations()[0];
             if (declaration.compilerNode.kind === SyntaxKind.ExportAssignment)
                 removeChildrenWithFormatting({ children: [declaration], getSiblingFormatting: () => FormattingKind.Newline });
-            else if (Node.isModifierableNode(declaration)) {
+            else if (Node.isModifierable(declaration)) {
                 declaration.toggleModifier("default", false);
                 declaration.toggleModifier("export", false);
             }
@@ -9384,7 +9384,7 @@ function getNodeForReferences(node) {
     const nameNode = node.getNodeProperty("name");
     if (nameNode != null)
         return nameNode;
-    if (Node.isExportableNode(node))
+    if (Node.isExportable(node))
         return node.getDefaultKeyword() || node;
     return node;
 }
@@ -9673,7 +9673,7 @@ function QuestionTokenableNode(Base) {
             if (value === hasQuestionToken)
                 return this;
             if (value) {
-                if (Node.isExclamationTokenableNode(this))
+                if (Node.isExclamationTokenable(this))
                     this.setHasExclamationToken(false);
                 insertIntoParentTextRange({
                     insertPos: getInsertPos.call(this),
@@ -11405,7 +11405,7 @@ function StatementedNode(Base) {
         }
         getStructure() {
             const structure = {};
-            if (Node.isBodyableNode(this) && !this.hasBody())
+            if (Node.isBodyable(this) && !this.hasBody())
                 structure.statements = undefined;
             else {
                 structure.statements = this.getStatements().map(s => {
@@ -11417,7 +11417,7 @@ function StatementedNode(Base) {
             return callBaseGetStructure(Base.prototype, this, structure);
         }
         set(structure) {
-            if (Node.isBodyableNode(this) && structure.statements == null && structure.hasOwnProperty(nameof(structure, "statements")))
+            if (Node.isBodyable(this) && structure.statements == null && structure.hasOwnProperty(nameof(structure, "statements")))
                 this.removeBody();
             else if (structure.statements != null) {
                 const statementCount = this._getCompilerStatementsWithComments().length;
@@ -11448,7 +11448,7 @@ function StatementedNode(Base) {
                 else
                     return body.compilerNode;
             }
-            else if (Node.isBodyableNode(this) || Node.isBodiedNode(this))
+            else if (Node.isBodyable(this) || Node.isBodied(this))
                 return (_a = this.getBody()) === null || _a === void 0 ? void 0 : _a.compilerNode;
             else if (Node.isBlock(this) || Node.isModuleBlock(this))
                 return this.compilerNode;
@@ -11483,7 +11483,7 @@ function StatementedNode(Base) {
     };
 }
 function addBodyIfNotExists(node) {
-    if (Node.isBodyableNode(node) && !node.hasBody())
+    if (Node.isBodyable(node) && !node.hasBody())
         node.addBody();
 }
 
@@ -12951,7 +12951,7 @@ class ModuleDeclaration extends ModuleDeclarationBase {
     }
     _getInnerBody() {
         let node = this.getBody();
-        while (node != null && Node.isBodyableNode(node) && node.compilerNode.statements == null)
+        while (node != null && Node.isBodyable(node) && node.compilerNode.statements == null)
             node = node.getBody();
         return node;
     }
@@ -13988,7 +13988,7 @@ function ClassLikeDeclarationBaseSpecific(Base) {
                 index,
                 parent: this,
                 write: (writer, info) => {
-                    const previousMemberHasBody = !isAmbient && info.previousMember != null && Node.isBodyableNode(info.previousMember)
+                    const previousMemberHasBody = !isAmbient && info.previousMember != null && Node.isBodyable(info.previousMember)
                         && info.previousMember.hasBody();
                     const firstStructureHasBody = !isAmbient && members instanceof Array && structureHasBody(members[0]);
                     if (previousMemberHasBody || info.previousMember != null && firstStructureHasBody)
@@ -14000,7 +14000,7 @@ function ClassLikeDeclarationBaseSpecific(Base) {
                     memberPrinter.printTexts(memberWriter, members);
                     writer.write(memberWriter.toString());
                     const lastStructureHasBody = !isAmbient && members instanceof Array && structureHasBody(members[members.length - 1]);
-                    const nextMemberHasBody = !isAmbient && info.nextMember != null && Node.isBodyableNode(info.nextMember) && info.nextMember.hasBody();
+                    const nextMemberHasBody = !isAmbient && info.nextMember != null && Node.isBodyable(info.nextMember) && info.nextMember.hasBody();
                     if (info.nextMember != null && lastStructureHasBody || nextMemberHasBody)
                         writer.blankLineIfLastNot();
                     else

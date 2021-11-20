@@ -34,9 +34,9 @@ function getReplacementText(node: Node) {
         if (bodyNode == null)
           throw new errors.InvalidOperationError("This operation requires the module to have a body.");
         return bodyNode;
-      } else if (Node.isBodiedNode(node))
+      } else if (Node.isBodied(node))
         return node.getBody();
-      else if (Node.isBodyableNode(node))
+      else if (Node.isBodyable(node))
         return node.getBodyOrThrow();
       else
         throw new errors.NotImplementedError(`Not implemented unwrap scenario for ${node.getKindName()}.`);

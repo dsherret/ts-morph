@@ -57,9 +57,9 @@ function getParentContainerOrThrow(parent: Node) {
     if (innerBody == null)
       throw new errors.InvalidOperationError("This operation requires the module to have a body.");
     return innerBody;
-  } else if (Node.isBodiedNode(parent))
+  } else if (Node.isBodied(parent))
     return parent.getBody();
-  else if (Node.isBodyableNode(parent))
+  else if (Node.isBodyable(parent))
     return parent.getBodyOrThrow();
   else
     return parent;

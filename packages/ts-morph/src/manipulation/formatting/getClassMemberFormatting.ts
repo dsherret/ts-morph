@@ -2,7 +2,7 @@ import { Node } from "../../compiler";
 import { FormattingKind } from "./FormattingKind";
 
 export function getClassMemberFormatting(parent: Node, member: Node) {
-  if (Node.isAmbientableNode(parent) && parent.isAmbient())
+  if (Node.isAmbientable(parent) && parent.isAmbient())
     return FormattingKind.Newline;
 
   if (hasBody(member))
@@ -12,9 +12,9 @@ export function getClassMemberFormatting(parent: Node, member: Node) {
 }
 
 function hasBody(node: Node) {
-  if (Node.isBodyableNode(node) && node.getBody() != null)
+  if (Node.isBodyable(node) && node.getBody() != null)
     return true;
-  if (Node.isBodiedNode(node))
+  if (Node.isBodied(node))
     return true;
   return false;
 }

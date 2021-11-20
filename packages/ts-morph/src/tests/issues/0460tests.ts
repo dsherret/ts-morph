@@ -13,7 +13,7 @@ export declare function baz(...args: any[]): void;`;
     const { sourceFile } = getInfoFromText(fileText, { isDefinitionFile: true });
 
     sourceFile.forEachChild(child => {
-      if (Node.isAmbientableNode(child))
+      if (Node.isAmbientable(child))
         child.setHasDeclareKeyword(false);
     });
 

@@ -34,7 +34,7 @@ function getNodeForReferences(node: ReferenceFindableNodeExtensionType) {
   const nameNode = node.getNodeProperty("name");
   if (nameNode != null)
     return nameNode;
-  if (Node.isExportableNode(node))
+  if (Node.isExportable(node))
     return node.getDefaultKeyword() || node;
   return node;
 }

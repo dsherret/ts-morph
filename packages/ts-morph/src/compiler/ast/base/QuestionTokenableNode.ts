@@ -50,7 +50,7 @@ export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNod
         return this;
 
       if (value) {
-        if (Node.isExclamationTokenableNode(this))
+        if (Node.isExclamationTokenable(this))
           this.setHasExclamationToken(false);
 
         insertIntoParentTextRange({

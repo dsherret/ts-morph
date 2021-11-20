@@ -43,7 +43,7 @@ export function createNodeTypeGuards(inspector: TsMorphInspector, tsInspector: T
   getMethodInfos().filter(n => isAllowedClass(n.name.replace(/^is/, ""))).forEach(method => {
     const description = `Gets if the node is ${(method.name[0] === "A" || method.name[0] === "E") ? "an" : "a"} ${method.name}.`;
     const common = {
-      name: `is${method.name}`,
+      name: `is${method.name.endsWith("TypeNode") ? method.name : method.name.replace(/Node$/, "")}`,
       isStatic: true,
     };
     const isImplementedNodeName = implementedNodeNames.has(method.name);

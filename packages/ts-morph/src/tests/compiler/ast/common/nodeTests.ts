@@ -1818,7 +1818,7 @@ class MyClass {
       const { sourceFile } = getInfoFromText("const t = 5;");
       const nodeTexts: string[] = [];
       sourceFile.forEachDescendant(node => {
-        if (Node.isTypedNode(node))
+        if (Node.isTyped(node))
           node.setType("any");
         nodeTexts.push(node.getText());
       });
@@ -1838,9 +1838,9 @@ class MyClass {
       const { sourceFile } = getInfoFromText("let t: any = 5;");
       const nodeTexts: string[] = [];
       sourceFile.forEachDescendant(node => {
-        if (Node.isInitializerExpressionableNode(node))
+        if (Node.isInitializerExpressionable(node))
           node.removeInitializer();
-        if (Node.isTypedNode(node))
+        if (Node.isTyped(node))
           node.removeType();
         nodeTexts.push(node.getText());
       });

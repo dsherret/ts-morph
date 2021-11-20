@@ -676,7 +676,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
         index,
         parent: this,
         write: (writer, info) => {
-          const previousMemberHasBody = !isAmbient && info.previousMember != null && Node.isBodyableNode(info.previousMember)
+          const previousMemberHasBody = !isAmbient && info.previousMember != null && Node.isBodyable(info.previousMember)
             && info.previousMember.hasBody();
           const firstStructureHasBody = !isAmbient && members instanceof Array && structureHasBody(members[0]);
 
@@ -693,7 +693,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
           writer.write(memberWriter.toString());
 
           const lastStructureHasBody = !isAmbient && members instanceof Array && structureHasBody(members[members.length - 1]);
-          const nextMemberHasBody = !isAmbient && info.nextMember != null && Node.isBodyableNode(info.nextMember) && info.nextMember.hasBody();
+          const nextMemberHasBody = !isAmbient && info.nextMember != null && Node.isBodyable(info.nextMember) && info.nextMember.hasBody();
 
           if (info.nextMember != null && lastStructureHasBody || nextMemberHasBody)
             writer.blankLineIfLastNot();

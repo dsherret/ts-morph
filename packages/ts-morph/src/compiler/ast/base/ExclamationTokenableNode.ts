@@ -50,7 +50,7 @@ export function ExclamationTokenableNode<T extends Constructor<ExclamationTokena
         return this;
 
       if (value) {
-        if (Node.isQuestionTokenableNode(this))
+        if (Node.isQuestionTokenable(this))
           this.setHasQuestionToken(false);
 
         const colonNode = this.getFirstChildByKind(SyntaxKind.ColonToken);

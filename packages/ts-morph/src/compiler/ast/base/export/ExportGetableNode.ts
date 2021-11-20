@@ -55,7 +55,7 @@ export function ExportGetableNode<T extends Constructor<ExportGetableNodeExtensi
         const variableStatement = this.getVariableStatement();
         return variableStatement?.getExportKeyword();
       }
-      if (!Node.isModifierableNode(this))
+      if (!Node.isModifierable(this))
         return throwForNotModifierableNode();
       return this.getFirstModifierByKind(SyntaxKind.ExportKeyword);
     }
@@ -73,7 +73,7 @@ export function ExportGetableNode<T extends Constructor<ExportGetableNodeExtensi
         const variableStatement = this.getVariableStatement();
         return variableStatement?.getDefaultKeyword();
       }
-      if (!Node.isModifierableNode(this))
+      if (!Node.isModifierable(this))
         return throwForNotModifierableNode();
       return this.getFirstModifierByKind(SyntaxKind.DefaultKeyword);
     }

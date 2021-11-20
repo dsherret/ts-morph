@@ -3930,17 +3930,17 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets if the node is an AbstractableNode.
    * @param node - Node to check.
    */
-  static isAbstractableNode<T extends Node>(node: T | undefined): node is AbstractableNode & AbstractableNodeExtensionType & T;
+  static isAbstractable<T extends Node>(node: T | undefined): node is AbstractableNode & AbstractableNodeExtensionType & T;
   /**
    * Gets if the node is an AmbientableNode.
    * @param node - Node to check.
    */
-  static isAmbientableNode<T extends Node>(node: T | undefined): node is AmbientableNode & AmbientableNodeExtensionType & T;
+  static isAmbientable<T extends Node>(node: T | undefined): node is AmbientableNode & AmbientableNodeExtensionType & T;
   /**
    * Gets if the node is an ArgumentedNode.
    * @param node - Node to check.
    */
-  static isArgumentedNode<T extends Node>(node: T | undefined): node is ArgumentedNode & ArgumentedNodeExtensionType & T;
+  static isArgumented<T extends Node>(node: T | undefined): node is ArgumentedNode & ArgumentedNodeExtensionType & T;
   /**
    * Gets if the node is an ArrayTypeNode.
    * @param node - Node to check.
@@ -3950,32 +3950,32 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets if the node is an AssertionKeyNamedNode.
    * @param node - Node to check.
    */
-  static isAssertionKeyNamedNode<T extends Node>(node: T | undefined): node is AssertionKeyNamedNode & AssertionKeyNamedNodeExtensionType & T;
+  static isAssertionKeyNamed<T extends Node>(node: T | undefined): node is AssertionKeyNamedNode & AssertionKeyNamedNodeExtensionType & T;
   /**
    * Gets if the node is an AsyncableNode.
    * @param node - Node to check.
    */
-  static isAsyncableNode<T extends Node>(node: T | undefined): node is AsyncableNode & AsyncableNodeExtensionType & T;
+  static isAsyncable<T extends Node>(node: T | undefined): node is AsyncableNode & AsyncableNodeExtensionType & T;
   /**
    * Gets if the node is an AwaitableNode.
    * @param node - Node to check.
    */
-  static isAwaitableNode<T extends Node>(node: T | undefined): node is AwaitableNode & AwaitableNodeExtensionType & T;
+  static isAwaitable<T extends Node>(node: T | undefined): node is AwaitableNode & AwaitableNodeExtensionType & T;
   /**
    * Gets if the node is a BindingNamedNode.
    * @param node - Node to check.
    */
-  static isBindingNamedNode<T extends Node>(node: T | undefined): node is BindingNamedNode & BindingNamedNodeExtensionType & T;
+  static isBindingNamed<T extends Node>(node: T | undefined): node is BindingNamedNode & BindingNamedNodeExtensionType & T;
   /**
    * Gets if the node is a BodiedNode.
    * @param node - Node to check.
    */
-  static isBodiedNode<T extends Node>(node: T | undefined): node is BodiedNode & BodiedNodeExtensionType & T;
+  static isBodied<T extends Node>(node: T | undefined): node is BodiedNode & BodiedNodeExtensionType & T;
   /**
    * Gets if the node is a BodyableNode.
    * @param node - Node to check.
    */
-  static isBodyableNode<T extends Node>(node: T | undefined): node is BodyableNode & BodyableNodeExtensionType & T;
+  static isBodyable<T extends Node>(node: T | undefined): node is BodyableNode & BodyableNodeExtensionType & T;
   /**
    * Gets if the node is a CallSignatureDeclaration.
    * @param node - Node to check.
@@ -3985,7 +3985,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets if the node is a ChildOrderableNode.
    * @param node - Node to check.
    */
-  static isChildOrderableNode<T extends Node>(node: T | undefined): node is ChildOrderableNode & ChildOrderableNodeExtensionType & T;
+  static isChildOrderable<T extends Node>(node: T | undefined): node is ChildOrderableNode & ChildOrderableNodeExtensionType & T;
   /**
    * Gets if the node is a ClassLikeDeclarationBase.
    * @param node - Node to check.
@@ -4015,27 +4015,27 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets if the node is a DecoratableNode.
    * @param node - Node to check.
    */
-  static isDecoratableNode<T extends Node>(node: T | undefined): node is DecoratableNode & DecoratableNodeExtensionType & T;
+  static isDecoratable<T extends Node>(node: T | undefined): node is DecoratableNode & DecoratableNodeExtensionType & T;
   /**
    * Gets if the node is a DotDotDotTokenableNode.
    * @param node - Node to check.
    */
-  static isDotDotDotTokenableNode<T extends Node>(node: T | undefined): node is DotDotDotTokenableNode & DotDotDotTokenableNodeExtensionType & T;
+  static isDotDotDotTokenable<T extends Node>(node: T | undefined): node is DotDotDotTokenableNode & DotDotDotTokenableNodeExtensionType & T;
   /**
    * Gets if the node is an ExclamationTokenableNode.
    * @param node - Node to check.
    */
-  static isExclamationTokenableNode<T extends Node>(node: T | undefined): node is ExclamationTokenableNode & ExclamationTokenableNodeExtensionType & T;
+  static isExclamationTokenable<T extends Node>(node: T | undefined): node is ExclamationTokenableNode & ExclamationTokenableNodeExtensionType & T;
   /**
    * Gets if the node is an ExportableNode.
    * @param node - Node to check.
    */
-  static isExportableNode<T extends Node>(node: T | undefined): node is ExportableNode & ExportableNodeExtensionType & T;
+  static isExportable<T extends Node>(node: T | undefined): node is ExportableNode & ExportableNodeExtensionType & T;
   /**
    * Gets if the node is an ExportGetableNode.
    * @param node - Node to check.
    */
-  static isExportGetableNode<T extends Node>(node: T | undefined): node is ExportGetableNode & ExportGetableNodeExtensionType & T;
+  static isExportGetable<T extends Node>(node: T | undefined): node is ExportGetableNode & ExportGetableNodeExtensionType & T;
   /**
    * Gets if the node is an Expression.
    * @param node - Node to check.
@@ -4045,17 +4045,17 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets if the node is an ExpressionableNode.
    * @param node - Node to check.
    */
-  static isExpressionableNode<T extends Node>(node: T | undefined): node is ExpressionableNode & ExpressionableNodeExtensionType & T;
+  static isExpressionable<T extends Node>(node: T | undefined): node is ExpressionableNode & ExpressionableNodeExtensionType & T;
   /**
    * Gets if the node is an ExpressionedNode.
    * @param node - Node to check.
    */
-  static isExpressionedNode<T extends Node>(node: T | undefined): node is ExpressionedNode & ExpressionedNodeExtensionType & T;
+  static isExpressioned<T extends Node>(node: T | undefined): node is ExpressionedNode & ExpressionedNodeExtensionType & T;
   /**
    * Gets if the node is an ExtendsClauseableNode.
    * @param node - Node to check.
    */
-  static isExtendsClauseableNode<T extends Node>(node: T | undefined): node is ExtendsClauseableNode & ExtendsClauseableNodeExtensionType & T;
+  static isExtendsClauseable<T extends Node>(node: T | undefined): node is ExtendsClauseableNode & ExtendsClauseableNodeExtensionType & T;
   /**
    * Gets if the node is a FalseLiteral.
    * @param node - Node to check.
@@ -4075,7 +4075,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets if the node is a GeneratorableNode.
    * @param node - Node to check.
    */
-  static isGeneratorableNode<T extends Node>(node: T | undefined): node is GeneratorableNode & GeneratorableNodeExtensionType & T;
+  static isGeneratorable<T extends Node>(node: T | undefined): node is GeneratorableNode & GeneratorableNodeExtensionType & T;
   /**
    * Gets if the node is a GetAccessorDeclaration.
    * @param node - Node to check.
@@ -4085,12 +4085,12 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets if the node is a HeritageClauseableNode.
    * @param node - Node to check.
    */
-  static isHeritageClauseableNode<T extends Node>(node: T | undefined): node is HeritageClauseableNode & HeritageClauseableNodeExtensionType & T;
+  static isHeritageClauseable<T extends Node>(node: T | undefined): node is HeritageClauseableNode & HeritageClauseableNodeExtensionType & T;
   /**
    * Gets if the node is a ImplementsClauseableNode.
    * @param node - Node to check.
    */
-  static isImplementsClauseableNode<T extends Node>(node: T | undefined): node is ImplementsClauseableNode & ImplementsClauseableNodeExtensionType & T;
+  static isImplementsClauseable<T extends Node>(node: T | undefined): node is ImplementsClauseableNode & ImplementsClauseableNodeExtensionType & T;
   /**
    * Gets if the node is a ImportExpression.
    * @param node - Node to check.
@@ -4120,12 +4120,12 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets if the node is a InitializerExpressionableNode.
    * @param node - Node to check.
    */
-  static isInitializerExpressionableNode<T extends Node>(node: T | undefined): node is InitializerExpressionableNode & InitializerExpressionableNodeExtensionType & T;
+  static isInitializerExpressionable<T extends Node>(node: T | undefined): node is InitializerExpressionableNode & InitializerExpressionableNodeExtensionType & T;
   /**
    * Gets if the node is a InitializerExpressionGetableNode.
    * @param node - Node to check.
    */
-  static isInitializerExpressionGetableNode<T extends Node>(node: T | undefined): node is InitializerExpressionGetableNode & InitializerExpressionGetableNodeExtensionType & T;
+  static isInitializerExpressionGetable<T extends Node>(node: T | undefined): node is InitializerExpressionGetableNode & InitializerExpressionGetableNodeExtensionType & T;
   /**
    * Gets if the node is a IntersectionTypeNode.
    * @param node - Node to check.
@@ -4145,7 +4145,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets if the node is a JSDocableNode.
    * @param node - Node to check.
    */
-  static isJSDocableNode<T extends Node>(node: T | undefined): node is JSDocableNode & JSDocableNodeExtensionType & T;
+  static isJSDocable<T extends Node>(node: T | undefined): node is JSDocableNode & JSDocableNodeExtensionType & T;
   /**
    * Gets if the node is a JSDocPropertyLikeTag.
    * @param node - Node to check.
@@ -4180,12 +4180,12 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets if the node is a JsxAttributedNode.
    * @param node - Node to check.
    */
-  static isJsxAttributedNode<T extends Node>(node: T | undefined): node is JsxAttributedNode & JsxAttributedNodeExtensionType & T;
+  static isJsxAttributed<T extends Node>(node: T | undefined): node is JsxAttributedNode & JsxAttributedNodeExtensionType & T;
   /**
    * Gets if the node is a JsxTagNamedNode.
    * @param node - Node to check.
    */
-  static isJsxTagNamedNode<T extends Node>(node: T | undefined): node is JsxTagNamedNode & JsxTagNamedNodeExtensionType & T;
+  static isJsxTagNamed<T extends Node>(node: T | undefined): node is JsxTagNamedNode & JsxTagNamedNodeExtensionType & T;
   /**
    * Gets if the node is a LeftHandSideExpression.
    * @param node - Node to check.
@@ -4195,7 +4195,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets if the node is a LeftHandSideExpressionedNode.
    * @param node - Node to check.
    */
-  static isLeftHandSideExpressionedNode<T extends Node>(node: T | undefined): node is LeftHandSideExpressionedNode & LeftHandSideExpressionedNodeExtensionType & T;
+  static isLeftHandSideExpressioned<T extends Node>(node: T | undefined): node is LeftHandSideExpressionedNode & LeftHandSideExpressionedNodeExtensionType & T;
   /**
    * Gets if the node is a LiteralExpression.
    * @param node - Node to check.
@@ -4205,7 +4205,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets if the node is a LiteralLikeNode.
    * @param node - Node to check.
    */
-  static isLiteralLikeNode<T extends Node>(node: T | undefined): node is LiteralLikeNode & LiteralLikeNodeExtensionType & T;
+  static isLiteralLike<T extends Node>(node: T | undefined): node is LiteralLikeNode & LiteralLikeNodeExtensionType & T;
   /**
    * Gets if the node is a LiteralTypeNode.
    * @param node - Node to check.
@@ -4225,32 +4225,32 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets if the node is a ModifierableNode.
    * @param node - Node to check.
    */
-  static isModifierableNode<T extends Node>(node: T | undefined): node is ModifierableNode & ModifierableNodeExtensionType & T;
+  static isModifierable<T extends Node>(node: T | undefined): node is ModifierableNode & ModifierableNodeExtensionType & T;
   /**
    * Gets if the node is a ModuleChildableNode.
    * @param node - Node to check.
    */
-  static isModuleChildableNode<T extends Node>(node: T | undefined): node is ModuleChildableNode & ModuleChildableNodeExtensionType & T;
+  static isModuleChildable<T extends Node>(node: T | undefined): node is ModuleChildableNode & ModuleChildableNodeExtensionType & T;
   /**
    * Gets if the node is a ModuledNode.
    * @param node - Node to check.
    */
-  static isModuledNode<T extends Node>(node: T | undefined): node is ModuledNode & ModuledNodeExtensionType & T;
+  static isModuled<T extends Node>(node: T | undefined): node is ModuledNode & ModuledNodeExtensionType & T;
   /**
    * Gets if the node is a ModuleNamedNode.
    * @param node - Node to check.
    */
-  static isModuleNamedNode<T extends Node>(node: T | undefined): node is ModuleNamedNode & ModuleNamedNodeExtensionType & T;
+  static isModuleNamed<T extends Node>(node: T | undefined): node is ModuleNamedNode & ModuleNamedNodeExtensionType & T;
   /**
    * Gets if the node is a NameableNode.
    * @param node - Node to check.
    */
-  static isNameableNode<T extends Node>(node: T | undefined): node is NameableNode & NameableNodeExtensionType & T;
+  static isNameable<T extends Node>(node: T | undefined): node is NameableNode & NameableNodeExtensionType & T;
   /**
    * Gets if the node is a NamedNode.
    * @param node - Node to check.
    */
-  static isNamedNode<T extends Node>(node: T | undefined): node is NamedNode & NamedNodeExtensionType & T;
+  static isNamed<T extends Node>(node: T | undefined): node is NamedNode & NamedNodeExtensionType & T;
   /**
    * Gets if the node is a NullLiteral.
    * @param node - Node to check.
@@ -4260,12 +4260,12 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets if the node is a OverloadableNode.
    * @param node - Node to check.
    */
-  static isOverloadableNode<T extends Node>(node: T | undefined): node is OverloadableNode & OverloadableNodeExtensionType & T;
+  static isOverloadable<T extends Node>(node: T | undefined): node is OverloadableNode & OverloadableNodeExtensionType & T;
   /**
    * Gets if the node is a OverrideableNode.
    * @param node - Node to check.
    */
-  static isOverrideableNode<T extends Node>(node: T | undefined): node is OverrideableNode & OverrideableNodeExtensionType & T;
+  static isOverrideable<T extends Node>(node: T | undefined): node is OverrideableNode & OverrideableNodeExtensionType & T;
   /**
    * Gets if the node is a ParameterDeclaration.
    * @param node - Node to check.
@@ -4275,7 +4275,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets if the node is a ParameteredNode.
    * @param node - Node to check.
    */
-  static isParameteredNode<T extends Node>(node: T | undefined): node is ParameteredNode & ParameteredNodeExtensionType & T;
+  static isParametered<T extends Node>(node: T | undefined): node is ParameteredNode & ParameteredNodeExtensionType & T;
   /**
    * Gets if the node is a ParenthesizedTypeNode.
    * @param node - Node to check.
@@ -4290,47 +4290,47 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets if the node is a PropertyNamedNode.
    * @param node - Node to check.
    */
-  static isPropertyNamedNode<T extends Node>(node: T | undefined): node is PropertyNamedNode & PropertyNamedNodeExtensionType & T;
+  static isPropertyNamed<T extends Node>(node: T | undefined): node is PropertyNamedNode & PropertyNamedNodeExtensionType & T;
   /**
    * Gets if the node is a QuestionDotTokenableNode.
    * @param node - Node to check.
    */
-  static isQuestionDotTokenableNode<T extends Node>(node: T | undefined): node is QuestionDotTokenableNode & QuestionDotTokenableNodeExtensionType & T;
+  static isQuestionDotTokenable<T extends Node>(node: T | undefined): node is QuestionDotTokenableNode & QuestionDotTokenableNodeExtensionType & T;
   /**
    * Gets if the node is a QuestionTokenableNode.
    * @param node - Node to check.
    */
-  static isQuestionTokenableNode<T extends Node>(node: T | undefined): node is QuestionTokenableNode & QuestionTokenableNodeExtensionType & T;
+  static isQuestionTokenable<T extends Node>(node: T | undefined): node is QuestionTokenableNode & QuestionTokenableNodeExtensionType & T;
   /**
    * Gets if the node is a ReadonlyableNode.
    * @param node - Node to check.
    */
-  static isReadonlyableNode<T extends Node>(node: T | undefined): node is ReadonlyableNode & ReadonlyableNodeExtensionType & T;
+  static isReadonlyable<T extends Node>(node: T | undefined): node is ReadonlyableNode & ReadonlyableNodeExtensionType & T;
   /**
    * Gets if the node is a ReferenceFindableNode.
    * @param node - Node to check.
    */
-  static isReferenceFindableNode<T extends Node>(node: T | undefined): node is ReferenceFindableNode & ReferenceFindableNodeExtensionType & T;
+  static isReferenceFindable<T extends Node>(node: T | undefined): node is ReferenceFindableNode & ReferenceFindableNodeExtensionType & T;
   /**
    * Gets if the node is a RenameableNode.
    * @param node - Node to check.
    */
-  static isRenameableNode<T extends Node>(node: T | undefined): node is RenameableNode & RenameableNodeExtensionType & T;
+  static isRenameable<T extends Node>(node: T | undefined): node is RenameableNode & RenameableNodeExtensionType & T;
   /**
    * Gets if the node is a ReturnTypedNode.
    * @param node - Node to check.
    */
-  static isReturnTypedNode<T extends Node>(node: T | undefined): node is ReturnTypedNode & ReturnTypedNodeExtensionType & T;
+  static isReturnTyped<T extends Node>(node: T | undefined): node is ReturnTypedNode & ReturnTypedNodeExtensionType & T;
   /**
    * Gets if the node is a ScopeableNode.
    * @param node - Node to check.
    */
-  static isScopeableNode<T extends Node>(node: T | undefined): node is ScopeableNode & ScopeableNodeExtensionType & T;
+  static isScopeable<T extends Node>(node: T | undefined): node is ScopeableNode & ScopeableNodeExtensionType & T;
   /**
    * Gets if the node is a ScopedNode.
    * @param node - Node to check.
    */
-  static isScopedNode<T extends Node>(node: T | undefined): node is ScopedNode & ScopedNodeExtensionType & T;
+  static isScoped<T extends Node>(node: T | undefined): node is ScopedNode & ScopedNodeExtensionType & T;
   /**
    * Gets if the node is a SetAccessorDeclaration.
    * @param node - Node to check.
@@ -4350,12 +4350,12 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets if the node is a StatementedNode.
    * @param node - Node to check.
    */
-  static isStatementedNode<T extends Node>(node: T | undefined): node is StatementedNode & StatementedNodeExtensionType & T;
+  static isStatemented<T extends Node>(node: T | undefined): node is StatementedNode & StatementedNodeExtensionType & T;
   /**
    * Gets if the node is a StaticableNode.
    * @param node - Node to check.
    */
-  static isStaticableNode<T extends Node>(node: T | undefined): node is StaticableNode & StaticableNodeExtensionType & T;
+  static isStaticable<T extends Node>(node: T | undefined): node is StaticableNode & StaticableNodeExtensionType & T;
   /**
    * Gets if the node is a SuperExpression.
    * @param node - Node to check.
@@ -4370,7 +4370,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets if the node is a TextInsertableNode.
    * @param node - Node to check.
    */
-  static isTextInsertableNode<T extends Node>(node: T | undefined): node is TextInsertableNode & TextInsertableNodeExtensionType & T;
+  static isTextInsertable<T extends Node>(node: T | undefined): node is TextInsertableNode & TextInsertableNodeExtensionType & T;
   /**
    * Gets if the node is a ThisExpression.
    * @param node - Node to check.
@@ -4395,7 +4395,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets if the node is a TypeArgumentedNode.
    * @param node - Node to check.
    */
-  static isTypeArgumentedNode<T extends Node>(node: T | undefined): node is TypeArgumentedNode & TypeArgumentedNodeExtensionType & T;
+  static isTypeArgumented<T extends Node>(node: T | undefined): node is TypeArgumentedNode & TypeArgumentedNodeExtensionType & T;
   /**
    * Gets if the node is a TypeAssertion.
    * @param node - Node to check.
@@ -4405,7 +4405,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets if the node is a TypedNode.
    * @param node - Node to check.
    */
-  static isTypedNode<T extends Node>(node: T | undefined): node is TypedNode & TypedNodeExtensionType & T;
+  static isTyped<T extends Node>(node: T | undefined): node is TypedNode & TypedNodeExtensionType & T;
   /**
    * Gets if the node is a TypeElement.
    * @param node - Node to check.
@@ -4415,12 +4415,12 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets if the node is a TypeElementMemberedNode.
    * @param node - Node to check.
    */
-  static isTypeElementMemberedNode<T extends Node>(node: T | undefined): node is TypeElementMemberedNode & TypeElementMemberedNodeExtensionType & T;
+  static isTypeElementMembered<T extends Node>(node: T | undefined): node is TypeElementMemberedNode & TypeElementMemberedNodeExtensionType & T;
   /**
    * Gets if the node is a TypeLiteralNode.
    * @param node - Node to check.
    */
-  static isTypeLiteralNode(node: Node | undefined): node is TypeLiteralNode;
+  static isTypeLiteral(node: Node | undefined): node is TypeLiteralNode;
   /**
    * Gets if the node is a TypeNode.
    * @param node - Node to check.
@@ -4440,22 +4440,22 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets if the node is a TypeParameteredNode.
    * @param node - Node to check.
    */
-  static isTypeParameteredNode<T extends Node>(node: T | undefined): node is TypeParameteredNode & TypeParameteredNodeExtensionType & T;
+  static isTypeParametered<T extends Node>(node: T | undefined): node is TypeParameteredNode & TypeParameteredNodeExtensionType & T;
   /**
    * Gets if the node is a TypePredicateNode.
    * @param node - Node to check.
    */
-  static isTypePredicateNode(node: Node | undefined): node is TypePredicateNode;
+  static isTypePredicate(node: Node | undefined): node is TypePredicateNode;
   /**
    * Gets if the node is a TypeQueryNode.
    * @param node - Node to check.
    */
-  static isTypeQueryNode(node: Node | undefined): node is TypeQueryNode;
+  static isTypeQuery(node: Node | undefined): node is TypeQueryNode;
   /**
    * Gets if the node is a TypeReferenceNode.
    * @param node - Node to check.
    */
-  static isTypeReferenceNode(node: Node | undefined): node is TypeReferenceNode;
+  static isTypeReference(node: Node | undefined): node is TypeReferenceNode;
   /**
    * Gets if the node is a UnaryExpression.
    * @param node - Node to check.
@@ -4465,7 +4465,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets if the node is a UnaryExpressionedNode.
    * @param node - Node to check.
    */
-  static isUnaryExpressionedNode<T extends Node>(node: T | undefined): node is UnaryExpressionedNode & UnaryExpressionedNodeExtensionType & T;
+  static isUnaryExpressioned<T extends Node>(node: T | undefined): node is UnaryExpressionedNode & UnaryExpressionedNodeExtensionType & T;
   /**
    * Gets if the node is a UnionTypeNode.
    * @param node - Node to check.
@@ -4475,7 +4475,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets if the node is a UnwrappableNode.
    * @param node - Node to check.
    */
-  static isUnwrappableNode<T extends Node>(node: T | undefined): node is UnwrappableNode & UnwrappableNodeExtensionType & T;
+  static isUnwrappable<T extends Node>(node: T | undefined): node is UnwrappableNode & UnwrappableNodeExtensionType & T;
   /**
    * Gets if the node is a UpdateExpression.
    * @param node - Node to check.

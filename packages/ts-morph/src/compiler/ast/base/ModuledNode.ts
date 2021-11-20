@@ -430,7 +430,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
       const declaration = defaultExportSymbol.getDeclarations()[0];
       if (declaration.compilerNode.kind === SyntaxKind.ExportAssignment)
         removeChildrenWithFormatting({ children: [declaration], getSiblingFormatting: () => FormattingKind.Newline });
-      else if (Node.isModifierableNode(declaration)) {
+      else if (Node.isModifierable(declaration)) {
         declaration.toggleModifier("default", false);
         declaration.toggleModifier("export", false);
       }
