@@ -2,6 +2,47 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="13.0.0"></a>
+# [13.0.0](https://github.com/dsherret/ts-morph/compare/12.2.0...13.0.0) (2021-11-20)
+
+
+### Bug Fixes
+
+* Do not throw an error if decorator expr is wrapped in a paren expr ([c77db30](https://github.com/dsherret/ts-morph/commit/c77db30)), closes [#1214](https://github.com/dsherret/ts-morph/issues/1214)
+
+
+### Chores
+
+* Target ES2018 instead of ES2015 ([519b139](https://github.com/dsherret/ts-morph/commit/519b139))
+
+
+### Code Refactoring
+
+* `Node.isXNode(node)` static type guard methods are now `Node.isX(node)` ([e5bcba9](https://github.com/dsherret/ts-morph/commit/e5bcba9)), closes [#1166](https://github.com/dsherret/ts-morph/issues/1166)
+* Remove already deprecated `WriterFunctions` and `TypeGuards` exports. ([be87373](https://github.com/dsherret/ts-morph/commit/be87373))
+
+
+### Features
+
+* Add `AssertClause` and `AssertEntry` ([#1224](https://github.com/dsherret/ts-morph/issues/1224)) ([bcf694f](https://github.com/dsherret/ts-morph/commit/bcf694f))
+* Add `Node.hasStructure` type guard. ([0f7d9be](https://github.com/dsherret/ts-morph/commit/0f7d9be))
+* Change `readDirSync` to return directory entries instead of file paths ([f22a50d](https://github.com/dsherret/ts-morph/commit/f22a50d))
+* Make `Structure.isX` function more flexible ([a54dd69](https://github.com/dsherret/ts-morph/commit/a54dd69)), closes [#1219](https://github.com/dsherret/ts-morph/issues/1219)
+* Type only methods for `ImportSpecifier` and `ExportSpecifier` ([e93c96e](https://github.com/dsherret/ts-morph/commit/e93c96e))
+* TypeScript 4.5 support ([#1220](https://github.com/dsherret/ts-morph/issues/1220)) ([526e0dd](https://github.com/dsherret/ts-morph/commit/526e0dd))
+* Wrap more JS doc nodes ([5107999](https://github.com/dsherret/ts-morph/commit/5107999))
+
+
+### BREAKING CHANGES
+
+* `Node.isXNode(node)` static type guard methods are now `Node.isX(node)` to reduce verbosity.
+* Targeting ES2018 instead of ES2015
+* Upgraded to TS 4.5
+* Removed already deprecated `WriterFunctions` and `TypeGuards` exports. Use `Writers` and `Node` instead.
+* `readDirSync` now returns directory entries.
+
+
+
 <a name="12.2.0"></a>
 # [12.2.0](https://github.com/dsherret/ts-morph/compare/12.1.0...12.2.0) (2021-11-02)
 

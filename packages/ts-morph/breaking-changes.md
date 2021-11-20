@@ -8,6 +8,7 @@ View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only
 - Node type guards like `Node.isXNode(node)` have dropped the `Node` suffix because it was overly verbose—use `Node.isX(node)` now (ex. `Node.isAmbientable(node)`).
 - The already deprecated `WriterFunctions` and `TypeGuards` exports were removed. Use `Writers` and `Node`.
 - `FileSystemHost#readDirSync` returns directory entries instead of file and dir path names.
+- Target ES2018 instead of ES2015.
 
 ## Version 12
 
