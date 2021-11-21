@@ -233,13 +233,7 @@ export class CompilerFactory {
     filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
     let sourceFile = this.sourceFileCacheByFilePath.get(filePath);
     if (sourceFile == null) {
-      let fileText: string | undefined;
-      try {
-        fileText = this.context.fileSystemWrapper.readFileSync(filePath, this.context.getEncoding());
-      } catch {
-        // ignore
-      }
-
+      const fileText = this.context.fileSystemWrapper.readFileIfExistsSync(filePath, this.context.getEncoding());
       if (fileText != null) {
         this.context.logger.log(`Loaded file: ${filePath}`);
         sourceFile = this.createSourceFileFromTextInternal(filePath, fileText, options);
