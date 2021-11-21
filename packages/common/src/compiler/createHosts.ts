@@ -65,19 +65,17 @@ export function createHosts(options: CreateHostsOptions) {
     },
     getScriptSnapshot: fileName => {
       const filePath = transactionalFileSystem.getStandardizedAbsolutePath(fileName);
-      if (!fileExistsSync(filePath)) {
-        if (libFileMap != null) {
-          const libFileText = libFileMap.get(filePath);
-          if (libFileText != null)
-            return ts.ScriptSnapshot.fromString(libFileText);
-        }
-
-        return undefined;
+      if (libFileMap != null) {
+        const libFileText = libFileMap.get(filePath);
+        if (libFileText != null)
+          return ts.ScriptSnapshot.fromString(libFileText);
       }
-      return ts.ScriptSnapshot.fromString(sourceFileContainer.addOrGetSourceFileFromFilePathSync(filePath, {
+
+      const sourceFile = sourceFileContainer.addOrGetSourceFileFromFilePathSync(filePath, {
         markInProject: false,
         scriptKind: undefined,
-      })!.getFullText());
+      });
+      return sourceFile ? ts.ScriptSnapshot.fromString(sourceFile.getFullText()) : undefined;
     },
     getCurrentDirectory: () => transactionalFileSystem.getCurrentDirectory(),
     getDefaultLibFileName: options => {
