@@ -58,12 +58,15 @@ export class SourceFileCache implements TsSourceFileContainer {
 
   async addOrGetSourceFileFromFilePath(filePath: StandardizedFilePath, options: { scriptKind: ScriptKind | undefined }): Promise<ts.SourceFile | undefined> {
     let sourceFile = this.sourceFilesByFilePath.get(filePath);
-    if (sourceFile == null && await this.fileSystemWrapper.fileExists(filePath)) {
-      sourceFile = this.createSourceFileFromText(
-        filePath,
-        await this.fileSystemWrapper.readFile(filePath, this.compilerOptions.getEncoding()),
-        options,
-      );
+    if (sourceFile == null) {
+      const fileText = await this.fileSystemWrapper.readFileIfExists(filePath, this.compilerOptions.getEncoding());
+      if (fileText != null) {
+        sourceFile = this.createSourceFileFromText(
+          filePath,
+          fileText,
+          options,
+        );
+      }
     }
 
     return sourceFile;
@@ -71,12 +74,15 @@ export class SourceFileCache implements TsSourceFileContainer {
 
   addOrGetSourceFileFromFilePathSync(filePath: StandardizedFilePath, options: { scriptKind: ScriptKind | undefined }): ts.SourceFile | undefined {
     let sourceFile = this.sourceFilesByFilePath.get(filePath);
-    if (sourceFile == null && this.fileSystemWrapper.fileExistsSync(filePath)) {
-      sourceFile = this.createSourceFileFromText(
-        filePath,
-        this.fileSystemWrapper.readFileSync(filePath, this.compilerOptions.getEncoding()),
-        options,
-      );
+    if (sourceFile == null) {
+      const fileText = this.fileSystemWrapper.readFileIfExistsSync(filePath, this.compilerOptions.getEncoding());
+      if (fileText != null) {
+        sourceFile = this.createSourceFileFromText(
+          filePath,
+          fileText,
+          options,
+        );
+      }
     }
 
     return sourceFile;

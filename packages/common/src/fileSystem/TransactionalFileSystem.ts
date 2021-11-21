@@ -596,9 +596,34 @@ export class TransactionalFileSystem {
     return this.fileSystem.directoryExistsSync(dirPath);
   }
 
+  readFileIfExistsSync(filePath: StandardizedFilePath, encoding: string | undefined) {
+    if (this._fileDeletedInMemory(filePath))
+      return undefined;
+    try {
+      return this.readFileSync(filePath, encoding);
+    } catch (err) {
+      if (err instanceof errors.FileNotFoundError)
+        return undefined;
+      else
+        throw err;
+    }
+  }
+
   readFileSync(filePath: StandardizedFilePath, encoding: string | undefined) {
     this._verifyCanReadFile(filePath);
     return this.fileSystem.readFileSync(filePath, encoding);
+  }
+
+  readFileIfExists(filePath: StandardizedFilePath, encoding: string | undefined) {
+    if (this._fileDeletedInMemory(filePath))
+      return Promise.resolve(undefined);
+    return this.readFile(filePath, encoding)
+      .catch(err => {
+        if (err instanceof errors.FileNotFoundError)
+          return Promise.resolve(undefined);
+        else
+          return Promise.reject(err);
+      });
   }
 
   readFile(filePath: StandardizedFilePath, encoding: string | undefined) {

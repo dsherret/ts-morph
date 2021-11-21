@@ -1140,7 +1140,9 @@ class FileUtils {
     constructor() {
     }
     static isNotExistsError(err) {
-        return err != null && err.code === FileUtils.ENOENT;
+        var _a;
+        return err != null && err.code === FileUtils.ENOENT
+            || err != null && ((_a = err === null || err === void 0 ? void 0 : err.constructor) === null || _a === void 0 ? void 0 : _a.name) === "NotFound";
     }
     static pathJoin(basePath, ...paths) {
         if (FileUtils.pathIsAbsolute(basePath)) {
@@ -2116,9 +2118,33 @@ class TransactionalFileSystem {
             return false;
         return this.fileSystem.directoryExistsSync(dirPath);
     }
+    readFileIfExistsSync(filePath, encoding) {
+        if (this._fileDeletedInMemory(filePath))
+            return undefined;
+        try {
+            return this.readFileSync(filePath, encoding);
+        }
+        catch (err) {
+            if (err instanceof errors.FileNotFoundError)
+                return undefined;
+            else
+                throw err;
+        }
+    }
     readFileSync(filePath, encoding) {
         this._verifyCanReadFile(filePath);
         return this.fileSystem.readFileSync(filePath, encoding);
+    }
+    readFileIfExists(filePath, encoding) {
+        if (this._fileDeletedInMemory(filePath))
+            return Promise.resolve(undefined);
+        return this.readFile(filePath, encoding)
+            .catch(err => {
+            if (err instanceof errors.FileNotFoundError)
+                return Promise.resolve(undefined);
+            else
+                return Promise.reject(err);
+        });
     }
     readFile(filePath, encoding) {
         this._verifyCanReadFile(filePath);

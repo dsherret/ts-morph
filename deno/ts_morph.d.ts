@@ -47,9 +47,15 @@ export interface FileSystemHost {
   copy(srcPath: string, destPath: string): Promise<void>;
   /** Synchronously copies a file or directory. */
   copySync(srcPath: string, destPath: string): void;
-  /** Asynchronously checks if a file exists. */
+  /**
+   * Asynchronously checks if a file exists.
+   * @remarks Implementers should throw an `errors.FileNotFoundError` when it does not exist.
+   */
   fileExists(filePath: string): Promise<boolean>;
-  /** Synchronously checks if a file exists. */
+  /**
+   * Synchronously checks if a file exists.
+   * @remarks Implementers should throw an `errors.FileNotFoundError` when it does not exist.
+   */
   fileExistsSync(filePath: string): boolean;
   /** Asynchronously checks if a directory exists. */
   directoryExists(dirPath: string): Promise<boolean>;
