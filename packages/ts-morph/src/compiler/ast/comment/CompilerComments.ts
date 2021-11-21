@@ -56,6 +56,7 @@ export abstract class CompilerCommentNode implements ts.Node {
     return undefined as any as ts.Node; // the compiler definition is wrong
   }
 
+  // @code-fence-allow(getChildren): this is an implementation, so it's ok.
   getChildren(sourceFile?: ts.SourceFile | undefined): ts.Node[] {
     return [];
   }

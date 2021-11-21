@@ -14,7 +14,7 @@ export function ensurePublicApiHasTests(inspector: TsMorphInspector, addProblem:
   const nodes: (tsMorph.Node & tsMorph.ReferenceFindableNode)[] = [];
 
   function tryAddNode(node: tsMorph.Node & tsMorph.ReferenceFindableNode) {
-    if (tsMorph.Node.isScopedNode(node) && node.getScope() !== tsMorph.Scope.Public)
+    if (tsMorph.Node.isScoped(node) && node.getScope() !== tsMorph.Scope.Public)
       return;
     if (hasInternalDocTag(node))
       return;

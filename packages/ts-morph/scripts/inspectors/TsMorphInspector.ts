@@ -158,7 +158,7 @@ export class TsMorphInspector {
       const syntaxKind = nameNodeExpression.getName();
 
       const typeNode = member.getTypeNodeOrThrow();
-      if (!tsMorph.Node.isTypeReferenceNode(typeNode))
+      if (!tsMorph.Node.isTypeReference(typeNode))
         throw new Error(error);
       const typeNodeName = typeNode.getTypeName();
       if (!tsMorph.Node.isQualifiedName(typeNodeName))
