@@ -403,7 +403,7 @@ class LazyReferenceCoordinator {
         if (!this.dirtySourceFiles.has(sourceFile))
             return;
         sourceFile._referenceContainer.refresh();
-        this.clearDityForSourceFile(sourceFile);
+        this.clearDirtyForSourceFile(sourceFile);
     }
     addDirtySourceFile(sourceFile) {
         this.dirtySourceFiles.add(sourceFile);
@@ -411,7 +411,7 @@ class LazyReferenceCoordinator {
     clearDirtySourceFiles() {
         this.dirtySourceFiles.clear();
     }
-    clearDityForSourceFile(sourceFile) {
+    clearDirtyForSourceFile(sourceFile) {
         this.dirtySourceFiles.delete(sourceFile);
     }
 }
@@ -17605,7 +17605,10 @@ class LanguageService {
             host: this._compilerHost,
             configFileParsingDiagnostics: params.configFileParsingDiagnostics,
         });
-        this._context.compilerFactory.onSourceFileAdded(() => this._reset());
+        this._context.compilerFactory.onSourceFileAdded(sourceFile => {
+            if (sourceFile._isInProject())
+                this._reset();
+        });
         this._context.compilerFactory.onSourceFileRemoved(() => this._reset());
     }
     get compilerObject() {
@@ -19233,11 +19236,10 @@ class CompilerFactory {
             wasAdded = true;
             return createdSourceFile;
         });
-        if (options.markInProject) {
+        if (options.markInProject)
             sourceFile._markAsInProject();
-            if (wasAdded)
-                this.sourceFileAddedEventContainer.fire(sourceFile);
-        }
+        if (wasAdded)
+            this.sourceFileAddedEventContainer.fire(sourceFile);
         return sourceFile;
     }
     addSourceFileToCache(sourceFile) {

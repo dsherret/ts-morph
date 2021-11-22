@@ -71,7 +71,13 @@ export class LanguageService {
       configFileParsingDiagnostics: params.configFileParsingDiagnostics,
     });
 
-    this._context.compilerFactory.onSourceFileAdded(() => this._reset());
+    this._context.compilerFactory.onSourceFileAdded(sourceFile => {
+      // Only reset if the user is explicitly adding the source file.
+      // Otherwise it might have just been the TypeScript compiler
+      // doing some analysis and pulling in a new lib file or other file.
+      if (sourceFile._isInProject())
+        this._reset();
+    });
     this._context.compilerFactory.onSourceFileRemoved(() => this._reset());
   }
 

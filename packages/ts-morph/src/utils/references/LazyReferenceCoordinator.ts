@@ -34,7 +34,7 @@ export class LazyReferenceCoordinator {
     if (!this.dirtySourceFiles.has(sourceFile))
       return;
     sourceFile._referenceContainer.refresh();
-    this.clearDityForSourceFile(sourceFile);
+    this.clearDirtyForSourceFile(sourceFile);
   }
 
   addDirtySourceFile(sourceFile: SourceFile) {
@@ -45,7 +45,7 @@ export class LazyReferenceCoordinator {
     this.dirtySourceFiles.clear();
   }
 
-  clearDityForSourceFile(sourceFile: SourceFile) {
+  clearDirtyForSourceFile(sourceFile: SourceFile) {
     this.dirtySourceFiles.delete(sourceFile);
   }
 }

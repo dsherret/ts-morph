@@ -389,12 +389,11 @@ export class CompilerFactory {
         return createdSourceFile;
       });
 
-    if (options.markInProject) {
+    if (options.markInProject)
       sourceFile._markAsInProject();
 
-      if (wasAdded)
-        this.sourceFileAddedEventContainer.fire(sourceFile);
-    }
+    if (wasAdded)
+      this.sourceFileAddedEventContainer.fire(sourceFile);
 
     return sourceFile;
   }
