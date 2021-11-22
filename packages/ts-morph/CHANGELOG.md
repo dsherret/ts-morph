@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="13.0.1"></a>
+## [13.0.1](https://github.com/dsherret/ts-morph/compare/13.0.0...13.0.1) (2021-11-22)
+
+
+### Bug Fixes
+
+* Regression in `getReferencingNodesInOtherSourceFiles` with source files not marked as in the project ([7504aed](https://github.com/dsherret/ts-morph/commit/7504aed)), closes [#1227](https://github.com/dsherret/ts-morph/issues/1227) [#1195](https://github.com/dsherret/ts-morph/issues/1195)
+* Surface read file errors instead of ignoring them ([760fe8c](https://github.com/dsherret/ts-morph/commit/760fe8c))
+* Align `getScriptSnapshot` compiler host libFileMap behaviour with `readFile` ([9e84d72](https://github.com/dsherret/ts-morph/commit/9e84d72))
+
+
+
 <a name="13.0.0"></a>
 # [13.0.0](https://github.com/dsherret/ts-morph/compare/12.2.0...13.0.0) (2021-11-20)
 
