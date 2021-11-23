@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="13.0.2"></a>
+## [13.0.2](https://github.com/dsherret/ts-morph/compare/13.0.1...13.0.2) (2021-11-23)
+
+
+### Bug Fixes
+
+* prevent in-memory `/node_modules/typescript/lib` folder getting saved to the file system sometimes ([a655c65](https://github.com/dsherret/ts-morph/commit/a655c65))
+
+
+
 <a name="13.0.1"></a>
 ## [13.0.1](https://github.com/dsherret/ts-morph/compare/13.0.0...13.0.1) (2021-11-22)
 
