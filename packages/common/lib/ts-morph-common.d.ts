@@ -842,6 +842,9 @@ export declare function getLibFiles(): {
     text: string;
 }[];
 
+/** The folder to use to "store" the in memory lib files. */
+export declare const libFolderInMemoryPath: StandardizedFilePath;
+
 /**
  * Gets the enum name for the specified syntax kind.
  * @param kind - Syntax kind.

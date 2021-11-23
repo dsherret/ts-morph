@@ -1,4 +1,4 @@
-import { errors, SyntaxKind, ts, NewLineKind, EmitHint, ScriptKind, ScriptTarget, SettingsContainer, KeyValueCache, getCompilerOptionsFromTsConfig as getCompilerOptionsFromTsConfig$1, ObjectUtils, StringUtils, getSyntaxKindName, ArrayUtils, nameof, EventContainer, FileUtils, Memoize, SymbolFlags, TypeFormatFlags, getEmitModuleResolutionKind, createHosts, ObjectFlags, TypeFlags, matchGlobs, ModuleResolutionKind, SortedKeyValueArray, LocaleStringComparer, WeakCache, DocumentRegistry, createModuleResolutionHost, TransactionalFileSystem, TsConfigResolver, CompilerOptionsContainer, InMemoryFileSystemHost, RealFileSystemHost, IterableUtils, runtime } from './common/mod.ts';
+import { errors, SyntaxKind, ts, NewLineKind, EmitHint, ScriptKind, ScriptTarget, SettingsContainer, KeyValueCache, getCompilerOptionsFromTsConfig as getCompilerOptionsFromTsConfig$1, ObjectUtils, StringUtils, getSyntaxKindName, ArrayUtils, nameof, EventContainer, FileUtils, libFolderInMemoryPath, Memoize, SymbolFlags, TypeFormatFlags, getEmitModuleResolutionKind, createHosts, ObjectFlags, TypeFlags, matchGlobs, ModuleResolutionKind, SortedKeyValueArray, LocaleStringComparer, WeakCache, DocumentRegistry, createModuleResolutionHost, TransactionalFileSystem, TsConfigResolver, CompilerOptionsContainer, InMemoryFileSystemHost, RealFileSystemHost, IterableUtils, runtime } from './common/mod.ts';
 export { CompilerOptionsContainer, DiagnosticCategory, EmitHint, InMemoryFileSystemHost, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, NodeFlags, ObjectFlags, ResolutionHosts, ScriptKind, ScriptTarget, SettingsContainer, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags, ts } from './common/mod.ts';
 import CodeBlockWriter from 'https://deno.land/x/code_block_writer@11.0.0/mod.ts';
 export { default as CodeBlockWriter } from 'https://deno.land/x/code_block_writer@11.0.0/mod.ts';
@@ -13124,6 +13124,7 @@ class SourceFile extends SourceFileBase {
         return this.copy(FileUtils.pathJoin(dirPath, this.getBaseName()), options);
     }
     copy(filePath, options = {}) {
+        this._throwIfIsInMemoryLibFile();
         const result = this._copyInternal(filePath, options);
         if (result === false)
             return this;
@@ -13180,6 +13181,7 @@ class SourceFile extends SourceFileBase {
         return this.move(FileUtils.pathJoin(dirPath, this.getBaseName()), options);
     }
     move(filePath, options = {}) {
+        this._throwIfIsInMemoryLibFile();
         const oldDirPath = this.getDirectoryPath();
         const sourceFileReferences = this._getReferencesForMoveInternal();
         const oldFilePath = this.getFilePath();
@@ -13256,25 +13258,32 @@ class SourceFile extends SourceFileBase {
         return this;
     }
     delete() {
+        this._throwIfIsInMemoryLibFile();
         const filePath = this.getFilePath();
         this.forget();
         this._context.fileSystemWrapper.queueFileDelete(filePath);
     }
     async deleteImmediately() {
+        this._throwIfIsInMemoryLibFile();
         const filePath = this.getFilePath();
         this.forget();
         await this._context.fileSystemWrapper.deleteFileImmediately(filePath);
     }
     deleteImmediatelySync() {
+        this._throwIfIsInMemoryLibFile();
         const filePath = this.getFilePath();
         this.forget();
         this._context.fileSystemWrapper.deleteFileImmediatelySync(filePath);
     }
     async save() {
+        if (this._isLibFileInMemory())
+            return;
         await this._context.fileSystemWrapper.writeFile(this.getFilePath(), this._getTextForSave());
         this._isSaved = true;
     }
     saveSync() {
+        if (this._isLibFileInMemory())
+            return;
         this._context.fileSystemWrapper.writeFileSync(this.getFilePath(), this._getTextForSave());
         this._isSaved = true;
     }
@@ -13368,7 +13377,7 @@ class SourceFile extends SourceFileBase {
         return this.getFilePath().indexOf("/node_modules/") >= 0;
     }
     isSaved() {
-        return this._isSaved;
+        return this._isSaved && !this._isLibFileInMemory();
     }
     _setIsSaved(value) {
         this._isSaved = value;
@@ -13517,6 +13526,13 @@ class SourceFile extends SourceFileBase {
         this.replaceText([0, this.getEnd()], fileText);
         this._setIsSaved(true);
         return FileSystemRefreshResult.Updated;
+    }
+    _isLibFileInMemory() {
+        return this.compilerNode.fileName.startsWith(libFolderInMemoryPath);
+    }
+    _throwIfIsInMemoryLibFile() {
+        if (this._isLibFileInMemory())
+            throw new errors.InvalidOperationError(`This operation is not permitted on an in memory lib folder file.`);
     }
     _isInProject() {
         return this._context.inProjectCoordinator.isSourceFileInProject(this);

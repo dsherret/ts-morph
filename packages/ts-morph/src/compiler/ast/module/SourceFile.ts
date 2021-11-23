@@ -4,6 +4,7 @@ import {
   EventContainer,
   FileUtils,
   LanguageVariant,
+  libFolderInMemoryPath,
   Memoize,
   ScriptKind,
   ScriptTarget,
@@ -218,6 +219,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    * @param options - Options for copying.
    */
   copy(filePath: string, options: SourceFileCopyOptions = {}): SourceFile {
+    this._throwIfIsInMemoryLibFile();
     const result = this._copyInternal(filePath, options);
     if (result === false)
       return this;
@@ -320,6 +322,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    * @param options - Options for moving.
    */
   move(filePath: string, options: SourceFileMoveOptions = {}): SourceFile {
+    this._throwIfIsInMemoryLibFile();
     const oldDirPath = this.getDirectoryPath();
     const sourceFileReferences = this._getReferencesForMoveInternal();
     const oldFilePath = this.getFilePath();
@@ -436,6 +439,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    * The file will be deleted when you call ast.save(). If you wish to immediately delete the file, then use deleteImmediately().
    */
   delete() {
+    this._throwIfIsInMemoryLibFile();
     const filePath = this.getFilePath();
     this.forget();
     this._context.fileSystemWrapper.queueFileDelete(filePath);
@@ -445,6 +449,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    * Asynchronously deletes the file from the file system.
    */
   async deleteImmediately() {
+    this._throwIfIsInMemoryLibFile();
     const filePath = this.getFilePath();
     this.forget();
     await this._context.fileSystemWrapper.deleteFileImmediately(filePath);
@@ -454,6 +459,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    * Synchronously deletes the file from the file system.
    */
   deleteImmediatelySync() {
+    this._throwIfIsInMemoryLibFile();
     const filePath = this.getFilePath();
     this.forget();
     this._context.fileSystemWrapper.deleteFileImmediatelySync(filePath);
@@ -463,6 +469,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    * Asynchronously saves this file with any changes.
    */
   async save() {
+    if (this._isLibFileInMemory())
+      return;
+
     await this._context.fileSystemWrapper.writeFile(this.getFilePath(), this._getTextForSave());
     this._isSaved = true;
   }
@@ -471,6 +480,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    * Synchronously saves this file with any changes.
    */
   saveSync() {
+    if (this._isLibFileInMemory())
+      return;
+
     this._context.fileSystemWrapper.writeFileSync(this.getFilePath(), this._getTextForSave());
     this._isSaved = true;
   }
@@ -658,7 +670,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    * Gets if this source file has been saved or if the latest changes have been saved.
    */
   isSaved() {
-    return this._isSaved;
+    return this._isSaved && !this._isLibFileInMemory();
   }
 
   /**
@@ -991,6 +1003,17 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     this.replaceText([0, this.getEnd()], fileText);
     this._setIsSaved(true); // saved when loaded from file system
     return FileSystemRefreshResult.Updated;
+  }
+
+  /** @internal */
+  _isLibFileInMemory() {
+    return this.compilerNode.fileName.startsWith(libFolderInMemoryPath);
+  }
+
+  /** @internal */
+  _throwIfIsInMemoryLibFile() {
+    if (this._isLibFileInMemory())
+      throw new errors.InvalidOperationError(`This operation is not permitted on an in memory lib folder file.`);
   }
 
   /** @internal */

@@ -6,5 +6,5 @@ export function getLibFiles() {
   return libFiles;
 }
 
-/** The folder to use to "store" the lib files. @internal */
+/** The folder to use to "store" the in memory lib files. */
 export const libFolderInMemoryPath = "/node_modules/typescript/lib" as StandardizedFilePath;
