@@ -68,4 +68,36 @@ describe("JsxSelfClosingElement", () => {
       });
     });
   });
+
+  describe(nameof<JsxSelfClosingElement>("addAttribute"), () => {
+    it("should add the attribute", () => {
+      const { descendant } = getInfo(`<jsx />`)
+      descendant.addAttribute({
+        name: "attribute",
+      })
+
+      expect(descendant.getFullText()).to.equal("<jsx attribute />")
+    });
+
+    it("should add the attribute with initializer", () => {
+      const { descendant } = getInfo(`<jsx />`)
+      descendant.addAttribute({
+        name: "attribute",
+        initializer: `"value"`
+      })
+
+      expect(descendant.getFullText()).to.equal(`<jsx attribute="value" />`)
+    });
+
+    it("should add the attribute with leadingTrivia", () => {
+      const { descendant } = getInfo(`<jsx />`)
+      descendant.addAttribute({
+        name: "attribute",
+        initializer: `"value"`,
+        leadingTrivia: "// comment",
+      })
+
+      expect(descendant.getFullText()).to.equal(`<jsx \n    // comment\n    attribute="value" />`)
+    });
+  });
 });
