@@ -6,9 +6,9 @@ import { NodePrinter } from "../NodePrinter";
 export class JsxAttributeDeciderStructurePrinter extends NodePrinter<InferArrayElementType<JsxElementStructure["attributes"]>> {
   protected printTextInternal(writer: CodeBlockWriter, structure: InferArrayElementType<JsxElementStructure["attributes"]>) {
     if (isJsxAttribute(structure))
-      this.factory.forJsxAttribute().printText(writer, structure);
+      this.factory.forJsxAttribute().printTextWithoutTrivia(writer, structure);
     else if (structure.kind === StructureKind.JsxSpreadAttribute)
-      this.factory.forJsxSpreadAttribute().printText(writer, structure);
+      this.factory.forJsxSpreadAttribute().printTextWithoutTrivia(writer, structure);
     else
       throw errors.throwNotImplementedForNeverValueError(structure);
 

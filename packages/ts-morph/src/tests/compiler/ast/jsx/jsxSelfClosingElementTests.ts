@@ -79,7 +79,7 @@ describe("JsxSelfClosingElement", () => {
       expect(descendant.getFullText()).to.equal("<jsx attribute />")
     });
 
-    it("should add the attribute with initializer", () => {
+    it("should add attribute with initializer", () => {
       const { descendant } = getInfo(`<jsx />`)
       descendant.addAttribute({
         name: "attribute",
@@ -89,7 +89,7 @@ describe("JsxSelfClosingElement", () => {
       expect(descendant.getFullText()).to.equal(`<jsx attribute="value" />`)
     });
 
-    it("should add the attribute with leadingTrivia", () => {
+    it("should add attribute with leadingTrivia", () => {
       const { descendant } = getInfo(`<jsx />`)
       descendant.addAttribute({
         name: "attribute",
@@ -97,7 +97,18 @@ describe("JsxSelfClosingElement", () => {
         leadingTrivia: "// comment",
       })
 
-      expect(descendant.getFullText()).to.equal(`<jsx \n    // comment\n    attribute="value" />`)
+      expect(descendant.getFullText()).to.equal(`<jsx // comment\n    attribute="value" />`)
+    });
+
+    it("should add spread attribute with leadingTrivia", () => {
+      const { descendant } = getInfo("<jsx />")
+      descendant.addAttribute({
+        kind: StructureKind.JsxSpreadAttribute,
+        expression: "props",
+        leadingTrivia: "// comment",
+      })
+
+      expect(descendant.getFullText()).to.equal(`<jsx // comment\n    ...props>`)
     });
   });
 });
