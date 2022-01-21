@@ -108,7 +108,66 @@ describe("JsxSelfClosingElement", () => {
         leadingTrivia: "// comment",
       })
 
-      expect(descendant.getFullText()).to.equal(`<jsx // comment\n    ...props>`)
+      expect(descendant.getFullText()).to.equal(`<jsx // comment\n    ...props />`)
+    });
+  });
+
+  describe(nameof<JsxSelfClosingElement>("addAttributes"), () => {
+    it("should add the attributes", () => {
+      const { descendant } = getInfo("<jsx />")
+      descendant.addAttributes([{
+        name: "attribute1",
+      },
+      {
+        name: "attribute2",
+      }])
+
+      expect(descendant.getFullText()).to.equal("<jsx attribute1 attribute2 />")
+    });
+
+    it("should add attributes with initializers", () => {
+      const { descendant } = getInfo("<jsx />")
+      descendant.addAttributes([{
+        name: "attribute1",
+        initializer: `"value1"`
+      },
+      {
+        name: "attribute2",
+        initializer: `"value2"`
+      }])
+
+      expect(descendant.getFullText()).to.equal(`<jsx attribute1="value1" attribute2="value2" />`)
+    });
+
+    it("should add attributes with leadingTrivia", () => {
+      const { descendant } = getInfo("<jsx />")
+      descendant.addAttributes([{
+        name: "attribute1",
+        initializer: `"value1"`,
+        leadingTrivia: "// comment1",
+      },
+      {
+        name: "attribute2",
+        initializer: `"value2"`,
+        leadingTrivia: "// comment2",
+      }])
+
+      expect(descendant.getFullText()).to.equal(`<jsx // comment1\n    attribute1="value1" // comment2\n    attribute2="value2" />`)
+    });
+
+    it("should add spread attributes with leadingTrivia", () => {
+      const { descendant } = getInfo("<jsx />")
+      descendant.addAttributes([{
+        kind: StructureKind.JsxSpreadAttribute,
+        expression: "props1",
+        leadingTrivia: "// comment1",
+      }, {
+        kind: StructureKind.JsxSpreadAttribute,
+        expression: "props2",
+        leadingTrivia: "// comment2",
+      }])
+
+      expect(descendant.getFullText()).to.equal(`<jsx // comment1\n    ...props1 // comment2\n    ...props2 />`)
     });
   });
 });
