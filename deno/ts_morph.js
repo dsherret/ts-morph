@@ -8250,8 +8250,10 @@ class JsxSelfClosingElementStructurePrinter extends NodePrinter {
 class JsxSpreadAttributeStructurePrinter extends NodePrinter {
     printTextInternal(writer, structure) {
         writer.hangingIndent(() => {
+            writer.write("{");
             writer.write("...");
             writer.write(structure.expression);
+            writer.write("}");
         });
     }
 }
