@@ -8165,9 +8165,9 @@ class TypeElementMemberStructurePrinter extends Printer {
 class JsxAttributeDeciderStructurePrinter extends NodePrinter {
     printTextInternal(writer, structure) {
         if (isJsxAttribute())
-            this.factory.forJsxAttribute().printText(writer, structure);
+            this.factory.forJsxAttribute().printTextWithoutTrivia(writer, structure);
         else if (structure.kind === StructureKind.JsxSpreadAttribute)
-            this.factory.forJsxSpreadAttribute().printText(writer, structure);
+            this.factory.forJsxSpreadAttribute().printTextWithoutTrivia(writer, structure);
         else
             throw errors.throwNotImplementedForNeverValueError(structure);
         function isJsxAttribute(struct) {
