@@ -50,7 +50,7 @@ describe("JsxAttributedNode", () => {
     });
 
     it("should be undefined when can't find using a find function", () => {
-      doFindFunctionTest(`var t = (<jsx attrib1 attrib2={5} {...attribs} attrib3={7}></jsx>);`, attrib => false, undefined);
+      doFindFunctionTest(`var t = (<jsx attrib1 attrib2={5} {...attribs} attrib3={7}></jsx>);`, () => false, undefined);
     });
   });
 
@@ -92,7 +92,7 @@ describe("JsxAttributedNode", () => {
         doTest(`var t = (<jsx attrib attrib5={2}></jsx>);`, 1, [{ name: "attrib2" }, { name: "attrib3", initializer: "{3}" }, {
           expression: "attrib4",
           kind: StructureKind.JsxSpreadAttribute,
-        }], `<jsx attrib attrib2 attrib3={3} ...attrib4 attrib5={2}>`);
+        }], `<jsx attrib attrib2 attrib3={3} {...attrib4} attrib5={2}>`);
       });
 
       it("should insert the attributes at the end", () => {

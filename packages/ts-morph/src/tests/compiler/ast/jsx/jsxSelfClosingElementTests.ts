@@ -108,7 +108,7 @@ describe("JsxSelfClosingElement", () => {
         leadingTrivia: "// comment",
       });
 
-      expect(descendant.getFullText()).to.equal(`<jsx // comment\n    ...props />`);
+      expect(descendant.getFullText()).to.equal(`<jsx // comment\n    {...props} />`);
     });
   });
 
@@ -164,7 +164,7 @@ describe("JsxSelfClosingElement", () => {
         leadingTrivia: "// comment2",
       }]);
 
-      expect(descendant.getFullText()).to.equal(`<jsx // comment1\n    ...props1 // comment2\n    ...props2 />`);
+      expect(descendant.getFullText()).to.equal(`<jsx // comment1\n    {...props1} // comment2\n    {...props2} />`);
     });
   });
 });
