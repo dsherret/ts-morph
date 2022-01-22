@@ -22,92 +22,89 @@ describe("JsxOpeningElement", () => {
 
   describe(nameof<JsxOpeningElement>("addAttribute"), () => {
     it("should add the attribute", () => {
-      const { descendant } = getInfo("<jsx></jsx>")
+      const { descendant } = getInfo("<jsx></jsx>");
       descendant.addAttribute({
         name: "attribute",
-      })
+      });
 
-      expect(descendant.getFullText()).to.equal("<jsx attribute>")
+      expect(descendant.getFullText()).to.equal("<jsx attribute>");
     });
 
     it("should add attribute with initializer", () => {
-      const { descendant } = getInfo("<jsx></jsx>")
+      const { descendant } = getInfo("<jsx></jsx>");
       descendant.addAttribute({
         name: "attribute",
-        initializer: `"value"`
-      })
+        initializer: `"value"`,
+      });
 
-      expect(descendant.getFullText()).to.equal(`<jsx attribute="value">`)
+      expect(descendant.getFullText()).to.equal(`<jsx attribute="value">`);
     });
 
     it("should add attribute with leadingTrivia", () => {
-      const { descendant } = getInfo("<jsx></jsx>")
+      const { descendant } = getInfo("<jsx></jsx>");
       descendant.addAttribute({
         name: "attribute",
         initializer: `"value"`,
         leadingTrivia: "// comment",
-      })
+      });
 
-      expect(descendant.getFullText()).to.equal(`<jsx // comment\n    attribute="value">`)
+      expect(descendant.getFullText()).to.equal(`<jsx // comment\n    attribute="value">`);
     });
 
     it("should add spread attribute with leadingTrivia", () => {
-      const { descendant } = getInfo("<jsx></jsx>")
+      const { descendant } = getInfo("<jsx></jsx>");
       descendant.addAttribute({
         kind: StructureKind.JsxSpreadAttribute,
         expression: "props",
         leadingTrivia: "// comment",
-      })
+      });
 
-      expect(descendant.getFullText()).to.equal(`<jsx // comment\n    ...props>`)
+      expect(descendant.getFullText()).to.equal(`<jsx // comment\n    ...props>`);
     });
   });
 
   describe(nameof<JsxOpeningElement>("addAttributes"), () => {
     it("should add the attributes", () => {
-      const { descendant } = getInfo("<jsx></jsx>")
+      const { descendant } = getInfo("<jsx></jsx>");
       descendant.addAttributes([{
         name: "attribute1",
-      },
-      {
+      }, {
         name: "attribute2",
-      }])
+      }]);
 
-      expect(descendant.getFullText()).to.equal("<jsx attribute1 attribute2>")
+      expect(descendant.getFullText()).to.equal("<jsx attribute1 attribute2>");
     });
 
     it("should add attributes with initializers", () => {
-      const { descendant } = getInfo("<jsx></jsx>")
+      const { descendant } = getInfo("<jsx></jsx>");
       descendant.addAttributes([{
         name: "attribute1",
-        initializer: `"value1"`
-      },
-      {
+        initializer: `"value1"`,
+      }, {
         name: "attribute2",
-        initializer: `"value2"`
-      }])
+        initializer: `"value2"`,
+      }]);
 
-      expect(descendant.getFullText()).to.equal(`<jsx attribute1="value1" attribute2="value2">`)
+      expect(descendant.getFullText()).to.equal(`<jsx attribute1="value1" attribute2="value2">`);
     });
 
     it("should add attributes with leadingTrivia", () => {
-      const { descendant } = getInfo("<jsx></jsx>")
+      const { descendant } = getInfo("<jsx></jsx>");
       descendant.addAttributes([{
         name: "attribute1",
         initializer: `"value1"`,
         leadingTrivia: "// comment1",
-      },
-      {
+      }, {
         name: "attribute2",
         initializer: `"value2"`,
         leadingTrivia: "// comment2",
-      }])
+      }]);
 
-      expect(descendant.getFullText()).to.equal(`<jsx // comment1\n    attribute1="value1" // comment2\n    attribute2="value2">`)
+      expect(descendant.getFullText()).to.equal(`<jsx // comment1\n    attribute1="value1" // comment2\n    attribute2="value2">`);
     });
 
     it("should add spread attributes with leadingTrivia", () => {
-      const { descendant } = getInfo("<jsx></jsx>")
+      const { descendant } = getInfo("<jsx></jsx>");
       descendant.addAttributes([{
         kind: StructureKind.JsxSpreadAttribute,
         expression: "props1",
@@ -116,9 +113,9 @@ describe("JsxOpeningElement", () => {
         kind: StructureKind.JsxSpreadAttribute,
         expression: "props2",
         leadingTrivia: "// comment2",
-      }])
+      }]);
 
-      expect(descendant.getFullText()).to.equal(`<jsx // comment1\n    ...props1 // comment2\n    ...props2>`)
+      expect(descendant.getFullText()).to.equal(`<jsx // comment1\n    ...props1 // comment2\n    ...props2>`);
     });
   });
 });

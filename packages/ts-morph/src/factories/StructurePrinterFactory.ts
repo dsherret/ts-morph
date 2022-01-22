@@ -1,7 +1,7 @@
 // DO NOT EDIT - Automatically maintained by createStructurePrinterFactory.ts
 import { Memoize } from "@ts-morph/common";
-import * as structurePrinters from "../structurePrinters";
 import { SupportedFormatCodeSettings } from "../options";
+import * as structurePrinters from "../structurePrinters";
 
 /** Cached lazy factory for StructurePrinters. */
 export class StructurePrinterFactory {
