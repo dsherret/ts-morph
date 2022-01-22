@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="13.0.3"></a>
+## [13.0.3](https://github.com/dsherret/ts-morph/compare/13.0.2...13.0.3) (2022-01-22)
+
+
+### Bug Fixes
+
+* adding jsx attribute with leading trivia should not add duplicate leading trivia ([#1241](https://github.com/dsherret/ts-morph/issues/1241)) ([038f09f](https://github.com/dsherret/ts-morph/commit/038f09f)) - Thanks [brandongregoryscott](https://github.com/brandongregoryscott)!
+* write JsxSpreadAttribute with surrounding braces ([d7497ee](https://github.com/dsherret/ts-morph/commit/d7497ee))
+
+
+
 <a name="13.0.2"></a>
 ## [13.0.2](https://github.com/dsherret/ts-morph/compare/13.0.1...13.0.2) (2021-11-23)
 
