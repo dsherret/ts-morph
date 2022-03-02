@@ -4,12 +4,12 @@ import { AssertionKeyNamedNode } from "../base";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
-import { StringLiteral } from "../literal";
+import { Expression } from "../expression";
 
 export const AssertEntryBase = AssertionKeyNamedNode(Node);
 export class AssertEntry extends AssertEntryBase<ts.AssertEntry> {
   /** Gets the value of the assert entry. */
-  getValue(): StringLiteral {
+  getValue(): Expression {
     return this._getNodeFromCompilerNode(this.compilerNode.value);
   }
 
@@ -18,7 +18,7 @@ export class AssertEntry extends AssertEntryBase<ts.AssertEntry> {
     callBaseSet(AssertEntryBase.prototype, this, structure);
 
     if (structure.value)
-      this.getValue().setLiteralValue(structure.value);
+      this.getValue().replaceWithText(structure.value);
 
     return this;
   }
@@ -29,7 +29,7 @@ export class AssertEntry extends AssertEntryBase<ts.AssertEntry> {
   getStructure(): AssertEntryStructure {
     return callBaseGetStructure<AssertEntryStructureSpecificStructure>(AssertEntryBase.prototype, this, {
       kind: StructureKind.AssertEntry,
-      value: this.getValue().getLiteralValue(),
+      value: this.getValue().getText(),
     });
   }
 }

@@ -797,7 +797,7 @@ describe("ImportDeclaration", () => {
         assertElements: [{
           kind: StructureKind.AssertEntry,
           name: "type",
-          value: "asdf",
+          value: "'asdf'",
         }],
       });
     });

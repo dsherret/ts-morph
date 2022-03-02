@@ -6,6 +6,6 @@ export interface AssertEntryStructure extends Structure, AssertEntryStructureSpe
 }
 
 export interface AssertEntryStructureSpecificStructure extends KindedStructure<StructureKind.AssertEntry> {
-  /** String literal value. */
+  /** Expression value. Quote this when providing a string. */
   value: string;
 }

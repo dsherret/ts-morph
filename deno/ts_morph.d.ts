@@ -7009,7 +7009,7 @@ declare const AssertEntryBase: Constructor<AssertionKeyNamedNode> & typeof Node;
 
 export declare class AssertEntry extends AssertEntryBase<ts.AssertEntry> {
   /** Gets the value of the assert entry. */
-  getValue(): StringLiteral;
+  getValue(): Expression;
   /** Sets the name and value. */
   set(structure: Partial<AssertEntryStructure>): this;
   /** Gets the structure equivalent to this node. */
@@ -10589,7 +10589,7 @@ export interface AssertEntryStructure extends Structure, AssertEntryStructureSpe
 }
 
 interface AssertEntryStructureSpecificStructure extends KindedStructure<StructureKind.AssertEntry> {
-  /** String literal value. */
+  /** Expression value. Quote this when providing a string. */
   value: string;
 }
 
