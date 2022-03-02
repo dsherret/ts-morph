@@ -19,7 +19,7 @@ describe("AssertEntry", () => {
     it("should set everything when specified", () => {
       const structure: OptionalKindAndTrivia<MakeRequired<AssertEntryStructure>> = {
         name: "test",
-        value: "asdf",
+        value: "'asdf'",
       };
       doTest(
         "import * as a from 'test' assert { name: 'value' };",

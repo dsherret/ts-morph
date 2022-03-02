@@ -2,6 +2,13 @@
 
 View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only a high level overview of breaking changes.
 
+## Version 14
+
+- Upgraded to TS 4.6
+- To align with the ts compiler:
+  - `AssertEntry#getValue` now returns an expression instead of a string literal.
+  - `AssertEntryStructure#value` now represents an expression instead of a string literal.
+
 ## Version 13
 
 - Upgraded to TS 4.5

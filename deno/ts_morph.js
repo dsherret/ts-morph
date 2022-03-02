@@ -6454,20 +6454,16 @@ const Structure = {
         return typeof structure.name === "string";
     },
     isAssertEntry(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.AssertEntry;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.AssertEntry;
     },
     isAssertionKeyNamed(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.AssertEntry;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.AssertEntry;
     },
     isCallSignature(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.CallSignature;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.CallSignature;
     },
     isJSDocable(structure) {
-        var _a;
-        switch ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) {
+        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
             case StructureKind.CallSignature:
             case StructureKind.Class:
             case StructureKind.ClassStaticBlock:
@@ -6496,8 +6492,7 @@ const Structure = {
         }
     },
     isSignatured(structure) {
-        var _a;
-        switch ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) {
+        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
             case StructureKind.CallSignature:
             case StructureKind.ConstructorOverload:
             case StructureKind.Constructor:
@@ -6515,8 +6510,7 @@ const Structure = {
         }
     },
     isParametered(structure) {
-        var _a;
-        switch ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) {
+        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
             case StructureKind.CallSignature:
             case StructureKind.ConstructorOverload:
             case StructureKind.Constructor:
@@ -6534,8 +6528,7 @@ const Structure = {
         }
     },
     isReturnTyped(structure) {
-        var _a;
-        switch ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) {
+        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
             case StructureKind.CallSignature:
             case StructureKind.ConstructorOverload:
             case StructureKind.Constructor:
@@ -6554,8 +6547,7 @@ const Structure = {
         }
     },
     isTypeParametered(structure) {
-        var _a;
-        switch ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) {
+        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
             case StructureKind.CallSignature:
             case StructureKind.Class:
             case StructureKind.ConstructorOverload:
@@ -6576,16 +6568,13 @@ const Structure = {
         }
     },
     isClass(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.Class;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.Class;
     },
     isClassLikeDeclarationBase(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.Class;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.Class;
     },
     isNameable(structure) {
-        var _a;
-        switch ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) {
+        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
             case StructureKind.Class:
             case StructureKind.Function:
                 return true;
@@ -6594,12 +6583,10 @@ const Structure = {
         }
     },
     isImplementsClauseable(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.Class;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.Class;
     },
     isDecoratable(structure) {
-        var _a;
-        switch ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) {
+        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
             case StructureKind.Class:
             case StructureKind.GetAccessor:
             case StructureKind.Method:
@@ -6612,8 +6599,7 @@ const Structure = {
         }
     },
     isAbstractable(structure) {
-        var _a;
-        switch ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) {
+        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
             case StructureKind.Class:
             case StructureKind.GetAccessor:
             case StructureKind.MethodOverload:
@@ -6626,8 +6612,7 @@ const Structure = {
         }
     },
     isAmbientable(structure) {
-        var _a;
-        switch ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) {
+        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
             case StructureKind.Class:
             case StructureKind.Enum:
             case StructureKind.FunctionOverload:
@@ -6643,8 +6628,7 @@ const Structure = {
         }
     },
     isExportable(structure) {
-        var _a;
-        switch ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) {
+        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
             case StructureKind.Class:
             case StructureKind.Enum:
             case StructureKind.FunctionOverload:
@@ -6659,12 +6643,10 @@ const Structure = {
         }
     },
     isClassStaticBlock(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.ClassStaticBlock;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.ClassStaticBlock;
     },
     isStatemented(structure) {
-        var _a;
-        switch ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) {
+        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
             case StructureKind.ClassStaticBlock:
             case StructureKind.Constructor:
             case StructureKind.Function:
@@ -6679,12 +6661,10 @@ const Structure = {
         }
     },
     isConstructorDeclarationOverload(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.ConstructorOverload;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.ConstructorOverload;
     },
     isScoped(structure) {
-        var _a;
-        switch ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) {
+        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
             case StructureKind.ConstructorOverload:
             case StructureKind.Constructor:
             case StructureKind.GetAccessor:
@@ -6698,12 +6678,10 @@ const Structure = {
         }
     },
     isConstructor(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.Constructor;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.Constructor;
     },
     isFunctionLike(structure) {
-        var _a;
-        switch ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) {
+        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
             case StructureKind.Constructor:
             case StructureKind.Function:
             case StructureKind.GetAccessor:
@@ -6715,20 +6693,16 @@ const Structure = {
         }
     },
     isConstructSignature(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.ConstructSignature;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.ConstructSignature;
     },
     isDecorator(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.Decorator;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.Decorator;
     },
     isEnum(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.Enum;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.Enum;
     },
     isNamed(structure) {
-        var _a;
-        switch ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) {
+        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
             case StructureKind.Enum:
             case StructureKind.Interface:
             case StructureKind.JsxAttribute:
@@ -6741,12 +6715,10 @@ const Structure = {
         }
     },
     isEnumMember(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.EnumMember;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.EnumMember;
     },
     isPropertyNamed(structure) {
-        var _a;
-        switch ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) {
+        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
             case StructureKind.EnumMember:
             case StructureKind.GetAccessor:
             case StructureKind.Method:
@@ -6761,8 +6733,7 @@ const Structure = {
         }
     },
     isInitializerExpressionable(structure) {
-        var _a;
-        switch ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) {
+        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
             case StructureKind.EnumMember:
             case StructureKind.Parameter:
             case StructureKind.Property:
@@ -6774,24 +6745,19 @@ const Structure = {
         }
     },
     isExportAssignment(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.ExportAssignment;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.ExportAssignment;
     },
     isExportDeclaration(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.ExportDeclaration;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.ExportDeclaration;
     },
     isExportSpecifier(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.ExportSpecifier;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.ExportSpecifier;
     },
     isFunctionDeclarationOverload(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.FunctionOverload;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.FunctionOverload;
     },
     isAsyncable(structure) {
-        var _a;
-        switch ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) {
+        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
             case StructureKind.FunctionOverload:
             case StructureKind.Function:
             case StructureKind.MethodOverload:
@@ -6802,8 +6768,7 @@ const Structure = {
         }
     },
     isGeneratorable(structure) {
-        var _a;
-        switch ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) {
+        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
             case StructureKind.FunctionOverload:
             case StructureKind.Function:
             case StructureKind.MethodOverload:
@@ -6814,16 +6779,13 @@ const Structure = {
         }
     },
     isFunction(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.Function;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.Function;
     },
     isGetAccessor(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.GetAccessor;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.GetAccessor;
     },
     isStaticable(structure) {
-        var _a;
-        switch ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) {
+        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
             case StructureKind.GetAccessor:
             case StructureKind.MethodOverload:
             case StructureKind.Method:
@@ -6835,20 +6797,16 @@ const Structure = {
         }
     },
     isImportDeclaration(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.ImportDeclaration;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.ImportDeclaration;
     },
     isImportSpecifier(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.ImportSpecifier;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.ImportSpecifier;
     },
     isIndexSignature(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.IndexSignature;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.IndexSignature;
     },
     isReadonlyable(structure) {
-        var _a;
-        switch ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) {
+        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
             case StructureKind.IndexSignature:
             case StructureKind.Parameter:
             case StructureKind.Property:
@@ -6859,56 +6817,43 @@ const Structure = {
         }
     },
     isInterface(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.Interface;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.Interface;
     },
     isExtendsClauseable(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.Interface;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.Interface;
     },
     isTypeElementMembered(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.Interface;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.Interface;
     },
     isJSDoc(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.JSDoc;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.JSDoc;
     },
     isJSDocTag(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.JSDocTag;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.JSDocTag;
     },
     isJsxAttribute(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.JsxAttribute;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.JsxAttribute;
     },
     isJsxElement(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.JsxElement;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.JsxElement;
     },
     isJsxSelfClosingElement(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.JsxSelfClosingElement;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.JsxSelfClosingElement;
     },
     isJsxTagNamed(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.JsxSelfClosingElement;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.JsxSelfClosingElement;
     },
     isJsxAttributed(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.JsxSelfClosingElement;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.JsxSelfClosingElement;
     },
     isJsxSpreadAttribute(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.JsxSpreadAttribute;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.JsxSpreadAttribute;
     },
     isMethodDeclarationOverload(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.MethodOverload;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.MethodOverload;
     },
     isQuestionTokenable(structure) {
-        var _a;
-        switch ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) {
+        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
             case StructureKind.MethodOverload:
             case StructureKind.Method:
             case StructureKind.MethodSignature:
@@ -6921,8 +6866,7 @@ const Structure = {
         }
     },
     isOverrideable(structure) {
-        var _a;
-        switch ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) {
+        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
             case StructureKind.MethodOverload:
             case StructureKind.Method:
             case StructureKind.Parameter:
@@ -6933,28 +6877,22 @@ const Structure = {
         }
     },
     isMethod(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.Method;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.Method;
     },
     isMethodSignature(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.MethodSignature;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.MethodSignature;
     },
     isModule(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.Module;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.Module;
     },
     isModuleNamed(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.Module;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.Module;
     },
     isParameter(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.Parameter;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.Parameter;
     },
     isBindingNamed(structure) {
-        var _a;
-        switch ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) {
+        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
             case StructureKind.Parameter:
             case StructureKind.VariableDeclaration:
                 return true;
@@ -6963,8 +6901,7 @@ const Structure = {
         }
     },
     isTyped(structure) {
-        var _a;
-        switch ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) {
+        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
             case StructureKind.Parameter:
             case StructureKind.Property:
             case StructureKind.PropertySignature:
@@ -6976,20 +6913,16 @@ const Structure = {
         }
     },
     isScopeable(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.Parameter;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.Parameter;
     },
     isPropertyAssignment(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.PropertyAssignment;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.PropertyAssignment;
     },
     isProperty(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.Property;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.Property;
     },
     isExclamationTokenable(structure) {
-        var _a;
-        switch ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) {
+        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
             case StructureKind.Property:
             case StructureKind.VariableDeclaration:
                 return true;
@@ -6998,44 +6931,34 @@ const Structure = {
         }
     },
     isPropertySignature(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.PropertySignature;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.PropertySignature;
     },
     isSetAccessor(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.SetAccessor;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.SetAccessor;
     },
     isShorthandPropertyAssignment(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.ShorthandPropertyAssignment;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.ShorthandPropertyAssignment;
     },
     isSourceFile(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.SourceFile;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.SourceFile;
     },
     isSpreadAssignment(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.SpreadAssignment;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.SpreadAssignment;
     },
     isExpressioned(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.SpreadAssignment;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.SpreadAssignment;
     },
     isTypeAlias(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.TypeAlias;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.TypeAlias;
     },
     isTypeParameter(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.TypeParameter;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.TypeParameter;
     },
     isVariableDeclaration(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.VariableDeclaration;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.VariableDeclaration;
     },
     isVariableStatement(structure) {
-        var _a;
-        return ((_a = structure) === null || _a === void 0 ? void 0 : _a.kind) === StructureKind.VariableStatement;
+        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.VariableStatement;
     }
 };
 
@@ -11727,13 +11650,13 @@ class AssertEntry extends AssertEntryBase {
     set(structure) {
         callBaseSet(AssertEntryBase.prototype, this, structure);
         if (structure.value)
-            this.getValue().setLiteralValue(structure.value);
+            this.getValue().replaceWithText(structure.value);
         return this;
     }
     getStructure() {
         return callBaseGetStructure(AssertEntryBase.prototype, this, {
             kind: StructureKind.AssertEntry,
-            value: this.getValue().getLiteralValue(),
+            value: this.getValue().getText(),
         });
     }
 }

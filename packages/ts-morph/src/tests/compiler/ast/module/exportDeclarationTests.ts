@@ -685,7 +685,7 @@ describe("ExportDeclaration", () => {
         moduleSpecifier: "./test",
         namedExports: [],
         namespaceExport: undefined,
-        assertElements: [{ kind: StructureKind.AssertEntry, name: "type", value: "asdf" }],
+        assertElements: [{ kind: StructureKind.AssertEntry, name: "type", value: "'asdf'" }],
       });
     });
 
