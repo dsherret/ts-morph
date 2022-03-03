@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="14.0.0"></a>
+# [14.0.0](https://github.com/dsherret/ts-morph/compare/13.0.3...14.0.0) (2022-03-02)
+
+
+### Features
+
+* upgrade to TS 4.6 ([#1251](https://github.com/dsherret/ts-morph/issues/1251)) ([40e9bf6](https://github.com/dsherret/ts-morph/commit/40e9bf6))
+
+
+### BREAKING CHANGES
+
+* AssertEntry#value is now an expression
+
+
+
 <a name="13.0.3"></a>
 ## [13.0.3](https://github.com/dsherret/ts-morph/compare/13.0.2...13.0.3) (2022-01-22)
 
