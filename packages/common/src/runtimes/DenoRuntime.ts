@@ -1,9 +1,9 @@
 // @ts-ignore
-import { ensureDir, ensureDirSync } from "https://deno.land/std@0.106.0/fs/ensure_dir.ts";
+import { ensureDir, ensureDirSync } from "https://deno.land/std@0.128.0/fs/ensure_dir.ts";
 // @ts-ignore
-import { expandGlob, expandGlobSync } from "https://deno.land/std@0.106.0/fs/expand_glob.ts";
+import { expandGlob, expandGlobSync } from "https://deno.land/std@0.128.0/fs/expand_glob.ts";
 // @ts-ignore
-import * as stdPath from "https://deno.land/std@0.106.0/path/mod.ts";
+import * as stdPath from "https://deno.land/std@0.128.0/path/mod.ts";
 
 declare var Deno: any;
 
