@@ -3727,9 +3727,10 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    */
   formatText(settings?: FormatCodeSettings): void;
   /**
-   * Transforms the node using the compiler api nodes and functions (experimental).
+   * Transforms the node using the compiler api nodes and functions and returns
+   * the node that was transformed (experimental).
    *
-   * WARNING: This will forget descendants of transformed nodes.
+   * WARNING: This will forget descendants of transformed nodes and potentially this node.
    * @example Increments all the numeric literals in a source file.
    * ```ts
    * sourceFile.transform(traversal => {
@@ -3748,7 +3749,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * });
    * ```
    */
-  transform(visitNode: (traversal: TransformTraversalControl) => ts.Node): this;
+  transform(visitNode: (traversal: TransformTraversalControl) => ts.Node): Node;
   /** Gets the leading comment ranges of the current node. */
   getLeadingCommentRanges(): CommentRange[];
   /** Gets the trailing comment ranges of the current node. */

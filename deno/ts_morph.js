@@ -3669,12 +3669,30 @@ class Node {
         const transformerFactory = context => {
             return rootNode => innerVisit(rootNode, context);
         };
-        ts.transform(compilerNode, [transformerFactory], this._context.compilerOptions.get());
-        replaceSourceFileTextStraight({
-            sourceFile: this._sourceFile,
-            newText: getTransformedText(),
-        });
-        return this;
+        if (this.getKind() === ts.SyntaxKind.SourceFile) {
+            ts.transform(compilerNode, [transformerFactory], this._context.compilerOptions.get());
+            replaceSourceFileTextStraight({
+                sourceFile: this._sourceFile,
+                newText: getTransformedText([0, this.getEnd()]),
+            });
+            return this;
+        }
+        else {
+            const parent = this.getParentSyntaxList() || this.getParentOrThrow();
+            const childIndex = this.getChildIndex();
+            const start = this.getStart(true);
+            const end = this.getEnd();
+            ts.transform(compilerNode, [transformerFactory], this._context.compilerOptions.get());
+            insertIntoParentTextRange({
+                parent,
+                insertPos: start,
+                newText: getTransformedText([start, end]),
+                replacing: {
+                    textLength: end - start,
+                },
+            });
+            return parent.getChildren()[childIndex];
+        }
         function innerVisit(node, context) {
             const traversal = {
                 visitChildren() {
@@ -3708,16 +3726,16 @@ class Node {
                     wrappedNode.forgetDescendants();
             }
         }
-        function getTransformedText() {
+        function getTransformedText(replaceRange) {
             const fileText = compilerSourceFile.getFullText();
             let finalText = "";
-            let lastPos = 0;
+            let lastPos = replaceRange[0];
             for (const transform of transformations) {
                 finalText += fileText.substring(lastPos, transform.start);
                 finalText += printer.printNode(ts.EmitHint.Unspecified, transform.compilerNode, compilerSourceFile);
                 lastPos = transform.end;
             }
-            finalText += fileText.substring(lastPos);
+            finalText += fileText.substring(lastPos, replaceRange[1]);
             return finalText;
         }
     }

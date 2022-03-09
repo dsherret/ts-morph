@@ -1439,9 +1439,10 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
-     * Transforms the node using the compiler api nodes and functions (experimental).
+     * Transforms the node using the compiler api nodes and functions and returns
+     * the node that was transformed (experimental).
      *
-     * WARNING: This will forget descendants of transformed nodes.
+     * WARNING: This will forget descendants of transformed nodes and potentially this node.
      * @example Increments all the numeric literals in a source file.
      * ```ts
      * sourceFile.transform(traversal => {
@@ -1460,7 +1461,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * });
      * ```
      */
-    transform(visitNode: (traversal: TransformTraversalControl) => ts.Node) {
+    transform(visitNode: (traversal: TransformTraversalControl) => ts.Node): Node {
         const compilerFactory = this._context.compilerFactory;
         const printer = ts.createPrinter({
             newLine: this._context.manipulationSettings.getNewLineKind(),
@@ -1474,14 +1475,34 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             return rootNode => innerVisit(rootNode, context);
         };
 
-        ts.transform(compilerNode, [transformerFactory], this._context.compilerOptions.get());
+        if (this.getKind() === ts.SyntaxKind.SourceFile) {
+          ts.transform(compilerNode, [transformerFactory], this._context.compilerOptions.get());
 
-        replaceSourceFileTextStraight({
-            sourceFile: this._sourceFile,
-            newText: getTransformedText(),
-        });
+          replaceSourceFileTextStraight({
+              sourceFile: this._sourceFile,
+              newText: getTransformedText([0, this.getEnd()]),
+          });
 
-        return this;
+          return this;
+        } else {
+          const parent = this.getParentSyntaxList() || this.getParentOrThrow();
+          const childIndex = this.getChildIndex();
+          const start = this.getStart(true);
+          const end = this.getEnd();
+
+          ts.transform(compilerNode, [transformerFactory], this._context.compilerOptions.get());
+
+          insertIntoParentTextRange({
+              parent,
+              insertPos: start,
+              newText: getTransformedText([start, end]),
+              replacing: {
+                  textLength: end - start,
+              },
+          });
+
+          return parent.getChildren()[childIndex];
+        }
 
         function innerVisit(node: ts.Node, context: ts.TransformationContext) {
             const traversal: TransformTraversalControl = {
@@ -1525,10 +1546,10 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             }
         }
 
-        function getTransformedText() {
+        function getTransformedText(replaceRange: [number, number]) {
             const fileText = compilerSourceFile.getFullText();
             let finalText = "";
-            let lastPos = 0;
+            let lastPos = replaceRange[0];
 
             for (const transform of transformations) {
                 finalText += fileText.substring(lastPos, transform.start);
@@ -1536,7 +1557,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
                 lastPos = transform.end;
             }
 
-            finalText += fileText.substring(lastPos);
+            finalText += fileText.substring(lastPos, replaceRange[1]);
             return finalText;
         }
     }

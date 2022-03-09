@@ -2171,6 +2171,49 @@ class MyClass {
         return node;
       }, "hello");
     });
+
+    it("should handle changing the node", () => {
+      const { sourceFile } = getInfoFromText("export class C {}");
+      const node = sourceFile.getClassOrThrow("C");
+
+      const newNode = node.transform(() => {
+        return ts.createFunctionDeclaration(
+          undefined,
+          undefined,
+          undefined,
+          "test",
+          undefined,
+          [],
+          undefined,
+          ts.createBlock([]),
+        );
+      });
+      expect(newNode.getText()).to.equal("function test() { }");
+      expect(sourceFile.getText()).to.equal("function test() { }");
+      expect(node.wasForgotten()).to.be.true;
+    });
+
+    it("should remember the node when not changing kind", () => {
+      const { sourceFile } = getInfoFromText("function original() {}");
+      const node = sourceFile.getFunctionOrThrow("original");
+
+      const newNode = node.transform(() => {
+        return ts.createFunctionDeclaration(
+          undefined,
+          undefined,
+          undefined,
+          "test",
+          undefined,
+          [],
+          undefined,
+          ts.createBlock([]),
+        );
+      });
+      expect(newNode.getText()).to.equal("function test() { }");
+      expect(sourceFile.getText()).to.equal("function test() { }");
+      expect(node.wasForgotten()).to.be.false;
+      expect(node === newNode).to.be.true;
+    });
   });
 
   describe(nameof<Node>("getLocals"), () => {
