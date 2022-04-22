@@ -28,7 +28,7 @@ For this reason, the methods like `.getName()` and `.getNameNode()` are nullable
 
 ### Add/Insert
 
-Add or insert enums to a source file, namespace, or function like declarations by calling `addFunction()`, `addFunctions()`, `insertFunction()`, or `insertFunctions()`.
+Add or insert functions to a source file, namespace, or function like declarations by calling `addFunction()`, `addFunctions()`, `insertFunction()`, or `insertFunctions()`.
 
 ```ts
 const functionDeclaration = sourceFile.addFunction({
