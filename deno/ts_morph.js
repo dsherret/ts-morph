@@ -3112,8 +3112,11 @@ class Node {
     asKindOrThrow(kind) {
         return errors.throwIfNullOrUndefined(this.asKind(kind), () => `Expected the node to be of kind ${getSyntaxKindName(kind)}, but it was ${getSyntaxKindName(this.getKind())}.`);
     }
+    isKind(kind) {
+        return this.getKind() === kind;
+    }
     asKind(kind) {
-        if (this.getKind() === kind) {
+        if (this.isKind(kind)) {
             return this;
         }
         else {
@@ -15244,6 +15247,24 @@ class ParenthesizedTypeNode extends TypeNode {
 }
 
 class TemplateLiteralTypeNode extends TypeNode {
+    getHead() {
+        return this._getNodeFromCompilerNode(this.compilerNode.head);
+    }
+    getTemplateSpans() {
+        return this.compilerNode.templateSpans.map(s => this._getNodeFromCompilerNode(s));
+    }
+    setLiteralValue(value) {
+        var _a;
+        const childIndex = this.getChildIndex();
+        const parent = (_a = this.getParentSyntaxList()) !== null && _a !== void 0 ? _a : this.getParentOrThrow();
+        replaceNodeText({
+            sourceFile: this._sourceFile,
+            start: this.getStart() + 1,
+            replacingLength: this.getWidth() - 2,
+            newText: value,
+        });
+        return parent.getChildAtIndex(childIndex);
+    }
 }
 
 class ThisTypeNode extends TypeNode {

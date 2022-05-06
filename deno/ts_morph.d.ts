@@ -3394,6 +3394,13 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    */
   asKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind];
   /**
+   * Returns if the node is the specified kind.
+   *
+   * This is a type guard.
+   * @param kind - Syntax kind.
+   */
+  isKind<TKind extends SyntaxKind>(kind: TKind): this is KindToNodeMappings[TKind];
+  /**
    * Gets the node as the specified kind if it is equal to that kind, otherwise returns undefined.
    * @param kind - Syntax kind.
    */
@@ -6946,7 +6953,7 @@ export declare class TemplateExpression extends TemplateExpressionBase<ts.Templa
    * @param value - Value to set.
    * @returns The new node if the kind changed; the current node otherwise.
    */
-  setLiteralValue(value: string): TemplateLiteral;
+  setLiteralValue(value: string): Node<ts.Node>;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.TemplateExpression>;
   /** @inheritdoc **/
@@ -8881,6 +8888,18 @@ export declare class ParenthesizedTypeNode extends TypeNode<ts.ParenthesizedType
 }
 
 export declare class TemplateLiteralTypeNode extends TypeNode<ts.TemplateLiteralTypeNode> {
+  /** Gets the template head. */
+  getHead(): TemplateHead;
+  /** Gets the template spans. */
+  getTemplateSpans(): TypeNode<ts.TypeNode>[];
+  /**
+   * Sets the literal value.
+   *
+   * Note: This could possibly replace the node if you remove all the tagged templates.
+   * @param value - Value to set.
+   * @returns The new node if the kind changed; the current node otherwise.
+   */
+  setLiteralValue(value: string): Node<ts.Node>;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.TemplateLiteralTypeNode>;
   /** @inheritdoc **/

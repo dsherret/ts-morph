@@ -1,6 +1,5 @@
 import { ts } from "@ts-morph/common";
 import { replaceNodeText } from "../../../../manipulation";
-import { TemplateLiteral } from "../../aliases";
 import { PrimaryExpression } from "../../expression";
 import { TemplateHead } from "./TemplateHead";
 
@@ -37,6 +36,6 @@ export class TemplateExpression extends TemplateExpressionBase<ts.TemplateExpres
       newText: value,
     });
 
-    return parent.getChildAtIndex(childIndex) as TemplateLiteral;
+    return parent.getChildAtIndex(childIndex);
   }
 }
