@@ -5,7 +5,7 @@
  * --------------------------------------------------------
  */
 import { tsMorph } from "../deps.ts";
-import { TsMorphInspector } from "../inspectors/mod";
+import { TsMorphInspector } from "../inspectors/mod.ts";
 
 export function createStructurePrinterFactory(inspector: TsMorphInspector) {
   const project = inspector.getProject();
