@@ -370,14 +370,24 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             () => `Expected the node to be of kind ${getSyntaxKindName(kind)}, but it was ${getSyntaxKindName(this.getKind())}.`,
         );
     }
+    
+    /**
+     * Returns if the node is the specified kind.
+     *
+     * This is a type guard.
+     * @param kind - Syntax kind.
+     */
+    isKind<TKind extends SyntaxKind>(kind: TKind): this is KindToNodeMappings[TKind] {
+        return this.getKind() === kind;
+    }
 
     /**
      * Gets the node as the specified kind if it is equal to that kind, otherwise returns undefined.
      * @param kind - Syntax kind.
      */
     asKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
-        if (this.getKind() === kind) {
-            return this as Node as KindToNodeMappings[TKind];
+        if (this.isKind(kind)) {
+            return this;
         } else {
             return undefined;
         }
