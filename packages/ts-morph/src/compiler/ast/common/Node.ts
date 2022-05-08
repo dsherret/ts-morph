@@ -370,7 +370,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             () => `Expected the node to be of kind ${getSyntaxKindName(kind)}, but it was ${getSyntaxKindName(this.getKind())}.`,
         );
     }
-    
+
     /**
      * Returns if the node is the specified kind.
      *
@@ -1472,121 +1472,122 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * ```
      */
     transform(visitNode: (traversal: TransformTraversalControl) => ts.Node): Node {
-        const compilerFactory = this._context.compilerFactory;
-        const printer = ts.createPrinter({
-            newLine: this._context.manipulationSettings.getNewLineKind(),
-            removeComments: false,
+      const compilerFactory = this._context.compilerFactory;
+      const printer = ts.createPrinter({
+        newLine: this._context.manipulationSettings.getNewLineKind(),
+        removeComments: false,
+      });
+      interface Transformation { start: number; end: number; compilerNode: ts.Node; }
+      const transformations: Transformation[] = [];
+      const compilerSourceFile = this._sourceFile.compilerNode;
+      const compilerNode = this.compilerNode;
+      const transformerFactory: ts.TransformerFactory<ts.Node> = context => {
+        return rootNode => innerVisit(rootNode, context);
+      };
+
+      if (this.getKind() === ts.SyntaxKind.SourceFile) {
+        ts.transform(compilerNode, [transformerFactory], this._context.compilerOptions.get());
+
+        replaceSourceFileTextStraight({
+          sourceFile: this._sourceFile,
+          newText: getTransformedText([0, this.getEnd()]),
         });
-        interface Transformation { start: number; end: number; compilerNode: ts.Node; }
-        const transformations: Transformation[] = [];
-        const compilerSourceFile = this._sourceFile.compilerNode;
-        const compilerNode = this.compilerNode;
-        const transformerFactory: ts.TransformerFactory<ts.Node> = context => {
-            return rootNode => innerVisit(rootNode, context);
+
+        return this;
+      } else {
+        const parent = this.getParentSyntaxList() || this.getParentOrThrow();
+        const childIndex = this.getChildIndex();
+        const start = this.getStart(true);
+        const end = this.getEnd();
+
+        ts.transform(compilerNode, [transformerFactory], this._context.compilerOptions.get());
+
+        insertIntoParentTextRange({
+          parent,
+          insertPos: start,
+          newText: getTransformedText([start, end]),
+          replacing: {
+            textLength: end - start,
+          },
+        });
+
+        return parent.getChildren()[childIndex];
+      }
+
+      function innerVisit(node: ts.Node, context: ts.TransformationContext) {
+        const traversal: TransformTraversalControl = {
+          factory: context.factory,
+          visitChildren() {
+            node = ts.visitEachChild(node, child => innerVisit(child, context), context);
+            return node;
+          },
+          currentNode: node,
         };
+        const resultNode = visitNode(traversal);
+        handleTransformation(node, resultNode);
+        return resultNode;
+      }
 
-        if (this.getKind() === ts.SyntaxKind.SourceFile) {
-          ts.transform(compilerNode, [transformerFactory], this._context.compilerOptions.get());
+      function handleTransformation(oldNode: ts.Node, newNode: ts.Node) {
+        if (oldNode === newNode)
+          return;
 
-          replaceSourceFileTextStraight({
-              sourceFile: this._sourceFile,
-              newText: getTransformedText([0, this.getEnd()]),
-          });
+        const start = oldNode.getStart(compilerSourceFile, true);
+        const end = oldNode.end;
+        let lastTransformation: Transformation | undefined;
 
-          return this;
-        } else {
-          const parent = this.getParentSyntaxList() || this.getParentOrThrow();
-          const childIndex = this.getChildIndex();
-          const start = this.getStart(true);
-          const end = this.getEnd();
+        // remove any prior transformations nested within this transformation
+        while ((lastTransformation = transformations[transformations.length - 1]) && lastTransformation.start > start)
+          transformations.pop();
 
-          ts.transform(compilerNode, [transformerFactory], this._context.compilerOptions.get());
+        const wrappedNode = compilerFactory.getExistingNodeFromCompilerNode(oldNode);
+        transformations.push({
+          start,
+          end,
+          compilerNode: newNode,
+        });
 
-          insertIntoParentTextRange({
-              parent,
-              insertPos: start,
-              newText: getTransformedText([start, end]),
-              replacing: {
-                  textLength: end - start,
-              },
-          });
+        // It's very difficult and expensive to tell about changes that could have happened to the descendants
+        // via updating properties. For this reason, descendant nodes will always be forgotten.
+        if (wrappedNode != null) {
+          if (oldNode.kind !== newNode.kind)
+            wrappedNode.forget();
+          else
+            wrappedNode.forgetDescendants();
+        }
+      }
 
-          return parent.getChildren()[childIndex];
+      function getTransformedText(replaceRange: [number, number]) {
+        const fileText = compilerSourceFile.getFullText();
+        let finalText = "";
+        let lastPos = replaceRange[0];
+
+        for (const transform of transformations) {
+          finalText += fileText.substring(lastPos, transform.start);
+          finalText += printer.printNode(ts.EmitHint.Unspecified, transform.compilerNode, compilerSourceFile);
+          lastPos = transform.end;
         }
 
-        function innerVisit(node: ts.Node, context: ts.TransformationContext) {
-            const traversal: TransformTraversalControl = {
-                visitChildren() {
-                    node = ts.visitEachChild(node, child => innerVisit(child, context), context);
-                    return node;
-                },
-                currentNode: node,
-            };
-            const resultNode = visitNode(traversal);
-            handleTransformation(node, resultNode);
-            return resultNode;
-        }
-
-        function handleTransformation(oldNode: ts.Node, newNode: ts.Node) {
-            if (oldNode === newNode)
-                return;
-
-            const start = oldNode.getStart(compilerSourceFile, true);
-            const end = oldNode.end;
-            let lastTransformation: Transformation | undefined;
-
-            // remove any prior transformations nested within this transformation
-            while ((lastTransformation = transformations[transformations.length - 1]) && lastTransformation.start > start)
-                transformations.pop();
-
-            const wrappedNode = compilerFactory.getExistingNodeFromCompilerNode(oldNode);
-            transformations.push({
-                start,
-                end,
-                compilerNode: newNode,
-            });
-
-            // It's very difficult and expensive to tell about changes that could have happened to the descendants
-            // via updating properties. For this reason, descendant nodes will always be forgotten.
-            if (wrappedNode != null) {
-                if (oldNode.kind !== newNode.kind)
-                    wrappedNode.forget();
-                else
-                    wrappedNode.forgetDescendants();
-            }
-        }
-
-        function getTransformedText(replaceRange: [number, number]) {
-            const fileText = compilerSourceFile.getFullText();
-            let finalText = "";
-            let lastPos = replaceRange[0];
-
-            for (const transform of transformations) {
-                finalText += fileText.substring(lastPos, transform.start);
-                finalText += printer.printNode(ts.EmitHint.Unspecified, transform.compilerNode, compilerSourceFile);
-                lastPos = transform.end;
-            }
-
-            finalText += fileText.substring(lastPos, replaceRange[1]);
-            return finalText;
-        }
+        finalText += fileText.substring(lastPos, replaceRange[1]);
+        return finalText;
+      }
     }
 
     /**
      * Gets the leading comment ranges of the current node.
      */
     getLeadingCommentRanges(): CommentRange[] {
-        return this._leadingCommentRanges || (this._leadingCommentRanges = this._getCommentsAtPos(this.getFullStart(), (text: string, pos: number) => {
-            const comments = ts.getLeadingCommentRanges(text, pos) || [];
-            // if this is a comment, then only include leading comment ranges before this one
-            if (this.getKind() === SyntaxKind.SingleLineCommentTrivia || this.getKind() === SyntaxKind.MultiLineCommentTrivia) {
-                const thisPos = this.getPos();
-                return comments.filter(r => r.pos < thisPos);
-            }
-            else {
-                return comments;
-            }
-        }));
+      return this._leadingCommentRanges || (this._leadingCommentRanges = this._getCommentsAtPos(this.getFullStart(), (text: string, pos: number) => {
+        const comments = ts.getLeadingCommentRanges(text, pos) || [];
+        // if this is a comment, then only include leading comment ranges before this one
+        if (this.getKind() === SyntaxKind.SingleLineCommentTrivia || this.getKind() === SyntaxKind.MultiLineCommentTrivia) {
+          const thisPos = this.getPos();
+          return comments.filter(r => r.pos < thisPos);
+        }
+        else {
+          return comments;
+        }
+      }));
     }
 
     /**

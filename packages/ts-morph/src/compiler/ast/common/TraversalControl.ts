@@ -16,6 +16,8 @@ export interface ForEachDescendantTraversalControl {
 }
 
 export interface TransformTraversalControl {
+  /** Factory to create nodes with. */
+  factory: ts.NodeFactory;
   /**
    * The node currently being transformed.
    * @remarks Use the result of `.visitChildren()` instead before transforming if visiting the children.

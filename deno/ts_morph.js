@@ -3698,6 +3698,7 @@ class Node {
         }
         function innerVisit(node, context) {
             const traversal = {
+                factory: context.factory,
                 visitChildren() {
                     node = ts.visitEachChild(node, child => innerVisit(child, context), context);
                     return node;
