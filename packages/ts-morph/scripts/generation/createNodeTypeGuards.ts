@@ -253,7 +253,7 @@ export function createNodeTypeGuards(inspector: TsMorphInspector, tsInspector: T
       returnType: `node is compiler.CommentStatement`,
       parameters: [{ name: "node", type: "compiler.Node | undefined" }],
       statements: writer => {
-        writer.writeLine(`return (node?.compilerNode as compiler.CompilerCommentStatement)._commentKind === compiler.CommentNodeKind.Statement;`);
+        writer.writeLine(`return (node?.compilerNode as compiler.CompilerCommentStatement)?._commentKind === compiler.CommentNodeKind.Statement;`);
       },
     }, {
       docs: ["Gets if the provided node is a CommentClassElement."],
@@ -262,7 +262,7 @@ export function createNodeTypeGuards(inspector: TsMorphInspector, tsInspector: T
       returnType: `node is compiler.CommentClassElement`,
       parameters: [{ name: "node", type: "compiler.Node | undefined" }],
       statements: writer => {
-        writer.writeLine(`return (node?.compilerNode as compiler.CompilerCommentClassElement)._commentKind === compiler.CommentNodeKind.ClassElement;`);
+        writer.writeLine(`return (node?.compilerNode as compiler.CompilerCommentClassElement)?._commentKind === compiler.CommentNodeKind.ClassElement;`);
       },
     }, {
       docs: ["Gets if the provided value is a CommentTypeElement."],
@@ -271,7 +271,7 @@ export function createNodeTypeGuards(inspector: TsMorphInspector, tsInspector: T
       returnType: `node is compiler.CommentTypeElement`,
       parameters: [{ name: "node", type: "compiler.Node | undefined" }],
       statements: writer => {
-        writer.writeLine(`return (node?.compilerNode as compiler.CompilerCommentTypeElement)._commentKind === compiler.CommentNodeKind.TypeElement;`);
+        writer.writeLine(`return (node?.compilerNode as compiler.CompilerCommentTypeElement)?._commentKind === compiler.CommentNodeKind.TypeElement;`);
       },
     }, {
       docs: ["Gets if the provided node is a CommentObjectLiteralElement."],
@@ -281,7 +281,7 @@ export function createNodeTypeGuards(inspector: TsMorphInspector, tsInspector: T
       parameters: [{ name: "node", type: "compiler.Node | undefined" }],
       statements: writer =>
         writer.writeLine(
-          `return (node?.compilerNode as compiler.CompilerCommentObjectLiteralElement)._commentKind === compiler.CommentNodeKind.ObjectLiteralElement;`,
+          `return (node?.compilerNode as compiler.CompilerCommentObjectLiteralElement)?._commentKind === compiler.CommentNodeKind.ObjectLiteralElement;`,
         ),
     }, {
       docs: ["Gets if the provided node is a CommentEnumMember."],
@@ -291,7 +291,7 @@ export function createNodeTypeGuards(inspector: TsMorphInspector, tsInspector: T
       parameters: [{ name: "node", type: "compiler.Node | undefined" }],
       statements: writer =>
         writer.writeLine(
-          `return (node?.compilerNode as compiler.CompilerCommentEnumMember)._commentKind == compiler.CommentNodeKind.EnumMember;`,
+          `return (node?.compilerNode as compiler.CompilerCommentEnumMember)?._commentKind == compiler.CommentNodeKind.EnumMember;`,
         ),
     }];
 
