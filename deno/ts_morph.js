@@ -4025,19 +4025,24 @@ class Node {
         return kind === SyntaxKind.SingleLineCommentTrivia || kind === SyntaxKind.MultiLineCommentTrivia;
     }
     static isCommentStatement(node) {
-        return (node === null || node === void 0 ? void 0 : node.compilerNode)._commentKind === CommentNodeKind.Statement;
+        var _a;
+        return ((_a = node === null || node === void 0 ? void 0 : node.compilerNode) === null || _a === void 0 ? void 0 : _a._commentKind) === CommentNodeKind.Statement;
     }
     static isCommentClassElement(node) {
-        return (node === null || node === void 0 ? void 0 : node.compilerNode)._commentKind === CommentNodeKind.ClassElement;
+        var _a;
+        return ((_a = node === null || node === void 0 ? void 0 : node.compilerNode) === null || _a === void 0 ? void 0 : _a._commentKind) === CommentNodeKind.ClassElement;
     }
     static isCommentTypeElement(node) {
-        return (node === null || node === void 0 ? void 0 : node.compilerNode)._commentKind === CommentNodeKind.TypeElement;
+        var _a;
+        return ((_a = node === null || node === void 0 ? void 0 : node.compilerNode) === null || _a === void 0 ? void 0 : _a._commentKind) === CommentNodeKind.TypeElement;
     }
     static isCommentObjectLiteralElement(node) {
-        return (node === null || node === void 0 ? void 0 : node.compilerNode)._commentKind === CommentNodeKind.ObjectLiteralElement;
+        var _a;
+        return ((_a = node === null || node === void 0 ? void 0 : node.compilerNode) === null || _a === void 0 ? void 0 : _a._commentKind) === CommentNodeKind.ObjectLiteralElement;
     }
     static isCommentEnumMember(node) {
-        return (node === null || node === void 0 ? void 0 : node.compilerNode)._commentKind == CommentNodeKind.EnumMember;
+        var _a;
+        return ((_a = node === null || node === void 0 ? void 0 : node.compilerNode) === null || _a === void 0 ? void 0 : _a._commentKind) == CommentNodeKind.EnumMember;
     }
     static isAbstractable(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
