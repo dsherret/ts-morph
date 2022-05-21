@@ -1,6 +1,6 @@
-import { ensureDir, ensureDirSync } from "https://deno.land/std@0.128.0/fs/ensure_dir.ts";
-import { expandGlob, expandGlobSync } from "https://deno.land/std@0.128.0/fs/expand_glob.ts";
-import * as stdPath from "https://deno.land/std@0.128.0/path/mod.ts";
+import { ensureDir, ensureDirSync } from "https://deno.land/std@0.140.0/fs/ensure_dir.ts";
+import { expandGlob, expandGlobSync } from "https://deno.land/std@0.140.0/fs/expand_glob.ts";
+import * as stdPath from "https://deno.land/std@0.140.0/path/mod.ts";
 
 export class DenoRuntime {
   fs = new DenoRuntimeFileSystem();

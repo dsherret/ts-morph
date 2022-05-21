@@ -24,7 +24,7 @@ jobs:
         npx lerna run test:ci
         npx lerna run test:ts-versions
     - name: Deno Test
-      run: deno test --allow-read --unstable deno
+      run: deno test --allow-read deno
     - name: Code Verification
       run: |
         npx lerna run code-verification
