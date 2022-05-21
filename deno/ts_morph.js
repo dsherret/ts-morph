@@ -3710,7 +3710,7 @@ class Node {
             return resultNode;
         }
         function handleTransformation(oldNode, newNode) {
-            if (oldNode === newNode)
+            if (oldNode === newNode && newNode.emitNode == null)
                 return;
             const start = oldNode.getStart(compilerSourceFile, true);
             const end = oldNode.end;

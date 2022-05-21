@@ -1529,7 +1529,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       }
 
       function handleTransformation(oldNode: ts.Node, newNode: ts.Node) {
-        if (oldNode === newNode)
+        if (oldNode === newNode && (newNode as any).emitNode == null)
           return;
 
         const start = oldNode.getStart(compilerSourceFile, true);

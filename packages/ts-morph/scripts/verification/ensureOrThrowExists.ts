@@ -9,7 +9,7 @@
  * --------------------------------------------
  */
 import { tsMorph } from "../deps.ts";
-import { TsMorphInspector } from "../inspectors.ts";
+import { TsMorphInspector } from "../inspectors/mod.ts";
 import { Problem } from "./Problem.ts";
 
 export function ensureOrThrowExists(inspector: TsMorphInspector, addProblem: (problem: Problem) => void) {
