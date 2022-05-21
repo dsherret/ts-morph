@@ -39,11 +39,11 @@ class DenoRuntimePath {
 
 class DenoRuntimeFileSystem {
   delete(path: string) {
-    return Deno.remove(path);
+    return Deno.remove(path, { recursive: true });
   }
 
   deleteSync(path: string) {
-    Deno.removeSync(path);
+    Deno.removeSync(path, { recursive: true });
   }
 
   readDirSync(dirPath: string) {

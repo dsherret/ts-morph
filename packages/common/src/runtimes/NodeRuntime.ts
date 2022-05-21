@@ -40,7 +40,7 @@ class NodeRuntimePath implements RuntimePath {
 class NodeRuntimeFileSystem implements RuntimeFileSystem {
   delete(path: string) {
     return new Promise<void>((resolve, reject) => {
-      fs.unlink(path, err => {
+      fs.rm(path, { recursive: true }, err => {
         if (err)
           reject(err);
         else
@@ -50,7 +50,7 @@ class NodeRuntimeFileSystem implements RuntimeFileSystem {
   }
 
   deleteSync(path: string) {
-    fs.unlinkSync(path);
+    fs.rmSync(path, { recursive: true });
   }
 
   readDirSync(dirPath: string) {
