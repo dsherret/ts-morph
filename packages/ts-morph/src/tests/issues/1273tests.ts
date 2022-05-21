@@ -2,8 +2,8 @@ import { ts } from "@ts-morph/common";
 import { expect } from "chai";
 import { Project } from "../../Project";
 
-describe("tests for issue #1227", () => {
-  it("should find referencing source files", () => {
+describe("tests for issue #1273", () => {
+  it("should output synthetic comments on nodes with only addSyntheticLeadingComment", () => {
     const project = new Project({ useInMemoryFileSystem: true, compilerOptions: { removeComments: false } });
 
     const file = project.createSourceFile("x.ts", `const x: number = 5 * 9;`);

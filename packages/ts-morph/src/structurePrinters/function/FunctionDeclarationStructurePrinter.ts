@@ -70,8 +70,10 @@ export class FunctionDeclarationStructurePrinter extends NodePrinter<OptionalKin
   }
 
   printOverload(writer: CodeBlockWriter, name: string | undefined, structure: OptionalKind<FunctionDeclarationOverloadStructure>) {
+    this.printLeadingTrivia(writer, structure);
     this.printHeader(writer, name, structure);
     writer.write(";");
+    this.printTrailingTrivia(writer, structure);
   }
 
   private printHeader(

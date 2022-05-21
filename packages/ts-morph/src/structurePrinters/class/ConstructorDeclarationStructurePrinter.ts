@@ -61,8 +61,10 @@ export class ConstructorDeclarationStructurePrinter extends NodePrinter<Optional
   }
 
   printOverload(writer: CodeBlockWriter, structure: OptionalKind<ConstructorDeclarationOverloadStructure>) {
+    this.printLeadingTrivia(writer, structure);
     this.printHeader(writer, structure);
     writer.write(";");
+    this.printTrailingTrivia(writer, structure);
   }
 
   private printHeader(writer: CodeBlockWriter, structure: OptionalKind<ConstructorDeclarationStructure | ConstructorDeclarationOverloadStructure>) {

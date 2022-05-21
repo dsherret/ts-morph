@@ -6319,7 +6319,7 @@ class NodePrinter extends Printer {
         this.printTrailingTrivia(writer, structure);
     }
     printLeadingTrivia(writer, structure) {
-        const leadingTrivia = structure["leadingTrivia"];
+        const leadingTrivia = structure.leadingTrivia;
         if (leadingTrivia != null) {
             this.printTrivia(writer, leadingTrivia);
             if (writer.isInComment())
@@ -6327,7 +6327,7 @@ class NodePrinter extends Printer {
         }
     }
     printTrailingTrivia(writer, structure) {
-        const trailingTrivia = structure["trailingTrivia"];
+        const trailingTrivia = structure.trailingTrivia;
         if (trailingTrivia != null)
             this.printTrivia(writer, trailingTrivia);
     }
@@ -7406,8 +7406,10 @@ class ConstructorDeclarationStructurePrinter extends NodePrinter {
         }
     }
     printOverload(writer, structure) {
+        this.printLeadingTrivia(writer, structure);
         this.printHeader(writer, structure);
         writer.write(";");
+        this.printTrailingTrivia(writer, structure);
     }
     printHeader(writer, structure) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
@@ -7495,8 +7497,10 @@ class MethodDeclarationStructurePrinter extends NodePrinter {
         }
     }
     printOverload(writer, name, structure) {
+        this.printLeadingTrivia(writer, structure);
         this.printHeader(writer, name, structure);
         writer.write(";");
+        this.printTrailingTrivia(writer, structure);
     }
     printHeader(writer, name, structure) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
@@ -7877,8 +7881,10 @@ class FunctionDeclarationStructurePrinter extends NodePrinter {
         }
     }
     printOverload(writer, name, structure) {
+        this.printLeadingTrivia(writer, structure);
         this.printHeader(writer, name, structure);
         writer.write(";");
+        this.printTrailingTrivia(writer, structure);
     }
     printHeader(writer, name, structure) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
