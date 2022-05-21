@@ -9747,7 +9747,7 @@ export declare class ReferenceEntry extends DocumentSpan<ts.ReferenceEntry> {
   private constructor();
   isWriteAccess(): boolean;
   /** If this is the definition reference. */
-  isDefinition(): boolean;
+  isDefinition(): any;
   isInString(): true | undefined;
 }
 
