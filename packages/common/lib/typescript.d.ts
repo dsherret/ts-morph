@@ -903,6 +903,7 @@ declare namespace ts {
         readonly kind: SyntaxKind.ConstructorType;
     }
     export interface NodeWithTypeArguments extends TypeNode {
+        _nodeWithTypeArgumentsBrand: any;
         readonly typeArguments?: NodeArray<TypeNode>;
     }
     export type TypeReferenceType = TypeReferenceNode | ExpressionWithTypeArguments;

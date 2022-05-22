@@ -110,7 +110,7 @@ export function createHosts(options: CreateHostsOptions) {
   };
 
   const compilerHost: ts.CompilerHost = {
-    getSourceFile: (fileName: string, languageVersion: ScriptTarget, onError?: (message: string) => void) => {
+    getSourceFile: (fileName: string, languageVersion: ScriptTarget | ts.CreateSourceFileOptions, onError?: (message: string) => void) => {
       const filePath = transactionalFileSystem.getStandardizedAbsolutePath(fileName);
       if (libFileMap != null) {
         const libFileText = libFileMap.get(filePath);
