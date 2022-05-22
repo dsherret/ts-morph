@@ -2990,7 +2990,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    * @param node - Node to check.
    */
   static isJSDoc(node: compiler.Node | undefined): node is compiler.JSDoc {
-    return node?.getKind() === SyntaxKind.JSDocComment;
+    return node?.getKind() === SyntaxKind.JSDoc;
   }
 
   /**
@@ -4526,7 +4526,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.ImportSpecifier:
       case SyntaxKind.IndexSignature:
       case SyntaxKind.InterfaceDeclaration:
-      case SyntaxKind.JSDocComment:
+      case SyntaxKind.JSDoc:
       case SyntaxKind.JsxAttribute:
       case SyntaxKind.JsxElement:
       case SyntaxKind.JsxSelfClosingElement:

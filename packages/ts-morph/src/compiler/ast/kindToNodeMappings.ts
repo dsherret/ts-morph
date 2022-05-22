@@ -183,7 +183,7 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.VariableDeclaration]: compiler.VariableDeclaration;
   [SyntaxKind.VariableDeclarationList]: compiler.VariableDeclarationList;
   [SyntaxKind.VariableStatement]: compiler.VariableStatement;
-  [SyntaxKind.JSDocComment]: compiler.JSDoc;
+  [SyntaxKind.JSDoc]: compiler.JSDoc;
   [SyntaxKind.TypeOfExpression]: compiler.TypeOfExpression;
   [SyntaxKind.WhileStatement]: compiler.WhileStatement;
   [SyntaxKind.WithStatement]: compiler.WithStatement;

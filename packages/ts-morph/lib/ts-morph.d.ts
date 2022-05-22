@@ -6686,7 +6686,7 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.VariableDeclaration]: VariableDeclaration;
   [SyntaxKind.VariableDeclarationList]: VariableDeclarationList;
   [SyntaxKind.VariableStatement]: VariableStatement;
-  [SyntaxKind.JSDocComment]: JSDoc;
+  [SyntaxKind.JSDoc]: JSDoc;
   [SyntaxKind.TypeOfExpression]: TypeOfExpression;
   [SyntaxKind.WhileStatement]: WhileStatement;
   [SyntaxKind.WithStatement]: WithStatement;
@@ -9734,7 +9734,7 @@ export declare class ReferencedSymbol {
   /** Gets the definition. */
   getDefinition(): ReferencedSymbolDefinitionInfo;
   /** Gets the references. */
-  getReferences(): ReferenceEntry[];
+  getReferences(): ReferenceEntry<ts.ReferenceEntry>[];
 }
 
 export declare class ReferencedSymbolDefinitionInfo extends DefinitionInfo<ts.ReferencedSymbolDefinitionInfo> {
@@ -9743,12 +9743,16 @@ export declare class ReferencedSymbolDefinitionInfo extends DefinitionInfo<ts.Re
   getDisplayParts(): SymbolDisplayPart[];
 }
 
-export declare class ReferenceEntry extends DocumentSpan<ts.ReferenceEntry> {
-  private constructor();
+export declare class ReferenceEntry<T extends ts.ReferenceEntry = ts.ReferenceEntry> extends DocumentSpan<T> {
+  protected constructor();
   isWriteAccess(): boolean;
-  /** If this is the definition reference. */
-  isDefinition(): any;
   isInString(): true | undefined;
+}
+
+export declare class ReferencedSymbolEntry extends ReferenceEntry<ts.ReferencedSymbolEntry> {
+  private constructor();
+  /** If this is the definition reference. */
+  isDefinition(): boolean | undefined;
 }
 
 /** Rename location. */
