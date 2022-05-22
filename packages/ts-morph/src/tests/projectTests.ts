@@ -171,7 +171,7 @@ describe("Project", () => {
           fileSystem,
           resolutionHost: (moduleResolutionHost, getCompilerOptions) => {
             return {
-              resolveTypeReferenceDirectives: (typeDirectiveNames: string[], containingFile: string) => {
+              resolveTypeReferenceDirectives: (typeDirectiveNames: string[] | ts.FileReference[], containingFile: string) => {
                 const compilerOptions = getCompilerOptions();
                 const resolvedTypeReferenceDirectives: ts.ResolvedTypeReferenceDirective[] = [];
 
@@ -185,7 +185,8 @@ describe("Project", () => {
               },
             };
 
-            function replaceAsdfExtension(moduleName: string) {
+            function replaceAsdfExtension(moduleName: string | ts.FileReference) {
+              moduleName = typeof moduleName === "string" ? moduleName : moduleName.fileName;
               return moduleName.replace("asdf", "");
             }
           },

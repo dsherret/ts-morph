@@ -160,7 +160,7 @@ function getNextTagStartOrDocEnd(jsDocTag: JSDocTag, nextJsDocTag?: JSDocTag) {
 }
 
 function getNextJsDocTag(jsDocTag: JSDocTag): JSDocTag | undefined {
-  const parent = jsDocTag.getParentIfKindOrThrow(SyntaxKind.JSDocComment);
+  const parent = jsDocTag.getParentIfKindOrThrow(SyntaxKind.JSDoc);
   const tags = parent.getTags();
   const thisIndex = tags.indexOf(jsDocTag);
   return tags[thisIndex + 1];

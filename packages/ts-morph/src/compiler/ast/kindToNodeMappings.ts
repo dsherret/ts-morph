@@ -65,6 +65,7 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.ImportEqualsDeclaration]: compiler.ImportEqualsDeclaration;
   [SyntaxKind.ImportSpecifier]: compiler.ImportSpecifier;
   [SyntaxKind.ImportType]: compiler.ImportTypeNode;
+  [SyntaxKind.ImportTypeAssertionContainer]: compiler.ImportTypeAssertionContainer;
   [SyntaxKind.IndexedAccessType]: compiler.IndexedAccessTypeNode;
   [SyntaxKind.IndexSignature]: compiler.IndexSignatureDeclaration;
   [SyntaxKind.InferType]: compiler.InferTypeNode;

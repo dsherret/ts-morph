@@ -1,6 +1,6 @@
 import { Memoize, ts } from "@ts-morph/common";
 import { ProjectContext } from "../../../ProjectContext";
-import { ReferenceEntry } from "./ReferenceEntry";
+import { ReferencedSymbolEntry } from "./ReferenceEntry";
 
 /**
  * Referenced symbol.
@@ -11,7 +11,7 @@ export class ReferencedSymbol {
   /** @internal */
   private readonly _compilerObject: ts.ReferencedSymbol;
   /** @internal */
-  private readonly _references: ReferenceEntry[];
+  private readonly _references: ReferencedSymbolEntry[];
 
   /**
    * @private
@@ -22,7 +22,7 @@ export class ReferencedSymbol {
 
     // it's important to store the references so that the nodes referenced inside will point
     // to the right node in case the user does manipulation between getting this object and getting the references
-    this._references = this.compilerObject.references.map(r => context.compilerFactory.getReferenceEntry(r));
+    this._references = this.compilerObject.references.map(r => context.compilerFactory.getReferencedSymbolEntry(r));
   }
 
   /**

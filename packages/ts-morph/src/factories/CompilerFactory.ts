@@ -29,7 +29,7 @@ import {
   Node,
   ReferencedSymbol,
   ReferencedSymbolDefinitionInfo,
-  ReferenceEntry,
+  ReferencedSymbolEntry,
   Signature,
   SourceFile,
   Symbol,
@@ -63,7 +63,7 @@ export class CompilerFactory {
   private readonly signatureCache = new WeakCache<ts.Signature, Signature>();
   private readonly symbolCache = new WeakCache<ts.Symbol, Symbol>();
   private readonly symbolDisplayPartCache = new WeakCache<ts.SymbolDisplayPart, SymbolDisplayPart>();
-  private readonly referenceEntryCache = new WeakCache<ts.ReferenceEntry, ReferenceEntry>();
+  private readonly referencedSymbolEntryCache = new WeakCache<ts.ReferencedSymbolEntry, ReferencedSymbolEntry>();
   private readonly referencedSymbolCache = new WeakCache<ts.ReferencedSymbol, ReferencedSymbol>();
   private readonly referencedSymbolDefinitionInfoCache = new WeakCache<ts.ReferencedSymbolDefinitionInfo, ReferencedSymbolDefinitionInfo>();
   private readonly typeCache = new WeakCache<ts.Type, Type>();
@@ -526,8 +526,8 @@ export class CompilerFactory {
    * Gets a wrapped referenced entry from a compiler object.
    * @param compilerObject - Compiler referenced entry.
    */
-  getReferenceEntry(compilerObject: ts.ReferenceEntry): ReferenceEntry {
-    return this.referenceEntryCache.getOrCreate(compilerObject, () => new ReferenceEntry(this.context, compilerObject));
+  getReferencedSymbolEntry(compilerObject: ts.ReferencedSymbolEntry): ReferencedSymbolEntry {
+    return this.referencedSymbolEntryCache.getOrCreate(compilerObject, () => new ReferencedSymbolEntry(this.context, compilerObject));
   }
 
   /**

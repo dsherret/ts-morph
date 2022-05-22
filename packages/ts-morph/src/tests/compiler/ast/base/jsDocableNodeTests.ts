@@ -25,7 +25,7 @@ describe("JSDocableNode", () => {
         });
 
         it("should have the right node kind", () => {
-          expect(nodes[0].getKind()).to.equal(SyntaxKind.JSDocComment);
+          expect(nodes[0].getKind()).to.equal(SyntaxKind.JSDoc);
         });
       });
 
@@ -48,7 +48,7 @@ describe("JSDocableNode", () => {
     const doc = firstChild.getJsDocs()[0];
 
     it("should have the right node kind", () => {
-      expect(doc.getKind()).to.equal(SyntaxKind.JSDocComment);
+      expect(doc.getKind()).to.equal(SyntaxKind.JSDoc);
     });
   });
 

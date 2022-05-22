@@ -1,6 +1,6 @@
 import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
-import { ClassDeclaration, MethodDeclaration, Scope } from "../../../../compiler";
+import { ClassDeclaration, MethodDeclaration, Scope, TypeParameterVariance } from "../../../../compiler";
 import {
   MethodDeclarationOverloadStructure,
   MethodDeclarationSpecificStructure,
@@ -379,14 +379,14 @@ class Test {
           returnType: "string",
           scope: Scope.Protected,
           parameters: [{ name: "p" }],
-          typeParameters: [{ name: "T" }],
+          typeParameters: [{ name: "T", variance: TypeParameterVariance.None }],
           isAbstract: false,
           hasQuestionToken: false,
         }],
         parameters: [{ name: "param" }],
         returnType: "string",
         scope: Scope.Protected,
-        typeParameters: [{ name: "T" }],
+        typeParameters: [{ name: "T", variance: TypeParameterVariance.None }],
       }]);
     });
   });

@@ -1,6 +1,6 @@
 import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
-import { InterfaceDeclaration, MethodSignature } from "../../../../compiler";
+import { InterfaceDeclaration, MethodSignature, TypeParameterVariance } from "../../../../compiler";
 import { MethodSignatureStructure, StructureKind, TypeParameterDeclarationStructure } from "../../../../structures";
 import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
@@ -117,7 +117,7 @@ interface Identifier {
         name: "method",
         parameters: [{ name: "p" }],
         returnType: "string",
-        typeParameters: [{ name: "T" }],
+        typeParameters: [{ name: "T", variance: TypeParameterVariance.None }],
       });
     });
   });

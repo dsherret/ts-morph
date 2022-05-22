@@ -21,3 +21,16 @@ commonFile.saveSync();
 
 fileSystem.copySync("node_modules/typescript/lib/typescript.js", "./dist/typescript.js");
 fileSystem.copySync("node_modules/typescript/lib/typescript.d.ts", "./lib/typescript.d.ts");
+
+// add a _nodeWithTypeArgumentsBrand to NodeWithTypeArguments
+// in order to distinguish it from TypeNode
+const tsFile = project.addSourceFileAtPath("./lib/typescript.d.ts");
+const nodeWithTypeArgs = tsFile
+  .getModules()
+  .map(m => m.getInterface("NodeWithTypeArguments"))
+  .filter(m => m != null)[0]!;
+nodeWithTypeArgs.insertProperty(0, {
+  name: "_nodeWithTypeArgumentsBrand",
+  type: "any",
+});
+tsFile.saveSync();

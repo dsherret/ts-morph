@@ -1,6 +1,6 @@
 import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
-import { ClassDeclaration, FunctionDeclaration, TypeParameterDeclaration } from "../../../../compiler";
+import { ClassDeclaration, FunctionDeclaration, TypeParameterDeclaration, TypeParameterVariance } from "../../../../compiler";
 import { StructureKind, TypeParameterDeclarationStructure } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText, OptionalTrivia } from "../../testHelpers";
@@ -162,6 +162,47 @@ describe("TypeParameterDeclaration", () => {
     });
   });
 
+  describe(nameof<TypeParameterDeclaration>("setVariance"), () => {
+    function doTest(text: string, variance: TypeParameterVariance, expected: string) {
+      const typeParameterDeclaration = getTypeParameterFromText(text);
+      typeParameterDeclaration.setVariance(variance);
+      expect(typeParameterDeclaration.getSourceFile().getFullText()).to.equal(expected);
+    }
+
+    it("should set when it doesn't exist", () => {
+      doTest("function func<T>() {}", TypeParameterVariance.Out, "function func<out T>() {}");
+      doTest("function func<T>() {}", TypeParameterVariance.In, "function func<in T>() {}");
+      doTest("function func<T>() {}", TypeParameterVariance.InOut, "function func<in out T>() {}");
+    });
+
+    it("should change", () => {
+      doTest("function func<in T>() {}", TypeParameterVariance.Out, "function func<out T>() {}");
+      doTest("function func<out T>() {}", TypeParameterVariance.In, "function func<in T>() {}");
+      doTest("function func<in out T>() {}", TypeParameterVariance.In, "function func<in T>() {}");
+      doTest("function func<in out T>() {}", TypeParameterVariance.Out, "function func<out T>() {}");
+    });
+
+    it("should remove", () => {
+      doTest("function func<in T>() {}", TypeParameterVariance.None, "function func<T>() {}");
+      doTest("function func<out T>() {}", TypeParameterVariance.None, "function func<T>() {}");
+      doTest("function func<in out T>() {}", TypeParameterVariance.None, "function func<T>() {}");
+    });
+  });
+
+  describe(nameof<TypeParameterDeclaration>("getVariance"), () => {
+    function doTest(text: string, expectedVariance: TypeParameterVariance) {
+      const typeParameterDeclaration = getTypeParameterFromText(text);
+      expect(typeParameterDeclaration.getVariance()).to.equal(expectedVariance);
+    }
+
+    it("should get", () => {
+      doTest("function func<T>() {}", TypeParameterVariance.None);
+      doTest("function func<in T>() {}", TypeParameterVariance.In);
+      doTest("function func<out T>() {}", TypeParameterVariance.Out);
+      doTest("function func<in out T>() {}", TypeParameterVariance.InOut);
+    });
+  });
+
   describe(nameof<TypeParameterDeclaration>("remove"), () => {
     function doTest(startText: string, indexToRemove: number, expectedText: string) {
       const typeParameterDeclaration = getTypeParameterFromText(startText, indexToRemove);
@@ -201,7 +242,7 @@ describe("TypeParameterDeclaration", () => {
     }
 
     it("should not change when empty", () => {
-      const code = "class C<T extends string = number> {}";
+      const code = "class C<in T extends string = number> {}";
       doTest(code, {}, code);
     });
 
@@ -224,6 +265,14 @@ describe("TypeParameterDeclaration", () => {
         "class C<U extends {\n        prop: string;\n    } = {\n        other: number;\n    }> {}",
       );
     });
+
+    it("should change variance", () => {
+      doTest(
+        "class C<in T extends string = number> {}",
+        { variance: TypeParameterVariance.Out },
+        "class C<out T extends string = number> {}",
+      );
+    });
   });
 
   describe(nameof<TypeParameterDeclaration>("getStructure"), () => {
@@ -239,15 +288,17 @@ describe("TypeParameterDeclaration", () => {
         name: "T",
         constraint: undefined,
         default: undefined,
+        variance: TypeParameterVariance.None,
       });
     });
 
     it("should get when it has everything", () => {
-      doTest("class C<T extends string = number> {}", {
+      doTest("class C<in T extends string = number> {}", {
         kind: StructureKind.TypeParameter,
         name: "T",
         constraint: "string",
         default: "number",
+        variance: TypeParameterVariance.In,
       });
     });
 
@@ -257,6 +308,7 @@ describe("TypeParameterDeclaration", () => {
         name: "T",
         constraint: "{\n    prop: string;\n}",
         default: "{\n}",
+        variance: TypeParameterVariance.None,
       });
     });
   });

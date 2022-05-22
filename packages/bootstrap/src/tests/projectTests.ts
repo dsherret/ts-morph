@@ -176,7 +176,7 @@ describe("Project", () => {
             fileSystem,
             resolutionHost: (moduleResolutionHost, getCompilerOptions) => {
               return {
-                resolveTypeReferenceDirectives: (typeDirectiveNames: string[], containingFile: string) => {
+                resolveTypeReferenceDirectives: (typeDirectiveNames: string[] | ts.FileReference[], containingFile: string) => {
                   const compilerOptions = getCompilerOptions();
                   const resolvedTypeReferenceDirectives: ts.ResolvedTypeReferenceDirective[] = [];
 
@@ -190,7 +190,8 @@ describe("Project", () => {
                 },
               };
 
-              function replaceAsdfExtension(moduleName: string) {
+              function replaceAsdfExtension(moduleName: string | ts.FileReference) {
+                moduleName = typeof moduleName === "string" ? moduleName : moduleName.fileName;
                 return moduleName.replace("asdf", "");
               }
             },
@@ -235,7 +236,7 @@ describe("Project", () => {
           const typeChecker = program.getTypeChecker();
           const varDecl = (sourceFile.statements[0] as ts.VariableStatement).declarationList.declarations[0];
           const varDeclType = typeChecker.getTypeAtLocation(varDecl.type!);
-          const stringDec = varDeclType.getSymbol()!.declarations[0];
+          const stringDec = varDeclType.getSymbol()!.declarations![0];
           expect(stringDec.getSourceFile().fileName).to.equal("/node_modules/typescript/lib/lib.es5.d.ts");
         });
 
@@ -255,7 +256,7 @@ describe("Project", () => {
           try {
             await create({ skipLoadingLibFiles: true, libFolderPath: "" });
             expect.fail("should have thrown");
-          } catch (err) {
+          } catch (err: any) {
             expect(err.message).to.equal("Cannot set skipLoadingLibFiles to true when libFolderPath is provided.");
           }
         });
@@ -274,7 +275,7 @@ describe("Project", () => {
           const typeChecker = program.getTypeChecker();
           const varDecl = (sourceFile.statements[0] as ts.VariableStatement).declarationList.declarations[0];
           const varDeclType = typeChecker.getTypeAtLocation(varDecl.type!);
-          const stringDec = varDeclType.getSymbol()!.declarations[0];
+          const stringDec = varDeclType.getSymbol()!.declarations![0];
           expect(stringDec.getSourceFile().fileName).to.equal("/other/lib.es5.d.ts");
         });
       });
@@ -374,7 +375,7 @@ describe("Project", () => {
         try {
           await action(project, "file1.ts");
           expect.fail("should have thrown.");
-        } catch (err) {
+        } catch (err: any) {
           expect(err.message).to.equal("File not found: /file1.ts");
         }
       });
@@ -418,7 +419,7 @@ describe("Project", () => {
         try {
           await action(project, "tsconfig.json");
           expect.fail("should have thrown");
-        } catch (err) {
+        } catch (err: any) {
           expect(err.message).to.equal("File not found: /tsconfig.json");
         }
       });

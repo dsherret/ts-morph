@@ -1,6 +1,6 @@
 import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
-import { FunctionDeclaration } from "../../../../compiler";
+import { FunctionDeclaration, TypeParameterVariance } from "../../../../compiler";
 import {
   FunctionDeclarationOverloadStructure,
   FunctionDeclarationSpecificStructure,
@@ -290,7 +290,7 @@ export default async function *test<T>(param): string {
         isGenerator: true,
         parameters: [{ name: "p" }],
         returnType: "number",
-        typeParameters: [{ name: "U" }],
+        typeParameters: [{ name: "U", variance: TypeParameterVariance.None }],
       };
 
       doTest(code, [{
@@ -306,7 +306,7 @@ export default async function *test<T>(param): string {
         overloads: [overloadStructure],
         parameters: [{ name: "param" }],
         returnType: "string",
-        typeParameters: [{ name: "T" }],
+        typeParameters: [{ name: "T", variance: TypeParameterVariance.None }],
       }]);
     });
   });

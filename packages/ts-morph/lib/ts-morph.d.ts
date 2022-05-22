@@ -1400,7 +1400,7 @@ export interface ModifierableNode {
 }
 
 declare type ModifierableNodeExtensionType = Node;
-export declare type ModifierTexts = "export" | "default" | "declare" | "abstract" | "public" | "protected" | "private" | "readonly" | "static" | "async" | "const" | "override";
+export declare type ModifierTexts = "export" | "default" | "declare" | "abstract" | "public" | "protected" | "private" | "readonly" | "static" | "async" | "const" | "override" | "in" | "out";
 export declare function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Base: T): Constructor<ModuledNode> & T;
 
 export interface ModuledNode {
@@ -3091,6 +3091,8 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isImportEqualsDeclaration: (node: Node | undefined) => node is ImportEqualsDeclaration;
   /** Gets if the node is a ImportSpecifier. */
   static readonly isImportSpecifier: (node: Node | undefined) => node is ImportSpecifier;
+  /** Gets if the node is a ImportTypeAssertionContainer. */
+  static readonly isImportTypeAssertionContainer: (node: Node | undefined) => node is ImportTypeAssertionContainer;
   /** Gets if the node is a InferKeyword. */
   static readonly isInferKeyword: (node: Node | undefined) => node is Node<ts.Token<SyntaxKind.InferKeyword>>;
   /** Gets if the node is a InterfaceDeclaration. */
@@ -4266,6 +4268,11 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    */
   static isNamed<T extends Node>(node: T | undefined): node is NamedNode & NamedNodeExtensionType & T;
   /**
+   * Gets if the node is a NodeWithTypeArguments.
+   * @param node - Node to check.
+   */
+  static isNodeWithTypeArguments(node: Node | undefined): node is NodeWithTypeArguments;
+  /**
    * Gets if the node is a NullLiteral.
    * @param node - Node to check.
    */
@@ -4566,7 +4573,7 @@ export interface TransformTraversalControl {
   visitChildren(): ts.Node;
 }
 
-export declare type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ObjectDestructuringAssignment ? ObjectDestructuringAssignment : T extends ts.ArrayDestructuringAssignment ? ArrayDestructuringAssignment : T extends ts.SuperElementAccessExpression ? SuperElementAccessExpression : T extends ts.SuperPropertyAccessExpression ? SuperPropertyAccessExpression : T extends ts.AssignmentExpression<infer U> ? AssignmentExpression<ts.AssignmentExpression<U>> : T["kind"] extends keyof ImplementedKindToNodeMappings ? ImplementedKindToNodeMappings[T["kind"]] : T extends ts.SyntaxList ? SyntaxList : T extends ts.JSDocTypeExpression ? JSDocTypeExpression : T extends ts.JSDocType ? JSDocType : T extends ts.TypeNode ? TypeNode : T extends ts.JSDocTag ? JSDocTag : T extends ts.LiteralExpression ? LiteralExpression : T extends ts.PrimaryExpression ? PrimaryExpression : T extends ts.MemberExpression ? MemberExpression : T extends ts.LeftHandSideExpression ? LeftHandSideExpression : T extends ts.UpdateExpression ? UpdateExpression : T extends ts.UnaryExpression ? UnaryExpression : T extends ts.Expression ? Expression : T extends ts.IterationStatement ? IterationStatement : T extends CompilerCommentStatement ? CommentStatement : T extends CompilerCommentClassElement ? CommentClassElement : T extends CompilerCommentTypeElement ? CommentTypeElement : T extends CompilerCommentObjectLiteralElement ? CommentObjectLiteralElement : T extends CompilerCommentEnumMember ? CommentEnumMember : T extends ts.TypeElement ? TypeElement : T extends ts.Statement ? Statement : T extends ts.ClassElement ? ClassElement : T extends ts.ObjectLiteralElement ? ObjectLiteralElement : Node<T>;
+export declare type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ObjectDestructuringAssignment ? ObjectDestructuringAssignment : T extends ts.ArrayDestructuringAssignment ? ArrayDestructuringAssignment : T extends ts.SuperElementAccessExpression ? SuperElementAccessExpression : T extends ts.SuperPropertyAccessExpression ? SuperPropertyAccessExpression : T extends ts.AssignmentExpression<infer U> ? AssignmentExpression<ts.AssignmentExpression<U>> : T["kind"] extends keyof ImplementedKindToNodeMappings ? ImplementedKindToNodeMappings[T["kind"]] : T extends ts.SyntaxList ? SyntaxList : T extends ts.JSDocTypeExpression ? JSDocTypeExpression : T extends ts.JSDocType ? JSDocType : T extends ts.NodeWithTypeArguments ? NodeWithTypeArguments : T extends ts.TypeNode ? TypeNode : T extends ts.JSDocTag ? JSDocTag : T extends ts.LiteralExpression ? LiteralExpression : T extends ts.PrimaryExpression ? PrimaryExpression : T extends ts.MemberExpression ? MemberExpression : T extends ts.LeftHandSideExpression ? LeftHandSideExpression : T extends ts.UpdateExpression ? UpdateExpression : T extends ts.UnaryExpression ? UnaryExpression : T extends ts.Expression ? Expression : T extends ts.IterationStatement ? IterationStatement : T extends CompilerCommentStatement ? CommentStatement : T extends CompilerCommentClassElement ? CommentClassElement : T extends CompilerCommentTypeElement ? CommentTypeElement : T extends CompilerCommentObjectLiteralElement ? CommentObjectLiteralElement : T extends CompilerCommentEnumMember ? CommentEnumMember : T extends ts.TypeElement ? TypeElement : T extends ts.Statement ? Statement : T extends ts.ClassElement ? ClassElement : T extends ts.ObjectLiteralElement ? ObjectLiteralElement : Node<T>;
 declare const DecoratorBase: Constructor<LeftHandSideExpressionedNode> & typeof Node;
 
 export declare class Decorator extends DecoratorBase<ts.Decorator> {
@@ -4900,6 +4907,7 @@ export declare class JSDocNameReference extends Node<ts.JSDocNameReference> {
 export declare class JSDocNonNullableType extends JSDocType<ts.JSDocNonNullableType> {
   /** Gets the type node of the JS doc non-nullable type node. */
   getTypeNode(): TypeNode<ts.TypeNode>;
+  isPostfix(): boolean;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.JSDocNonNullableType>;
   /** @inheritdoc **/
@@ -4910,6 +4918,7 @@ export declare class JSDocNonNullableType extends JSDocType<ts.JSDocNonNullableT
 export declare class JSDocNullableType extends JSDocType<ts.JSDocNullableType> {
   /** Gets the type node of the JS doc nullable type node. */
   getTypeNode(): TypeNode<ts.TypeNode>;
+  isPostfix(): boolean;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.JSDocNullableType>;
   /** @inheritdoc **/
@@ -6568,6 +6577,7 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.ImportEqualsDeclaration]: ImportEqualsDeclaration;
   [SyntaxKind.ImportSpecifier]: ImportSpecifier;
   [SyntaxKind.ImportType]: ImportTypeNode;
+  [SyntaxKind.ImportTypeAssertionContainer]: ImportTypeAssertionContainer;
   [SyntaxKind.IndexedAccessType]: IndexedAccessTypeNode;
   [SyntaxKind.IndexSignature]: IndexSignatureDeclaration;
   [SyntaxKind.InferType]: InferTypeNode;
@@ -7972,7 +7982,7 @@ export declare class CaseBlock extends CaseBlockBase<ts.CaseBlock> {
   getParentOrThrow(): NonNullable<NodeParentType<ts.CaseBlock>>;
 }
 
-declare const CaseClauseBase: Constructor<ExpressionedNode> & Constructor<TextInsertableNode> & Constructor<StatementedNode> & typeof Node;
+declare const CaseClauseBase: Constructor<JSDocableNode> & Constructor<ExpressionedNode> & Constructor<TextInsertableNode> & Constructor<StatementedNode> & typeof Node;
 
 export declare class CaseClause extends CaseClauseBase<ts.CaseClause> {
   /** Removes this case clause. */
@@ -8732,11 +8742,9 @@ export declare class ConstructorTypeNode extends ConstructorTypeNodeBase<ts.Cons
   getParentOrThrow(): NonNullable<NodeParentType<ts.ConstructorTypeNode>>;
 }
 
-declare const ExpressionWithTypeArgumentsBase: Constructor<LeftHandSideExpressionedNode> & typeof TypeNode;
+declare const ExpressionWithTypeArgumentsBase: Constructor<LeftHandSideExpressionedNode> & typeof NodeWithTypeArguments;
 
 export declare class ExpressionWithTypeArguments extends ExpressionWithTypeArgumentsBase<ts.ExpressionWithTypeArguments> {
-  /** Gets the type arguments. */
-  getTypeArguments(): TypeNode[];
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.ExpressionWithTypeArguments>;
   /** @inheritdoc **/
@@ -8757,9 +8765,17 @@ export declare class FunctionTypeNode extends FunctionTypeNodeBase<ts.FunctionTy
   getParentOrThrow(): NonNullable<NodeParentType<ts.FunctionTypeNode>>;
 }
 
-declare const ImportTypeNodeBase: Constructor<TypeArgumentedNode> & typeof TypeNode;
+export declare class ImportTypeAssertionContainer extends Node<ts.ImportTypeAssertionContainer> {
+  getAssertClause(): AssertClause;
+  /** If the assertion clause spans multiple lines. */
+  isMultiline(): boolean;
+  /** @inheritdoc **/
+  getParent(): NodeParentType<ts.ImportTypeAssertionContainer>;
+  /** @inheritdoc **/
+  getParentOrThrow(): NonNullable<NodeParentType<ts.ImportTypeAssertionContainer>>;
+}
 
-export declare class ImportTypeNode extends ImportTypeNodeBase<ts.ImportTypeNode> {
+export declare class ImportTypeNode extends NodeWithTypeArguments<ts.ImportTypeNode> {
   /**
    * Sets the argument text.
    * @param text - Text of the argument.
@@ -8776,6 +8792,10 @@ export declare class ImportTypeNode extends ImportTypeNodeBase<ts.ImportTypeNode
   getQualifierOrThrow(): EntityName;
   /** Gets the qualifier of the import type if it exists or returns undefined. */
   getQualifier(): EntityName | undefined;
+  /** Gets the import type assertion container if it exists. */
+  getAssertions(): ImportTypeAssertionContainer | undefined;
+  /** Gets the import type assertion container if it exists or throws. */
+  getAssertionsOrThrow(): ImportTypeAssertionContainer;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.ImportTypeNode>;
   /** @inheritdoc **/
@@ -8952,6 +8972,11 @@ export declare class TypeLiteralNode extends TypeLiteralNodeBase<ts.TypeLiteralN
 export declare class TypeNode<T extends ts.TypeNode = ts.TypeNode> extends Node<T> {
 }
 
+declare const NodeWithTypeArgumentsBase: Constructor<TypeArgumentedNode> & typeof TypeNode;
+
+export declare class NodeWithTypeArguments<T extends ts.NodeWithTypeArguments = ts.NodeWithTypeArguments> extends NodeWithTypeArgumentsBase<T> {
+}
+
 export declare class TypeOperatorTypeNode extends TypeNode<ts.TypeOperatorNode> {
   /** Gets the operator of the type node. */
   getOperator(): SyntaxKind.KeyOfKeyword | SyntaxKind.ReadonlyKeyword | SyntaxKind.UniqueKeyword;
@@ -8963,7 +8988,19 @@ export declare class TypeOperatorTypeNode extends TypeNode<ts.TypeOperatorNode> 
   getParentOrThrow(): NonNullable<NodeParentType<ts.TypeOperatorNode>>;
 }
 
-declare const TypeParameterDeclarationBase: Constructor<NamedNode> & typeof Node;
+/** Variance of the type parameter. */
+export declare enum TypeParameterVariance {
+  /** Variance is not specified. */
+  None = 0,
+  /** Contravariant. */
+  In = 1,
+  /** Covariant. */
+  Out = 2,
+  /** Invariant. */
+  InOut = 3
+}
+
+declare const TypeParameterDeclarationBase: Constructor<ModifierableNode> & Constructor<NamedNode> & typeof Node;
 
 export declare class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.TypeParameterDeclaration> {
   /** Gets the constraint of the type parameter. */
@@ -8988,6 +9025,10 @@ export declare class TypeParameterDeclaration extends TypeParameterDeclarationBa
   setDefault(text: string | WriterFunction): this;
   /** Removes the default type node. */
   removeDefault(): this;
+  /** Set the variance of the type parameter. */
+  setVariance(variance: TypeParameterVariance): this;
+  /** Gets the variance of the type parameter. */
+  getVariance(): TypeParameterVariance;
   /** Removes this type parameter. */
   remove(): void;
   /**
@@ -9029,7 +9070,7 @@ export declare class TypePredicateNode extends TypeNode<ts.TypePredicateNode> {
   getParentOrThrow(): NonNullable<NodeParentType<ts.TypePredicateNode>>;
 }
 
-export declare class TypeQueryNode extends TypeNode<ts.TypeQueryNode> {
+export declare class TypeQueryNode extends NodeWithTypeArguments<ts.TypeQueryNode> {
   /** Gets the expression name. */
   getExprName(): EntityName;
   /** @inheritdoc **/
@@ -9038,11 +9079,9 @@ export declare class TypeQueryNode extends TypeNode<ts.TypeQueryNode> {
   getParentOrThrow(): NonNullable<NodeParentType<ts.TypeQueryNode>>;
 }
 
-export declare class TypeReferenceNode extends TypeNode<ts.TypeReferenceNode> {
+export declare class TypeReferenceNode extends NodeWithTypeArguments<ts.TypeReferenceNode> {
   /** Gets the type name. */
   getTypeName(): EntityName;
-  /** Gets the type arguments. */
-  getTypeArguments(): TypeNode[];
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.TypeReferenceNode>;
   /** @inheritdoc **/
@@ -9734,7 +9773,7 @@ export declare class ReferencedSymbol {
   /** Gets the definition. */
   getDefinition(): ReferencedSymbolDefinitionInfo;
   /** Gets the references. */
-  getReferences(): ReferenceEntry[];
+  getReferences(): ReferencedSymbolEntry[];
 }
 
 export declare class ReferencedSymbolDefinitionInfo extends DefinitionInfo<ts.ReferencedSymbolDefinitionInfo> {
@@ -9743,12 +9782,16 @@ export declare class ReferencedSymbolDefinitionInfo extends DefinitionInfo<ts.Re
   getDisplayParts(): SymbolDisplayPart[];
 }
 
-export declare class ReferenceEntry extends DocumentSpan<ts.ReferenceEntry> {
-  private constructor();
+export declare class ReferenceEntry<T extends ts.ReferenceEntry = ts.ReferenceEntry> extends DocumentSpan<T> {
+  protected constructor();
   isWriteAccess(): boolean;
-  /** If this is the definition reference. */
-  isDefinition(): boolean;
   isInString(): true | undefined;
+}
+
+export declare class ReferencedSymbolEntry extends ReferenceEntry<ts.ReferencedSymbolEntry> {
+  private constructor();
+  /** If this is the definition reference. */
+  isDefinition(): boolean | undefined;
 }
 
 /** Rename location. */
@@ -10933,6 +10976,7 @@ export interface TypeParameterDeclarationStructure extends Structure, TypeParame
 interface TypeParameterDeclarationSpecificStructure extends KindedStructure<StructureKind.TypeParameter> {
   constraint?: string | WriterFunction;
   default?: string | WriterFunction;
+  variance?: TypeParameterVariance;
 }
 
 export declare type OptionalKind<TStructure extends {

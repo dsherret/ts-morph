@@ -2883,6 +2883,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
   /** Gets if the node is a ImportSpecifier. */
   static readonly isImportSpecifier: (node: compiler.Node | undefined) => node is compiler.ImportSpecifier = Node.is(SyntaxKind.ImportSpecifier);
+  /** Gets if the node is a ImportTypeAssertionContainer. */
+  static readonly isImportTypeAssertionContainer: (node: compiler.Node | undefined) => node is compiler.ImportTypeAssertionContainer = Node.is(SyntaxKind.ImportTypeAssertionContainer);
 
   /**
    * Gets if the node is a ImportTypeNode.
@@ -2990,7 +2992,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    * @param node - Node to check.
    */
   static isJSDoc(node: compiler.Node | undefined): node is compiler.JSDoc {
-    return node?.getKind() === SyntaxKind.JSDocComment;
+    return node?.getKind() === SyntaxKind.JSDoc;
   }
 
   /**
@@ -3001,6 +3003,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     switch (node?.getKind()) {
       case SyntaxKind.ArrowFunction:
       case SyntaxKind.CallSignature:
+      case SyntaxKind.CaseClause:
       case SyntaxKind.ClassDeclaration:
       case SyntaxKind.ClassExpression:
       case SyntaxKind.ClassStaticBlockDeclaration:
@@ -3446,6 +3449,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.PropertySignature:
       case SyntaxKind.SetAccessor:
       case SyntaxKind.TypeAliasDeclaration:
+      case SyntaxKind.TypeParameter:
       case SyntaxKind.VariableDeclarationList:
       case SyntaxKind.VariableStatement:
         return true;
@@ -3553,6 +3557,23 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isNeverKeyword: (node: compiler.Node | undefined) => node is compiler.Node<ts.Token<SyntaxKind.NeverKeyword>> = Node.is(SyntaxKind.NeverKeyword);
   /** Gets if the node is a NewExpression. */
   static readonly isNewExpression: (node: compiler.Node | undefined) => node is compiler.NewExpression = Node.is(SyntaxKind.NewExpression);
+
+  /**
+   * Gets if the node is a NodeWithTypeArguments.
+   * @param node - Node to check.
+   */
+  static isNodeWithTypeArguments(node: compiler.Node | undefined): node is compiler.NodeWithTypeArguments {
+    switch (node?.getKind()) {
+      case SyntaxKind.ExpressionWithTypeArguments:
+      case SyntaxKind.ImportType:
+      case SyntaxKind.TypeQuery:
+      case SyntaxKind.TypeReference:
+        return true;
+      default:
+        return false;
+    }
+  }
+
   /** Gets if the node is a NonNullExpression. */
   static readonly isNonNullExpression: (node: compiler.Node | undefined) => node is compiler.NonNullExpression = Node.is(SyntaxKind.NonNullExpression);
   /** Gets if the node is a NoSubstitutionTemplateLiteral. */
@@ -4173,8 +4194,11 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   static isTypeArgumented<T extends compiler.Node>(node: T | undefined): node is compiler.TypeArgumentedNode & compiler.TypeArgumentedNodeExtensionType & T {
     switch (node?.getKind()) {
       case SyntaxKind.CallExpression:
+      case SyntaxKind.ExpressionWithTypeArguments:
       case SyntaxKind.ImportType:
       case SyntaxKind.NewExpression:
+      case SyntaxKind.TypeQuery:
+      case SyntaxKind.TypeReference:
         return true;
       default:
         return false;
@@ -4526,7 +4550,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.ImportSpecifier:
       case SyntaxKind.IndexSignature:
       case SyntaxKind.InterfaceDeclaration:
-      case SyntaxKind.JSDocComment:
+      case SyntaxKind.JSDoc:
       case SyntaxKind.JsxAttribute:
       case SyntaxKind.JsxElement:
       case SyntaxKind.JsxSelfClosingElement:

@@ -1,6 +1,13 @@
 import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
-import { CallSignatureDeclaration, FunctionDeclaration, TypeAliasDeclaration, TypeParameterDeclaration, TypeParameteredNode } from "../../../../compiler";
+import {
+  CallSignatureDeclaration,
+  FunctionDeclaration,
+  TypeAliasDeclaration,
+  TypeParameterDeclaration,
+  TypeParameteredNode,
+  TypeParameterVariance,
+} from "../../../../compiler";
 import { OptionalKind, TypeParameterDeclarationStructure, TypeParameteredNodeStructure } from "../../../../structures";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia } from "../../testHelpers";
 
@@ -141,8 +148,9 @@ describe("TypeParameteredNode", () => {
         name: "V",
         constraint: "string",
         default: "number",
+        variance: TypeParameterVariance.InOut,
       };
-      doTest("function identifier() {}", 0, structure, "function identifier<V extends string = number>() {}");
+      doTest("function identifier() {}", 0, structure, "function identifier<in out V extends string = number>() {}");
     });
   });
 

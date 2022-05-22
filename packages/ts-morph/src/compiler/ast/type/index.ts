@@ -4,6 +4,7 @@ export * from "./ConstructorTypeNode";
 export * from "./ExpressionWithTypeArguments";
 export * from "./FunctionOrConstructorTypeNodeBase";
 export * from "./FunctionTypeNode";
+export * from "./ImportTypeAssertionContainer";
 export * from "./ImportTypeNode";
 export * from "./IndexedAccessTypeNode";
 export * from "./InferTypeNode";
