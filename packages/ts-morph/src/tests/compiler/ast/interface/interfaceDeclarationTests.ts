@@ -1,6 +1,6 @@
 import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
-import { InterfaceDeclaration } from "../../../../compiler";
+import { InterfaceDeclaration, TypeParameterVariance } from "../../../../compiler";
 import {
   InterfaceDeclarationSpecificStructure,
   InterfaceDeclarationStructure,
@@ -152,7 +152,7 @@ export default interface Test<T> extends Test2 {
         methods: [{ name: "method", returnType: "void" }],
         name: "Test",
         properties: [{ name: "property", type: "string" }],
-        typeParameters: [{ name: "T" }],
+        typeParameters: [{ name: "T", variance: TypeParameterVariance.None }],
       });
     });
   });

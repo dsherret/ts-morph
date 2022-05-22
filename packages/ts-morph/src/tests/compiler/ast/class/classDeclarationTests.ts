@@ -1,6 +1,6 @@
 import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
-import { ClassDeclaration } from "../../../../compiler";
+import { ClassDeclaration, TypeParameterVariance } from "../../../../compiler";
 import {
   ClassDeclarationSpecificStructure,
   ClassDeclarationStructure,
@@ -174,7 +174,7 @@ class Identifier {
         name: "Identifier",
         properties: [{ name: "prop", type: "string" }],
         setAccessors: [{ name: "setAccessor", parameters: [{ name: "value", type: "string" }], statements: [] }],
-        typeParameters: [{ name: "T" }],
+        typeParameters: [{ name: "T", variance: TypeParameterVariance.None }],
       });
     });
 
@@ -280,8 +280,8 @@ abstract class Test<T extends string = number, U> extends Base implements IBase 
           name: "Test",
           docs: [{ kind: StructureKind.JSDoc, description: "Test", tags: [] }],
           typeParameters: [
-            { kind: StructureKind.TypeParameter, name: "T", constraint: "string", default: "number" },
-            { kind: StructureKind.TypeParameter, name: "U", constraint: undefined, default: undefined },
+            { kind: StructureKind.TypeParameter, name: "T", constraint: "string", default: "number", variance: TypeParameterVariance.None },
+            { kind: StructureKind.TypeParameter, name: "U", constraint: undefined, default: undefined, variance: TypeParameterVariance.None },
           ],
           properties: [{
             kind: StructureKind.PropertySignature,
@@ -359,8 +359,8 @@ abstract class Test<T extends string = number, U> extends Base implements IBase 
               scope: undefined,
             }],
             typeParameters: [
-              { kind: StructureKind.TypeParameter, name: "T", constraint: "string", default: "number" },
-              { kind: StructureKind.TypeParameter, name: "U", constraint: undefined, default: undefined },
+              { kind: StructureKind.TypeParameter, name: "T", constraint: "string", default: "number", variance: TypeParameterVariance.None },
+              { kind: StructureKind.TypeParameter, name: "U", constraint: undefined, default: undefined, variance: TypeParameterVariance.None },
             ],
           }, {
             kind: StructureKind.MethodSignature,
@@ -659,11 +659,13 @@ class Test<T extends string = number, U> extends Base implements IBase {
               name: "T",
               constraint: "string",
               default: "number",
+              variance: TypeParameterVariance.None,
             }, {
               kind: StructureKind.TypeParameter,
               name: "U",
               constraint: undefined,
               default: undefined,
+              variance: TypeParameterVariance.None,
             }],
           }, {
             kind: StructureKind.MethodSignature,

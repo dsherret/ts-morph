@@ -1400,7 +1400,7 @@ export interface ModifierableNode {
 }
 
 declare type ModifierableNodeExtensionType = Node;
-export declare type ModifierTexts = "export" | "default" | "declare" | "abstract" | "public" | "protected" | "private" | "readonly" | "static" | "async" | "const" | "override";
+export declare type ModifierTexts = "export" | "default" | "declare" | "abstract" | "public" | "protected" | "private" | "readonly" | "static" | "async" | "const" | "override" | "in" | "out";
 export declare function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Base: T): Constructor<ModuledNode> & T;
 
 export interface ModuledNode {
@@ -4900,6 +4900,7 @@ export declare class JSDocNameReference extends Node<ts.JSDocNameReference> {
 export declare class JSDocNonNullableType extends JSDocType<ts.JSDocNonNullableType> {
   /** Gets the type node of the JS doc non-nullable type node. */
   getTypeNode(): TypeNode<ts.TypeNode>;
+  isPostfix(): boolean;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.JSDocNonNullableType>;
   /** @inheritdoc **/
@@ -4910,6 +4911,7 @@ export declare class JSDocNonNullableType extends JSDocType<ts.JSDocNonNullableT
 export declare class JSDocNullableType extends JSDocType<ts.JSDocNullableType> {
   /** Gets the type node of the JS doc nullable type node. */
   getTypeNode(): TypeNode<ts.TypeNode>;
+  isPostfix(): boolean;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.JSDocNullableType>;
   /** @inheritdoc **/
@@ -8963,7 +8965,19 @@ export declare class TypeOperatorTypeNode extends TypeNode<ts.TypeOperatorNode> 
   getParentOrThrow(): NonNullable<NodeParentType<ts.TypeOperatorNode>>;
 }
 
-declare const TypeParameterDeclarationBase: Constructor<NamedNode> & typeof Node;
+/** Variance of the type parameter. */
+export declare enum TypeParameterVariance {
+  /** Variance is not specified. */
+  None = 0,
+  /** Contravariant. */
+  In = 1,
+  /** Covariant. */
+  Out = 2,
+  /** Invariant. */
+  InOut = 3
+}
+
+declare const TypeParameterDeclarationBase: Constructor<ModifierableNode> & Constructor<NamedNode> & typeof Node;
 
 export declare class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.TypeParameterDeclaration> {
   /** Gets the constraint of the type parameter. */
@@ -8988,6 +9002,10 @@ export declare class TypeParameterDeclaration extends TypeParameterDeclarationBa
   setDefault(text: string | WriterFunction): this;
   /** Removes the default type node. */
   removeDefault(): this;
+  /** Set the variance of the type parameter. */
+  setVariance(variance: TypeParameterVariance): this;
+  /** Gets the variance of the type parameter. */
+  getVariance(): TypeParameterVariance;
   /** Removes this type parameter. */
   remove(): void;
   /**
@@ -9734,7 +9752,7 @@ export declare class ReferencedSymbol {
   /** Gets the definition. */
   getDefinition(): ReferencedSymbolDefinitionInfo;
   /** Gets the references. */
-  getReferences(): ReferenceEntry<ts.ReferenceEntry>[];
+  getReferences(): ReferencedSymbolEntry[];
 }
 
 export declare class ReferencedSymbolDefinitionInfo extends DefinitionInfo<ts.ReferencedSymbolDefinitionInfo> {
@@ -10937,6 +10955,7 @@ export interface TypeParameterDeclarationStructure extends Structure, TypeParame
 interface TypeParameterDeclarationSpecificStructure extends KindedStructure<StructureKind.TypeParameter> {
   constraint?: string | WriterFunction;
   default?: string | WriterFunction;
+  variance?: TypeParameterVariance;
 }
 
 export declare type OptionalKind<TStructure extends {

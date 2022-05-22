@@ -1,6 +1,6 @@
 import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
-import { ClassDeclaration, ConstructorDeclaration, Scope } from "../../../../compiler";
+import { ClassDeclaration, ConstructorDeclaration, Scope, TypeParameterVariance } from "../../../../compiler";
 import {
   ConstructorDeclarationOverloadStructure,
   ConstructorDeclarationSpecificStructure,
@@ -237,12 +237,13 @@ class T {
             name: "T",
             constraint: undefined,
             default: undefined,
+            variance: TypeParameterVariance.None,
           }],
         }],
         parameters: [{ name: "p" }],
         returnType: undefined,
         scope: Scope.Public,
-        typeParameters: [{ name: "T" }],
+        typeParameters: [{ name: "T", variance: TypeParameterVariance.None }],
       });
     });
   });

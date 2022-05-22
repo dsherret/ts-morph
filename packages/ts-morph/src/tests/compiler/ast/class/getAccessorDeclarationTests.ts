@@ -1,6 +1,6 @@
 import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
-import { ClassDeclaration, GetAccessorDeclaration, Scope } from "../../../../compiler";
+import { ClassDeclaration, GetAccessorDeclaration, Scope, TypeParameterVariance } from "../../../../compiler";
 import { GetAccessorDeclarationStructure, StructureKind } from "../../../../structures";
 import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
@@ -178,7 +178,7 @@ class T {
         parameters: [{ name: "p" }],
         returnType: "number",
         scope: Scope.Public,
-        typeParameters: [{ name: "T" }],
+        typeParameters: [{ name: "T", variance: TypeParameterVariance.None }],
         decorators: [{ name: "dec" }],
         isAbstract: false,
         isStatic: true,

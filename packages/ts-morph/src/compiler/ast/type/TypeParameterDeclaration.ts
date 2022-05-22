@@ -2,13 +2,25 @@ import { errors, nameof, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange, removeChildren, removeCommaSeparatedChild } from "../../../manipulation";
 import { StructureKind, TypeParameterDeclarationSpecificStructure, TypeParameterDeclarationStructure } from "../../../structures";
 import { WriterFunction } from "../../../types";
-import { NamedNode } from "../base";
+import { ModifierableNode, NamedNode } from "../base";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { TypeNode } from "./TypeNode";
 
-export const TypeParameterDeclarationBase = NamedNode(Node);
+/** Variance of the type parameter. */
+export enum TypeParameterVariance {
+  /** Variance is not specified. */
+  None = 0,
+  /** Contravariant. */
+  In = 1 << 0,
+  /** Covariant. */
+  Out = 1 << 1,
+  /** Invariant. */
+  InOut = In | Out,
+}
+
+export const TypeParameterDeclarationBase = ModifierableNode(NamedNode(Node));
 export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.TypeParameterDeclaration> {
   /**
    * Gets the constraint of the type parameter.
@@ -108,6 +120,23 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
     return this;
   }
 
+  /** Set the variance of the type parameter. */
+  setVariance(variance: TypeParameterVariance) {
+    this.toggleModifier("in", (variance & TypeParameterVariance.In) !== 0);
+    this.toggleModifier("out", (variance & TypeParameterVariance.Out) !== 0);
+    return this;
+  }
+
+  /** Gets the variance of the type parameter. */
+  getVariance() {
+    let variance = TypeParameterVariance.None;
+    if (this.hasModifier("in"))
+      variance |= TypeParameterVariance.In;
+    if (this.hasModifier("out"))
+      variance |= TypeParameterVariance.Out;
+    return variance;
+  }
+
   /**
    * Removes this type parameter.
    */
@@ -148,6 +177,9 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
     else if (structure.hasOwnProperty(nameof(structure, "default")))
       this.removeDefault();
 
+    if (structure.variance != null)
+      this.setVariance(structure.variance);
+
     return this;
   }
 
@@ -162,6 +194,7 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
       kind: StructureKind.TypeParameter,
       constraint: constraintNode != null ? constraintNode.getText({ trimLeadingIndentation: true }) : undefined,
       default: defaultNode ? defaultNode.getText({ trimLeadingIndentation: true }) : undefined,
+      variance: this.getVariance(),
     });
   }
 }

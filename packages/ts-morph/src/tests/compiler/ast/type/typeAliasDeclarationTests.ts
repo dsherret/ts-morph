@@ -1,6 +1,6 @@
 import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
-import { TypeAliasDeclaration } from "../../../../compiler";
+import { TypeAliasDeclaration, TypeParameterVariance } from "../../../../compiler";
 import { StructureKind, TypeAliasDeclarationStructure, TypeParameterDeclarationStructure } from "../../../../structures";
 import { fillStructures, getInfoFromText, OptionalTrivia } from "../../testHelpers";
 
@@ -70,7 +70,7 @@ export declare type Identifier<T> = string;
         isExported: true,
         name: "Identifier",
         type: "string",
-        typeParameters: [{ name: "T" }],
+        typeParameters: [{ name: "T", variance: TypeParameterVariance.None }],
       });
     });
   });
