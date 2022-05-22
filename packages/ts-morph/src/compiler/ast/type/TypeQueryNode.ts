@@ -1,8 +1,8 @@
 import { ts } from "@ts-morph/common";
 import { EntityName } from "../aliases";
-import { TypeNode } from "./TypeNode";
+import { NodeWithTypeArguments } from "./TypeNode";
 
-export class TypeQueryNode extends TypeNode<ts.TypeQueryNode> {
+export class TypeQueryNode extends NodeWithTypeArguments<ts.TypeQueryNode> {
   /**
    * Gets the expression name.
    */
