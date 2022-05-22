@@ -18497,7 +18497,7 @@ class Directory {
                             return FileUtils.pathJoin(dir.getPath(), "index.ts");
                         return dir.getPath();
                     case ModuleResolutionKind.Classic:
-                    case ModuleResolutionKind.Node12:
+                    case ModuleResolutionKind.Node16:
                     case ModuleResolutionKind.NodeNext:
                         return FileUtils.pathJoin(dir.getPath(), "index.ts");
                     default:
@@ -18512,7 +18512,7 @@ class Directory {
                             return filePath;
                         return filePath.replace(/\/index?(\.d\.ts|\.ts|\.js)$/i, "");
                     case ModuleResolutionKind.Classic:
-                    case ModuleResolutionKind.Node12:
+                    case ModuleResolutionKind.Node16:
                     case ModuleResolutionKind.NodeNext:
                         return filePath;
                     default:
