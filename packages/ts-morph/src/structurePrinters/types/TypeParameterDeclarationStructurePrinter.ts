@@ -1,5 +1,6 @@
 import { StringUtils } from "@ts-morph/common";
 import { CodeBlockWriter } from "../../codeBlockWriter";
+import { TypeParameterVariance } from "../../compiler";
 import { OptionalKind, TypeParameterDeclarationStructure } from "../../structures";
 import { CommaSeparatedStructuresPrinter } from "../formatting";
 import { NodePrinter } from "../NodePrinter";
@@ -26,6 +27,12 @@ export class TypeParameterDeclarationStructurePrinter extends NodePrinter<Option
     }
 
     writer.hangingIndent(() => {
+      if (structure.variance != null) {
+        if ((structure.variance & TypeParameterVariance.In) !== 0)
+          writer.write("in ");
+        if ((structure.variance & TypeParameterVariance.Out) !== 0)
+          writer.write("out ");
+      }
       writer.write(structure.name);
       if (structure.constraint != null) {
         const constraintText = this.getText(writer, structure.constraint);

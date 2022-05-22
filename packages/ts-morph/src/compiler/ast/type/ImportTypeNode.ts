@@ -1,12 +1,10 @@
 import { errors, SyntaxKind, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange } from "../../../manipulation";
 import { EntityName } from "../aliases";
-import { TypeArgumentedNode } from "../base";
 import { Node } from "../common";
-import { TypeNode } from "./TypeNode";
+import { NodeWithTypeArguments, TypeNode } from "./TypeNode";
 
-export const ImportTypeNodeBase = TypeArgumentedNode(TypeNode);
-export class ImportTypeNode extends ImportTypeNodeBase<ts.ImportTypeNode> {
+export class ImportTypeNode extends NodeWithTypeArguments<ts.ImportTypeNode> {
   /**
    * Sets the argument text.
    * @param text - Text of the argument.
@@ -65,5 +63,18 @@ export class ImportTypeNode extends ImportTypeNodeBase<ts.ImportTypeNode> {
    */
   getQualifier(): EntityName | undefined {
     return this._getNodeFromCompilerNodeIfExists(this.compilerNode.qualifier);
+  }
+
+  /** Gets the import type assertion container if it exists. */
+  getAssertions() {
+    return this._getNodeFromCompilerNodeIfExists(this.compilerNode.assertions);
+  }
+
+  /** Gets the import type assertion container if it exists or throws. */
+  getAssertionsOrThrow() {
+    return errors.throwIfNullOrUndefined(
+      this._getNodeFromCompilerNodeIfExists(this.compilerNode.assertions),
+      "Could not find import type assertion container.",
+    );
   }
 }

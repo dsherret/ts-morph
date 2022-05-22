@@ -65,6 +65,7 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.ImportEqualsDeclaration]: compiler.ImportEqualsDeclaration;
   [SyntaxKind.ImportSpecifier]: compiler.ImportSpecifier;
   [SyntaxKind.ImportType]: compiler.ImportTypeNode;
+  [SyntaxKind.ImportTypeAssertionContainer]: compiler.ImportTypeAssertionContainer;
   [SyntaxKind.IndexedAccessType]: compiler.IndexedAccessTypeNode;
   [SyntaxKind.IndexSignature]: compiler.IndexSignatureDeclaration;
   [SyntaxKind.InferType]: compiler.InferTypeNode;
@@ -183,7 +184,7 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.VariableDeclaration]: compiler.VariableDeclaration;
   [SyntaxKind.VariableDeclarationList]: compiler.VariableDeclarationList;
   [SyntaxKind.VariableStatement]: compiler.VariableStatement;
-  [SyntaxKind.JSDoc]: compiler.JSDoc;
+  [SyntaxKind.JSDocComment]: compiler.JSDoc;
   [SyntaxKind.TypeOfExpression]: compiler.TypeOfExpression;
   [SyntaxKind.WhileStatement]: compiler.WhileStatement;
   [SyntaxKind.WithStatement]: compiler.WithStatement;
