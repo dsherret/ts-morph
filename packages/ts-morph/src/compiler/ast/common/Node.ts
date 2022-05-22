@@ -2987,8 +2987,13 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
   }
 
-  /** Gets if the node is a JSDoc. */
-  static readonly isJSDoc: (node: compiler.Node | undefined) => node is compiler.JSDoc = Node.is(SyntaxKind.JSDoc);
+  /**
+   * Gets if the node is a JSDoc.
+   * @param node - Node to check.
+   */
+  static isJSDoc(node: compiler.Node | undefined): node is compiler.JSDoc {
+    return node?.getKind() === SyntaxKind.JSDoc;
+  }
 
   /**
    * Gets if the node is a JSDocableNode.
@@ -2998,6 +3003,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     switch (node?.getKind()) {
       case SyntaxKind.ArrowFunction:
       case SyntaxKind.CallSignature:
+      case SyntaxKind.CaseClause:
       case SyntaxKind.ClassDeclaration:
       case SyntaxKind.ClassExpression:
       case SyntaxKind.ClassStaticBlockDeclaration:
