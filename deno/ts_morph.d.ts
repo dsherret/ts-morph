@@ -8745,6 +8745,10 @@ export declare class ConstructorTypeNode extends ConstructorTypeNodeBase<ts.Cons
 declare const ExpressionWithTypeArgumentsBase: Constructor<LeftHandSideExpressionedNode> & typeof NodeWithTypeArguments;
 
 export declare class ExpressionWithTypeArguments extends ExpressionWithTypeArgumentsBase<ts.ExpressionWithTypeArguments> {
+  /** @inheritdoc **/
+  getParent(): NodeParentType<ts.ExpressionWithTypeArguments>;
+  /** @inheritdoc **/
+  getParentOrThrow(): NonNullable<NodeParentType<ts.ExpressionWithTypeArguments>>;
 }
 
 declare const FunctionOrConstructorTypeNodeBaseBase: Constructor<SignaturedDeclaration> & typeof TypeNode;
@@ -8792,6 +8796,10 @@ export declare class ImportTypeNode extends NodeWithTypeArguments<ts.ImportTypeN
   getAssertions(): ImportTypeAssertionContainer | undefined;
   /** Gets the import type assertion container if it exists or throws. */
   getAssertionsOrThrow(): ImportTypeAssertionContainer;
+  /** @inheritdoc **/
+  getParent(): NodeParentType<ts.ImportTypeNode>;
+  /** @inheritdoc **/
+  getParentOrThrow(): NonNullable<NodeParentType<ts.ImportTypeNode>>;
 }
 
 export declare class IndexedAccessTypeNode extends TypeNode<ts.IndexedAccessTypeNode> {
@@ -8964,7 +8972,9 @@ export declare class TypeLiteralNode extends TypeLiteralNodeBase<ts.TypeLiteralN
 export declare class TypeNode<T extends ts.TypeNode = ts.TypeNode> extends Node<T> {
 }
 
-export declare class NodeWithTypeArguments<T extends ts.NodeWithTypeArguments = ts.NodeWithTypeArguments> extends NodeWithTypeArguments_base<T> {
+declare const NodeWithTypeArgumentsBase: Constructor<TypeArgumentedNode> & typeof TypeNode;
+
+export declare class NodeWithTypeArguments<T extends ts.NodeWithTypeArguments = ts.NodeWithTypeArguments> extends NodeWithTypeArgumentsBase<T> {
 }
 
 export declare class TypeOperatorTypeNode extends TypeNode<ts.TypeOperatorNode> {
@@ -9063,11 +9073,19 @@ export declare class TypePredicateNode extends TypeNode<ts.TypePredicateNode> {
 export declare class TypeQueryNode extends NodeWithTypeArguments<ts.TypeQueryNode> {
   /** Gets the expression name. */
   getExprName(): EntityName;
+  /** @inheritdoc **/
+  getParent(): NodeParentType<ts.TypeQueryNode>;
+  /** @inheritdoc **/
+  getParentOrThrow(): NonNullable<NodeParentType<ts.TypeQueryNode>>;
 }
 
 export declare class TypeReferenceNode extends NodeWithTypeArguments<ts.TypeReferenceNode> {
   /** Gets the type name. */
   getTypeName(): EntityName;
+  /** @inheritdoc **/
+  getParent(): NodeParentType<ts.TypeReferenceNode>;
+  /** @inheritdoc **/
+  getParentOrThrow(): NonNullable<NodeParentType<ts.TypeReferenceNode>>;
 }
 
 export declare class UnionTypeNode extends TypeNode<ts.UnionTypeNode> {
