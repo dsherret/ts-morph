@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="15.0.0"></a>
+# [15.0.0](https://github.com/dsherret/ts-morph/compare/14.0.0...15.0.0) (2022-05-24)
+
+
+### Bug Fixes
+
+* `transform()` - ensure comments on nodes with only added synthetic leading comments show up in output ([abc840d](https://github.com/dsherret/ts-morph/commit/abc840d)), closes [#1273](https://github.com/dsherret/ts-morph/issues/1273)
+* ensure leading and trailing trivia for overloads ends up in output ([0d043b5](https://github.com/dsherret/ts-morph/commit/0d043b5)), closes [#1244](https://github.com/dsherret/ts-morph/issues/1244)
+* **common:** deleting directories didn't work on Node ([163de40](https://github.com/dsherret/ts-morph/commit/163de40)), closes [#1249](https://github.com/dsherret/ts-morph/issues/1249)
+* handle undefined in comment node type guards ([#1275](https://github.com/dsherret/ts-morph/issues/1275)) ([452cff3](https://github.com/dsherret/ts-morph/commit/452cff3))
+* transform should take into account the node changing kinds ([75c4a75](https://github.com/dsherret/ts-morph/commit/75c4a75)), closes [#1248](https://github.com/dsherret/ts-morph/issues/1248)
+
+
+### Features
+
+* add `Node#isKind(kind)` type guard ([#1271](https://github.com/dsherret/ts-morph/issues/1271)) ([79ab80f](https://github.com/dsherret/ts-morph/commit/79ab80f))
+* add factory property to traversal control ([d4c5a35](https://github.com/dsherret/ts-morph/commit/d4c5a35))
+* add helper properties on TemplateLiteralTypeNode. ([1a8de49](https://github.com/dsherret/ts-morph/commit/1a8de49)), closes [#1266](https://github.com/dsherret/ts-morph/issues/1266)
+* upgrade to TypeScript 4.7 ([#1281](https://github.com/dsherret/ts-morph/issues/1281)) ([ae797d8](https://github.com/dsherret/ts-morph/commit/ae797d8))
+
+
+### BREAKING CHANGES
+
+* `transform` now returns a `Node` instead of `this` because the returned node could be the replaced node.
+* Upgraded to TS 4.7. Please review changes to typescript.d.ts in [#1281](https://github.com/dsherret/ts-morph/pull/1281/files#diff-1689901fc8d46451616bd34e0e34bf5c359401decc33ecd5fa7065f30525af6a).
+
 <a name="14.0.0"></a>
 # [14.0.0](https://github.com/dsherret/ts-morph/compare/13.0.3...14.0.0) (2022-03-02)
 
