@@ -95,6 +95,13 @@ export class Symbol {
   }
 
   /**
+   * Gets if the symbol is optional.
+   */
+  isOptional() {
+    return (this.getFlags() & SymbolFlags.Optional) === SymbolFlags.Optional;
+  }
+
+  /**
    * Gets the symbol flags.
    */
   getFlags(): SymbolFlags {
