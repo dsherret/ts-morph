@@ -325,12 +325,6 @@ export interface TsSourceFileContainer {
         scriptKind: ScriptKind | undefined;
     }): ts.SourceFile | undefined;
     /**
-     * Adds a lib file whose existence is virtual to the cache.
-     * @param filePath - File path to get.
-     * @param scriptKind - Script kind of the source file.
-     */
-    addLibFileToCacheByText(filePath: StandardizedFilePath, fileText: string, scriptKind: ScriptKind | undefined): ts.SourceFile;
-    /**
      * Gets the source file version of the specified source file.
      * @param sourceFile - Source file to inspect.
      */
@@ -757,18 +751,25 @@ export interface DirEntry {
     isSymlink: boolean;
 }
 
+export interface TransactionalFileSystemOptions {
+    fileSystem: FileSystemHost;
+    skipLoadingLibFiles: boolean | undefined;
+    libFolderPath: string | undefined;
+}
+
 /**
  * FileSystemHost wrapper that allows transactionally queuing operations to the file system.
  */
 export declare class TransactionalFileSystem {
-    private readonly fileSystem;
     private readonly directories;
     private readonly pathCasingMaintainer;
+    private readonly fileSystem;
+    private readonly libFileMap;
     /**
      * Constructor.
      * @param fileSystem - File system host to commit the operations to.
      */
-    constructor(fileSystem: FileSystemHost);
+    constructor(options: TransactionalFileSystemOptions);
     queueFileDelete(filePath: StandardizedFilePath): void;
     removeFileDelete(filePath: StandardizedFilePath): void;
     queueMkdir(dirPath: StandardizedFilePath): void;
@@ -799,7 +800,7 @@ export declare class TransactionalFileSystem {
     deleteDirectoryImmediatelySync(dirPath: StandardizedFilePath): void;
     private deleteSuppressNotFound;
     private deleteSuppressNotFoundSync;
-    fileExists(filePath: StandardizedFilePath): false | Promise<boolean>;
+    fileExists(filePath: StandardizedFilePath): boolean | Promise<boolean>;
     fileExistsSync(filePath: StandardizedFilePath): boolean;
     private _fileDeletedInMemory;
     directoryExistsSync(dirPath: StandardizedFilePath): boolean;
@@ -834,6 +835,9 @@ export declare class TransactionalFileSystem {
     private ensureDirectoryExists;
     private ensureDirectoryExistsSync;
     private removeMkDirOperationsForDir;
+    private libFileExists;
+    private readLibFile;
+    private throwIfLibFile;
 }
 
 /** Gets the TypeScript lib files (.d.ts files). */
@@ -841,6 +845,11 @@ export declare function getLibFiles(): {
     fileName: string;
     text: string;
 }[];
+
+export declare function getLibFolderPath(options: {
+    libFolderPath?: string;
+    skipLoadingLibFiles?: boolean;
+}): string;
 
 /** The folder to use to "store" the in memory lib files. */
 export declare const libFolderInMemoryPath: StandardizedFilePath;

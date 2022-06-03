@@ -16961,7 +16961,10 @@ class FileTextChanges {
         this._context = context;
         this._compilerObject = compilerObject;
         const file = context.compilerFactory
-            .getSourceFileFromCacheFromFilePath(context.fileSystemWrapper.getStandardizedAbsolutePath(compilerObject.fileName));
+            .addOrGetSourceFileFromFilePath(context.fileSystemWrapper.getStandardizedAbsolutePath(compilerObject.fileName), {
+            markInProject: false,
+            scriptKind: undefined,
+        });
         this._existingFileExists = file != null;
         if (!compilerObject.isNewFile)
             this._sourceFile = file;
@@ -16992,6 +16995,7 @@ class FileTextChanges {
                 + `that doesn't exist at path: ${this.getFilePath()}`);
         }
         file.applyTextChanges(this.getTextChanges());
+        file._markAsInProject();
         this._isApplied = true;
         return this;
     }
@@ -17057,7 +17061,10 @@ class DocumentSpan {
         this._context = context;
         this._compilerObject = compilerObject;
         this._sourceFile = this._context.compilerFactory
-            .getSourceFileFromCacheFromFilePath(context.fileSystemWrapper.getStandardizedAbsolutePath(this.compilerObject.fileName));
+            .addOrGetSourceFileFromFilePath(context.fileSystemWrapper.getStandardizedAbsolutePath(this.compilerObject.fileName), {
+            markInProject: false,
+            scriptKind: undefined,
+        });
         this._sourceFile._doActionPreNextModification(() => this.getNode());
     }
     get compilerObject() {
@@ -19963,9 +19970,6 @@ class ProjectContext {
                 var _a;
                 return (_a = this.compilerFactory.addOrGetSourceFileFromFilePath(filePath, opts)) === null || _a === void 0 ? void 0 : _a.compilerNode;
             },
-            addLibFileToCacheByText: (filePath, fileText, scriptKind) => {
-                return this.compilerFactory.documentRegistry.createOrUpdateSourceFile(filePath, this.compilerOptions.get(), ts.ScriptSnapshot.fromString(fileText), scriptKind);
-            },
             containsDirectoryAtPath: dirPath => this.compilerFactory.containsDirectoryAtPath(dirPath),
             containsSourceFileAtPath: filePath => this.compilerFactory.containsSourceFileAtPath(filePath),
             getSourceFileFromCacheFromFilePath: filePath => {
@@ -20008,7 +20012,11 @@ class Project {
         var _a;
         verifyOptions();
         const fileSystem = getFileSystem();
-        const fileSystemWrapper = new TransactionalFileSystem(fileSystem);
+        const fileSystemWrapper = new TransactionalFileSystem({
+            fileSystem,
+            skipLoadingLibFiles: options.skipLoadingLibFiles,
+            libFolderPath: options.libFolderPath,
+        });
         const tsConfigResolver = options.tsConfigFilePath == null
             ? undefined
             : new TsConfigResolver(fileSystemWrapper, fileSystemWrapper.getStandardizedAbsolutePath(options.tsConfigFilePath), getEncoding());
@@ -20315,7 +20323,11 @@ function createWrappedNode(node, opts = {}) {
     compilerOptionsContainer.set(compilerOptions);
     const projectContext = new ProjectContext({
         project: undefined,
-        fileSystemWrapper: new TransactionalFileSystem(new RealFileSystemHost()),
+        fileSystemWrapper: new TransactionalFileSystem({
+            fileSystem: new RealFileSystemHost(),
+            skipLoadingLibFiles: true,
+            libFolderPath: undefined,
+        }),
         compilerOptionsContainer,
         createLanguageService: false,
         typeChecker,

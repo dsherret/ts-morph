@@ -94,7 +94,11 @@ function createProjectCommon(options: ProjectOptions) {
   verifyOptions();
 
   const fileSystem = getFileSystem();
-  const fileSystemWrapper = new TransactionalFileSystem(fileSystem);
+  const fileSystemWrapper = new TransactionalFileSystem({
+    fileSystem,
+    libFolderPath: options.libFolderPath,
+    skipLoadingLibFiles: options.skipLoadingLibFiles,
+  });
 
   // get tsconfig info
   const tsConfigResolver = options.tsConfigFilePath == null

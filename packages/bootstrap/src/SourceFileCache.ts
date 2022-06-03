@@ -47,15 +47,6 @@ export class SourceFileCache implements TsSourceFileContainer {
     return this.sourceFilesByFilePath.get(filePath);
   }
 
-  addLibFileToCacheByText(filePath: StandardizedFilePath, fileText: string, scriptKind: ScriptKind | undefined) {
-    return this.documentRegistry.createOrUpdateSourceFile(
-      filePath,
-      this.compilerOptions.get(),
-      ts.ScriptSnapshot.fromString(fileText),
-      scriptKind,
-    );
-  }
-
   async addOrGetSourceFileFromFilePath(filePath: StandardizedFilePath, options: { scriptKind: ScriptKind | undefined }): Promise<ts.SourceFile | undefined> {
     let sourceFile = this.sourceFilesByFilePath.get(filePath);
     if (sourceFile == null) {

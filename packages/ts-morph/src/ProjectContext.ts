@@ -186,14 +186,6 @@ export class ProjectContext {
       addOrGetSourceFileFromFilePathSync: (filePath, opts) => {
         return this.compilerFactory.addOrGetSourceFileFromFilePath(filePath, opts)?.compilerNode;
       },
-      addLibFileToCacheByText: (filePath, fileText, scriptKind) => {
-        return this.compilerFactory.documentRegistry.createOrUpdateSourceFile(
-          filePath,
-          this.compilerOptions.get(),
-          ts.ScriptSnapshot.fromString(fileText),
-          scriptKind,
-        );
-      },
       containsDirectoryAtPath: dirPath => this.compilerFactory.containsDirectoryAtPath(dirPath),
       containsSourceFileAtPath: filePath => this.compilerFactory.containsSourceFileAtPath(filePath),
       getSourceFileFromCacheFromFilePath: filePath => {

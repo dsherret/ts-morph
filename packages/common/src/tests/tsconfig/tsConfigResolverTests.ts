@@ -6,7 +6,11 @@ import { nameof } from "../../utils";
 
 describe("TsConfigResolver", () => {
   function getResolver(fileSystem: FileSystemHost) {
-    const fileSystemWrapper = new TransactionalFileSystem(fileSystem);
+    const fileSystemWrapper = new TransactionalFileSystem({
+      fileSystem,
+      libFolderPath: undefined,
+      skipLoadingLibFiles: false,
+    });
     return new TsConfigResolver(
       fileSystemWrapper,
       fileSystemWrapper.getStandardizedAbsolutePath("/tsconfig.json"),

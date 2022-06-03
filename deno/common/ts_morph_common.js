@@ -1035,6 +1035,16 @@ function getLibFiles() {
     return libFiles;
 }
 const libFolderInMemoryPath = "/node_modules/typescript/lib";
+function getLibFolderPath(options) {
+    if (options.libFolderPath != null) {
+        if (options.skipLoadingLibFiles === true) {
+            throw new errors.InvalidOperationError(`Cannot set ${nameof(options, "skipLoadingLibFiles")} to true when ${nameof(options, "libFolderPath")} is provided.`);
+        }
+        return options.libFolderPath;
+    }
+    return libFolderInMemoryPath;
+}
+
 const runtime = getRuntime();
 function getRuntime() {
     return new DenoRuntime();
@@ -1043,8 +1053,7 @@ function getRuntime() {
 function createHosts(options) {
     const { transactionalFileSystem, sourceFileContainer, compilerOptions, getNewLine, resolutionHost, getProjectVersion, isKnownTypesPackageName } = options;
     let version = 0;
-    const libFolderPath = transactionalFileSystem.getStandardizedAbsolutePath(getLibFolderPath());
-    const libFileMap = getLibFileMap();
+    const libFolderPath = transactionalFileSystem.getStandardizedAbsolutePath(getLibFolderPath(options));
     const fileExistsSync = (path) => sourceFileContainer.containsSourceFileAtPath(path)
         || transactionalFileSystem.fileExistsSync(path);
     const languageServiceHost = {
@@ -1061,11 +1070,6 @@ function createHosts(options) {
         },
         getScriptSnapshot: fileName => {
             const filePath = transactionalFileSystem.getStandardizedAbsolutePath(fileName);
-            if (libFileMap != null) {
-                const libFileText = libFileMap.get(filePath);
-                if (libFileText != null)
-                    return ts.ScriptSnapshot.fromString(libFileText);
-            }
             const sourceFile = sourceFileContainer.addOrGetSourceFileFromFilePathSync(filePath, {
                 markInProject: false,
                 scriptKind: undefined,
@@ -1080,18 +1084,13 @@ function createHosts(options) {
         useCaseSensitiveFileNames: () => true,
         readFile: (path, encoding) => {
             const standardizedPath = transactionalFileSystem.getStandardizedAbsolutePath(path);
-            if (libFileMap != null) {
-                const libFileText = libFileMap.get(standardizedPath);
-                if (libFileText != null)
-                    return libFileText;
-            }
             if (sourceFileContainer.containsSourceFileAtPath(standardizedPath))
                 return sourceFileContainer.getSourceFileFromCacheFromFilePath(standardizedPath).getFullText();
             return transactionalFileSystem.readFileSync(standardizedPath, encoding);
         },
         fileExists: filePath => {
             const standardizedFilePath = transactionalFileSystem.getStandardizedAbsolutePath(filePath);
-            return fileExistsSync(standardizedFilePath) || libFileMap != null && libFileMap.has(standardizedFilePath);
+            return fileExistsSync(standardizedFilePath);
         },
         directoryExists: dirName => {
             const dirPath = transactionalFileSystem.getStandardizedAbsolutePath(dirName);
@@ -1106,16 +1105,6 @@ function createHosts(options) {
     const compilerHost = {
         getSourceFile: (fileName, languageVersion, onError) => {
             const filePath = transactionalFileSystem.getStandardizedAbsolutePath(fileName);
-            if (libFileMap != null) {
-                const libFileText = libFileMap.get(filePath);
-                if (libFileText != null) {
-                    let sourceFile = sourceFileContainer.getSourceFileFromCacheFromFilePath(filePath);
-                    if (sourceFile == null) {
-                        sourceFile = sourceFileContainer.addLibFileToCacheByText(filePath, libFileText, ts.ScriptKind.TS);
-                    }
-                    return sourceFile;
-                }
-            }
             return sourceFileContainer.addOrGetSourceFileFromFilePathSync(filePath, {
                 markInProject: false,
                 scriptKind: undefined,
@@ -1140,25 +1129,6 @@ function createHosts(options) {
         realpath: languageServiceHost.realpath,
     };
     return { languageServiceHost, compilerHost };
-    function getLibFolderPath() {
-        if (options.libFolderPath != null) {
-            if (options.skipLoadingLibFiles === true) {
-                throw new errors.InvalidOperationError(`Cannot set ${nameof(options, "skipLoadingLibFiles")} to true when ${nameof(options, "libFolderPath")} is provided.`);
-            }
-            return options.libFolderPath;
-        }
-        return libFolderInMemoryPath;
-    }
-    function getLibFileMap() {
-        if (options.skipLoadingLibFiles || options.libFolderPath != null)
-            return undefined;
-        const libFilesMap = new Map();
-        const libFiles = getLibFiles();
-        for (const libFile of libFiles) {
-            libFilesMap.set(transactionalFileSystem.getStandardizedAbsolutePath(libFolderPath + "/" + libFile.fileName), libFile.text);
-        }
-        return libFilesMap;
-    }
 }
 
 const isWindowsRootDirRegex = /^[a-z]+:[\\\/]$/i;
@@ -1858,13 +1828,22 @@ class Directory {
     }
 }
 class TransactionalFileSystem {
-    constructor(fileSystem) {
-        this.fileSystem = fileSystem;
+    constructor(options) {
         this.directories = new KeyValueCache();
         this.operationIndex = 0;
-        this.pathCasingMaintainer = new PathCasingMaintainer(fileSystem);
+        this.fileSystem = options.fileSystem;
+        this.pathCasingMaintainer = new PathCasingMaintainer(options.fileSystem);
+        if (!options.skipLoadingLibFiles && options.libFolderPath == null) {
+            const libFolderPath = getLibFolderPath(options);
+            this.libFileMap = new Map();
+            const libFiles = getLibFiles();
+            for (const libFile of libFiles) {
+                this.libFileMap.set(this.getStandardizedAbsolutePath(libFolderPath + "/" + libFile.fileName), libFile.text);
+            }
+        }
     }
     queueFileDelete(filePath) {
+        this.throwIfLibFile(filePath);
         const parentDir = this.getOrCreateParentDirectory(filePath);
         parentDir.operations.push({
             kind: "deleteFile",
@@ -2014,18 +1993,21 @@ class TransactionalFileSystem {
         return operations;
     }
     async moveFileImmediately(oldFilePath, newFilePath, fileText) {
+        this.throwIfLibFile(newFilePath);
         this.throwIfHasExternalOperations(this.getOrCreateParentDirectory(oldFilePath), "move file");
         this.throwIfHasExternalOperations(this.getOrCreateParentDirectory(newFilePath), "move file");
         await this.writeFile(newFilePath, fileText);
         await this.deleteFileImmediately(oldFilePath);
     }
     moveFileImmediatelySync(oldFilePath, newFilePath, fileText) {
+        this.throwIfLibFile(newFilePath);
         this.throwIfHasExternalOperations(this.getOrCreateParentDirectory(oldFilePath), "move file");
         this.throwIfHasExternalOperations(this.getOrCreateParentDirectory(newFilePath), "move file");
         this.writeFileSync(newFilePath, fileText);
         this.deleteFileImmediatelySync(oldFilePath);
     }
     async deleteFileImmediately(filePath) {
+        this.throwIfLibFile(filePath);
         const dir = this.getOrCreateParentDirectory(filePath);
         this.throwIfHasExternalOperations(dir, "delete file");
         dir.dequeueFileDelete(filePath);
@@ -2039,6 +2021,7 @@ class TransactionalFileSystem {
         }
     }
     deleteFileImmediatelySync(filePath) {
+        this.throwIfLibFile(filePath);
         const dir = this.getOrCreateParentDirectory(filePath);
         this.throwIfHasExternalOperations(dir, "delete file");
         dir.dequeueFileDelete(filePath);
@@ -2130,6 +2113,7 @@ class TransactionalFileSystem {
         }
     }
     async deleteSuppressNotFound(path) {
+        this.throwIfLibFile(path);
         try {
             await this.fileSystem.delete(path);
         }
@@ -2139,6 +2123,7 @@ class TransactionalFileSystem {
         }
     }
     deleteSuppressNotFoundSync(path) {
+        this.throwIfLibFile(path);
         try {
             this.fileSystem.deleteSync(path);
         }
@@ -2148,11 +2133,15 @@ class TransactionalFileSystem {
         }
     }
     fileExists(filePath) {
+        if (this.libFileExists(filePath))
+            return true;
         if (this._fileDeletedInMemory(filePath))
             return false;
         return this.fileSystem.fileExists(filePath);
     }
     fileExistsSync(filePath) {
+        if (this.libFileExists(filePath))
+            return true;
         if (this._fileDeletedInMemory(filePath))
             return false;
         return this.fileSystem.fileExistsSync(filePath);
@@ -2189,6 +2178,9 @@ class TransactionalFileSystem {
         }
     }
     readFileSync(filePath, encoding) {
+        const libFileText = this.readLibFile(filePath);
+        if (libFileText != null)
+            return libFileText;
         this._verifyCanReadFile(filePath);
         return this.fileSystem.readFileSync(filePath, encoding);
     }
@@ -2204,6 +2196,9 @@ class TransactionalFileSystem {
         });
     }
     readFile(filePath, encoding) {
+        const libFileText = this.readLibFile(filePath);
+        if (libFileText != null)
+            return Promise.resolve(libFileText);
         this._verifyCanReadFile(filePath);
         return this.fileSystem.readFile(filePath, encoding);
     }
@@ -2261,6 +2256,8 @@ class TransactionalFileSystem {
         return this.readDirSync(dirPath).filter(entry => entry.isDirectory).map(d => d.path);
     }
     realpathSync(path) {
+        if (this.libFileExists(path))
+            return path;
         try {
             return this.getStandardizedAbsolutePath(this.fileSystem.realpathSync(path));
         }
@@ -2273,16 +2270,23 @@ class TransactionalFileSystem {
         return this.pathCasingMaintainer.getPath(standardizedFileOrDirPath);
     }
     readFileOrNotExists(filePath, encoding) {
+        const libFileText = this.readLibFile(filePath);
+        if (libFileText != null)
+            return Promise.resolve(libFileText);
         if (this.isPathQueuedForDeletion(filePath))
             return false;
         return FileUtils.readFileOrNotExists(this.fileSystem, filePath, encoding);
     }
     readFileOrNotExistsSync(filePath, encoding) {
+        const libFileText = this.readLibFile(filePath);
+        if (libFileText != null)
+            return libFileText;
         if (this.isPathQueuedForDeletion(filePath))
             return false;
         return FileUtils.readFileOrNotExistsSync(this.fileSystem, filePath, encoding);
     }
     async writeFile(filePath, fileText) {
+        this.throwIfLibFile(filePath);
         const parentDir = this.getOrCreateParentDirectory(filePath);
         this.throwIfHasExternalOperations(parentDir, "write file");
         parentDir.dequeueFileDelete(filePath);
@@ -2290,6 +2294,7 @@ class TransactionalFileSystem {
         await this.fileSystem.writeFile(filePath, fileText);
     }
     writeFileSync(filePath, fileText) {
+        this.throwIfLibFile(filePath);
         const parentDir = this.getOrCreateParentDirectory(filePath);
         this.throwIfHasExternalOperations(parentDir, "write file");
         parentDir.dequeueFileDelete(filePath);
@@ -2399,6 +2404,19 @@ class TransactionalFileSystem {
             ArrayUtils.removeAll(parentDir.operations, operation => operation.kind === "mkdir" && operation.dir === dir);
             this.removeMkDirOperationsForDir(parentDir);
         }
+    }
+    libFileExists(filePath) {
+        return this.libFileMap != null && this.libFileMap.has(filePath);
+    }
+    readLibFile(filePath) {
+        if (this.libFileMap != null)
+            return this.libFileMap.get(filePath);
+        else
+            return undefined;
+    }
+    throwIfLibFile(filePath) {
+        if (this.libFileExists(filePath))
+            throw new errors.InvalidOperationError(`This operation is not permitted on an in memory lib folder file.`);
     }
 }
 class PathCasingMaintainer {
@@ -2768,7 +2786,11 @@ __decorate([
 ], TsConfigResolver.prototype, "getTsConfigFileJson", null);
 
 function getCompilerOptionsFromTsConfig(filePath, options = {}) {
-    const fileSystemWrapper = new TransactionalFileSystem(options.fileSystem || new RealFileSystemHost());
+    const fileSystemWrapper = new TransactionalFileSystem({
+        fileSystem: options.fileSystem || new RealFileSystemHost(),
+        skipLoadingLibFiles: false,
+        libFolderPath: undefined,
+    });
     const tsConfigResolver = new TsConfigResolver(fileSystemWrapper, fileSystemWrapper.getStandardizedAbsolutePath(filePath), options.encoding || "utf-8");
     return {
         options: tsConfigResolver.getCompilerOptions(),
@@ -2776,4 +2798,4 @@ function getCompilerOptionsFromTsConfig(filePath, options = {}) {
     };
 }
 
-export { ArrayUtils, ComparerToStoredComparer, CompilerOptionsContainer, DocumentRegistry, EventContainer, FileUtils, InMemoryFileSystemHost, IterableUtils, KeyValueCache, LocaleStringComparer, Memoize, ObjectUtils, PropertyComparer, PropertyStoredComparer, RealFileSystemHost, ResolutionHosts, SettingsContainer, SortedKeyValueArray, StringUtils, TransactionalFileSystem, TsConfigResolver, WeakCache, createDocumentCache, createHosts, createModuleResolutionHost, deepClone, errors, getCompilerOptionsFromTsConfig, getEmitModuleResolutionKind, getFileMatcherPatterns, getLibFiles, getSyntaxKindName, libFolderInMemoryPath, matchFiles, matchGlobs, nameof, runtime };
+export { ArrayUtils, ComparerToStoredComparer, CompilerOptionsContainer, DocumentRegistry, EventContainer, FileUtils, InMemoryFileSystemHost, IterableUtils, KeyValueCache, LocaleStringComparer, Memoize, ObjectUtils, PropertyComparer, PropertyStoredComparer, RealFileSystemHost, ResolutionHosts, SettingsContainer, SortedKeyValueArray, StringUtils, TransactionalFileSystem, TsConfigResolver, WeakCache, createDocumentCache, createHosts, createModuleResolutionHost, deepClone, errors, getCompilerOptionsFromTsConfig, getEmitModuleResolutionKind, getFileMatcherPatterns, getLibFiles, getLibFolderPath, getSyntaxKindName, libFolderInMemoryPath, matchFiles, matchGlobs, nameof, runtime };
