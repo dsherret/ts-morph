@@ -1605,8 +1605,18 @@ class RealFileSystemHost {
     readDirSync(dirPath) {
         try {
             const entries = fs.readDirSync(dirPath);
-            for (const entry of entries)
+            for (const entry of entries) {
                 entry.name = FileUtils.pathJoin(dirPath, entry.name);
+                if (entry.isSymlink) {
+                    try {
+                        const info = fs.statSync(entry.name);
+                        entry.isDirectory = info.isDirectory();
+                        entry.isFile = info.isFile();
+                    }
+                    catch (_a) {
+                    }
+                }
+            }
             return entries;
         }
         catch (err) {
@@ -1653,17 +1663,37 @@ class RealFileSystemHost {
     copySync(srcPath, destPath) {
         fs.copySync(srcPath, destPath);
     }
-    fileExists(filePath) {
-        return fs.fileExists(filePath);
+    async fileExists(filePath) {
+        try {
+            return (await fs.stat(filePath)).isFile();
+        }
+        catch (_a) {
+            return false;
+        }
     }
     fileExistsSync(filePath) {
-        return fs.fileExistsSync(filePath);
+        try {
+            return fs.statSync(filePath).isFile();
+        }
+        catch (_a) {
+            return false;
+        }
     }
-    directoryExists(dirPath) {
-        return fs.directoryExists(dirPath);
+    async directoryExists(dirPath) {
+        try {
+            return (await fs.stat(dirPath)).isDirectory();
+        }
+        catch (_a) {
+            return false;
+        }
     }
     directoryExistsSync(dirPath) {
-        return fs.directoryExistsSync(dirPath);
+        try {
+            return fs.statSync(dirPath).isDirectory();
+        }
+        catch (_a) {
+            return false;
+        }
     }
     realpathSync(path) {
         return fs.realpathSync(path);
