@@ -389,12 +389,12 @@ export class Type<TType extends ts.Type = ts.Type> {
     return symbol.getName() === "Array" && this.getTypeArguments().length === 1;
   }
 
-    /**
-     * Gets if this is a boolean type.
-     */
-    isTemplateLiteral() {
-        return this._hasTypeFlag(TypeFlags.TemplateLiteral);
-    }
+  /**
+   * Gets if this is a template literal type.
+   */
+  isTemplateLiteral() {
+    return this._hasTypeFlag(TypeFlags.TemplateLiteral);
+  }
 
   /**
    * Gets if this is a boolean type.

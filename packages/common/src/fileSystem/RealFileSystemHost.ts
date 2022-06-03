@@ -29,8 +29,18 @@ export class RealFileSystemHost implements FileSystemHost {
   readDirSync(dirPath: string): RuntimeDirEntry[] {
     try {
       const entries = fs.readDirSync(dirPath);
-      for (const entry of entries)
+      for (const entry of entries) {
         entry.name = FileUtils.pathJoin(dirPath, entry.name);
+        if (entry.isSymlink) {
+          try {
+            const info = fs.statSync(entry.name);
+            entry.isDirectory = info.isDirectory();
+            entry.isFile = info.isFile();
+          } catch {
+            // ignore
+          }
+        }
+      }
       return entries;
     } catch (err) {
       throw this.getDirectoryNotFoundErrorIfNecessary(err, dirPath);
@@ -96,23 +106,39 @@ export class RealFileSystemHost implements FileSystemHost {
   }
 
   /** @inheritdoc */
-  fileExists(filePath: string) {
-    return fs.fileExists(filePath);
+  async fileExists(filePath: string) {
+    try {
+      return (await fs.stat(filePath)).isFile();
+    } catch {
+      return false;
+    }
   }
 
   /** @inheritdoc */
   fileExistsSync(filePath: string) {
-    return fs.fileExistsSync(filePath);
+    try {
+      return fs.statSync(filePath).isFile();
+    } catch {
+      return false;
+    }
   }
 
   /** @inheritdoc */
-  directoryExists(dirPath: string) {
-    return fs.directoryExists(dirPath);
+  async directoryExists(dirPath: string) {
+    try {
+      return (await fs.stat(dirPath)).isDirectory();
+    } catch {
+      return false;
+    }
   }
 
   /** @inheritdoc */
   directoryExistsSync(dirPath: string) {
-    return fs.directoryExistsSync(dirPath);
+    try {
+      return fs.statSync(dirPath).isDirectory();
+    } catch {
+      return false;
+    }
   }
 
   /** @inheritdoc */

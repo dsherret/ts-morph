@@ -914,6 +914,11 @@ export interface RuntimeDirEntry {
     isSymlink: boolean;
 }
 
+export interface RuntimeFileInfo {
+    isFile(): boolean;
+    isDirectory(): boolean;
+}
+
 export interface RuntimeFileSystem {
     /** Gets if this file system is case sensitive. */
     isCaseSensitive(): boolean;
@@ -943,14 +948,10 @@ export interface RuntimeFileSystem {
     copy(srcPath: string, destPath: string): Promise<void>;
     /** Synchronously copies a file or directory. */
     copySync(srcPath: string, destPath: string): void;
-    /** Asynchronously checks if a file exists. */
-    fileExists(filePath: string): Promise<boolean>;
-    /** Synchronously checks if a file exists. */
-    fileExistsSync(filePath: string): boolean;
-    /** Asynchronously checks if a directory exists. */
-    directoryExists(dirPath: string): Promise<boolean>;
-    /** Synchronously checks if a directory exists. */
-    directoryExistsSync(dirPath: string): boolean;
+    /** Asynchronously gets the path's stat information. */
+    stat(path: string): Promise<RuntimeFileInfo>;
+    /** Synchronously gets the path's stat information. */
+    statSync(path: string): RuntimeFileInfo;
     /** See https://nodejs.org/api/fs.html#fs_fs_realpathsync_path_options */
     realpathSync(path: string): string;
     /** Gets the current directory of the environment. */

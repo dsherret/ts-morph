@@ -4,7 +4,7 @@ import minimatch from "minimatch";
 import mkdirp from "mkdirp";
 import * as os from "os";
 import * as path from "path";
-import { Runtime, RuntimeFileSystem, RuntimePath } from "./Runtime";
+import { Runtime, RuntimeFileInfo, RuntimeFileSystem, RuntimePath } from "./Runtime";
 
 export class NodeRuntime implements Runtime {
   fs = new NodeRuntimeFileSystem();
@@ -135,42 +135,19 @@ class NodeRuntimeFileSystem implements RuntimeFileSystem {
     fs.copyFileSync(srcPath, destPath);
   }
 
-  fileExists(filePath: string) {
-    return new Promise<boolean>(resolve => {
-      fs.stat(filePath, (err, stat) => {
+  stat(path: string) {
+    return new Promise<RuntimeFileInfo>(resolve => {
+      fs.stat(path, (err, stat) => {
         if (err)
-          resolve(false);
+          throw err;
         else
-          resolve(stat.isFile());
+          resolve(stat);
       });
     });
   }
 
-  fileExistsSync(filePath: string) {
-    try {
-      return fs.statSync(filePath).isFile();
-    } catch (err) {
-      return false;
-    }
-  }
-
-  directoryExists(dirPath: string) {
-    return new Promise<boolean>(resolve => {
-      fs.stat(dirPath, (err, stat) => {
-        if (err)
-          resolve(false);
-        else
-          resolve(stat.isDirectory());
-      });
-    });
-  }
-
-  directoryExistsSync(dirPath: string) {
-    try {
-      return fs.statSync(dirPath).isDirectory();
-    } catch (err) {
-      return false;
-    }
+  statSync(path: string) {
+    return fs.statSync(path);
   }
 
   realpathSync(path: string) {

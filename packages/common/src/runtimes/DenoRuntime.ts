@@ -95,38 +95,25 @@ class DenoRuntimeFileSystem {
     return Deno.copyFileSync(srcPath, destPath);
   }
 
-  async fileExists(filePath: string) {
-    try {
-      const stat = await Deno.stat(filePath);
-      return stat.isFile;
-    } catch {
-      return false;
-    }
+  async stat(filePath: string) {
+    const stat = await Deno.stat(filePath);
+    return this._toStat(stat);
   }
 
-  fileExistsSync(filePath: string) {
-    try {
-      return Deno.statSync(filePath).isFile;
-    } catch {
-      return false;
-    }
+  statSync(path: string) {
+    const stat = Deno.statSync(path);
+    return this._toStat(stat);
   }
 
-  async directoryExists(dirPath: string) {
-    try {
-      const stat = await Deno.stat(dirPath);
-      return stat.isDirectory;
-    } catch {
-      return false;
-    }
-  }
-
-  directoryExistsSync(dirPath: string) {
-    try {
-      return Deno.statSync(dirPath).isDirectory;
-    } catch (err) {
-      return false;
-    }
+  private _toStat(stat: Deno.FileInfo) {
+    return {
+      isFile() {
+        return stat.isFile;
+      },
+      isDirectory() {
+        return stat.isDirectory;
+      },
+    };
   }
 
   realpathSync(path: string) {

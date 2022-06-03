@@ -9214,6 +9214,8 @@ export declare class Symbol {
   getExportSymbol(): Symbol;
   /** Gets if the symbol is an alias. */
   isAlias(): boolean;
+  /** Gets if the symbol is optional. */
+  isOptional(): boolean;
   /** Gets the symbol flags. */
   getFlags(): SymbolFlags;
   /**
@@ -10124,6 +10126,8 @@ export declare class Type<TType extends ts.Type = ts.Type> {
   isAny(): boolean;
   /** Gets if this is an array type. */
   isArray(): boolean;
+  /** Gets if this is a template literal type. */
+  isTemplateLiteral(): boolean;
   /** Gets if this is a boolean type. */
   isBoolean(): boolean;
   /** Gets if this is a string type. */

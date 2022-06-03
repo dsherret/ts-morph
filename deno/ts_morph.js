@@ -16840,6 +16840,9 @@ class Symbol {
     isAlias() {
         return (this.getFlags() & SymbolFlags.Alias) === SymbolFlags.Alias;
     }
+    isOptional() {
+        return (this.getFlags() & SymbolFlags.Optional) === SymbolFlags.Optional;
+    }
     getFlags() {
         return this.compilerSymbol.getFlags();
     }
@@ -17970,6 +17973,9 @@ class Type {
         if (symbol == null)
             return false;
         return symbol.getName() === "Array" && this.getTypeArguments().length === 1;
+    }
+    isTemplateLiteral() {
+        return this._hasTypeFlag(TypeFlags.TemplateLiteral);
     }
     isBoolean() {
         return this._hasTypeFlag(TypeFlags.Boolean);
