@@ -25,7 +25,10 @@ export class DocumentSpan<TCompilerObject extends ts.DocumentSpan = ts.DocumentS
     // Note: this will cause the source file to transitively hold a reference to this node and so it won't be released
     // from the WeakMap until a manipulation happens on the source file.
     this._sourceFile = this._context.compilerFactory
-      .getSourceFileFromCacheFromFilePath(context.fileSystemWrapper.getStandardizedAbsolutePath(this.compilerObject.fileName))!;
+      .addOrGetSourceFileFromFilePath(context.fileSystemWrapper.getStandardizedAbsolutePath(this.compilerObject.fileName), {
+        markInProject: false,
+        scriptKind: undefined,
+      })!;
     this._sourceFile._doActionPreNextModification(() => this.getNode());
   }
 

@@ -1,4 +1,4 @@
-import { DocumentRegistry, ts, StringUtils, FileUtils, Memoize, TransactionalFileSystem, TsConfigResolver, errors, InMemoryFileSystemHost, RealFileSystemHost, CompilerOptionsContainer, createHosts, runtime, createModuleResolutionHost } from '../common/mod.ts';
+import { DocumentRegistry, StringUtils, ts, FileUtils, Memoize, TransactionalFileSystem, TsConfigResolver, errors, InMemoryFileSystemHost, RealFileSystemHost, CompilerOptionsContainer, createHosts, runtime, createModuleResolutionHost } from '../common/mod.ts';
 export { CompilerOptionsContainer, InMemoryFileSystemHost, ResolutionHosts, SettingsContainer, ts } from '../common/mod.ts';
 
 /*! *****************************************************************************
@@ -48,9 +48,6 @@ class SourceFileCache {
     }
     getSourceFileFromCacheFromFilePath(filePath) {
         return this.sourceFilesByFilePath.get(filePath);
-    }
-    addLibFileToCacheByText(filePath, fileText, scriptKind) {
-        return this.documentRegistry.createOrUpdateSourceFile(filePath, this.compilerOptions.get(), ts.ScriptSnapshot.fromString(fileText), scriptKind);
     }
     async addOrGetSourceFileFromFilePath(filePath, options) {
         let sourceFile = this.sourceFilesByFilePath.get(filePath);
@@ -123,7 +120,11 @@ function createProjectSync(options = {}) {
 function createProjectCommon(options) {
     verifyOptions();
     const fileSystem = getFileSystem();
-    const fileSystemWrapper = new TransactionalFileSystem(fileSystem);
+    const fileSystemWrapper = new TransactionalFileSystem({
+        fileSystem,
+        libFolderPath: options.libFolderPath,
+        skipLoadingLibFiles: options.skipLoadingLibFiles,
+    });
     const tsConfigResolver = options.tsConfigFilePath == null
         ? undefined
         : new TsConfigResolver(fileSystemWrapper, fileSystemWrapper.getStandardizedAbsolutePath(options.tsConfigFilePath), getEncodingFromProvidedOptions());

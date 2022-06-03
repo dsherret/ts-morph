@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { errors } from "../../errors";
-import { InMemoryFileSystemHost, TransactionalFileSystem } from "../../fileSystem";
+import { FileSystemHost, InMemoryFileSystemHost, TransactionalFileSystem } from "../../fileSystem";
 import { nameof } from "../../utils";
 
 describe("TransactionalFileSystem", () => {
@@ -11,7 +11,14 @@ describe("TransactionalFileSystem", () => {
 
   function setup(): SetupObjects {
     const fileSystem = new InMemoryFileSystemHost();
-    return { fileSystem, wrapper: new TransactionalFileSystem(fileSystem) };
+    return {
+      fileSystem,
+      wrapper: new TransactionalFileSystem({
+        fileSystem,
+        libFolderPath: undefined,
+        skipLoadingLibFiles: false,
+      }),
+    };
   }
 
   function checkState(objs: SetupObjects, filePath: string, state: [boolean, boolean]) {
@@ -921,10 +928,18 @@ describe("TransactionalFileSystem", () => {
     });
   });
 
+  function createTransactionalFileSystem(fileSystem: FileSystemHost) {
+    return new TransactionalFileSystem({
+      fileSystem,
+      skipLoadingLibFiles: true,
+      libFolderPath: undefined,
+    });
+  }
+
   describe(nameof<TransactionalFileSystem>("getStandardizedAbsolutePath"), () => {
     it("should use the casing provided for case sensitive file systems", () => {
       const fileSystem = new InMemoryFileSystemHost();
-      const wrapper = new TransactionalFileSystem(fileSystem);
+      const wrapper = createTransactionalFileSystem(fileSystem);
       expect(wrapper.getStandardizedAbsolutePath("test.ts")).to.equal("/test.ts");
       expect(wrapper.getStandardizedAbsolutePath("tesT.ts")).to.equal("/tesT.ts");
     });
@@ -932,7 +947,7 @@ describe("TransactionalFileSystem", () => {
     it("should use the first casing found for case insensitive file systems", async () => {
       const fileSystem = new InMemoryFileSystemHost();
       fileSystem.isCaseSensitive = () => false;
-      const wrapper = new TransactionalFileSystem(fileSystem);
+      const wrapper = createTransactionalFileSystem(fileSystem);
       expect(wrapper.getStandardizedAbsolutePath("test.ts")).to.equal("/test.ts");
       expect(wrapper.getStandardizedAbsolutePath("tesT.ts")).to.equal("/test.ts");
     });
@@ -940,7 +955,7 @@ describe("TransactionalFileSystem", () => {
     it("should use the first casing found for case insensitive file systems", async () => {
       const fileSystem = new InMemoryFileSystemHost();
       fileSystem.isCaseSensitive = () => false;
-      const wrapper = new TransactionalFileSystem(fileSystem);
+      const wrapper = createTransactionalFileSystem(fileSystem);
 
       expect(wrapper.getStandardizedAbsolutePath("RANDOM")).to.equal("/RANDOM");
       expect(wrapper.getStandardizedAbsolutePath("randoM.ts")).to.equal("/randoM.ts");

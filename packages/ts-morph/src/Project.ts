@@ -86,7 +86,11 @@ export class Project {
 
     // setup file system
     const fileSystem = getFileSystem();
-    const fileSystemWrapper = new TransactionalFileSystem(fileSystem);
+    const fileSystemWrapper = new TransactionalFileSystem({
+      fileSystem,
+      skipLoadingLibFiles: options.skipLoadingLibFiles,
+      libFolderPath: options.libFolderPath,
+    });
 
     // get tsconfig info
     const tsConfigResolver = options.tsConfigFilePath == null

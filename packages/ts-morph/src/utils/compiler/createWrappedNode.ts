@@ -28,7 +28,11 @@ export function createWrappedNode<T extends ts.Node = ts.Node>(node: T, opts: Cr
   compilerOptionsContainer.set(compilerOptions);
   const projectContext = new ProjectContext({
     project: undefined,
-    fileSystemWrapper: new TransactionalFileSystem(new RealFileSystemHost()),
+    fileSystemWrapper: new TransactionalFileSystem({
+      fileSystem: new RealFileSystemHost(),
+      skipLoadingLibFiles: true,
+      libFolderPath: undefined,
+    }),
     compilerOptionsContainer,
     createLanguageService: false,
     typeChecker,

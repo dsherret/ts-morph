@@ -1,6 +1,7 @@
 import { KeyValueCache, SortedKeyValueArray } from "../collections";
 import { LocaleStringComparer } from "../comparers";
 import { errors } from "../errors";
+import { getLibFiles, getLibFolderPath } from "../getLibFiles";
 import { ArrayUtils } from "../utils";
 import { FileSystemHost } from "./FileSystemHost";
 import { FileUtils } from "./FileUtils";
@@ -209,22 +210,45 @@ export interface DirEntry {
   isSymlink: boolean;
 }
 
+export interface TransactionalFileSystemOptions {
+  fileSystem: FileSystemHost;
+  skipLoadingLibFiles: boolean | undefined;
+  libFolderPath: string | undefined;
+}
+
 /**
  * FileSystemHost wrapper that allows transactionally queuing operations to the file system.
  */
 export class TransactionalFileSystem {
   private readonly directories = new KeyValueCache<StandardizedFilePath, Directory>();
   private readonly pathCasingMaintainer: PathCasingMaintainer;
+  private readonly fileSystem: FileSystemHost;
+  private readonly libFileMap: Map<StandardizedFilePath, string> | undefined;
 
   /**
    * Constructor.
    * @param fileSystem - File system host to commit the operations to.
    */
-  constructor(private readonly fileSystem: FileSystemHost) {
-    this.pathCasingMaintainer = new PathCasingMaintainer(fileSystem);
+  constructor(options: TransactionalFileSystemOptions) {
+    this.fileSystem = options.fileSystem;
+    this.pathCasingMaintainer = new PathCasingMaintainer(options.fileSystem);
+
+    if (!options.skipLoadingLibFiles && options.libFolderPath == null) {
+      // add the lib files into the map for use later
+      const libFolderPath = getLibFolderPath(options);
+      this.libFileMap = new Map<StandardizedFilePath, string>();
+      const libFiles = getLibFiles();
+      for (const libFile of libFiles) {
+        this.libFileMap.set(
+          this.getStandardizedAbsolutePath(libFolderPath + "/" + libFile.fileName),
+          libFile.text,
+        );
+      }
+    }
   }
 
   queueFileDelete(filePath: StandardizedFilePath) {
+    this.throwIfLibFile(filePath);
     const parentDir = this.getOrCreateParentDirectory(filePath);
     parentDir.operations.push({
       kind: "deleteFile",
@@ -397,6 +421,7 @@ export class TransactionalFileSystem {
   }
 
   async moveFileImmediately(oldFilePath: StandardizedFilePath, newFilePath: StandardizedFilePath, fileText: string) {
+    this.throwIfLibFile(newFilePath);
     this.throwIfHasExternalOperations(this.getOrCreateParentDirectory(oldFilePath), "move file");
     this.throwIfHasExternalOperations(this.getOrCreateParentDirectory(newFilePath), "move file");
 
@@ -405,6 +430,7 @@ export class TransactionalFileSystem {
   }
 
   moveFileImmediatelySync(oldFilePath: StandardizedFilePath, newFilePath: StandardizedFilePath, fileText: string) {
+    this.throwIfLibFile(newFilePath);
     this.throwIfHasExternalOperations(this.getOrCreateParentDirectory(oldFilePath), "move file");
     this.throwIfHasExternalOperations(this.getOrCreateParentDirectory(newFilePath), "move file");
 
@@ -413,6 +439,7 @@ export class TransactionalFileSystem {
   }
 
   async deleteFileImmediately(filePath: StandardizedFilePath) {
+    this.throwIfLibFile(filePath);
     const dir = this.getOrCreateParentDirectory(filePath);
 
     this.throwIfHasExternalOperations(dir, "delete file");
@@ -428,6 +455,7 @@ export class TransactionalFileSystem {
   }
 
   deleteFileImmediatelySync(filePath: StandardizedFilePath) {
+    this.throwIfLibFile(filePath);
     const dir = this.getOrCreateParentDirectory(filePath);
 
     this.throwIfHasExternalOperations(dir, "delete file");
@@ -547,6 +575,7 @@ export class TransactionalFileSystem {
   }
 
   private async deleteSuppressNotFound(path: StandardizedFilePath) {
+    this.throwIfLibFile(path);
     try {
       await this.fileSystem.delete(path);
     } catch (err) {
@@ -556,6 +585,7 @@ export class TransactionalFileSystem {
   }
 
   private deleteSuppressNotFoundSync(path: StandardizedFilePath) {
+    this.throwIfLibFile(path);
     try {
       this.fileSystem.deleteSync(path);
     } catch (err) {
@@ -565,12 +595,16 @@ export class TransactionalFileSystem {
   }
 
   fileExists(filePath: StandardizedFilePath) {
+    if (this.libFileExists(filePath))
+      return true;
     if (this._fileDeletedInMemory(filePath))
       return false;
     return this.fileSystem.fileExists(filePath);
   }
 
   fileExistsSync(filePath: StandardizedFilePath) {
+    if (this.libFileExists(filePath))
+      return true;
     if (this._fileDeletedInMemory(filePath))
       return false;
     return this.fileSystem.fileExistsSync(filePath);
@@ -610,6 +644,10 @@ export class TransactionalFileSystem {
   }
 
   readFileSync(filePath: StandardizedFilePath, encoding: string | undefined) {
+    const libFileText = this.readLibFile(filePath);
+    if (libFileText != null)
+      return libFileText;
+
     this._verifyCanReadFile(filePath);
     return this.fileSystem.readFileSync(filePath, encoding);
   }
@@ -627,6 +665,10 @@ export class TransactionalFileSystem {
   }
 
   readFile(filePath: StandardizedFilePath, encoding: string | undefined) {
+    const libFileText = this.readLibFile(filePath);
+    if (libFileText != null)
+      return Promise.resolve(libFileText);
+
     this._verifyCanReadFile(filePath);
     return this.fileSystem.readFile(filePath, encoding);
   }
@@ -693,6 +735,9 @@ export class TransactionalFileSystem {
   }
 
   realpathSync(path: StandardizedFilePath) {
+    if (this.libFileExists(path))
+      return path;
+
     // The TypeScript compiler does a try catch in ts.sys.realpathSync, so do that here too.
     // (See issue #827 for more details)
     try {
@@ -708,18 +753,25 @@ export class TransactionalFileSystem {
   }
 
   readFileOrNotExists(filePath: StandardizedFilePath, encoding: string) {
+    const libFileText = this.readLibFile(filePath);
+    if (libFileText != null)
+      return Promise.resolve(libFileText);
     if (this.isPathQueuedForDeletion(filePath))
       return false;
     return FileUtils.readFileOrNotExists(this.fileSystem, filePath, encoding);
   }
 
   readFileOrNotExistsSync(filePath: StandardizedFilePath, encoding: string) {
+    const libFileText = this.readLibFile(filePath);
+    if (libFileText != null)
+      return libFileText;
     if (this.isPathQueuedForDeletion(filePath))
       return false;
     return FileUtils.readFileOrNotExistsSync(this.fileSystem, filePath, encoding);
   }
 
   async writeFile(filePath: StandardizedFilePath, fileText: string) {
+    this.throwIfLibFile(filePath);
     const parentDir = this.getOrCreateParentDirectory(filePath);
     this.throwIfHasExternalOperations(parentDir, "write file");
     parentDir.dequeueFileDelete(filePath);
@@ -728,6 +780,7 @@ export class TransactionalFileSystem {
   }
 
   writeFileSync(filePath: StandardizedFilePath, fileText: string) {
+    this.throwIfLibFile(filePath);
     const parentDir = this.getOrCreateParentDirectory(filePath);
     this.throwIfHasExternalOperations(parentDir, "write file");
     parentDir.dequeueFileDelete(filePath);
@@ -868,6 +921,22 @@ export class TransactionalFileSystem {
       ArrayUtils.removeAll(parentDir.operations, operation => operation.kind === "mkdir" && operation.dir === dir);
       this.removeMkDirOperationsForDir(parentDir);
     }
+  }
+
+  private libFileExists(filePath: StandardizedFilePath) {
+    return this.libFileMap != null && this.libFileMap.has(filePath);
+  }
+
+  private readLibFile(filePath: StandardizedFilePath) {
+    if (this.libFileMap != null)
+      return this.libFileMap.get(filePath);
+    else
+      return undefined;
+  }
+
+  private throwIfLibFile(filePath: StandardizedFilePath) {
+    if (this.libFileExists(filePath))
+      throw new errors.InvalidOperationError(`This operation is not permitted on an in memory lib folder file.`);
   }
 }
 

@@ -28,7 +28,10 @@ export class FileTextChanges {
     this._compilerObject = compilerObject;
 
     const file = context.compilerFactory
-      .getSourceFileFromCacheFromFilePath(context.fileSystemWrapper.getStandardizedAbsolutePath(compilerObject.fileName));
+      .addOrGetSourceFileFromFilePath(context.fileSystemWrapper.getStandardizedAbsolutePath(compilerObject.fileName), {
+        markInProject: false,
+        scriptKind: undefined,
+      });
     this._existingFileExists = file != null;
     if (!compilerObject.isNewFile)
       this._sourceFile = file;
@@ -87,6 +90,7 @@ export class FileTextChanges {
     }
 
     file.applyTextChanges(this.getTextChanges());
+    file._markAsInProject();
     this._isApplied = true;
 
     return this;
