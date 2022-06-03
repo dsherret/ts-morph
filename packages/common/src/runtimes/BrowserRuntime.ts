@@ -1,5 +1,5 @@
 import minimatch from "minimatch";
-import { Runtime, RuntimeDirEntry, RuntimeFileSystem, RuntimePath } from "./Runtime";
+import { Runtime, RuntimeDirEntry, RuntimeFileInfo, RuntimeFileSystem, RuntimePath } from "./Runtime";
 
 const path = require("path-browserify");
 
@@ -90,19 +90,11 @@ class BrowserRuntimeFileSystem implements RuntimeFileSystem {
     throw new Error(this._errorMessage);
   }
 
-  fileExists(_filePath: string): Promise<boolean> {
+  stat(_path: string): Promise<RuntimeFileInfo> {
     return Promise.reject(new Error(this._errorMessage));
   }
 
-  fileExistsSync(_filePath: string): boolean {
-    throw new Error(this._errorMessage);
-  }
-
-  directoryExists(_dirPath: string): Promise<boolean> {
-    return Promise.reject(new Error(this._errorMessage));
-  }
-
-  directoryExistsSync(_dirPath: string): boolean {
+  statSync(_path: string): RuntimeFileInfo {
     throw new Error(this._errorMessage);
   }
 
