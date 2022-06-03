@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="15.1.0"></a>
+# [15.1.0](https://github.com/dsherret/ts-morph/compare/15.0.0...15.1.0) (2022-06-03)
+
+
+### Bug Fixes
+
+* `DocumentSpan` should attempt to load the source file if it's not loaded yet ([#1291](https://github.com/dsherret/ts-morph/issues/1291)) ([1eda69c](https://github.com/dsherret/ts-morph/commit/1eda69c))
+* included symlinked directories when reading a directory ([#1290](https://github.com/dsherret/ts-morph/issues/1290)) ([f1b4ea2](https://github.com/dsherret/ts-morph/commit/f1b4ea2))
+
+
+### Features
+
+* add Symbol.isOptional method ([#1285](https://github.com/dsherret/ts-morph/issues/1285)) ([c7f3512](https://github.com/dsherret/ts-morph/commit/c7f3512))
+* add Type.isTemplateLiteral method ([#1288](https://github.com/dsherret/ts-morph/issues/1288)) ([284a7fd](https://github.com/dsherret/ts-morph/commit/284a7fd))
+
+
+
 <a name="15.0.0"></a>
 # [15.0.0](https://github.com/dsherret/ts-morph/compare/14.0.0...15.0.0) (2022-05-24)
 
