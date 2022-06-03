@@ -1,7 +1,7 @@
 import { DocumentRegistry, StringUtils, ts, FileUtils, Memoize, TransactionalFileSystem, TsConfigResolver, errors, InMemoryFileSystemHost, RealFileSystemHost, CompilerOptionsContainer, createHosts, runtime, createModuleResolutionHost } from '../common/mod.ts';
 export { CompilerOptionsContainer, InMemoryFileSystemHost, ResolutionHosts, SettingsContainer, ts } from '../common/mod.ts';
 
-/*! *****************************************************************************
+/******************************************************************************
 Copyright (c) Microsoft Corporation.
 
 Permission to use, copy, modify, and/or distribute this software for any

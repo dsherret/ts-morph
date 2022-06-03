@@ -13016,7 +13016,7 @@ var FileSystemRefreshResult;
     FileSystemRefreshResult[FileSystemRefreshResult["Deleted"] = 2] = "Deleted";
 })(FileSystemRefreshResult || (FileSystemRefreshResult = {}));
 
-/*! *****************************************************************************
+/******************************************************************************
 Copyright (c) Microsoft Corporation.
 
 Permission to use, copy, modify, and/or distribute this software for any

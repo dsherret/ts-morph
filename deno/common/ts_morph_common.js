@@ -2635,7 +2635,7 @@ class CompilerOptionsContainer extends SettingsContainer {
     }
 }
 
-/*! *****************************************************************************
+/******************************************************************************
 Copyright (c) Microsoft Corporation.
 
 Permission to use, copy, modify, and/or distribute this software for any

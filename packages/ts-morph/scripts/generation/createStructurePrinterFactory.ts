@@ -17,11 +17,11 @@ export function createStructurePrinterFactory(inspector: TsMorphInspector) {
     namedImports: ["Memoize"],
     moduleSpecifier: "@ts-morph/common",
   }, {
-    namespaceImport: "structurePrinters",
-    moduleSpecifier: sourceFile.getRelativePathAsModuleSpecifierTo(project.getSourceFileOrThrow("src/structurePrinters/index.ts")),
-  }, {
     namedImports: ["SupportedFormatCodeSettings"],
     moduleSpecifier: sourceFile.getRelativePathAsModuleSpecifierTo(project.getSourceFileOrThrow("src/options/index.ts")),
+  }, {
+    namespaceImport: "structurePrinters",
+    moduleSpecifier: sourceFile.getRelativePathAsModuleSpecifierTo(project.getSourceFileOrThrow("src/structurePrinters/index.ts")),
   }]);
 
   sourceFile.addClass({
