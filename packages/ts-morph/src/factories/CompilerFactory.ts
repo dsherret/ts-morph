@@ -658,7 +658,7 @@ export class CompilerFactory {
    * @param block - Block of code to run.
    */
   forgetNodesCreatedInBlock<T = void>(block: (remember: (...node: Node[]) => void) => Promise<T>): Promise<T>;
-  forgetNodesCreatedInBlock<T = void>(block: (remember: (...node: Node[]) => void) => (T | Promise<T>)): Promise<T> | T {
+  forgetNodesCreatedInBlock<T = void>(block: (remember: (...node: Node[]) => void) => T | Promise<T>): Promise<T> | T {
     // can't use the async keyword here because exceptions that happen when doing this synchronously need to be thrown
     this.nodeCache.setForgetPoint();
     let wasPromise = false;

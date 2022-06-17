@@ -561,7 +561,7 @@ function insertChildren<TNode extends Node, TStructure extends Structure>(opts: 
   index: number;
   structures: ReadonlyArray<TStructure>;
   expectedKind: SyntaxKind;
-  createStructurePrinter: () => ({ printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<TStructure>): void });
+  createStructurePrinter: () => { printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<TStructure>): void };
 }): TNode[] {
   return insertIntoBracesOrSourceFileWithGetChildren<TNode>({
     getIndexedChildren: () => opts.thisNode.getMembersWithComments(),

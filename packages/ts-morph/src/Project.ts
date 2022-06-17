@@ -673,7 +673,7 @@ export class Project {
    * @param block - Block of code to run. Use the `remember` callback or return a node to remember it.
    */
   forgetNodesCreatedInBlock<T = void>(block: (remember: (...node: Node[]) => void) => Promise<T>): Promise<T>;
-  forgetNodesCreatedInBlock(block: (remember: (...node: Node[]) => void) => (void | Promise<void>)) {
+  forgetNodesCreatedInBlock(block: (remember: (...node: Node[]) => void) => void | Promise<void>) {
     return this._context.compilerFactory.forgetNodesCreatedInBlock(block);
   }
 

@@ -9,7 +9,7 @@ export class ArrayUtils {
     return a instanceof Array;
   }
 
-  static isNullOrEmpty<T>(a: (ReadonlyArray<T> | undefined)): a is undefined {
+  static isNullOrEmpty<T>(a: ReadonlyArray<T> | undefined): a is undefined {
     return !(a instanceof Array) || a.length === 0;
   }
 

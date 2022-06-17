@@ -17,7 +17,7 @@
     "dist-deno"
   ],
   "plugins": [
-    "https://plugins.dprint.dev/typescript-0.68.5.wasm",
+    "../dprint-plugin-typescript/target/wasm32-unknown-unknown/release/dprint_plugin_typescript.wasm",
     "https://plugins.dprint.dev/json-0.7.2.wasm",
     "https://plugins.dprint.dev/markdown-0.13.3.wasm"
   ]

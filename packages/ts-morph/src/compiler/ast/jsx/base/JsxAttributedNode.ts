@@ -65,14 +65,14 @@ export function JsxAttributedNode<T extends Constructor<JsxAttributedNodeExtensi
       return this.compilerNode.attributes.properties.map(p => this._getNodeFromCompilerNode(p));
     }
 
-    getAttributeOrThrow(nameOrFindFunction: (string | ((attribute: JsxAttributeLike) => boolean))) {
+    getAttributeOrThrow(nameOrFindFunction: string | ((attribute: JsxAttributeLike) => boolean)) {
       return errors.throwIfNullOrUndefined(
         this.getAttribute(nameOrFindFunction),
         () => getNotFoundErrorMessageForNameOrFindFunction("attribute", nameOrFindFunction),
       );
     }
 
-    getAttribute(nameOrFindFunction: (string | ((attribute: JsxAttributeLike) => boolean))) {
+    getAttribute(nameOrFindFunction: string | ((attribute: JsxAttributeLike) => boolean)) {
       return getNodeByNameOrFindFunction(this.getAttributes(), nameOrFindFunction);
     }
 

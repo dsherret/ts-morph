@@ -1003,7 +1003,7 @@ export interface FileSystemEntries {
 export declare class ArrayUtils {
     private constructor();
     static isReadonlyArray<T>(a: unknown): a is ReadonlyArray<T>;
-    static isNullOrEmpty<T>(a: (ReadonlyArray<T> | undefined)): a is undefined;
+    static isNullOrEmpty<T>(a: ReadonlyArray<T> | undefined): a is undefined;
     static getUniqueItems<T>(a: ReadonlyArray<T>): T[];
     static removeFirst<T>(a: T[], item: T): boolean;
     static removeAll<T>(a: T[], isMatch: (item: T) => boolean): T[];
