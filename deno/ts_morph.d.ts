@@ -6696,7 +6696,7 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.VariableDeclaration]: VariableDeclaration;
   [SyntaxKind.VariableDeclarationList]: VariableDeclarationList;
   [SyntaxKind.VariableStatement]: VariableStatement;
-  [SyntaxKind.JSDocComment]: JSDoc;
+  [SyntaxKind.JSDoc]: JSDoc;
   [SyntaxKind.TypeOfExpression]: TypeOfExpression;
   [SyntaxKind.WhileStatement]: WhileStatement;
   [SyntaxKind.WithStatement]: WithStatement;

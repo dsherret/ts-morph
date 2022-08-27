@@ -40,7 +40,6 @@ export abstract class CompilerCommentNode implements ts.Node {
   end: number;
   kind: SyntaxKind.SingleLineCommentTrivia | SyntaxKind.MultiLineCommentTrivia;
   flags: ts.NodeFlags;
-  decorators?: ts.NodeArray<ts.Decorator> | undefined;
   modifiers?: ts.NodeArray<ts.Modifier> | undefined;
   parent: ts.Node;
 

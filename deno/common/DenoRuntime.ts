@@ -100,7 +100,7 @@ class DenoRuntimeFileSystem {
     return this._toStat(stat);
   }
 
-  private _toStat(stat: Deno.FileInfo) {
+  private _toStat(stat: any) {
     return {
       isFile() {
         return stat.isFile;

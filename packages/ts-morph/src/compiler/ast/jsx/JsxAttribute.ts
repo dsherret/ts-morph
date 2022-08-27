@@ -8,7 +8,10 @@ import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { StringLiteral } from "../literal";
+import { JsxElement } from "./JsxElement";
 import { JsxExpression } from "./JsxExpression";
+import { JsxFragment } from "./JsxFragment";
+import { JsxSelfClosingElement } from "./JsxSelfClosingElement";
 
 export const JsxAttributeBase = NamedNode(Node);
 export class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
@@ -22,7 +25,7 @@ export class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
   /**
    * Gets the JSX attribute's initializer or returns undefined if it doesn't exist.
    */
-  getInitializer(): StringLiteral | JsxExpression | undefined {
+  getInitializer(): JsxElement | JsxExpression | JsxFragment | JsxSelfClosingElement | StringLiteral | undefined {
     return this._getNodeFromCompilerNodeIfExists(this.compilerNode.initializer);
   }
 

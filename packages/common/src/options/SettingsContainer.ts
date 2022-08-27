@@ -12,7 +12,7 @@ export abstract class SettingsContainer<T extends object> {
    * @param defaultSettings - The settings to use by default.
    */
   constructor(defaultSettings: T) {
-    this._defaultSettings = ObjectUtils.assign({}, defaultSettings);
+    this._defaultSettings = Object.assign({}, defaultSettings);
     this._settings = defaultSettings;
   }
 
@@ -20,7 +20,7 @@ export abstract class SettingsContainer<T extends object> {
    * Resets the settings to the default.
    */
   reset() {
-    this._settings = ObjectUtils.assign({}, this._defaultSettings);
+    this._settings = Object.assign({}, this._defaultSettings);
     this._fireModified();
   }
 
@@ -28,7 +28,7 @@ export abstract class SettingsContainer<T extends object> {
    * Gets a copy of the settings as an object.
    */
   get(): T {
-    return ObjectUtils.assign({}, this._settings);
+    return Object.assign({}, this._settings);
   }
 
   /**
@@ -36,7 +36,7 @@ export abstract class SettingsContainer<T extends object> {
    * @param settings - Settings to set.
    */
   set(settings: Partial<T>) {
-    ObjectUtils.assign(this._settings, settings);
+    Object.assign(this._settings, settings);
     this._fireModified();
   }
 

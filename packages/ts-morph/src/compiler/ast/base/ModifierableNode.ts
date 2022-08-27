@@ -25,7 +25,7 @@ export interface ModifierableNode {
   /**
    * Gets the node's modifiers.
    */
-  getModifiers(): Node[];
+  getModifiers(): Node<ts.Modifier>[];
   /**
    * Gets the first modifier of the specified syntax kind or throws if none found.
    * @param kind - Syntax kind.
@@ -71,7 +71,7 @@ export interface ModifierableNode {
 export function ModifierableNode<T extends Constructor<ModifierableNodeExtensionType>>(Base: T): Constructor<ModifierableNode> & T {
   return class extends Base implements ModifierableNode {
     getModifiers() {
-      return this.getCompilerModifiers().map(m => this._getNodeFromCompilerNode(m));
+      return this.getCompilerModifiers().map(m => this._getNodeFromCompilerNode(m)) as Node<ts.Modifier>[];
     }
 
     getFirstModifierByKindOrThrow<TKind extends SyntaxKind>(kind: TKind) {

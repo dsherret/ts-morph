@@ -140,7 +140,9 @@ describe("FileUtils", () => {
 
   describe(nameof(FileUtils, "getParentMostPaths"), () => {
     function doTest(paths: string[], expected: string[]) {
-      expect(FileUtils.getParentMostPaths(paths).sort()).to.deep.equal(expected.sort());
+      const fileSystem = new InMemoryFileSystemHost();
+      const standardizedPaths = paths.map(p => FileUtils.getStandardizedAbsolutePath(fileSystem, p));
+      expect(FileUtils.getParentMostPaths(standardizedPaths).sort()).to.deep.equal(expected.sort());
     }
 
     it("should get the parent-most paths", () => {
@@ -154,7 +156,11 @@ describe("FileUtils", () => {
 
   describe(nameof(FileUtils, "getRelativePathTo"), () => {
     function doTest(from: string, to: string, expected: string) {
-      expect(FileUtils.getRelativePathTo(from, to)).to.equal(expected);
+      const fileSystem = new InMemoryFileSystemHost();
+      expect(FileUtils.getRelativePathTo(
+        FileUtils.getStandardizedAbsolutePath(fileSystem, from),
+        FileUtils.getStandardizedAbsolutePath(fileSystem, to),
+      )).to.equal(expected);
     }
 
     it("should get the relative path when the file is in the parent directory", () => {
@@ -180,7 +186,8 @@ describe("FileUtils", () => {
 
   describe(nameof(FileUtils, "getExtension"), () => {
     function doTest(path: string, expected: string) {
-      expect(FileUtils.getExtension(path)).to.equal(expected);
+      const fileSystem = new InMemoryFileSystemHost();
+      expect(FileUtils.getExtension(FileUtils.getStandardizedAbsolutePath(fileSystem, path))).to.equal(expected);
     }
 
     // copying behaviour from https://nodejs.org/api/path.html#path_path_extname_path

@@ -184,7 +184,7 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.VariableDeclaration]: compiler.VariableDeclaration;
   [SyntaxKind.VariableDeclarationList]: compiler.VariableDeclarationList;
   [SyntaxKind.VariableStatement]: compiler.VariableStatement;
-  [SyntaxKind.JSDocComment]: compiler.JSDoc;
+  [SyntaxKind.JSDoc]: compiler.JSDoc;
   [SyntaxKind.TypeOfExpression]: compiler.TypeOfExpression;
   [SyntaxKind.WhileStatement]: compiler.WhileStatement;
   [SyntaxKind.WithStatement]: compiler.WithStatement;
@@ -209,7 +209,7 @@ export interface ImplementedKindToNodeMappings {
 }
 
 export interface KindToNodeMappings extends ImplementedKindToNodeMappings {
-  [kind: number]: compiler.Node;
+  [kind: ts.SyntaxKind]: compiler.Node;
 }
 
 export interface KindToExpressionMappings {

@@ -535,7 +535,7 @@ function callBaseGetStructure(basePrototype, node, structure) {
     else
         newStructure = {};
     if (structure != null)
-        ObjectUtils.assign(newStructure, structure);
+        Object.assign(newStructure, structure);
     return newStructure;
 }
 
@@ -924,22 +924,22 @@ function getRangeWithoutCommentsFromArray(array, index, length, expectedKind) {
 
 function fromConstructorDeclarationOverload(node) {
     const structure = {};
-    ObjectUtils.assign(structure, fromScopedNode(node));
+    Object.assign(structure, fromScopedNode(node));
     return structure;
 }
 function fromFunctionDeclarationOverload(node) {
     const structure = {};
-    ObjectUtils.assign(structure, fromAmbientableNode(node));
-    ObjectUtils.assign(structure, fromExportableNode(node));
+    Object.assign(structure, fromAmbientableNode(node));
+    Object.assign(structure, fromExportableNode(node));
     return structure;
 }
 function fromMethodDeclarationOverload(node) {
     const structure = {};
-    ObjectUtils.assign(structure, fromStaticableNode(node));
-    ObjectUtils.assign(structure, fromAbstractableNode(node));
-    ObjectUtils.assign(structure, fromScopedNode(node));
-    ObjectUtils.assign(structure, fromQuestionTokenableNode(node));
-    ObjectUtils.assign(structure, fromOverrideableNode(node));
+    Object.assign(structure, fromStaticableNode(node));
+    Object.assign(structure, fromAbstractableNode(node));
+    Object.assign(structure, fromScopedNode(node));
+    Object.assign(structure, fromQuestionTokenableNode(node));
+    Object.assign(structure, fromOverrideableNode(node));
     return structure;
 }
 
@@ -13665,7 +13665,7 @@ function insertOverloads(opts) {
     const index = verifyAndGetIndex(opts.index, overloadsCount);
     const mainIndex = firstIndex + index;
     const thisStructure = opts.getThisStructure(implementationNode);
-    const structures = opts.structures.map(structure => ObjectUtils.assign(ObjectUtils.assign({}, thisStructure), structure));
+    const structures = opts.structures.map(structure => Object.assign(Object.assign({}, thisStructure), structure));
     const writer = implementationNode._getWriterWithQueuedIndentation();
     for (const structure of structures) {
         if (writer.getLength() > 0)
@@ -17818,13 +17818,13 @@ class LanguageService {
     _getFilledSettings(settings) {
         if (settings["_filled"])
             return settings;
-        settings = ObjectUtils.assign(this._context.getFormatCodeSettings(), settings);
+        settings = Object.assign(this._context.getFormatCodeSettings(), settings);
         fillDefaultFormatCodeSettings(settings, this._context.manipulationSettings);
         settings["_filled"] = true;
         return settings;
     }
     _getFilledUserPreferences(userPreferences) {
-        return ObjectUtils.assign(this._context.getUserPreferences(), userPreferences);
+        return Object.assign(this._context.getUserPreferences(), userPreferences);
     }
 }
 
