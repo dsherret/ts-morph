@@ -2,7 +2,6 @@ import { ts } from "@ts-morph/common";
 import {
   CompilerCommentClassElement,
   CompilerCommentEnumMember,
-  CompilerCommentNode,
   CompilerCommentObjectLiteralElement,
   CompilerCommentStatement,
   CompilerCommentTypeElement,

@@ -1,4 +1,3 @@
-/* barrel:ignore */
 import { errors } from "@ts-morph/common";
 import { CodeBlockWriter } from "../codeBlockWriter";
 import { StructurePrinterFactory } from "../factories/StructurePrinterFactory";

@@ -1,6 +1,3 @@
-import { ObjectUtils } from "@ts-morph/common";
-
-/* barrel:ignore */
 import { Node } from "./common/Node";
 
 /** @internal */

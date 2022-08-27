@@ -1,4 +1,3 @@
-/* barrel:ignore */
 import { StandardizedFilePath } from "@ts-morph/common";
 import { Diagnostic, SourceFile } from "../../compiler";
 import { Project, ProjectOptions } from "../../Project";

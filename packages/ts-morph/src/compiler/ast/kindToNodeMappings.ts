@@ -209,7 +209,7 @@ export interface ImplementedKindToNodeMappings {
 }
 
 export interface KindToNodeMappings extends ImplementedKindToNodeMappings {
-  [kind: ts.SyntaxKind]: compiler.Node;
+  [kind: number]: compiler.Node;
 }
 
 export interface KindToExpressionMappings {

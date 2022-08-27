@@ -1,4 +1,3 @@
-/* barrel:ignore */
 import { CodeBlock } from "./CodeBlock.ts";
 import { MarkDownFile } from "./MarkDownFile.ts";
 
