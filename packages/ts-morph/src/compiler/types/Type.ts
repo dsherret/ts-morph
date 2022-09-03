@@ -386,7 +386,19 @@ export class Type<TType extends ts.Type = ts.Type> {
     const symbol = this.getSymbol();
     if (symbol == null)
       return false;
-    return symbol.getName() === "Array" && this.getTypeArguments().length === 1;
+    // this is not bulletproof and should be improved
+    return (symbol.getName() === "Array" || symbol.getName() === "ReadonlyArray") && this.getTypeArguments().length === 1;
+  }
+
+  /**
+   * Gets if this is a readonly array type.
+   */
+  isReadonlyArray() {
+    const symbol = this.getSymbol();
+    if (symbol == null)
+      return false;
+    // this is not bulletproof and should be improved
+    return symbol.getName() === "ReadonlyArray" && this.getTypeArguments().length === 1;
   }
 
   /**

@@ -10125,6 +10125,8 @@ export declare class Type<TType extends ts.Type = ts.Type> {
   isAny(): boolean;
   /** Gets if this is an array type. */
   isArray(): boolean;
+  /** Gets if this is a readonly array type. */
+  isReadonlyArray(): boolean;
   /** Gets if this is a template literal type. */
   isTemplateLiteral(): boolean;
   /** Gets if this is a boolean type. */

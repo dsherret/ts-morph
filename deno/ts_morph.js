@@ -17984,7 +17984,13 @@ class Type {
         const symbol = this.getSymbol();
         if (symbol == null)
             return false;
-        return symbol.getName() === "Array" && this.getTypeArguments().length === 1;
+        return (symbol.getName() === "Array" || symbol.getName() === "ReadonlyArray") && this.getTypeArguments().length === 1;
+    }
+    isReadonlyArray() {
+        const symbol = this.getSymbol();
+        if (symbol == null)
+            return false;
+        return symbol.getName() === "ReadonlyArray" && this.getTypeArguments().length === 1;
     }
     isTemplateLiteral() {
         return this._hasTypeFlag(TypeFlags.TemplateLiteral);

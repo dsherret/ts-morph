@@ -52,6 +52,8 @@ let tupleType: [string];
 let tupleTypeMultiple: [string, number];
 let genericArrayType: Array<string>;
 let arrayType: string[];
+let readonlyArrayType: readonly string[];
+let explicitReadonlyArrayType: ReadonlyArray<string>;
 let arrayTypeOfTuples: [string][];
 let undefinedType: undefined;
 let classType: MyClass;
@@ -415,7 +417,7 @@ let unknownType: unknown;
         doTest("tupleTypeMultiple", true);
       });
 
-      it("should not be when not an array", () => {
+      it("should not be when an array", () => {
         doTest("arrayType", false);
       });
 
@@ -424,6 +426,50 @@ let unknownType: unknown;
       });
 
       it("should not be when not tuple", () => {
+        doTest("stringType", false);
+      });
+    });
+
+    describe(nameof<Type>("isArray"), () => {
+      function doTest(typeName: string, expected: boolean) {
+        expect(typesByName[typeName].isArray()).to.equal(expected);
+      }
+
+      it("should be when an array", () => {
+        doTest("arrayType", true);
+      });
+
+      it("should be when a readonly array", () => {
+        doTest("readonlyArrayType", true);
+      });
+
+      it("should be when explicitly a readonly array", () => {
+        doTest("explicitReadonlyArrayType", true);
+      });
+
+      it("should not be when not", () => {
+        doTest("stringType", false);
+      });
+    });
+
+    describe(nameof<Type>("isReadonlyArray"), () => {
+      function doTest(typeName: string, expected: boolean) {
+        expect(typesByName[typeName].isReadonlyArray()).to.equal(expected);
+      }
+
+      it("should not be when an array", () => {
+        doTest("arrayType", false);
+      });
+
+      it("should be when a readonly array", () => {
+        doTest("readonlyArrayType", true);
+      });
+
+      it("should be when explicitly a readonly array", () => {
+        doTest("explicitReadonlyArrayType", true);
+      });
+
+      it("should not be when not", () => {
         doTest("stringType", false);
       });
     });
