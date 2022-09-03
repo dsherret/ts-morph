@@ -1100,7 +1100,7 @@ export interface DecoratableNode {
   insertDecorators(index: number, structures: ReadonlyArray<OptionalKind<DecoratorStructure>>): Decorator[];
 }
 
-declare type DecoratableNodeExtensionType = Node<ts.Node>;
+declare type DecoratableNodeExtensionType = Node<ts.Node> & ModifierableNode;
 export declare function DotDotDotTokenableNode<T extends Constructor<DotDotDotTokenableNodeExtensionType>>(Base: T): Constructor<DotDotDotTokenableNode> & T;
 
 export interface DotDotDotTokenableNode {

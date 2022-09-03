@@ -2039,7 +2039,7 @@ class MyClass {
     function doTest(
       text: string,
       selectNode: (sourceFile: SourceFile) => Node,
-      visitNode: (traversal: { visitChildren(): ts.Node; currentNode: ts.Node }) => ts.Node,
+      visitNode: (traversal: { factory: ts.NodeFactory; visitChildren(): ts.Node; currentNode: ts.Node }) => ts.Node,
       expectedText: string,
       additionalChecks?: (sourceFile: SourceFile) => void,
     ) {
@@ -2066,7 +2066,7 @@ class MyClass {
         traversal => {
           const node = traversal.visitChildren();
           if (ts.isNumericLiteral(node))
-            return ts.createNumericLiteral((parseInt(node.text, 10) + 1).toString());
+            return traversal.factory.createNumericLiteral((parseInt(node.text, 10) + 1).toString());
           return node;
         },
         `2; 3; 4;`,
@@ -2090,7 +2090,7 @@ class MyClass {
         traversal => {
           const node = traversal.visitChildren();
           if (ts.isNumericLiteral(node))
-            return ts.createStringLiteral((parseInt(node.text, 10) + 1).toString());
+            return traversal.factory.createStringLiteral((parseInt(node.text, 10) + 1).toString());
           return node;
         },
         `"2"; "3"; "4";`,
@@ -2116,7 +2116,7 @@ class MyClass {
         traversal => {
           const node = traversal.visitChildren();
           if (ts.isThrowStatement(node))
-            return ts.updateThrow(node, ts.createStringLiteral("test"));
+            return traversal.factory.updateThrowStatement(node, traversal.factory.createStringLiteral("test"));
           return node;
         },
         `throw "test";`,
@@ -2131,7 +2131,7 @@ class MyClass {
       doTest("class C {} class B {}", sourceFile => sourceFile.getClassOrThrow("C"), traversal => {
         const node = traversal.visitChildren();
         if (ts.isClassDeclaration(node))
-          return ts.createInterfaceDeclaration(undefined, undefined, "A", undefined, undefined, []);
+          return traversal.factory.createInterfaceDeclaration(undefined, undefined, "A", undefined, undefined, []);
         return node;
       }, `interface A {\n} class B {}`);
     });
@@ -2140,7 +2140,7 @@ class MyClass {
       doTest("// test\nclass C {}\n// test2\nclass B {}", sourceFile => sourceFile, traversal => {
         const node = traversal.visitChildren();
         if (ts.isClassDeclaration(node))
-          return ts.createInterfaceDeclaration(undefined, undefined, "A", undefined, undefined, []);
+          return traversal.factory.createInterfaceDeclaration(undefined, undefined, "A", undefined, undefined, []);
         return node;
       }, `// test\ninterface A {\n}\n// test2\ninterface A {\n}`);
     });
@@ -2149,7 +2149,7 @@ class MyClass {
       doTest("/** Testing */\nclass C {}", sourceFile => sourceFile, traversal => {
         const node = traversal.visitChildren();
         if (ts.isClassDeclaration(node))
-          return ts.createInterfaceDeclaration(undefined, undefined, "A", undefined, undefined, []);
+          return traversal.factory.createInterfaceDeclaration(undefined, undefined, "A", undefined, undefined, []);
         return node;
       }, `interface A {\n}`);
     });
@@ -2158,7 +2158,7 @@ class MyClass {
       doTest("/** Testing */\nexport class C {}", sourceFile => sourceFile, traversal => {
         const node = traversal.visitChildren();
         if (ts.isClassDeclaration(node))
-          return ts.updateClassDeclaration(node, undefined, undefined, ts.createIdentifier("A"), undefined, undefined, []);
+          return traversal.factory.updateClassDeclaration(node, undefined, undefined, traversal.factory.createIdentifier("A"), undefined, undefined, []);
         return node;
       }, `/** Testing */\nclass A {\n}`);
     });
@@ -2167,7 +2167,7 @@ class MyClass {
       doTest("foo(bar(), baz())", sourceFile => sourceFile, traversal => {
         const node = traversal.visitChildren();
         if (ts.isCallExpression(node))
-          return ts.createIdentifier("hello");
+          return traversal.factory.createIdentifier("hello");
         return node;
       }, "hello");
     });
@@ -2176,8 +2176,8 @@ class MyClass {
       const { sourceFile } = getInfoFromText("export class C {}");
       const node = sourceFile.getClassOrThrow("C");
 
-      const newNode = node.transform(() => {
-        return ts.createFunctionDeclaration(
+      const newNode = node.transform(traversal => {
+        return traversal.factory.createFunctionDeclaration(
           undefined,
           undefined,
           undefined,
@@ -2185,7 +2185,7 @@ class MyClass {
           undefined,
           [],
           undefined,
-          ts.createBlock([]),
+          traversal.factory.createBlock([]),
         );
       });
       expect(newNode.getText()).to.equal("function test() { }");
@@ -2197,8 +2197,8 @@ class MyClass {
       const { sourceFile } = getInfoFromText("function original() {}");
       const node = sourceFile.getFunctionOrThrow("original");
 
-      const newNode = node.transform(() => {
-        return ts.createFunctionDeclaration(
+      const newNode = node.transform(traversal => {
+        return traversal.factory.createFunctionDeclaration(
           undefined,
           undefined,
           undefined,
@@ -2206,7 +2206,7 @@ class MyClass {
           undefined,
           [],
           undefined,
-          ts.createBlock([]),
+          traversal.factory.createBlock([]),
         );
       });
       expect(newNode.getText()).to.equal("function test() { }");

@@ -7,8 +7,9 @@ import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { Decorator } from "../decorator/Decorator";
+import { ModifierableNode } from "./ModifierableNode";
 
-export type DecoratableNodeExtensionType = Node<ts.Node>;
+export type DecoratableNodeExtensionType = Node<ts.Node> & ModifierableNode;
 
 export interface DecoratableNode {
   /**
@@ -108,7 +109,7 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
       });
 
       insertIntoParentTextRange({
-        parent: decorators.length === 0 ? this : decorators[0].getParentSyntaxListOrThrow(),
+        parent: decorators[0]?.getParentSyntaxListOrThrow() ?? this.getModifiers()[0]?.getParentSyntaxListOrThrow() ?? this,
         insertPos: decorators[index - 1] == null ? this.getStart() : decorators[index - 1].getEnd(),
         newText: decoratorCode,
       });

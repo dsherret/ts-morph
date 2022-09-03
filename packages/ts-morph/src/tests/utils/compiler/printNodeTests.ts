@@ -44,26 +44,22 @@ describe("printNode", () => {
 
   it("general compiler api test", () => {
     // https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API
-    const tsFunctionDeclaration = ts.createFunctionDeclaration(
-      /*decorators*/ undefined,
-      /*modifiers*/ [ts.createToken(SyntaxKind.ExportKeyword)],
-      /*asteriskToken*/ undefined,
-      "myFunction",
-      /*typeParameters*/ undefined,
-      /*parameters*/ [],
-      /*returnType*/ ts.createKeywordTypeNode(SyntaxKind.NumberKeyword),
-      ts.createBlock([ts.createReturn(ts.createLiteral(5))], /*multiline*/ true),
-    );
-    expect(printNode(tsFunctionDeclaration)).to.equal("export function myFunction(): number {\n    return 5;\n}");
+    const text = "export function myFunction(): number {\n    return 5;\n}";
+    const sourceFile = ts.createSourceFile("file.ts", text, ScriptTarget.Latest, false);
+    expect(printNode(sourceFile.statements[0])).to.equal("export function myFunction(): number {\n    return 5;\n}");
   });
 
   it("should print the node when printing a jsx file", () => {
-    const node = ts.createJsxSelfClosingElement(ts.createIdentifier("Test"), undefined, ts.createJsxAttributes([]));
+    const text = "const test = <Test />";
+    const sourceFile = ts.createSourceFile("file.ts", text, ScriptTarget.Latest, false, ScriptKind.TSX);
+    const node = (sourceFile.statements[0] as ts.VariableStatement).declarationList.declarations[0].initializer!;
     expect(printNode(node, { scriptKind: ScriptKind.TSX })).to.equal("<Test />");
   });
 
   it("should print the node when printing a non-jsx file", () => {
-    const node = ts.createTypeAssertion(ts.createKeywordTypeNode(SyntaxKind.StringKeyword), ts.createIdentifier("test"));
-    expect(printNode(node, { scriptKind: ScriptKind.TS })).to.equal("<string>test");
+    const text = "const test = <string> asdf";
+    const sourceFile = ts.createSourceFile("file.ts", text, ScriptTarget.Latest, false);
+    const node = (sourceFile.statements[0] as ts.VariableStatement).declarationList.declarations[0].initializer!;
+    expect(printNode(node, { scriptKind: ScriptKind.TS })).to.equal("<string>asdf");
   });
 });

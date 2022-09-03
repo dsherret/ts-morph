@@ -1067,17 +1067,21 @@ describe("Project", () => {
     it("should emit with custom transformations", async () => {
       const { project, fileSystem } = emitSetup({ noLib: true, outDir: "dist" });
 
-      function visitSourceFile(sourceFile: ts.SourceFile, context: ts.TransformationContext, visitNode: (node: ts.Node) => ts.Node) {
+      function visitSourceFile(
+        sourceFile: ts.SourceFile,
+        context: ts.TransformationContext,
+        visitNode: (node: ts.Node, context: ts.TransformationContext) => ts.Node,
+      ) {
         return visitNodeAndChildren(sourceFile) as ts.SourceFile;
 
         function visitNodeAndChildren(node: ts.Node): ts.Node {
-          return ts.visitEachChild(visitNode(node), visitNodeAndChildren, context);
+          return ts.visitEachChild(visitNode(node, context), visitNodeAndChildren, context);
         }
       }
 
-      function numericLiteralToStringLiteral(node: ts.Node) {
+      function numericLiteralToStringLiteral(node: ts.Node, context: ts.TransformationContext) {
         if (ts.isNumericLiteral(node))
-          return ts.createStringLiteral(node.text);
+          return context.factory.createStringLiteral(node.text);
         return node;
       }
 

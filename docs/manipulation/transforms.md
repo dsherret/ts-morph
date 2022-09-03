@@ -67,16 +67,16 @@ sourceFile.transform(traversal => {
 
   const node = traversal.visitChildren();
   if (ts.isFunctionDeclaration(node)) {
-    return ts.updateFunctionDeclaration(
+    return traversal.factory.updateFunctionDeclaration(
       node,
       [],
       [],
       undefined,
-      ts.createIdentifier("newName"),
+      traversal.factory.createIdentifier("newName"),
       [],
       [],
       undefined,
-      ts.createBlock([]),
+      traversal.factory.createBlock([]),
     );
   }
   return node;

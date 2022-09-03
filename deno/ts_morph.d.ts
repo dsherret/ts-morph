@@ -1100,7 +1100,7 @@ export interface DecoratableNode {
   insertDecorators(index: number, structures: ReadonlyArray<OptionalKind<DecoratorStructure>>): Decorator[];
 }
 
-declare type DecoratableNodeExtensionType = Node<ts.Node>;
+declare type DecoratableNodeExtensionType = Node<ts.Node> & ModifierableNode;
 export declare function DotDotDotTokenableNode<T extends Constructor<DotDotDotTokenableNodeExtensionType>>(Base: T): Constructor<DotDotDotTokenableNode> & T;
 
 export interface DotDotDotTokenableNode {
@@ -1370,7 +1370,7 @@ export declare function ModifierableNode<T extends Constructor<ModifierableNodeE
 
 export interface ModifierableNode {
   /** Gets the node's modifiers. */
-  getModifiers(): Node[];
+  getModifiers(): Node<ts.Modifier>[];
   /**
    * Gets the first modifier of the specified syntax kind or throws if none found.
    * @param kind - Syntax kind.
@@ -2939,7 +2939,6 @@ export declare abstract class CompilerCommentNode implements ts.Node {
   end: number;
   kind: SyntaxKind.SingleLineCommentTrivia | SyntaxKind.MultiLineCommentTrivia;
   flags: ts.NodeFlags;
-  decorators?: ts.NodeArray<ts.Decorator> | undefined;
   modifiers?: ts.NodeArray<ts.Modifier> | undefined;
   parent: ts.Node;
   protected constructor();
@@ -6358,9 +6357,9 @@ declare const JsxAttributeBase: Constructor<NamedNode> & typeof Node;
 
 export declare class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
   /** Gets the JSX attribute's initializer or throws if it doesn't exist. */
-  getInitializerOrThrow(): StringLiteral | JsxExpression;
+  getInitializerOrThrow(): StringLiteral | JsxElement | JsxSelfClosingElement | JsxFragment | JsxExpression;
   /** Gets the JSX attribute's initializer or returns undefined if it doesn't exist. */
-  getInitializer(): StringLiteral | JsxExpression | undefined;
+  getInitializer(): JsxElement | JsxExpression | JsxFragment | JsxSelfClosingElement | StringLiteral | undefined;
   /**
    * Sets the initializer.
    * @param textOrWriterFunction - Text or writer function to set the initializer with.

@@ -109,7 +109,8 @@ export function ModifierableNode<T extends Constructor<ModifierableNodeExtension
     }
 
     addModifier(text: ModifierTexts): Node<ts.Modifier> {
-      const modifiers = this.getModifiers();
+      const rawModifiers = this.getModifiers();
+      const modifiers = this.getModifiers().filter(m => m.getKind() !== SyntaxKind.Decorator);
       const existingModifier = modifiers.find(m => m.getText() === text);
       if (existingModifier != null)
         return existingModifier;
@@ -131,7 +132,7 @@ export function ModifierableNode<T extends Constructor<ModifierableNodeExtension
 
       // insert
       insertIntoParentTextRange({
-        parent: modifiers.length === 0 ? this : modifiers[0].getParentSyntaxListOrThrow(),
+        parent: rawModifiers.length === 0 ? this : rawModifiers[0].getParentSyntaxListOrThrow(),
         insertPos,
         newText,
       });

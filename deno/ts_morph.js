@@ -1,7 +1,7 @@
-import { errors, SyntaxKind, ts, NewLineKind, EmitHint, ScriptKind, ScriptTarget, SettingsContainer, KeyValueCache, getCompilerOptionsFromTsConfig as getCompilerOptionsFromTsConfig$1, ObjectUtils, StringUtils, getSyntaxKindName, ArrayUtils, nameof, EventContainer, FileUtils, libFolderInMemoryPath, Memoize, SymbolFlags, TypeFormatFlags, getEmitModuleResolutionKind, createHosts, ObjectFlags, TypeFlags, matchGlobs, ModuleResolutionKind, SortedKeyValueArray, LocaleStringComparer, WeakCache, DocumentRegistry, createModuleResolutionHost, TransactionalFileSystem, TsConfigResolver, CompilerOptionsContainer, InMemoryFileSystemHost, RealFileSystemHost, IterableUtils, runtime } from './common/mod.ts';
+import { errors, SyntaxKind, ts, NewLineKind, EmitHint, ScriptTarget, ScriptKind, SettingsContainer, KeyValueCache, getCompilerOptionsFromTsConfig as getCompilerOptionsFromTsConfig$1, StringUtils, getSyntaxKindName, ArrayUtils, nameof, ObjectUtils, EventContainer, FileUtils, libFolderInMemoryPath, Memoize, SymbolFlags, TypeFormatFlags, getEmitModuleResolutionKind, createHosts, ObjectFlags, TypeFlags, matchGlobs, ModuleResolutionKind, SortedKeyValueArray, LocaleStringComparer, WeakCache, DocumentRegistry, createModuleResolutionHost, TransactionalFileSystem, TsConfigResolver, CompilerOptionsContainer, InMemoryFileSystemHost, RealFileSystemHost, IterableUtils, runtime } from './common/mod.ts';
 export { CompilerOptionsContainer, DiagnosticCategory, EmitHint, InMemoryFileSystemHost, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, NodeFlags, ObjectFlags, ResolutionHosts, ScriptKind, ScriptTarget, SettingsContainer, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags, ts } from './common/mod.ts';
-import CodeBlockWriter from 'https://deno.land/x/code_block_writer@11.0.0/mod.ts';
-export { default as CodeBlockWriter } from 'https://deno.land/x/code_block_writer@11.0.0/mod.ts';
+import CodeBlockWriter from 'https://deno.land/x/code_block_writer@11.0.3/mod.ts';
+export { default as CodeBlockWriter } from 'https://deno.land/x/code_block_writer@11.0.3/mod.ts';
 
 class AdvancedIterator {
     constructor(iterator) {
@@ -5856,19 +5856,19 @@ function DecoratableNode(Base) {
             return errors.throwIfNullOrUndefined(this.getDecorator(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("decorator", nameOrFindFunction));
         }
         getDecorators() {
-            var _a, _b;
-            return (_b = (_a = this.compilerNode.decorators) === null || _a === void 0 ? void 0 : _a.map(d => this._getNodeFromCompilerNode(d))) !== null && _b !== void 0 ? _b : [];
+            return getCompilerNodeDecorators(this.compilerNode).map(d => this._getNodeFromCompilerNode(d));
         }
         addDecorator(structure) {
-            return this.insertDecorator(getEndIndexFromArray(this.compilerNode.decorators), structure);
+            return this.insertDecorator(getEndIndexFromArray(getCompilerNodeDecorators(this.compilerNode)), structure);
         }
         addDecorators(structures) {
-            return this.insertDecorators(getEndIndexFromArray(this.compilerNode.decorators), structures);
+            return this.insertDecorators(getEndIndexFromArray(getCompilerNodeDecorators(this.compilerNode)), structures);
         }
         insertDecorator(index, structure) {
             return this.insertDecorators(index, [structure])[0];
         }
         insertDecorators(index, structures) {
+            var _a, _b, _c, _d;
             if (ArrayUtils.isNullOrEmpty(structures))
                 return [];
             const decoratorLines = getDecoratorLines(this, structures);
@@ -5886,7 +5886,7 @@ function DecoratableNode(Base) {
                 nextFormattingKind: previousDecorator == null ? formattingKind : FormattingKind.None,
             });
             insertIntoParentTextRange({
-                parent: decorators.length === 0 ? this : decorators[0].getParentSyntaxListOrThrow(),
+                parent: (_d = (_b = (_a = decorators[0]) === null || _a === void 0 ? void 0 : _a.getParentSyntaxListOrThrow()) !== null && _b !== void 0 ? _b : (_c = this.getModifiers()[0]) === null || _c === void 0 ? void 0 : _c.getParentSyntaxListOrThrow()) !== null && _d !== void 0 ? _d : this,
                 insertPos: decorators[index - 1] == null ? this.getStart() : decorators[index - 1].getEnd(),
                 newText: decoratorCode,
             });
@@ -5906,6 +5906,10 @@ function DecoratableNode(Base) {
             });
         }
     };
+}
+function getCompilerNodeDecorators(node) {
+    var _a;
+    return ts.canHaveDecorators(node) ? (_a = ts.getDecorators(node)) !== null && _a !== void 0 ? _a : [] : [];
 }
 function getDecoratorLines(node, structures) {
     const lines = [];
@@ -9016,7 +9020,8 @@ function ModifierableNode(Base) {
             return this;
         }
         addModifier(text) {
-            const modifiers = this.getModifiers();
+            const rawModifiers = this.getModifiers();
+            const modifiers = this.getModifiers().filter(m => m.getKind() !== SyntaxKind.Decorator);
             const existingModifier = modifiers.find(m => m.getText() === text);
             if (existingModifier != null)
                 return existingModifier;
@@ -9033,7 +9038,7 @@ function ModifierableNode(Base) {
                 startPos = insertPos + 1;
             }
             insertIntoParentTextRange({
-                parent: modifiers.length === 0 ? this : modifiers[0].getParentSyntaxListOrThrow(),
+                parent: rawModifiers.length === 0 ? this : rawModifiers[0].getParentSyntaxListOrThrow(),
                 insertPos,
                 newText,
             });
