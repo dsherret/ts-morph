@@ -23,7 +23,7 @@
   "homepage": "https://github.com/dsherret/ts-morph#readme",
   "devDependencies": {
     "@types/node": "16.11.7",
-    "dprint": "^0.29.1",
+    "dprint": "^0.31.1",
     "lerna": "^5.0.0"
   }
 }

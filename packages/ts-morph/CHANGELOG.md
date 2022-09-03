@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="16.0.0"></a>
+# [16.0.0](https://github.com/dsherret/ts-morph/compare/15.1.0...16.0.0) (2022-09-03)
+
+
+### Features
+
+* add `Type#isNever()` ([ac0db0d](https://github.com/dsherret/ts-morph/commit/ac0db0d)), closes [#1303](https://github.com/dsherret/ts-morph/issues/1303)
+* add `Type#isReadonlyArray()` and `Type#isArray()` also includes readonly arrays ([f1d5c43](https://github.com/dsherret/ts-morph/commit/f1d5c43)), closes [#1306](https://github.com/dsherret/ts-morph/issues/1306) [#1305](https://github.com/dsherret/ts-morph/issues/1305)
+* upgrade to TS 4.8 ([#1316](https://github.com/dsherret/ts-morph/issues/1316)) ([8a87a1b](https://github.com/dsherret/ts-morph/commit/8a87a1b))
+
+
+### BREAKING CHANGES
+
+- Upgraded to TS 4.8
+- Decorators are now modifiers due to TS 4.8
+- `ts.createX` functions seem almost completely deprecated in TS 4.8, so make sure to update your code to use the `traversal.context.createX` functions instead
+- `Type#isArray()` returns true for readonly arrays
+
+
 <a name="15.1.0"></a>
 # [15.1.0](https://github.com/dsherret/ts-morph/compare/15.0.0...15.1.0) (2022-06-03)
 

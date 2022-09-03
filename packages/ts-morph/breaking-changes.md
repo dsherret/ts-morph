@@ -2,6 +2,13 @@
 
 View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only a high level overview of breaking changes.
 
+## Version 16
+
+- Upgraded to TS 4.8
+- Decorators are now modifiers due to TS 4.8
+- `ts.createX` functions seem almost completely deprecated in TS 4.8, so make sure to update your code to use the `traversal.context.createX` functions instead
+- `Type#isArray()` returns true for readonly arrays
+
 ## Version 14
 
 - Upgraded to TS 4.6
