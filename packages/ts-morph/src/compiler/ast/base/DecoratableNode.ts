@@ -7,8 +7,9 @@ import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { Decorator } from "../decorator/Decorator";
+import { ModifierableNode } from "./ModifierableNode";
 
-export type DecoratableNodeExtensionType = Node<ts.Node>;
+export type DecoratableNodeExtensionType = Node<ts.Node> & ModifierableNode;
 
 export interface DecoratableNode {
   /**
@@ -73,15 +74,15 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
     }
 
     getDecorators(): Decorator[] {
-      return this.compilerNode.decorators?.map(d => this._getNodeFromCompilerNode(d)) ?? [];
+      return getCompilerNodeDecorators(this.compilerNode).map(d => this._getNodeFromCompilerNode(d));
     }
 
     addDecorator(structure: OptionalKind<DecoratorStructure>) {
-      return this.insertDecorator(getEndIndexFromArray(this.compilerNode.decorators), structure);
+      return this.insertDecorator(getEndIndexFromArray(getCompilerNodeDecorators(this.compilerNode)), structure);
     }
 
     addDecorators(structures: ReadonlyArray<OptionalKind<DecoratorStructure>>) {
-      return this.insertDecorators(getEndIndexFromArray(this.compilerNode.decorators), structures);
+      return this.insertDecorators(getEndIndexFromArray(getCompilerNodeDecorators(this.compilerNode)), structures);
     }
 
     insertDecorator(index: number, structure: OptionalKind<DecoratorStructure>) {
@@ -108,7 +109,7 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
       });
 
       insertIntoParentTextRange({
-        parent: decorators.length === 0 ? this : decorators[0].getParentSyntaxListOrThrow(),
+        parent: decorators[0]?.getParentSyntaxListOrThrow() ?? this.getModifiers()[0]?.getParentSyntaxListOrThrow() ?? this,
         insertPos: decorators[index - 1] == null ? this.getStart() : decorators[index - 1].getEnd(),
         newText: decoratorCode,
       });
@@ -133,6 +134,10 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
       });
     }
   };
+}
+
+function getCompilerNodeDecorators(node: ts.Node): readonly ts.Decorator[] {
+  return ts.canHaveDecorators(node) ? ts.getDecorators(node) ?? [] : [];
 }
 
 function getDecoratorLines(node: Node, structures: ReadonlyArray<OptionalKind<DecoratorStructure>>) {

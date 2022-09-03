@@ -46,7 +46,7 @@ function write(writer: tsMorph.CodeBlockWriter, structure: Structure) {
 function writeBody(writer: tsMorph.CodeBlockWriter, structure: Structure, baseStructures: Structure[]) {
   writer.writeLine(`const structure: structures.${structure.getName()} = {} as any;`);
   for (const extendsStructure of baseStructures) {
-    writer.write("ObjectUtils.assign(structure, ");
+    writer.write("Object.assign(structure, ");
     writer.write("getMixinStructureFuncs.");
     const extendsClassName = extendsStructure.getName().replace(/Structure$/, "");
     writer.write(`from${extendsClassName}(node));`).newLine();

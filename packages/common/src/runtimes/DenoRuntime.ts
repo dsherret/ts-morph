@@ -5,7 +5,7 @@ import { expandGlob, expandGlobSync } from "https://deno.land/std@0.140.0/fs/exp
 // @ts-ignore
 import * as stdPath from "https://deno.land/std@0.140.0/path/mod.ts";
 
-declare var Deno: any;
+const Deno = (globalThis as any).Deno;
 
 export class DenoRuntime {
   fs = new DenoRuntimeFileSystem();
@@ -105,7 +105,7 @@ class DenoRuntimeFileSystem {
     return this._toStat(stat);
   }
 
-  private _toStat(stat: Deno.FileInfo) {
+  private _toStat(stat: any) {
     return {
       isFile() {
         return stat.isFile;

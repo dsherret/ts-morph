@@ -1,6 +1,3 @@
-import { ObjectUtils } from "@ts-morph/common";
-
-/* barrel:ignore */
 import { Node } from "./common/Node";
 
 /** @internal */
@@ -12,7 +9,7 @@ export function callBaseGetStructure<T>(basePrototype: any, node: Node, structur
     newStructure = {} as any;
 
   if (structure != null)
-    ObjectUtils.assign(newStructure, structure);
+    Object.assign(newStructure, structure);
 
   return newStructure;
 }

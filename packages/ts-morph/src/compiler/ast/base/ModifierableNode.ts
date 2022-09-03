@@ -25,7 +25,7 @@ export interface ModifierableNode {
   /**
    * Gets the node's modifiers.
    */
-  getModifiers(): Node[];
+  getModifiers(): Node<ts.Modifier>[];
   /**
    * Gets the first modifier of the specified syntax kind or throws if none found.
    * @param kind - Syntax kind.
@@ -71,7 +71,7 @@ export interface ModifierableNode {
 export function ModifierableNode<T extends Constructor<ModifierableNodeExtensionType>>(Base: T): Constructor<ModifierableNode> & T {
   return class extends Base implements ModifierableNode {
     getModifiers() {
-      return this.getCompilerModifiers().map(m => this._getNodeFromCompilerNode(m));
+      return this.getCompilerModifiers().map(m => this._getNodeFromCompilerNode(m)) as Node<ts.Modifier>[];
     }
 
     getFirstModifierByKindOrThrow<TKind extends SyntaxKind>(kind: TKind) {
@@ -109,7 +109,8 @@ export function ModifierableNode<T extends Constructor<ModifierableNodeExtension
     }
 
     addModifier(text: ModifierTexts): Node<ts.Modifier> {
-      const modifiers = this.getModifiers();
+      const rawModifiers = this.getModifiers();
+      const modifiers = this.getModifiers().filter(m => m.getKind() !== SyntaxKind.Decorator);
       const existingModifier = modifiers.find(m => m.getText() === text);
       if (existingModifier != null)
         return existingModifier;
@@ -131,7 +132,7 @@ export function ModifierableNode<T extends Constructor<ModifierableNodeExtension
 
       // insert
       insertIntoParentTextRange({
-        parent: modifiers.length === 0 ? this : modifiers[0].getParentSyntaxListOrThrow(),
+        parent: rawModifiers.length === 0 ? this : rawModifiers[0].getParentSyntaxListOrThrow(),
         insertPos,
         newText,
       });

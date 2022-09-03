@@ -427,7 +427,7 @@ export class LanguageService {
     if ((settings as any)["_filled"]) // optimization
       return settings;
 
-    settings = ObjectUtils.assign(this._context.getFormatCodeSettings(), settings);
+    settings = Object.assign(this._context.getFormatCodeSettings(), settings);
     fillDefaultFormatCodeSettings(settings, this._context.manipulationSettings);
     (settings as any)["_filled"] = true;
     return settings;
@@ -435,6 +435,6 @@ export class LanguageService {
 
   /** @internal */
   private _getFilledUserPreferences(userPreferences: UserPreferences) {
-    return ObjectUtils.assign(this._context.getUserPreferences(), userPreferences);
+    return Object.assign(this._context.getUserPreferences(), userPreferences);
   }
 }

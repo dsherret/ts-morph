@@ -106,7 +106,7 @@ export function insertOverloads<TNode extends OverloadableNode & Node, TStructur
   const mainIndex = firstIndex + index;
 
   const thisStructure = opts.getThisStructure(implementationNode);
-  const structures = opts.structures.map(structure => ObjectUtils.assign(ObjectUtils.assign({}, thisStructure), structure));
+  const structures = opts.structures.map(structure => Object.assign(Object.assign({}, thisStructure), structure));
   const writer = implementationNode._getWriterWithQueuedIndentation();
 
   // write text

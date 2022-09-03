@@ -1062,9 +1062,6 @@ export declare function nameof<TObject>(key: keyof TObject): string;
 export declare class ObjectUtils {
     private constructor();
     static clone<T>(obj: T): T;
-    static assign<T, U>(a: T, b: U): T & U;
-    static assign<T, U, V>(a: T, b: U, c: V): T & U & V;
-    private static es5Assign;
 }
 
 export declare class StringUtils {

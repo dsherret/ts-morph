@@ -46,24 +46,10 @@ But sometimes you might want to print a compiler node. There's a `printNode` uti
 ```ts
 import { printNode, ts } from "ts-morph";
 
-// Source: https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API
-const tsFunctionDeclaration = ts.createFunctionDeclaration(
-  /*decorators*/ undefined,
-  /*modifiers*/ [ts.createToken(SyntaxKind.ExportKeyword)],
-  /*asteriskToken*/ undefined,
-  "myFunction",
-  /*typeParameters*/ undefined,
-  /*parameters*/ [],
-  /*returnType*/ ts.createKeywordTypeNode(SyntaxKind.NumberKeyword),
-  ts.createBlock([ts.createReturn(ts.createLiteral(5))], /*multiline*/ true),
-);
+// get a compiler node from somewhere
+const compilerNode: ts.Node = ...;
 // optionally provide a source file and there is some printing options on this
-const functionText = printNode(tsFunctionDeclaration);
+const functionText = printNode(compilerNode);
 
 console.log(functionText);
-// outputs:
-// ========
-// export function myFunction(): number {
-//     return 5;
-// }
 ```

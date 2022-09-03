@@ -8,23 +8,23 @@ import * as getMixinStructureFuncs from "./getMixinStructureFunctions";
 
 export function fromConstructorDeclarationOverload(node: compiler.ConstructorDeclaration): structures.ConstructorDeclarationOverloadStructure {
     const structure: structures.ConstructorDeclarationOverloadStructure = {} as any;
-    ObjectUtils.assign(structure, getMixinStructureFuncs.fromScopedNode(node));
+    Object.assign(structure, getMixinStructureFuncs.fromScopedNode(node));
     return structure;
 }
 
 export function fromFunctionDeclarationOverload(node: compiler.FunctionDeclaration): structures.FunctionDeclarationOverloadStructure {
     const structure: structures.FunctionDeclarationOverloadStructure = {} as any;
-    ObjectUtils.assign(structure, getMixinStructureFuncs.fromAmbientableNode(node));
-    ObjectUtils.assign(structure, getMixinStructureFuncs.fromExportableNode(node));
+    Object.assign(structure, getMixinStructureFuncs.fromAmbientableNode(node));
+    Object.assign(structure, getMixinStructureFuncs.fromExportableNode(node));
     return structure;
 }
 
 export function fromMethodDeclarationOverload(node: compiler.MethodDeclaration): structures.MethodDeclarationOverloadStructure {
     const structure: structures.MethodDeclarationOverloadStructure = {} as any;
-    ObjectUtils.assign(structure, getMixinStructureFuncs.fromStaticableNode(node));
-    ObjectUtils.assign(structure, getMixinStructureFuncs.fromAbstractableNode(node));
-    ObjectUtils.assign(structure, getMixinStructureFuncs.fromScopedNode(node));
-    ObjectUtils.assign(structure, getMixinStructureFuncs.fromQuestionTokenableNode(node));
-    ObjectUtils.assign(structure, getMixinStructureFuncs.fromOverrideableNode(node));
+    Object.assign(structure, getMixinStructureFuncs.fromStaticableNode(node));
+    Object.assign(structure, getMixinStructureFuncs.fromAbstractableNode(node));
+    Object.assign(structure, getMixinStructureFuncs.fromScopedNode(node));
+    Object.assign(structure, getMixinStructureFuncs.fromQuestionTokenableNode(node));
+    Object.assign(structure, getMixinStructureFuncs.fromOverrideableNode(node));
     return structure;
 }
