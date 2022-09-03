@@ -17980,6 +17980,9 @@ class Type {
     isAny() {
         return this._hasTypeFlag(TypeFlags.Any);
     }
+    isNever() {
+        return this._hasTypeFlag(TypeFlags.Never);
+    }
     isArray() {
         const symbol = this.getSymbol();
         if (symbol == null)

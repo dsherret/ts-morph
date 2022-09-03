@@ -380,6 +380,13 @@ export class Type<TType extends ts.Type = ts.Type> {
   }
 
   /**
+   * Gets if this is a never type.
+   */
+  isNever() {
+    return this._hasTypeFlag(TypeFlags.Never);
+  }
+
+  /**
    * Gets if this is an array type.
    */
   isArray() {

@@ -10123,6 +10123,8 @@ export declare class Type<TType extends ts.Type = ts.Type> {
   isAnonymous(): boolean;
   /** Gets if this is an any type. */
   isAny(): boolean;
+  /** Gets if this is a never type. */
+  isNever(): boolean;
   /** Gets if this is an array type. */
   isArray(): boolean;
   /** Gets if this is a readonly array type. */

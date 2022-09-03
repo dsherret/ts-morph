@@ -54,6 +54,7 @@ let genericArrayType: Array<string>;
 let arrayType: string[];
 let readonlyArrayType: readonly string[];
 let explicitReadonlyArrayType: ReadonlyArray<string>;
+let neverType: never;
 let arrayTypeOfTuples: [string][];
 let undefinedType: undefined;
 let classType: MyClass;
@@ -135,6 +136,21 @@ let unknownType: unknown;
       });
 
       it("should not be when not any", () => {
+        doTest("stringType", false);
+      });
+    });
+
+    describe(nameof<Type>("isNever"), () => {
+      function doTest(typeName: string, expected: boolean) {
+        expect(typesByName[typeName].isNever()).to.equal(expected);
+      }
+
+      it("should be when never", () => {
+        doTest("neverType", true);
+      });
+
+      it("should not be when not never", () => {
+        doTest("anyType", false);
         doTest("stringType", false);
       });
     });
