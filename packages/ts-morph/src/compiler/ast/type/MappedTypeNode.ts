@@ -11,7 +11,7 @@ export class MappedTypeNode extends TypeNode<ts.MappedTypeNode> {
   }
 
   /** Gets the mapped type node's name type node or throws if it doesn't exist. */
-  getNameTypeNodeOrThrow(): TypeNode {
+  getNameTypeNodeOrThrow(message?: string): TypeNode {
     return errors.throwIfNullOrUndefined(this.getNameTypeNode(), "Type did not exist.");
   }
 
@@ -48,7 +48,7 @@ export class MappedTypeNode extends TypeNode<ts.MappedTypeNode> {
   }
 
   /** Gets the mapped type node's type node if it exists or throws when undefined. */
-  getTypeNodeOrThrow(): TypeNode {
+  getTypeNodeOrThrow(message?: string): TypeNode {
     return errors.throwIfNullOrUndefined(this.getTypeNode(), "Type did not exist, but was expected to exist.");
   }
 }

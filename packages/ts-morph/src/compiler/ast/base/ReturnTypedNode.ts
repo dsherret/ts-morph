@@ -24,7 +24,7 @@ export interface ReturnTypedNode {
   /**
    * Gets the return type node or throws if none exists.
    */
-  getReturnTypeNodeOrThrow(): TypeNode;
+  getReturnTypeNodeOrThrow(message?: string): TypeNode;
   /**
    * Sets the return type of the node.
    * @param textOrWriterFunction - Text or writer function to set the return type with.

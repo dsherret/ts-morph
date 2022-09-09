@@ -2,43 +2,65 @@ import { StandardizedFilePath } from "./fileSystem";
 import { getSyntaxKindName } from "./helpers";
 import { ts } from "./typescript";
 
+/** Minimal attributes to show a error message with source */
+export type MaybeTraceAbleNode = undefined | null | {} | {
+    getSourceFile: () => ts.SourceFile;
+    pos: number;
+}
+
 /** Collection of helper functions that can be used to throw errors. */
 export namespace errors {
   /** Base error class. */
   export abstract class BaseError extends Error {
+    public readonly source: { fileName: string; pos: ts.LineAndCharacter } | undefined;
     /** @private */
-    constructor(public readonly message: string) {
-      super(message);
-
-      this.message = message;
+    constructor(public readonly message: string, node?: MaybeTraceAbleNode) {
+      let messageWithSource = message;
+      let source: { fileName: string; pos: ts.LineAndCharacter } | undefined;
+      if (node && "getSourceFile" in node && "pos" in node) {
+        try {
+          const sourceFile = node.getSourceFile();
+          source = { fileName: sourceFile.fileName, pos: sourceFile.getLineAndCharacterOfPosition(node.pos) };
+          const brokenLineStart = sourceFile.getPositionOfLineAndCharacter(source.pos.line, 0);
+          const brokenLineEnd = sourceFile.getLineEndOfPosition(node.pos);
+          const brokenLine = sourceFile.text.substring(brokenLineStart, brokenLineEnd);
+          messageWithSource += ` at ${source.fileName}:${source.pos.line + 1}:${source.pos.character + 1}\n${brokenLine}\n${" ".repeat(source.pos.character)}^`;
+        } catch (e) {
+          // Errors inside BaseError would be confusing
+          // so ignore errors here and fallback to the original message
+        }
+    }
+      super(messageWithSource);
+      this.message = messageWithSource;
+      this.source = source;
     }
   }
 
   /** Thrown when there is a problem with a provided argument. */
   export class ArgumentError extends BaseError {
-    constructor(argName: string, message: string) {
-      super(`Argument Error (${argName}): ${message}`);
+    constructor(argName: string, message: string, node?: MaybeTraceAbleNode) {
+      super(`Argument Error (${argName}): ${message}`, node);
     }
   }
 
   /** Thrown when an argument is null or whitespace. */
   export class ArgumentNullOrWhitespaceError extends ArgumentError {
-    constructor(argName: string) {
-      super(argName, "Cannot be null or whitespace.");
+    constructor(argName: string, node?: MaybeTraceAbleNode) {
+      super(argName, "Cannot be null or whitespace.", node);
     }
   }
 
   /** Thrown when an argument is out of range. */
   export class ArgumentOutOfRangeError extends ArgumentError {
-    constructor(argName: string, value: number, range: [number, number]) {
-      super(argName, `Range is ${range[0]} to ${range[1]}, but ${value} was provided.`);
+    constructor(argName: string, value: number, range: [number, number], node?: MaybeTraceAbleNode) {
+      super(argName, `Range is ${range[0]} to ${range[1]}, but ${value} was provided.`, node);
     }
   }
 
   /** Thrown when an argument does not match an expected type. */
   export class ArgumentTypeError extends ArgumentError {
-    constructor(argName: string, expectedType: string, actualType: string) {
-      super(argName, `Expected type '${expectedType}', but was '${actualType}'.`);
+    constructor(argName: string, expectedType: string, actualType: string, node?: MaybeTraceAbleNode) {
+      super(argName, `Expected type '${expectedType}', but was '${actualType}'.`, node);
     }
   }
 
@@ -67,15 +89,15 @@ export namespace errors {
 
   /** Thrown when an action was taken that is not allowed. */
   export class InvalidOperationError extends BaseError {
-    constructor(message: string) {
-      super(message);
+    constructor(message: string, node?: MaybeTraceAbleNode) {
+      super(message, node);
     }
   }
 
   /** Thrown when a certain behaviour or feature has not been implemented. */
   export class NotImplementedError extends BaseError {
-    constructor(message = "Not implemented.") {
-      super(message);
+    constructor(message = "Not implemented.", node?: MaybeTraceAbleNode) {
+      super(message, node);
     }
   }
 
@@ -148,8 +170,8 @@ export namespace errors {
    * Gets an error saying that a feature is not implemented for a certain syntax kind.
    * @param kind - Syntax kind that isn't implemented.
    */
-  export function throwNotImplementedForSyntaxKindError(kind: ts.SyntaxKind): never {
-    throw new NotImplementedError(`Not implemented feature for syntax kind '${getSyntaxKindName(kind)}'.`);
+  export function throwNotImplementedForSyntaxKindError(kind: ts.SyntaxKind, node?: MaybeTraceAbleNode): never {
+    throw new NotImplementedError(`Not implemented feature for syntax kind '${getSyntaxKindName(kind)}'.`, node);
   }
 
   /**
@@ -167,9 +189,9 @@ export namespace errors {
    * @param value - Value to check.
    * @param errorMessage - Error message to throw when not defined.
    */
-  export function throwIfNullOrUndefined<T>(value: T | undefined, errorMessage: string | (() => string)) {
+  export function throwIfNullOrUndefined<T>(value: T | undefined, errorMessage: string | (() => string), node?: MaybeTraceAbleNode) {
     if (value == null)
-      throw new InvalidOperationError(typeof errorMessage === "string" ? errorMessage : errorMessage());
+      throw new InvalidOperationError(typeof errorMessage === "string" ? errorMessage : errorMessage(), node);
     return value;
   }
 
@@ -177,12 +199,12 @@ export namespace errors {
    * Throw if the value should have been the never type.
    * @param value - Value to check.
    */
-  export function throwNotImplementedForNeverValueError(value: never): never {
+  export function throwNotImplementedForNeverValueError(value: never, sourceNode?: MaybeTraceAbleNode): never {
     const node = value as any as { kind: number };
     if (node != null && typeof node.kind === "number")
-      return throwNotImplementedForSyntaxKindError(node.kind);
+      return throwNotImplementedForSyntaxKindError(node.kind, sourceNode);
 
-    throw new NotImplementedError(`Not implemented value: ${JSON.stringify(value)}`);
+    throw new NotImplementedError(`Not implemented value: ${JSON.stringify(value)}`, sourceNode);
   }
 
   /**

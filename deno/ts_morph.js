@@ -2793,7 +2793,7 @@ function AsyncableNode(Base) {
         getAsyncKeyword() {
             return this.getFirstModifierByKind(SyntaxKind.AsyncKeyword);
         }
-        getAsyncKeywordOrThrow() {
+        getAsyncKeywordOrThrow(message) {
             return errors.throwIfNullOrUndefined(this.getAsyncKeyword(), "Expected to find an async keyword.");
         }
         setIsAsync(value) {
@@ -2823,7 +2823,7 @@ function AwaitableNode(Base) {
             const awaitModifier = this.compilerNode.awaitModifier;
             return this._getNodeFromCompilerNodeIfExists(awaitModifier);
         }
-        getAwaitKeywordOrThrow() {
+        getAwaitKeywordOrThrow(message) {
             return errors.throwIfNullOrUndefined(this.getAwaitKeyword(), "Expected to find an await token.");
         }
         setIsAwaited(value) {
@@ -3044,7 +3044,7 @@ class Node {
         else
             return printNode(this.compilerNode, this._sourceFile.compilerNode, options);
     }
-    getSymbolOrThrow() {
+    getSymbolOrThrow(message) {
         return errors.throwIfNullOrUndefined(this.getSymbol(), "Could not find the node's symbol.");
     }
     getSymbol() {
@@ -5955,7 +5955,7 @@ function ExclamationTokenableNode(Base) {
         getExclamationTokenNode() {
             return this._getNodeFromCompilerNodeIfExists(this.compilerNode.exclamationToken);
         }
-        getExclamationTokenNodeOrThrow() {
+        getExclamationTokenNodeOrThrow(message) {
             return errors.throwIfNullOrUndefined(this.getExclamationTokenNode(), "Expected to find an exclamation token.");
         }
         setHasExclamationToken(value) {
@@ -8721,7 +8721,7 @@ function GeneratorableNode(Base) {
         getAsteriskToken() {
             return this._getNodeFromCompilerNodeIfExists(this.compilerNode.asteriskToken);
         }
-        getAsteriskTokenOrThrow() {
+        getAsteriskTokenOrThrow(message) {
             return errors.throwIfNullOrUndefined(this.getAsteriskToken(), "Expected to find an asterisk token.");
         }
         setIsGenerator(value) {
@@ -9252,7 +9252,7 @@ function ModuledNode(Base) {
                 return undefined;
             return sourceFileSymbol.getExport("default");
         }
-        getDefaultExportSymbolOrThrow() {
+        getDefaultExportSymbolOrThrow(message) {
             return errors.throwIfNullOrUndefined(this.getDefaultExportSymbol(), "Expected to find a default export symbol");
         }
         getExportSymbols() {
@@ -9515,7 +9515,7 @@ function OverrideableNode(Base) {
         getOverrideKeyword() {
             return this.getFirstModifierByKind(SyntaxKind.OverrideKeyword);
         }
-        getOverrideKeywordOrThrow() {
+        getOverrideKeywordOrThrow(message) {
             return errors.throwIfNullOrUndefined(this.getOverrideKeyword(), "Expected to find an override keyword.");
         }
         setHasOverrideKeyword(value) {
@@ -9598,7 +9598,7 @@ function QuestionDotTokenableNode(Base) {
         getQuestionDotTokenNode() {
             return this._getNodeFromCompilerNodeIfExists(this.compilerNode.questionDotToken);
         }
-        getQuestionDotTokenNodeOrThrow() {
+        getQuestionDotTokenNodeOrThrow(message) {
             return errors.throwIfNullOrUndefined(this.getQuestionDotTokenNode(), "Expected to find a question dot token.");
         }
         setHasQuestionDotToken(value) {
@@ -9654,7 +9654,7 @@ function QuestionTokenableNode(Base) {
         getQuestionTokenNode() {
             return this._getNodeFromCompilerNodeIfExists(this.compilerNode.questionToken);
         }
-        getQuestionTokenNodeOrThrow() {
+        getQuestionTokenNodeOrThrow(message) {
             return errors.throwIfNullOrUndefined(this.getQuestionTokenNode(), "Expected to find a question token.");
         }
         setHasQuestionToken(value) {
@@ -10430,7 +10430,7 @@ class ArrayBindingPattern extends Node {
 const createBase$D = (ctor) => DotDotDotTokenableNode(InitializerExpressionableNode(BindingNamedNode(ctor)));
 const BindingElementBase = createBase$D(Node);
 class BindingElement extends BindingElementBase {
-    getPropertyNameNodeOrThrow() {
+    getPropertyNameNodeOrThrow(message) {
         return errors.throwIfNullOrUndefined(this.getPropertyNameNode(), "Expected to find a property name node.");
     }
     getPropertyNameNode() {
@@ -11850,8 +11850,8 @@ class ExportDeclaration extends ExportDeclarationBase {
         const moduleSpecifier = this.getModuleSpecifier();
         return moduleSpecifier === null || moduleSpecifier === void 0 ? void 0 : moduleSpecifier.getLiteralValue();
     }
-    getModuleSpecifierSourceFileOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getModuleSpecifierSourceFile(), `A module specifier source file was expected.`);
+    getModuleSpecifierSourceFileOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getModuleSpecifierSourceFile(), message || `A module specifier source file was expected.`, this);
     }
     getModuleSpecifierSourceFile() {
         const stringLiteral = this.getLastChildByKind(SyntaxKind.StringLiteral);
@@ -12144,8 +12144,8 @@ class ExportSpecifier extends ExportSpecifierBase {
     getExportDeclaration() {
         return this.getFirstAncestorByKindOrThrow(SyntaxKind.ExportDeclaration);
     }
-    getLocalTargetSymbolOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getLocalTargetSymbol(), `The export specifier's local target symbol was expected.`);
+    getLocalTargetSymbolOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getLocalTargetSymbol(), message || `The export specifier's local target symbol was expected.`, this);
     }
     getLocalTargetSymbol() {
         return this._context.typeChecker.getExportSpecifierLocalTargetSymbol(this);
@@ -12290,8 +12290,8 @@ class ImportDeclaration extends ImportDeclarationBase {
     getModuleSpecifierValue() {
         return this.getModuleSpecifier().getLiteralValue();
     }
-    getModuleSpecifierSourceFileOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getModuleSpecifierSourceFile(), `A module specifier source file was expected.`);
+    getModuleSpecifierSourceFileOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getModuleSpecifierSourceFile(), message || `A module specifier source file was expected.`, this);
     }
     getModuleSpecifierSourceFile() {
         const symbol = this.getModuleSpecifier().getSymbol();
@@ -13632,7 +13632,7 @@ function OverloadableNode(Base) {
                 return this;
             return getOverloadsAndImplementation(this).find(n => n.isImplementation());
         }
-        getImplementationOrThrow() {
+        getImplementationOrThrow(message) {
             return errors.throwIfNullOrUndefined(this.getImplementation(), "Expected to find a corresponding implementation for the overload.");
         }
         isOverload() {
@@ -13968,8 +13968,8 @@ function ClassLikeDeclarationBaseSpecific(Base) {
             extendsClause.removeExpression(0);
             return this;
         }
-        getExtendsOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getExtends(), `Expected to find the extends expression for the class ${this.getName()}.`);
+        getExtendsOrThrow(message) {
+            return errors.throwIfNullOrUndefined(this.getExtends(), message || `Expected to find the extends expression for the class ${this.getName()}.`, this);
         }
         getExtends() {
             const extendsClause = this.getHeritageClauseByKind(SyntaxKind.ExtendsKeyword);
@@ -14335,8 +14335,8 @@ function ClassLikeDeclarationBaseSpecific(Base) {
         getBaseTypes() {
             return this.getType().getBaseTypes();
         }
-        getBaseClassOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getBaseClass(), `Expected to find the base class of ${this.getName()}.`);
+        getBaseClassOrThrow(message) {
+            return errors.throwIfNullOrUndefined(this.getBaseClass(), message || `Expected to find the base class of ${this.getName()}.`, this);
         }
         getBaseClass() {
             const baseTypes = ArrayUtils.flatten(this.getBaseTypes().map(t => t.isIntersection() ? t.getIntersectionTypes() : [t]));
@@ -14677,8 +14677,8 @@ class GetAccessorDeclaration extends GetAccessorDeclarationBase {
             return undefined;
         });
     }
-    getSetAccessorOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getSetAccessor(), () => `Expected to find a corresponding set accessor for ${this.getName()}.`);
+    getSetAccessorOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getSetAccessor(), () => message || `Expected to find a corresponding set accessor for ${this.getName()}.`, this);
     }
     getStructure() {
         return callBaseGetStructure(GetAccessorDeclarationBase.prototype, this, {
@@ -14727,8 +14727,8 @@ class SetAccessorDeclaration extends SetAccessorDeclarationBase {
             return undefined;
         });
     }
-    getGetAccessorOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getGetAccessor(), () => `Expected to find a corresponding get accessor for ${this.getName()}.`);
+    getGetAccessorOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getGetAccessor(), () => message || `Expected to find a corresponding get accessor for ${this.getName()}.`, this);
     }
     getStructure() {
         return callBaseGetStructure(SetAccessorDeclarationBase.prototype, this, {
@@ -14807,7 +14807,7 @@ class Decorator extends DecoratorBase {
         }
         return this;
     }
-    getCallExpressionOrThrow() {
+    getCallExpressionOrThrow(message) {
         return errors.throwIfNullOrUndefined(this.getCallExpression(), "Expected to find a call expression.");
     }
     getCallExpression() {
@@ -14915,8 +14915,8 @@ function JSDocPropertyLikeTag(Base) {
         getTypeExpression() {
             return this._getNodeFromCompilerNodeIfExists(this.compilerNode.typeExpression);
         }
-        getTypeExpressionOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getTypeExpression(), `Expected to find a JS doc type expression.`);
+        getTypeExpressionOrThrow(message) {
+            return errors.throwIfNullOrUndefined(this.getTypeExpression(), message || `Expected to find a JS doc type expression.`, this);
         }
         getName() {
             return this.getNameNode().getText();
@@ -14938,8 +14938,8 @@ function JSDocTypeExpressionableTag(Base) {
                 return undefined;
             return result;
         }
-        getTypeExpressionOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getTypeExpression(), `Expected to find the JS doc tag's type expression.`);
+        getTypeExpressionOrThrow(message) {
+            return errors.throwIfNullOrUndefined(this.getTypeExpression(), message || `Expected to find the JS doc tag's type expression.`, this);
         }
     };
 }
@@ -15211,8 +15211,8 @@ class ImportTypeNode extends NodeWithTypeArguments {
         }
         return this;
     }
-    getQualifierOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getQualifier(), () => `Expected to find a qualifier for the import type: ${this.getText()}`);
+    getQualifierOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getQualifier(), () => message || `Expected to find a qualifier for the import type: ${this.getText()}`, this);
     }
     getQualifier() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.qualifier);
@@ -15257,7 +15257,7 @@ class MappedTypeNode extends TypeNode {
     getNameTypeNode() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.nameType);
     }
-    getNameTypeNodeOrThrow() {
+    getNameTypeNodeOrThrow(message) {
         return errors.throwIfNullOrUndefined(this.getNameTypeNode(), "Type did not exist.");
     }
     getReadonlyToken() {
@@ -15278,7 +15278,7 @@ class MappedTypeNode extends TypeNode {
     getTypeNode() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.type);
     }
-    getTypeNodeOrThrow() {
+    getTypeNodeOrThrow(message) {
         return errors.throwIfNullOrUndefined(this.getTypeNode(), "Type did not exist, but was expected to exist.");
     }
 }
@@ -15508,7 +15508,7 @@ class TypePredicateNode extends TypeNode {
     getTypeNode() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.type);
     }
-    getTypeNodeOrThrow() {
+    getTypeNodeOrThrow(message) {
         return errors.throwIfNullOrUndefined(this.getTypeNode(), "Expected to find a type node.");
     }
 }
@@ -16201,8 +16201,8 @@ function JsxTagNamedNode(Base) {
 
 const JsxAttributeBase = NamedNode(Node);
 class JsxAttribute extends JsxAttributeBase {
-    getInitializerOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getInitializer(), `Expected to find an initializer for the JSX attribute '${this.getName()}'`);
+    getInitializerOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getInitializer(), message || `Expected to find an initializer for the JSX attribute '${this.getName()}'`, this);
     }
     getInitializer() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.initializer);
@@ -16827,13 +16827,13 @@ class Symbol {
     getEscapedName() {
         return this.compilerSymbol.getEscapedName();
     }
-    getAliasedSymbolOrThrow() {
+    getAliasedSymbolOrThrow(message) {
         return errors.throwIfNullOrUndefined(this.getAliasedSymbol(), "Expected to find an aliased symbol.");
     }
     getImmediatelyAliasedSymbol() {
         return this._context.typeChecker.getImmediatelyAliasedSymbol(this);
     }
-    getImmediatelyAliasedSymbolOrThrow() {
+    getImmediatelyAliasedSymbolOrThrow(message) {
         return errors.throwIfNullOrUndefined(this.getImmediatelyAliasedSymbol(), "Expected to find an immediately aliased symbol.");
     }
     getAliasedSymbol() {
@@ -16854,8 +16854,8 @@ class Symbol {
     hasFlags(flags) {
         return (this.compilerSymbol.flags & flags) === flags;
     }
-    getValueDeclarationOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getValueDeclaration(), () => `Expected to find the value declaration of symbol '${this.getName()}'.`);
+    getValueDeclarationOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getValueDeclaration(), () => message || `Expected to find the value declaration of symbol '${this.getName()}'.`, this);
     }
     getValueDeclaration() {
         const declaration = this.compilerSymbol.valueDeclaration;
@@ -17847,7 +17847,7 @@ class Type {
     getAliasSymbol() {
         return this.compilerType.aliasSymbol == null ? undefined : this._context.compilerFactory.getSymbol(this.compilerType.aliasSymbol);
     }
-    getAliasSymbolOrThrow() {
+    getAliasSymbolOrThrow(message) {
         return errors.throwIfNullOrUndefined(this.getAliasSymbol(), "Expected to find an alias symbol.");
     }
     getAliasTypeArguments() {
@@ -17925,7 +17925,7 @@ class Type {
         const targetType = this.compilerType.target || undefined;
         return targetType == null ? undefined : this._context.compilerFactory.getType(targetType);
     }
-    getTargetTypeOrThrow() {
+    getTargetTypeOrThrow(message) {
         return errors.throwIfNullOrUndefined(this.getTargetType(), "Expected to find the target type.");
     }
     getTypeArguments() {
@@ -17971,7 +17971,7 @@ class Type {
         const tsSymbol = this.compilerType.getSymbol();
         return tsSymbol == null ? undefined : this._context.compilerFactory.getSymbol(tsSymbol);
     }
-    getSymbolOrThrow() {
+    getSymbolOrThrow(message) {
         return errors.throwIfNullOrUndefined(this.getSymbol(), "Expected to find a symbol.");
     }
     isAnonymous() {
@@ -18091,7 +18091,7 @@ class Type {
 }
 
 class TypeParameter extends Type {
-    getConstraintOrThrow() {
+    getConstraintOrThrow(message) {
         return errors.throwIfNullOrUndefined(this.getConstraint(), "Expected type parameter to have a constraint.");
     }
     getConstraint() {
@@ -18103,7 +18103,7 @@ class TypeParameter extends Type {
             return undefined;
         return this._context.typeChecker.getTypeAtLocation(constraintNode);
     }
-    getDefaultOrThrow() {
+    getDefaultOrThrow(message) {
         return errors.throwIfNullOrUndefined(this.getDefault(), "Expected type parameter to have a default type.");
     }
     getDefault() {
@@ -18170,8 +18170,8 @@ class Directory {
     getBaseName() {
         return this._pathParts[this._pathParts.length - 1];
     }
-    getParentOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getParent(), () => `Parent directory of ${this.getPath()} does not exist or was never added.`);
+    getParentOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getParent(), () => message || `Parent directory of ${this.getPath()} does not exist or was never added.`, this);
     }
     getParent() {
         if (FileUtils.isRootDirPath(this.getPath()))

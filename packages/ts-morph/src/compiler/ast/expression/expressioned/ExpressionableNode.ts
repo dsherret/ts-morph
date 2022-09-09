@@ -14,7 +14,7 @@ export interface ExpressionableNode {
   /**
    * Gets the expression if it exists or throws.
    */
-  getExpressionOrThrow(): Expression;
+  getExpressionOrThrow(message?: string): Expression;
   /**
    * Gets the expression if it is of the specified syntax kind or returns undefined.
    */

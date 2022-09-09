@@ -20,7 +20,7 @@ export interface ReadonlyableNode {
   /**
    * Gets the readonly keyword, or throws if none exists.
    */
-  getReadonlyKeywordOrThrow(): Node;
+  getReadonlyKeywordOrThrow(message?: string): Node;
   /**
    * Sets if this node is readonly.
    * @param value - If readonly or not.

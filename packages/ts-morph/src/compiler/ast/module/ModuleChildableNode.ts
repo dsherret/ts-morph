@@ -14,7 +14,7 @@ export interface ModuleChildableNode {
   /**
    * Gets the parent module declaration or throws if it doesn't exist.
    */
-  getParentModuleOrThrow(): ModuleDeclaration;
+  getParentModuleOrThrow(message?: string): ModuleDeclaration;
 }
 
 export function ModuleChildableNode<T extends Constructor<ModuleChildableNodeExtensionType>>(Base: T): Constructor<ModuleChildableNode> & T {

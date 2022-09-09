@@ -26,7 +26,7 @@ export interface InitializerExpressionGetableNode {
   /**
    * Gets the initializer or throw.
    */
-  getInitializerOrThrow(): Expression;
+  getInitializerOrThrow(message?: string): Expression;
 }
 
 export function InitializerExpressionGetableNode<T extends Constructor<InitializerExpressionGetableNodeExtensionType>>(

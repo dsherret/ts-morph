@@ -18,7 +18,7 @@ export interface TypedNode {
   /**
    * Gets the type node or throws if none exists.
    */
-  getTypeNodeOrThrow(): TypeNode;
+  getTypeNodeOrThrow(message?: string): TypeNode;
   /**
    * Sets the type.
    * @param textOrWriterFunction - Text or writer function to set the type with.

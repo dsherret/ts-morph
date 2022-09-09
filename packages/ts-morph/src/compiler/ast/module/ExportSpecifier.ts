@@ -157,8 +157,8 @@ export class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecifier> {
   /**
    * Gets the local target symbol of the export specifier or throws if it doesn't exist.
    */
-  getLocalTargetSymbolOrThrow() {
-    return errors.throwIfNullOrUndefined(this.getLocalTargetSymbol(), `The export specifier's local target symbol was expected.`);
+  getLocalTargetSymbolOrThrow(message?: string) {
+    return errors.throwIfNullOrUndefined(this.getLocalTargetSymbol(), message || `The export specifier's local target symbol was expected.`, this);
   }
 
   /**

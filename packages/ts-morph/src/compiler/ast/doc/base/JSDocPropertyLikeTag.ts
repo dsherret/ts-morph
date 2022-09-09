@@ -11,7 +11,7 @@ export interface JSDocPropertyLikeTag {
   /** Gets the type expression node of the JS doc tag if it exists. */
   getTypeExpression(): JSDocTypeExpression | undefined;
   /** Gets the type expression node of the JS doc tag or throws if it doesn't exist. */
-  getTypeExpressionOrThrow(): JSDocTypeExpression;
+  getTypeExpressionOrThrow(message?: string): JSDocTypeExpression;
   /** Gets the name of the JS doc property like tag. */
   getName(): string;
   /** Gets the name node of the JS doc property like tag. */
@@ -27,8 +27,8 @@ export function JSDocPropertyLikeTag<T extends Constructor<JSDocPropertyLikeTagE
       return this._getNodeFromCompilerNodeIfExists(this.compilerNode.typeExpression);
     }
 
-    getTypeExpressionOrThrow() {
-      return errors.throwIfNullOrUndefined(this.getTypeExpression(), `Expected to find a JS doc type expression.`);
+    getTypeExpressionOrThrow(message?: string) {
+      return errors.throwIfNullOrUndefined(this.getTypeExpression(), message || `Expected to find a JS doc type expression.`, this);
     }
 
     getName() {

@@ -47,7 +47,7 @@ export class TypePredicateNode extends TypeNode<ts.TypePredicateNode> {
   /**
    * Gets the type name if it exists or throws when it asserts a condition.
    */
-  getTypeNodeOrThrow(): TypeNode {
+  getTypeNodeOrThrow(message?: string): TypeNode {
     return errors.throwIfNullOrUndefined(this.getTypeNode(), "Expected to find a type node.");
   }
 }

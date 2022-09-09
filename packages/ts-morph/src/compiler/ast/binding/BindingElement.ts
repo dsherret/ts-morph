@@ -11,7 +11,7 @@ export class BindingElement extends BindingElementBase<ts.BindingElement> {
    *
    * For example in `const { a: b } = { a: 5 }`, `a` would be the property name.
    */
-  getPropertyNameNodeOrThrow(): PropertyName {
+  getPropertyNameNodeOrThrow(message?: string): PropertyName {
     return errors.throwIfNullOrUndefined(this.getPropertyNameNode(), "Expected to find a property name node.");
   }
 

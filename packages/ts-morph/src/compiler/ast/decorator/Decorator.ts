@@ -111,7 +111,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
   /**
    * Gets the call expression if a decorator factory, or throws.
    */
-  getCallExpressionOrThrow(): CallExpression {
+  getCallExpressionOrThrow(message?: string): CallExpression {
     return errors.throwIfNullOrUndefined(this.getCallExpression(), "Expected to find a call expression.");
   }
 

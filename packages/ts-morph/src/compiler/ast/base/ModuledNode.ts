@@ -155,7 +155,7 @@ export interface ModuledNode {
   /**
    * Gets the default export symbol or throws if it doesn't exist.
    */
-  getDefaultExportSymbolOrThrow(): Symbol;
+  getDefaultExportSymbolOrThrow(message?: string): Symbol;
   /**
    * Gets the export symbols.
    */
@@ -351,7 +351,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
       return sourceFileSymbol.getExport("default");
     }
 
-    getDefaultExportSymbolOrThrow(): Symbol {
+    getDefaultExportSymbolOrThrow(message?: string): Symbol {
       return errors.throwIfNullOrUndefined(this.getDefaultExportSymbol(), "Expected to find a default export symbol");
     }
 

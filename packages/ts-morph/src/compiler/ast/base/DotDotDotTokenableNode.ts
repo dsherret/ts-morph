@@ -12,7 +12,7 @@ export interface DotDotDotTokenableNode {
   /**
    * Gets the dot dot dot token (...) if it exists or throws if not.
    */
-  getDotDotDotTokenOrThrow(): Node<ts.DotDotDotToken>;
+  getDotDotDotTokenOrThrow(message?: string): Node<ts.DotDotDotToken>;
 }
 
 export function DotDotDotTokenableNode<T extends Constructor<DotDotDotTokenableNodeExtensionType>>(Base: T): Constructor<DotDotDotTokenableNode> & T {

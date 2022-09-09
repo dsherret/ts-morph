@@ -20,7 +20,7 @@ export interface AbstractableNode {
   /**
    * Gets the abstract keyword or throws if it doesn't exist.
    */
-  getAbstractKeywordOrThrow(): Node;
+  getAbstractKeywordOrThrow(message?: string): Node;
   /**
    * Sets if the node is abstract.
    * @param isAbstract - If it should be abstract or not.

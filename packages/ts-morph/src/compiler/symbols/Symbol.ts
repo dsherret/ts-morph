@@ -48,7 +48,7 @@ export class Symbol {
   /**
    * Gets the aliased symbol or throws if it doesn't exist.
    */
-  getAliasedSymbolOrThrow(): Symbol {
+  getAliasedSymbolOrThrow(message?: string): Symbol {
     return errors.throwIfNullOrUndefined(this.getAliasedSymbol(), "Expected to find an aliased symbol.");
   }
 
@@ -62,7 +62,7 @@ export class Symbol {
   /**
    * Follows a single alias to get the immediately aliased symbol or throws if it doesn't exist.
    */
-  getImmediatelyAliasedSymbolOrThrow(): Symbol {
+  getImmediatelyAliasedSymbolOrThrow(message?: string): Symbol {
     return errors.throwIfNullOrUndefined(this.getImmediatelyAliasedSymbol(), "Expected to find an immediately aliased symbol.");
   }
 
@@ -119,8 +119,8 @@ export class Symbol {
   /**
    * Gets the value declaration of a symbol or throws if it doesn't exist.
    */
-  getValueDeclarationOrThrow(): Node {
-    return errors.throwIfNullOrUndefined(this.getValueDeclaration(), () => `Expected to find the value declaration of symbol '${this.getName()}'.`);
+  getValueDeclarationOrThrow(message?: string): Node {
+    return errors.throwIfNullOrUndefined(this.getValueDeclaration(), () => message || `Expected to find the value declaration of symbol '${this.getName()}'.`, this);
   }
 
   /**

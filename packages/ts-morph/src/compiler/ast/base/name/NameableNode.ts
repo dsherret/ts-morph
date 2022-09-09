@@ -22,7 +22,7 @@ export interface NameableNodeSpecific {
   /**
    * Gets the name node if it exists, or throws.
    */
-  getNameNodeOrThrow(): Identifier;
+  getNameNodeOrThrow(message?: string): Identifier;
   /**
    * Gets the name if it exists.
    */
@@ -30,7 +30,7 @@ export interface NameableNodeSpecific {
   /**
    * Gets the name if it exists, or throws.
    */
-  getNameOrThrow(): string;
+  getNameOrThrow(message?: string): string;
   /**
    * Removes the name from the node.
    */

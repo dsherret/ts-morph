@@ -21,7 +21,7 @@ export interface AmbientableNode {
   /**
    * Gets the declare keyword or throws if it doesn't exist.
    */
-  getDeclareKeywordOrThrow(): Node;
+  getDeclareKeywordOrThrow(message?: string): Node;
   /**
    * Gets if the node is ambient.
    */

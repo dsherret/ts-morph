@@ -10,7 +10,7 @@ export interface BodyableNode {
   /**
    * Gets the body or throws an error if it doesn't exist.
    */
-  getBodyOrThrow(): Node;
+  getBodyOrThrow(message?: string): Node;
   /**
    * Gets the body if it exists.
    */

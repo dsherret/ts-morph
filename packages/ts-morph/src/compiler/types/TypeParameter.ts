@@ -6,7 +6,7 @@ export class TypeParameter extends Type<ts.TypeParameter> {
   /**
    * Gets the constraint or throws if it doesn't exist.
    */
-  getConstraintOrThrow(): Type {
+  getConstraintOrThrow(message?: string): Type {
     return errors.throwIfNullOrUndefined(this.getConstraint(), "Expected type parameter to have a constraint.");
   }
 
@@ -26,7 +26,7 @@ export class TypeParameter extends Type<ts.TypeParameter> {
   /**
    * Gets the default type or throws if it doesn't exist.
    */
-  getDefaultOrThrow(): Type {
+  getDefaultOrThrow(message?: string): Type {
     return errors.throwIfNullOrUndefined(this.getDefault(), "Expected type parameter to have a default type.");
   }
 

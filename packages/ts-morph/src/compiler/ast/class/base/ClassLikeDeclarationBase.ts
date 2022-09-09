@@ -98,7 +98,7 @@ export interface ClassLikeDeclarationBaseSpecific {
   /**
    * Gets the extends expression or throws if it doesn't exist.
    */
-  getExtendsOrThrow(): ExpressionWithTypeArguments;
+  getExtendsOrThrow(message?: string): ExpressionWithTypeArguments;
   /**
    * Gets the extends expression or returns undefined if it doesn't exist.
    */
@@ -574,7 +574,7 @@ export interface ClassLikeDeclarationBaseSpecific {
    *
    * Note: Use getBaseTypes if you need to get the mixins.
    */
-  getBaseClassOrThrow(): ClassDeclaration;
+  getBaseClassOrThrow(message?: string): ClassDeclaration;
   /**
    * Gets the base class.
    *
@@ -641,8 +641,8 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
       return this;
     }
 
-    getExtendsOrThrow() {
-      return errors.throwIfNullOrUndefined(this.getExtends(), `Expected to find the extends expression for the class ${this.getName()}.`);
+    getExtendsOrThrow(message?: string) {
+      return errors.throwIfNullOrUndefined(this.getExtends(), message || `Expected to find the extends expression for the class ${this.getName()}.`, this);
     }
 
     getExtends(): ExpressionWithTypeArguments | undefined {
@@ -1186,8 +1186,8 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
       return this.getType().getBaseTypes();
     }
 
-    getBaseClassOrThrow() {
-      return errors.throwIfNullOrUndefined(this.getBaseClass(), `Expected to find the base class of ${this.getName()}.`);
+    getBaseClassOrThrow(message?: string) {
+      return errors.throwIfNullOrUndefined(this.getBaseClass(), message || `Expected to find the base class of ${this.getName()}.`, this);
     }
 
     getBaseClass() {

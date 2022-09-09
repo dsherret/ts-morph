@@ -146,8 +146,8 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
   /**
    * Gets the source file referenced in the module specifier or throws if it can't find it or it doesn't exist.
    */
-  getModuleSpecifierSourceFileOrThrow() {
-    return errors.throwIfNullOrUndefined(this.getModuleSpecifierSourceFile(), `A module specifier source file was expected.`);
+  getModuleSpecifierSourceFileOrThrow(message?: string) {
+    return errors.throwIfNullOrUndefined(this.getModuleSpecifierSourceFile(), message || `A module specifier source file was expected.`, this);
   }
 
   /**

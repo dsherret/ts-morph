@@ -17,7 +17,7 @@ export interface ExportGetableNode {
   /**
    * Gets the export keyword or throws if none exists.
    */
-  getExportKeywordOrThrow(): Node;
+  getExportKeywordOrThrow(message?: string): Node;
   /**
    * If the node has the default keyword.
    */
@@ -29,7 +29,7 @@ export interface ExportGetableNode {
   /**
    * Gets the default keyword or throws if none exists.
    */
-  getDefaultKeywordOrThrow(): Node;
+  getDefaultKeywordOrThrow(message?: string): Node;
   /**
    * Gets if the node is exported from a namespace, is a default export, or is a named export.
    */

@@ -48,7 +48,7 @@ export class Type<TType extends ts.Type = ts.Type> {
   /**
    * Gets the alias symbol if it exists, or throws.
    */
-  getAliasSymbolOrThrow(): Symbol {
+  getAliasSymbolOrThrow(message?: string): Symbol {
     return errors.throwIfNullOrUndefined(this.getAliasSymbol(), "Expected to find an alias symbol.");
   }
 
@@ -260,7 +260,7 @@ export class Type<TType extends ts.Type = ts.Type> {
    * - Given `string` throws an error.
    */
 
-  getTargetTypeOrThrow(): Type<ts.GenericType> {
+  getTargetTypeOrThrow(message?: string): Type<ts.GenericType> {
     return errors.throwIfNullOrUndefined(this.getTargetType(), "Expected to find the target type.");
   }
 
@@ -361,7 +361,7 @@ export class Type<TType extends ts.Type = ts.Type> {
   /**
    * Gets the symbol of the type or throws.
    */
-  getSymbolOrThrow(): Symbol {
+  getSymbolOrThrow(message?: string): Symbol {
     return errors.throwIfNullOrUndefined(this.getSymbol(), "Expected to find a symbol.");
   }
 

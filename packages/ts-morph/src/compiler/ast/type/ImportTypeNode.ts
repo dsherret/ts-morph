@@ -54,8 +54,8 @@ export class ImportTypeNode extends NodeWithTypeArguments<ts.ImportTypeNode> {
   /**
    * Gets the qualifier of the import type if it exists or throws
    */
-  getQualifierOrThrow(): EntityName {
-    return errors.throwIfNullOrUndefined(this.getQualifier(), () => `Expected to find a qualifier for the import type: ${this.getText()}`);
+  getQualifierOrThrow(message?: string): EntityName {
+    return errors.throwIfNullOrUndefined(this.getQualifier(), () => message || `Expected to find a qualifier for the import type: ${this.getText()}`, this);
   }
 
   /**
