@@ -242,10 +242,10 @@ export class Project {
    * Gets a directory by the specified path or throws if it doesn't exist.
    * @param dirPath - Path to create the directory at.
    */
-  getDirectoryOrThrow(dirPath: string): Directory {
+  getDirectoryOrThrow(dirPath: string, message?: string): Directory {
     return errors.throwIfNullOrUndefined(
       this.getDirectory(dirPath),
-      () => `Could not find a directory at the specified path: ${this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath)}`,
+      () => message || `Could not find a directory at the specified path: ${this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath)}`, this,
     );
   }
 
@@ -522,10 +522,10 @@ export class Project {
    * Gets the specified ambient module symbol or throws if not found.
    * @param moduleName - The ambient module name with or without quotes.
    */
-  getAmbientModuleOrThrow(moduleName: string) {
+  getAmbientModuleOrThrow(moduleName: string, message?: string) {
     return errors.throwIfNullOrUndefined(
       this.getAmbientModule(moduleName),
-      () => `Could not find ambient module with name: ${normalizeAmbientModuleName(moduleName)}`,
+      () => message || `Could not find ambient module with name: ${normalizeAmbientModuleName(moduleName)}`, this,
     );
   }
 

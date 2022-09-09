@@ -145,8 +145,8 @@ export class Symbol {
    * Gets the export of the symbol by the specified name or throws if not exists.
    * @param name - Name of the export.
    */
-  getExportOrThrow(name: string): Symbol {
-    return errors.throwIfNullOrUndefined(this.getExport(name), `Expected to find export with name: ${name}`);
+  getExportOrThrow(name: string, message?: string): Symbol {
+    return errors.throwIfNullOrUndefined(this.getExport(name), message || `Expected to find export with name: ${name}`, this);
   }
 
   /**
@@ -174,8 +174,8 @@ export class Symbol {
    * Gets the global export of the symbol by the specified name or throws if not exists.
    * @param name - Name of the global export.
    */
-  getGlobalExportOrThrow(name: string): Symbol {
-    return errors.throwIfNullOrUndefined(this.getGlobalExport(name), `Expected to find global export with name: ${name}`);
+  getGlobalExportOrThrow(name: string, message?: string): Symbol {
+    return errors.throwIfNullOrUndefined(this.getGlobalExport(name), message || `Expected to find global export with name: ${name}`, this);
   }
 
   /**
@@ -203,8 +203,8 @@ export class Symbol {
    * Gets the member of the symbol by the specified name or throws if not exists.
    * @param name - Name of the export.
    */
-  getMemberOrThrow(name: string): Symbol {
-    return errors.throwIfNullOrUndefined(this.getMember(name), `Expected to find member with name: ${name}`);
+  getMemberOrThrow(name: string, message?: string): Symbol {
+    return errors.throwIfNullOrUndefined(this.getMember(name), message || `Expected to find member with name: ${name}`, this);
   }
 
   /**

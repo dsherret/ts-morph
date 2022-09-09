@@ -38,8 +38,8 @@ export function StaticableNode<T extends Constructor<StaticableNodeExtensionType
       return this.getFirstModifierByKind(SyntaxKind.StaticKeyword);
     }
 
-    getStaticKeywordOrThrow() {
-      return errors.throwIfNullOrUndefined(this.getStaticKeyword(), "Expected to find a static keyword.");
+    getStaticKeywordOrThrow(message?: string) {
+      return errors.throwIfNullOrUndefined(this.getStaticKeyword(), message || "Expected to find a static keyword.", this);
     }
 
     setIsStatic(value: boolean) {

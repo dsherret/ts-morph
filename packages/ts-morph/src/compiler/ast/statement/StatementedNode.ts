@@ -500,8 +500,8 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
       return this.getStatements().find(findFunction);
     }
 
-    getStatementOrThrow(findFunction: (statement: Statement) => boolean) {
-      return errors.throwIfNullOrUndefined(this.getStatement(findFunction), "Expected to find a statement matching the provided condition.");
+    getStatementOrThrow(findFunction: (statement: Statement) => boolean, message?: string) {
+      return errors.throwIfNullOrUndefined(this.getStatement(findFunction), message || "Expected to find a statement matching the provided condition.", this);
     }
 
     getStatementByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappingsWithCommentStatements[TKind] | undefined {
@@ -509,8 +509,8 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
       return this._getNodeFromCompilerNodeIfExists(statement) as KindToNodeMappingsWithCommentStatements[TKind] | undefined;
     }
 
-    getStatementByKindOrThrow<TKind extends SyntaxKind>(kind: TKind) {
-      return errors.throwIfNullOrUndefined(this.getStatementByKind(kind), `Expected to find a statement with syntax kind ${getSyntaxKindName(kind)}.`);
+    getStatementByKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string) {
+      return errors.throwIfNullOrUndefined(this.getStatementByKind(kind), message || `Expected to find a statement with syntax kind ${getSyntaxKindName(kind)}.`, this);
     }
 
     addStatements(textOrWriterFunction: string | WriterFunction | ReadonlyArray<string | WriterFunction | StatementStructures>) {
@@ -868,10 +868,10 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
       }
     }
 
-    getVariableStatementOrThrow(nameOrFindFunction: string | ((statement: VariableStatement) => boolean)): VariableStatement {
+    getVariableStatementOrThrow(nameOrFindFunction: string | ((statement: VariableStatement) => boolean), message?: string): VariableStatement {
       return errors.throwIfNullOrUndefined(
         this.getVariableStatement(nameOrFindFunction),
-        "Expected to find a variable statement that matched the provided condition.",
+        message || "Expected to find a variable statement that matched the provided condition.", this,
       );
     }
 

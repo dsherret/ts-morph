@@ -541,7 +541,7 @@ export declare class Project {
    * Gets a directory by the specified path or throws if it doesn't exist.
    * @param dirPath - Path to create the directory at.
    */
-  getDirectoryOrThrow(dirPath: string): Directory;
+  getDirectoryOrThrow(dirPath: string, message?: string): Directory;
   /**
    * Gets a directory by the specified path or returns undefined if it doesn't exist.
    * @param dirPath - Directory path.
@@ -637,7 +637,7 @@ export declare class Project {
    * Gets the specified ambient module symbol or throws if not found.
    * @param moduleName - The ambient module name with or without quotes.
    */
-  getAmbientModuleOrThrow(moduleName: string): Symbol;
+  getAmbientModuleOrThrow(moduleName: string, message?: string): Symbol;
   /** Gets the ambient module symbols (ex. modules in the @types folder or node_modules). */
   getAmbientModules(): Symbol[];
   /** Saves all the unsaved source files to the file system and deletes all deleted files. */
@@ -3362,7 +3362,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * WARNING: The symbol table of locals is not exposed publicly by the compiler. Use this at your own risk knowing it may break.
    * @param name - Name of the local symbol.
    */
-  getLocalOrThrow(name: string): Symbol;
+  getLocalOrThrow(name: string, message?: string): Symbol;
   /**
    * Gets the specified local symbol by name or returns undefined if it doesn't exist.
    *
@@ -3393,7 +3393,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets the node as the specified kind if it is equal to that kind, otherwise throws.
    * @param kind - Syntax kind.
    */
-  asKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind];
+  asKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string): KindToNodeMappings[TKind];
   /**
    * Returns if the node is the specified kind.
    *
@@ -3410,12 +3410,12 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets the first child by a condition or throws.
    * @param condition - Condition.
    */
-  getFirstChildOrThrow<T extends Node>(condition?: (node: Node) => node is T): T;
+  getFirstChildOrThrow<T extends Node>(condition?: (node: Node) => node is T, message?: string): T;
   /**
    * Gets the first child by a condition or throws.
    * @param condition - Condition.
    */
-  getFirstChildOrThrow(condition?: (node: Node) => boolean): Node;
+  getFirstChildOrThrow(condition?: (node: Node) => boolean, message?: string): Node;
   /**
    * Gets the first child by a condition.
    * @param condition - Condition.
@@ -3430,12 +3430,12 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets the last child by a condition or throws.
    * @param condition - Condition.
    */
-  getLastChildOrThrow<T extends Node>(condition?: (node: Node) => node is T): T;
+  getLastChildOrThrow<T extends Node>(condition?: (node: Node) => node is T, message?: string): T;
   /**
    * Gets the last child by a condition or throws.
    * @param condition - Condition.
    */
-  getLastChildOrThrow(condition?: (node: Node) => boolean): Node;
+  getLastChildOrThrow(condition?: (node: Node) => boolean, message?: string): Node;
   /**
    * Gets the last child by a condition.
    * @param condition - Condition.
@@ -3450,12 +3450,12 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets the first descendant by a condition or throws.
    * @param condition - Condition.
    */
-  getFirstDescendantOrThrow<T extends Node>(condition?: (node: Node) => node is T): T;
+  getFirstDescendantOrThrow<T extends Node>(condition?: (node: Node) => node is T, message?: string): T;
   /**
    * Gets the first descendant by a condition or throws.
    * @param condition - Condition.
    */
-  getFirstDescendantOrThrow(condition?: (node: Node) => boolean): Node;
+  getFirstDescendantOrThrow(condition?: (node: Node) => boolean, message?: string): Node;
   /**
    * Gets the first descendant by a condition.
    * @param condition - Condition.
@@ -3470,12 +3470,12 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets the previous sibling or throws.
    * @param condition - Optional condition for getting the previous sibling.
    */
-  getPreviousSiblingOrThrow<T extends Node>(condition?: (node: Node) => node is T): T;
+  getPreviousSiblingOrThrow<T extends Node>(condition?: (node: Node) => node is T, message?: string): T;
   /**
    * Gets the previous sibling or throws.
    * @param condition - Optional condition for getting the previous sibling.
    */
-  getPreviousSiblingOrThrow(condition?: (node: Node) => boolean): Node;
+  getPreviousSiblingOrThrow(condition?: (node: Node) => boolean, message?: string): Node;
   /**
    * Gets the previous sibling.
    * @param condition - Optional condition for getting the previous sibling.
@@ -3490,12 +3490,12 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets the next sibling or throws.
    * @param condition - Optional condition for getting the next sibling.
    */
-  getNextSiblingOrThrow<T extends Node>(condition?: (node: Node) => node is T): T;
+  getNextSiblingOrThrow<T extends Node>(condition?: (node: Node) => node is T, message?: string): T;
   /**
    * Gets the next sibling or throws.
    * @param condition - Optional condition for getting the next sibling.
    */
-  getNextSiblingOrThrow(condition?: (node: Node) => boolean): Node;
+  getNextSiblingOrThrow(condition?: (node: Node) => boolean, message?: string): Node;
   /**
    * Gets the next sibling.
    * @param condition - Optional condition for getting the next sibling.
@@ -3526,7 +3526,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    */
   getChildAtIndex(index: number): Node;
   /** Gets the child syntax list or throws if it doesn't exist. */
-  getChildSyntaxListOrThrow(): SyntaxList;
+  getChildSyntaxListOrThrow(message?: string): SyntaxList;
   /** Gets the child syntax list if it exists. */
   getChildSyntaxList(): SyntaxList | undefined;
   /**
@@ -3634,19 +3634,19 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   /** Get the node's parent. */
   getParent(): Node<ts.Node> | undefined;
   /** Gets the parent or throws an error if it doesn't exist. */
-  getParentOrThrow(): Node<ts.Node>;
+  getParentOrThrow(message?: string): Node<ts.Node>;
   /**
    * Goes up the parents (ancestors) of the node while a condition is true.
    * Throws if the initial parent doesn't match the condition.
    * @param condition - Condition that tests the parent to see if the expression is true.
    */
-  getParentWhileOrThrow<T extends Node>(condition: (parent: Node, node: Node) => parent is T): T;
+  getParentWhileOrThrow<T extends Node>(condition: (parent: Node, node: Node) => parent is T, message?: string): T;
   /**
    * Goes up the parents (ancestors) of the node while a condition is true.
    * Throws if the initial parent doesn't match the condition.
    * @param condition - Condition that tests the parent to see if the expression is true.
    */
-  getParentWhileOrThrow(condition: (parent: Node, node: Node) => boolean): Node;
+  getParentWhileOrThrow(condition: (parent: Node, node: Node) => boolean, message?: string): Node;
   /**
    * Goes up the parents (ancestors) of the node while a condition is true.
    * Returns undefined if the initial parent doesn't match the condition.
@@ -3664,7 +3664,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Throws if the initial parent is not the specified syntax kind.
    * @param kind - Syntax kind to check for.
    */
-  getParentWhileKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind];
+  getParentWhileKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string): KindToNodeMappings[TKind];
   /**
    * Goes up the parents (ancestors) of the node while the parent is the specified syntax kind.
    * Returns undefined if the initial parent is not the specified syntax kind.
@@ -3676,7 +3676,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   /** Gets if this node is in a syntax list. */
   isInSyntaxList(): boolean;
   /** Gets the parent if it's a syntax list or throws an error otherwise. */
-  getParentSyntaxListOrThrow(): SyntaxList;
+  getParentSyntaxListOrThrow(message?: string): SyntaxList;
   /** Gets the parent if it's a syntax list. */
   getParentSyntaxList(): SyntaxList | undefined;
   /** Gets the child index of this node relative to the parent. */
@@ -3771,7 +3771,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets the first child by syntax kind or throws an error if not found.
    * @param kind - Syntax kind.
    */
-  getFirstChildByKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind];
+  getFirstChildByKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string): KindToNodeMappings[TKind];
   /**
    * Gets the first child by syntax kind.
    * @param kind - Syntax kind.
@@ -3781,7 +3781,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets the first child if it matches the specified syntax kind or throws an error if not found.
    * @param kind - Syntax kind.
    */
-  getFirstChildIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind];
+  getFirstChildIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string): KindToNodeMappings[TKind];
   /**
    * Gets the first child if it matches the specified syntax kind.
    * @param kind - Syntax kind.
@@ -3791,7 +3791,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets the last child by syntax kind or throws an error if not found.
    * @param kind - Syntax kind.
    */
-  getLastChildByKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind];
+  getLastChildByKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string): KindToNodeMappings[TKind];
   /**
    * Gets the last child by syntax kind.
    * @param kind - Syntax kind.
@@ -3801,7 +3801,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets the last child if it matches the specified syntax kind or throws an error if not found.
    * @param kind - Syntax kind.
    */
-  getLastChildIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind];
+  getLastChildIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string): KindToNodeMappings[TKind];
   /**
    * Gets the last child if it matches the specified syntax kind.
    * @param kind - Syntax kind.
@@ -3812,7 +3812,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * @param index - Child index to get.
    * @param kind - Expected kind.
    */
-  getChildAtIndexIfKindOrThrow<TKind extends SyntaxKind>(index: number, kind: TKind): KindToNodeMappings[TKind];
+  getChildAtIndexIfKindOrThrow<TKind extends SyntaxKind>(index: number, kind: TKind, message?: string): KindToNodeMappings[TKind];
   /**
    * Gets the child at the specified index if it's the specified kind or returns undefined.
    * @param index - Child index to get.
@@ -3823,12 +3823,12 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets the previous sibiling if it matches the specified kind, or throws.
    * @param kind - Kind to check.
    */
-  getPreviousSiblingIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind];
+  getPreviousSiblingIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string): KindToNodeMappings[TKind];
   /**
    * Gets the next sibiling if it matches the specified kind, or throws.
    * @param kind - Kind to check.
    */
-  getNextSiblingIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind];
+  getNextSiblingIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string): KindToNodeMappings[TKind];
   /**
    * Gets the previous sibling if it matches the specified kind.
    * @param kind - Kind to check.
@@ -3840,22 +3840,22 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    */
   getNextSiblingIfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined;
   /** Gets the parent if it matches a certain condition or throws. */
-  getParentIfOrThrow<T extends Node>(condition: (parent: Node | undefined, node: Node) => parent is T): T;
+  getParentIfOrThrow<T extends Node>(condition: (parent: Node | undefined, node: Node) => parent is T, message?: string): T;
   /** Gets the parent if it matches a certain condition or throws. */
-  getParentIfOrThrow(condition: (parent: Node | undefined, node: Node) => boolean): Node;
+  getParentIfOrThrow(condition: (parent: Node | undefined, node: Node) => boolean, message?: string): Node;
   /** Gets the parent if it matches a certain condition. */
   getParentIf<T extends Node>(condition: (parent: Node | undefined, node: Node) => parent is T): T | undefined;
   /** Gets the parent if it matches a certain condition. */
   getParentIf(condition: (parent: Node | undefined, node: Node) => boolean): Node | undefined;
   /** Gets the parent if it's a certain syntax kind or throws. */
-  getParentIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind];
+  getParentIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string): KindToNodeMappings[TKind];
   /** Gets the parent if it's a certain syntax kind. */
   getParentIfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined;
   /**
    * Gets the first ancestor by syntax kind or throws if not found.
    * @param kind - Syntax kind.
    */
-  getFirstAncestorByKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind];
+  getFirstAncestorByKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string): KindToNodeMappings[TKind];
   /**
    * Get the first ancestor by syntax kind.
    * @param kind - Syntax kind.
@@ -3890,7 +3890,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets the first descendant by syntax kind or throws.
    * @param kind - Syntax kind.
    */
-  getFirstDescendantByKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind];
+  getFirstDescendantByKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string): KindToNodeMappings[TKind];
   /**
    * Gets the first descendant by syntax kind.
    * @param kind - Syntax kind.
@@ -5075,7 +5075,7 @@ export declare class JSDocTemplateTag extends JSDocTemplateTagBase<ts.JSDocTempl
   /** Gets the template tag's constraint if it exists or returns undefined. */
   getConstraint(): JSDocTypeExpression | undefined;
   /** Gets the template tag's constraint if it exists or throws otherwise. */
-  getConstraintOrThrow(): JSDocTypeExpression;
+  getConstraintOrThrow(message?: string): JSDocTypeExpression;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.JSDocTemplateTag>;
   /** @inheritdoc **/
@@ -5445,7 +5445,7 @@ export declare class ElementAccessExpression<T extends ts.ElementAccessExpressio
   /** Gets this element access expression's argument expression or undefined if none exists. */
   getArgumentExpression(): Expression | undefined;
   /** Gets this element access expression's argument expression or throws if none exists. */
-  getArgumentExpressionOrThrow(): Expression<ts.Expression>;
+  getArgumentExpressionOrThrow(message?: string): Expression<ts.Expression>;
 }
 
 export declare class Expression<T extends ts.Expression = ts.Expression> extends Node<T> {
@@ -5827,11 +5827,11 @@ export declare class ShorthandPropertyAssignment extends ShorthandPropertyAssign
   /** Gets if the shorthand property assignment has an object assignment initializer. */
   hasObjectAssignmentInitializer(): boolean;
   /** Gets the object assignment initializer or throws if it doesn't exist. */
-  getObjectAssignmentInitializerOrThrow(): Expression<ts.Expression>;
+  getObjectAssignmentInitializerOrThrow(message?: string): Expression<ts.Expression>;
   /** Gets the object assignment initializer if it exists. */
   getObjectAssignmentInitializer(): Expression | undefined;
   /** Gets the equals token or throws if it doesn't exist. */
-  getEqualsTokenOrThrow(): Node<ts.EqualsToken>;
+  getEqualsTokenOrThrow(message?: string): Node<ts.EqualsToken>;
   /** Gets the equals token if it exists. */
   getEqualsToken(): Node<ts.EqualsToken> | undefined;
   /**
@@ -7076,7 +7076,7 @@ export declare class ExportDeclaration extends ExportDeclarationBase<ts.ExportDe
   /** Gets the namespace export or returns undefined if it doesn't exist. (ex. `* as ns`, but not `*`). */
   getNamespaceExport(): NamespaceExport | undefined;
   /** Gets the namespace export or throws if it doesn't exist. (ex. `* as ns`, but not `*`) */
-  getNamespaceExportOrThrow(): NamespaceExport;
+  getNamespaceExportOrThrow(message?: string): NamespaceExport;
   /** Sets the namespace export name. */
   setNamespaceExport(name: string): this;
   /**
@@ -7209,7 +7209,7 @@ declare const ExternalModuleReferenceBase: Constructor<ExpressionableNode> & typ
 
 export declare class ExternalModuleReference extends ExternalModuleReferenceBase<ts.ExternalModuleReference> {
   /** Gets the source file referenced or throws if it can't find it. */
-  getReferencedSourceFileOrThrow(): SourceFile;
+  getReferencedSourceFileOrThrow(message?: string): SourceFile;
   /** Gets if the external module reference is relative. */
   isRelative(): boolean;
   /** Gets the source file referenced or returns undefined if it can't find it. */
@@ -7228,15 +7228,15 @@ export declare class ImportClause extends ImportClauseBase<ts.ImportClause> {
   /** Sets if this import declaration is type only. */
   setIsTypeOnly(value: boolean): this;
   /** Gets the default import or throws if it doesn't exit. */
-  getDefaultImportOrThrow(): Identifier;
+  getDefaultImportOrThrow(message?: string): Identifier;
   /** Gets the default import or returns undefined if it doesn't exist. */
   getDefaultImport(): Identifier | undefined;
   /** Gets the named bindings of the import clause or throws if it doesn't exist. */
-  getNamedBindingsOrThrow(): NamespaceImport | NamedImports;
+  getNamedBindingsOrThrow(message?: string): NamespaceImport | NamedImports;
   /** Gets the named bindings of the import clause or returns undefined if it doesn't exist. */
   getNamedBindings(): NamespaceImport | NamedImports | undefined;
   /** Gets the namespace import if it exists or throws. */
-  getNamespaceImportOrThrow(): Identifier;
+  getNamespaceImportOrThrow(message?: string): Identifier;
   /** Gets the namespace import identifier, if it exists. */
   getNamespaceImport(): Identifier | undefined;
   /** Gets the namespace import identifier, if it exists. */
@@ -7286,7 +7286,7 @@ export declare class ImportDeclaration extends ImportDeclarationBase<ts.ImportDe
    */
   renameDefaultImport(text: string): this;
   /** Gets the default import or throws if it doesn't exit. */
-  getDefaultImportOrThrow(): Identifier;
+  getDefaultImportOrThrow(message?: string): Identifier;
   /** Gets the default import or returns undefined if it doesn't exist. */
   getDefaultImport(): Identifier | undefined;
   /**
@@ -7300,7 +7300,7 @@ export declare class ImportDeclaration extends ImportDeclarationBase<ts.ImportDe
   /** Removes the default import. */
   removeDefaultImport(): this;
   /** Gets the namespace import if it exists or throws. */
-  getNamespaceImportOrThrow(): Identifier;
+  getNamespaceImportOrThrow(message?: string): Identifier;
   /** Gets the namespace import identifier, if it exists. */
   getNamespaceImport(): Identifier | undefined;
   /**
@@ -7333,7 +7333,7 @@ export declare class ImportDeclaration extends ImportDeclarationBase<ts.ImportDe
    */
   removeNamedImports(): this;
   /** Gets the import clause or throws if it doesn't exist. */
-  getImportClauseOrThrow(): ImportClause;
+  getImportClauseOrThrow(message?: string): ImportClause;
   /** Gets the import clause or returns undefined if it doesn't exist. */
   getImportClause(): ImportClause | undefined;
   /** Sets the elements in an assert clause. */
@@ -7375,7 +7375,7 @@ export declare class ImportEqualsDeclaration extends ImportEqualsDeclarationBase
    */
   setExternalModuleReference(sourceFile: SourceFile): this;
   /** Gets the source file referenced in the external module reference or throws if it doesn't exist. */
-  getExternalModuleReferenceSourceFileOrThrow(): SourceFile;
+  getExternalModuleReferenceSourceFileOrThrow(message?: string): SourceFile;
   /** Gets the source file referenced in the external module reference or returns undefined if it doesn't exist. */
   getExternalModuleReferenceSourceFile(): SourceFile | undefined;
   /** @inheritdoc **/
@@ -7953,7 +7953,7 @@ export declare class BreakStatement extends Statement<ts.BreakStatement> {
   /** Gets this break statement's label or undefined if it does not exist. */
   getLabel(): Identifier | undefined;
   /** Gets this break statement's label or throw if it does not exist. */
-  getLabelOrThrow(): Identifier;
+  getLabelOrThrow(message?: string): Identifier;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.BreakStatement>;
   /** @inheritdoc **/
@@ -8000,7 +8000,7 @@ export declare class CatchClause extends CatchClauseBase<ts.CatchClause> {
   /** Gets this catch clause's variable declaration or undefined if none exists. */
   getVariableDeclaration(): VariableDeclaration | undefined;
   /** Gets this catch clause's variable declaration or throws if none exists. */
-  getVariableDeclarationOrThrow(): VariableDeclaration;
+  getVariableDeclarationOrThrow(message?: string): VariableDeclaration;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.CatchClause>;
   /** @inheritdoc **/
@@ -8014,7 +8014,7 @@ export declare class ContinueStatement extends Statement<ts.ContinueStatement> {
   /** Gets this continue statement's label or undefined if it does not exist. */
   getLabel(): Identifier | undefined;
   /** Gets this continue statement's label or throw if it does not exist. */
-  getLabelOrThrow(): Identifier;
+  getLabelOrThrow(message?: string): Identifier;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.ContinueStatement>;
   /** @inheritdoc **/
@@ -8096,15 +8096,15 @@ export declare class ForStatement extends ForStatementBase<ts.ForStatement> {
   /** Gets this for statement's initializer or undefined if none exists. */
   getInitializer(): VariableDeclarationList | Expression | undefined;
   /** Gets this for statement's initializer or throws if none exists. */
-  getInitializerOrThrow(): Expression<ts.Expression> | VariableDeclarationList;
+  getInitializerOrThrow(message?: string): Expression<ts.Expression> | VariableDeclarationList;
   /** Gets this for statement's condition or undefined if none exists. */
   getCondition(): Expression | undefined;
   /** Gets this for statement's condition or throws if none exists. */
-  getConditionOrThrow(): Expression<ts.Expression>;
+  getConditionOrThrow(message?: string): Expression<ts.Expression>;
   /** Gets this for statement's incrementor. */
   getIncrementor(): Expression | undefined;
   /** Gets this for statement's incrementor or throws if none exists. */
-  getIncrementorOrThrow(): Expression<ts.Expression>;
+  getIncrementorOrThrow(message?: string): Expression<ts.Expression>;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.ForStatement>;
   /** @inheritdoc **/
@@ -8610,11 +8610,11 @@ export declare class TryStatement extends TryStatementBase<ts.TryStatement> {
   /** Gets this try statement's catch clause or undefined if none exists. */
   getCatchClause(): CatchClause | undefined;
   /** Gets this try statement's catch clause or throws if none exists. */
-  getCatchClauseOrThrow(): CatchClause;
+  getCatchClauseOrThrow(message?: string): CatchClause;
   /** Gets this try statement's finally block or undefined if none exists. */
   getFinallyBlock(): Block | undefined;
   /** Gets this try statement's finally block or throws if none exists. */
-  getFinallyBlockOrThrow(): Block;
+  getFinallyBlockOrThrow(message?: string): Block;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.TryStatement>;
   /** @inheritdoc **/
@@ -8794,7 +8794,7 @@ export declare class ImportTypeNode extends NodeWithTypeArguments<ts.ImportTypeN
   /** Gets the import type assertion container if it exists. */
   getAssertions(): ImportTypeAssertionContainer | undefined;
   /** Gets the import type assertion container if it exists or throws. */
-  getAssertionsOrThrow(): ImportTypeAssertionContainer;
+  getAssertionsOrThrow(message?: string): ImportTypeAssertionContainer;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.ImportTypeNode>;
   /** @inheritdoc **/
@@ -8859,11 +8859,11 @@ export declare class MappedTypeNode extends TypeNode<ts.MappedTypeNode> {
   /** Gets the mapped type's readonly token. */
   getReadonlyToken(): Node<ts.ReadonlyKeyword> | Node<ts.PlusToken> | Node<ts.MinusToken> | undefined;
   /** Gets the mapped type's readonly token or throws if not exist. */
-  getReadonlyTokenOrThrow(): Node<ts.ReadonlyKeyword> | Node<ts.PlusToken> | Node<ts.MinusToken>;
+  getReadonlyTokenOrThrow(message?: string): Node<ts.ReadonlyKeyword> | Node<ts.PlusToken> | Node<ts.MinusToken>;
   /** Gets the mapped type's question token. */
   getQuestionToken(): Node<ts.QuestionToken> | Node<ts.PlusToken> | Node<ts.MinusToken> | undefined;
   /** Gets the mapped type's question token or throws if not exist. */
-  getQuestionTokenOrThrow(): Node<ts.QuestionToken> | Node<ts.PlusToken> | Node<ts.MinusToken>;
+  getQuestionTokenOrThrow(message?: string): Node<ts.QuestionToken> | Node<ts.PlusToken> | Node<ts.MinusToken>;
   /** Gets the mapped type node's type parameter. */
   getTypeParameter(): TypeParameterDeclaration;
   /** Gets the mapped type node's type node if it exists or returns undefined when not. */
@@ -9005,7 +9005,7 @@ export declare class TypeParameterDeclaration extends TypeParameterDeclarationBa
   /** Gets the constraint of the type parameter. */
   getConstraint(): TypeNode | undefined;
   /** Gets the constraint of the type parameter or throws if it doesn't exist. */
-  getConstraintOrThrow(): TypeNode<ts.TypeNode>;
+  getConstraintOrThrow(message?: string): TypeNode<ts.TypeNode>;
   /**
    * Sets the type parameter constraint.
    * @param text - Text to set as the constraint.
@@ -9016,7 +9016,7 @@ export declare class TypeParameterDeclaration extends TypeParameterDeclarationBa
   /** Gets the default node of the type parameter. */
   getDefault(): TypeNode | undefined;
   /** Gets the default node of the type parameter or throws if it doesn't exist. */
-  getDefaultOrThrow(): TypeNode<ts.TypeNode>;
+  getDefaultOrThrow(message?: string): TypeNode<ts.TypeNode>;
   /**
    * Sets the type parameter default type node.
    * @param text - Text to set as the default type node.
@@ -9058,7 +9058,7 @@ export declare class TypePredicateNode extends TypeNode<ts.TypePredicateNode> {
   /** Gets the asserts modifier if it exists. */
   getAssertsModifier(): Node<ts.AssertsKeyword> | undefined;
   /** Gets the asserts modifier if it exists or throws otherwise. */
-  getAssertsModifierOrThrow(): Node<ts.AssertsKeyword>;
+  getAssertsModifierOrThrow(message?: string): Node<ts.AssertsKeyword>;
   /** Gets the type name if it exists or returns undefined when it asserts a condition. */
   getTypeNode(): TypeNode | undefined;
   /** Gets the type name if it exists or throws when it asserts a condition. */
@@ -9102,7 +9102,7 @@ export declare class VariableDeclaration extends VariableDeclarationBase<ts.Vari
   /** Removes this variable declaration. */
   remove(): void;
   /** Gets the corresponding variable statement if it exists. Throws for variable declarations in for statements. */
-  getVariableStatementOrThrow(): VariableStatement;
+  getVariableStatementOrThrow(message?: string): VariableStatement;
   /** Gets the corresponding variable statement if it exists. Returns undefined for variable declarations in for statements. */
   getVariableStatement(): VariableStatement | undefined;
   /**
@@ -9232,7 +9232,7 @@ export declare class Symbol {
    * Gets the export of the symbol by the specified name or throws if not exists.
    * @param name - Name of the export.
    */
-  getExportOrThrow(name: string): Symbol;
+  getExportOrThrow(name: string, message?: string): Symbol;
   /**
    * Gets the export of the symbol by the specified name or returns undefined if not exists.
    * @param name - Name of the export.
@@ -9244,7 +9244,7 @@ export declare class Symbol {
    * Gets the global export of the symbol by the specified name or throws if not exists.
    * @param name - Name of the global export.
    */
-  getGlobalExportOrThrow(name: string): Symbol;
+  getGlobalExportOrThrow(name: string, message?: string): Symbol;
   /**
    * Gets the global export of the symbol by the specified name or returns undefined if not exists.
    * @param name - Name of the global export.
@@ -9256,7 +9256,7 @@ export declare class Symbol {
    * Gets the member of the symbol by the specified name or throws if not exists.
    * @param name - Name of the export.
    */
-  getMemberOrThrow(name: string): Symbol;
+  getMemberOrThrow(name: string, message?: string): Symbol;
   /**
    * Gets the member of the symbol by the specified name or returns undefined if not exists.
    * @param name - Name of the member.
@@ -9952,7 +9952,7 @@ export declare class TypeChecker {
    * Gets the resolved signature from a node or throws if the signature cannot be resolved.
    * @param node - Node to get the signature from.
    */
-  getResolvedSignatureOrThrow(node: CallLikeExpression): Signature;
+  getResolvedSignatureOrThrow(node: CallLikeExpression, message?: string): Signature;
   /**
    * Gets the base type of a literal type.
    *
@@ -9995,7 +9995,7 @@ export declare class Type<TType extends ts.Type = ts.Type> {
   /** Gets the apparent type. */
   getApparentType(): Type;
   /** Gets the array element type or throws if it doesn't exist (ex. for `T[]` it would be `T`). */
-  getArrayElementTypeOrThrow(): Type<ts.Type>;
+  getArrayElementTypeOrThrow(message?: string): Type<ts.Type>;
   /** Gets the array element type or returns undefined if it doesn't exist (ex. for `T[]` it would be `T`). */
   getArrayElementType(): Type<ts.Type> | undefined;
   /** Gets the base types. */
@@ -10011,11 +10011,11 @@ export declare class Type<TType extends ts.Type = ts.Type> {
   /** Gets the construct signatures. */
   getConstructSignatures(): Signature[];
   /** Gets the constraint or throws if it doesn't exist. */
-  getConstraintOrThrow(): Type<ts.Type>;
+  getConstraintOrThrow(message?: string): Type<ts.Type>;
   /** Gets the constraint or returns undefined if it doesn't exist. */
   getConstraint(): Type<ts.Type> | undefined;
   /** Gets the default type or throws if it doesn't exist. */
-  getDefaultOrThrow(): Type<ts.Type>;
+  getDefaultOrThrow(message?: string): Type<ts.Type>;
   /** Gets the default type or returns undefined if it doesn't exist. */
   getDefault(): Type<ts.Type> | undefined;
   /** Gets the properties of the type. */
@@ -10090,7 +10090,7 @@ export declare class Type<TType extends ts.Type = ts.Type> {
   /** Gets the value of a literal or returns undefined if this is not a literal type. */
   getLiteralValue(): string | number | ts.PseudoBigInt | undefined;
   /** Gets the value of the literal or throws if this is not a literal type. */
-  getLiteralValueOrThrow(): string | number | ts.PseudoBigInt;
+  getLiteralValueOrThrow(message?: string): string | number | ts.PseudoBigInt;
   /**
    * Gets the fresh type of the literal or returns undefined if this is not a literal type.
    *
@@ -10102,7 +10102,7 @@ export declare class Type<TType extends ts.Type = ts.Type> {
    *
    * Note: I have no idea what this means. Please help contribute to these js docs if you know.
    */
-  getLiteralFreshTypeOrThrow(): Type<ts.LiteralType>;
+  getLiteralFreshTypeOrThrow(message?: string): Type<ts.LiteralType>;
   /**
    * Gets the regular type of the literal or returns undefined if this is not a literal type.
    *
@@ -10114,7 +10114,7 @@ export declare class Type<TType extends ts.Type = ts.Type> {
    *
    * Note: I have no idea what this means. Please help contribute to these js docs if you know.
    */
-  getLiteralRegularTypeOrThrow(): Type<ts.LiteralType>;
+  getLiteralRegularTypeOrThrow(message?: string): Type<ts.LiteralType>;
   /** Gets the symbol of the type. */
   getSymbol(): Symbol | undefined;
   /** Gets the symbol of the type or throws. */

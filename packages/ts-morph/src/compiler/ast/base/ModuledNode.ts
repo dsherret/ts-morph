@@ -238,10 +238,10 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
       }
     }
 
-    getImportDeclarationOrThrow(conditionOrModuleSpecifier: string | ((importDeclaration: ImportDeclaration) => boolean)) {
+    getImportDeclarationOrThrow(conditionOrModuleSpecifier: string | ((importDeclaration: ImportDeclaration) => boolean), message?: string) {
       return errors.throwIfNullOrUndefined(
         this.getImportDeclaration(conditionOrModuleSpecifier),
-        "Expected to find an import with the provided condition.",
+        message || "Expected to find an import with the provided condition.", this,
       );
     }
 
@@ -289,10 +289,10 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
       }
     }
 
-    getExportDeclarationOrThrow(conditionOrModuleSpecifier: string | ((exportDeclaration: ExportDeclaration) => boolean)) {
+    getExportDeclarationOrThrow(conditionOrModuleSpecifier: string | ((exportDeclaration: ExportDeclaration) => boolean), message?: string) {
       return errors.throwIfNullOrUndefined(
         this.getExportDeclaration(conditionOrModuleSpecifier),
-        "Expected to find an export declaration with the provided condition.",
+        message || "Expected to find an export declaration with the provided condition.", this,
       );
     }
 
@@ -333,8 +333,8 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
       return this.getExportAssignments().find(condition);
     }
 
-    getExportAssignmentOrThrow(condition: (exportAssignment: ExportAssignment) => boolean): ExportAssignment {
-      return errors.throwIfNullOrUndefined(this.getExportAssignment(condition), "Expected to find an export assignment with the provided condition.");
+    getExportAssignmentOrThrow(condition: (exportAssignment: ExportAssignment) => boolean, message?: string): ExportAssignment {
+      return errors.throwIfNullOrUndefined(this.getExportAssignment(condition), message || "Expected to find an export assignment with the provided condition.", this);
     }
 
     getExportAssignments(): ExportAssignment[] {

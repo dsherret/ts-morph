@@ -36,8 +36,8 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
       return this._getNodeFromCompilerNodeIfExists(this.compilerNode.type);
     }
 
-    getTypeNodeOrThrow() {
-      return errors.throwIfNullOrUndefined(this.getTypeNode(), "Expected to find a type node.");
+    getTypeNodeOrThrow(message?: string) {
+      return errors.throwIfNullOrUndefined(this.getTypeNode(), message || "Expected to find a type node.", this);
     }
 
     setType(textOrWriterFunction: string | WriterFunction) {

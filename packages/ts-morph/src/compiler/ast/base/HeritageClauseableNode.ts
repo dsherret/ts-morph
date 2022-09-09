@@ -29,8 +29,8 @@ export function HeritageClauseableNode<T extends Constructor<HeritageClauseableN
       return heritageClauses?.map(c => this._getNodeFromCompilerNode(c)) ?? [];
     }
 
-    getHeritageClauseByKindOrThrow(kind: SyntaxKind.ExtendsKeyword | SyntaxKind.ImplementsKeyword) {
-      return errors.throwIfNullOrUndefined(this.getHeritageClauseByKind(kind), `Expected to have heritage clause of kind ${getSyntaxKindName(kind)}.`);
+    getHeritageClauseByKindOrThrow(kind: SyntaxKind.ExtendsKeyword | SyntaxKind.ImplementsKeyword, message?: string) {
+      return errors.throwIfNullOrUndefined(this.getHeritageClauseByKind(kind), message || `Expected to have heritage clause of kind ${getSyntaxKindName(kind)}.`, this);
     }
 
     getHeritageClauseByKind(kind: SyntaxKind.ExtendsKeyword | SyntaxKind.ImplementsKeyword) {

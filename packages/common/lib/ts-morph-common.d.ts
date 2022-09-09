@@ -346,8 +346,11 @@ export declare function Memoize(target: any, propertyName: string, descriptor: T
 
 /** Minimal attributes to show a error message with source */
 export declare type MaybeTraceAbleNode = undefined | null | {} | {
-    getSourceFile: () => ts.SourceFile;
-    pos: number;
+    getSourceFile: () => {
+        getFilePath: () => StandardizedFilePath;
+        getText: () => string;
+    };
+    getPos(): number;
 };
 
 /** Collection of helper functions that can be used to throw errors. */

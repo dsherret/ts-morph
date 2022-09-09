@@ -39,8 +39,8 @@ export function AmbientableNode<T extends Constructor<AmbientableNodeExtensionTy
       return this.getDeclareKeyword() != null;
     }
 
-    getDeclareKeywordOrThrow() {
-      return errors.throwIfNullOrUndefined(this.getDeclareKeyword(), "Expected to find a declare keyword.");
+    getDeclareKeywordOrThrow(message?: string) {
+      return errors.throwIfNullOrUndefined(this.getDeclareKeyword(), message || "Expected to find a declare keyword.", this);
     }
 
     getDeclareKeyword() {

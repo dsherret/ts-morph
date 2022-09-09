@@ -33,8 +33,8 @@ export class TypePredicateNode extends TypeNode<ts.TypePredicateNode> {
   /**
    * Gets the asserts modifier if it exists or throws otherwise.
    */
-  getAssertsModifierOrThrow() {
-    return errors.throwIfNullOrUndefined(this.getAssertsModifier(), "Expected to find an asserts modifier.");
+  getAssertsModifierOrThrow(message?: string) {
+    return errors.throwIfNullOrUndefined(this.getAssertsModifier(), message || "Expected to find an asserts modifier.", this);
   }
 
   /**

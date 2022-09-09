@@ -15,8 +15,8 @@ export class ForStatement extends ForStatementBase<ts.ForStatement> {
   /**
    * Gets this for statement's initializer or throws if none exists.
    */
-  getInitializerOrThrow() {
-    return errors.throwIfNullOrUndefined(this.getInitializer(), "Expected to find an initializer.");
+  getInitializerOrThrow(message?: string) {
+    return errors.throwIfNullOrUndefined(this.getInitializer(), message || "Expected to find an initializer.", this);
   }
 
   /**
@@ -29,8 +29,8 @@ export class ForStatement extends ForStatementBase<ts.ForStatement> {
   /**
    * Gets this for statement's condition or throws if none exists.
    */
-  getConditionOrThrow() {
-    return errors.throwIfNullOrUndefined(this.getCondition(), "Expected to find a condition.");
+  getConditionOrThrow(message?: string) {
+    return errors.throwIfNullOrUndefined(this.getCondition(), message || "Expected to find a condition.", this);
   }
 
   /**
@@ -43,7 +43,7 @@ export class ForStatement extends ForStatementBase<ts.ForStatement> {
   /**
    * Gets this for statement's incrementor or throws if none exists.
    */
-  getIncrementorOrThrow() {
-    return errors.throwIfNullOrUndefined(this.getIncrementor(), "Expected to find an incrementor.");
+  getIncrementorOrThrow(message?: string) {
+    return errors.throwIfNullOrUndefined(this.getIncrementor(), message || "Expected to find an incrementor.", this);
   }
 }

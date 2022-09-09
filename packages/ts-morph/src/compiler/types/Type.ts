@@ -70,8 +70,8 @@ export class Type<TType extends ts.Type = ts.Type> {
   /**
    * Gets the array element type or throws if it doesn't exist (ex. for `T[]` it would be `T`).
    */
-  getArrayElementTypeOrThrow() {
-    return errors.throwIfNullOrUndefined(this.getArrayElementType(), "Expected to find an array element type.");
+  getArrayElementTypeOrThrow(message?: string) {
+    return errors.throwIfNullOrUndefined(this.getArrayElementType(), message || "Expected to find an array element type.", this);
   }
 
   /**
@@ -117,8 +117,8 @@ export class Type<TType extends ts.Type = ts.Type> {
   /**
    * Gets the constraint or throws if it doesn't exist.
    */
-  getConstraintOrThrow() {
-    return errors.throwIfNullOrUndefined(this.getConstraint(), "Expected to find a constraint.");
+  getConstraintOrThrow(message?: string) {
+    return errors.throwIfNullOrUndefined(this.getConstraint(), message || "Expected to find a constraint.", this);
   }
 
   /**
@@ -132,8 +132,8 @@ export class Type<TType extends ts.Type = ts.Type> {
   /**
    * Gets the default type or throws if it doesn't exist.
    */
-  getDefaultOrThrow() {
-    return errors.throwIfNullOrUndefined(this.getDefault(), "Expected to find a default type.");
+  getDefaultOrThrow(message?: string) {
+    return errors.throwIfNullOrUndefined(this.getDefault(), message || "Expected to find a default type.", this);
   }
 
   /**
@@ -308,8 +308,8 @@ export class Type<TType extends ts.Type = ts.Type> {
   /**
    * Gets the value of the literal or throws if this is not a literal type.
    */
-  getLiteralValueOrThrow() {
-    return errors.throwIfNullOrUndefined(this.getLiteralValue(), "Type was not a literal type.");
+  getLiteralValueOrThrow(message?: string) {
+    return errors.throwIfNullOrUndefined(this.getLiteralValue(), message || "Type was not a literal type.", this);
   }
 
   /**
@@ -327,8 +327,8 @@ export class Type<TType extends ts.Type = ts.Type> {
    *
    * Note: I have no idea what this means. Please help contribute to these js docs if you know.
    */
-  getLiteralFreshTypeOrThrow() {
-    return errors.throwIfNullOrUndefined(this.getLiteralFreshType(), "Type was not a literal type.");
+  getLiteralFreshTypeOrThrow(message?: string) {
+    return errors.throwIfNullOrUndefined(this.getLiteralFreshType(), message || "Type was not a literal type.", this);
   }
 
   /**
@@ -346,8 +346,8 @@ export class Type<TType extends ts.Type = ts.Type> {
    *
    * Note: I have no idea what this means. Please help contribute to these js docs if you know.
    */
-  getLiteralRegularTypeOrThrow() {
-    return errors.throwIfNullOrUndefined(this.getLiteralRegularType(), "Type was not a literal type.");
+  getLiteralRegularTypeOrThrow(message?: string) {
+    return errors.throwIfNullOrUndefined(this.getLiteralRegularType(), message || "Type was not a literal type.", this);
   }
 
   /**

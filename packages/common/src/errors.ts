@@ -4,8 +4,12 @@ import { ts } from "./typescript";
 
 /** Minimal attributes to show a error message with source */
 export type MaybeTraceAbleNode = undefined | null | {} | {
-    getSourceFile: () => ts.SourceFile;
-    pos: number;
+    // TODO: Find correct type
+    getSourceFile: () => {
+        getFilePath: () => StandardizedFilePath;
+        getText: () => string;
+    }
+    getPos(): number;
 }
 
 /** Collection of helper functions that can be used to throw errors. */
@@ -17,14 +21,19 @@ export namespace errors {
     constructor(public readonly message: string, node?: MaybeTraceAbleNode) {
       let messageWithSource = message;
       let source: { fileName: string; pos: ts.LineAndCharacter } | undefined;
-      if (node && "getSourceFile" in node && "pos" in node) {
+      if (node && "getSourceFile" in node && "getPos" in node) {
         try {
           const sourceFile = node.getSourceFile();
-          source = { fileName: sourceFile.fileName, pos: sourceFile.getLineAndCharacterOfPosition(node.pos) };
-          const brokenLineStart = sourceFile.getPositionOfLineAndCharacter(source.pos.line, 0);
-          const brokenLineEnd = sourceFile.getLineEndOfPosition(node.pos);
-          const brokenLine = sourceFile.text.substring(brokenLineStart, brokenLineEnd);
-          messageWithSource += ` at ${source.fileName}:${source.pos.line + 1}:${source.pos.character + 1}\n${brokenLine}\n${" ".repeat(source.pos.character)}^`;
+          const sourceCode = sourceFile.getText();
+          const pos = node.getPos();
+          const textBeforePos = sourceCode.substring(0, pos);
+          const line = textBeforePos.match(/\n/g)?.length || 0;
+          const brokenLineStart = textBeforePos.lastIndexOf("\n", pos);
+          const brokenLineEnd = sourceCode.indexOf("\n", pos);
+          const brokenLine = sourceCode.substring(brokenLineStart + 1, brokenLineEnd === -1 ? undefined : brokenLineEnd);
+          source = { fileName: sourceFile.getFilePath(), pos: { line, character: pos - brokenLineStart } };
+          const linePrefix = `> ${source.pos.line + 1} |`;
+          messageWithSource += `\nin ${source.fileName}:${source.pos.line + 1}:${source.pos.character + 1}\n\n${linePrefix}${brokenLine}\n${" ".repeat(linePrefix.length - 1)}|${" ".repeat(source.pos.character)}^`;
         } catch (e) {
           // Errors inside BaseError would be confusing
           // so ignore errors here and fallback to the original message

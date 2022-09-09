@@ -17,7 +17,7 @@ export class ElementAccessExpression<T extends ts.ElementAccessExpression = ts.E
   /**
    * Gets this element access expression's argument expression or throws if none exists.
    */
-  getArgumentExpressionOrThrow() {
-    return errors.throwIfNullOrUndefined(this.getArgumentExpression(), "Expected to find an argument expression.");
+  getArgumentExpressionOrThrow(message?: string) {
+    return errors.throwIfNullOrUndefined(this.getArgumentExpression(), message || "Expected to find an argument expression.", this);
   }
 }

@@ -50,8 +50,8 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionTy
       return this._getNodeFromCompilerNodeIfExists(this.compilerNode.type);
     }
 
-    getReturnTypeNodeOrThrow() {
-      return errors.throwIfNullOrUndefined(this.getReturnTypeNode(), "Expected to find a return type node.");
+    getReturnTypeNodeOrThrow(message?: string) {
+      return errors.throwIfNullOrUndefined(this.getReturnTypeNode(), message || "Expected to find a return type node.", this);
     }
 
     setReturnType(textOrWriterFunction: string | WriterFunction) {

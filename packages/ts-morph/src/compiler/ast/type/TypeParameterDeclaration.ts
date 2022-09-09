@@ -32,8 +32,8 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
   /**
    * Gets the constraint of the type parameter or throws if it doesn't exist.
    */
-  getConstraintOrThrow() {
-    return errors.throwIfNullOrUndefined(this.getConstraint(), "Expected to find the type parameter's constraint.");
+  getConstraintOrThrow(message?: string) {
+    return errors.throwIfNullOrUndefined(this.getConstraint(), message || "Expected to find the type parameter's constraint.", this);
   }
 
   /**
@@ -81,8 +81,8 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
   /**
    * Gets the default node of the type parameter or throws if it doesn't exist.
    */
-  getDefaultOrThrow() {
-    return errors.throwIfNullOrUndefined(this.getDefault(), "Expected to find the type parameter's default.");
+  getDefaultOrThrow(message?: string) {
+    return errors.throwIfNullOrUndefined(this.getDefault(), message || "Expected to find the type parameter's default.", this);
   }
 
   /**

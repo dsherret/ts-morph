@@ -74,8 +74,8 @@ export function ModifierableNode<T extends Constructor<ModifierableNodeExtension
       return this.getCompilerModifiers().map(m => this._getNodeFromCompilerNode(m)) as Node<ts.Modifier>[];
     }
 
-    getFirstModifierByKindOrThrow<TKind extends SyntaxKind>(kind: TKind) {
-      return errors.throwIfNullOrUndefined(this.getFirstModifierByKind(kind), `Expected a modifier of syntax kind: ${getSyntaxKindName(kind)}`);
+    getFirstModifierByKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string) {
+      return errors.throwIfNullOrUndefined(this.getFirstModifierByKind(kind), message || `Expected a modifier of syntax kind: ${getSyntaxKindName(kind)}`, this);
     }
 
     getFirstModifierByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {

@@ -13,7 +13,7 @@ export class JSDocTemplateTag extends JSDocTemplateTagBase<ts.JSDocTemplateTag> 
   }
 
   /** Gets the template tag's constraint if it exists or throws otherwise. */
-  getConstraintOrThrow() {
-    return errors.throwIfNullOrUndefined(this.getConstraint(), "Expected to find the JS doc template tag's constraint.");
+  getConstraintOrThrow(message?: string) {
+    return errors.throwIfNullOrUndefined(this.getConstraint(), message || "Expected to find the JS doc template tag's constraint.", this);
   }
 }

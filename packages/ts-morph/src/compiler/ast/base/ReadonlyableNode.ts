@@ -38,8 +38,8 @@ export function ReadonlyableNode<T extends Constructor<ReadonlyableNodeExtension
       return this.getFirstModifierByKind(SyntaxKind.ReadonlyKeyword);
     }
 
-    getReadonlyKeywordOrThrow() {
-      return errors.throwIfNullOrUndefined(this.getReadonlyKeyword(), "Expected to find a readonly keyword.");
+    getReadonlyKeywordOrThrow(message?: string) {
+      return errors.throwIfNullOrUndefined(this.getReadonlyKeyword(), message || "Expected to find a readonly keyword.", this);
     }
 
     setIsReadonly(value: boolean) {

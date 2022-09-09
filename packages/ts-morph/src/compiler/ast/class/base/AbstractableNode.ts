@@ -38,8 +38,8 @@ export function AbstractableNode<T extends Constructor<AbstractableNodeExtension
       return this.getFirstModifierByKind(SyntaxKind.AbstractKeyword);
     }
 
-    getAbstractKeywordOrThrow() {
-      return errors.throwIfNullOrUndefined(this.getAbstractKeyword(), "Expected to find an abstract keyword.");
+    getAbstractKeywordOrThrow(message?: string) {
+      return errors.throwIfNullOrUndefined(this.getAbstractKeyword(), message || "Expected to find an abstract keyword.", this);
     }
 
     setIsAbstract(isAbstract: boolean) {

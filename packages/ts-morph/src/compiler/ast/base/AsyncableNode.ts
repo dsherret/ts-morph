@@ -39,7 +39,7 @@ export function AsyncableNode<T extends Constructor<AsyncableNodeExtensionType>>
     }
 
     getAsyncKeywordOrThrow(message?: string): Node<ts.AsyncKeyword> {
-      return errors.throwIfNullOrUndefined(this.getAsyncKeyword(), "Expected to find an async keyword.");
+      return errors.throwIfNullOrUndefined(this.getAsyncKeyword(), message || "Expected to find an async keyword.", this);
     }
 
     setIsAsync(value: boolean) {

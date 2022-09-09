@@ -21,8 +21,8 @@ export class MappedTypeNode extends TypeNode<ts.MappedTypeNode> {
   }
 
   /** Gets the mapped type's readonly token or throws if not exist. */
-  getReadonlyTokenOrThrow() {
-    return errors.throwIfNullOrUndefined(this.getReadonlyToken(), "Readonly token did not exist.");
+  getReadonlyTokenOrThrow(message?: string) {
+    return errors.throwIfNullOrUndefined(this.getReadonlyToken(), message || "Readonly token did not exist.", this);
   }
 
   /** Gets the mapped type's question token. */
@@ -31,8 +31,8 @@ export class MappedTypeNode extends TypeNode<ts.MappedTypeNode> {
   }
 
   /** Gets the mapped type's question token or throws if not exist. */
-  getQuestionTokenOrThrow() {
-    return errors.throwIfNullOrUndefined(this.getQuestionToken(), "Question token did not exist.");
+  getQuestionTokenOrThrow(message?: string) {
+    return errors.throwIfNullOrUndefined(this.getQuestionToken(), message || "Question token did not exist.", this);
   }
 
   /**

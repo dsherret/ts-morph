@@ -54,8 +54,8 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
   }
 
   /** Gets the namespace export or throws if it doesn't exist. (ex. `* as ns`, but not `*`) */
-  getNamespaceExportOrThrow() {
-    return errors.throwIfNullOrUndefined(this.getNamespaceExport(), "Expected to find a namespace export.");
+  getNamespaceExportOrThrow(message?: string) {
+    return errors.throwIfNullOrUndefined(this.getNamespaceExport(), message || "Expected to find a namespace export.", this);
   }
 
   /** Sets the namespace export name. */

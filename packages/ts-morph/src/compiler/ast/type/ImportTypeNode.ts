@@ -71,10 +71,10 @@ export class ImportTypeNode extends NodeWithTypeArguments<ts.ImportTypeNode> {
   }
 
   /** Gets the import type assertion container if it exists or throws. */
-  getAssertionsOrThrow() {
+  getAssertionsOrThrow(message?: string) {
     return errors.throwIfNullOrUndefined(
       this._getNodeFromCompilerNodeIfExists(this.compilerNode.assertions),
-      "Could not find import type assertion container.",
+      message || "Could not find import type assertion container.", this,
     );
   }
 }

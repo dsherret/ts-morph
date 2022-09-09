@@ -40,8 +40,8 @@ export interface BodyableNode {
 
 export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(Base: T): Constructor<BodyableNode> & T {
   return class extends Base implements BodyableNode {
-    getBodyOrThrow() {
-      return errors.throwIfNullOrUndefined(this.getBody(), "Expected to find the node's body.");
+    getBodyOrThrow(message?: string) {
+      return errors.throwIfNullOrUndefined(this.getBody(), message || "Expected to find the node's body.", this);
     }
 
     getBody() {
