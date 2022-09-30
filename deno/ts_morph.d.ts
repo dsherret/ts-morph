@@ -3096,6 +3096,8 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isInferKeyword: (node: Node | undefined) => node is Node<ts.Token<SyntaxKind.InferKeyword>>;
   /** Gets if the node is a InterfaceDeclaration. */
   static readonly isInterfaceDeclaration: (node: Node | undefined) => node is InterfaceDeclaration;
+  /** Gets if the node is a JSDoc. */
+  static readonly isJSDoc: (node: Node | undefined) => node is JSDoc;
   /** Gets if the node is a JSDocAllType. */
   static readonly isJSDocAllType: (node: Node | undefined) => node is JSDocAllType;
   /** Gets if the node is a JSDocAugmentsTag. */
@@ -4151,11 +4153,6 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * @param node - Node to check.
    */
   static isIterationStatement(node: Node | undefined): node is IterationStatement;
-  /**
-   * Gets if the node is a JSDoc.
-   * @param node - Node to check.
-   */
-  static isJSDoc(node: Node | undefined): node is JSDoc;
   /**
    * Gets if the node is a JSDocableNode.
    * @param node - Node to check.
@@ -7353,7 +7350,7 @@ export declare class ImportDeclaration extends ImportDeclarationBase<ts.ImportDe
   getParentOrThrow(): NonNullable<NodeParentType<ts.ImportDeclaration>>;
 }
 
-declare const ImportEqualsDeclarationBase: Constructor<JSDocableNode> & Constructor<NamedNode> & typeof Statement;
+declare const ImportEqualsDeclarationBase: Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<JSDocableNode> & Constructor<NamedNode> & typeof Statement;
 
 export declare class ImportEqualsDeclaration extends ImportEqualsDeclarationBase<ts.ImportEqualsDeclaration> {
   /** Gets if this import equals declaration is type only. */

@@ -2591,6 +2591,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.ClassDeclaration:
       case SyntaxKind.EnumDeclaration:
       case SyntaxKind.FunctionDeclaration:
+      case SyntaxKind.ImportEqualsDeclaration:
       case SyntaxKind.InterfaceDeclaration:
       case SyntaxKind.ModuleDeclaration:
       case SyntaxKind.TypeAliasDeclaration:
@@ -2615,6 +2616,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.ClassDeclaration:
       case SyntaxKind.EnumDeclaration:
       case SyntaxKind.FunctionDeclaration:
+      case SyntaxKind.ImportEqualsDeclaration:
       case SyntaxKind.InterfaceDeclaration:
       case SyntaxKind.ModuleDeclaration:
       case SyntaxKind.TypeAliasDeclaration:
@@ -2987,13 +2989,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
   }
 
-  /**
-   * Gets if the node is a JSDoc.
-   * @param node - Node to check.
-   */
-  static isJSDoc(node: compiler.Node | undefined): node is compiler.JSDoc {
-    return node?.getKind() === SyntaxKind.JSDoc;
-  }
+  /** Gets if the node is a JSDoc. */
+  static readonly isJSDoc: (node: compiler.Node | undefined) => node is compiler.JSDoc = Node.is(SyntaxKind.JSDoc);
 
   /**
    * Gets if the node is a JSDocableNode.
@@ -3440,6 +3437,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.FunctionDeclaration:
       case SyntaxKind.FunctionExpression:
       case SyntaxKind.GetAccessor:
+      case SyntaxKind.ImportEqualsDeclaration:
       case SyntaxKind.IndexSignature:
       case SyntaxKind.InterfaceDeclaration:
       case SyntaxKind.MethodDeclaration:

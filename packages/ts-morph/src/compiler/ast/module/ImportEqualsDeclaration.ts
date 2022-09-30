@@ -1,12 +1,12 @@
 import { errors, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange, removeChildren } from "../../../manipulation";
 import { ModuleReference } from "../aliases";
-import { JSDocableNode, NamedNode } from "../base";
+import { ExportableNode, JSDocableNode, ModifierableNode, NamedNode } from "../base";
 import { Node } from "../common";
 import { Statement } from "../statement";
 import { SourceFile } from "./SourceFile";
 
-const createBase = <T extends typeof Statement>(ctor: T) => JSDocableNode(NamedNode(ctor));
+const createBase = <T extends typeof Statement>(ctor: T) => ExportableNode(ModifierableNode(JSDocableNode(NamedNode(ctor))));
 export const ImportEqualsDeclarationBase = createBase(Statement);
 export class ImportEqualsDeclaration extends ImportEqualsDeclarationBase<ts.ImportEqualsDeclaration> {
   /** Gets if this import equals declaration is type only. */

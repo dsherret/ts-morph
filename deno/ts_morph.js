@@ -4247,6 +4247,7 @@ class Node {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.EnumDeclaration:
             case SyntaxKind.FunctionDeclaration:
+            case SyntaxKind.ImportEqualsDeclaration:
             case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.ModuleDeclaration:
             case SyntaxKind.TypeAliasDeclaration:
@@ -4261,6 +4262,7 @@ class Node {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.EnumDeclaration:
             case SyntaxKind.FunctionDeclaration:
+            case SyntaxKind.ImportEqualsDeclaration:
             case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.ModuleDeclaration:
             case SyntaxKind.TypeAliasDeclaration:
@@ -4483,9 +4485,6 @@ class Node {
             default:
                 return false;
         }
-    }
-    static isJSDoc(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.JSDoc;
     }
     static isJSDocable(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
@@ -4734,6 +4733,7 @@ class Node {
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
             case SyntaxKind.GetAccessor:
+            case SyntaxKind.ImportEqualsDeclaration:
             case SyntaxKind.IndexSignature:
             case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.MethodDeclaration:
@@ -5523,6 +5523,7 @@ Node.isImportSpecifier = Node.is(SyntaxKind.ImportSpecifier);
 Node.isImportTypeAssertionContainer = Node.is(SyntaxKind.ImportTypeAssertionContainer);
 Node.isInferKeyword = Node.is(SyntaxKind.InferKeyword);
 Node.isInterfaceDeclaration = Node.is(SyntaxKind.InterfaceDeclaration);
+Node.isJSDoc = Node.is(SyntaxKind.JSDoc);
 Node.isJSDocAllType = Node.is(SyntaxKind.JSDocAllType);
 Node.isJSDocAugmentsTag = Node.is(SyntaxKind.JSDocAugmentsTag);
 Node.isJSDocAuthorTag = Node.is(SyntaxKind.JSDocAuthorTag);
@@ -12615,7 +12616,7 @@ function getErrorWhenNamespaceImportsExist() {
     return new errors.InvalidOperationError("Cannot add a named import to an import declaration that has a namespace import.");
 }
 
-const createBase$r = (ctor) => JSDocableNode(NamedNode(ctor));
+const createBase$r = (ctor) => ExportableNode(ModifierableNode(JSDocableNode(NamedNode(ctor))));
 const ImportEqualsDeclarationBase = createBase$r(Statement);
 class ImportEqualsDeclaration extends ImportEqualsDeclarationBase {
     isTypeOnly() {
