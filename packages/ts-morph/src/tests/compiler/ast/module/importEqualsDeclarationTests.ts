@@ -200,4 +200,29 @@ describe("ImportEqualsDeclaration", () => {
         .to.throw();
     });
   });
+
+  describe(nameof<ImportEqualsDeclaration>("hasExportKeyword"), () => {
+    function doTest(text: string, expected: boolean) {
+      const { firstChild } = getInfoFromText<ImportEqualsDeclaration>(text);
+      expect(firstChild.hasExportKeyword()).to.equal(expected);
+    }
+
+    it("should get if has export keyword", () => {
+      doTest("import test = Namespace.Test;", false);
+      doTest("export import test = Namespace.Test;", true);
+    });
+  });
+
+  describe(nameof<ImportEqualsDeclaration>("setIsExported"), () => {
+    function doTest(text: string, value: boolean, expected: string) {
+      const { firstChild, sourceFile } = getInfoFromText<ImportEqualsDeclaration>(text);
+      firstChild.setIsExported(value);
+      expect(sourceFile.getText()).to.equal(expected);
+    }
+
+    it("should add and remove", () => {
+      doTest("import test = Namespace.Test;", true, "export import test = Namespace.Test;");
+      doTest("export import test = Namespace.Test;", false, "import test = Namespace.Test;");
+    });
+  });
 });
