@@ -13647,11 +13647,12 @@ function OverloadableNode(Base) {
 function getOverloadsAndImplementation(node) {
     const parent = node.getParentOrThrow();
     const name = getNameIfNamedNode(node);
+    const isStatic = getStaticIfStaticable(node);
     const kind = node.getKind();
     return parent.forEachChildAsArray().filter(n => {
-        const hasSameName = getNameIfNamedNode(n) === name;
-        const hasSameKind = n.getKind() === kind;
-        return hasSameName && hasSameKind;
+        return getNameIfNamedNode(n) === name
+            && n.getKind() === kind
+            && getStaticIfStaticable(n) === isStatic;
     });
 }
 function getNameIfNamedNode(node) {
@@ -13659,6 +13660,12 @@ function getNameIfNamedNode(node) {
     if (nodeAsNamedNode.getName instanceof Function)
         return nodeAsNamedNode.getName();
     return undefined;
+}
+function getStaticIfStaticable(node) {
+    const nodeAsStaticableNode = node;
+    if (nodeAsStaticableNode.isStatic instanceof Function)
+        return nodeAsStaticableNode.isStatic();
+    return false;
 }
 function insertOverloads(opts) {
     if (opts.structures.length === 0)

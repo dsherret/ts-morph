@@ -1,9 +1,9 @@
-import { errors, ObjectUtils, SyntaxKind } from "@ts-morph/common";
+import { errors, SyntaxKind } from "@ts-morph/common";
 import { CodeBlockWriter } from "../../../codeBlockWriter";
 import { getRangeWithoutCommentsFromArray, insertIntoParentTextRange, verifyAndGetIndex } from "../../../manipulation";
 import { Structure } from "../../../structures";
 import { Constructor } from "../../../types";
-import { BodyableNode, NamedNode } from "../base";
+import { BodyableNode, NamedNode, StaticableNode } from "../base";
 import { Node } from "../common";
 
 export type OverloadableNodeExtensionType = Node & BodyableNode;
@@ -63,11 +63,12 @@ export function OverloadableNode<T extends Constructor<OverloadableNodeExtension
 function getOverloadsAndImplementation(node: OverloadableNodeExtensionType & OverloadableNode) {
   const parent = node.getParentOrThrow();
   const name = getNameIfNamedNode(node);
+  const isStatic = getStaticIfStaticable(node);
   const kind = node.getKind();
   return parent.forEachChildAsArray().filter(n => {
-    const hasSameName = getNameIfNamedNode(n) === name;
-    const hasSameKind = n.getKind() === kind;
-    return hasSameName && hasSameKind;
+    return getNameIfNamedNode(n) === name
+      && n.getKind() === kind
+      && getStaticIfStaticable(n) === isStatic;
   }) as (OverloadableNodeExtensionType & OverloadableNode)[];
 }
 
@@ -76,6 +77,13 @@ function getNameIfNamedNode(node: Node) {
   if (nodeAsNamedNode.getName instanceof Function)
     return nodeAsNamedNode.getName();
   return undefined;
+}
+
+function getStaticIfStaticable(node: Node) {
+  const nodeAsStaticableNode = (node as any as StaticableNode);
+  if (nodeAsStaticableNode.isStatic instanceof Function)
+    return nodeAsStaticableNode.isStatic();
+  return false;
 }
 
 /**

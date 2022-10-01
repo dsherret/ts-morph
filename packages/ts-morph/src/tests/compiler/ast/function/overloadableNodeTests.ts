@@ -8,7 +8,8 @@ describe("OverloadableNode", () => {
   const { sourceFile: functionSourceFile } = getInfoFromText<FunctionDeclaration>(functionCode);
   const functions = functionSourceFile.getChildSyntaxListOrThrow().getChildren() as FunctionDeclaration[];
 
-  const constructorCode = `class MyClass { constructor();constructor();constructor() {} myMethod(): void;myMethod() {} abstract test(); }`;
+  const constructorCode =
+    `class MyClass { constructor();constructor();constructor() {} myMethod(): void;myMethod() {} static myMethod(): void;static myMethod(): void;static myMethod() {} abstract test(); }`;
   const { firstChild: classChild } = getInfoFromText<ClassDeclaration>(constructorCode);
   const constructors = classChild.getChildSyntaxListOrThrow().getChildren().filter(c => c instanceof ConstructorDeclaration) as ConstructorDeclaration[];
 
@@ -82,6 +83,13 @@ describe("OverloadableNode", () => {
         const code = `declare function myFunction(): void;declare function myFunction(): void;`;
         const { firstChild } = getInfoFromText<FunctionDeclaration>(code);
         expect(firstChild.getOverloads().length).to.equal(2);
+      });
+    });
+
+    describe("methods", () => {
+      it("should get the correct number of overloads for method", () => {
+        expect(classChild.getInstanceMethodOrThrow("myMethod").getOverloads().length).to.equal(1);
+        expect(classChild.getStaticMethodOrThrow("myMethod").getOverloads().length).to.equal(2);
       });
     });
   });
