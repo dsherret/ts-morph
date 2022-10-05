@@ -20,7 +20,7 @@ export interface ReadonlyableNode {
   /**
    * Gets the readonly keyword, or throws if none exists.
    */
-  getReadonlyKeywordOrThrow(message?: string): Node;
+  getReadonlyKeywordOrThrow(message?: string | (() => string)): Node;
   /**
    * Sets if this node is readonly.
    * @param value - If readonly or not.
@@ -38,7 +38,7 @@ export function ReadonlyableNode<T extends Constructor<ReadonlyableNodeExtension
       return this.getFirstModifierByKind(SyntaxKind.ReadonlyKeyword);
     }
 
-    getReadonlyKeywordOrThrow(message?: string) {
+    getReadonlyKeywordOrThrow(message?: string | (() => string)) {
       return errors.throwIfNullOrUndefined(this.getReadonlyKeyword(), message || "Expected to find a readonly keyword.", this);
     }
 

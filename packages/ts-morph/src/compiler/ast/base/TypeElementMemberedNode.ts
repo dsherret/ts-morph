@@ -349,7 +349,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
       return this.getConstructSignatures().find(findFunction);
     }
 
-    getConstructSignatureOrThrow(findFunction: (member: ConstructSignatureDeclaration) => boolean, message?: string) {
+    getConstructSignatureOrThrow(findFunction: (member: ConstructSignatureDeclaration) => boolean, message?: string | (() => string)) {
       return errors.throwIfNullOrUndefined(
         this.getConstructSignature(findFunction),
         message || "Expected to find a construct signature with the provided condition.", this,
@@ -387,7 +387,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
       return this.getCallSignatures().find(findFunction);
     }
 
-    getCallSignatureOrThrow(findFunction: (member: CallSignatureDeclaration) => boolean, message?: string) {
+    getCallSignatureOrThrow(findFunction: (member: CallSignatureDeclaration) => boolean, message?: string | (() => string)) {
       return errors.throwIfNullOrUndefined(this.getCallSignature(findFunction), message || "Expected to find a call signature with the provided condition.", this);
     }
 
@@ -422,7 +422,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
       return this.getIndexSignatures().find(findFunction);
     }
 
-    getIndexSignatureOrThrow(findFunction: (member: IndexSignatureDeclaration) => boolean, message?: string) {
+    getIndexSignatureOrThrow(findFunction: (member: IndexSignatureDeclaration) => boolean, message?: string | (() => string)) {
       return errors.throwIfNullOrUndefined(this.getIndexSignature(findFunction), message || "Expected to find a index signature with the provided condition.", this);
     }
 

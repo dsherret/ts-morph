@@ -19,7 +19,7 @@ export interface AwaitableNode {
   /**
    * Gets the await token or throws if none exists.
    */
-  getAwaitKeywordOrThrow(message?: string): Node<ts.AwaitKeywordToken>;
+  getAwaitKeywordOrThrow(message?: string | (() => string)): Node<ts.AwaitKeywordToken>;
   /**
    * Sets if the node is awaited.
    * @param value - If it should be awaited or not.
@@ -38,7 +38,7 @@ export function AwaitableNode<T extends Constructor<AwaitableNodeExtensionType>>
       return this._getNodeFromCompilerNodeIfExists(awaitModifier);
     }
 
-    getAwaitKeywordOrThrow(message?: string): Node<ts.AwaitKeywordToken> {
+    getAwaitKeywordOrThrow(message?: string | (() => string)): Node<ts.AwaitKeywordToken> {
       return errors.throwIfNullOrUndefined(this.getAwaitKeyword(), "Expected to find an await token.");
     }
 

@@ -22,7 +22,7 @@ export class TryStatement extends TryStatementBase<ts.TryStatement> {
   /**
    * Gets this try statement's catch clause or throws if none exists.
    */
-  getCatchClauseOrThrow(message?: string) {
+  getCatchClauseOrThrow(message?: string | (() => string)) {
     return errors.throwIfNullOrUndefined(this.getCatchClause(), message || "Expected to find a catch clause.", this);
   }
 
@@ -39,7 +39,7 @@ export class TryStatement extends TryStatementBase<ts.TryStatement> {
   /**
    * Gets this try statement's finally block or throws if none exists.
    */
-  getFinallyBlockOrThrow(message?: string) {
+  getFinallyBlockOrThrow(message?: string | (() => string)) {
     return errors.throwIfNullOrUndefined(this.getFinallyBlock(), message || "Expected to find a finally block.", this);
   }
 }

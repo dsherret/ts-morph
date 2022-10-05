@@ -20,7 +20,7 @@ export interface QuestionDotTokenableNode {
   /**
    * Gets the question dot token node or throws.
    */
-  getQuestionDotTokenNodeOrThrow(message?: string): Node<ts.QuestionDotToken>;
+  getQuestionDotTokenNodeOrThrow(message?: string | (() => string)): Node<ts.QuestionDotToken>;
   /**
    * Sets if this node has a question dot token.
    * @param value - If it should have a question dot token or not.
@@ -38,7 +38,7 @@ export function QuestionDotTokenableNode<T extends Constructor<QuestionDotTokena
       return this._getNodeFromCompilerNodeIfExists(this.compilerNode.questionDotToken);
     }
 
-    getQuestionDotTokenNodeOrThrow(message?: string): Node<ts.QuestionDotToken> {
+    getQuestionDotTokenNodeOrThrow(message?: string | (() => string)): Node<ts.QuestionDotToken> {
       return errors.throwIfNullOrUndefined(this.getQuestionDotTokenNode(), "Expected to find a question dot token.");
     }
 

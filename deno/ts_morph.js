@@ -10431,7 +10431,7 @@ const createBase$D = (ctor) => DotDotDotTokenableNode(InitializerExpressionableN
 const BindingElementBase = createBase$D(Node);
 class BindingElement extends BindingElementBase {
     getPropertyNameNodeOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getPropertyNameNode(), "Expected to find a property name node.");
+        return errors.throwIfNullOrUndefined(this.getPropertyNameNode(), message || "Expected to find a property name node.");
     }
     getPropertyNameNode() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.propertyName);
@@ -16855,7 +16855,7 @@ class Symbol {
         return (this.compilerSymbol.flags & flags) === flags;
     }
     getValueDeclarationOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getValueDeclaration(), () => message || `Expected to find the value declaration of symbol '${this.getName()}'.`, this);
+        return errors.throwIfNullOrUndefined(this.getValueDeclaration(), message || (() => `Expected to find the value declaration of symbol '${this.getName()}'.`));
     }
     getValueDeclaration() {
         const declaration = this.compilerSymbol.valueDeclaration;
@@ -16869,7 +16869,7 @@ class Symbol {
             .map(d => this._context.compilerFactory.getNodeFromCompilerNode(d, this._context.compilerFactory.getSourceFileForNode(d)));
     }
     getExportOrThrow(name, message) {
-        return errors.throwIfNullOrUndefined(this.getExport(name), message || `Expected to find export with name: ${name}`, this);
+        return errors.throwIfNullOrUndefined(this.getExport(name), message || `Expected to find export with name: ${name}`);
     }
     getExport(name) {
         if (this.compilerSymbol.exports == null)
@@ -16883,7 +16883,7 @@ class Symbol {
         return ArrayUtils.from(this.compilerSymbol.exports.values()).map(symbol => this._context.compilerFactory.getSymbol(symbol));
     }
     getGlobalExportOrThrow(name, message) {
-        return errors.throwIfNullOrUndefined(this.getGlobalExport(name), message || `Expected to find global export with name: ${name}`, this);
+        return errors.throwIfNullOrUndefined(this.getGlobalExport(name), message || `Expected to find global export with name: ${name}`);
     }
     getGlobalExport(name) {
         if (this.compilerSymbol.globalExports == null)
@@ -16897,7 +16897,7 @@ class Symbol {
         return ArrayUtils.from(this.compilerSymbol.globalExports.values()).map(symbol => this._context.compilerFactory.getSymbol(symbol));
     }
     getMemberOrThrow(name, message) {
-        return errors.throwIfNullOrUndefined(this.getMember(name), message || `Expected to find member with name: ${name}`, this);
+        return errors.throwIfNullOrUndefined(this.getMember(name), message || `Expected to find member with name: ${name}`);
     }
     getMember(name) {
         if (this.compilerSymbol.members == null)

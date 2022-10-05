@@ -17,7 +17,7 @@ export interface ExportGetableNode {
   /**
    * Gets the export keyword or throws if none exists.
    */
-  getExportKeywordOrThrow(message?: string): Node;
+  getExportKeywordOrThrow(message?: string | (() => string)): Node;
   /**
    * If the node has the default keyword.
    */
@@ -29,7 +29,7 @@ export interface ExportGetableNode {
   /**
    * Gets the default keyword or throws if none exists.
    */
-  getDefaultKeywordOrThrow(message?: string): Node;
+  getDefaultKeywordOrThrow(message?: string | (() => string)): Node;
   /**
    * Gets if the node is exported from a namespace, is a default export, or is a named export.
    */
@@ -60,7 +60,7 @@ export function ExportGetableNode<T extends Constructor<ExportGetableNodeExtensi
       return this.getFirstModifierByKind(SyntaxKind.ExportKeyword);
     }
 
-    getExportKeywordOrThrow(message?: string) {
+    getExportKeywordOrThrow(message?: string | (() => string)) {
       return errors.throwIfNullOrUndefined(this.getExportKeyword(), message || "Expected to find an export keyword.", this);
     }
 
@@ -78,7 +78,7 @@ export function ExportGetableNode<T extends Constructor<ExportGetableNodeExtensi
       return this.getFirstModifierByKind(SyntaxKind.DefaultKeyword);
     }
 
-    getDefaultKeywordOrThrow(message?: string) {
+    getDefaultKeywordOrThrow(message?: string | (() => string)) {
       return errors.throwIfNullOrUndefined(this.getDefaultKeyword(), message || "Expected to find a default keyword.", this);
     }
 

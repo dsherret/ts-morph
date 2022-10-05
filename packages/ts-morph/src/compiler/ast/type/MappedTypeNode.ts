@@ -11,7 +11,7 @@ export class MappedTypeNode extends TypeNode<ts.MappedTypeNode> {
   }
 
   /** Gets the mapped type node's name type node or throws if it doesn't exist. */
-  getNameTypeNodeOrThrow(message?: string): TypeNode {
+  getNameTypeNodeOrThrow(message?: string | (() => string)): TypeNode {
     return errors.throwIfNullOrUndefined(this.getNameTypeNode(), "Type did not exist.");
   }
 
@@ -21,7 +21,7 @@ export class MappedTypeNode extends TypeNode<ts.MappedTypeNode> {
   }
 
   /** Gets the mapped type's readonly token or throws if not exist. */
-  getReadonlyTokenOrThrow(message?: string) {
+  getReadonlyTokenOrThrow(message?: string | (() => string)) {
     return errors.throwIfNullOrUndefined(this.getReadonlyToken(), message || "Readonly token did not exist.", this);
   }
 
@@ -31,7 +31,7 @@ export class MappedTypeNode extends TypeNode<ts.MappedTypeNode> {
   }
 
   /** Gets the mapped type's question token or throws if not exist. */
-  getQuestionTokenOrThrow(message?: string) {
+  getQuestionTokenOrThrow(message?: string | (() => string)) {
     return errors.throwIfNullOrUndefined(this.getQuestionToken(), message || "Question token did not exist.", this);
   }
 
@@ -48,7 +48,7 @@ export class MappedTypeNode extends TypeNode<ts.MappedTypeNode> {
   }
 
   /** Gets the mapped type node's type node if it exists or throws when undefined. */
-  getTypeNodeOrThrow(message?: string): TypeNode {
+  getTypeNodeOrThrow(message?: string | (() => string)): TypeNode {
     return errors.throwIfNullOrUndefined(this.getTypeNode(), "Type did not exist, but was expected to exist.");
   }
 }

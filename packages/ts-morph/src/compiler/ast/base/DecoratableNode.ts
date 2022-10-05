@@ -66,7 +66,7 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
       return getNodeByNameOrFindFunction(this.getDecorators(), nameOrFindFunction);
     }
 
-    getDecoratorOrThrow(nameOrFindFunction: string | ((declaration: Decorator) => boolean), message?: string): Decorator {
+    getDecoratorOrThrow(nameOrFindFunction: string | ((declaration: Decorator) => boolean), message?: string | (() => string)): Decorator {
       return errors.throwIfNullOrUndefined(
         this.getDecorator(nameOrFindFunction),
         () => message || getNotFoundErrorMessageForNameOrFindFunction("decorator", nameOrFindFunction),

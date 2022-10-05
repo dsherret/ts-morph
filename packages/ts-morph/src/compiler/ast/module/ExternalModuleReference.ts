@@ -8,7 +8,7 @@ export class ExternalModuleReference extends ExternalModuleReferenceBase<ts.Exte
   /**
    * Gets the source file referenced or throws if it can't find it.
    */
-  getReferencedSourceFileOrThrow(message?: string) {
+  getReferencedSourceFileOrThrow(message?: string | (() => string)) {
     return errors.throwIfNullOrUndefined(this.getReferencedSourceFile(), message || "Expected to find the referenced source file.", this);
   }
 

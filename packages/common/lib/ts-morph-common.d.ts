@@ -344,15 +344,6 @@ export interface TsSourceFileContainer {
 /** Decorator for memoizing the result of a method or get accessor. */
 export declare function Memoize(target: any, propertyName: string, descriptor: TypedPropertyDescriptor<any>): void;
 
-/** Minimal attributes to show a error message with source */
-export declare type MaybeTraceAbleNode = undefined | null | {} | {
-    getSourceFile: () => {
-        getFilePath: () => StandardizedFilePath;
-        getText: () => string;
-    };
-    getPos(): number;
-};
-
 /** Collection of helper functions that can be used to throw errors. */
 export declare namespace errors {
     /** Base error class. */
@@ -360,25 +351,25 @@ export declare namespace errors {
         readonly message: string;
         readonly source: {
             fileName: string;
-            pos: ts.LineAndCharacter;
+            loc: ts.LineAndCharacter;
         } | undefined;
         protected constructor();
     }
     /** Thrown when there is a problem with a provided argument. */
     class ArgumentError extends BaseError {
-        constructor(argName: string, message: string, node?: MaybeTraceAbleNode);
+        constructor(argName: string, message: string, node?: TracableNode);
     }
     /** Thrown when an argument is null or whitespace. */
     class ArgumentNullOrWhitespaceError extends ArgumentError {
-        constructor(argName: string, node?: MaybeTraceAbleNode);
+        constructor(argName: string, node?: TracableNode);
     }
     /** Thrown when an argument is out of range. */
     class ArgumentOutOfRangeError extends ArgumentError {
-        constructor(argName: string, value: number, range: [number, number], node?: MaybeTraceAbleNode);
+        constructor(argName: string, value: number, range: [number, number], node?: TracableNode);
     }
     /** Thrown when an argument does not match an expected type. */
     class ArgumentTypeError extends ArgumentError {
-        constructor(argName: string, expectedType: string, actualType: string, node?: MaybeTraceAbleNode);
+        constructor(argName: string, expectedType: string, actualType: string, node?: TracableNode);
     }
     /** Thrown when a file or directory path was not found. */
     class PathNotFoundError extends BaseError {
@@ -396,11 +387,11 @@ export declare namespace errors {
     }
     /** Thrown when an action was taken that is not allowed. */
     class InvalidOperationError extends BaseError {
-        constructor(message: string, node?: MaybeTraceAbleNode);
+        constructor(message: string, node?: TracableNode);
     }
     /** Thrown when a certain behaviour or feature has not been implemented. */
     class NotImplementedError extends BaseError {
-        constructor(message?: string, node?: MaybeTraceAbleNode);
+        constructor(message?: string, node?: TracableNode);
     }
     /** Thrown when an operation is not supported. */
     class NotSupportedError extends BaseError {
@@ -445,7 +436,7 @@ export declare namespace errors {
      * Gets an error saying that a feature is not implemented for a certain syntax kind.
      * @param kind - Syntax kind that isn't implemented.
      */
-    function throwNotImplementedForSyntaxKindError(kind: ts.SyntaxKind, node?: MaybeTraceAbleNode): never;
+    function throwNotImplementedForSyntaxKindError(kind: ts.SyntaxKind, node?: TracableNode): never;
     /**
      * Throws an Argument
      * @param value
@@ -457,12 +448,12 @@ export declare namespace errors {
      * @param value - Value to check.
      * @param errorMessage - Error message to throw when not defined.
      */
-    function throwIfNullOrUndefined<T>(value: T | undefined, errorMessage: string | (() => string), node?: MaybeTraceAbleNode): T;
+    function throwIfNullOrUndefined<T>(value: T | undefined, errorMessage: string | (() => string), node?: TracableNode): T;
     /**
      * Throw if the value should have been the never type.
      * @param value - Value to check.
      */
-    function throwNotImplementedForNeverValueError(value: never, sourceNode?: MaybeTraceAbleNode): never;
+    function throwNotImplementedForNeverValueError(value: never, sourceNode?: TracableNode): never;
     /**
      * Throws an error if the actual value does not equal the expected value.
      * @param actual - Actual value.
@@ -872,6 +863,42 @@ export declare const libFolderInMemoryPath: StandardizedFilePath;
  * @param kind - Syntax kind.
  */
 export declare function getSyntaxKindName(kind: ts.SyntaxKind): string;
+
+/**
+ * Minimal attributes to show a error message with source
+ * (ts.Node from ts-morph)
+ */
+export declare type TracableNode = {
+    getSourceFile: () => {
+        getFilePath: () => StandardizedFilePath;
+        getFullText: () => string;
+    };
+    getPos(): number;
+};
+
+/**
+ * Returns the line of the given node inside its source file
+ * in a prettified format.
+ */
+export declare const getPrettyNodeLocation: (node: TracableNode) => string | undefined;
+
+/**
+ * Prints prettified string of the nodes location
+ */
+export declare const printPrettyNodeLocation: (node: TracableNode) => void;
+
+/**
+ * Returns the location of the given node inside its source file.
+ */
+export declare const getSourceLocation: (node: TracableNode) => {
+    fileName: StandardizedFilePath;
+    loc: {
+        line: number;
+        character: number;
+    };
+    brokenLine: string;
+    pos: number;
+} | undefined;
 
 /**
  * Holds the compiler options.

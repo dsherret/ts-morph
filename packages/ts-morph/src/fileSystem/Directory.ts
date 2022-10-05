@@ -91,7 +91,7 @@ export class Directory {
   /**
    * Gets the parent directory or throws if it doesn't exist or was never added to the project.
    */
-  getParentOrThrow(message?: string) {
+  getParentOrThrow(message?: string | (() => string)) {
     return errors.throwIfNullOrUndefined(this.getParent(), () => message || `Parent directory of ${this.getPath()} does not exist or was never added.`, this);
   }
 

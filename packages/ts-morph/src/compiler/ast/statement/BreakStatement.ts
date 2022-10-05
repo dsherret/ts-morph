@@ -13,7 +13,7 @@ export class BreakStatement extends Statement<ts.BreakStatement> {
   /**
    * Gets this break statement's label or throw if it does not exist.
    */
-  getLabelOrThrow(message?: string) {
+  getLabelOrThrow(message?: string | (() => string)) {
     return errors.throwIfNullOrUndefined(this.getLabel(), message || "Expected to find a label.", this);
   }
 }

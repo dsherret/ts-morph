@@ -500,7 +500,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
       return this.getStatements().find(findFunction);
     }
 
-    getStatementOrThrow(findFunction: (statement: Statement) => boolean, message?: string) {
+    getStatementOrThrow(findFunction: (statement: Statement) => boolean, message?: string | (() => string)) {
       return errors.throwIfNullOrUndefined(this.getStatement(findFunction), message || "Expected to find a statement matching the provided condition.", this);
     }
 
@@ -509,7 +509,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
       return this._getNodeFromCompilerNodeIfExists(statement) as KindToNodeMappingsWithCommentStatements[TKind] | undefined;
     }
 
-    getStatementByKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string) {
+    getStatementByKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string | (() => string)) {
       return errors.throwIfNullOrUndefined(this.getStatementByKind(kind), message || `Expected to find a statement with syntax kind ${getSyntaxKindName(kind)}.`, this);
     }
 
@@ -868,7 +868,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
       }
     }
 
-    getVariableStatementOrThrow(nameOrFindFunction: string | ((statement: VariableStatement) => boolean), message?: string): VariableStatement {
+    getVariableStatementOrThrow(nameOrFindFunction: string | ((statement: VariableStatement) => boolean), message?: string | (() => string)): VariableStatement {
       return errors.throwIfNullOrUndefined(
         this.getVariableStatement(nameOrFindFunction),
         message || "Expected to find a variable statement that matched the provided condition.", this,

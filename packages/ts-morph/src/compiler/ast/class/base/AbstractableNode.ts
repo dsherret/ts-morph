@@ -20,7 +20,7 @@ export interface AbstractableNode {
   /**
    * Gets the abstract keyword or throws if it doesn't exist.
    */
-  getAbstractKeywordOrThrow(message?: string): Node;
+  getAbstractKeywordOrThrow(message?: string | (() => string)): Node;
   /**
    * Sets if the node is abstract.
    * @param isAbstract - If it should be abstract or not.
@@ -38,7 +38,7 @@ export function AbstractableNode<T extends Constructor<AbstractableNodeExtension
       return this.getFirstModifierByKind(SyntaxKind.AbstractKeyword);
     }
 
-    getAbstractKeywordOrThrow(message?: string) {
+    getAbstractKeywordOrThrow(message?: string | (() => string)) {
       return errors.throwIfNullOrUndefined(this.getAbstractKeyword(), message || "Expected to find an abstract keyword.", this);
     }
 

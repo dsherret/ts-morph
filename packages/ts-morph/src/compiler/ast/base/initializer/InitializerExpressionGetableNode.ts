@@ -26,7 +26,7 @@ export interface InitializerExpressionGetableNode {
   /**
    * Gets the initializer or throw.
    */
-  getInitializerOrThrow(message?: string): Expression;
+  getInitializerOrThrow(message?: string | (() => string)): Expression;
 }
 
 export function InitializerExpressionGetableNode<T extends Constructor<InitializerExpressionGetableNodeExtensionType>>(
@@ -37,7 +37,7 @@ export function InitializerExpressionGetableNode<T extends Constructor<Initializ
       return this.compilerNode.initializer != null;
     }
 
-    getInitializerIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string) {
+    getInitializerIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string | (() => string)) {
       return errors.throwIfNullOrUndefined(this.getInitializerIfKind(kind), message || `Expected to find an initializer of kind '${getSyntaxKindName(kind)}'.`, this);
     }
 
@@ -48,7 +48,7 @@ export function InitializerExpressionGetableNode<T extends Constructor<Initializ
       return initializer as KindToExpressionMappings[TKind];
     }
 
-    getInitializerOrThrow(message?: string) {
+    getInitializerOrThrow(message?: string | (() => string)) {
       return errors.throwIfNullOrUndefined(this.getInitializer(), message || "Expected to find an initializer.", this);
     }
 

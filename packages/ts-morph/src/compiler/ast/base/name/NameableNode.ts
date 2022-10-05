@@ -22,7 +22,7 @@ export interface NameableNodeSpecific {
   /**
    * Gets the name node if it exists, or throws.
    */
-  getNameNodeOrThrow(message?: string): Identifier;
+  getNameNodeOrThrow(message?: string | (() => string)): Identifier;
   /**
    * Gets the name if it exists.
    */
@@ -30,7 +30,7 @@ export interface NameableNodeSpecific {
   /**
    * Gets the name if it exists, or throws.
    */
-  getNameOrThrow(message?: string): string;
+  getNameOrThrow(message?: string | (() => string)): string;
   /**
    * Removes the name from the node.
    */
@@ -47,7 +47,7 @@ function NameableNodeInternal<T extends Constructor<NameableNodeExtensionType>>(
       return this._getNodeFromCompilerNodeIfExists(this.compilerNode.name);
     }
 
-    getNameNodeOrThrow(message?: string) {
+    getNameNodeOrThrow(message?: string | (() => string)) {
       return errors.throwIfNullOrUndefined(this.getNameNode(), message || "Expected to have a name node.", this);
     }
 
@@ -55,7 +55,7 @@ function NameableNodeInternal<T extends Constructor<NameableNodeExtensionType>>(
       return this.getNameNode()?.getText() ?? undefined; // huh? why was this necessary? bug in optional chaining?
     }
 
-    getNameOrThrow(message?: string) {
+    getNameOrThrow(message?: string | (() => string)) {
       return errors.throwIfNullOrUndefined(this.getName(), message || "Expected to have a name.", this);
     }
 

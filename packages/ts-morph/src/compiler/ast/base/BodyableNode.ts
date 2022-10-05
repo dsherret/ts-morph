@@ -10,7 +10,7 @@ export interface BodyableNode {
   /**
    * Gets the body or throws an error if it doesn't exist.
    */
-  getBodyOrThrow(message?: string): Node;
+  getBodyOrThrow(message?: string | (() => string)): Node;
   /**
    * Gets the body if it exists.
    */
@@ -40,7 +40,7 @@ export interface BodyableNode {
 
 export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(Base: T): Constructor<BodyableNode> & T {
   return class extends Base implements BodyableNode {
-    getBodyOrThrow(message?: string) {
+    getBodyOrThrow(message?: string | (() => string)) {
       return errors.throwIfNullOrUndefined(this.getBody(), message || "Expected to find the node's body.", this);
     }
 

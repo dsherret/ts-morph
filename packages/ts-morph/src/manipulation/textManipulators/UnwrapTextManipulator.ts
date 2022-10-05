@@ -28,7 +28,7 @@ function getReplacementText(node: Node) {
     const bodyNode = getBodyNodeOrThrow();
     return [bodyNode.getStart() + 1, bodyNode.getEnd() - 1] as const;
 
-    function getBodyNodeOrThrow(message?: string) {
+    function getBodyNodeOrThrow(message?: string | (() => string)) {
       if (Node.isModuleDeclaration(node)) {
         const bodyNode = node._getInnerBody();
         if (bodyNode == null)

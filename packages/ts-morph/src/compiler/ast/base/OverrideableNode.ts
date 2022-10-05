@@ -20,7 +20,7 @@ export interface OverrideableNode {
   /**
    * Gets the override keyword or throws if none exists.
    */
-  getOverrideKeywordOrThrow(message?: string): Node<ts.Modifier>;
+  getOverrideKeywordOrThrow(message?: string | (() => string)): Node<ts.Modifier>;
   /**
    * Sets if the node has an override keyword.
    * @param value - If it should have an override keyword or not.
@@ -38,7 +38,7 @@ export function OverrideableNode<T extends Constructor<OverrideableNodeExtension
       return this.getFirstModifierByKind(SyntaxKind.OverrideKeyword) as Node<ts.OverrideKeyword> | undefined;
     }
 
-    getOverrideKeywordOrThrow(message?: string): Node<ts.OverrideKeyword> {
+    getOverrideKeywordOrThrow(message?: string | (() => string)): Node<ts.OverrideKeyword> {
       return errors.throwIfNullOrUndefined(this.getOverrideKeyword(), "Expected to find an override keyword.");
     }
 

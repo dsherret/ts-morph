@@ -14,7 +14,7 @@ export interface ExpressionableNode {
   /**
    * Gets the expression if it exists or throws.
    */
-  getExpressionOrThrow(message?: string): Expression;
+  getExpressionOrThrow(message?: string | (() => string)): Expression;
   /**
    * Gets the expression if it is of the specified syntax kind or returns undefined.
    */
@@ -31,7 +31,7 @@ export function ExpressionableNode<T extends Constructor<ExpressionableNodeExten
       return this._getNodeFromCompilerNodeIfExists(this.compilerNode.expression);
     }
 
-    getExpressionOrThrow(message?: string) {
+    getExpressionOrThrow(message?: string | (() => string)) {
       return errors.throwIfNullOrUndefined(this.getExpression(), message || "Expected to find an expression.", this);
     }
 
@@ -40,7 +40,7 @@ export function ExpressionableNode<T extends Constructor<ExpressionableNodeExten
       return expression?.getKind() === kind ? expression as KindToExpressionMappings[TKind] : undefined;
     }
 
-    getExpressionIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string) {
+    getExpressionIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string | (() => string)) {
       return errors.throwIfNullOrUndefined(this.getExpressionIfKind(kind), message || `An expression with the kind kind ${getSyntaxKindName(kind)} was expected.`, this);
     }
   };

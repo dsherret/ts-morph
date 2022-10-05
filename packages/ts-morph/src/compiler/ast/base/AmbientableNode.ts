@@ -21,7 +21,7 @@ export interface AmbientableNode {
   /**
    * Gets the declare keyword or throws if it doesn't exist.
    */
-  getDeclareKeywordOrThrow(message?: string): Node;
+  getDeclareKeywordOrThrow(message?: string | (() => string)): Node;
   /**
    * Gets if the node is ambient.
    */
@@ -39,7 +39,7 @@ export function AmbientableNode<T extends Constructor<AmbientableNodeExtensionTy
       return this.getDeclareKeyword() != null;
     }
 
-    getDeclareKeywordOrThrow(message?: string) {
+    getDeclareKeywordOrThrow(message?: string | (() => string)) {
       return errors.throwIfNullOrUndefined(this.getDeclareKeyword(), message || "Expected to find a declare keyword.", this);
     }
 

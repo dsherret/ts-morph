@@ -14,12 +14,12 @@ export interface ModuleChildableNode {
   /**
    * Gets the parent module declaration or throws if it doesn't exist.
    */
-  getParentModuleOrThrow(message?: string): ModuleDeclaration;
+  getParentModuleOrThrow(message?: string | (() => string)): ModuleDeclaration;
 }
 
 export function ModuleChildableNode<T extends Constructor<ModuleChildableNodeExtensionType>>(Base: T): Constructor<ModuleChildableNode> & T {
   return class extends Base implements ModuleChildableNode {
-    getParentModuleOrThrow(message?: string) {
+    getParentModuleOrThrow(message?: string | (() => string)) {
       return errors.throwIfNullOrUndefined(this.getParentModule(), message || "Expected to find the parent module declaration.", this);
     }
 

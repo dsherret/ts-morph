@@ -1,74 +1,46 @@
 import { StandardizedFilePath } from "./fileSystem";
-import { getSyntaxKindName } from "./helpers";
+import { getSyntaxKindName, getPrettyNodeLocation, getSourceLocation, TracableNode } from "./helpers";
 import { ts } from "./typescript";
-
-/** Minimal attributes to show a error message with source */
-export type MaybeTraceAbleNode = undefined | null | {} | {
-    // TODO: Find correct type
-    getSourceFile: () => {
-        getFilePath: () => StandardizedFilePath;
-        getText: () => string;
-    }
-    getPos(): number;
-}
 
 /** Collection of helper functions that can be used to throw errors. */
 export namespace errors {
   /** Base error class. */
   export abstract class BaseError extends Error {
-    public readonly source: { fileName: string; pos: ts.LineAndCharacter } | undefined;
+    public readonly source: { fileName: string; loc: ts.LineAndCharacter } | undefined;
     /** @private */
-    constructor(public readonly message: string, node?: MaybeTraceAbleNode) {
-      let messageWithSource = message;
-      let source: { fileName: string; pos: ts.LineAndCharacter } | undefined;
-      if (node && "getSourceFile" in node && "getPos" in node) {
-        try {
-          const sourceFile = node.getSourceFile();
-          const sourceCode = sourceFile.getText();
-          const pos = node.getPos();
-          const textBeforePos = sourceCode.substring(0, pos);
-          const line = textBeforePos.match(/\n/g)?.length || 0;
-          const brokenLineStart = textBeforePos.lastIndexOf("\n", pos);
-          const brokenLineEnd = sourceCode.indexOf("\n", pos);
-          const brokenLine = sourceCode.substring(brokenLineStart + 1, brokenLineEnd === -1 ? undefined : brokenLineEnd);
-          source = { fileName: sourceFile.getFilePath(), pos: { line, character: pos - brokenLineStart } };
-          const linePrefix = `> ${source.pos.line + 1} |`;
-          messageWithSource += `\nin ${source.fileName}:${source.pos.line + 1}:${source.pos.character + 1}\n\n${linePrefix}${brokenLine}\n${" ".repeat(linePrefix.length - 1)}|${" ".repeat(source.pos.character)}^`;
-        } catch (e) {
-          // Errors inside BaseError would be confusing
-          // so ignore errors here and fallback to the original message
-        }
-    }
-      super(messageWithSource);
-      this.message = messageWithSource;
-      this.source = source;
+    constructor(public readonly message: string, node?: TracableNode) {
+      const nodeLocation = node && getPrettyNodeLocation(node);
+      const messageWithLocation = nodeLocation ? `${message}\n in ${nodeLocation}` : message;
+      super(messageWithLocation);
+      this.source = node && getSourceLocation(node);
+      this.message = messageWithLocation;
     }
   }
 
   /** Thrown when there is a problem with a provided argument. */
   export class ArgumentError extends BaseError {
-    constructor(argName: string, message: string, node?: MaybeTraceAbleNode) {
+    constructor(argName: string, message: string, node?: TracableNode) {
       super(`Argument Error (${argName}): ${message}`, node);
     }
   }
 
   /** Thrown when an argument is null or whitespace. */
   export class ArgumentNullOrWhitespaceError extends ArgumentError {
-    constructor(argName: string, node?: MaybeTraceAbleNode) {
+    constructor(argName: string, node?: TracableNode) {
       super(argName, "Cannot be null or whitespace.", node);
     }
   }
 
   /** Thrown when an argument is out of range. */
   export class ArgumentOutOfRangeError extends ArgumentError {
-    constructor(argName: string, value: number, range: [number, number], node?: MaybeTraceAbleNode) {
+    constructor(argName: string, value: number, range: [number, number], node?: TracableNode) {
       super(argName, `Range is ${range[0]} to ${range[1]}, but ${value} was provided.`, node);
     }
   }
 
   /** Thrown when an argument does not match an expected type. */
   export class ArgumentTypeError extends ArgumentError {
-    constructor(argName: string, expectedType: string, actualType: string, node?: MaybeTraceAbleNode) {
+    constructor(argName: string, expectedType: string, actualType: string, node?: TracableNode) {
       super(argName, `Expected type '${expectedType}', but was '${actualType}'.`, node);
     }
   }
@@ -98,14 +70,14 @@ export namespace errors {
 
   /** Thrown when an action was taken that is not allowed. */
   export class InvalidOperationError extends BaseError {
-    constructor(message: string, node?: MaybeTraceAbleNode) {
+    constructor(message: string, node?: TracableNode) {
       super(message, node);
     }
   }
 
   /** Thrown when a certain behaviour or feature has not been implemented. */
   export class NotImplementedError extends BaseError {
-    constructor(message = "Not implemented.", node?: MaybeTraceAbleNode) {
+    constructor(message = "Not implemented.", node?: TracableNode) {
       super(message, node);
     }
   }
@@ -179,7 +151,7 @@ export namespace errors {
    * Gets an error saying that a feature is not implemented for a certain syntax kind.
    * @param kind - Syntax kind that isn't implemented.
    */
-  export function throwNotImplementedForSyntaxKindError(kind: ts.SyntaxKind, node?: MaybeTraceAbleNode): never {
+  export function throwNotImplementedForSyntaxKindError(kind: ts.SyntaxKind, node?: TracableNode): never {
     throw new NotImplementedError(`Not implemented feature for syntax kind '${getSyntaxKindName(kind)}'.`, node);
   }
 
@@ -198,7 +170,7 @@ export namespace errors {
    * @param value - Value to check.
    * @param errorMessage - Error message to throw when not defined.
    */
-  export function throwIfNullOrUndefined<T>(value: T | undefined, errorMessage: string | (() => string), node?: MaybeTraceAbleNode) {
+  export function throwIfNullOrUndefined<T>(value: T | undefined, errorMessage: string | (() => string), node?: TracableNode) {
     if (value == null)
       throw new InvalidOperationError(typeof errorMessage === "string" ? errorMessage : errorMessage(), node);
     return value;
@@ -208,7 +180,7 @@ export namespace errors {
    * Throw if the value should have been the never type.
    * @param value - Value to check.
    */
-  export function throwNotImplementedForNeverValueError(value: never, sourceNode?: MaybeTraceAbleNode): never {
+  export function throwNotImplementedForNeverValueError(value: never, sourceNode?: TracableNode): never {
     const node = value as any as { kind: number };
     if (node != null && typeof node.kind === "number")
       return throwNotImplementedForSyntaxKindError(node.kind, sourceNode);

@@ -162,7 +162,7 @@ export async function createDeclarationFile() {
         writer.writeLine("/** @inheritdoc **/");
         writer.writeLine(`getParent(): NodeParentType<${typeArgName}>;`);
         writer.writeLine("/** @inheritdoc **/");
-        writer.writeLine(`getParentOrThrow(message?: string): NonNullable<NodeParentType<${typeArgName}>>;`);
+        writer.writeLine(`getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<${typeArgName}>>;`);
       });
     }
 

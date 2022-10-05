@@ -22,7 +22,7 @@ export class CatchClause extends CatchClauseBase<ts.CatchClause> {
   /**
    * Gets this catch clause's variable declaration or throws if none exists.
    */
-  getVariableDeclarationOrThrow(message?: string) {
+  getVariableDeclarationOrThrow(message?: string | (() => string)) {
     return errors.throwIfNullOrUndefined(this.getVariableDeclaration(), message || "Expected to find a variable declaration.", this);
   }
 }
