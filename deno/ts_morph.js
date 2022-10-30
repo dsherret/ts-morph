@@ -8433,6 +8433,8 @@ class NamedImportExportSpecifierStructurePrinter extends NodePrinter {
         else if (structure instanceof Function)
             structure(specifierWriter);
         else {
+            if (structure.isTypeOnly)
+                writer.write("type ");
             specifierWriter.write(structure.name);
             if (!StringUtils.isNullOrWhitespace(structure.alias)) {
                 if (!specifierWriter.isLastNewLine())
@@ -12167,6 +12169,8 @@ class ExportSpecifier extends ExportSpecifierBase {
     }
     set(structure) {
         callBaseSet(ExportSpecifierBase.prototype, this, structure);
+        if (structure.isTypeOnly != null)
+            this.setIsTypeOnly(structure.isTypeOnly);
         if (structure.name != null)
             this.setName(structure.name);
         if (structure.alias != null)
@@ -12181,6 +12185,7 @@ class ExportSpecifier extends ExportSpecifierBase {
             kind: StructureKind.ExportSpecifier,
             alias: alias ? alias.getText() : undefined,
             name: this.getNameNode().getText(),
+            isTypeOnly: this.isTypeOnly(),
         });
     }
 }
@@ -12776,6 +12781,8 @@ class ImportSpecifier extends ImportSpecifierBase {
     }
     set(structure) {
         callBaseSet(ImportSpecifierBase.prototype, this, structure);
+        if (structure.isTypeOnly != null)
+            this.setIsTypeOnly(structure.isTypeOnly);
         if (structure.name != null)
             this.setName(structure.name);
         if (structure.alias != null)
@@ -12790,6 +12797,7 @@ class ImportSpecifier extends ImportSpecifierBase {
             kind: StructureKind.ImportSpecifier,
             name: this.getName(),
             alias: alias ? alias.getText() : undefined,
+            isTypeOnly: this.isTypeOnly(),
         });
     }
 }

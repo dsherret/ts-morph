@@ -412,6 +412,15 @@ describe("ExportSpecifier", () => {
         "name",
       );
     });
+
+    it("should set if type only", () => {
+      doTest(
+        `export { name as alias } from './file';`,
+        { isTypeOnly: true },
+        `export { type name as alias } from './file';`,
+        "name",
+      );
+    });
   });
 
   describe(nameof<ExportSpecifier>("getStructure"), () => {
@@ -425,6 +434,7 @@ describe("ExportSpecifier", () => {
         kind: StructureKind.ExportSpecifier,
         alias: undefined,
         name: "name",
+        isTypeOnly: false,
       });
     });
 
@@ -433,6 +443,16 @@ describe("ExportSpecifier", () => {
         kind: StructureKind.ExportSpecifier,
         alias: "alias",
         name: "name",
+        isTypeOnly: false,
+      });
+    });
+
+    it("should get when has type only", () => {
+      doTest(`export { type a } from 'foo'`, {
+        kind: StructureKind.ExportSpecifier,
+        name: "a",
+        alias: undefined,
+        isTypeOnly: true,
       });
     });
   });

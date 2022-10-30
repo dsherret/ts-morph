@@ -42,6 +42,8 @@ export class NamedImportExportSpecifierStructurePrinter extends NodePrinter<Name
     else if (structure instanceof Function)
       structure(specifierWriter);
     else {
+      if (structure.isTypeOnly)
+        writer.write("type ");
       specifierWriter.write(structure.name);
 
       if (!StringUtils.isNullOrWhitespace(structure.alias)) {

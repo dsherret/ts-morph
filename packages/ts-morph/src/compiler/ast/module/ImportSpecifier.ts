@@ -173,6 +173,9 @@ export class ImportSpecifier extends ImportSpecifierBase<ts.ImportSpecifier> {
   set(structure: Partial<ImportSpecifierStructure>) {
     callBaseSet(ImportSpecifierBase.prototype, this, structure);
 
+    if (structure.isTypeOnly != null)
+      this.setIsTypeOnly(structure.isTypeOnly);
+
     if (structure.name != null)
       this.setName(structure.name);
 
@@ -193,6 +196,7 @@ export class ImportSpecifier extends ImportSpecifierBase<ts.ImportSpecifier> {
       kind: StructureKind.ImportSpecifier,
       name: this.getName(),
       alias: alias ? alias.getText() : undefined,
+      isTypeOnly: this.isTypeOnly(),
     }) as ImportSpecifierStructure;
   }
 }
