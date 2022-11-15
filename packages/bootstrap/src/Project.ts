@@ -320,7 +320,7 @@ export class Project {
    * @param tsConfigFilePath - File path to the tsconfig.json file.
    */
   addSourceFilesFromTsConfig(tsConfigFilePath: string): Promise<ts.SourceFile[]> {
-    const resolver = this._getTsConfigResolover(tsConfigFilePath);
+    const resolver = this._getTsConfigResolver(tsConfigFilePath);
     return this._addSourceFilesForTsConfigResolver(resolver, resolver.getCompilerOptions());
   }
 
@@ -332,12 +332,12 @@ export class Project {
    * @param tsConfigFilePath - File path to the tsconfig.json file.
    */
   addSourceFilesFromTsConfigSync(tsConfigFilePath: string): ts.SourceFile[] {
-    const resolver = this._getTsConfigResolover(tsConfigFilePath);
+    const resolver = this._getTsConfigResolver(tsConfigFilePath);
     return this._addSourceFilesForTsConfigResolverSync(resolver, resolver.getCompilerOptions());
   }
 
   /** @internal */
-  private _getTsConfigResolover(tsConfigFilePath: string) {
+  private _getTsConfigResolver(tsConfigFilePath: string) {
     const standardizedFilePath = this._fileSystemWrapper.getStandardizedAbsolutePath(tsConfigFilePath);
     return new TsConfigResolver(this._fileSystemWrapper, standardizedFilePath, this.compilerOptions.getEncoding());
   }
@@ -526,9 +526,9 @@ export class Project {
       return this._sourceFileCache.getSourceFileFromCacheFromFilePath(filePathOrSearchFunction);
     }
 
-    const allSoureFilesIterable = this.getSourceFiles();
+    const allSourceFilesIterable = this.getSourceFiles();
     return selectSmallestDirPathResult(function*() {
-      for (const sourceFile of allSoureFilesIterable) {
+      for (const sourceFile of allSourceFilesIterable) {
         if (filePathOrSearchFunction(sourceFile))
           yield sourceFile;
       }
