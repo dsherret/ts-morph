@@ -5949,7 +5949,7 @@ export declare class SatisfiesExpression extends SatisfiesExpressionBase<ts.Sati
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.SatisfiesExpression>;
   /** @inheritdoc **/
-  getParentOrThrow(): NonNullable<NodeParentType<ts.SatisfiesExpression>>;
+  getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.SatisfiesExpression>>;
 }
 
 declare const SpreadElementBase: Constructor<ExpressionedNode> & typeof Expression;

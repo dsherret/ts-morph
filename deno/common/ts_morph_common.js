@@ -316,37 +316,68 @@ function getKindCache() {
     return kindCache;
 }
 
+const getPrettyNodeLocation = (node) => {
+    const source = getSourceLocation(node);
+    if (!source) {
+        return;
+    }
+    const linePrefix = `> ${source.loc.line + 1} |`;
+    return `${source.fileName}:${source.loc.line + 1}:${source.loc.character + 1}\n\n${linePrefix}${source.brokenLine}\n${" ".repeat(linePrefix.length - 1)}|${" ".repeat(source.loc.character)}^`;
+};
+const printPrettyNodeLocation = (node) => {
+    console.log(getPrettyNodeLocation(node) || node);
+};
+const getSourceLocation = (node) => {
+    var _a;
+    if (!isTracableNode(node)) {
+        return;
+    }
+    const sourceFile = node.getSourceFile();
+    const sourceCode = sourceFile.getFullText();
+    const pos = node.getPos();
+    const textBeforePos = sourceCode.substring(0, pos);
+    const line = ((_a = textBeforePos.match(/\n/g)) === null || _a === void 0 ? void 0 : _a.length) || 0;
+    const brokenLineStart = textBeforePos.lastIndexOf("\n", pos);
+    const brokenLineEnd = sourceCode.indexOf("\n", pos);
+    const brokenLine = sourceCode.substring(brokenLineStart + 1, brokenLineEnd === -1 ? undefined : brokenLineEnd);
+    return { fileName: sourceFile.getFilePath(), loc: { line, character: pos - brokenLineStart }, brokenLine, pos };
+};
+const isTracableNode = (node) => typeof node === "object" && node !== null && ("getSourceFile" in node) && ("getPos" in node);
+
 var errors;
 (function (errors) {
     class BaseError extends Error {
-        constructor(message) {
-            super(message);
+        constructor(message, node) {
+            const nodeLocation = node && getPrettyNodeLocation(node);
+            const messageWithLocation = nodeLocation ? `${message}\n in ${nodeLocation}` : message;
+            super(messageWithLocation);
             this.message = message;
-            this.message = message;
+            this.source = node && getSourceLocation(node);
+            this.message = messageWithLocation;
         }
     }
     errors.BaseError = BaseError;
     class ArgumentError extends BaseError {
-        constructor(argName, message) {
-            super(`Argument Error (${argName}): ${message}`);
+        constructor(argName, message, node) {
+            super(`Argument Error (${argName}): ${message}`, node);
         }
     }
     errors.ArgumentError = ArgumentError;
     class ArgumentNullOrWhitespaceError extends ArgumentError {
-        constructor(argName) {
-            super(argName, "Cannot be null or whitespace.");
+        constructor(argName, node) {
+            super(argName, "Cannot be null or whitespace.", node);
         }
     }
     errors.ArgumentNullOrWhitespaceError = ArgumentNullOrWhitespaceError;
     class ArgumentOutOfRangeError extends ArgumentError {
-        constructor(argName, value, range) {
-            super(argName, `Range is ${range[0]} to ${range[1]}, but ${value} was provided.`);
+        constructor(argName, value, range, node) {
+            super(argName, `Range is ${range[0]} to ${range[1]}, but ${value} was provided.`, node);
         }
     }
     errors.ArgumentOutOfRangeError = ArgumentOutOfRangeError;
     class ArgumentTypeError extends ArgumentError {
-        constructor(argName, expectedType, actualType) {
-            super(argName, `Expected type '${expectedType}', but was '${actualType}'.`);
+        constructor(argName, expectedType, actualType, node) {
+            super(argName, `Expected type '${expectedType}', but was '${actualType}'.`, node);
         }
     }
     errors.ArgumentTypeError = ArgumentTypeError;
@@ -371,14 +402,14 @@ var errors;
     }
     errors.FileNotFoundError = FileNotFoundError;
     class InvalidOperationError extends BaseError {
-        constructor(message) {
-            super(message);
+        constructor(message, node) {
+            super(message, node);
         }
     }
     errors.InvalidOperationError = InvalidOperationError;
     class NotImplementedError extends BaseError {
-        constructor(message = "Not implemented.") {
-            super(message);
+        constructor(message = "Not implemented.", node) {
+            super(message, node);
         }
     }
     errors.NotImplementedError = NotImplementedError;
@@ -416,8 +447,8 @@ var errors;
         throwIfOutOfRange(actualRange[1], range, argName);
     }
     errors.throwIfRangeOutOfRange = throwIfRangeOutOfRange;
-    function throwNotImplementedForSyntaxKindError(kind) {
-        throw new NotImplementedError(`Not implemented feature for syntax kind '${getSyntaxKindName(kind)}'.`);
+    function throwNotImplementedForSyntaxKindError(kind, node) {
+        throw new NotImplementedError(`Not implemented feature for syntax kind '${getSyntaxKindName(kind)}'.`, node);
     }
     errors.throwNotImplementedForSyntaxKindError = throwNotImplementedForSyntaxKindError;
     function throwIfNegative(value, argName) {
@@ -425,17 +456,17 @@ var errors;
             throw new ArgumentError(argName, "Expected a non-negative value.");
     }
     errors.throwIfNegative = throwIfNegative;
-    function throwIfNullOrUndefined(value, errorMessage) {
+    function throwIfNullOrUndefined(value, errorMessage, node) {
         if (value == null)
-            throw new InvalidOperationError(typeof errorMessage === "string" ? errorMessage : errorMessage());
+            throw new InvalidOperationError(typeof errorMessage === "string" ? errorMessage : errorMessage(), node);
         return value;
     }
     errors.throwIfNullOrUndefined = throwIfNullOrUndefined;
-    function throwNotImplementedForNeverValueError(value) {
+    function throwNotImplementedForNeverValueError(value, sourceNode) {
         const node = value;
         if (node != null && typeof node.kind === "number")
-            return throwNotImplementedForSyntaxKindError(node.kind);
-        throw new NotImplementedError(`Not implemented value: ${JSON.stringify(value)}`);
+            return throwNotImplementedForSyntaxKindError(node.kind, sourceNode);
+        throw new NotImplementedError(`Not implemented value: ${JSON.stringify(value)}`, sourceNode);
     }
     errors.throwNotImplementedForNeverValueError = throwNotImplementedForNeverValueError;
     function throwIfNotEqual(actual, expected, description) {
@@ -2779,4 +2810,4 @@ function getCompilerOptionsFromTsConfig(filePath, options = {}) {
     };
 }
 
-export { ArrayUtils, ComparerToStoredComparer, CompilerOptionsContainer, DocumentRegistry, EventContainer, FileUtils, InMemoryFileSystemHost, IterableUtils, KeyValueCache, LocaleStringComparer, Memoize, ObjectUtils, PropertyComparer, PropertyStoredComparer, RealFileSystemHost, ResolutionHosts, SettingsContainer, SortedKeyValueArray, StringUtils, TransactionalFileSystem, TsConfigResolver, WeakCache, createDocumentCache, createHosts, createModuleResolutionHost, deepClone, errors, getCompilerOptionsFromTsConfig, getEmitModuleResolutionKind, getFileMatcherPatterns, getLibFiles, getLibFolderPath, getSyntaxKindName, libFolderInMemoryPath, matchFiles, matchGlobs, nameof, runtime };
+export { ArrayUtils, ComparerToStoredComparer, CompilerOptionsContainer, DocumentRegistry, EventContainer, FileUtils, InMemoryFileSystemHost, IterableUtils, KeyValueCache, LocaleStringComparer, Memoize, ObjectUtils, PropertyComparer, PropertyStoredComparer, RealFileSystemHost, ResolutionHosts, SettingsContainer, SortedKeyValueArray, StringUtils, TransactionalFileSystem, TsConfigResolver, WeakCache, createDocumentCache, createHosts, createModuleResolutionHost, deepClone, errors, getCompilerOptionsFromTsConfig, getEmitModuleResolutionKind, getFileMatcherPatterns, getLibFiles, getLibFolderPath, getPrettyNodeLocation, getSourceLocation, getSyntaxKindName, libFolderInMemoryPath, matchFiles, matchGlobs, nameof, printPrettyNodeLocation, runtime };
