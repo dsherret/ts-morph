@@ -23,6 +23,10 @@ describe("NamedImportExportSpecifierStructurePrinter", () => {
       expect(writer.toString()).to.equal(expectedOutput);
     }
 
+    it("should write with type only", () => {
+      doTest({ name: "test", isTypeOnly: true }, "type test");
+    });
+
     it("should write with alias", () => {
       doTest({ name: "test", alias: "alias" }, "test as alias");
     });

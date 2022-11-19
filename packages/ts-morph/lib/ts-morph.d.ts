@@ -10687,6 +10687,7 @@ export interface ExportSpecifierStructure extends Structure, ExportSpecifierSpec
 interface ExportSpecifierSpecificStructure extends KindedStructure<StructureKind.ExportSpecifier> {
   name: string;
   alias?: string;
+  isTypeOnly?: boolean;
 }
 
 export interface ImportDeclarationStructure extends Structure, ImportDeclarationSpecificStructure {
@@ -10706,6 +10707,7 @@ export interface ImportSpecifierStructure extends Structure, ImportSpecifierSpec
 
 interface ImportSpecifierSpecificStructure extends KindedStructure<StructureKind.ImportSpecifier> {
   name: string;
+  isTypeOnly?: boolean;
   alias?: string;
 }
 

@@ -84,6 +84,7 @@ export namespace fillStructures {
 
   export function importSpecifier(structure: OptionalKind<ImportSpecifierStructure>): ImportSpecifierStructure {
     setIfNull(structure, "alias", undefined);
+    setIfNull(structure, "isTypeOnly", false);
 
     setIfNull(structure, "kind", StructureKind.ImportSpecifier);
     return structure as ImportSpecifierStructure;

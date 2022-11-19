@@ -197,6 +197,9 @@ export class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecifier> {
   set(structure: Partial<ExportSpecifierStructure>) {
     callBaseSet(ExportSpecifierBase.prototype, this, structure);
 
+    if (structure.isTypeOnly != null)
+      this.setIsTypeOnly(structure.isTypeOnly);
+
     if (structure.name != null)
       this.setName(structure.name);
 
@@ -217,6 +220,7 @@ export class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecifier> {
       kind: StructureKind.ExportSpecifier,
       alias: alias ? alias.getText() : undefined,
       name: this.getNameNode().getText(),
+      isTypeOnly: this.isTypeOnly(),
     });
   }
 }
