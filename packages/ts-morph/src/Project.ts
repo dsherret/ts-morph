@@ -245,7 +245,7 @@ export class Project {
   getDirectoryOrThrow(dirPath: string, message?: string | (() => string)): Directory {
     return errors.throwIfNullOrUndefined(
       this.getDirectory(dirPath),
-      () => message || `Could not find a directory at the specified path: ${this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath)}`, this,
+      message ?? (() => `Could not find a directory at the specified path: ${this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath)}`),
     );
   }
 
@@ -525,7 +525,7 @@ export class Project {
   getAmbientModuleOrThrow(moduleName: string, message?: string | (() => string)) {
     return errors.throwIfNullOrUndefined(
       this.getAmbientModule(moduleName),
-      () => message || `Could not find ambient module with name: ${normalizeAmbientModuleName(moduleName)}`, this,
+      message ?? (() => `Could not find ambient module with name: ${normalizeAmbientModuleName(moduleName)}`),
     );
   }
 

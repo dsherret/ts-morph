@@ -39,7 +39,7 @@ export function OverrideableNode<T extends Constructor<OverrideableNodeExtension
     }
 
     getOverrideKeywordOrThrow(message?: string | (() => string)): Node<ts.OverrideKeyword> {
-      return errors.throwIfNullOrUndefined(this.getOverrideKeyword(), "Expected to find an override keyword.");
+      return errors.throwIfNullOrUndefined(this.getOverrideKeyword(), message ?? "Expected to find an override keyword.", this);
     }
 
     setHasOverrideKeyword(value: boolean) {

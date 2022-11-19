@@ -218,7 +218,7 @@ export class TypeChecker {
    * @param node - Node to get the signature from.
    */
   getResolvedSignatureOrThrow(node: CallLikeExpression, message?: string | (() => string)) {
-    return errors.throwIfNullOrUndefined(this.getResolvedSignature(node), message || "Signature could not be resolved.", this);
+    return errors.throwIfNullOrUndefined(this.getResolvedSignature(node), message ?? "Signature could not be resolved.", node);
   }
 
   /**

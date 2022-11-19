@@ -40,7 +40,7 @@ export function GeneratorableNode<T extends Constructor<GeneratorableNodeExtensi
     }
 
     getAsteriskTokenOrThrow(message?: string | (() => string)): Node<ts.AsteriskToken> {
-      return errors.throwIfNullOrUndefined(this.getAsteriskToken(), message || "Expected to find an asterisk token.", this);
+      return errors.throwIfNullOrUndefined(this.getAsteriskToken(), message ?? "Expected to find an asterisk token.", this);
     }
 
     setIsGenerator(value: boolean) {

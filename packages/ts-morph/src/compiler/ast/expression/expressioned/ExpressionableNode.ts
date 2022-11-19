@@ -32,7 +32,7 @@ export function ExpressionableNode<T extends Constructor<ExpressionableNodeExten
     }
 
     getExpressionOrThrow(message?: string | (() => string)) {
-      return errors.throwIfNullOrUndefined(this.getExpression(), message || "Expected to find an expression.", this);
+      return errors.throwIfNullOrUndefined(this.getExpression(), message ?? "Expected to find an expression.", this);
     }
 
     getExpressionIfKind<TKind extends SyntaxKind>(kind: TKind) {
@@ -41,7 +41,11 @@ export function ExpressionableNode<T extends Constructor<ExpressionableNodeExten
     }
 
     getExpressionIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string | (() => string)) {
-      return errors.throwIfNullOrUndefined(this.getExpressionIfKind(kind), message || `An expression with the kind kind ${getSyntaxKindName(kind)} was expected.`, this);
+      return errors.throwIfNullOrUndefined(
+        this.getExpressionIfKind(kind),
+        message ?? `An expression with the kind kind ${getSyntaxKindName(kind)} was expected.`,
+        this,
+      );
     }
   };
 }

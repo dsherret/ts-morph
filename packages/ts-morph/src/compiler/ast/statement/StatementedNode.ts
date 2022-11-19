@@ -501,7 +501,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
     }
 
     getStatementOrThrow(findFunction: (statement: Statement) => boolean, message?: string | (() => string)) {
-      return errors.throwIfNullOrUndefined(this.getStatement(findFunction), message || "Expected to find a statement matching the provided condition.", this);
+      return errors.throwIfNullOrUndefined(this.getStatement(findFunction), message ?? "Expected to find a statement matching the provided condition.", this);
     }
 
     getStatementByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappingsWithCommentStatements[TKind] | undefined {
@@ -510,7 +510,11 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
     }
 
     getStatementByKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string | (() => string)) {
-      return errors.throwIfNullOrUndefined(this.getStatementByKind(kind), message || `Expected to find a statement with syntax kind ${getSyntaxKindName(kind)}.`, this);
+      return errors.throwIfNullOrUndefined(
+        this.getStatementByKind(kind),
+        message ?? `Expected to find a statement with syntax kind ${getSyntaxKindName(kind)}.`,
+        this,
+      );
     }
 
     addStatements(textOrWriterFunction: string | WriterFunction | ReadonlyArray<string | WriterFunction | StatementStructures>) {
@@ -868,10 +872,14 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
       }
     }
 
-    getVariableStatementOrThrow(nameOrFindFunction: string | ((statement: VariableStatement) => boolean), message?: string | (() => string)): VariableStatement {
+    getVariableStatementOrThrow(
+      nameOrFindFunction: string | ((statement: VariableStatement) => boolean),
+      message?: string | (() => string),
+    ): VariableStatement {
       return errors.throwIfNullOrUndefined(
         this.getVariableStatement(nameOrFindFunction),
-        message || "Expected to find a variable statement that matched the provided condition.", this,
+        message ?? "Expected to find a variable statement that matched the provided condition.",
+        this,
       );
     }
 

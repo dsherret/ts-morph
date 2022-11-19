@@ -18,7 +18,7 @@ export interface DotDotDotTokenableNode {
 export function DotDotDotTokenableNode<T extends Constructor<DotDotDotTokenableNodeExtensionType>>(Base: T): Constructor<DotDotDotTokenableNode> & T {
   return class extends Base implements DotDotDotTokenableNode {
     getDotDotDotTokenOrThrow(message?: string | (() => string)) {
-      return errors.throwIfNullOrUndefined(this.getDotDotDotToken(), message || "Expected to find a dot dot dot token (...).", this);
+      return errors.throwIfNullOrUndefined(this.getDotDotDotToken(), message ?? "Expected to find a dot dot dot token (...).", this);
     }
 
     getDotDotDotToken() {

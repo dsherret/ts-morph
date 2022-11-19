@@ -71,7 +71,7 @@ export class Type<TType extends ts.Type = ts.Type> {
    * Gets the array element type or throws if it doesn't exist (ex. for `T[]` it would be `T`).
    */
   getArrayElementTypeOrThrow(message?: string | (() => string)) {
-    return errors.throwIfNullOrUndefined(this.getArrayElementType(), message || "Expected to find an array element type.", this);
+    return errors.throwIfNullOrUndefined(this.getArrayElementType(), message ?? "Expected to find an array element type.");
   }
 
   /**
@@ -118,7 +118,7 @@ export class Type<TType extends ts.Type = ts.Type> {
    * Gets the constraint or throws if it doesn't exist.
    */
   getConstraintOrThrow(message?: string | (() => string)) {
-    return errors.throwIfNullOrUndefined(this.getConstraint(), message || "Expected to find a constraint.", this);
+    return errors.throwIfNullOrUndefined(this.getConstraint(), message ?? "Expected to find a constraint.");
   }
 
   /**
@@ -133,7 +133,7 @@ export class Type<TType extends ts.Type = ts.Type> {
    * Gets the default type or throws if it doesn't exist.
    */
   getDefaultOrThrow(message?: string | (() => string)) {
-    return errors.throwIfNullOrUndefined(this.getDefault(), message || "Expected to find a default type.", this);
+    return errors.throwIfNullOrUndefined(this.getDefault(), message ?? "Expected to find a default type.");
   }
 
   /**
@@ -261,7 +261,7 @@ export class Type<TType extends ts.Type = ts.Type> {
    */
 
   getTargetTypeOrThrow(message?: string | (() => string)): Type<ts.GenericType> {
-    return errors.throwIfNullOrUndefined(this.getTargetType(), "Expected to find the target type.");
+    return errors.throwIfNullOrUndefined(this.getTargetType(), message ?? "Expected to find the target type.");
   }
 
   /**
@@ -309,7 +309,7 @@ export class Type<TType extends ts.Type = ts.Type> {
    * Gets the value of the literal or throws if this is not a literal type.
    */
   getLiteralValueOrThrow(message?: string | (() => string)) {
-    return errors.throwIfNullOrUndefined(this.getLiteralValue(), message || "Type was not a literal type.", this);
+    return errors.throwIfNullOrUndefined(this.getLiteralValue(), message ?? "Type was not a literal type.");
   }
 
   /**
@@ -328,7 +328,7 @@ export class Type<TType extends ts.Type = ts.Type> {
    * Note: I have no idea what this means. Please help contribute to these js docs if you know.
    */
   getLiteralFreshTypeOrThrow(message?: string | (() => string)) {
-    return errors.throwIfNullOrUndefined(this.getLiteralFreshType(), message || "Type was not a literal type.", this);
+    return errors.throwIfNullOrUndefined(this.getLiteralFreshType(), message ?? "Type was not a literal type.");
   }
 
   /**
@@ -347,7 +347,7 @@ export class Type<TType extends ts.Type = ts.Type> {
    * Note: I have no idea what this means. Please help contribute to these js docs if you know.
    */
   getLiteralRegularTypeOrThrow(message?: string | (() => string)) {
-    return errors.throwIfNullOrUndefined(this.getLiteralRegularType(), message || "Type was not a literal type.", this);
+    return errors.throwIfNullOrUndefined(this.getLiteralRegularType(), message ?? "Type was not a literal type.");
   }
 
   /**
@@ -362,7 +362,7 @@ export class Type<TType extends ts.Type = ts.Type> {
    * Gets the symbol of the type or throws.
    */
   getSymbolOrThrow(message?: string | (() => string)): Symbol {
-    return errors.throwIfNullOrUndefined(this.getSymbol(), "Expected to find a symbol.");
+    return errors.throwIfNullOrUndefined(this.getSymbol(), message ?? "Expected to find a symbol.");
   }
 
   /**

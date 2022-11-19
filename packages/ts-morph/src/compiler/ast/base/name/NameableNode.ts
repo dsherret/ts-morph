@@ -48,7 +48,7 @@ function NameableNodeInternal<T extends Constructor<NameableNodeExtensionType>>(
     }
 
     getNameNodeOrThrow(message?: string | (() => string)) {
-      return errors.throwIfNullOrUndefined(this.getNameNode(), message || "Expected to have a name node.", this);
+      return errors.throwIfNullOrUndefined(this.getNameNode(), message ?? "Expected to have a name node.", this);
     }
 
     getName() {
@@ -56,7 +56,7 @@ function NameableNodeInternal<T extends Constructor<NameableNodeExtensionType>>(
     }
 
     getNameOrThrow(message?: string | (() => string)) {
-      return errors.throwIfNullOrUndefined(this.getName(), message || "Expected to have a name.", this);
+      return errors.throwIfNullOrUndefined(this.getName(), message ?? "Expected to have a name.", this);
     }
 
     rename(newName: string) {

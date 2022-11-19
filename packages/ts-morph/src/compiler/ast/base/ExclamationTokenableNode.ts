@@ -39,7 +39,7 @@ export function ExclamationTokenableNode<T extends Constructor<ExclamationTokena
     }
 
     getExclamationTokenNodeOrThrow(message?: string | (() => string)): Node<ts.ExclamationToken> {
-      return errors.throwIfNullOrUndefined(this.getExclamationTokenNode(), message || "Expected to find an exclamation token.", this);
+      return errors.throwIfNullOrUndefined(this.getExclamationTokenNode(), message ?? "Expected to find an exclamation token.", this);
     }
 
     setHasExclamationToken(value: boolean) {

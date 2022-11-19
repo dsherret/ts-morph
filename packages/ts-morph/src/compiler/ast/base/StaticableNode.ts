@@ -39,7 +39,7 @@ export function StaticableNode<T extends Constructor<StaticableNodeExtensionType
     }
 
     getStaticKeywordOrThrow(message?: string | (() => string)) {
-      return errors.throwIfNullOrUndefined(this.getStaticKeyword(), message || "Expected to find a static keyword.", this);
+      return errors.throwIfNullOrUndefined(this.getStaticKeyword(), message ?? "Expected to find a static keyword.", this);
     }
 
     setIsStatic(value: boolean) {

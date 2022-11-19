@@ -54,7 +54,7 @@ export class VariableDeclaration extends VariableDeclarationBase<ts.VariableDecl
    * Gets the corresponding variable statement if it exists. Throws for variable declarations in for statements.
    */
   getVariableStatementOrThrow(message?: string | (() => string)) {
-    return errors.throwIfNullOrUndefined(this.getVariableStatement(), message || "Expected the grandparent to be a variable statement.", this);
+    return errors.throwIfNullOrUndefined(this.getVariableStatement(), message ?? "Expected the grandparent to be a variable statement.", this);
   }
 
   /**

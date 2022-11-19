@@ -39,7 +39,7 @@ export function AbstractableNode<T extends Constructor<AbstractableNodeExtension
     }
 
     getAbstractKeywordOrThrow(message?: string | (() => string)) {
-      return errors.throwIfNullOrUndefined(this.getAbstractKeyword(), message || "Expected to find an abstract keyword.", this);
+      return errors.throwIfNullOrUndefined(this.getAbstractKeyword(), message ?? "Expected to find an abstract keyword.", this);
     }
 
     setIsAbstract(isAbstract: boolean) {

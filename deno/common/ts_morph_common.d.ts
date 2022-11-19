@@ -860,12 +860,6 @@ export declare function getLibFolderPath(options: {
 export declare const libFolderInMemoryPath: StandardizedFilePath;
 
 /**
- * Gets the enum name for the specified syntax kind.
- * @param kind - Syntax kind.
- */
-export declare function getSyntaxKindName(kind: ts.SyntaxKind): string;
-
-/**
  * Minimal attributes to show a error message with source
  * (ts.Node from ts-morph)
  */
@@ -900,6 +894,12 @@ export declare const getSourceLocation: (node: TracableNode) => {
     brokenLine: string;
     pos: number;
 } | undefined;
+
+/**
+ * Gets the enum name for the specified syntax kind.
+ * @param kind - Syntax kind.
+ */
+export declare function getSyntaxKindName(kind: ts.SyntaxKind): string;
 
 /**
  * Holds the compiler options.

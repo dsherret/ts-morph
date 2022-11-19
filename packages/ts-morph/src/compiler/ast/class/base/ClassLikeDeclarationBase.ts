@@ -642,7 +642,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
     }
 
     getExtendsOrThrow(message?: string | (() => string)) {
-      return errors.throwIfNullOrUndefined(this.getExtends(), message || `Expected to find the extends expression for the class ${this.getName()}.`, this);
+      return errors.throwIfNullOrUndefined(this.getExtends(), message ?? `Expected to find the extends expression for the class ${this.getName()}.`, this);
     }
 
     getExtends(): ExpressionWithTypeArguments | undefined {
@@ -1187,7 +1187,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
     }
 
     getBaseClassOrThrow(message?: string | (() => string)) {
-      return errors.throwIfNullOrUndefined(this.getBaseClass(), message || `Expected to find the base class of ${this.getName()}.`, this);
+      return errors.throwIfNullOrUndefined(this.getBaseClass(), message ?? `Expected to find the base class of ${this.getName()}.`, this);
     }
 
     getBaseClass() {

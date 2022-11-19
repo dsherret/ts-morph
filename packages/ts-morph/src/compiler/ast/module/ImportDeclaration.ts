@@ -76,7 +76,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
    * Gets the source file referenced in the module specifier or throws if it can't find it.
    */
   getModuleSpecifierSourceFileOrThrow(message?: string | (() => string)) {
-    return errors.throwIfNullOrUndefined(this.getModuleSpecifierSourceFile(), message || `A module specifier source file was expected.`, this);
+    return errors.throwIfNullOrUndefined(this.getModuleSpecifierSourceFile(), message ?? `A module specifier source file was expected.`, this);
   }
 
   /**
@@ -153,7 +153,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
    * Gets the default import or throws if it doesn't exit.
    */
   getDefaultImportOrThrow(message?: string | (() => string)) {
-    return errors.throwIfNullOrUndefined(this.getDefaultImport(), message || "Expected to find a default import.", this);
+    return errors.throwIfNullOrUndefined(this.getDefaultImport(), message ?? "Expected to find a default import.", this);
   }
 
   /**
@@ -259,7 +259,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
    * Gets the namespace import if it exists or throws.
    */
   getNamespaceImportOrThrow(message?: string | (() => string)) {
-    return errors.throwIfNullOrUndefined(this.getNamespaceImport(), message || "Expected to find a namespace import.", this);
+    return errors.throwIfNullOrUndefined(this.getNamespaceImport(), message ?? "Expected to find a namespace import.", this);
   }
 
   /**
@@ -393,7 +393,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
    * Gets the import clause or throws if it doesn't exist.
    */
   getImportClauseOrThrow(message?: string | (() => string)) {
-    return errors.throwIfNullOrUndefined(this.getImportClause(), message || "Expected to find an import clause.", this);
+    return errors.throwIfNullOrUndefined(this.getImportClause(), message ?? "Expected to find an import clause.", this);
   }
 
   /**

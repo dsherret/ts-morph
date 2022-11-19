@@ -32,7 +32,7 @@ export function JSDocTypeExpressionableTag<T extends Constructor<JSDocTypeExpres
     }
 
     getTypeExpressionOrThrow(message?: string | (() => string)) {
-      return errors.throwIfNullOrUndefined(this.getTypeExpression(), message || `Expected to find the JS doc tag's type expression.`, this);
+      return errors.throwIfNullOrUndefined(this.getTypeExpression(), message ?? `Expected to find the JS doc tag's type expression.`, this);
     }
   };
 }

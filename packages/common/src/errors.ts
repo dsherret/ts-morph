@@ -1,5 +1,5 @@
 import { StandardizedFilePath } from "./fileSystem";
-import { getSyntaxKindName, getPrettyNodeLocation, getSourceLocation, TracableNode } from "./helpers";
+import { getPrettyNodeLocation, getSourceLocation, getSyntaxKindName, TracableNode } from "./helpers";
 import { ts } from "./typescript";
 
 /** Collection of helper functions that can be used to throw errors. */

@@ -39,7 +39,7 @@ export function QuestionDotTokenableNode<T extends Constructor<QuestionDotTokena
     }
 
     getQuestionDotTokenNodeOrThrow(message?: string | (() => string)): Node<ts.QuestionDotToken> {
-      return errors.throwIfNullOrUndefined(this.getQuestionDotTokenNode(), "Expected to find a question dot token.");
+      return errors.throwIfNullOrUndefined(this.getQuestionDotTokenNode(), message ?? "Expected to find a question dot token.", this);
     }
 
     setHasQuestionDotToken(value: boolean) {

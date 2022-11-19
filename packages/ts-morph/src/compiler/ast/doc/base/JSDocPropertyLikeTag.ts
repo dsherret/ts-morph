@@ -28,7 +28,7 @@ export function JSDocPropertyLikeTag<T extends Constructor<JSDocPropertyLikeTagE
     }
 
     getTypeExpressionOrThrow(message?: string | (() => string)) {
-      return errors.throwIfNullOrUndefined(this.getTypeExpression(), message || `Expected to find a JS doc type expression.`, this);
+      return errors.throwIfNullOrUndefined(this.getTypeExpression(), message ?? `Expected to find a JS doc type expression.`, this);
     }
 
     getName() {

@@ -76,7 +76,11 @@ export function ModifierableNode<T extends Constructor<ModifierableNodeExtension
     }
 
     getFirstModifierByKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string | (() => string)) {
-      return errors.throwIfNullOrUndefined(this.getFirstModifierByKind(kind), message || `Expected a modifier of syntax kind: ${getSyntaxKindName(kind)}`, this);
+      return errors.throwIfNullOrUndefined(
+        this.getFirstModifierByKind(kind),
+        message ?? (() => `Expected a modifier of syntax kind: ${getSyntaxKindName(kind)}`),
+        this,
+      );
     }
 
     getFirstModifierByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {

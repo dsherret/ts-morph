@@ -55,7 +55,7 @@ export class ImportTypeNode extends NodeWithTypeArguments<ts.ImportTypeNode> {
    * Gets the qualifier of the import type if it exists or throws
    */
   getQualifierOrThrow(message?: string | (() => string)): EntityName {
-    return errors.throwIfNullOrUndefined(this.getQualifier(), () => message || `Expected to find a qualifier for the import type: ${this.getText()}`, this);
+    return errors.throwIfNullOrUndefined(this.getQualifier(), () => message ?? `Expected to find a qualifier for the import type: ${this.getText()}`, this);
   }
 
   /**
@@ -74,7 +74,8 @@ export class ImportTypeNode extends NodeWithTypeArguments<ts.ImportTypeNode> {
   getAssertionsOrThrow(message?: string | (() => string)) {
     return errors.throwIfNullOrUndefined(
       this._getNodeFromCompilerNodeIfExists(this.compilerNode.assertions),
-      message || "Could not find import type assertion container.", this,
+      message ?? "Could not find import type assertion container.",
+      this,
     );
   }
 }

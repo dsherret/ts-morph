@@ -20,7 +20,7 @@ export interface ModuleChildableNode {
 export function ModuleChildableNode<T extends Constructor<ModuleChildableNodeExtensionType>>(Base: T): Constructor<ModuleChildableNode> & T {
   return class extends Base implements ModuleChildableNode {
     getParentModuleOrThrow(message?: string | (() => string)) {
-      return errors.throwIfNullOrUndefined(this.getParentModule(), message || "Expected to find the parent module declaration.", this);
+      return errors.throwIfNullOrUndefined(this.getParentModule(), message ?? "Expected to find the parent module declaration.", this);
     }
 
     getParentModule() {

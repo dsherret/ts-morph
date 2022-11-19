@@ -61,7 +61,7 @@ export function ExportGetableNode<T extends Constructor<ExportGetableNodeExtensi
     }
 
     getExportKeywordOrThrow(message?: string | (() => string)) {
-      return errors.throwIfNullOrUndefined(this.getExportKeyword(), message || "Expected to find an export keyword.", this);
+      return errors.throwIfNullOrUndefined(this.getExportKeyword(), message ?? "Expected to find an export keyword.", this);
     }
 
     hasDefaultKeyword() {
@@ -79,7 +79,7 @@ export function ExportGetableNode<T extends Constructor<ExportGetableNodeExtensi
     }
 
     getDefaultKeywordOrThrow(message?: string | (() => string)) {
-      return errors.throwIfNullOrUndefined(this.getDefaultKeyword(), message || "Expected to find a default keyword.", this);
+      return errors.throwIfNullOrUndefined(this.getDefaultKeyword(), message ?? "Expected to find a default keyword.", this);
     }
 
     isExported() {

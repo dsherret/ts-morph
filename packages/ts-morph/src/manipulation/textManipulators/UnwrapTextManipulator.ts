@@ -28,18 +28,18 @@ function getReplacementText(node: Node) {
     const bodyNode = getBodyNodeOrThrow();
     return [bodyNode.getStart() + 1, bodyNode.getEnd() - 1] as const;
 
-    function getBodyNodeOrThrow(message?: string | (() => string)) {
+    function getBodyNodeOrThrow() {
       if (Node.isModuleDeclaration(node)) {
         const bodyNode = node._getInnerBody();
         if (bodyNode == null)
-          throw new errors.InvalidOperationError(message || "This operation requires the module to have a body.");
+          throw new errors.InvalidOperationError("This operation requires the module to have a body.");
         return bodyNode;
       } else if (Node.isBodied(node))
         return node.getBody();
       else if (Node.isBodyable(node))
         return node.getBodyOrThrow();
       else
-        throw new errors.NotImplementedError(message || `Not implemented unwrap scenario for ${node.getKindName()}.`, node);
+        errors.throwNotImplementedForSyntaxKindError(node.getKind(), node);
     }
   }
 }

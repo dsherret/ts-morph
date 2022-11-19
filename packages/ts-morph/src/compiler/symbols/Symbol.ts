@@ -49,7 +49,7 @@ export class Symbol {
    * Gets the aliased symbol or throws if it doesn't exist.
    */
   getAliasedSymbolOrThrow(message?: string | (() => string)): Symbol {
-    return errors.throwIfNullOrUndefined(this.getAliasedSymbol(), "Expected to find an aliased symbol.");
+    return errors.throwIfNullOrUndefined(this.getAliasedSymbol(), message ?? "Expected to find an aliased symbol.");
   }
 
   /**
@@ -63,7 +63,7 @@ export class Symbol {
    * Follows a single alias to get the immediately aliased symbol or throws if it doesn't exist.
    */
   getImmediatelyAliasedSymbolOrThrow(message?: string | (() => string)): Symbol {
-    return errors.throwIfNullOrUndefined(this.getImmediatelyAliasedSymbol(), "Expected to find an immediately aliased symbol.");
+    return errors.throwIfNullOrUndefined(this.getImmediatelyAliasedSymbol(), message ?? "Expected to find an immediately aliased symbol.");
   }
 
   /**
@@ -120,7 +120,10 @@ export class Symbol {
    * Gets the value declaration of a symbol or throws if it doesn't exist.
    */
   getValueDeclarationOrThrow(message?: string | (() => string)): Node {
-    return errors.throwIfNullOrUndefined(this.getValueDeclaration(), message || (() => `Expected to find the value declaration of symbol '${this.getName()}'.`));
+    return errors.throwIfNullOrUndefined(
+      this.getValueDeclaration(),
+      message ?? (() => `Expected to find the value declaration of symbol '${this.getName()}'.`),
+    );
   }
 
   /**
@@ -146,7 +149,7 @@ export class Symbol {
    * @param name - Name of the export.
    */
   getExportOrThrow(name: string, message?: string | (() => string)): Symbol {
-    return errors.throwIfNullOrUndefined(this.getExport(name), message || `Expected to find export with name: ${name}`);
+    return errors.throwIfNullOrUndefined(this.getExport(name), message ?? (() => `Expected to find export with name: ${name}`));
   }
 
   /**
@@ -175,7 +178,7 @@ export class Symbol {
    * @param name - Name of the global export.
    */
   getGlobalExportOrThrow(name: string, message?: string | (() => string)): Symbol {
-    return errors.throwIfNullOrUndefined(this.getGlobalExport(name), message || `Expected to find global export with name: ${name}`);
+    return errors.throwIfNullOrUndefined(this.getGlobalExport(name), message ?? (() => `Expected to find global export with name: ${name}`));
   }
 
   /**
@@ -204,7 +207,7 @@ export class Symbol {
    * @param name - Name of the export.
    */
   getMemberOrThrow(name: string, message?: string | (() => string)): Symbol {
-    return errors.throwIfNullOrUndefined(this.getMember(name), message || `Expected to find member with name: ${name}`);
+    return errors.throwIfNullOrUndefined(this.getMember(name), message ?? `Expected to find member with name: ${name}`);
   }
 
   /**

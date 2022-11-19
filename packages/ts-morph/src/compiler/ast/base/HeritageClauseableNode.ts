@@ -30,7 +30,11 @@ export function HeritageClauseableNode<T extends Constructor<HeritageClauseableN
     }
 
     getHeritageClauseByKindOrThrow(kind: SyntaxKind.ExtendsKeyword | SyntaxKind.ImplementsKeyword, message?: string | (() => string)) {
-      return errors.throwIfNullOrUndefined(this.getHeritageClauseByKind(kind), message || `Expected to have heritage clause of kind ${getSyntaxKindName(kind)}.`, this);
+      return errors.throwIfNullOrUndefined(
+        this.getHeritageClauseByKind(kind),
+        message ?? (() => `Expected to have heritage clause of kind ${getSyntaxKindName(kind)}.`),
+        this,
+      );
     }
 
     getHeritageClauseByKind(kind: SyntaxKind.ExtendsKeyword | SyntaxKind.ImplementsKeyword) {

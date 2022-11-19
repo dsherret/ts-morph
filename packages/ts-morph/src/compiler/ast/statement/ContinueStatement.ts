@@ -16,6 +16,6 @@ export class ContinueStatement extends Statement<ts.ContinueStatement> {
    * Gets this continue statement's label or throw if it does not exist.
    */
   getLabelOrThrow(message?: string | (() => string)) {
-    return errors.throwIfNullOrUndefined(this.getLabel(), message || "Expected to find a label.", this);
+    return errors.throwIfNullOrUndefined(this.getLabel(), message ?? "Expected to find a label.", this);
   }
 }

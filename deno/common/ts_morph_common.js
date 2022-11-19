@@ -290,6 +290,32 @@ class ObjectUtils {
     }
 }
 
+const getPrettyNodeLocation = (node) => {
+    const source = getSourceLocation(node);
+    if (!source)
+        return;
+    const linePrefix = `> ${source.loc.line + 1} |`;
+    return `${source.fileName}:${source.loc.line + 1}:${source.loc.character + 1}\n\n${linePrefix}${source.brokenLine}\n${" ".repeat(linePrefix.length - 1)}|${" ".repeat(source.loc.character)}^`;
+};
+const printPrettyNodeLocation = (node) => {
+    console.log(getPrettyNodeLocation(node) || node);
+};
+const getSourceLocation = (node) => {
+    var _a;
+    if (!isTracableNode(node))
+        return;
+    const sourceFile = node.getSourceFile();
+    const sourceCode = sourceFile.getFullText();
+    const pos = node.getPos();
+    const textBeforePos = sourceCode.substring(0, pos);
+    const line = ((_a = textBeforePos.match(/\n/g)) === null || _a === void 0 ? void 0 : _a.length) || 0;
+    const brokenLineStart = textBeforePos.lastIndexOf("\n", pos);
+    const brokenLineEnd = sourceCode.indexOf("\n", pos);
+    const brokenLine = sourceCode.substring(brokenLineStart + 1, brokenLineEnd === -1 ? undefined : brokenLineEnd);
+    return { fileName: sourceFile.getFilePath(), loc: { line, character: pos - brokenLineStart }, brokenLine, pos };
+};
+const isTracableNode = (node) => typeof node === "object" && node !== null && ("getSourceFile" in node) && ("getPos" in node);
+
 function matchFiles(path, extensions, excludes, includes, useCaseSensitiveFileNames, currentDirectory, depth, getEntries, realpath, directoryExists) {
     return ts.matchFiles.apply(this, arguments);
 }
@@ -315,34 +341,6 @@ function getKindCache() {
     }
     return kindCache;
 }
-
-const getPrettyNodeLocation = (node) => {
-    const source = getSourceLocation(node);
-    if (!source) {
-        return;
-    }
-    const linePrefix = `> ${source.loc.line + 1} |`;
-    return `${source.fileName}:${source.loc.line + 1}:${source.loc.character + 1}\n\n${linePrefix}${source.brokenLine}\n${" ".repeat(linePrefix.length - 1)}|${" ".repeat(source.loc.character)}^`;
-};
-const printPrettyNodeLocation = (node) => {
-    console.log(getPrettyNodeLocation(node) || node);
-};
-const getSourceLocation = (node) => {
-    var _a;
-    if (!isTracableNode(node)) {
-        return;
-    }
-    const sourceFile = node.getSourceFile();
-    const sourceCode = sourceFile.getFullText();
-    const pos = node.getPos();
-    const textBeforePos = sourceCode.substring(0, pos);
-    const line = ((_a = textBeforePos.match(/\n/g)) === null || _a === void 0 ? void 0 : _a.length) || 0;
-    const brokenLineStart = textBeforePos.lastIndexOf("\n", pos);
-    const brokenLineEnd = sourceCode.indexOf("\n", pos);
-    const brokenLine = sourceCode.substring(brokenLineStart + 1, brokenLineEnd === -1 ? undefined : brokenLineEnd);
-    return { fileName: sourceFile.getFilePath(), loc: { line, character: pos - brokenLineStart }, brokenLine, pos };
-};
-const isTracableNode = (node) => typeof node === "object" && node !== null && ("getSourceFile" in node) && ("getPos" in node);
 
 var errors;
 (function (errors) {

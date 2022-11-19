@@ -38,7 +38,11 @@ export function InitializerExpressionGetableNode<T extends Constructor<Initializ
     }
 
     getInitializerIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string | (() => string)) {
-      return errors.throwIfNullOrUndefined(this.getInitializerIfKind(kind), message || `Expected to find an initializer of kind '${getSyntaxKindName(kind)}'.`, this);
+      return errors.throwIfNullOrUndefined(
+        this.getInitializerIfKind(kind),
+        message ?? `Expected to find an initializer of kind '${getSyntaxKindName(kind)}'.`,
+        this,
+      );
     }
 
     getInitializerIfKind<TKind extends SyntaxKind>(kind: TKind): KindToExpressionMappings[TKind] | undefined {
@@ -49,7 +53,7 @@ export function InitializerExpressionGetableNode<T extends Constructor<Initializ
     }
 
     getInitializerOrThrow(message?: string | (() => string)) {
-      return errors.throwIfNullOrUndefined(this.getInitializer(), message || "Expected to find an initializer.", this);
+      return errors.throwIfNullOrUndefined(this.getInitializer(), message ?? "Expected to find an initializer.", this);
     }
 
     getInitializer() {

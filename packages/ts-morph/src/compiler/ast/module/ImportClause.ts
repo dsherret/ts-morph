@@ -35,7 +35,7 @@ export class ImportClause extends ImportClauseBase<ts.ImportClause> {
    * Gets the default import or throws if it doesn't exit.
    */
   getDefaultImportOrThrow(message?: string | (() => string)) {
-    return errors.throwIfNullOrUndefined(this.getDefaultImport(), message || "Expected to find a default import.", this);
+    return errors.throwIfNullOrUndefined(this.getDefaultImport(), message ?? "Expected to find a default import.", this);
   }
 
   /**
@@ -49,7 +49,7 @@ export class ImportClause extends ImportClauseBase<ts.ImportClause> {
    * Gets the named bindings of the import clause or throws if it doesn't exist.
    */
   getNamedBindingsOrThrow(message?: string | (() => string)) {
-    return errors.throwIfNullOrUndefined(this.getNamedBindings(), message || "Expected to find an import declaration's named bindings.", this);
+    return errors.throwIfNullOrUndefined(this.getNamedBindings(), message ?? "Expected to find an import declaration's named bindings.", this);
   }
 
   /**
@@ -63,7 +63,7 @@ export class ImportClause extends ImportClauseBase<ts.ImportClause> {
    * Gets the namespace import if it exists or throws.
    */
   getNamespaceImportOrThrow(message?: string | (() => string)) {
-    return errors.throwIfNullOrUndefined(this.getNamespaceImport(), message || "Expected to find a namespace import.", this);
+    return errors.throwIfNullOrUndefined(this.getNamespaceImport(), message ?? "Expected to find a namespace import.", this);
   }
 
   /**

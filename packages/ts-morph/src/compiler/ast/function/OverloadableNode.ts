@@ -47,7 +47,7 @@ export function OverloadableNode<T extends Constructor<OverloadableNodeExtension
     }
 
     getImplementationOrThrow(message?: string | (() => string)): this {
-      return errors.throwIfNullOrUndefined(this.getImplementation(), "Expected to find a corresponding implementation for the overload.");
+      return errors.throwIfNullOrUndefined(this.getImplementation(), message ?? "Expected to find a corresponding implementation for the overload.", this);
     }
 
     isOverload() {

@@ -51,7 +51,7 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionTy
     }
 
     getReturnTypeNodeOrThrow(message?: string | (() => string)) {
-      return errors.throwIfNullOrUndefined(this.getReturnTypeNode(), message || "Expected to find a return type node.", this);
+      return errors.throwIfNullOrUndefined(this.getReturnTypeNode(), message ?? "Expected to find a return type node.", this);
     }
 
     setReturnType(textOrWriterFunction: string | WriterFunction) {

@@ -33,7 +33,7 @@ export class ShorthandPropertyAssignment extends ShorthandPropertyAssignmentBase
    * Gets the object assignment initializer or throws if it doesn't exist.
    */
   getObjectAssignmentInitializerOrThrow(message?: string | (() => string)) {
-    return errors.throwIfNullOrUndefined(this.getObjectAssignmentInitializer(), message || "Expected to find an object assignment initializer.", this);
+    return errors.throwIfNullOrUndefined(this.getObjectAssignmentInitializer(), message ?? "Expected to find an object assignment initializer.", this);
   }
 
   /**
@@ -47,7 +47,7 @@ export class ShorthandPropertyAssignment extends ShorthandPropertyAssignmentBase
    * Gets the equals token or throws if it doesn't exist.
    */
   getEqualsTokenOrThrow(message?: string | (() => string)) {
-    return errors.throwIfNullOrUndefined(this.getEqualsToken(), message || "Expected to find an equals token.", this);
+    return errors.throwIfNullOrUndefined(this.getEqualsToken(), message ?? "Expected to find an equals token.", this);
   }
 
   /**
