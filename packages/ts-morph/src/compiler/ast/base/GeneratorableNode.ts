@@ -21,7 +21,7 @@ export interface GeneratorableNode {
   /**
    * Gets the asterisk token or throws if none exists.
    */
-  getAsteriskTokenOrThrow(): Node<ts.AsteriskToken>;
+  getAsteriskTokenOrThrow(message?: string | (() => string)): Node<ts.AsteriskToken>;
   /**
    * Sets if the node is a generator.
    * @param value - If it should be a generator or not.
@@ -39,8 +39,8 @@ export function GeneratorableNode<T extends Constructor<GeneratorableNodeExtensi
       return this._getNodeFromCompilerNodeIfExists(this.compilerNode.asteriskToken);
     }
 
-    getAsteriskTokenOrThrow(): Node<ts.AsteriskToken> {
-      return errors.throwIfNullOrUndefined(this.getAsteriskToken(), "Expected to find an asterisk token.");
+    getAsteriskTokenOrThrow(message?: string | (() => string)): Node<ts.AsteriskToken> {
+      return errors.throwIfNullOrUndefined(this.getAsteriskToken(), message ?? "Expected to find an asterisk token.", this);
     }
 
     setIsGenerator(value: boolean) {

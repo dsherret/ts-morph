@@ -549,8 +549,8 @@ function AmbientableNode(Base) {
         hasDeclareKeyword() {
             return this.getDeclareKeyword() != null;
         }
-        getDeclareKeywordOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getDeclareKeyword(), "Expected to find a declare keyword.");
+        getDeclareKeywordOrThrow(message) {
+            return errors.throwIfNullOrUndefined(this.getDeclareKeyword(), message !== null && message !== void 0 ? message : "Expected to find a declare keyword.", this);
         }
         getDeclareKeyword() {
             return this.getFirstModifierByKind(SyntaxKind.DeclareKeyword);
@@ -2255,7 +2255,7 @@ function getReplacementText(node) {
             else if (Node.isBodyable(node))
                 return node.getBodyOrThrow();
             else
-                throw new errors.NotImplementedError(`Not implemented unwrap scenario for ${node.getKindName()}.`);
+                errors.throwNotImplementedForSyntaxKindError(node.getKind(), node);
         }
     }
 }
@@ -2793,8 +2793,8 @@ function AsyncableNode(Base) {
         getAsyncKeyword() {
             return this.getFirstModifierByKind(SyntaxKind.AsyncKeyword);
         }
-        getAsyncKeywordOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getAsyncKeyword(), "Expected to find an async keyword.");
+        getAsyncKeywordOrThrow(message) {
+            return errors.throwIfNullOrUndefined(this.getAsyncKeyword(), message !== null && message !== void 0 ? message : "Expected to find an async keyword.", this);
         }
         setIsAsync(value) {
             this.toggleModifier("async", value);
@@ -2823,7 +2823,7 @@ function AwaitableNode(Base) {
             const awaitModifier = this.compilerNode.awaitModifier;
             return this._getNodeFromCompilerNodeIfExists(awaitModifier);
         }
-        getAwaitKeywordOrThrow() {
+        getAwaitKeywordOrThrow(message) {
             return errors.throwIfNullOrUndefined(this.getAwaitKeyword(), "Expected to find an await token.");
         }
         setIsAwaited(value) {
@@ -3044,8 +3044,8 @@ class Node {
         else
             return printNode(this.compilerNode, this._sourceFile.compilerNode, options);
     }
-    getSymbolOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getSymbol(), "Could not find the node's symbol.");
+    getSymbolOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getSymbol(), message !== null && message !== void 0 ? message : "Could not find the node's symbol.", this);
     }
     getSymbol() {
         const boundSymbol = this.compilerNode.symbol;
@@ -3063,8 +3063,8 @@ class Node {
     getSymbolsInScope(meaning) {
         return this._context.typeChecker.getSymbolsInScope(this, meaning);
     }
-    getLocalOrThrow(name) {
-        return errors.throwIfNullOrUndefined(this.getLocal(name), `Expected to find local symbol with name: ${name}`);
+    getLocalOrThrow(name, message) {
+        return errors.throwIfNullOrUndefined(this.getLocal(name), message !== null && message !== void 0 ? message : `Expected to find local symbol with name: ${name}`, this);
     }
     getLocal(name) {
         const locals = this._getCompilerLocals();
@@ -3109,8 +3109,8 @@ class Node {
         }
         return ArrayUtils.binarySearch(this._childStringRanges, new InStringRangeComparer()) !== -1;
     }
-    asKindOrThrow(kind) {
-        return errors.throwIfNullOrUndefined(this.asKind(kind), () => `Expected the node to be of kind ${getSyntaxKindName(kind)}, but it was ${getSyntaxKindName(this.getKind())}.`);
+    asKindOrThrow(kind, message) {
+        return errors.throwIfNullOrUndefined(this.asKind(kind), message !== null && message !== void 0 ? message : (() => `Expected the node to be of kind ${getSyntaxKindName(kind)}, but it was ${getSyntaxKindName(this.getKind())}.`), this);
     }
     isKind(kind) {
         return this.getKind() === kind;
@@ -3123,22 +3123,22 @@ class Node {
             return undefined;
         }
     }
-    getFirstChildOrThrow(condition) {
-        return errors.throwIfNullOrUndefined(this.getFirstChild(condition), "Could not find a child that matched the specified condition.");
+    getFirstChildOrThrow(condition, message) {
+        return errors.throwIfNullOrUndefined(this.getFirstChild(condition), message !== null && message !== void 0 ? message : "Could not find a child that matched the specified condition.", this);
     }
     getFirstChild(condition) {
         const firstChild = this._getCompilerFirstChild(getWrappedCondition(this, condition));
         return this._getNodeFromCompilerNodeIfExists(firstChild);
     }
-    getLastChildOrThrow(condition) {
-        return errors.throwIfNullOrUndefined(this.getLastChild(condition), "Could not find a child that matched the specified condition.");
+    getLastChildOrThrow(condition, message) {
+        return errors.throwIfNullOrUndefined(this.getLastChild(condition), message !== null && message !== void 0 ? message : "Could not find a child that matched the specified condition.", this);
     }
     getLastChild(condition) {
         const lastChild = this._getCompilerLastChild(getWrappedCondition(this, condition));
         return this._getNodeFromCompilerNodeIfExists(lastChild);
     }
-    getFirstDescendantOrThrow(condition) {
-        return errors.throwIfNullOrUndefined(this.getFirstDescendant(condition), "Could not find a descendant that matched the specified condition.");
+    getFirstDescendantOrThrow(condition, message) {
+        return errors.throwIfNullOrUndefined(this.getFirstDescendant(condition), message !== null && message !== void 0 ? message : "Could not find a descendant that matched the specified condition.", this);
     }
     getFirstDescendant(condition) {
         for (const descendant of this._getDescendantsIterator()) {
@@ -3147,15 +3147,15 @@ class Node {
         }
         return undefined;
     }
-    getPreviousSiblingOrThrow(condition) {
-        return errors.throwIfNullOrUndefined(this.getPreviousSibling(condition), "Could not find the previous sibling.");
+    getPreviousSiblingOrThrow(condition, message) {
+        return errors.throwIfNullOrUndefined(this.getPreviousSibling(condition), message !== null && message !== void 0 ? message : "Could not find the previous sibling.", this);
     }
     getPreviousSibling(condition) {
         const previousSibling = this._getCompilerPreviousSibling(getWrappedCondition(this, condition));
         return this._getNodeFromCompilerNodeIfExists(previousSibling);
     }
-    getNextSiblingOrThrow(condition) {
-        return errors.throwIfNullOrUndefined(this.getNextSibling(condition), "Could not find the next sibling.");
+    getNextSiblingOrThrow(condition, message) {
+        return errors.throwIfNullOrUndefined(this.getNextSibling(condition), message !== null && message !== void 0 ? message : "Could not find the next sibling.", this);
     }
     getNextSibling(condition) {
         const nextSibling = this._getCompilerNextSibling(getWrappedCondition(this, condition));
@@ -3187,8 +3187,8 @@ class Node {
             }
         }
     }
-    getChildSyntaxListOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getChildSyntaxList(), "A child syntax list was expected.");
+    getChildSyntaxListOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getChildSyntaxList(), message !== null && message !== void 0 ? message : "A child syntax list was expected.", this);
     }
     getChildSyntaxList() {
         let node = this;
@@ -3532,11 +3532,11 @@ class Node {
     getParent() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.parent);
     }
-    getParentOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getParent(), "Expected to find a parent.");
+    getParentOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getParent(), message !== null && message !== void 0 ? message : "Expected to find a parent.", this);
     }
-    getParentWhileOrThrow(condition) {
-        return errors.throwIfNullOrUndefined(this.getParentWhile(condition), "The initial parent did not match the provided condition.");
+    getParentWhileOrThrow(condition, message) {
+        return errors.throwIfNullOrUndefined(this.getParentWhile(condition), message !== null && message !== void 0 ? message : "The initial parent did not match the provided condition.", this);
     }
     getParentWhile(condition) {
         let node = undefined;
@@ -3547,8 +3547,8 @@ class Node {
         }
         return node;
     }
-    getParentWhileKindOrThrow(kind) {
-        return errors.throwIfNullOrUndefined(this.getParentWhileKind(kind), `The initial parent was not a syntax kind of ${getSyntaxKindName(kind)}.`);
+    getParentWhileKindOrThrow(kind, message) {
+        return errors.throwIfNullOrUndefined(this.getParentWhileKind(kind), message !== null && message !== void 0 ? message : `The initial parent was not a syntax kind of ${getSyntaxKindName(kind)}.`, this);
     }
     getParentWhileKind(kind) {
         return this.getParentWhile(n => n.getKind() === kind);
@@ -3562,8 +3562,8 @@ class Node {
     isInSyntaxList() {
         return this.getParentSyntaxList() != null;
     }
-    getParentSyntaxListOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getParentSyntaxList(), "Expected the parent to be a syntax list.");
+    getParentSyntaxListOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getParentSyntaxList(), message !== null && message !== void 0 ? message : "Expected the parent to be a syntax list.", this);
     }
     getParentSyntaxList() {
         const kind = this.getKind();
@@ -3766,47 +3766,47 @@ class Node {
     getChildrenOfKind(kind) {
         return this._getCompilerChildrenOfKind(kind).map(c => this._getNodeFromCompilerNode(c));
     }
-    getFirstChildByKindOrThrow(kind) {
-        return errors.throwIfNullOrUndefined(this.getFirstChildByKind(kind), `A child of the kind ${getSyntaxKindName(kind)} was expected.`);
+    getFirstChildByKindOrThrow(kind, message) {
+        return errors.throwIfNullOrUndefined(this.getFirstChildByKind(kind), message !== null && message !== void 0 ? message : `A child of the kind ${getSyntaxKindName(kind)} was expected.`, this);
     }
     getFirstChildByKind(kind) {
         const child = this._getCompilerChildrenOfKind(kind)[0];
         return child == null ? undefined : this._getNodeFromCompilerNode(child);
     }
-    getFirstChildIfKindOrThrow(kind) {
-        return errors.throwIfNullOrUndefined(this.getFirstChildIfKind(kind), `A first child of the kind ${getSyntaxKindName(kind)} was expected.`);
+    getFirstChildIfKindOrThrow(kind, message) {
+        return errors.throwIfNullOrUndefined(this.getFirstChildIfKind(kind), message !== null && message !== void 0 ? message : `A first child of the kind ${getSyntaxKindName(kind)} was expected.`, this);
     }
     getFirstChildIfKind(kind) {
         const firstChild = this._getCompilerFirstChild();
         return firstChild != null && firstChild.kind === kind ? this._getNodeFromCompilerNode(firstChild) : undefined;
     }
-    getLastChildByKindOrThrow(kind) {
-        return errors.throwIfNullOrUndefined(this.getLastChildByKind(kind), `A child of the kind ${getSyntaxKindName(kind)} was expected.`);
+    getLastChildByKindOrThrow(kind, message) {
+        return errors.throwIfNullOrUndefined(this.getLastChildByKind(kind), message !== null && message !== void 0 ? message : `A child of the kind ${getSyntaxKindName(kind)} was expected.`, this);
     }
     getLastChildByKind(kind) {
         const children = this._getCompilerChildrenOfKind(kind);
         const lastChild = children[children.length - 1];
         return this._getNodeFromCompilerNodeIfExists(lastChild);
     }
-    getLastChildIfKindOrThrow(kind) {
-        return errors.throwIfNullOrUndefined(this.getLastChildIfKind(kind), `A last child of the kind ${getSyntaxKindName(kind)} was expected.`);
+    getLastChildIfKindOrThrow(kind, message) {
+        return errors.throwIfNullOrUndefined(this.getLastChildIfKind(kind), message !== null && message !== void 0 ? message : `A last child of the kind ${getSyntaxKindName(kind)} was expected.`, this);
     }
     getLastChildIfKind(kind) {
         const lastChild = this._getCompilerLastChild();
         return lastChild != null && lastChild.kind === kind ? this._getNodeFromCompilerNode(lastChild) : undefined;
     }
-    getChildAtIndexIfKindOrThrow(index, kind) {
-        return errors.throwIfNullOrUndefined(this.getChildAtIndexIfKind(index, kind), `Child at index ${index} was expected to be ${getSyntaxKindName(kind)}`);
+    getChildAtIndexIfKindOrThrow(index, kind, message) {
+        return errors.throwIfNullOrUndefined(this.getChildAtIndexIfKind(index, kind), message !== null && message !== void 0 ? message : `Child at index ${index} was expected to be ${getSyntaxKindName(kind)}`, this);
     }
     getChildAtIndexIfKind(index, kind) {
         const node = this._getCompilerChildAtIndex(index);
         return node.kind === kind ? this._getNodeFromCompilerNode(node) : undefined;
     }
-    getPreviousSiblingIfKindOrThrow(kind) {
-        return errors.throwIfNullOrUndefined(this.getPreviousSiblingIfKind(kind), `A previous sibling of kind ${getSyntaxKindName(kind)} was expected.`);
+    getPreviousSiblingIfKindOrThrow(kind, message) {
+        return errors.throwIfNullOrUndefined(this.getPreviousSiblingIfKind(kind), message !== null && message !== void 0 ? message : `A previous sibling of kind ${getSyntaxKindName(kind)} was expected.`, this);
     }
-    getNextSiblingIfKindOrThrow(kind) {
-        return errors.throwIfNullOrUndefined(this.getNextSiblingIfKind(kind), `A next sibling of kind ${getSyntaxKindName(kind)} was expected.`);
+    getNextSiblingIfKindOrThrow(kind, message) {
+        return errors.throwIfNullOrUndefined(this.getNextSiblingIfKind(kind), message !== null && message !== void 0 ? message : `A next sibling of kind ${getSyntaxKindName(kind)} was expected.`, this);
     }
     getPreviousSiblingIfKind(kind) {
         const previousSibling = this._getCompilerPreviousSibling();
@@ -3818,20 +3818,20 @@ class Node {
         const nextSibling = this._getCompilerNextSibling();
         return nextSibling != null && nextSibling.kind === kind ? this._getNodeFromCompilerNode(nextSibling) : undefined;
     }
-    getParentIfOrThrow(condition) {
-        return errors.throwIfNullOrUndefined(this.getParentIf(condition), "The parent did not match the provided condition.");
+    getParentIfOrThrow(condition, message) {
+        return errors.throwIfNullOrUndefined(this.getParentIf(condition), message !== null && message !== void 0 ? message : "The parent did not match the provided condition.", this);
     }
     getParentIf(condition) {
         return condition(this.getParent(), this) ? this.getParent() : undefined;
     }
-    getParentIfKindOrThrow(kind) {
-        return errors.throwIfNullOrUndefined(this.getParentIfKind(kind), `The parent was not a syntax kind of ${getSyntaxKindName(kind)}.`);
+    getParentIfKindOrThrow(kind, message) {
+        return errors.throwIfNullOrUndefined(this.getParentIfKind(kind), message !== null && message !== void 0 ? message : `The parent was not a syntax kind of ${getSyntaxKindName(kind)}.`, this);
     }
     getParentIfKind(kind) {
         return this.getParentIf(n => n !== undefined && n.getKind() === kind);
     }
-    getFirstAncestorByKindOrThrow(kind) {
-        return errors.throwIfNullOrUndefined(this.getFirstAncestorByKind(kind), `Expected an ancestor with a syntax kind of ${getSyntaxKindName(kind)}.`);
+    getFirstAncestorByKindOrThrow(kind, message) {
+        return errors.throwIfNullOrUndefined(this.getFirstAncestorByKind(kind), message !== null && message !== void 0 ? message : `Expected an ancestor with a syntax kind of ${getSyntaxKindName(kind)}.`, this);
     }
     getFirstAncestorByKind(kind) {
         for (const parent of this._getAncestorsIterator(kind === SyntaxKind.SyntaxList)) {
@@ -3840,8 +3840,8 @@ class Node {
         }
         return undefined;
     }
-    getFirstAncestorOrThrow(condition) {
-        return errors.throwIfNullOrUndefined(this.getFirstAncestor(condition), `Expected to find an ancestor that matched the provided condition.`);
+    getFirstAncestorOrThrow(condition, message) {
+        return errors.throwIfNullOrUndefined(this.getFirstAncestor(condition), message !== null && message !== void 0 ? message : `Expected to find an ancestor that matched the provided condition.`, this);
     }
     getFirstAncestor(condition) {
         for (const ancestor of this._getAncestorsIterator(false)) {
@@ -3856,8 +3856,8 @@ class Node {
             descendants.push(this._getNodeFromCompilerNode(descendant));
         return descendants;
     }
-    getFirstDescendantByKindOrThrow(kind) {
-        return errors.throwIfNullOrUndefined(this.getFirstDescendantByKind(kind), `A descendant of kind ${getSyntaxKindName(kind)} was expected to be found.`);
+    getFirstDescendantByKindOrThrow(kind, message) {
+        return errors.throwIfNullOrUndefined(this.getFirstDescendantByKind(kind), message !== null && message !== void 0 ? message : `A descendant of kind ${getSyntaxKindName(kind)} was expected to be found.`, this);
     }
     getFirstDescendantByKind(kind) {
         for (const descendant of this._getCompilerDescendantsOfKindIterator(kind))
@@ -5785,8 +5785,8 @@ function BodiedNode(Base) {
 
 function BodyableNode(Base) {
     return class extends Base {
-        getBodyOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getBody(), "Expected to find the node's body.");
+        getBodyOrThrow(message) {
+            return errors.throwIfNullOrUndefined(this.getBody(), message !== null && message !== void 0 ? message : "Expected to find the node's body.", this);
         }
         getBody() {
             return this._getNodeFromCompilerNodeIfExists(this.compilerNode.body);
@@ -5859,8 +5859,8 @@ function DecoratableNode(Base) {
         getDecorator(nameOrFindFunction) {
             return getNodeByNameOrFindFunction(this.getDecorators(), nameOrFindFunction);
         }
-        getDecoratorOrThrow(nameOrFindFunction) {
-            return errors.throwIfNullOrUndefined(this.getDecorator(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("decorator", nameOrFindFunction));
+        getDecoratorOrThrow(nameOrFindFunction, message) {
+            return errors.throwIfNullOrUndefined(this.getDecorator(nameOrFindFunction), message !== null && message !== void 0 ? message : (() => getNotFoundErrorMessageForNameOrFindFunction("decorator", nameOrFindFunction)), this);
         }
         getDecorators() {
             return getCompilerNodeDecorators(this.compilerNode).map(d => this._getNodeFromCompilerNode(d));
@@ -5945,8 +5945,8 @@ function areDecoratorsOnSameLine(parent, currentDecorators) {
 
 function DotDotDotTokenableNode(Base) {
     return class extends Base {
-        getDotDotDotTokenOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getDotDotDotToken(), "Expected to find a dot dot dot token (...).");
+        getDotDotDotTokenOrThrow(message) {
+            return errors.throwIfNullOrUndefined(this.getDotDotDotToken(), message !== null && message !== void 0 ? message : "Expected to find a dot dot dot token (...).", this);
         }
         getDotDotDotToken() {
             return this._getNodeFromCompilerNodeIfExists(this.compilerNode.dotDotDotToken);
@@ -5962,8 +5962,8 @@ function ExclamationTokenableNode(Base) {
         getExclamationTokenNode() {
             return this._getNodeFromCompilerNodeIfExists(this.compilerNode.exclamationToken);
         }
-        getExclamationTokenNodeOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getExclamationTokenNode(), "Expected to find an exclamation token.");
+        getExclamationTokenNodeOrThrow(message) {
+            return errors.throwIfNullOrUndefined(this.getExclamationTokenNode(), message !== null && message !== void 0 ? message : "Expected to find an exclamation token.", this);
         }
         setHasExclamationToken(value) {
             const exclamationTokenNode = this.getExclamationTokenNode();
@@ -6015,8 +6015,8 @@ function ExportGetableNode(Base) {
                 return throwForNotModifierableNode();
             return this.getFirstModifierByKind(SyntaxKind.ExportKeyword);
         }
-        getExportKeywordOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getExportKeyword(), "Expected to find an export keyword.");
+        getExportKeywordOrThrow(message) {
+            return errors.throwIfNullOrUndefined(this.getExportKeyword(), message !== null && message !== void 0 ? message : "Expected to find an export keyword.", this);
         }
         hasDefaultKeyword() {
             return this.getDefaultKeyword() != null;
@@ -6030,8 +6030,8 @@ function ExportGetableNode(Base) {
                 return throwForNotModifierableNode();
             return this.getFirstModifierByKind(SyntaxKind.DefaultKeyword);
         }
-        getDefaultKeywordOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getDefaultKeyword(), "Expected to find a default keyword.");
+        getDefaultKeywordOrThrow(message) {
+            return errors.throwIfNullOrUndefined(this.getDefaultKeyword(), message !== null && message !== void 0 ? message : "Expected to find a default keyword.", this);
         }
         isExported() {
             if (this.hasExportKeyword())
@@ -8732,8 +8732,8 @@ function GeneratorableNode(Base) {
         getAsteriskToken() {
             return this._getNodeFromCompilerNodeIfExists(this.compilerNode.asteriskToken);
         }
-        getAsteriskTokenOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getAsteriskToken(), "Expected to find an asterisk token.");
+        getAsteriskTokenOrThrow(message) {
+            return errors.throwIfNullOrUndefined(this.getAsteriskToken(), message !== null && message !== void 0 ? message : "Expected to find an asterisk token.", this);
         }
         setIsGenerator(value) {
             const asteriskToken = this.getAsteriskToken();
@@ -8784,8 +8784,8 @@ function HeritageClauseableNode(Base) {
             const heritageClauses = this.compilerNode.heritageClauses;
             return (_a = heritageClauses === null || heritageClauses === void 0 ? void 0 : heritageClauses.map(c => this._getNodeFromCompilerNode(c))) !== null && _a !== void 0 ? _a : [];
         }
-        getHeritageClauseByKindOrThrow(kind) {
-            return errors.throwIfNullOrUndefined(this.getHeritageClauseByKind(kind), `Expected to have heritage clause of kind ${getSyntaxKindName(kind)}.`);
+        getHeritageClauseByKindOrThrow(kind, message) {
+            return errors.throwIfNullOrUndefined(this.getHeritageClauseByKind(kind), message !== null && message !== void 0 ? message : (() => `Expected to have heritage clause of kind ${getSyntaxKindName(kind)}.`), this);
         }
         getHeritageClauseByKind(kind) {
             return this.getHeritageClauses().find(c => c.compilerNode.token === kind);
@@ -8872,8 +8872,8 @@ function InitializerExpressionGetableNode(Base) {
         hasInitializer() {
             return this.compilerNode.initializer != null;
         }
-        getInitializerIfKindOrThrow(kind) {
-            return errors.throwIfNullOrUndefined(this.getInitializerIfKind(kind), `Expected to find an initializer of kind '${getSyntaxKindName(kind)}'.`);
+        getInitializerIfKindOrThrow(kind, message) {
+            return errors.throwIfNullOrUndefined(this.getInitializerIfKind(kind), message !== null && message !== void 0 ? message : `Expected to find an initializer of kind '${getSyntaxKindName(kind)}'.`, this);
         }
         getInitializerIfKind(kind) {
             const initializer = this.getInitializer();
@@ -8881,8 +8881,8 @@ function InitializerExpressionGetableNode(Base) {
                 return undefined;
             return initializer;
         }
-        getInitializerOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getInitializer(), "Expected to find an initializer.");
+        getInitializerOrThrow(message) {
+            return errors.throwIfNullOrUndefined(this.getInitializer(), message !== null && message !== void 0 ? message : "Expected to find an initializer.", this);
         }
         getInitializer() {
             return this._getNodeFromCompilerNodeIfExists(this.compilerNode.initializer);
@@ -9005,8 +9005,8 @@ function ModifierableNode(Base) {
         getModifiers() {
             return this.getCompilerModifiers().map(m => this._getNodeFromCompilerNode(m));
         }
-        getFirstModifierByKindOrThrow(kind) {
-            return errors.throwIfNullOrUndefined(this.getFirstModifierByKind(kind), `Expected a modifier of syntax kind: ${getSyntaxKindName(kind)}`);
+        getFirstModifierByKindOrThrow(kind, message) {
+            return errors.throwIfNullOrUndefined(this.getFirstModifierByKind(kind), message !== null && message !== void 0 ? message : (() => `Expected a modifier of syntax kind: ${getSyntaxKindName(kind)}`), this);
         }
         getFirstModifierByKind(kind) {
             for (const modifier of this.getCompilerModifiers()) {
@@ -9181,8 +9181,8 @@ function ModuledNode(Base) {
                     return conditionOrModuleSpecifier;
             }
         }
-        getImportDeclarationOrThrow(conditionOrModuleSpecifier) {
-            return errors.throwIfNullOrUndefined(this.getImportDeclaration(conditionOrModuleSpecifier), "Expected to find an import with the provided condition.");
+        getImportDeclarationOrThrow(conditionOrModuleSpecifier, message) {
+            return errors.throwIfNullOrUndefined(this.getImportDeclaration(conditionOrModuleSpecifier), message !== null && message !== void 0 ? message : "Expected to find an import with the provided condition.", this);
         }
         getImportDeclarations() {
             return this.getStatements().filter(Node.isImportDeclaration);
@@ -9220,8 +9220,8 @@ function ModuledNode(Base) {
                     return conditionOrModuleSpecifier;
             }
         }
-        getExportDeclarationOrThrow(conditionOrModuleSpecifier) {
-            return errors.throwIfNullOrUndefined(this.getExportDeclaration(conditionOrModuleSpecifier), "Expected to find an export declaration with the provided condition.");
+        getExportDeclarationOrThrow(conditionOrModuleSpecifier, message) {
+            return errors.throwIfNullOrUndefined(this.getExportDeclaration(conditionOrModuleSpecifier), message !== null && message !== void 0 ? message : "Expected to find an export declaration with the provided condition.", this);
         }
         getExportDeclarations() {
             return this.getStatements().filter(Node.isExportDeclaration);
@@ -9253,8 +9253,8 @@ function ModuledNode(Base) {
         getExportAssignment(condition) {
             return this.getExportAssignments().find(condition);
         }
-        getExportAssignmentOrThrow(condition) {
-            return errors.throwIfNullOrUndefined(this.getExportAssignment(condition), "Expected to find an export assignment with the provided condition.");
+        getExportAssignmentOrThrow(condition, message) {
+            return errors.throwIfNullOrUndefined(this.getExportAssignment(condition), message !== null && message !== void 0 ? message : "Expected to find an export assignment with the provided condition.", this);
         }
         getExportAssignments() {
             return this.getStatements().filter(Node.isExportAssignment);
@@ -9265,8 +9265,8 @@ function ModuledNode(Base) {
                 return undefined;
             return sourceFileSymbol.getExport("default");
         }
-        getDefaultExportSymbolOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getDefaultExportSymbol(), "Expected to find a default export symbol");
+        getDefaultExportSymbolOrThrow(message) {
+            return errors.throwIfNullOrUndefined(this.getDefaultExportSymbol(), message !== null && message !== void 0 ? message : "Expected to find a default export symbol");
         }
         getExportSymbols() {
             const symbol = this.getSymbol();
@@ -9438,15 +9438,15 @@ function NameableNodeInternal(Base) {
         getNameNode() {
             return this._getNodeFromCompilerNodeIfExists(this.compilerNode.name);
         }
-        getNameNodeOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getNameNode(), "Expected to have a name node.");
+        getNameNodeOrThrow(message) {
+            return errors.throwIfNullOrUndefined(this.getNameNode(), message !== null && message !== void 0 ? message : "Expected to have a name node.", this);
         }
         getName() {
             var _a, _b;
             return (_b = (_a = this.getNameNode()) === null || _a === void 0 ? void 0 : _a.getText()) !== null && _b !== void 0 ? _b : undefined;
         }
-        getNameOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getName(), "Expected to have a name.");
+        getNameOrThrow(message) {
+            return errors.throwIfNullOrUndefined(this.getName(), message !== null && message !== void 0 ? message : "Expected to have a name.", this);
         }
         rename(newName) {
             if (newName === this.getName())
@@ -9528,8 +9528,8 @@ function OverrideableNode(Base) {
         getOverrideKeyword() {
             return this.getFirstModifierByKind(SyntaxKind.OverrideKeyword);
         }
-        getOverrideKeywordOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getOverrideKeyword(), "Expected to find an override keyword.");
+        getOverrideKeywordOrThrow(message) {
+            return errors.throwIfNullOrUndefined(this.getOverrideKeyword(), message !== null && message !== void 0 ? message : "Expected to find an override keyword.", this);
         }
         setHasOverrideKeyword(value) {
             this.toggleModifier("override", value);
@@ -9611,8 +9611,8 @@ function QuestionDotTokenableNode(Base) {
         getQuestionDotTokenNode() {
             return this._getNodeFromCompilerNodeIfExists(this.compilerNode.questionDotToken);
         }
-        getQuestionDotTokenNodeOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getQuestionDotTokenNode(), "Expected to find a question dot token.");
+        getQuestionDotTokenNodeOrThrow(message) {
+            return errors.throwIfNullOrUndefined(this.getQuestionDotTokenNode(), message !== null && message !== void 0 ? message : "Expected to find a question dot token.", this);
         }
         setHasQuestionDotToken(value) {
             const questionDotTokenNode = this.getQuestionDotTokenNode();
@@ -9667,8 +9667,8 @@ function QuestionTokenableNode(Base) {
         getQuestionTokenNode() {
             return this._getNodeFromCompilerNodeIfExists(this.compilerNode.questionToken);
         }
-        getQuestionTokenNodeOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getQuestionTokenNode(), "Expected to find a question token.");
+        getQuestionTokenNodeOrThrow(message) {
+            return errors.throwIfNullOrUndefined(this.getQuestionTokenNode(), message !== null && message !== void 0 ? message : "Expected to find a question token.", this);
         }
         setHasQuestionToken(value) {
             const questionTokenNode = this.getQuestionTokenNode();
@@ -9722,8 +9722,8 @@ function ReadonlyableNode(Base) {
         getReadonlyKeyword() {
             return this.getFirstModifierByKind(SyntaxKind.ReadonlyKeyword);
         }
-        getReadonlyKeywordOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getReadonlyKeyword(), "Expected to find a readonly keyword.");
+        getReadonlyKeywordOrThrow(message) {
+            return errors.throwIfNullOrUndefined(this.getReadonlyKeyword(), message !== null && message !== void 0 ? message : "Expected to find a readonly keyword.", this);
         }
         setIsReadonly(value) {
             this.toggleModifier("readonly", value);
@@ -9751,8 +9751,8 @@ function ReturnTypedNode(Base) {
         getReturnTypeNode() {
             return this._getNodeFromCompilerNodeIfExists(this.compilerNode.type);
         }
-        getReturnTypeNodeOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getReturnTypeNode(), "Expected to find a return type node.");
+        getReturnTypeNodeOrThrow(message) {
+            return errors.throwIfNullOrUndefined(this.getReturnTypeNode(), message !== null && message !== void 0 ? message : "Expected to find a return type node.", this);
         }
         setReturnType(textOrWriterFunction) {
             const text = getTextFromStringOrWriter(this._getWriterWithQueuedChildIndentation(), textOrWriterFunction);
@@ -9898,8 +9898,8 @@ function StaticableNode(Base) {
         getStaticKeyword() {
             return this.getFirstModifierByKind(SyntaxKind.StaticKeyword);
         }
-        getStaticKeywordOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getStaticKeyword(), "Expected to find a static keyword.");
+        getStaticKeywordOrThrow(message) {
+            return errors.throwIfNullOrUndefined(this.getStaticKeyword(), message !== null && message !== void 0 ? message : "Expected to find a static keyword.", this);
         }
         setIsStatic(value) {
             this.toggleModifier("static", value);
@@ -10049,8 +10049,8 @@ function TypedNode(Base) {
         getTypeNode() {
             return this._getNodeFromCompilerNodeIfExists(this.compilerNode.type);
         }
-        getTypeNodeOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getTypeNode(), "Expected to find a type node.");
+        getTypeNodeOrThrow(message) {
+            return errors.throwIfNullOrUndefined(this.getTypeNode(), message !== null && message !== void 0 ? message : "Expected to find a type node.", this);
         }
         setType(textOrWriterFunction) {
             const text = getTextFromStringOrWriter(this._getWriterWithQueuedChildIndentation(), textOrWriterFunction);
@@ -10175,8 +10175,8 @@ function TypeElementMemberedNode(Base) {
         getConstructSignature(findFunction) {
             return this.getConstructSignatures().find(findFunction);
         }
-        getConstructSignatureOrThrow(findFunction) {
-            return errors.throwIfNullOrUndefined(this.getConstructSignature(findFunction), "Expected to find a construct signature with the provided condition.");
+        getConstructSignatureOrThrow(findFunction, message) {
+            return errors.throwIfNullOrUndefined(this.getConstructSignature(findFunction), message !== null && message !== void 0 ? message : "Expected to find a construct signature with the provided condition.", this);
         }
         getConstructSignatures() {
             return this.compilerNode.members.filter(m => m.kind === SyntaxKind.ConstructSignature)
@@ -10203,8 +10203,8 @@ function TypeElementMemberedNode(Base) {
         getCallSignature(findFunction) {
             return this.getCallSignatures().find(findFunction);
         }
-        getCallSignatureOrThrow(findFunction) {
-            return errors.throwIfNullOrUndefined(this.getCallSignature(findFunction), "Expected to find a call signature with the provided condition.");
+        getCallSignatureOrThrow(findFunction, message) {
+            return errors.throwIfNullOrUndefined(this.getCallSignature(findFunction), message !== null && message !== void 0 ? message : "Expected to find a call signature with the provided condition.", this);
         }
         getCallSignatures() {
             return this.compilerNode.members.filter(m => m.kind === SyntaxKind.CallSignature)
@@ -10231,8 +10231,8 @@ function TypeElementMemberedNode(Base) {
         getIndexSignature(findFunction) {
             return this.getIndexSignatures().find(findFunction);
         }
-        getIndexSignatureOrThrow(findFunction) {
-            return errors.throwIfNullOrUndefined(this.getIndexSignature(findFunction), "Expected to find a index signature with the provided condition.");
+        getIndexSignatureOrThrow(findFunction, message) {
+            return errors.throwIfNullOrUndefined(this.getIndexSignature(findFunction), message !== null && message !== void 0 ? message : "Expected to find a index signature with the provided condition.", this);
         }
         getIndexSignatures() {
             return this.compilerNode.members.filter(m => m.kind === SyntaxKind.IndexSignature)
@@ -10443,8 +10443,8 @@ class ArrayBindingPattern extends Node {
 const createBase$E = (ctor) => DotDotDotTokenableNode(InitializerExpressionableNode(BindingNamedNode(ctor)));
 const BindingElementBase = createBase$E(Node);
 class BindingElement extends BindingElementBase {
-    getPropertyNameNodeOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getPropertyNameNode(), "Expected to find a property name node.");
+    getPropertyNameNodeOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getPropertyNameNode(), message !== null && message !== void 0 ? message : "Expected to find a property name node.", this);
     }
     getPropertyNameNode() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.propertyName);
@@ -10465,8 +10465,8 @@ function AbstractableNode(Base) {
         getAbstractKeyword() {
             return this.getFirstModifierByKind(SyntaxKind.AbstractKeyword);
         }
-        getAbstractKeywordOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getAbstractKeyword(), "Expected to find an abstract keyword.");
+        getAbstractKeywordOrThrow(message) {
+            return errors.throwIfNullOrUndefined(this.getAbstractKeyword(), message !== null && message !== void 0 ? message : "Expected to find an abstract keyword.", this);
         }
         setIsAbstract(isAbstract) {
             this.toggleModifier("abstract", isAbstract);
@@ -10605,15 +10605,15 @@ function ExpressionableNode(Base) {
         getExpression() {
             return this._getNodeFromCompilerNodeIfExists(this.compilerNode.expression);
         }
-        getExpressionOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getExpression(), "Expected to find an expression.");
+        getExpressionOrThrow(message) {
+            return errors.throwIfNullOrUndefined(this.getExpression(), message !== null && message !== void 0 ? message : "Expected to find an expression.", this);
         }
         getExpressionIfKind(kind) {
             const expression = this.getExpression();
             return (expression === null || expression === void 0 ? void 0 : expression.getKind()) === kind ? expression : undefined;
         }
-        getExpressionIfKindOrThrow(kind) {
-            return errors.throwIfNullOrUndefined(this.getExpressionIfKind(kind), `An expression with the kind kind ${getSyntaxKindName(kind)} was expected.`);
+        getExpressionIfKindOrThrow(kind, message) {
+            return errors.throwIfNullOrUndefined(this.getExpressionIfKind(kind), message !== null && message !== void 0 ? message : `An expression with the kind kind ${getSyntaxKindName(kind)} was expected.`, this);
         }
     };
 }
@@ -10627,8 +10627,8 @@ function BaseExpressionedNode(Base) {
             const { expression } = this.compilerNode;
             return expression.kind === kind ? this._getNodeFromCompilerNode(expression) : undefined;
         }
-        getExpressionIfKindOrThrow(kind) {
-            return errors.throwIfNullOrUndefined(this.getExpressionIfKind(kind), `An expression of the kind ${getSyntaxKindName(kind)} was expected.`);
+        getExpressionIfKindOrThrow(kind, message) {
+            return errors.throwIfNullOrUndefined(this.getExpressionIfKind(kind), message !== null && message !== void 0 ? message : `An expression of the kind ${getSyntaxKindName(kind)} was expected.`, this);
         }
         setExpression(textOrWriterFunction) {
             this.getExpression().replaceWithText(textOrWriterFunction, this._getWriterWithQueuedChildIndentation());
@@ -10715,8 +10715,8 @@ class ElementAccessExpression extends ElementAccessExpressionBase {
     getArgumentExpression() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.argumentExpression);
     }
-    getArgumentExpressionOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getArgumentExpression(), "Expected to find an argument expression.");
+    getArgumentExpressionOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getArgumentExpression(), message !== null && message !== void 0 ? message : "Expected to find an argument expression.", this);
     }
 }
 
@@ -10963,14 +10963,14 @@ class ShorthandPropertyAssignment extends ShorthandPropertyAssignmentBase {
     hasObjectAssignmentInitializer() {
         return this.compilerNode.objectAssignmentInitializer != null;
     }
-    getObjectAssignmentInitializerOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getObjectAssignmentInitializer(), "Expected to find an object assignment initializer.");
+    getObjectAssignmentInitializerOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getObjectAssignmentInitializer(), message !== null && message !== void 0 ? message : "Expected to find an object assignment initializer.", this);
     }
     getObjectAssignmentInitializer() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.objectAssignmentInitializer);
     }
-    getEqualsTokenOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getEqualsToken(), "Expected to find an equals token.");
+    getEqualsTokenOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getEqualsToken(), message !== null && message !== void 0 ? message : "Expected to find an equals token.", this);
     }
     getEqualsToken() {
         const equalsToken = this.compilerNode.equalsToken;
@@ -11127,15 +11127,15 @@ function StatementedNode(Base) {
         getStatement(findFunction) {
             return this.getStatements().find(findFunction);
         }
-        getStatementOrThrow(findFunction) {
-            return errors.throwIfNullOrUndefined(this.getStatement(findFunction), "Expected to find a statement matching the provided condition.");
+        getStatementOrThrow(findFunction, message) {
+            return errors.throwIfNullOrUndefined(this.getStatement(findFunction), message !== null && message !== void 0 ? message : "Expected to find a statement matching the provided condition.", this);
         }
         getStatementByKind(kind) {
             const statement = this._getCompilerStatementsWithComments().find(s => s.kind === kind);
             return this._getNodeFromCompilerNodeIfExists(statement);
         }
-        getStatementByKindOrThrow(kind) {
-            return errors.throwIfNullOrUndefined(this.getStatementByKind(kind), `Expected to find a statement with syntax kind ${getSyntaxKindName(kind)}.`);
+        getStatementByKindOrThrow(kind, message) {
+            return errors.throwIfNullOrUndefined(this.getStatementByKind(kind), message !== null && message !== void 0 ? message : `Expected to find a statement with syntax kind ${getSyntaxKindName(kind)}.`, this);
         }
         addStatements(textOrWriterFunction) {
             return this.insertStatements(this._getCompilerStatementsWithComments().length, textOrWriterFunction);
@@ -11372,8 +11372,8 @@ function StatementedNode(Base) {
                 return nameOrFindFunction;
             }
         }
-        getVariableStatementOrThrow(nameOrFindFunction) {
-            return errors.throwIfNullOrUndefined(this.getVariableStatement(nameOrFindFunction), "Expected to find a variable statement that matched the provided condition.");
+        getVariableStatementOrThrow(nameOrFindFunction, message) {
+            return errors.throwIfNullOrUndefined(this.getVariableStatement(nameOrFindFunction), message !== null && message !== void 0 ? message : "Expected to find a variable statement that matched the provided condition.", this);
         }
         addVariableStatement(structure) {
             return this.addVariableStatements([structure])[0];
@@ -11504,8 +11504,8 @@ class BreakStatement extends Statement {
     getLabel() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.label);
     }
-    getLabelOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getLabel(), "Expected to find a label.");
+    getLabelOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getLabel(), message !== null && message !== void 0 ? message : "Expected to find a label.", this);
     }
 }
 
@@ -11543,8 +11543,8 @@ class CatchClause extends CatchClauseBase {
     getVariableDeclaration() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.variableDeclaration);
     }
-    getVariableDeclarationOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getVariableDeclaration(), "Expected to find a variable declaration.");
+    getVariableDeclarationOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getVariableDeclaration(), message !== null && message !== void 0 ? message : "Expected to find a variable declaration.", this);
     }
 }
 
@@ -11557,8 +11557,8 @@ class ContinueStatement extends Statement {
             ? undefined
             : this._getNodeFromCompilerNode(this.compilerNode.label);
     }
-    getLabelOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getLabel(), "Expected to find a label.");
+    getLabelOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getLabel(), message !== null && message !== void 0 ? message : "Expected to find a label.", this);
     }
 }
 
@@ -11611,20 +11611,20 @@ class ForStatement extends ForStatementBase {
     getInitializer() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.initializer);
     }
-    getInitializerOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getInitializer(), "Expected to find an initializer.");
+    getInitializerOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getInitializer(), message !== null && message !== void 0 ? message : "Expected to find an initializer.", this);
     }
     getCondition() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.condition);
     }
-    getConditionOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getCondition(), "Expected to find a condition.");
+    getConditionOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getCondition(), message !== null && message !== void 0 ? message : "Expected to find a condition.", this);
     }
     getIncrementor() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.incrementor);
     }
-    getIncrementorOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getIncrementor(), "Expected to find an incrementor.");
+    getIncrementorOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getIncrementor(), message !== null && message !== void 0 ? message : "Expected to find an incrementor.", this);
     }
 }
 
@@ -11691,16 +11691,16 @@ class TryStatement extends TryStatementBase {
     getCatchClause() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.catchClause);
     }
-    getCatchClauseOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getCatchClause(), "Expected to find a catch clause.");
+    getCatchClauseOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getCatchClause(), message !== null && message !== void 0 ? message : "Expected to find a catch clause.", this);
     }
     getFinallyBlock() {
         if (this.compilerNode.finallyBlock == null || this.compilerNode.finallyBlock.getFullWidth() === 0)
             return undefined;
         return this._getNodeFromCompilerNode(this.compilerNode.finallyBlock);
     }
-    getFinallyBlockOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getFinallyBlock(), "Expected to find a finally block.");
+    getFinallyBlockOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getFinallyBlock(), message !== null && message !== void 0 ? message : "Expected to find a finally block.", this);
     }
 }
 
@@ -11804,8 +11804,8 @@ class ExportDeclaration extends ExportDeclarationBase {
         const exportClause = this.getNodeProperty("exportClause");
         return exportClause != null && Node.isNamespaceExport(exportClause) ? exportClause : undefined;
     }
-    getNamespaceExportOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getNamespaceExport(), "Expected to find a namespace export.");
+    getNamespaceExportOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getNamespaceExport(), message !== null && message !== void 0 ? message : "Expected to find a namespace export.", this);
     }
     setNamespaceExport(name) {
         const exportClause = this.getNodeProperty("exportClause");
@@ -11868,8 +11868,8 @@ class ExportDeclaration extends ExportDeclarationBase {
         const moduleSpecifier = this.getModuleSpecifier();
         return moduleSpecifier === null || moduleSpecifier === void 0 ? void 0 : moduleSpecifier.getLiteralValue();
     }
-    getModuleSpecifierSourceFileOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getModuleSpecifierSourceFile(), `A module specifier source file was expected.`);
+    getModuleSpecifierSourceFileOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getModuleSpecifierSourceFile(), message !== null && message !== void 0 ? message : `A module specifier source file was expected.`, this);
     }
     getModuleSpecifierSourceFile() {
         const stringLiteral = this.getLastChildByKind(SyntaxKind.StringLiteral);
@@ -12162,8 +12162,8 @@ class ExportSpecifier extends ExportSpecifierBase {
     getExportDeclaration() {
         return this.getFirstAncestorByKindOrThrow(SyntaxKind.ExportDeclaration);
     }
-    getLocalTargetSymbolOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getLocalTargetSymbol(), `The export specifier's local target symbol was expected.`);
+    getLocalTargetSymbolOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getLocalTargetSymbol(), message !== null && message !== void 0 ? message : `The export specifier's local target symbol was expected.`, this);
     }
     getLocalTargetSymbol() {
         return this._context.typeChecker.getExportSpecifierLocalTargetSymbol(this);
@@ -12207,8 +12207,8 @@ class ExportSpecifier extends ExportSpecifierBase {
 
 const ExternalModuleReferenceBase = ExpressionableNode(Node);
 class ExternalModuleReference extends ExternalModuleReferenceBase {
-    getReferencedSourceFileOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getReferencedSourceFile(), "Expected to find the referenced source file.");
+    getReferencedSourceFileOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getReferencedSourceFile(), message !== null && message !== void 0 ? message : "Expected to find the referenced source file.", this);
     }
     isRelative() {
         const expression = this.getExpression();
@@ -12251,20 +12251,20 @@ class ImportClause extends ImportClauseBase {
         }
         return this;
     }
-    getDefaultImportOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getDefaultImport(), "Expected to find a default import.");
+    getDefaultImportOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getDefaultImport(), message !== null && message !== void 0 ? message : "Expected to find a default import.", this);
     }
     getDefaultImport() {
         return this.getNodeProperty("name");
     }
-    getNamedBindingsOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getNamedBindings(), "Expected to find an import declaration's named bindings.");
+    getNamedBindingsOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getNamedBindings(), message !== null && message !== void 0 ? message : "Expected to find an import declaration's named bindings.", this);
     }
     getNamedBindings() {
         return this.getNodeProperty("namedBindings");
     }
-    getNamespaceImportOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getNamespaceImport(), "Expected to find a namespace import.");
+    getNamespaceImportOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getNamespaceImport(), message !== null && message !== void 0 ? message : "Expected to find a namespace import.", this);
     }
     getNamespaceImport() {
         const namedBindings = this.getNamedBindings();
@@ -12311,8 +12311,8 @@ class ImportDeclaration extends ImportDeclarationBase {
     getModuleSpecifierValue() {
         return this.getModuleSpecifier().getLiteralValue();
     }
-    getModuleSpecifierSourceFileOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getModuleSpecifierSourceFile(), `A module specifier source file was expected.`);
+    getModuleSpecifierSourceFileOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getModuleSpecifierSourceFile(), message !== null && message !== void 0 ? message : `A module specifier source file was expected.`, this);
     }
     getModuleSpecifierSourceFile() {
         const symbol = this.getModuleSpecifier().getSymbol();
@@ -12359,8 +12359,8 @@ class ImportDeclaration extends ImportDeclarationBase {
         this.setDefaultImport(text);
         return this;
     }
-    getDefaultImportOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getDefaultImport(), "Expected to find a default import.");
+    getDefaultImportOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getDefaultImport(), message !== null && message !== void 0 ? message : "Expected to find a default import.", this);
     }
     getDefaultImport() {
         var _a, _b;
@@ -12434,8 +12434,8 @@ class ImportDeclaration extends ImportDeclarationBase {
         }
         return this;
     }
-    getNamespaceImportOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getNamespaceImport(), "Expected to find a namespace import.");
+    getNamespaceImportOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getNamespaceImport(), message !== null && message !== void 0 ? message : "Expected to find a namespace import.", this);
     }
     getNamespaceImport() {
         var _a, _b;
@@ -12525,8 +12525,8 @@ class ImportDeclaration extends ImportDeclarationBase {
         removeChildren({ children: [importClause, fromKeyword], removePrecedingSpaces: true });
         return this;
     }
-    getImportClauseOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getImportClause(), "Expected to find an import clause.");
+    getImportClauseOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getImportClause(), message !== null && message !== void 0 ? message : "Expected to find an import clause.", this);
     }
     getImportClause() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.importClause);
@@ -12680,8 +12680,8 @@ class ImportEqualsDeclaration extends ImportEqualsDeclarationBase {
             moduleReference.replaceWithText(writer => writer.write("require(").quote(text).write(")"));
         return this;
     }
-    getExternalModuleReferenceSourceFileOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getExternalModuleReferenceSourceFile(), "Expected to find an external module reference's referenced source file.");
+    getExternalModuleReferenceSourceFileOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getExternalModuleReferenceSourceFile(), message !== null && message !== void 0 ? message : "Expected to find an external module reference's referenced source file.", this);
     }
     getExternalModuleReferenceSourceFile() {
         const moduleReference = this.getModuleReference();
@@ -12823,8 +12823,8 @@ class ModuleBlock extends ModuleBlockBase {
 
 function ModuleChildableNode(Base) {
     return class extends Base {
-        getParentModuleOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getParentModule(), "Expected to find the parent module declaration.");
+        getParentModuleOrThrow(message) {
+            return errors.throwIfNullOrUndefined(this.getParentModule(), message !== null && message !== void 0 ? message : "Expected to find the parent module declaration.", this);
         }
         getParentModule() {
             let parent = this.getParentOrThrow();
@@ -13656,8 +13656,8 @@ function OverloadableNode(Base) {
                 return this;
             return getOverloadsAndImplementation(this).find(n => n.isImplementation());
         }
-        getImplementationOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getImplementation(), "Expected to find a corresponding implementation for the overload.");
+        getImplementationOrThrow(message) {
+            return errors.throwIfNullOrUndefined(this.getImplementation(), message !== null && message !== void 0 ? message : "Expected to find a corresponding implementation for the overload.", this);
         }
         isOverload() {
             return !this.isImplementation();
@@ -13999,8 +13999,8 @@ function ClassLikeDeclarationBaseSpecific(Base) {
             extendsClause.removeExpression(0);
             return this;
         }
-        getExtendsOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getExtends(), `Expected to find the extends expression for the class ${this.getName()}.`);
+        getExtendsOrThrow(message) {
+            return errors.throwIfNullOrUndefined(this.getExtends(), message !== null && message !== void 0 ? message : `Expected to find the extends expression for the class ${this.getName()}.`, this);
         }
         getExtends() {
             const extendsClause = this.getHeritageClauseByKind(SyntaxKind.ExtendsKeyword);
@@ -14366,8 +14366,8 @@ function ClassLikeDeclarationBaseSpecific(Base) {
         getBaseTypes() {
             return this.getType().getBaseTypes();
         }
-        getBaseClassOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getBaseClass(), `Expected to find the base class of ${this.getName()}.`);
+        getBaseClassOrThrow(message) {
+            return errors.throwIfNullOrUndefined(this.getBaseClass(), message !== null && message !== void 0 ? message : `Expected to find the base class of ${this.getName()}.`, this);
         }
         getBaseClass() {
             const baseTypes = ArrayUtils.flatten(this.getBaseTypes().map(t => t.isIntersection() ? t.getIntersectionTypes() : [t]));
@@ -14708,8 +14708,8 @@ class GetAccessorDeclaration extends GetAccessorDeclarationBase {
             return undefined;
         });
     }
-    getSetAccessorOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getSetAccessor(), () => `Expected to find a corresponding set accessor for ${this.getName()}.`);
+    getSetAccessorOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getSetAccessor(), message !== null && message !== void 0 ? message : (() => `Expected to find a corresponding set accessor for ${this.getName()}.`), this);
     }
     getStructure() {
         return callBaseGetStructure(GetAccessorDeclarationBase.prototype, this, {
@@ -14767,8 +14767,8 @@ class SetAccessorDeclaration extends SetAccessorDeclarationBase {
             return undefined;
         });
     }
-    getGetAccessorOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getGetAccessor(), () => `Expected to find a corresponding get accessor for ${this.getName()}.`);
+    getGetAccessorOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getGetAccessor(), message !== null && message !== void 0 ? message : (() => `Expected to find a corresponding get accessor for ${this.getName()}.`), this);
     }
     getStructure() {
         return callBaseGetStructure(SetAccessorDeclarationBase.prototype, this, {
@@ -14847,8 +14847,8 @@ class Decorator extends DecoratorBase {
         }
         return this;
     }
-    getCallExpressionOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getCallExpression(), "Expected to find a call expression.");
+    getCallExpressionOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getCallExpression(), message !== null && message !== void 0 ? message : "Expected to find a call expression.", this);
     }
     getCallExpression() {
         const expression = this._getInnerExpression();
@@ -14955,8 +14955,8 @@ function JSDocPropertyLikeTag(Base) {
         getTypeExpression() {
             return this._getNodeFromCompilerNodeIfExists(this.compilerNode.typeExpression);
         }
-        getTypeExpressionOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getTypeExpression(), `Expected to find a JS doc type expression.`);
+        getTypeExpressionOrThrow(message) {
+            return errors.throwIfNullOrUndefined(this.getTypeExpression(), message !== null && message !== void 0 ? message : `Expected to find a JS doc type expression.`, this);
         }
         getName() {
             return this.getNameNode().getText();
@@ -14978,8 +14978,8 @@ function JSDocTypeExpressionableTag(Base) {
                 return undefined;
             return result;
         }
-        getTypeExpressionOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getTypeExpression(), `Expected to find the JS doc tag's type expression.`);
+        getTypeExpressionOrThrow(message) {
+            return errors.throwIfNullOrUndefined(this.getTypeExpression(), message !== null && message !== void 0 ? message : `Expected to find the JS doc tag's type expression.`, this);
         }
     };
 }
@@ -15251,8 +15251,8 @@ class ImportTypeNode extends NodeWithTypeArguments {
         }
         return this;
     }
-    getQualifierOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getQualifier(), () => `Expected to find a qualifier for the import type: ${this.getText()}`);
+    getQualifierOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getQualifier(), message !== null && message !== void 0 ? message : (() => `Expected to find a qualifier for the import type: ${this.getText()}`), this);
     }
     getQualifier() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.qualifier);
@@ -15260,8 +15260,8 @@ class ImportTypeNode extends NodeWithTypeArguments {
     getAssertions() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.assertions);
     }
-    getAssertionsOrThrow() {
-        return errors.throwIfNullOrUndefined(this._getNodeFromCompilerNodeIfExists(this.compilerNode.assertions), "Could not find import type assertion container.");
+    getAssertionsOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this._getNodeFromCompilerNodeIfExists(this.compilerNode.assertions), message !== null && message !== void 0 ? message : "Could not find import type assertion container.", this);
     }
 }
 
@@ -15297,20 +15297,20 @@ class MappedTypeNode extends TypeNode {
     getNameTypeNode() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.nameType);
     }
-    getNameTypeNodeOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getNameTypeNode(), "Type did not exist.");
+    getNameTypeNodeOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getNameTypeNode(), message !== null && message !== void 0 ? message : "Type did not exist.", this);
     }
     getReadonlyToken() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.readonlyToken);
     }
-    getReadonlyTokenOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getReadonlyToken(), "Readonly token did not exist.");
+    getReadonlyTokenOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getReadonlyToken(), message !== null && message !== void 0 ? message : "Readonly token did not exist.", this);
     }
     getQuestionToken() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.questionToken);
     }
-    getQuestionTokenOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getQuestionToken(), "Question token did not exist.");
+    getQuestionTokenOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getQuestionToken(), message !== null && message !== void 0 ? message : "Question token did not exist.", this);
     }
     getTypeParameter() {
         return this._getNodeFromCompilerNode(this.compilerNode.typeParameter);
@@ -15318,8 +15318,8 @@ class MappedTypeNode extends TypeNode {
     getTypeNode() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.type);
     }
-    getTypeNodeOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getTypeNode(), "Type did not exist, but was expected to exist.");
+    getTypeNodeOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getTypeNode(), message !== null && message !== void 0 ? message : "Type did not exist, but was expected to exist.", this);
     }
 }
 
@@ -15414,8 +15414,8 @@ class TypeParameterDeclaration extends TypeParameterDeclarationBase {
     getConstraint() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.constraint);
     }
-    getConstraintOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getConstraint(), "Expected to find the type parameter's constraint.");
+    getConstraintOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getConstraint(), message !== null && message !== void 0 ? message : "Expected to find the type parameter's constraint.", this);
     }
     setConstraint(text) {
         text = this.getParentOrThrow()._getTextWithQueuedChildIndentation(text);
@@ -15443,8 +15443,8 @@ class TypeParameterDeclaration extends TypeParameterDeclarationBase {
     getDefault() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.default);
     }
-    getDefaultOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getDefault(), "Expected to find the type parameter's default.");
+    getDefaultOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getDefault(), message !== null && message !== void 0 ? message : "Expected to find the type parameter's default.", this);
     }
     setDefault(text) {
         text = this.getParentOrThrow()._getTextWithQueuedChildIndentation(text);
@@ -15542,14 +15542,14 @@ class TypePredicateNode extends TypeNode {
     getAssertsModifier() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.assertsModifier);
     }
-    getAssertsModifierOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getAssertsModifier(), "Expected to find an asserts modifier.");
+    getAssertsModifierOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getAssertsModifier(), message !== null && message !== void 0 ? message : "Expected to find an asserts modifier.", this);
     }
     getTypeNode() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.type);
     }
-    getTypeNodeOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getTypeNode(), "Expected to find a type node.");
+    getTypeNodeOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getTypeNode(), message !== null && message !== void 0 ? message : "Expected to find a type node.", this);
     }
 }
 
@@ -15819,8 +15819,8 @@ class JSDocTemplateTag extends JSDocTemplateTagBase {
     getConstraint() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.constraint);
     }
-    getConstraintOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getConstraint(), "Expected to find the JS doc template tag's constraint.");
+    getConstraintOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getConstraint(), message !== null && message !== void 0 ? message : "Expected to find the JS doc template tag's constraint.", this);
     }
 }
 
@@ -16241,8 +16241,8 @@ function JsxTagNamedNode(Base) {
 
 const JsxAttributeBase = NamedNode(Node);
 class JsxAttribute extends JsxAttributeBase {
-    getInitializerOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getInitializer(), `Expected to find an initializer for the JSX attribute '${this.getName()}'`);
+    getInitializerOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getInitializer(), message !== null && message !== void 0 ? message : `Expected to find an initializer for the JSX attribute '${this.getName()}'`, this);
     }
     getInitializer() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.initializer);
@@ -16733,8 +16733,8 @@ class VariableDeclaration extends VariableDeclarationBase {
             });
         }
     }
-    getVariableStatementOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getVariableStatement(), "Expected the grandparent to be a variable statement.");
+    getVariableStatementOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getVariableStatement(), message !== null && message !== void 0 ? message : "Expected the grandparent to be a variable statement.", this);
     }
     getVariableStatement() {
         const grandParent = this.getParentOrThrow().getParentOrThrow();
@@ -16867,14 +16867,14 @@ class Symbol {
     getEscapedName() {
         return this.compilerSymbol.getEscapedName();
     }
-    getAliasedSymbolOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getAliasedSymbol(), "Expected to find an aliased symbol.");
+    getAliasedSymbolOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getAliasedSymbol(), message !== null && message !== void 0 ? message : "Expected to find an aliased symbol.");
     }
     getImmediatelyAliasedSymbol() {
         return this._context.typeChecker.getImmediatelyAliasedSymbol(this);
     }
-    getImmediatelyAliasedSymbolOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getImmediatelyAliasedSymbol(), "Expected to find an immediately aliased symbol.");
+    getImmediatelyAliasedSymbolOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getImmediatelyAliasedSymbol(), message !== null && message !== void 0 ? message : "Expected to find an immediately aliased symbol.");
     }
     getAliasedSymbol() {
         return this._context.typeChecker.getAliasedSymbol(this);
@@ -16894,8 +16894,8 @@ class Symbol {
     hasFlags(flags) {
         return (this.compilerSymbol.flags & flags) === flags;
     }
-    getValueDeclarationOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getValueDeclaration(), () => `Expected to find the value declaration of symbol '${this.getName()}'.`);
+    getValueDeclarationOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getValueDeclaration(), message !== null && message !== void 0 ? message : (() => `Expected to find the value declaration of symbol '${this.getName()}'.`));
     }
     getValueDeclaration() {
         const declaration = this.compilerSymbol.valueDeclaration;
@@ -16908,8 +16908,8 @@ class Symbol {
         return ((_a = this.compilerSymbol.declarations) !== null && _a !== void 0 ? _a : [])
             .map(d => this._context.compilerFactory.getNodeFromCompilerNode(d, this._context.compilerFactory.getSourceFileForNode(d)));
     }
-    getExportOrThrow(name) {
-        return errors.throwIfNullOrUndefined(this.getExport(name), `Expected to find export with name: ${name}`);
+    getExportOrThrow(name, message) {
+        return errors.throwIfNullOrUndefined(this.getExport(name), message !== null && message !== void 0 ? message : (() => `Expected to find export with name: ${name}`));
     }
     getExport(name) {
         if (this.compilerSymbol.exports == null)
@@ -16922,8 +16922,8 @@ class Symbol {
             return [];
         return ArrayUtils.from(this.compilerSymbol.exports.values()).map(symbol => this._context.compilerFactory.getSymbol(symbol));
     }
-    getGlobalExportOrThrow(name) {
-        return errors.throwIfNullOrUndefined(this.getGlobalExport(name), `Expected to find global export with name: ${name}`);
+    getGlobalExportOrThrow(name, message) {
+        return errors.throwIfNullOrUndefined(this.getGlobalExport(name), message !== null && message !== void 0 ? message : (() => `Expected to find global export with name: ${name}`));
     }
     getGlobalExport(name) {
         if (this.compilerSymbol.globalExports == null)
@@ -16936,8 +16936,8 @@ class Symbol {
             return [];
         return ArrayUtils.from(this.compilerSymbol.globalExports.values()).map(symbol => this._context.compilerFactory.getSymbol(symbol));
     }
-    getMemberOrThrow(name) {
-        return errors.throwIfNullOrUndefined(this.getMember(name), `Expected to find member with name: ${name}`);
+    getMemberOrThrow(name, message) {
+        return errors.throwIfNullOrUndefined(this.getMember(name), message !== null && message !== void 0 ? message : `Expected to find member with name: ${name}`);
     }
     getMember(name) {
         if (this.compilerSymbol.members == null)
@@ -17575,8 +17575,8 @@ class TypeChecker {
             return undefined;
         return this._context.compilerFactory.getSignature(resolvedSignature);
     }
-    getResolvedSignatureOrThrow(node) {
-        return errors.throwIfNullOrUndefined(this.getResolvedSignature(node), "Signature could not be resolved.");
+    getResolvedSignatureOrThrow(node, message) {
+        return errors.throwIfNullOrUndefined(this.getResolvedSignature(node), message !== null && message !== void 0 ? message : "Signature could not be resolved.", node);
     }
     getBaseTypeOfLiteralType(type) {
         return this._context.compilerFactory.getType(this.compilerObject.getBaseTypeOfLiteralType(type.compilerType));
@@ -17887,7 +17887,7 @@ class Type {
     getAliasSymbol() {
         return this.compilerType.aliasSymbol == null ? undefined : this._context.compilerFactory.getSymbol(this.compilerType.aliasSymbol);
     }
-    getAliasSymbolOrThrow() {
+    getAliasSymbolOrThrow(message) {
         return errors.throwIfNullOrUndefined(this.getAliasSymbol(), "Expected to find an alias symbol.");
     }
     getAliasTypeArguments() {
@@ -17897,8 +17897,8 @@ class Type {
     getApparentType() {
         return this._context.typeChecker.getApparentType(this);
     }
-    getArrayElementTypeOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getArrayElementType(), "Expected to find an array element type.");
+    getArrayElementTypeOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getArrayElementType(), message !== null && message !== void 0 ? message : "Expected to find an array element type.");
     }
     getArrayElementType() {
         if (!this.isArray())
@@ -17918,15 +17918,15 @@ class Type {
     getConstructSignatures() {
         return this.compilerType.getConstructSignatures().map(s => this._context.compilerFactory.getSignature(s));
     }
-    getConstraintOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getConstraint(), "Expected to find a constraint.");
+    getConstraintOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getConstraint(), message !== null && message !== void 0 ? message : "Expected to find a constraint.");
     }
     getConstraint() {
         const constraint = this.compilerType.getConstraint();
         return constraint == null ? undefined : this._context.compilerFactory.getType(constraint);
     }
-    getDefaultOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getDefault(), "Expected to find a default type.");
+    getDefaultOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getDefault(), message !== null && message !== void 0 ? message : "Expected to find a default type.");
     }
     getDefault() {
         const defaultType = this.compilerType.getDefault();
@@ -17965,8 +17965,8 @@ class Type {
         const targetType = this.compilerType.target || undefined;
         return targetType == null ? undefined : this._context.compilerFactory.getType(targetType);
     }
-    getTargetTypeOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getTargetType(), "Expected to find the target type.");
+    getTargetTypeOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getTargetType(), message !== null && message !== void 0 ? message : "Expected to find the target type.");
     }
     getTypeArguments() {
         return this._context.typeChecker.getTypeArguments(this);
@@ -17988,31 +17988,31 @@ class Type {
         var _a;
         return (_a = this.compilerType) === null || _a === void 0 ? void 0 : _a.value;
     }
-    getLiteralValueOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getLiteralValue(), "Type was not a literal type.");
+    getLiteralValueOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getLiteralValue(), message !== null && message !== void 0 ? message : "Type was not a literal type.");
     }
     getLiteralFreshType() {
         var _a;
         const type = (_a = this.compilerType) === null || _a === void 0 ? void 0 : _a.freshType;
         return type == null ? undefined : this._context.compilerFactory.getType(type);
     }
-    getLiteralFreshTypeOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getLiteralFreshType(), "Type was not a literal type.");
+    getLiteralFreshTypeOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getLiteralFreshType(), message !== null && message !== void 0 ? message : "Type was not a literal type.");
     }
     getLiteralRegularType() {
         var _a;
         const type = (_a = this.compilerType) === null || _a === void 0 ? void 0 : _a.regularType;
         return type == null ? undefined : this._context.compilerFactory.getType(type);
     }
-    getLiteralRegularTypeOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getLiteralRegularType(), "Type was not a literal type.");
+    getLiteralRegularTypeOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getLiteralRegularType(), message !== null && message !== void 0 ? message : "Type was not a literal type.");
     }
     getSymbol() {
         const tsSymbol = this.compilerType.getSymbol();
         return tsSymbol == null ? undefined : this._context.compilerFactory.getSymbol(tsSymbol);
     }
-    getSymbolOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getSymbol(), "Expected to find a symbol.");
+    getSymbolOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getSymbol(), message !== null && message !== void 0 ? message : "Expected to find a symbol.");
     }
     isAnonymous() {
         return this._hasObjectFlag(ObjectFlags.Anonymous);
@@ -18131,8 +18131,8 @@ class Type {
 }
 
 class TypeParameter extends Type {
-    getConstraintOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getConstraint(), "Expected type parameter to have a constraint.");
+    getConstraintOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getConstraint(), message !== null && message !== void 0 ? message : "Expected type parameter to have a constraint.");
     }
     getConstraint() {
         const declaration = this._getTypeParameterDeclaration();
@@ -18143,8 +18143,8 @@ class TypeParameter extends Type {
             return undefined;
         return this._context.typeChecker.getTypeAtLocation(constraintNode);
     }
-    getDefaultOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getDefault(), "Expected type parameter to have a default type.");
+    getDefaultOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getDefault(), message !== null && message !== void 0 ? message : "Expected type parameter to have a default type.");
     }
     getDefault() {
         const declaration = this._getTypeParameterDeclaration();
@@ -18210,8 +18210,8 @@ class Directory {
     getBaseName() {
         return this._pathParts[this._pathParts.length - 1];
     }
-    getParentOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getParent(), () => `Parent directory of ${this.getPath()} does not exist or was never added.`);
+    getParentOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getParent(), message !== null && message !== void 0 ? message : (() => `Parent directory of ${this.getPath()} does not exist or was never added.`));
     }
     getParent() {
         if (FileUtils.isRootDirPath(this.getPath()))
@@ -20157,8 +20157,8 @@ class Project {
     createDirectory(dirPath) {
         return this._context.directoryCoordinator.createDirectoryOrAddIfExists(this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath), { markInProject: true });
     }
-    getDirectoryOrThrow(dirPath) {
-        return errors.throwIfNullOrUndefined(this.getDirectory(dirPath), () => `Could not find a directory at the specified path: ${this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath)}`);
+    getDirectoryOrThrow(dirPath, message) {
+        return errors.throwIfNullOrUndefined(this.getDirectory(dirPath), message !== null && message !== void 0 ? message : (() => `Could not find a directory at the specified path: ${this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath)}`));
     }
     getDirectory(dirPath) {
         const { compilerFactory } = this._context;
@@ -20289,8 +20289,8 @@ class Project {
         moduleName = normalizeAmbientModuleName(moduleName);
         return this.getAmbientModules().find(s => s.getName() === moduleName);
     }
-    getAmbientModuleOrThrow(moduleName) {
-        return errors.throwIfNullOrUndefined(this.getAmbientModule(moduleName), () => `Could not find ambient module with name: ${normalizeAmbientModuleName(moduleName)}`);
+    getAmbientModuleOrThrow(moduleName, message) {
+        return errors.throwIfNullOrUndefined(this.getAmbientModule(moduleName), message !== null && message !== void 0 ? message : (() => `Could not find ambient module with name: ${normalizeAmbientModuleName(moduleName)}`));
     }
     getAmbientModules() {
         return this.getTypeChecker().getAmbientModules();

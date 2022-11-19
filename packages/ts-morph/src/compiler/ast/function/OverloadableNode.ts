@@ -23,7 +23,7 @@ export interface OverloadableNode {
   /**
    * Gets the implementation or throws if it doesn't exist.
    */
-  getImplementationOrThrow(): this;
+  getImplementationOrThrow(message?: string | (() => string)): this;
   /**
    * Gets if this is not the implementation.
    */
@@ -46,8 +46,8 @@ export function OverloadableNode<T extends Constructor<OverloadableNodeExtension
       return getOverloadsAndImplementation(this).find(n => n.isImplementation()) as this | undefined;
     }
 
-    getImplementationOrThrow(): this {
-      return errors.throwIfNullOrUndefined(this.getImplementation(), "Expected to find a corresponding implementation for the overload.");
+    getImplementationOrThrow(message?: string | (() => string)): this {
+      return errors.throwIfNullOrUndefined(this.getImplementation(), message ?? "Expected to find a corresponding implementation for the overload.", this);
     }
 
     isOverload() {

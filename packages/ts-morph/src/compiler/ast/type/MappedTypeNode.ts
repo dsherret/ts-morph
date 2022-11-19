@@ -11,8 +11,8 @@ export class MappedTypeNode extends TypeNode<ts.MappedTypeNode> {
   }
 
   /** Gets the mapped type node's name type node or throws if it doesn't exist. */
-  getNameTypeNodeOrThrow(): TypeNode {
-    return errors.throwIfNullOrUndefined(this.getNameTypeNode(), "Type did not exist.");
+  getNameTypeNodeOrThrow(message?: string | (() => string)): TypeNode {
+    return errors.throwIfNullOrUndefined(this.getNameTypeNode(), message ?? "Type did not exist.", this);
   }
 
   /** Gets the mapped type's readonly token. */
@@ -21,8 +21,8 @@ export class MappedTypeNode extends TypeNode<ts.MappedTypeNode> {
   }
 
   /** Gets the mapped type's readonly token or throws if not exist. */
-  getReadonlyTokenOrThrow() {
-    return errors.throwIfNullOrUndefined(this.getReadonlyToken(), "Readonly token did not exist.");
+  getReadonlyTokenOrThrow(message?: string | (() => string)) {
+    return errors.throwIfNullOrUndefined(this.getReadonlyToken(), message ?? "Readonly token did not exist.", this);
   }
 
   /** Gets the mapped type's question token. */
@@ -31,8 +31,8 @@ export class MappedTypeNode extends TypeNode<ts.MappedTypeNode> {
   }
 
   /** Gets the mapped type's question token or throws if not exist. */
-  getQuestionTokenOrThrow() {
-    return errors.throwIfNullOrUndefined(this.getQuestionToken(), "Question token did not exist.");
+  getQuestionTokenOrThrow(message?: string | (() => string)) {
+    return errors.throwIfNullOrUndefined(this.getQuestionToken(), message ?? "Question token did not exist.", this);
   }
 
   /**
@@ -48,7 +48,7 @@ export class MappedTypeNode extends TypeNode<ts.MappedTypeNode> {
   }
 
   /** Gets the mapped type node's type node if it exists or throws when undefined. */
-  getTypeNodeOrThrow(): TypeNode {
-    return errors.throwIfNullOrUndefined(this.getTypeNode(), "Type did not exist, but was expected to exist.");
+  getTypeNodeOrThrow(message?: string | (() => string)): TypeNode {
+    return errors.throwIfNullOrUndefined(this.getTypeNode(), message ?? "Type did not exist, but was expected to exist.", this);
   }
 }

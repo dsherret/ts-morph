@@ -20,7 +20,7 @@ export interface StaticableNode {
   /**
    * Gets the static keyword, or throws if none exists.
    */
-  getStaticKeywordOrThrow(): Node;
+  getStaticKeywordOrThrow(message?: string | (() => string)): Node;
   /**
    * Sets if the node is static.
    * @param value - If it should be static or not.
@@ -38,8 +38,8 @@ export function StaticableNode<T extends Constructor<StaticableNodeExtensionType
       return this.getFirstModifierByKind(SyntaxKind.StaticKeyword);
     }
 
-    getStaticKeywordOrThrow() {
-      return errors.throwIfNullOrUndefined(this.getStaticKeyword(), "Expected to find a static keyword.");
+    getStaticKeywordOrThrow(message?: string | (() => string)) {
+      return errors.throwIfNullOrUndefined(this.getStaticKeyword(), message ?? "Expected to find a static keyword.", this);
     }
 
     setIsStatic(value: boolean) {

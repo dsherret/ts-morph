@@ -319,34 +319,35 @@ function getKindCache() {
 var errors;
 (function (errors) {
     class BaseError extends Error {
-        constructor(message) {
-            super(message);
-            this.message = message;
-            this.message = message;
+        constructor(message, node) {
+            const nodeLocation = node && getPrettyNodeLocation(node);
+            const messageWithLocation = nodeLocation ? `${message}\n\n${nodeLocation}` : message;
+            super(messageWithLocation);
+            this.message = messageWithLocation;
         }
     }
     errors.BaseError = BaseError;
     class ArgumentError extends BaseError {
-        constructor(argName, message) {
-            super(`Argument Error (${argName}): ${message}`);
+        constructor(argName, message, node) {
+            super(`Argument Error (${argName}): ${message}`, node);
         }
     }
     errors.ArgumentError = ArgumentError;
     class ArgumentNullOrWhitespaceError extends ArgumentError {
-        constructor(argName) {
-            super(argName, "Cannot be null or whitespace.");
+        constructor(argName, node) {
+            super(argName, "Cannot be null or whitespace.", node);
         }
     }
     errors.ArgumentNullOrWhitespaceError = ArgumentNullOrWhitespaceError;
     class ArgumentOutOfRangeError extends ArgumentError {
-        constructor(argName, value, range) {
-            super(argName, `Range is ${range[0]} to ${range[1]}, but ${value} was provided.`);
+        constructor(argName, value, range, node) {
+            super(argName, `Range is ${range[0]} to ${range[1]}, but ${value} was provided.`, node);
         }
     }
     errors.ArgumentOutOfRangeError = ArgumentOutOfRangeError;
     class ArgumentTypeError extends ArgumentError {
-        constructor(argName, expectedType, actualType) {
-            super(argName, `Expected type '${expectedType}', but was '${actualType}'.`);
+        constructor(argName, expectedType, actualType, node) {
+            super(argName, `Expected type '${expectedType}', but was '${actualType}'.`, node);
         }
     }
     errors.ArgumentTypeError = ArgumentTypeError;
@@ -371,14 +372,14 @@ var errors;
     }
     errors.FileNotFoundError = FileNotFoundError;
     class InvalidOperationError extends BaseError {
-        constructor(message) {
-            super(message);
+        constructor(message, node) {
+            super(message, node);
         }
     }
     errors.InvalidOperationError = InvalidOperationError;
     class NotImplementedError extends BaseError {
-        constructor(message = "Not implemented.") {
-            super(message);
+        constructor(message = "Not implemented.", node) {
+            super(message, node);
         }
     }
     errors.NotImplementedError = NotImplementedError;
@@ -416,8 +417,8 @@ var errors;
         throwIfOutOfRange(actualRange[1], range, argName);
     }
     errors.throwIfRangeOutOfRange = throwIfRangeOutOfRange;
-    function throwNotImplementedForSyntaxKindError(kind) {
-        throw new NotImplementedError(`Not implemented feature for syntax kind '${getSyntaxKindName(kind)}'.`);
+    function throwNotImplementedForSyntaxKindError(kind, node) {
+        throw new NotImplementedError(`Not implemented feature for syntax kind '${getSyntaxKindName(kind)}'.`, node);
     }
     errors.throwNotImplementedForSyntaxKindError = throwNotImplementedForSyntaxKindError;
     function throwIfNegative(value, argName) {
@@ -425,17 +426,17 @@ var errors;
             throw new ArgumentError(argName, "Expected a non-negative value.");
     }
     errors.throwIfNegative = throwIfNegative;
-    function throwIfNullOrUndefined(value, errorMessage) {
+    function throwIfNullOrUndefined(value, errorMessage, node) {
         if (value == null)
-            throw new InvalidOperationError(typeof errorMessage === "string" ? errorMessage : errorMessage());
+            throw new InvalidOperationError(typeof errorMessage === "string" ? errorMessage : errorMessage(), node);
         return value;
     }
     errors.throwIfNullOrUndefined = throwIfNullOrUndefined;
-    function throwNotImplementedForNeverValueError(value) {
+    function throwNotImplementedForNeverValueError(value, sourceNode) {
         const node = value;
         if (node != null && typeof node.kind === "number")
-            return throwNotImplementedForSyntaxKindError(node.kind);
-        throw new NotImplementedError(`Not implemented value: ${JSON.stringify(value)}`);
+            return throwNotImplementedForSyntaxKindError(node.kind, sourceNode);
+        throw new NotImplementedError(`Not implemented value: ${JSON.stringify(value)}`, sourceNode);
     }
     errors.throwNotImplementedForNeverValueError = throwNotImplementedForNeverValueError;
     function throwIfNotEqual(actual, expected, description) {
@@ -449,6 +450,42 @@ var errors;
     }
     errors.throwIfTrue = throwIfTrue;
 })(errors || (errors = {}));
+function getPrettyNodeLocation(node) {
+    const source = getSourceLocation(node);
+    if (!source)
+        return undefined;
+    return `${source.filePath}:${source.loc.line}:${source.loc.character}\n`
+        + `> ${source.loc.line} | ${source.lineText}`;
+}
+function getSourceLocation(node) {
+    if (!isNode(node))
+        return;
+    const sourceFile = node.getSourceFile();
+    const sourceCode = sourceFile.getFullText();
+    const start = node.getStart();
+    const lineStart = sourceCode.lastIndexOf("\n", start) + 1;
+    const nextNewLinePos = sourceCode.indexOf("\n", start);
+    const lineEnd = nextNewLinePos === -1 ? sourceCode.length : nextNewLinePos;
+    const textStart = (start - lineStart > 40) ? start - 37 : lineStart;
+    const textEnd = (lineEnd - textStart > 80) ? textStart + 77 : lineEnd;
+    let lineText = "";
+    if (textStart !== lineStart)
+        lineText += "...";
+    lineText += sourceCode.substring(textStart, textEnd);
+    if (textEnd !== lineEnd)
+        lineText += "...";
+    return {
+        filePath: sourceFile.getFilePath(),
+        loc: {
+            line: StringUtils.getLineNumberAtPos(sourceCode, start),
+            character: start - lineStart + 1,
+        },
+        lineText,
+    };
+}
+function isNode(node) {
+    return typeof node === "object" && node !== null && ("getSourceFile" in node) && ("getStart" in node);
+}
 
 const CharCodes = {
     ASTERISK: "*".charCodeAt(0),

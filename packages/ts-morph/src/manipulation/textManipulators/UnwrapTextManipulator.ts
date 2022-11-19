@@ -39,7 +39,7 @@ function getReplacementText(node: Node) {
       else if (Node.isBodyable(node))
         return node.getBodyOrThrow();
       else
-        throw new errors.NotImplementedError(`Not implemented unwrap scenario for ${node.getKindName()}.`);
+        errors.throwNotImplementedForSyntaxKindError(node.getKind(), node);
     }
   }
 }

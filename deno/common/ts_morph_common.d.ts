@@ -347,26 +347,35 @@ export declare function Memoize(target: any, propertyName: string, descriptor: T
 
 /** Collection of helper functions that can be used to throw errors. */
 export declare namespace errors {
+    /**
+     * Minimal attributes to show a error message with the node source.
+     */
+    interface Node {
+        getSourceFile(): {
+            getFilePath(): StandardizedFilePath;
+            getFullText(): string;
+        };
+        getStart(): number;
+    }
     /** Base error class. */
     abstract class BaseError extends Error {
-        readonly message: string;
         protected constructor();
     }
     /** Thrown when there is a problem with a provided argument. */
     class ArgumentError extends BaseError {
-        constructor(argName: string, message: string);
+        constructor(argName: string, message: string, node?: Node);
     }
     /** Thrown when an argument is null or whitespace. */
     class ArgumentNullOrWhitespaceError extends ArgumentError {
-        constructor(argName: string);
+        constructor(argName: string, node?: Node);
     }
     /** Thrown when an argument is out of range. */
     class ArgumentOutOfRangeError extends ArgumentError {
-        constructor(argName: string, value: number, range: [number, number]);
+        constructor(argName: string, value: number, range: [number, number], node?: Node);
     }
     /** Thrown when an argument does not match an expected type. */
     class ArgumentTypeError extends ArgumentError {
-        constructor(argName: string, expectedType: string, actualType: string);
+        constructor(argName: string, expectedType: string, actualType: string, node?: Node);
     }
     /** Thrown when a file or directory path was not found. */
     class PathNotFoundError extends BaseError {
@@ -384,11 +393,11 @@ export declare namespace errors {
     }
     /** Thrown when an action was taken that is not allowed. */
     class InvalidOperationError extends BaseError {
-        constructor(message: string);
+        constructor(message: string, node?: Node);
     }
     /** Thrown when a certain behaviour or feature has not been implemented. */
     class NotImplementedError extends BaseError {
-        constructor(message?: string);
+        constructor(message?: string, node?: Node);
     }
     /** Thrown when an operation is not supported. */
     class NotSupportedError extends BaseError {
@@ -433,7 +442,7 @@ export declare namespace errors {
      * Gets an error saying that a feature is not implemented for a certain syntax kind.
      * @param kind - Syntax kind that isn't implemented.
      */
-    function throwNotImplementedForSyntaxKindError(kind: ts.SyntaxKind): never;
+    function throwNotImplementedForSyntaxKindError(kind: ts.SyntaxKind, node?: Node): never;
     /**
      * Throws an Argument
      * @param value
@@ -445,12 +454,12 @@ export declare namespace errors {
      * @param value - Value to check.
      * @param errorMessage - Error message to throw when not defined.
      */
-    function throwIfNullOrUndefined<T>(value: T | undefined, errorMessage: string | (() => string)): T;
+    function throwIfNullOrUndefined<T>(value: T | undefined, errorMessage: string | (() => string), node?: Node): T;
     /**
      * Throw if the value should have been the never type.
      * @param value - Value to check.
      */
-    function throwNotImplementedForNeverValueError(value: never): never;
+    function throwNotImplementedForNeverValueError(value: never, sourceNode?: Node): never;
     /**
      * Throws an error if the actual value does not equal the expected value.
      * @param actual - Actual value.

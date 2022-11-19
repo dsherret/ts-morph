@@ -85,10 +85,10 @@ export interface ModuledNode {
    */
   insertExportDeclarations(index: number, structures: ReadonlyArray<OptionalKind<ExportDeclarationStructure>>): ExportDeclaration[];
   /*
-     * Gets the first export declaration that matches a condition, or undefined if it doesn't exist.
-     * @param condition - Condition to get the export declaration by.
-     */
-  getExportDeclaration(condition: (exportDeclaration: ExportDeclaration) => boolean): ExportDeclaration | undefined;
+   * Gets the first export declaration that matches a condition, or undefined if it doesn't exist.
+   * @param condition - Condition to get the export declaration by.
+   */
+  getExportDeclaration(condition: (exportDeclaration: ExportDeclaration) => boolean, message?: string | (() => string)): ExportDeclaration | undefined;
   /**
    * Gets the first export declaration that matches a module specifier, or undefined if it doesn't exist.
    * @param module - Module specifier to get the export declaration by.
@@ -100,14 +100,17 @@ export interface ModuledNode {
    * Gets the first export declaration that matches a condition, or throws if it doesn't exist.
    * @param condition - Condition to get the export declaration by.
    */
-  getExportDeclarationOrThrow(condition: (exportDeclaration: ExportDeclaration) => boolean): ExportDeclaration;
+  getExportDeclarationOrThrow(condition: (exportDeclaration: ExportDeclaration) => boolean, message?: string | (() => string)): ExportDeclaration;
   /**
    * Gets the first export declaration that matches a module specifier, or throws if it doesn't exist.
    * @param module - Module specifier to get the export declaration by.
    */
-  getExportDeclarationOrThrow(moduleSpecifier: string): ExportDeclaration;
+  getExportDeclarationOrThrow(moduleSpecifier: string, message?: string | (() => string)): ExportDeclaration;
   /** @internal */
-  getExportDeclarationOrThrow(conditionOrModuleSpecifier: string | ((exportDeclaration: ExportDeclaration) => boolean)): ExportDeclaration;
+  getExportDeclarationOrThrow(
+    conditionOrModuleSpecifier: string | ((exportDeclaration: ExportDeclaration) => boolean),
+    message?: string | (() => string),
+  ): ExportDeclaration;
   /**
    * Get the export declarations.
    */
@@ -143,7 +146,7 @@ export interface ModuledNode {
    * Gets the first export assignment that matches a condition, or throws if it doesn't exist.
    * @param condition - Condition to get the export assignment by.
    */
-  getExportAssignmentOrThrow(condition: (exportAssignment: ExportAssignment) => boolean): ExportAssignment;
+  getExportAssignmentOrThrow(condition: (exportAssignment: ExportAssignment) => boolean, message?: string | (() => string)): ExportAssignment;
   /**
    * Get the file's export assignments.
    */
@@ -155,7 +158,7 @@ export interface ModuledNode {
   /**
    * Gets the default export symbol or throws if it doesn't exist.
    */
-  getDefaultExportSymbolOrThrow(): Symbol;
+  getDefaultExportSymbolOrThrow(message?: string | (() => string)): Symbol;
   /**
    * Gets the export symbols.
    */
@@ -238,10 +241,11 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
       }
     }
 
-    getImportDeclarationOrThrow(conditionOrModuleSpecifier: string | ((importDeclaration: ImportDeclaration) => boolean)) {
+    getImportDeclarationOrThrow(conditionOrModuleSpecifier: string | ((importDeclaration: ImportDeclaration) => boolean), message?: string | (() => string)) {
       return errors.throwIfNullOrUndefined(
         this.getImportDeclaration(conditionOrModuleSpecifier),
-        "Expected to find an import with the provided condition.",
+        message ?? "Expected to find an import with the provided condition.",
+        this,
       );
     }
 
@@ -289,10 +293,11 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
       }
     }
 
-    getExportDeclarationOrThrow(conditionOrModuleSpecifier: string | ((exportDeclaration: ExportDeclaration) => boolean)) {
+    getExportDeclarationOrThrow(conditionOrModuleSpecifier: string | ((exportDeclaration: ExportDeclaration) => boolean), message?: string | (() => string)) {
       return errors.throwIfNullOrUndefined(
         this.getExportDeclaration(conditionOrModuleSpecifier),
-        "Expected to find an export declaration with the provided condition.",
+        message ?? "Expected to find an export declaration with the provided condition.",
+        this,
       );
     }
 
@@ -333,8 +338,12 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
       return this.getExportAssignments().find(condition);
     }
 
-    getExportAssignmentOrThrow(condition: (exportAssignment: ExportAssignment) => boolean): ExportAssignment {
-      return errors.throwIfNullOrUndefined(this.getExportAssignment(condition), "Expected to find an export assignment with the provided condition.");
+    getExportAssignmentOrThrow(condition: (exportAssignment: ExportAssignment) => boolean, message?: string | (() => string)): ExportAssignment {
+      return errors.throwIfNullOrUndefined(
+        this.getExportAssignment(condition),
+        message ?? "Expected to find an export assignment with the provided condition.",
+        this,
+      );
     }
 
     getExportAssignments(): ExportAssignment[] {
@@ -351,8 +360,8 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
       return sourceFileSymbol.getExport("default");
     }
 
-    getDefaultExportSymbolOrThrow(): Symbol {
-      return errors.throwIfNullOrUndefined(this.getDefaultExportSymbol(), "Expected to find a default export symbol");
+    getDefaultExportSymbolOrThrow(message?: string | (() => string)): Symbol {
+      return errors.throwIfNullOrUndefined(this.getDefaultExportSymbol(), message ?? "Expected to find a default export symbol");
     }
 
     getExportSymbols(): Symbol[] {

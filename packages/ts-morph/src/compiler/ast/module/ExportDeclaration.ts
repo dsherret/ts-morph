@@ -54,8 +54,8 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
   }
 
   /** Gets the namespace export or throws if it doesn't exist. (ex. `* as ns`, but not `*`) */
-  getNamespaceExportOrThrow() {
-    return errors.throwIfNullOrUndefined(this.getNamespaceExport(), "Expected to find a namespace export.");
+  getNamespaceExportOrThrow(message?: string | (() => string)) {
+    return errors.throwIfNullOrUndefined(this.getNamespaceExport(), message ?? "Expected to find a namespace export.", this);
   }
 
   /** Sets the namespace export name. */
@@ -146,8 +146,8 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
   /**
    * Gets the source file referenced in the module specifier or throws if it can't find it or it doesn't exist.
    */
-  getModuleSpecifierSourceFileOrThrow() {
-    return errors.throwIfNullOrUndefined(this.getModuleSpecifierSourceFile(), `A module specifier source file was expected.`);
+  getModuleSpecifierSourceFileOrThrow(message?: string | (() => string)) {
+    return errors.throwIfNullOrUndefined(this.getModuleSpecifierSourceFile(), message ?? `A module specifier source file was expected.`, this);
   }
 
   /**

@@ -77,10 +77,11 @@ export class ImportEqualsDeclaration extends ImportEqualsDeclarationBase<ts.Impo
   /**
    * Gets the source file referenced in the external module reference or throws if it doesn't exist.
    */
-  getExternalModuleReferenceSourceFileOrThrow() {
+  getExternalModuleReferenceSourceFileOrThrow(message?: string | (() => string)) {
     return errors.throwIfNullOrUndefined(
       this.getExternalModuleReferenceSourceFile(),
-      "Expected to find an external module reference's referenced source file.",
+      message ?? "Expected to find an external module reference's referenced source file.",
+      this,
     );
   }
 

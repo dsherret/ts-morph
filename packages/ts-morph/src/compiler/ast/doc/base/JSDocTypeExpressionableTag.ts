@@ -15,7 +15,7 @@ export interface JSDocTypeExpressionableTag {
   /**
    * Gets the type expression node of the JS doc tag or throws if it doesn't exist.
    */
-  getTypeExpressionOrThrow(): JSDocTypeExpression;
+  getTypeExpressionOrThrow(message?: string | (() => string)): JSDocTypeExpression;
 }
 
 export function JSDocTypeExpressionableTag<T extends Constructor<JSDocTypeExpressionableTagExtensionType>>(Base: T):
@@ -31,8 +31,8 @@ export function JSDocTypeExpressionableTag<T extends Constructor<JSDocTypeExpres
       return result;
     }
 
-    getTypeExpressionOrThrow() {
-      return errors.throwIfNullOrUndefined(this.getTypeExpression(), `Expected to find the JS doc tag's type expression.`);
+    getTypeExpressionOrThrow(message?: string | (() => string)) {
+      return errors.throwIfNullOrUndefined(this.getTypeExpression(), message ?? `Expected to find the JS doc tag's type expression.`, this);
     }
   };
 }

@@ -45,8 +45,12 @@ export function BaseExpressionedNode<
       return expression.kind === kind ? (this._getNodeFromCompilerNode(expression) as KindToExpressionMappings[TKind]) : undefined;
     }
 
-    getExpressionIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToExpressionMappings[TKind] {
-      return errors.throwIfNullOrUndefined(this.getExpressionIfKind(kind), `An expression of the kind ${getSyntaxKindName(kind)} was expected.`);
+    getExpressionIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string | (() => string)): KindToExpressionMappings[TKind] {
+      return errors.throwIfNullOrUndefined(
+        this.getExpressionIfKind(kind),
+        message ?? `An expression of the kind ${getSyntaxKindName(kind)} was expected.`,
+        this,
+      );
     }
 
     setExpression(textOrWriterFunction: string | WriterFunction) {

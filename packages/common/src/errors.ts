@@ -1,44 +1,57 @@
 import { StandardizedFilePath } from "./fileSystem";
 import { getSyntaxKindName } from "./helpers";
 import { ts } from "./typescript";
+import { StringUtils } from "./utils";
 
 /** Collection of helper functions that can be used to throw errors. */
 export namespace errors {
+  /**
+   * Minimal attributes to show a error message with the node source.
+   */
+  export interface Node {
+    getSourceFile(): {
+      getFilePath(): StandardizedFilePath;
+      getFullText(): string;
+    };
+    getStart(): number;
+  }
+
   /** Base error class. */
   export abstract class BaseError extends Error {
     /** @private */
-    constructor(public readonly message: string) {
-      super(message);
-
-      this.message = message;
+    constructor(message: string, node?: Node) {
+      const nodeLocation = node && getPrettyNodeLocation(node);
+      const messageWithLocation = nodeLocation ? `${message}\n\n${nodeLocation}` : message;
+      super(messageWithLocation);
+      this.message = messageWithLocation;
     }
   }
 
   /** Thrown when there is a problem with a provided argument. */
   export class ArgumentError extends BaseError {
-    constructor(argName: string, message: string) {
-      super(`Argument Error (${argName}): ${message}`);
+    constructor(argName: string, message: string, node?: Node) {
+      super(`Argument Error (${argName}): ${message}`, node);
     }
   }
 
   /** Thrown when an argument is null or whitespace. */
   export class ArgumentNullOrWhitespaceError extends ArgumentError {
-    constructor(argName: string) {
-      super(argName, "Cannot be null or whitespace.");
+    constructor(argName: string, node?: Node) {
+      super(argName, "Cannot be null or whitespace.", node);
     }
   }
 
   /** Thrown when an argument is out of range. */
   export class ArgumentOutOfRangeError extends ArgumentError {
-    constructor(argName: string, value: number, range: [number, number]) {
-      super(argName, `Range is ${range[0]} to ${range[1]}, but ${value} was provided.`);
+    constructor(argName: string, value: number, range: [number, number], node?: Node) {
+      super(argName, `Range is ${range[0]} to ${range[1]}, but ${value} was provided.`, node);
     }
   }
 
   /** Thrown when an argument does not match an expected type. */
   export class ArgumentTypeError extends ArgumentError {
-    constructor(argName: string, expectedType: string, actualType: string) {
-      super(argName, `Expected type '${expectedType}', but was '${actualType}'.`);
+    constructor(argName: string, expectedType: string, actualType: string, node?: Node) {
+      super(argName, `Expected type '${expectedType}', but was '${actualType}'.`, node);
     }
   }
 
@@ -67,15 +80,15 @@ export namespace errors {
 
   /** Thrown when an action was taken that is not allowed. */
   export class InvalidOperationError extends BaseError {
-    constructor(message: string) {
-      super(message);
+    constructor(message: string, node?: Node) {
+      super(message, node);
     }
   }
 
   /** Thrown when a certain behaviour or feature has not been implemented. */
   export class NotImplementedError extends BaseError {
-    constructor(message = "Not implemented.") {
-      super(message);
+    constructor(message = "Not implemented.", node?: Node) {
+      super(message, node);
     }
   }
 
@@ -148,8 +161,8 @@ export namespace errors {
    * Gets an error saying that a feature is not implemented for a certain syntax kind.
    * @param kind - Syntax kind that isn't implemented.
    */
-  export function throwNotImplementedForSyntaxKindError(kind: ts.SyntaxKind): never {
-    throw new NotImplementedError(`Not implemented feature for syntax kind '${getSyntaxKindName(kind)}'.`);
+  export function throwNotImplementedForSyntaxKindError(kind: ts.SyntaxKind, node?: Node): never {
+    throw new NotImplementedError(`Not implemented feature for syntax kind '${getSyntaxKindName(kind)}'.`, node);
   }
 
   /**
@@ -167,9 +180,9 @@ export namespace errors {
    * @param value - Value to check.
    * @param errorMessage - Error message to throw when not defined.
    */
-  export function throwIfNullOrUndefined<T>(value: T | undefined, errorMessage: string | (() => string)) {
+  export function throwIfNullOrUndefined<T>(value: T | undefined, errorMessage: string | (() => string), node?: Node) {
     if (value == null)
-      throw new InvalidOperationError(typeof errorMessage === "string" ? errorMessage : errorMessage());
+      throw new InvalidOperationError(typeof errorMessage === "string" ? errorMessage : errorMessage(), node);
     return value;
   }
 
@@ -177,12 +190,12 @@ export namespace errors {
    * Throw if the value should have been the never type.
    * @param value - Value to check.
    */
-  export function throwNotImplementedForNeverValueError(value: never): never {
+  export function throwNotImplementedForNeverValueError(value: never, sourceNode?: Node): never {
     const node = value as any as { kind: number };
     if (node != null && typeof node.kind === "number")
-      return throwNotImplementedForSyntaxKindError(node.kind);
+      return throwNotImplementedForSyntaxKindError(node.kind, sourceNode);
 
-    throw new NotImplementedError(`Not implemented value: ${JSON.stringify(value)}`);
+    throw new NotImplementedError(`Not implemented value: ${JSON.stringify(value)}`, sourceNode);
   }
 
   /**
@@ -205,4 +218,51 @@ export namespace errors {
     if (value === true)
       throw new InvalidOperationError(errorMessage);
   }
+}
+
+/**
+ * Returns the line of the given node inside its source file
+ * in a prettified format.
+ */
+function getPrettyNodeLocation(node: errors.Node) {
+  const source = getSourceLocation(node);
+  if (!source)
+    return undefined;
+  return `${source.filePath}:${source.loc.line}:${source.loc.character}\n`
+    + `> ${source.loc.line} | ${source.lineText}`;
+}
+
+/**
+ * Returns the location of the given node inside its source file.
+ */
+function getSourceLocation(node: errors.Node) {
+  if (!isNode(node))
+    return;
+  const sourceFile = node.getSourceFile();
+  const sourceCode = sourceFile.getFullText();
+  const start = node.getStart();
+  const lineStart = sourceCode.lastIndexOf("\n", start) + 1;
+  const nextNewLinePos = sourceCode.indexOf("\n", start);
+  const lineEnd = nextNewLinePos === -1 ? sourceCode.length : nextNewLinePos;
+  const textStart = (start - lineStart > 40) ? start - 37 : lineStart;
+  const textEnd = (lineEnd - textStart > 80) ? textStart + 77 : lineEnd;
+  let lineText = "";
+  if (textStart !== lineStart)
+    lineText += "...";
+  lineText += sourceCode.substring(textStart, textEnd);
+  if (textEnd !== lineEnd)
+    lineText += "...";
+
+  return {
+    filePath: sourceFile.getFilePath(),
+    loc: {
+      line: StringUtils.getLineNumberAtPos(sourceCode, start),
+      character: start - lineStart + 1, // make 1-indexed
+    },
+    lineText,
+  };
+}
+
+function isNode(node: unknown): node is errors.Node {
+  return typeof node === "object" && node !== null && ("getSourceFile" in node) && ("getStart" in node);
 }

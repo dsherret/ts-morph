@@ -20,7 +20,7 @@ export interface ExclamationTokenableNode {
   /**
    * Gets the exclamation token node or throws.
    */
-  getExclamationTokenNodeOrThrow(): Node<ts.ExclamationToken>;
+  getExclamationTokenNodeOrThrow(message?: string | (() => string)): Node<ts.ExclamationToken>;
   /**
    * Sets if this node has a exclamation token.
    * @param value - If it should have a exclamation token or not.
@@ -38,8 +38,8 @@ export function ExclamationTokenableNode<T extends Constructor<ExclamationTokena
       return this._getNodeFromCompilerNodeIfExists(this.compilerNode.exclamationToken);
     }
 
-    getExclamationTokenNodeOrThrow(): Node<ts.ExclamationToken> {
-      return errors.throwIfNullOrUndefined(this.getExclamationTokenNode(), "Expected to find an exclamation token.");
+    getExclamationTokenNodeOrThrow(message?: string | (() => string)): Node<ts.ExclamationToken> {
+      return errors.throwIfNullOrUndefined(this.getExclamationTokenNode(), message ?? "Expected to find an exclamation token.", this);
     }
 
     setHasExclamationToken(value: boolean) {

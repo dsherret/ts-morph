@@ -18,8 +18,8 @@ export class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
   /**
    * Gets the JSX attribute's initializer or throws if it doesn't exist.
    */
-  getInitializerOrThrow() {
-    return errors.throwIfNullOrUndefined(this.getInitializer(), `Expected to find an initializer for the JSX attribute '${this.getName()}'`);
+  getInitializerOrThrow(message?: string | (() => string)) {
+    return errors.throwIfNullOrUndefined(this.getInitializer(), message ?? `Expected to find an initializer for the JSX attribute '${this.getName()}'`, this);
   }
 
   /**
