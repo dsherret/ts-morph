@@ -344,6 +344,7 @@ export namespace fillStructures {
     setIfNull(structure, "isStatic", false);
     setIfNull(structure, "isReadonly", false);
     setIfNull(structure, "isAbstract", false);
+    setIfNull(structure, "hasAccessorKeyword", false);
     setIfNull(structure, "hasExclamationToken", false);
     setIfNull(structure, "hasQuestionToken", false);
     setIfNull(structure, "hasDeclareKeyword", false);
@@ -466,7 +467,7 @@ function setIfNull<T, TKey extends keyof T>(structure: T, key: TKey, value: T[TK
     structure[key] = value;
 }
 
-function fill<T>(items: (OptionalKind<T> | string)[], fillItem: (item: OptionalKind<T>) => T) {
+function fill<T extends { kind?: StructureKind }>(items: (OptionalKind<T> | string)[], fillItem: (item: OptionalKind<T>) => T) {
   if (items == null)
     throw new Error("Did not expect an undefined array.");
 

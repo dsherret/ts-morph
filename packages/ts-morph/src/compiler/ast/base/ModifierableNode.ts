@@ -19,7 +19,8 @@ export type ModifierTexts =
   | "const"
   | "override"
   | "in"
-  | "out";
+  | "out"
+  | "accessor";
 
 export interface ModifierableNode {
   /**
@@ -218,6 +219,8 @@ function getAddAfterModifierTexts(text: ModifierTexts): ModifierTexts[] {
       return ["in"];
     case "in":
       return [];
+    case "accessor":
+      return ["public", "private", "protected", "declare", "override", "static", "abstract", "readonly"];
     /* istanbul ignore next */
     default:
       errors.throwNotImplementedForNeverValueError(text);

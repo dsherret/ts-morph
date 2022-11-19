@@ -24,7 +24,7 @@ CHANGELOG.md
 CODE_OF_CONDUCT.md
 CONTRIBUTING.md
 dprint.config.js
-rollup.config.js
+rollup.config.mjs
 gulpfile.js
 tsconfig.json
 tsconfig.*.json

@@ -4,7 +4,7 @@ azure-pipelines.yml
 .mocharc.yml
 .npmignore
 CHANGELOG.md
-rollup.config.js
+rollup.config.mjs
 tsconfig.json
 tsconfig.*.json
 yarn-error.log

@@ -29,12 +29,25 @@ const createBase = <T extends typeof ClassElement>(ctor: T) =>
   ))))));
 export const PropertyDeclarationBase = createBase(ClassElement);
 export class PropertyDeclaration extends PropertyDeclarationBase<ts.PropertyDeclaration> {
+  /** Gets if this property declaration has an accessor keyword. */
+  hasAccessorKeyword() {
+    return this.hasModifier(SyntaxKind.AccessorKeyword);
+  }
+
+  /** Sets if this property declaration should have an accessor keyword. */
+  setHasAccessorKeyword(value: boolean) {
+    return this.toggleModifier("accessor", value);
+  }
+
   /**
    * Sets the node from a structure.
    * @param structure - Structure to set the node with.
    */
   set(structure: Partial<PropertyDeclarationStructure>) {
     callBaseSet(PropertyDeclarationBase.prototype, this, structure);
+
+    if (structure.hasAccessorKeyword != null)
+      this.setHasAccessorKeyword(structure.hasAccessorKeyword);
 
     return this;
   }
@@ -60,6 +73,7 @@ export class PropertyDeclaration extends PropertyDeclarationBase<ts.PropertyDecl
   getStructure(): PropertyDeclarationStructure {
     return callBaseGetStructure<PropertyDeclarationSpecificStructure>(PropertyDeclarationBase.prototype, this, {
       kind: StructureKind.Property,
+      hasAccessorKeyword: this.hasAccessorKeyword(),
     }) as any as PropertyDeclarationStructure;
   }
 }

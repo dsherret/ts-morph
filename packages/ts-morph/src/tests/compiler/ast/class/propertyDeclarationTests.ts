@@ -32,6 +32,7 @@ describe("PropertyDeclaration", () => {
         decorators: [{ name: "dec" }],
         initializer: "5",
         docs: ["test"],
+        hasAccessorKeyword: true,
         hasExclamationToken: false,
         hasQuestionToken: true,
         hasOverrideKeyword: true,
@@ -45,7 +46,7 @@ describe("PropertyDeclaration", () => {
       doTest(
         "class Identifier {\n    prop: string;\n}",
         structure,
-        "class Identifier {\n    /** test */\n    @dec\n    declare public static override abstract readonly newName?: string = 5;\n}",
+        "class Identifier {\n    /** test */\n    @dec\n    declare public static override abstract readonly accessor newName?: string = 5;\n}",
       );
     });
   });
@@ -62,6 +63,7 @@ describe("PropertyDeclaration", () => {
         kind: StructureKind.Property,
         decorators: [],
         docs: [],
+        hasAccessorKeyword: false,
         hasExclamationToken: false,
         hasQuestionToken: false,
         hasDeclareKeyword: false,
@@ -80,13 +82,14 @@ describe("PropertyDeclaration", () => {
       const code = `
 class T {
     /** test */
-    @dec public static declare override readonly abstract prop?: number = 5;
+    @dec public static declare override readonly abstract accessor prop?: number = 5;
 }
 `;
       doTest(code, {
         kind: StructureKind.Property,
         decorators: [{ name: "dec" }],
         docs: [{ description: "test" }],
+        hasAccessorKeyword: true,
         hasExclamationToken: false,
         hasQuestionToken: true,
         hasDeclareKeyword: true,
@@ -106,6 +109,7 @@ class T {
         kind: StructureKind.Property,
         decorators: [],
         docs: [],
+        hasAccessorKeyword: false,
         hasExclamationToken: true,
         hasQuestionToken: false,
         hasDeclareKeyword: false,
@@ -165,6 +169,32 @@ class T {
         "declare class Identifier {\n    method(): void;\n\n    prop: string;\n\n    method2(): void;\n}",
         "prop",
         "declare class Identifier {\n    method(): void;\n    method2(): void;\n}",
+      );
+    });
+  });
+
+  describe(nameof<PropertyDeclaration>("setHasAccessorKeyword"), () => {
+    function doTest(code: string, value: boolean, expectedCode: string) {
+      const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
+      const propDecl = firstChild.getInstanceProperties()[0] as PropertyDeclaration;
+      propDecl.setHasAccessorKeyword(value);
+      expect(propDecl.hasAccessorKeyword()).to.equal(value);
+      expect(sourceFile.getFullText()).to.equal(expectedCode);
+    }
+
+    it("should add an accessor keyword", () => {
+      doTest(
+        "class Identifier {\n    prop: string;\n}",
+        true,
+        "class Identifier {\n    accessor prop: string;\n}",
+      );
+    });
+
+    it("should remove accessor keyword", () => {
+      doTest(
+        "class Identifier {\n    accessor prop: string;\n}",
+        false,
+        "class Identifier {\n    prop: string;\n}",
       );
     });
   });
