@@ -155,6 +155,7 @@ export const kindToWrapperMappings: { [key: number]: unknown } = {
   [SyntaxKind.PropertySignature]: compiler.PropertySignature,
   [SyntaxKind.RegularExpressionLiteral]: compiler.RegularExpressionLiteral,
   [SyntaxKind.ReturnStatement]: compiler.ReturnStatement,
+  [SyntaxKind.SatisfiesExpression]: compiler.SatisfiesExpression,
   [SyntaxKind.SetAccessor]: compiler.SetAccessorDeclaration,
   [SyntaxKind.ShorthandPropertyAssignment]: compiler.ShorthandPropertyAssignment,
   [SyntaxKind.SpreadAssignment]: compiler.SpreadAssignment,

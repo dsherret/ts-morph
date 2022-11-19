@@ -154,6 +154,7 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.PropertySignature]: compiler.PropertySignature;
   [SyntaxKind.RegularExpressionLiteral]: compiler.RegularExpressionLiteral;
   [SyntaxKind.ReturnStatement]: compiler.ReturnStatement;
+  [SyntaxKind.SatisfiesExpression]: compiler.SatisfiesExpression;
   [SyntaxKind.SetAccessor]: compiler.SetAccessorDeclaration;
   [SyntaxKind.ShorthandPropertyAssignment]: compiler.ShorthandPropertyAssignment;
   [SyntaxKind.SpreadAssignment]: compiler.SpreadAssignment;
@@ -248,6 +249,7 @@ export interface KindToExpressionMappings {
   [SyntaxKind.PrefixUnaryExpression]: compiler.PrefixUnaryExpression;
   [SyntaxKind.PropertyAccessExpression]: compiler.PropertyAccessExpression;
   [SyntaxKind.RegularExpressionLiteral]: compiler.RegularExpressionLiteral;
+  [SyntaxKind.SatisfiesExpression]: compiler.SatisfiesExpression;
   [SyntaxKind.SpreadElement]: compiler.SpreadElement;
   [SyntaxKind.StringLiteral]: compiler.StringLiteral;
   [SyntaxKind.TaggedTemplateExpression]: compiler.TaggedTemplateExpression;
