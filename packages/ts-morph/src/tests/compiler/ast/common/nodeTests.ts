@@ -2131,7 +2131,7 @@ class MyClass {
       doTest("class C {} class B {}", sourceFile => sourceFile.getClassOrThrow("C"), traversal => {
         const node = traversal.visitChildren();
         if (ts.isClassDeclaration(node))
-          return traversal.factory.createInterfaceDeclaration(undefined, undefined, "A", undefined, undefined, []);
+          return traversal.factory.createInterfaceDeclaration(undefined, "A", undefined, undefined, []);
         return node;
       }, `interface A {\n} class B {}`);
     });
@@ -2140,7 +2140,7 @@ class MyClass {
       doTest("// test\nclass C {}\n// test2\nclass B {}", sourceFile => sourceFile, traversal => {
         const node = traversal.visitChildren();
         if (ts.isClassDeclaration(node))
-          return traversal.factory.createInterfaceDeclaration(undefined, undefined, "A", undefined, undefined, []);
+          return traversal.factory.createInterfaceDeclaration(undefined, "A", undefined, undefined, []);
         return node;
       }, `// test\ninterface A {\n}\n// test2\ninterface A {\n}`);
     });
@@ -2149,7 +2149,7 @@ class MyClass {
       doTest("/** Testing */\nclass C {}", sourceFile => sourceFile, traversal => {
         const node = traversal.visitChildren();
         if (ts.isClassDeclaration(node))
-          return traversal.factory.createInterfaceDeclaration(undefined, undefined, "A", undefined, undefined, []);
+          return traversal.factory.createInterfaceDeclaration(undefined, "A", undefined, undefined, []);
         return node;
       }, `interface A {\n}`);
     });
@@ -2158,7 +2158,7 @@ class MyClass {
       doTest("/** Testing */\nexport class C {}", sourceFile => sourceFile, traversal => {
         const node = traversal.visitChildren();
         if (ts.isClassDeclaration(node))
-          return traversal.factory.updateClassDeclaration(node, undefined, undefined, traversal.factory.createIdentifier("A"), undefined, undefined, []);
+          return traversal.factory.updateClassDeclaration(node, undefined, traversal.factory.createIdentifier("A"), undefined, undefined, []);
         return node;
       }, `/** Testing */\nclass A {\n}`);
     });
@@ -2180,7 +2180,6 @@ class MyClass {
         return traversal.factory.createFunctionDeclaration(
           undefined,
           undefined,
-          undefined,
           "test",
           undefined,
           [],
@@ -2199,7 +2198,6 @@ class MyClass {
 
       const newNode = node.transform(traversal => {
         return traversal.factory.createFunctionDeclaration(
-          undefined,
           undefined,
           undefined,
           "test",

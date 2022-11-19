@@ -37,4 +37,5 @@ export interface PropertyDeclarationStructure
 }
 
 export interface PropertyDeclarationSpecificStructure extends KindedStructure<StructureKind.Property> {
+  hasAccessorKeyword?: boolean;
 }

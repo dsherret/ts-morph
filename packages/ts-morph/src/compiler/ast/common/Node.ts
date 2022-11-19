@@ -2592,6 +2592,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.ClassDeclaration:
       case SyntaxKind.EnumDeclaration:
       case SyntaxKind.FunctionDeclaration:
+      case SyntaxKind.ImportEqualsDeclaration:
       case SyntaxKind.InterfaceDeclaration:
       case SyntaxKind.ModuleDeclaration:
       case SyntaxKind.TypeAliasDeclaration:
@@ -2616,6 +2617,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.ClassDeclaration:
       case SyntaxKind.EnumDeclaration:
       case SyntaxKind.FunctionDeclaration:
+      case SyntaxKind.ImportEqualsDeclaration:
       case SyntaxKind.InterfaceDeclaration:
       case SyntaxKind.ModuleDeclaration:
       case SyntaxKind.TypeAliasDeclaration:
@@ -2680,6 +2682,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.PrefixUnaryExpression:
       case SyntaxKind.PropertyAccessExpression:
       case SyntaxKind.RegularExpressionLiteral:
+      case SyntaxKind.SatisfiesExpression:
       case SyntaxKind.SpreadElement:
       case SyntaxKind.StringLiteral:
       case SyntaxKind.SuperKeyword:
@@ -2732,6 +2735,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.NonNullExpression:
       case SyntaxKind.ParenthesizedExpression:
       case SyntaxKind.PartiallyEmittedExpression:
+      case SyntaxKind.SatisfiesExpression:
       case SyntaxKind.SpreadAssignment:
       case SyntaxKind.SpreadElement:
       case SyntaxKind.SwitchStatement:
@@ -2988,13 +2992,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
   }
 
-  /**
-   * Gets if the node is a JSDoc.
-   * @param node - Node to check.
-   */
-  static isJSDoc(node: compiler.Node | undefined): node is compiler.JSDoc {
-    return node?.getKind() === SyntaxKind.JSDoc;
-  }
+  /** Gets if the node is a JSDoc. */
+  static readonly isJSDoc: (node: compiler.Node | undefined) => node is compiler.JSDoc = Node.is(SyntaxKind.JSDoc);
 
   /**
    * Gets if the node is a JSDocableNode.
@@ -3441,6 +3440,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.FunctionDeclaration:
       case SyntaxKind.FunctionExpression:
       case SyntaxKind.GetAccessor:
+      case SyntaxKind.ImportEqualsDeclaration:
       case SyntaxKind.IndexSignature:
       case SyntaxKind.InterfaceDeclaration:
       case SyntaxKind.MethodDeclaration:
@@ -3921,6 +3921,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   }
 
   /**
+   * Gets if the node is a SatisfiesExpression.
+   * @param node - Node to check.
+   */
+  static isSatisfiesExpression(node: compiler.Node | undefined): node is compiler.SatisfiesExpression {
+    return node?.getKind() === SyntaxKind.SatisfiesExpression;
+  }
+
+  /**
    * Gets if the node is a ScopeableNode.
    * @param node - Node to check.
    */
@@ -4225,6 +4233,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.Parameter:
       case SyntaxKind.PropertyDeclaration:
       case SyntaxKind.PropertySignature:
+      case SyntaxKind.SatisfiesExpression:
       case SyntaxKind.TypeAliasDeclaration:
       case SyntaxKind.TypeAssertionExpression:
       case SyntaxKind.VariableDeclaration:

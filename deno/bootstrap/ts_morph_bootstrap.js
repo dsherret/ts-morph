@@ -239,14 +239,14 @@ class Project {
         return sourceFiles;
     }
     addSourceFilesFromTsConfig(tsConfigFilePath) {
-        const resolver = this._getTsConfigResolover(tsConfigFilePath);
+        const resolver = this._getTsConfigResolver(tsConfigFilePath);
         return this._addSourceFilesForTsConfigResolver(resolver, resolver.getCompilerOptions());
     }
     addSourceFilesFromTsConfigSync(tsConfigFilePath) {
-        const resolver = this._getTsConfigResolover(tsConfigFilePath);
+        const resolver = this._getTsConfigResolver(tsConfigFilePath);
         return this._addSourceFilesForTsConfigResolverSync(resolver, resolver.getCompilerOptions());
     }
-    _getTsConfigResolover(tsConfigFilePath) {
+    _getTsConfigResolver(tsConfigFilePath) {
         const standardizedFilePath = this._fileSystemWrapper.getStandardizedAbsolutePath(tsConfigFilePath);
         return new TsConfigResolver(this._fileSystemWrapper, standardizedFilePath, this.compilerOptions.getEncoding());
     }
@@ -327,9 +327,9 @@ class Project {
         if (isStandardizedFilePath(filePathOrSearchFunction)) {
             return this._sourceFileCache.getSourceFileFromCacheFromFilePath(filePathOrSearchFunction);
         }
-        const allSoureFilesIterable = this.getSourceFiles();
+        const allSourceFilesIterable = this.getSourceFiles();
         return selectSmallestDirPathResult(function* () {
-            for (const sourceFile of allSoureFilesIterable) {
+            for (const sourceFile of allSourceFilesIterable) {
                 if (filePathOrSearchFunction(sourceFile))
                     yield sourceFile;
             }

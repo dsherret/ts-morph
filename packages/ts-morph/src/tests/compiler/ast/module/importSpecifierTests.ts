@@ -264,6 +264,14 @@ describe("ImportSpecifier", () => {
         `import { name2 } from './file'; const t = alias;`,
       );
     });
+
+    it("should set if type only", () => {
+      doTest(
+        `import { name as alias } from './file';`,
+        { isTypeOnly: true },
+        `import { type name as alias } from './file';`,
+      );
+    });
   });
 
   describe(nameof<ImportSpecifier>("getStructure"), () => {
@@ -277,6 +285,7 @@ describe("ImportSpecifier", () => {
         kind: StructureKind.ImportSpecifier,
         name: "a",
         alias: undefined,
+        isTypeOnly: false,
       });
     });
 
@@ -285,6 +294,16 @@ describe("ImportSpecifier", () => {
         kind: StructureKind.ImportSpecifier,
         name: "a",
         alias: "alias",
+        isTypeOnly: false,
+      });
+    });
+
+    it("should get when has type only", () => {
+      doTest(`import { type a } from 'foo'`, {
+        kind: StructureKind.ImportSpecifier,
+        name: "a",
+        alias: undefined,
+        isTypeOnly: true,
       });
     });
   });

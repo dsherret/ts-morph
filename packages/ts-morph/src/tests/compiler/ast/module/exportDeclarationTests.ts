@@ -672,7 +672,7 @@ describe("ExportDeclaration", () => {
         kind: StructureKind.ExportDeclaration,
         isTypeOnly: false,
         moduleSpecifier: "./test",
-        namedExports: [{ kind: StructureKind.ExportSpecifier, alias: undefined, name: "name" }],
+        namedExports: [{ kind: StructureKind.ExportSpecifier, alias: undefined, name: "name", isTypeOnly: false }],
         namespaceExport: undefined,
         assertElements: undefined,
       });

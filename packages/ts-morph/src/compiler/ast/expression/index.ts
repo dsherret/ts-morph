@@ -25,6 +25,7 @@ export * from "./PostfixUnaryExpression";
 export * from "./PrefixUnaryExpression";
 export * from "./PrimaryExpression";
 export * from "./PropertyAccessExpression";
+export * from "./SatisfiesExpression";
 export * from "./SpreadElement";
 export * from "./SuperElementAccessExpression";
 export * from "./SuperExpression";

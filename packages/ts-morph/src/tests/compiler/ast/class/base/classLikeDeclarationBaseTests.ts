@@ -650,6 +650,7 @@ describe("ClassLikeDeclarationBase", () => {
         scope: Scope.Public,
         type: "number",
         hasExclamationToken: true, // will favour question token
+        hasAccessorKeyword: true,
         hasQuestionToken: true,
         hasDeclareKeyword: true,
         hasOverrideKeyword: true,
@@ -661,7 +662,7 @@ describe("ClassLikeDeclarationBase", () => {
         "class c {\n}",
         0,
         [structure, { name: "other", hasExclamationToken: true }],
-        "class c {\n    /** Test */\n    @dec\n    declare public static override readonly prop?: number = 5;\n    other!;\n"
+        "class c {\n    /** Test */\n    @dec\n    declare public static override readonly accessor prop?: number = 5;\n    other!;\n"
           + "}",
       );
     });

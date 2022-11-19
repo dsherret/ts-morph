@@ -1400,7 +1400,7 @@ export interface ModifierableNode {
 }
 
 declare type ModifierableNodeExtensionType = Node;
-export declare type ModifierTexts = "export" | "default" | "declare" | "abstract" | "public" | "protected" | "private" | "readonly" | "static" | "async" | "const" | "override" | "in" | "out";
+export declare type ModifierTexts = "export" | "default" | "declare" | "abstract" | "public" | "protected" | "private" | "readonly" | "static" | "async" | "const" | "override" | "in" | "out" | "accessor";
 export declare function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Base: T): Constructor<ModuledNode> & T;
 
 export interface ModuledNode {
@@ -2890,6 +2890,10 @@ export declare class MethodDeclaration extends MethodDeclarationBase<ts.MethodDe
 declare const PropertyDeclarationBase: Constructor<ChildOrderableNode> & Constructor<OverrideableNode> & Constructor<AmbientableNode> & Constructor<DecoratableNode> & Constructor<AbstractableNode> & Constructor<ScopedNode> & Constructor<StaticableNode> & Constructor<JSDocableNode> & Constructor<ReadonlyableNode> & Constructor<ExclamationTokenableNode> & Constructor<QuestionTokenableNode> & Constructor<InitializerExpressionableNode> & Constructor<TypedNode> & Constructor<PropertyNamedNode> & Constructor<ModifierableNode> & typeof ClassElement;
 
 export declare class PropertyDeclaration extends PropertyDeclarationBase<ts.PropertyDeclaration> {
+  /** Gets if this property declaration has an accessor keyword. */
+  hasAccessorKeyword(): boolean;
+  /** Sets if this property declaration should have an accessor keyword. */
+  setHasAccessorKeyword(value: boolean): this;
   /**
    * Sets the node from a structure.
    * @param structure - Structure to set the node with.
@@ -3096,6 +3100,8 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isInferKeyword: (node: Node | undefined) => node is Node<ts.Token<SyntaxKind.InferKeyword>>;
   /** Gets if the node is a InterfaceDeclaration. */
   static readonly isInterfaceDeclaration: (node: Node | undefined) => node is InterfaceDeclaration;
+  /** Gets if the node is a JSDoc. */
+  static readonly isJSDoc: (node: Node | undefined) => node is JSDoc;
   /** Gets if the node is a JSDocAllType. */
   static readonly isJSDocAllType: (node: Node | undefined) => node is JSDocAllType;
   /** Gets if the node is a JSDocAugmentsTag. */
@@ -4152,11 +4158,6 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    */
   static isIterationStatement(node: Node | undefined): node is IterationStatement;
   /**
-   * Gets if the node is a JSDoc.
-   * @param node - Node to check.
-   */
-  static isJSDoc(node: Node | undefined): node is JSDoc;
-  /**
    * Gets if the node is a JSDocableNode.
    * @param node - Node to check.
    */
@@ -4341,6 +4342,11 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * @param node - Node to check.
    */
   static isReturnTyped<T extends Node>(node: T | undefined): node is ReturnTypedNode & ReturnTypedNodeExtensionType & T;
+  /**
+   * Gets if the node is a SatisfiesExpression.
+   * @param node - Node to check.
+   */
+  static isSatisfiesExpression(node: Node | undefined): node is SatisfiesExpression;
   /**
    * Gets if the node is a ScopeableNode.
    * @param node - Node to check.
@@ -5937,6 +5943,15 @@ declare const PropertyAccessExpressionBase: Constructor<NamedNode> & Constructor
 export declare class PropertyAccessExpression<T extends ts.PropertyAccessExpression = ts.PropertyAccessExpression> extends PropertyAccessExpressionBase<T> {
 }
 
+declare const SatisfiesExpressionBase: Constructor<TypedNode> & Constructor<ExpressionedNode> & typeof Expression;
+
+export declare class SatisfiesExpression extends SatisfiesExpressionBase<ts.SatisfiesExpression> {
+  /** @inheritdoc **/
+  getParent(): NodeParentType<ts.SatisfiesExpression>;
+  /** @inheritdoc **/
+  getParentOrThrow(): NonNullable<NodeParentType<ts.SatisfiesExpression>>;
+}
+
 declare const SpreadElementBase: Constructor<ExpressionedNode> & typeof Expression;
 
 export declare class SpreadElement extends SpreadElementBase<ts.SpreadElement> {
@@ -6665,6 +6680,7 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.PropertySignature]: PropertySignature;
   [SyntaxKind.RegularExpressionLiteral]: RegularExpressionLiteral;
   [SyntaxKind.ReturnStatement]: ReturnStatement;
+  [SyntaxKind.SatisfiesExpression]: SatisfiesExpression;
   [SyntaxKind.SetAccessor]: SetAccessorDeclaration;
   [SyntaxKind.ShorthandPropertyAssignment]: ShorthandPropertyAssignment;
   [SyntaxKind.SpreadAssignment]: SpreadAssignment;
@@ -6759,6 +6775,7 @@ export interface KindToExpressionMappings {
   [SyntaxKind.PrefixUnaryExpression]: PrefixUnaryExpression;
   [SyntaxKind.PropertyAccessExpression]: PropertyAccessExpression;
   [SyntaxKind.RegularExpressionLiteral]: RegularExpressionLiteral;
+  [SyntaxKind.SatisfiesExpression]: SatisfiesExpression;
   [SyntaxKind.SpreadElement]: SpreadElement;
   [SyntaxKind.StringLiteral]: StringLiteral;
   [SyntaxKind.TaggedTemplateExpression]: TaggedTemplateExpression;
@@ -7353,7 +7370,7 @@ export declare class ImportDeclaration extends ImportDeclarationBase<ts.ImportDe
   getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.ImportDeclaration>>;
 }
 
-declare const ImportEqualsDeclarationBase: Constructor<JSDocableNode> & Constructor<NamedNode> & typeof Statement;
+declare const ImportEqualsDeclarationBase: Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<JSDocableNode> & Constructor<NamedNode> & typeof Statement;
 
 export declare class ImportEqualsDeclaration extends ImportEqualsDeclarationBase<ts.ImportEqualsDeclaration> {
   /** Gets if this import equals declaration is type only. */
@@ -10475,6 +10492,7 @@ export interface PropertyDeclarationStructure extends Structure, PropertyDeclara
 }
 
 interface PropertyDeclarationSpecificStructure extends KindedStructure<StructureKind.Property> {
+  hasAccessorKeyword?: boolean;
 }
 
 export interface SetAccessorDeclarationStructure extends Structure, SetAccessorDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure {
@@ -10690,6 +10708,7 @@ export interface ExportSpecifierStructure extends Structure, ExportSpecifierSpec
 interface ExportSpecifierSpecificStructure extends KindedStructure<StructureKind.ExportSpecifier> {
   name: string;
   alias?: string;
+  isTypeOnly?: boolean;
 }
 
 export interface ImportDeclarationStructure extends Structure, ImportDeclarationSpecificStructure {
@@ -10709,6 +10728,7 @@ export interface ImportSpecifierStructure extends Structure, ImportSpecifierSpec
 
 interface ImportSpecifierSpecificStructure extends KindedStructure<StructureKind.ImportSpecifier> {
   name: string;
+  isTypeOnly?: boolean;
   alias?: string;
 }
 
