@@ -2940,16 +2940,6 @@ class CommentRange extends TextRange {
 }
 
 class Node {
-    constructor(context, node, sourceFile) {
-        this._wrappedChildCount = 0;
-        if (context == null || context.compilerFactory == null) {
-            throw new errors.InvalidOperationError("Constructing a node is not supported. Please create a source file from the default export "
-                + "of the package and manipulate the source file from there.");
-        }
-        this._context = context;
-        this._compilerNode = node;
-        this.__sourceFile = sourceFile;
-    }
     get _sourceFile() {
         if (this.__sourceFile == null)
             throw new errors.InvalidOperationError("Operation cannot be performed on a node that has no source file.");
@@ -2963,6 +2953,16 @@ class Node {
             throw new errors.InvalidOperationError(message);
         }
         return this._compilerNode;
+    }
+    constructor(context, node, sourceFile) {
+        this._wrappedChildCount = 0;
+        if (context == null || context.compilerFactory == null) {
+            throw new errors.InvalidOperationError("Constructing a node is not supported. Please create a source file from the default export "
+                + "of the package and manipulate the source file from there.");
+        }
+        this._context = context;
+        this._compilerNode = node;
+        this.__sourceFile = sourceFile;
     }
     forget() {
         if (this.wasForgotten())
@@ -16828,14 +16828,14 @@ class Signature {
 }
 
 class Symbol {
+    get compilerSymbol() {
+        return this._compilerSymbol;
+    }
     constructor(context, symbol) {
         this._context = context;
         this._compilerSymbol = symbol;
         this.getValueDeclaration();
         this.getDeclarations();
-    }
-    get compilerSymbol() {
-        return this._compilerSymbol;
     }
     getName() {
         return this.compilerSymbol.getName();
@@ -17676,6 +17676,9 @@ class Program {
 }
 
 class LanguageService {
+    get compilerObject() {
+        return this._compilerObject;
+    }
     constructor(params) {
         var _a;
         this._projectVersion = 0;
@@ -17703,9 +17706,6 @@ class LanguageService {
                 this._reset();
         });
         this._context.compilerFactory.onSourceFileRemoved(() => this._reset());
-    }
-    get compilerObject() {
-        return this._compilerObject;
     }
     _reset() {
         this._projectVersion += 1;
@@ -17850,12 +17850,12 @@ class LanguageService {
 }
 
 class Type {
+    get compilerType() {
+        return this._compilerType;
+    }
     constructor(context, type) {
         this._context = context;
         this._compilerType = type;
-    }
-    get compilerType() {
-        return this._compilerType;
     }
     getText(enclosingNode, typeFormatFlags) {
         return this._context.typeChecker.getTypeText(this, enclosingNode, typeFormatFlags);
@@ -19911,6 +19911,11 @@ __decorate([
 ], StructurePrinterFactory.prototype, "forVariableDeclaration", null);
 
 class ProjectContext {
+    get project() {
+        if (this._project == null)
+            throw new errors.InvalidOperationError("This operation is not permitted in this context.");
+        return this._project;
+    }
     constructor(params) {
         this.logger = new ConsoleLogger();
         this.manipulationSettings = new ManipulationSettingsContainer();
@@ -19936,11 +19941,6 @@ class ProjectContext {
             this._customTypeChecker = new TypeChecker(this);
             this._customTypeChecker._reset(() => params.typeChecker);
         }
-    }
-    get project() {
-        if (this._project == null)
-            throw new errors.InvalidOperationError("This operation is not permitted in this context.");
-        return this._project;
     }
     get compilerOptions() {
         return this._compilerOptions;

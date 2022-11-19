@@ -26,6 +26,7 @@ describe("PropertyDeclarationStructurePrinter", () => {
         decorators: [{ name: "dec" }],
         docs: [{ description: "test" }],
         hasExclamationToken: false,
+        hasAccessorKeyword: true,
         hasQuestionToken: true,
         hasDeclareKeyword: true,
         hasOverrideKeyword: true,
@@ -43,7 +44,7 @@ describe("PropertyDeclarationStructurePrinter", () => {
         [
           "/** test */",
           "@dec",
-          "declare public static override abstract readonly prop?: number = 5;",
+          "declare public static override abstract readonly accessor prop?: number = 5;",
         ].join("\n"),
       );
     });

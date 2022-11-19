@@ -5,6 +5,7 @@ import {
   AmbientableNodeStructure,
   AsyncableNodeStructure,
   ExportableNodeStructure,
+  PropertyDeclarationStructure,
   ReadonlyableNodeStructure,
   ScopeableNodeStructure,
   ScopedNodeStructure,
@@ -20,7 +21,8 @@ export type ModifierableNodeStructures =
   | ReadonlyableNodeStructure
   | ScopeableNodeStructure
   | ScopedNodeStructure
-  | StaticableNodeStructure;
+  | StaticableNodeStructure
+  | PropertyDeclarationStructure;
 
 export class ModifierableNodeStructurePrinter extends Printer<ModifierableNodeStructures> {
   printText(writer: CodeBlockWriter, structure: ModifierableNodeStructures) {
@@ -43,5 +45,7 @@ export class ModifierableNodeStructurePrinter extends Printer<ModifierableNodeSt
       writer.write("async ");
     if ((structure as ReadonlyableNodeStructure).isReadonly)
       writer.write("readonly ");
+    if ((structure as PropertyDeclarationStructure).hasAccessorKeyword)
+      writer.write("accessor ");
   }
 }
