@@ -290,32 +290,6 @@ class ObjectUtils {
     }
 }
 
-const getPrettyNodeLocation = (node) => {
-    const source = getSourceLocation(node);
-    if (!source)
-        return;
-    const linePrefix = `> ${source.loc.line + 1} |`;
-    return `${source.fileName}:${source.loc.line + 1}:${source.loc.character + 1}\n\n${linePrefix}${source.brokenLine}\n${" ".repeat(linePrefix.length - 1)}|${" ".repeat(source.loc.character)}^`;
-};
-const printPrettyNodeLocation = (node) => {
-    console.log(getPrettyNodeLocation(node) || node);
-};
-const getSourceLocation = (node) => {
-    var _a;
-    if (!isTracableNode(node))
-        return;
-    const sourceFile = node.getSourceFile();
-    const sourceCode = sourceFile.getFullText();
-    const pos = node.getPos();
-    const textBeforePos = sourceCode.substring(0, pos);
-    const line = ((_a = textBeforePos.match(/\n/g)) === null || _a === void 0 ? void 0 : _a.length) || 0;
-    const brokenLineStart = textBeforePos.lastIndexOf("\n", pos);
-    const brokenLineEnd = sourceCode.indexOf("\n", pos);
-    const brokenLine = sourceCode.substring(brokenLineStart + 1, brokenLineEnd === -1 ? undefined : brokenLineEnd);
-    return { fileName: sourceFile.getFilePath(), loc: { line, character: pos - brokenLineStart }, brokenLine, pos };
-};
-const isTracableNode = (node) => typeof node === "object" && node !== null && ("getSourceFile" in node) && ("getPos" in node);
-
 function matchFiles(path, extensions, excludes, includes, useCaseSensitiveFileNames, currentDirectory, depth, getEntries, realpath, directoryExists) {
     return ts.matchFiles.apply(this, arguments);
 }
@@ -347,10 +321,8 @@ var errors;
     class BaseError extends Error {
         constructor(message, node) {
             const nodeLocation = node && getPrettyNodeLocation(node);
-            const messageWithLocation = nodeLocation ? `${message}\n in ${nodeLocation}` : message;
+            const messageWithLocation = nodeLocation ? `${message}\n\n${nodeLocation}` : message;
             super(messageWithLocation);
-            this.message = message;
-            this.source = node && getSourceLocation(node);
             this.message = messageWithLocation;
         }
     }
@@ -478,6 +450,42 @@ var errors;
     }
     errors.throwIfTrue = throwIfTrue;
 })(errors || (errors = {}));
+function getPrettyNodeLocation(node) {
+    const source = getSourceLocation(node);
+    if (!source)
+        return undefined;
+    return `${source.filePath}:${source.loc.line}:${source.loc.character}\n`
+        + `> ${source.loc.line} | ${source.lineText}`;
+}
+function getSourceLocation(node) {
+    if (!isNode(node))
+        return;
+    const sourceFile = node.getSourceFile();
+    const sourceCode = sourceFile.getFullText();
+    const start = node.getStart();
+    const lineStart = sourceCode.lastIndexOf("\n", start) + 1;
+    const nextNewLinePos = sourceCode.indexOf("\n", start);
+    const lineEnd = nextNewLinePos === -1 ? sourceCode.length : nextNewLinePos;
+    const textStart = (start - lineStart > 40) ? start - 37 : lineStart;
+    const textEnd = (lineEnd - textStart > 80) ? textStart + 77 : lineEnd;
+    let lineText = "";
+    if (textStart !== lineStart)
+        lineText += "...";
+    lineText += sourceCode.substring(textStart, textEnd);
+    if (textEnd !== lineEnd)
+        lineText += "...";
+    return {
+        filePath: sourceFile.getFilePath(),
+        loc: {
+            line: StringUtils.getLineNumberAtPos(sourceCode, start),
+            character: start - lineStart + 1,
+        },
+        lineText,
+    };
+}
+function isNode(node) {
+    return typeof node === "object" && node !== null && ("getSourceFile" in node) && ("getStart" in node);
+}
 
 const CharCodes = {
     ASTERISK: "*".charCodeAt(0),
@@ -2808,4 +2816,4 @@ function getCompilerOptionsFromTsConfig(filePath, options = {}) {
     };
 }
 
-export { ArrayUtils, ComparerToStoredComparer, CompilerOptionsContainer, DocumentRegistry, EventContainer, FileUtils, InMemoryFileSystemHost, IterableUtils, KeyValueCache, LocaleStringComparer, Memoize, ObjectUtils, PropertyComparer, PropertyStoredComparer, RealFileSystemHost, ResolutionHosts, SettingsContainer, SortedKeyValueArray, StringUtils, TransactionalFileSystem, TsConfigResolver, WeakCache, createDocumentCache, createHosts, createModuleResolutionHost, deepClone, errors, getCompilerOptionsFromTsConfig, getEmitModuleResolutionKind, getFileMatcherPatterns, getLibFiles, getLibFolderPath, getPrettyNodeLocation, getSourceLocation, getSyntaxKindName, libFolderInMemoryPath, matchFiles, matchGlobs, nameof, printPrettyNodeLocation, runtime };
+export { ArrayUtils, ComparerToStoredComparer, CompilerOptionsContainer, DocumentRegistry, EventContainer, FileUtils, InMemoryFileSystemHost, IterableUtils, KeyValueCache, LocaleStringComparer, Memoize, ObjectUtils, PropertyComparer, PropertyStoredComparer, RealFileSystemHost, ResolutionHosts, SettingsContainer, SortedKeyValueArray, StringUtils, TransactionalFileSystem, TsConfigResolver, WeakCache, createDocumentCache, createHosts, createModuleResolutionHost, deepClone, errors, getCompilerOptionsFromTsConfig, getEmitModuleResolutionKind, getFileMatcherPatterns, getLibFiles, getLibFolderPath, getSyntaxKindName, libFolderInMemoryPath, matchFiles, matchGlobs, nameof, runtime };

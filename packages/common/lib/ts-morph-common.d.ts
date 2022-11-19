@@ -346,30 +346,35 @@ export declare function Memoize(target: any, propertyName: string, descriptor: T
 
 /** Collection of helper functions that can be used to throw errors. */
 export declare namespace errors {
+    /**
+     * Minimal attributes to show a error message with the node source.
+     */
+    interface Node {
+        getSourceFile(): {
+            getFilePath(): StandardizedFilePath;
+            getFullText(): string;
+        };
+        getStart(): number;
+    }
     /** Base error class. */
     abstract class BaseError extends Error {
-        readonly message: string;
-        readonly source: {
-            fileName: string;
-            loc: ts.LineAndCharacter;
-        } | undefined;
         protected constructor();
     }
     /** Thrown when there is a problem with a provided argument. */
     class ArgumentError extends BaseError {
-        constructor(argName: string, message: string, node?: TracableNode);
+        constructor(argName: string, message: string, node?: Node);
     }
     /** Thrown when an argument is null or whitespace. */
     class ArgumentNullOrWhitespaceError extends ArgumentError {
-        constructor(argName: string, node?: TracableNode);
+        constructor(argName: string, node?: Node);
     }
     /** Thrown when an argument is out of range. */
     class ArgumentOutOfRangeError extends ArgumentError {
-        constructor(argName: string, value: number, range: [number, number], node?: TracableNode);
+        constructor(argName: string, value: number, range: [number, number], node?: Node);
     }
     /** Thrown when an argument does not match an expected type. */
     class ArgumentTypeError extends ArgumentError {
-        constructor(argName: string, expectedType: string, actualType: string, node?: TracableNode);
+        constructor(argName: string, expectedType: string, actualType: string, node?: Node);
     }
     /** Thrown when a file or directory path was not found. */
     class PathNotFoundError extends BaseError {
@@ -387,11 +392,11 @@ export declare namespace errors {
     }
     /** Thrown when an action was taken that is not allowed. */
     class InvalidOperationError extends BaseError {
-        constructor(message: string, node?: TracableNode);
+        constructor(message: string, node?: Node);
     }
     /** Thrown when a certain behaviour or feature has not been implemented. */
     class NotImplementedError extends BaseError {
-        constructor(message?: string, node?: TracableNode);
+        constructor(message?: string, node?: Node);
     }
     /** Thrown when an operation is not supported. */
     class NotSupportedError extends BaseError {
@@ -436,7 +441,7 @@ export declare namespace errors {
      * Gets an error saying that a feature is not implemented for a certain syntax kind.
      * @param kind - Syntax kind that isn't implemented.
      */
-    function throwNotImplementedForSyntaxKindError(kind: ts.SyntaxKind, node?: TracableNode): never;
+    function throwNotImplementedForSyntaxKindError(kind: ts.SyntaxKind, node?: Node): never;
     /**
      * Throws an Argument
      * @param value
@@ -448,12 +453,12 @@ export declare namespace errors {
      * @param value - Value to check.
      * @param errorMessage - Error message to throw when not defined.
      */
-    function throwIfNullOrUndefined<T>(value: T | undefined, errorMessage: string | (() => string), node?: TracableNode): T;
+    function throwIfNullOrUndefined<T>(value: T | undefined, errorMessage: string | (() => string), node?: Node): T;
     /**
      * Throw if the value should have been the never type.
      * @param value - Value to check.
      */
-    function throwNotImplementedForNeverValueError(value: never, sourceNode?: TracableNode): never;
+    function throwNotImplementedForNeverValueError(value: never, sourceNode?: Node): never;
     /**
      * Throws an error if the actual value does not equal the expected value.
      * @param actual - Actual value.
@@ -857,42 +862,6 @@ export declare function getLibFolderPath(options: {
 
 /** The folder to use to "store" the in memory lib files. */
 export declare const libFolderInMemoryPath: StandardizedFilePath;
-
-/**
- * Minimal attributes to show a error message with source
- * (ts.Node from ts-morph)
- */
-export declare type TracableNode = {
-    getSourceFile: () => {
-        getFilePath: () => StandardizedFilePath;
-        getFullText: () => string;
-    };
-    getPos(): number;
-};
-
-/**
- * Returns the line of the given node inside its source file
- * in a prettified format.
- */
-export declare const getPrettyNodeLocation: (node: TracableNode) => string | undefined;
-
-/**
- * Prints prettified string of the nodes location
- */
-export declare const printPrettyNodeLocation: (node: TracableNode) => void;
-
-/**
- * Returns the location of the given node inside its source file.
- */
-export declare const getSourceLocation: (node: TracableNode) => {
-    fileName: StandardizedFilePath;
-    loc: {
-        line: number;
-        character: number;
-    };
-    brokenLine: string;
-    pos: number;
-} | undefined;
 
 /**
  * Gets the enum name for the specified syntax kind.
