@@ -5860,7 +5860,7 @@ function DecoratableNode(Base) {
             return getNodeByNameOrFindFunction(this.getDecorators(), nameOrFindFunction);
         }
         getDecoratorOrThrow(nameOrFindFunction, message) {
-            return errors.throwIfNullOrUndefined(this.getDecorator(nameOrFindFunction), () => message !== null && message !== void 0 ? message : getNotFoundErrorMessageForNameOrFindFunction("decorator", nameOrFindFunction), this);
+            return errors.throwIfNullOrUndefined(this.getDecorator(nameOrFindFunction), message !== null && message !== void 0 ? message : (() => getNotFoundErrorMessageForNameOrFindFunction("decorator", nameOrFindFunction)), this);
         }
         getDecorators() {
             return getCompilerNodeDecorators(this.compilerNode).map(d => this._getNodeFromCompilerNode(d));
@@ -14709,7 +14709,7 @@ class GetAccessorDeclaration extends GetAccessorDeclarationBase {
         });
     }
     getSetAccessorOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getSetAccessor(), () => message !== null && message !== void 0 ? message : `Expected to find a corresponding set accessor for ${this.getName()}.`, this);
+        return errors.throwIfNullOrUndefined(this.getSetAccessor(), message !== null && message !== void 0 ? message : (() => `Expected to find a corresponding set accessor for ${this.getName()}.`), this);
     }
     getStructure() {
         return callBaseGetStructure(GetAccessorDeclarationBase.prototype, this, {
@@ -14768,7 +14768,7 @@ class SetAccessorDeclaration extends SetAccessorDeclarationBase {
         });
     }
     getGetAccessorOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getGetAccessor(), () => message !== null && message !== void 0 ? message : `Expected to find a corresponding get accessor for ${this.getName()}.`, this);
+        return errors.throwIfNullOrUndefined(this.getGetAccessor(), message !== null && message !== void 0 ? message : (() => `Expected to find a corresponding get accessor for ${this.getName()}.`), this);
     }
     getStructure() {
         return callBaseGetStructure(SetAccessorDeclarationBase.prototype, this, {
@@ -15252,7 +15252,7 @@ class ImportTypeNode extends NodeWithTypeArguments {
         return this;
     }
     getQualifierOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getQualifier(), () => message !== null && message !== void 0 ? message : `Expected to find a qualifier for the import type: ${this.getText()}`, this);
+        return errors.throwIfNullOrUndefined(this.getQualifier(), message !== null && message !== void 0 ? message : (() => `Expected to find a qualifier for the import type: ${this.getText()}`), this);
     }
     getQualifier() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.qualifier);
@@ -18211,7 +18211,7 @@ class Directory {
         return this._pathParts[this._pathParts.length - 1];
     }
     getParentOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getParent(), () => message !== null && message !== void 0 ? message : `Parent directory of ${this.getPath()} does not exist or was never added.`, this);
+        return errors.throwIfNullOrUndefined(this.getParent(), message !== null && message !== void 0 ? message : (() => `Parent directory of ${this.getPath()} does not exist or was never added.`));
     }
     getParent() {
         if (FileUtils.isRootDirPath(this.getPath()))
