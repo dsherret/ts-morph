@@ -180,7 +180,7 @@ export namespace errors {
    * @param value - Value to check.
    * @param errorMessage - Error message to throw when not defined.
    */
-  export function throwIfNullOrUndefined<T>(value: T | undefined, errorMessage: string | (() => string), node?: Node) {
+  export function throwIfNullOrUndefined<T>(value: T | undefined, errorMessage: string | (() => string), node?: Node): T {
     if (value == null)
       throw new InvalidOperationError(typeof errorMessage === "string" ? errorMessage : errorMessage(), node);
     return value;

@@ -453,7 +453,7 @@ export declare namespace errors {
      * @param value - Value to check.
      * @param errorMessage - Error message to throw when not defined.
      */
-    function throwIfNullOrUndefined<T>(value: T | undefined, errorMessage: string | (() => string), node?: Node): NonNullable<T>;
+    function throwIfNullOrUndefined<T>(value: T | undefined, errorMessage: string | (() => string), node?: Node): T;
     /**
      * Throw if the value should have been the never type.
      * @param value - Value to check.

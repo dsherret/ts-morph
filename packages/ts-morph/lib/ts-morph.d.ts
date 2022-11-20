@@ -3670,7 +3670,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Throws if the initial parent is not the specified syntax kind.
    * @param kind - Syntax kind to check for.
    */
-  getParentWhileKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string | (() => string)): NonNullable<KindToNodeMappings[TKind]>;
+  getParentWhileKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string | (() => string)): KindToNodeMappings[TKind];
   /**
    * Goes up the parents (ancestors) of the node while the parent is the specified syntax kind.
    * Returns undefined if the initial parent is not the specified syntax kind.
@@ -3797,7 +3797,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets the last child by syntax kind or throws an error if not found.
    * @param kind - Syntax kind.
    */
-  getLastChildByKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string | (() => string)): NonNullable<KindToNodeMappings[TKind]>;
+  getLastChildByKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string | (() => string)): KindToNodeMappings[TKind];
   /**
    * Gets the last child by syntax kind.
    * @param kind - Syntax kind.
@@ -3807,7 +3807,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets the last child if it matches the specified syntax kind or throws an error if not found.
    * @param kind - Syntax kind.
    */
-  getLastChildIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string | (() => string)): NonNullable<KindToNodeMappings[TKind]>;
+  getLastChildIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string | (() => string)): KindToNodeMappings[TKind];
   /**
    * Gets the last child if it matches the specified syntax kind.
    * @param kind - Syntax kind.
@@ -3818,7 +3818,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * @param index - Child index to get.
    * @param kind - Expected kind.
    */
-  getChildAtIndexIfKindOrThrow<TKind extends SyntaxKind>(index: number, kind: TKind, message?: string | (() => string)): NonNullable<KindToNodeMappings[TKind]>;
+  getChildAtIndexIfKindOrThrow<TKind extends SyntaxKind>(index: number, kind: TKind, message?: string | (() => string)): KindToNodeMappings[TKind];
   /**
    * Gets the child at the specified index if it's the specified kind or returns undefined.
    * @param index - Child index to get.
@@ -3829,12 +3829,12 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets the previous sibiling if it matches the specified kind, or throws.
    * @param kind - Kind to check.
    */
-  getPreviousSiblingIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string | (() => string)): NonNullable<KindToNodeMappings[TKind]>;
+  getPreviousSiblingIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string | (() => string)): KindToNodeMappings[TKind];
   /**
    * Gets the next sibiling if it matches the specified kind, or throws.
    * @param kind - Kind to check.
    */
-  getNextSiblingIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string | (() => string)): NonNullable<KindToNodeMappings[TKind]>;
+  getNextSiblingIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string | (() => string)): KindToNodeMappings[TKind];
   /**
    * Gets the previous sibling if it matches the specified kind.
    * @param kind - Kind to check.
@@ -3896,7 +3896,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets the first descendant by syntax kind or throws.
    * @param kind - Syntax kind.
    */
-  getFirstDescendantByKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string | (() => string)): NonNullable<KindToNodeMappings[TKind]>;
+  getFirstDescendantByKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string | (() => string)): KindToNodeMappings[TKind];
   /**
    * Gets the first descendant by syntax kind.
    * @param kind - Syntax kind.
@@ -6372,7 +6372,7 @@ declare const JsxAttributeBase: Constructor<NamedNode> & typeof Node;
 
 export declare class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
   /** Gets the JSX attribute's initializer or throws if it doesn't exist. */
-  getInitializerOrThrow(message?: string | (() => string)): NonNullable<StringLiteral | JsxElement | JsxSelfClosingElement | JsxFragment | JsxExpression>;
+  getInitializerOrThrow(message?: string | (() => string)): StringLiteral | JsxElement | JsxSelfClosingElement | JsxFragment | JsxExpression;
   /** Gets the JSX attribute's initializer or returns undefined if it doesn't exist. */
   getInitializer(): JsxElement | JsxExpression | JsxFragment | JsxSelfClosingElement | StringLiteral | undefined;
   /**
@@ -7249,7 +7249,7 @@ export declare class ImportClause extends ImportClauseBase<ts.ImportClause> {
   /** Gets the default import or returns undefined if it doesn't exist. */
   getDefaultImport(): Identifier | undefined;
   /** Gets the named bindings of the import clause or throws if it doesn't exist. */
-  getNamedBindingsOrThrow(message?: string | (() => string)): NonNullable<NamespaceImport | NamedImports>;
+  getNamedBindingsOrThrow(message?: string | (() => string)): NamespaceImport | NamedImports;
   /** Gets the named bindings of the import clause or returns undefined if it doesn't exist. */
   getNamedBindings(): NamespaceImport | NamedImports | undefined;
   /** Gets the namespace import if it exists or throws. */
@@ -8113,7 +8113,7 @@ export declare class ForStatement extends ForStatementBase<ts.ForStatement> {
   /** Gets this for statement's initializer or undefined if none exists. */
   getInitializer(): VariableDeclarationList | Expression | undefined;
   /** Gets this for statement's initializer or throws if none exists. */
-  getInitializerOrThrow(message?: string | (() => string)): NonNullable<Expression<ts.Expression> | VariableDeclarationList>;
+  getInitializerOrThrow(message?: string | (() => string)): Expression<ts.Expression> | VariableDeclarationList;
   /** Gets this for statement's condition or undefined if none exists. */
   getCondition(): Expression | undefined;
   /** Gets this for statement's condition or throws if none exists. */
@@ -8876,11 +8876,11 @@ export declare class MappedTypeNode extends TypeNode<ts.MappedTypeNode> {
   /** Gets the mapped type's readonly token. */
   getReadonlyToken(): Node<ts.ReadonlyKeyword> | Node<ts.PlusToken> | Node<ts.MinusToken> | undefined;
   /** Gets the mapped type's readonly token or throws if not exist. */
-  getReadonlyTokenOrThrow(message?: string | (() => string)): NonNullable<Node<ts.ReadonlyKeyword> | Node<ts.PlusToken> | Node<ts.MinusToken>>;
+  getReadonlyTokenOrThrow(message?: string | (() => string)): Node<ts.ReadonlyKeyword> | Node<ts.PlusToken> | Node<ts.MinusToken>;
   /** Gets the mapped type's question token. */
   getQuestionToken(): Node<ts.QuestionToken> | Node<ts.PlusToken> | Node<ts.MinusToken> | undefined;
   /** Gets the mapped type's question token or throws if not exist. */
-  getQuestionTokenOrThrow(message?: string | (() => string)): NonNullable<Node<ts.QuestionToken> | Node<ts.PlusToken> | Node<ts.MinusToken>>;
+  getQuestionTokenOrThrow(message?: string | (() => string)): Node<ts.QuestionToken> | Node<ts.PlusToken> | Node<ts.MinusToken>;
   /** Gets the mapped type node's type parameter. */
   getTypeParameter(): TypeParameterDeclaration;
   /** Gets the mapped type node's type node if it exists or returns undefined when not. */
@@ -10107,7 +10107,7 @@ export declare class Type<TType extends ts.Type = ts.Type> {
   /** Gets the value of a literal or returns undefined if this is not a literal type. */
   getLiteralValue(): string | number | ts.PseudoBigInt | undefined;
   /** Gets the value of the literal or throws if this is not a literal type. */
-  getLiteralValueOrThrow(message?: string | (() => string)): NonNullable<string | number | ts.PseudoBigInt>;
+  getLiteralValueOrThrow(message?: string | (() => string)): string | number | ts.PseudoBigInt;
   /**
    * Gets the fresh type of the literal or returns undefined if this is not a literal type.
    *
