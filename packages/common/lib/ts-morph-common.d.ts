@@ -120,7 +120,7 @@ export declare class LocaleStringComparer implements Comparer<string> {
     /** Static instance for reuse. */
     static readonly instance: LocaleStringComparer;
     /** @inheritdoc */
-    compareTo(a: string, b: string): 1 | -1 | 0;
+    compareTo(a: string, b: string): 0 | 1 | -1;
 }
 
 /**
@@ -281,7 +281,7 @@ export interface ResolutionHost {
  * Factory used to create a resolution host.
  * @remarks The compiler options are retrieved via a function in order to get the project's current compiler options.
  */
-export declare type ResolutionHostFactory = (moduleResolutionHost: ts.ModuleResolutionHost, getCompilerOptions: () => ts.CompilerOptions) => ResolutionHost;
+export type ResolutionHostFactory = (moduleResolutionHost: ts.ModuleResolutionHost, getCompilerOptions: () => ts.CompilerOptions) => ResolutionHost;
 
 /** Collection of reusable resolution hosts. */
 export declare const ResolutionHosts: {
@@ -453,7 +453,7 @@ export declare namespace errors {
      * @param value - Value to check.
      * @param errorMessage - Error message to throw when not defined.
      */
-    function throwIfNullOrUndefined<T>(value: T | undefined, errorMessage: string | (() => string), node?: Node): T;
+    function throwIfNullOrUndefined<T>(value: T | undefined, errorMessage: string | (() => string), node?: Node): NonNullable<T>;
     /**
      * Throw if the value should have been the never type.
      * @param value - Value to check.
@@ -749,7 +749,7 @@ export declare class RealFileSystemHost implements FileSystemHost {
 }
 
 /** Nominal type to denote a file path that has been standardized. */
-export declare type StandardizedFilePath = string & {
+export type StandardizedFilePath = string & {
     _standardizedFilePathBrand: undefined;
 };
 
@@ -1035,7 +1035,7 @@ export declare function deepClone<T extends object>(objToClone: T): T;
 /**
  * Event container subscription type
  */
-export declare type EventContainerSubscription<EventArgType> = (arg: EventArgType) => void;
+export type EventContainerSubscription<EventArgType> = (arg: EventArgType) => void;
 
 /**
  * Event container for event subscriptions.

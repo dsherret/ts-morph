@@ -138,7 +138,7 @@ export interface ResolutionHost {
  * Factory used to create a resolution host.
  * @remarks The compiler options are retrieved via a function in order to get the project's current compiler options.
  */
-export declare type ResolutionHostFactory = (moduleResolutionHost: ts.ModuleResolutionHost, getCompilerOptions: () => ts.CompilerOptions) => ResolutionHost;
+export type ResolutionHostFactory = (moduleResolutionHost: ts.ModuleResolutionHost, getCompilerOptions: () => ts.CompilerOptions) => ResolutionHost;
 
 /** Collection of reusable resolution hosts. */
 export declare const ResolutionHosts: {

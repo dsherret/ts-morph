@@ -20,7 +20,8 @@ export enum TypeParameterVariance {
   InOut = In | Out,
 }
 
-export const TypeParameterDeclarationBase = ModifierableNode(NamedNode(Node));
+const createBase = <T extends typeof Node>(ctor: T) => ModifierableNode(NamedNode(ctor));
+export const TypeParameterDeclarationBase = createBase(Node);
 export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.TypeParameterDeclaration> {
   /**
    * Gets the constraint of the type parameter.

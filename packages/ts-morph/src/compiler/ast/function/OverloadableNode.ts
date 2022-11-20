@@ -101,7 +101,9 @@ export interface InsertOverloadsOptions<TNode extends OverloadableNode & Node, T
 /**
  * @internal
  */
-export function insertOverloads<TNode extends OverloadableNode & Node, TStructure>(opts: InsertOverloadsOptions<TNode, TStructure>): TNode[] {
+export function insertOverloads<TNode extends OverloadableNode & Node, TStructure extends Record<string, any>>(
+  opts: InsertOverloadsOptions<TNode, TStructure>,
+): TNode[] {
   if (opts.structures.length === 0)
     return [];
 

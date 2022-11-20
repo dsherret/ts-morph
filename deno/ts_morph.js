@@ -6349,15 +6349,15 @@ class NodePrinter extends Printer {
         this.printTrailingTrivia(writer, structure);
     }
     printLeadingTrivia(writer, structure) {
-        const leadingTrivia = structure.leadingTrivia;
-        if (leadingTrivia != null) {
+        const leadingTrivia = structure === null || structure === void 0 ? void 0 : structure.leadingTrivia;
+        if (leadingTrivia) {
             this.printTrivia(writer, leadingTrivia);
             if (writer.isInComment())
                 writer.closeComment();
         }
     }
     printTrailingTrivia(writer, structure) {
-        const trailingTrivia = structure.trailingTrivia;
+        const trailingTrivia = structure === null || structure === void 0 ? void 0 : structure.trailingTrivia;
         if (trailingTrivia != null)
             this.printTrivia(writer, trailingTrivia);
     }
@@ -10440,8 +10440,8 @@ class ArrayBindingPattern extends Node {
     }
 }
 
-const createBase$E = (ctor) => DotDotDotTokenableNode(InitializerExpressionableNode(BindingNamedNode(ctor)));
-const BindingElementBase = createBase$E(Node);
+const createBase$F = (ctor) => DotDotDotTokenableNode(InitializerExpressionableNode(BindingNamedNode(ctor)));
+const BindingElementBase = createBase$F(Node);
 class BindingElement extends BindingElementBase {
     getPropertyNameNodeOrThrow(message) {
         return errors.throwIfNullOrUndefined(this.getPropertyNameNode(), message !== null && message !== void 0 ? message : "Expected to find a property name node.", this);
@@ -10662,8 +10662,8 @@ function UnaryExpressionedNode(Base) {
     return BaseExpressionedNode(Base);
 }
 
-const createBase$D = (ctor) => TypedNode(ExpressionedNode(ctor));
-const AsExpressionBase = createBase$D(Expression);
+const createBase$E = (ctor) => TypedNode(ExpressionedNode(ctor));
+const AsExpressionBase = createBase$E(Expression);
 class AsExpression extends AsExpressionBase {
 }
 
@@ -10671,8 +10671,8 @@ const AwaitExpressionBase = UnaryExpressionedNode(UnaryExpression);
 class AwaitExpression extends AwaitExpressionBase {
 }
 
-const createBase$C = (ctor) => TypeArgumentedNode(ArgumentedNode(QuestionDotTokenableNode(LeftHandSideExpressionedNode(ctor))));
-const CallExpressionBase = createBase$C(LeftHandSideExpression);
+const createBase$D = (ctor) => TypeArgumentedNode(ArgumentedNode(QuestionDotTokenableNode(LeftHandSideExpressionedNode(ctor))));
+const CallExpressionBase = createBase$D(LeftHandSideExpression);
 class CallExpression extends CallExpressionBase {
     getReturnType() {
         return this._context.typeChecker.getTypeAtLocation(this);
@@ -10709,8 +10709,8 @@ const DeleteExpressionBase = UnaryExpressionedNode(UnaryExpression);
 class DeleteExpression extends DeleteExpressionBase {
 }
 
-const createBase$B = (ctor) => QuestionDotTokenableNode(LeftHandSideExpressionedNode(ctor));
-const ElementAccessExpressionBase = createBase$B(MemberExpression);
+const createBase$C = (ctor) => QuestionDotTokenableNode(LeftHandSideExpressionedNode(ctor));
+const ElementAccessExpressionBase = createBase$C(MemberExpression);
 class ElementAccessExpression extends ElementAccessExpressionBase {
     getArgumentExpression() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.argumentExpression);
@@ -10735,8 +10735,8 @@ class MetaProperty extends MetaPropertyBase {
     }
 }
 
-const createBase$A = (ctor) => TypeArgumentedNode(ArgumentedNode(LeftHandSideExpressionedNode(ctor)));
-const NewExpressionBase = createBase$A(PrimaryExpression);
+const createBase$B = (ctor) => TypeArgumentedNode(ArgumentedNode(LeftHandSideExpressionedNode(ctor)));
+const NewExpressionBase = createBase$B(PrimaryExpression);
 class NewExpression extends NewExpressionBase {
 }
 
@@ -10905,8 +10905,8 @@ class ObjectLiteralExpression extends ObjectLiteralExpressionBase {
     }
 }
 
-const createBase$z = (ctor) => InitializerExpressionGetableNode(QuestionTokenableNode(PropertyNamedNode(ctor)));
-const PropertyAssignmentBase = createBase$z(ObjectLiteralElement);
+const createBase$A = (ctor) => InitializerExpressionGetableNode(QuestionTokenableNode(PropertyNamedNode(ctor)));
+const PropertyAssignmentBase = createBase$A(ObjectLiteralElement);
 class PropertyAssignment extends PropertyAssignmentBase {
     removeInitializer() {
         const initializer = this.getInitializerOrThrow();
@@ -10957,8 +10957,8 @@ class PropertyAssignment extends PropertyAssignmentBase {
     }
 }
 
-const createBase$y = (ctor) => InitializerExpressionGetableNode(QuestionTokenableNode(NamedNode(ctor)));
-const ShorthandPropertyAssignmentBase = createBase$y(ObjectLiteralElement);
+const createBase$z = (ctor) => InitializerExpressionGetableNode(QuestionTokenableNode(NamedNode(ctor)));
+const ShorthandPropertyAssignmentBase = createBase$z(ObjectLiteralElement);
 class ShorthandPropertyAssignment extends ShorthandPropertyAssignmentBase {
     hasObjectAssignmentInitializer() {
         return this.compilerNode.objectAssignmentInitializer != null;
@@ -11059,13 +11059,13 @@ class PrefixUnaryExpression extends PrefixUnaryExpressionBase {
     }
 }
 
-const createBase$x = (ctor) => NamedNode(QuestionDotTokenableNode(LeftHandSideExpressionedNode(ctor)));
-const PropertyAccessExpressionBase = createBase$x(MemberExpression);
+const createBase$y = (ctor) => NamedNode(QuestionDotTokenableNode(LeftHandSideExpressionedNode(ctor)));
+const PropertyAccessExpressionBase = createBase$y(MemberExpression);
 class PropertyAccessExpression extends PropertyAccessExpressionBase {
 }
 
-const createBase$w = (ctor) => TypedNode(ExpressionedNode(ctor));
-const SatisfiesExpressionBase = createBase$w(Expression);
+const createBase$x = (ctor) => TypedNode(ExpressionedNode(ctor));
+const SatisfiesExpressionBase = createBase$x(Expression);
 class SatisfiesExpression extends SatisfiesExpressionBase {
 }
 
@@ -11089,8 +11089,8 @@ const ThisExpressionBase = PrimaryExpression;
 class ThisExpression extends ThisExpressionBase {
 }
 
-const createBase$v = (ctor) => TypedNode(UnaryExpressionedNode(ctor));
-const TypeAssertionBase = createBase$v(UnaryExpression);
+const createBase$w = (ctor) => TypedNode(UnaryExpressionedNode(ctor));
+const TypeAssertionBase = createBase$w(UnaryExpression);
 class TypeAssertion extends TypeAssertionBase {
 }
 
@@ -11495,8 +11495,8 @@ function addBodyIfNotExists(node) {
         node.addBody();
 }
 
-const createBase$u = (ctor) => TextInsertableNode(StatementedNode(ctor));
-const BlockBase = createBase$u(Statement);
+const createBase$v = (ctor) => TextInsertableNode(StatementedNode(ctor));
+const BlockBase = createBase$v(Statement);
 class Block extends BlockBase {
 }
 
@@ -11527,8 +11527,8 @@ class CaseBlock extends CaseBlockBase {
     }
 }
 
-const createBase$t = (ctor) => JSDocableNode(ExpressionedNode(TextInsertableNode(StatementedNode(ctor))));
-const CaseClauseBase = createBase$t(Node);
+const createBase$u = (ctor) => JSDocableNode(ExpressionedNode(TextInsertableNode(StatementedNode(ctor))));
+const CaseClauseBase = createBase$u(Node);
 class CaseClause extends CaseClauseBase {
     remove() {
         removeClausedNodeChild(this);
@@ -11566,8 +11566,8 @@ const DebuggerStatementBase = Statement;
 class DebuggerStatement extends DebuggerStatementBase {
 }
 
-const createBase$s = (ctor) => TextInsertableNode(StatementedNode(ctor));
-const DefaultClauseBase = createBase$s(Node);
+const createBase$t = (ctor) => TextInsertableNode(StatementedNode(ctor));
+const DefaultClauseBase = createBase$t(Node);
 class DefaultClause extends DefaultClauseBase {
     remove() {
         removeClausedNodeChild(this);
@@ -12636,8 +12636,8 @@ function getErrorWhenNamespaceImportsExist() {
     return new errors.InvalidOperationError("Cannot add a named import to an import declaration that has a namespace import.");
 }
 
-const createBase$r = (ctor) => ExportableNode(ModifierableNode(JSDocableNode(NamedNode(ctor))));
-const ImportEqualsDeclarationBase = createBase$r(Statement);
+const createBase$s = (ctor) => ExportableNode(ModifierableNode(JSDocableNode(NamedNode(ctor))));
+const ImportEqualsDeclarationBase = createBase$s(Statement);
 class ImportEqualsDeclaration extends ImportEqualsDeclarationBase {
     isTypeOnly() {
         var _a;
@@ -12844,8 +12844,8 @@ var ModuleDeclarationKind;
     ModuleDeclarationKind["Global"] = "global";
 })(ModuleDeclarationKind || (ModuleDeclarationKind = {}));
 
-const createBase$q = (ctor) => ModuledNode(UnwrappableNode(TextInsertableNode(BodyableNode(ModuleChildableNode(StatementedNode(JSDocableNode(AmbientableNode(ExportableNode(ModifierableNode(ModuleNamedNode(ctor)))))))))));
-const ModuleDeclarationBase = createBase$q(Statement);
+const createBase$r = (ctor) => ModuledNode(UnwrappableNode(TextInsertableNode(BodyableNode(ModuleChildableNode(StatementedNode(JSDocableNode(AmbientableNode(ExportableNode(ModifierableNode(ModuleNamedNode(ctor)))))))))));
+const ModuleDeclarationBase = createBase$r(Statement);
 class ModuleDeclaration extends ModuleDeclarationBase {
     getName() {
         const nameNodesOrStringLit = this.getNameNodes();
@@ -13573,8 +13573,8 @@ function getReferencingNodeFromStringLiteral(literal) {
         return parent;
 }
 
-const createBase$p = (ctor) => ModuleChildableNode(JSDocableNode(AmbientableNode(ExportableNode(ModifierableNode(ctor)))));
-const VariableStatementBase = createBase$p(Statement);
+const createBase$q = (ctor) => ModuleChildableNode(JSDocableNode(AmbientableNode(ExportableNode(ModifierableNode(ctor)))));
+const VariableStatementBase = createBase$q(Statement);
 class VariableStatement extends VariableStatementBase {
     getDeclarationList() {
         return this._getNodeFromCompilerNode(this.compilerNode.declarationList);
@@ -13638,8 +13638,8 @@ function FunctionLikeDeclaration(Base) {
     return JSDocableNode(TypeParameteredNode(SignaturedDeclaration(StatementedNode(ModifierableNode(Base)))));
 }
 
-const createBase$o = (ctor) => TextInsertableNode(BodiedNode(AsyncableNode(FunctionLikeDeclaration(ctor))));
-const ArrowFunctionBase = createBase$o(Expression);
+const createBase$p = (ctor) => TextInsertableNode(BodiedNode(AsyncableNode(FunctionLikeDeclaration(ctor))));
+const ArrowFunctionBase = createBase$p(Expression);
 class ArrowFunction extends ArrowFunctionBase {
     getEqualsGreaterThan() {
         return this._getNodeFromCompilerNode(this.compilerNode.equalsGreaterThanToken);
@@ -13718,8 +13718,8 @@ function insertOverloads(opts) {
     return getRangeWithoutCommentsFromArray(parentSyntaxList.getChildren(), mainIndex, structures.length, opts.expectedSyntaxKind);
 }
 
-const createBase$n = (ctor) => UnwrappableNode(TextInsertableNode(OverloadableNode(BodyableNode(AsyncableNode(GeneratorableNode(AmbientableNode(ExportableNode(FunctionLikeDeclaration(ModuleChildableNode(NameableNode(ctor)))))))))));
-const FunctionDeclarationBase = createBase$n(Statement);
+const createBase$o = (ctor) => UnwrappableNode(TextInsertableNode(OverloadableNode(BodyableNode(AsyncableNode(GeneratorableNode(AmbientableNode(ExportableNode(FunctionLikeDeclaration(ModuleChildableNode(NameableNode(ctor)))))))))));
+const FunctionDeclarationBase = createBase$o(Statement);
 const createOverloadBase$2 = (ctor) => UnwrappableNode(TextInsertableNode(AsyncableNode(GeneratorableNode(SignaturedDeclaration(AmbientableNode(ModuleChildableNode(JSDocableNode(TypeParameteredNode(ExportableNode(ModifierableNode(ctor)))))))))));
 const FunctionDeclarationOverloadBase = createOverloadBase$2(Statement);
 class FunctionDeclaration extends FunctionDeclarationBase {
@@ -13785,13 +13785,13 @@ class FunctionDeclaration extends FunctionDeclarationBase {
     }
 }
 
-const createBase$m = (ctor) => JSDocableNode(TextInsertableNode(BodiedNode(AsyncableNode(GeneratorableNode(StatementedNode(TypeParameteredNode(SignaturedDeclaration(ModifierableNode(NameableNode(ctor))))))))));
-const FunctionExpressionBase = createBase$m(PrimaryExpression);
+const createBase$n = (ctor) => JSDocableNode(TextInsertableNode(BodiedNode(AsyncableNode(GeneratorableNode(StatementedNode(TypeParameteredNode(SignaturedDeclaration(ModifierableNode(NameableNode(ctor))))))))));
+const FunctionExpressionBase = createBase$n(PrimaryExpression);
 class FunctionExpression extends FunctionExpressionBase {
 }
 
-const createBase$l = (ctor) => OverrideableNode(QuestionTokenableNode(DecoratableNode(ScopeableNode(ReadonlyableNode(ModifierableNode(DotDotDotTokenableNode(TypedNode(InitializerExpressionableNode(BindingNamedNode(ctor))))))))));
-const ParameterDeclarationBase = createBase$l(Node);
+const createBase$m = (ctor) => OverrideableNode(QuestionTokenableNode(DecoratableNode(ScopeableNode(ReadonlyableNode(ModifierableNode(DotDotDotTokenableNode(TypedNode(InitializerExpressionableNode(BindingNamedNode(ctor))))))))));
+const ParameterDeclarationBase = createBase$m(Node);
 class ParameterDeclaration extends ParameterDeclarationBase {
     isRestParameter() {
         return this.compilerNode.dotDotDotToken != null;
@@ -13887,8 +13887,8 @@ class ClassElement extends Node {
     }
 }
 
-const createBase$k = (ctor) => ChildOrderableNode(TextInsertableNode(OverrideableNode(OverloadableNode(BodyableNode(DecoratableNode(AbstractableNode(ScopedNode(QuestionTokenableNode(StaticableNode(AsyncableNode(GeneratorableNode(FunctionLikeDeclaration(PropertyNamedNode(ctor))))))))))))));
-const MethodDeclarationBase = createBase$k(ClassElement);
+const createBase$l = (ctor) => ChildOrderableNode(TextInsertableNode(OverrideableNode(OverloadableNode(BodyableNode(DecoratableNode(AbstractableNode(ScopedNode(QuestionTokenableNode(StaticableNode(AsyncableNode(GeneratorableNode(FunctionLikeDeclaration(PropertyNamedNode(ctor))))))))))))));
+const MethodDeclarationBase = createBase$l(ClassElement);
 const createOverloadBase$1 = (ctor) => JSDocableNode(ChildOrderableNode(TextInsertableNode(OverrideableNode(ScopedNode(TypeParameteredNode(AbstractableNode(QuestionTokenableNode(StaticableNode(AsyncableNode(ModifierableNode(GeneratorableNode(SignaturedDeclaration(ctor)))))))))))));
 const MethodDeclarationOverloadBase = createOverloadBase$1(ClassElement);
 class MethodDeclaration extends MethodDeclarationBase {
@@ -14446,8 +14446,8 @@ function insertChildren(classDeclaration, opts) {
     });
 }
 
-const createBase$j = (ctor) => ModuleChildableNode(AmbientableNode(ExportableNode(ClassLikeDeclarationBase(ctor))));
-const ClassDeclarationBase = createBase$j(Statement);
+const createBase$k = (ctor) => ModuleChildableNode(AmbientableNode(ExportableNode(ClassLikeDeclarationBase(ctor))));
+const ClassDeclarationBase = createBase$k(Statement);
 class ClassDeclaration extends ClassDeclarationBase {
     set(structure) {
         callBaseSet(ClassDeclarationBase.prototype, this, structure);
@@ -14606,8 +14606,8 @@ const ClassExpressionBase = ClassLikeDeclarationBase(PrimaryExpression);
 class ClassExpression extends ClassExpressionBase {
 }
 
-const createBase$i = (ctor) => ChildOrderableNode(TextInsertableNode(StatementedNode(JSDocableNode(BodiedNode(ctor)))));
-const ClassStaticBlockDeclarationBase = createBase$i(ClassElement);
+const createBase$j = (ctor) => ChildOrderableNode(TextInsertableNode(StatementedNode(JSDocableNode(BodiedNode(ctor)))));
+const ClassStaticBlockDeclarationBase = createBase$j(ClassElement);
 class ClassStaticBlockDeclaration extends ClassStaticBlockDeclarationBase {
     getName() {
         return "static";
@@ -14629,8 +14629,8 @@ class ClassStaticBlockDeclaration extends ClassStaticBlockDeclarationBase {
 class CommentClassElement extends ClassElement {
 }
 
-const createBase$h = (ctor) => ReferenceFindableNode(ChildOrderableNode(TextInsertableNode(OverloadableNode(ScopedNode(FunctionLikeDeclaration(BodyableNode(ctor)))))));
-const ConstructorDeclarationBase = createBase$h(ClassElement);
+const createBase$i = (ctor) => ReferenceFindableNode(ChildOrderableNode(TextInsertableNode(OverloadableNode(ScopedNode(FunctionLikeDeclaration(BodyableNode(ctor)))))));
+const ConstructorDeclarationBase = createBase$i(ClassElement);
 const createOverloadBase = (ctor) => TypeParameteredNode(JSDocableNode(ChildOrderableNode(TextInsertableNode(ScopedNode(ModifierableNode(SignaturedDeclaration(ctor)))))));
 const ConstructorDeclarationOverloadBase = createOverloadBase(ClassElement);
 class ConstructorDeclaration extends ConstructorDeclarationBase {
@@ -14692,8 +14692,8 @@ class ConstructorDeclaration extends ConstructorDeclarationBase {
     }
 }
 
-const createBase$g = (ctor) => ChildOrderableNode(TextInsertableNode(DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(FunctionLikeDeclaration(BodyableNode(PropertyNamedNode(ctor)))))))));
-const GetAccessorDeclarationBase = createBase$g(ClassElement);
+const createBase$h = (ctor) => ChildOrderableNode(TextInsertableNode(DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(FunctionLikeDeclaration(BodyableNode(PropertyNamedNode(ctor)))))))));
+const GetAccessorDeclarationBase = createBase$h(ClassElement);
 class GetAccessorDeclaration extends GetAccessorDeclarationBase {
     set(structure) {
         callBaseSet(GetAccessorDeclarationBase.prototype, this, structure);
@@ -14718,8 +14718,8 @@ class GetAccessorDeclaration extends GetAccessorDeclarationBase {
     }
 }
 
-const createBase$f = (ctor) => ChildOrderableNode(OverrideableNode(AmbientableNode(DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(JSDocableNode(ReadonlyableNode(ExclamationTokenableNode(QuestionTokenableNode(InitializerExpressionableNode(TypedNode(PropertyNamedNode(ModifierableNode(ctor)))))))))))))));
-const PropertyDeclarationBase = createBase$f(ClassElement);
+const createBase$g = (ctor) => ChildOrderableNode(OverrideableNode(AmbientableNode(DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(JSDocableNode(ReadonlyableNode(ExclamationTokenableNode(QuestionTokenableNode(InitializerExpressionableNode(TypedNode(PropertyNamedNode(ModifierableNode(ctor)))))))))))))));
+const PropertyDeclarationBase = createBase$g(ClassElement);
 class PropertyDeclaration extends PropertyDeclarationBase {
     hasAccessorKeyword() {
         return this.hasModifier(SyntaxKind.AccessorKeyword);
@@ -14751,8 +14751,8 @@ class PropertyDeclaration extends PropertyDeclarationBase {
     }
 }
 
-const createBase$e = (ctor) => ChildOrderableNode(TextInsertableNode(DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(FunctionLikeDeclaration(BodyableNode(PropertyNamedNode(ctor)))))))));
-const SetAccessorDeclarationBase = createBase$e(ClassElement);
+const createBase$f = (ctor) => ChildOrderableNode(TextInsertableNode(DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(FunctionLikeDeclaration(BodyableNode(PropertyNamedNode(ctor)))))))));
+const SetAccessorDeclarationBase = createBase$f(ClassElement);
 class SetAccessorDeclaration extends SetAccessorDeclarationBase {
     set(structure) {
         callBaseSet(SetAccessorDeclarationBase.prototype, this, structure);
@@ -15323,8 +15323,8 @@ class MappedTypeNode extends TypeNode {
     }
 }
 
-const createBase$d = (ctor) => TypedNode(QuestionTokenableNode(DotDotDotTokenableNode(JSDocableNode(NamedNode(ctor)))));
-const NamedTupleMemberBase = createBase$d(TypeNode);
+const createBase$e = (ctor) => TypedNode(QuestionTokenableNode(DotDotDotTokenableNode(JSDocableNode(NamedNode(ctor)))));
+const NamedTupleMemberBase = createBase$e(TypeNode);
 class NamedTupleMember extends NamedTupleMemberBase {
     getTypeNode() {
         return super.getTypeNode();
@@ -15374,8 +15374,8 @@ class TupleTypeNode extends TypeNode {
     }
 }
 
-const createBase$c = (ctor) => TypeParameteredNode(TypedNode(JSDocableNode(AmbientableNode(ExportableNode(ModifierableNode(NamedNode(ctor)))))));
-const TypeAliasDeclarationBase = createBase$c(Statement);
+const createBase$d = (ctor) => TypeParameteredNode(TypedNode(JSDocableNode(AmbientableNode(ExportableNode(ModifierableNode(NamedNode(ctor)))))));
+const TypeAliasDeclarationBase = createBase$d(Statement);
 class TypeAliasDeclaration extends TypeAliasDeclarationBase {
     set(structure) {
         callBaseSet(TypeAliasDeclarationBase.prototype, this, structure);
@@ -15409,7 +15409,8 @@ var TypeParameterVariance;
     TypeParameterVariance[TypeParameterVariance["Out"] = 2] = "Out";
     TypeParameterVariance[TypeParameterVariance["InOut"] = 3] = "InOut";
 })(TypeParameterVariance || (TypeParameterVariance = {}));
-const TypeParameterDeclarationBase = ModifierableNode(NamedNode(Node));
+const createBase$c = (ctor) => ModifierableNode(NamedNode(ctor));
+const TypeParameterDeclarationBase = createBase$c(Node);
 class TypeParameterDeclaration extends TypeParameterDeclarationBase {
     getConstraint() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.constraint);
