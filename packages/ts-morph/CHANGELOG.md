@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="17.0.0"></a>
+# [17.0.0](https://github.com/dsherret/ts-morph/compare/16.0.0...17.0.0) (2022-11-19)
+
+
+### Bug Fixes
+
+* getOverloads for a class method should take into account if static ([#1337](https://github.com/dsherret/ts-morph/issues/1337)) ([f927d01](https://github.com/dsherret/ts-morph/commit/f927d01)), closes [#1298](https://github.com/dsherret/ts-morph/issues/1298)
+* ImportEqualsDeclaration should be exportable ([#1336](https://github.com/dsherret/ts-morph/issues/1336)) ([7680bae](https://github.com/dsherret/ts-morph/commit/7680bae))
+* named import/export specifier structures were missing isTypeOnly ([#1347](https://github.com/dsherret/ts-morph/issues/1347)) ([6b88a0b](https://github.com/dsherret/ts-morph/commit/6b88a0b))
+
+
+### Features
+
+* allow providing custom error messages to `OrThrow` methods ([#1327](https://github.com/dsherret/ts-morph/issues/1327)) ([05916d3](https://github.com/dsherret/ts-morph/commit/05916d3)) - Thanks [@jantimon](https://github.com/jantimon)!
+* upgrade to TS 4.9 ([#1354](https://github.com/dsherret/ts-morph/issues/1354)) ([e334437](https://github.com/dsherret/ts-morph/commit/e334437))
+
+### BREAKING CHANGES
+
+- Upgraded to TS 4.9
+
+
 <a name="16.0.0"></a>
 # [16.0.0](https://github.com/dsherret/ts-morph/compare/15.1.0...16.0.0) (2022-09-03)
 
