@@ -1608,6 +1608,7 @@ class MyClass {
           if (result)
             return result;
         }
+        return undefined;
       });
       expect(foundKinds).to.deep.equal(expectedKinds);
       expect(returnValue).to.deep.equal(expectedReturnValue);
@@ -1704,6 +1705,7 @@ class MyClass {
           if (result)
             return result;
         }
+        return undefined;
       }, (childArray, traversal) => {
         foundArrayKinds.push(childArray.map(c => c.getKind()));
         if (arrayCallback) {
@@ -1711,6 +1713,7 @@ class MyClass {
           if (result)
             return result;
         }
+        return undefined;
       });
 
       expect(foundNodeKinds).to.deep.equal(expectedNodeKinds);

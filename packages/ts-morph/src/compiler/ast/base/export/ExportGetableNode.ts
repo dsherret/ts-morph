@@ -50,7 +50,7 @@ export function ExportGetableNode<T extends Constructor<ExportGetableNodeExtensi
       return this.getExportKeyword() != null;
     }
 
-    getExportKeyword() {
+    getExportKeyword(): Node | undefined {
       if (Node.isVariableDeclaration(this)) {
         const variableStatement = this.getVariableStatement();
         return variableStatement?.getExportKeyword();
@@ -68,7 +68,7 @@ export function ExportGetableNode<T extends Constructor<ExportGetableNodeExtensi
       return this.getDefaultKeyword() != null;
     }
 
-    getDefaultKeyword() {
+    getDefaultKeyword(): Node | undefined {
       if (Node.isVariableDeclaration(this)) {
         const variableStatement = this.getVariableStatement();
         return variableStatement?.getDefaultKeyword();

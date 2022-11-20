@@ -132,7 +132,7 @@ export interface ResolutionHost {
  * Factory used to create a resolution host.
  * @remarks The compiler options are retrieved via a function in order to get the project's current compiler options.
  */
-export declare type ResolutionHostFactory = (moduleResolutionHost: ts.ModuleResolutionHost, getCompilerOptions: () => ts.CompilerOptions) => ResolutionHost;
+export type ResolutionHostFactory = (moduleResolutionHost: ts.ModuleResolutionHost, getCompilerOptions: () => ts.CompilerOptions) => ResolutionHost;
 /** Collection of reusable resolution hosts. */
 export declare const ResolutionHosts: {
       deno: ResolutionHostFactory;
@@ -757,9 +757,9 @@ export interface SourceFileCreateOptions {
   scriptKind?: ScriptKind;
 }
 
-export declare type Constructor<T> = new (...args: any[]) => T;
-export declare type InstanceOf<T> = T extends new (...args: any[]) => infer U ? U : never;
-export declare type WriterFunction = (writer: CodeBlockWriter) => void;
+export type Constructor<T> = new (...args: any[]) => T;
+export type InstanceOf<T> = T extends new (...args: any[]) => infer U ? U : never;
+export type WriterFunction = (writer: CodeBlockWriter) => void;
 /**
  * Creates a wrapped node from a compiler node.
  * @param node - Node to create a wrapped node from.
@@ -822,7 +822,7 @@ export interface PrintNodeOptions {
   scriptKind?: ScriptKind;
 }
 
-export declare type SourceFileReferencingNodes = ImportDeclaration | ExportDeclaration | ImportEqualsDeclaration | CallExpression;
+export type SourceFileReferencingNodes = ImportDeclaration | ExportDeclaration | ImportEqualsDeclaration | CallExpression;
 
 export interface CompilerOptionsFromTsConfigOptions {
   encoding?: string;
@@ -866,44 +866,44 @@ export declare class Writers {
   static returnStatement(value: WriterFunctionOrValue): WriterFunction;
 }
 
-export declare type WriterFunctionOrValue = string | number | WriterFunction;
-export declare type AssertionKey = Identifier | StringLiteral;
-export declare type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName | PrivateIdentifier;
-export declare type ModuleName = Identifier | StringLiteral;
-export declare type AccessorDeclaration = GetAccessorDeclaration | SetAccessorDeclaration;
-export declare type ArrayBindingElement = BindingElement | OmittedExpression;
-export declare type BindingName = Identifier | BindingPattern;
-export declare type BindingPattern = ObjectBindingPattern | ArrayBindingPattern;
-export declare type BooleanLiteral = TrueLiteral | FalseLiteral;
-export declare type CallLikeExpression = CallExpression | NewExpression | TaggedTemplateExpression | Decorator | JsxOpeningLikeElement;
-export declare type EntityNameExpression = Identifier | PropertyAccessExpression;
-export declare type DeclarationName = Identifier | PrivateIdentifier | StringLiteralLike | NumericLiteral | ComputedPropertyName | ElementAccessExpression | BindingPattern | EntityNameExpression;
-export declare type EntityName = Identifier | QualifiedName;
-export declare type JsxChild = JsxText | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment;
-export declare type JsxAttributeLike = JsxAttribute | JsxSpreadAttribute;
-export declare type JsxOpeningLikeElement = JsxSelfClosingElement | JsxOpeningElement;
-export declare type JsxTagNameExpression = Identifier | ThisExpression | JsxTagNamePropertyAccess;
+export type WriterFunctionOrValue = string | number | WriterFunction;
+export type AssertionKey = Identifier | StringLiteral;
+export type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName | PrivateIdentifier;
+export type ModuleName = Identifier | StringLiteral;
+export type AccessorDeclaration = GetAccessorDeclaration | SetAccessorDeclaration;
+export type ArrayBindingElement = BindingElement | OmittedExpression;
+export type BindingName = Identifier | BindingPattern;
+export type BindingPattern = ObjectBindingPattern | ArrayBindingPattern;
+export type BooleanLiteral = TrueLiteral | FalseLiteral;
+export type CallLikeExpression = CallExpression | NewExpression | TaggedTemplateExpression | Decorator | JsxOpeningLikeElement;
+export type EntityNameExpression = Identifier | PropertyAccessExpression;
+export type DeclarationName = Identifier | PrivateIdentifier | StringLiteralLike | NumericLiteral | ComputedPropertyName | ElementAccessExpression | BindingPattern | EntityNameExpression;
+export type EntityName = Identifier | QualifiedName;
+export type JsxChild = JsxText | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment;
+export type JsxAttributeLike = JsxAttribute | JsxSpreadAttribute;
+export type JsxOpeningLikeElement = JsxSelfClosingElement | JsxOpeningElement;
+export type JsxTagNameExpression = Identifier | ThisExpression | JsxTagNamePropertyAccess;
 
 export interface JsxTagNamePropertyAccess extends PropertyAccessExpression {
   getExpression(): JsxTagNameExpression;
 }
 
-export declare type ObjectLiteralElementLike = PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment | MethodDeclaration | AccessorDeclaration;
-export declare type CaseOrDefaultClause = CaseClause | DefaultClause;
-export declare type ModuleReference = EntityName | ExternalModuleReference;
-export declare type StringLiteralLike = StringLiteral | NoSubstitutionTemplateLiteral;
-export declare type TypeElementTypes = PropertySignature | MethodSignature | ConstructSignatureDeclaration | CallSignatureDeclaration | IndexSignatureDeclaration;
-export declare type TemplateLiteral = TemplateExpression | NoSubstitutionTemplateLiteral;
+export type ObjectLiteralElementLike = PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment | MethodDeclaration | AccessorDeclaration;
+export type CaseOrDefaultClause = CaseClause | DefaultClause;
+export type ModuleReference = EntityName | ExternalModuleReference;
+export type StringLiteralLike = StringLiteral | NoSubstitutionTemplateLiteral;
+export type TypeElementTypes = PropertySignature | MethodSignature | ConstructSignatureDeclaration | CallSignatureDeclaration | IndexSignatureDeclaration;
+export type TemplateLiteral = TemplateExpression | NoSubstitutionTemplateLiteral;
 /**
  * Local target declarations.
  * @remarks This may be missing some types. Please open an issue if this returns a type not listed here.
  */
-export declare type LocalTargetDeclarations = SourceFile | ClassDeclaration | InterfaceDeclaration | EnumDeclaration | FunctionDeclaration | VariableDeclaration | TypeAliasDeclaration | ModuleDeclaration | ExportAssignment;
+export type LocalTargetDeclarations = SourceFile | ClassDeclaration | InterfaceDeclaration | EnumDeclaration | FunctionDeclaration | VariableDeclaration | TypeAliasDeclaration | ModuleDeclaration | ExportAssignment;
 /**
  * Declarations that can be exported from a module.
  * @remarks This may be missing some types. Please open an issue if this returns a type not listed here.
  */
-export declare type ExportedDeclarations = ClassDeclaration | InterfaceDeclaration | EnumDeclaration | FunctionDeclaration | VariableDeclaration | TypeAliasDeclaration | ModuleDeclaration | Expression | SourceFile;
+export type ExportedDeclarations = ClassDeclaration | InterfaceDeclaration | EnumDeclaration | FunctionDeclaration | VariableDeclaration | TypeAliasDeclaration | ModuleDeclaration | Expression | SourceFile;
 export declare function AmbientableNode<T extends Constructor<AmbientableNodeExtensionType>>(Base: T): Constructor<AmbientableNode> & T;
 
 export interface AmbientableNode {
@@ -922,7 +922,7 @@ export interface AmbientableNode {
   setHasDeclareKeyword(value?: boolean): this;
 }
 
-declare type AmbientableNodeExtensionType = Node & ModifierableNode;
+type AmbientableNodeExtensionType = Node & ModifierableNode;
 export declare function ArgumentedNode<T extends Constructor<ArgumentedNodeExtensionType>>(Base: T): Constructor<ArgumentedNode> & T;
 
 export interface ArgumentedNode {
@@ -962,7 +962,7 @@ export interface ArgumentedNode {
   removeArgument(index: number): this;
 }
 
-declare type ArgumentedNodeExtensionType = Node<ts.Node & {
+type ArgumentedNodeExtensionType = Node<ts.Node & {
       arguments?: ts.NodeArray<ts.Node>;
   }>;
 export declare function AsyncableNode<T extends Constructor<AsyncableNodeExtensionType>>(Base: T): Constructor<AsyncableNode> & T;
@@ -981,7 +981,7 @@ export interface AsyncableNode {
   setIsAsync(value: boolean): this;
 }
 
-declare type AsyncableNodeExtensionType = Node & ModifierableNode;
+type AsyncableNodeExtensionType = Node & ModifierableNode;
 export declare function AwaitableNode<T extends Constructor<AwaitableNodeExtensionType>>(Base: T): Constructor<AwaitableNode> & T;
 
 export interface AwaitableNode {
@@ -998,7 +998,7 @@ export interface AwaitableNode {
   setIsAwaited(value: boolean): this;
 }
 
-declare type AwaitableNodeExtensionType = Node<ts.Node & {
+type AwaitableNodeExtensionType = Node<ts.Node & {
       awaitModifier?: ts.AwaitKeywordToken;
   }>;
 export declare function BodiedNode<T extends Constructor<BodiedNodeExtensionType>>(Base: T): Constructor<BodiedNode> & T;
@@ -1015,7 +1015,7 @@ export interface BodiedNode {
   getBodyText(): string;
 }
 
-declare type BodiedNodeExtensionType = Node<ts.Node & {
+type BodiedNodeExtensionType = Node<ts.Node & {
       body: ts.Node;
   }>;
 export declare function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(Base: T): Constructor<BodyableNode> & T;
@@ -1040,7 +1040,7 @@ export interface BodyableNode {
   removeBody(): this;
 }
 
-declare type BodyableNodeExtensionType = Node<ts.Node & {
+type BodyableNodeExtensionType = Node<ts.Node & {
       body?: ts.Node;
   }>;
 export declare function ChildOrderableNode<T extends Constructor<ChildOrderableNodeExtensionType>>(Base: T): Constructor<ChildOrderableNode> & T;
@@ -1050,7 +1050,7 @@ export interface ChildOrderableNode {
   setOrder(order: number): this;
 }
 
-declare type ChildOrderableNodeExtensionType = Node;
+type ChildOrderableNodeExtensionType = Node;
 export declare function DecoratableNode<T extends Constructor<DecoratableNodeExtensionType>>(Base: T): Constructor<DecoratableNode> & T;
 
 export interface DecoratableNode {
@@ -1100,7 +1100,7 @@ export interface DecoratableNode {
   insertDecorators(index: number, structures: ReadonlyArray<OptionalKind<DecoratorStructure>>): Decorator[];
 }
 
-declare type DecoratableNodeExtensionType = Node<ts.Node> & ModifierableNode;
+type DecoratableNodeExtensionType = Node<ts.Node> & ModifierableNode;
 export declare function DotDotDotTokenableNode<T extends Constructor<DotDotDotTokenableNodeExtensionType>>(Base: T): Constructor<DotDotDotTokenableNode> & T;
 
 export interface DotDotDotTokenableNode {
@@ -1110,7 +1110,7 @@ export interface DotDotDotTokenableNode {
   getDotDotDotTokenOrThrow(message?: string | (() => string)): Node<ts.DotDotDotToken>;
 }
 
-declare type DotDotDotTokenableNodeExtensionType = Node<ts.Node & {
+type DotDotDotTokenableNodeExtensionType = Node<ts.Node & {
       dotDotDotToken?: ts.DotDotDotToken;
   }>;
 export declare function ExclamationTokenableNode<T extends Constructor<ExclamationTokenableNodeExtensionType>>(Base: T): Constructor<ExclamationTokenableNode> & T;
@@ -1129,7 +1129,7 @@ export interface ExclamationTokenableNode {
   setHasExclamationToken(value: boolean): this;
 }
 
-declare type ExclamationTokenableNodeExtensionType = Node<ts.Node & {
+type ExclamationTokenableNodeExtensionType = Node<ts.Node & {
       exclamationToken?: ts.ExclamationToken;
   }>;
 export declare function ExportableNode<T extends Constructor<ExportableNodeExtensionType>>(Base: T): Constructor<ExportableNode> & T;
@@ -1149,7 +1149,7 @@ export interface ExportableNode extends ExportGetableNode {
   setIsExported(value: boolean): this;
 }
 
-declare type ExportableNodeExtensionType = Node & ModifierableNode;
+type ExportableNodeExtensionType = Node & ModifierableNode;
 export declare function ExportGetableNode<T extends Constructor<ExportGetableNodeExtensionType>>(Base: T): Constructor<ExportGetableNode> & T;
 
 export interface ExportGetableNode {
@@ -1173,7 +1173,7 @@ export interface ExportGetableNode {
   isNamedExport(): boolean;
 }
 
-declare type ExportGetableNodeExtensionType = Node;
+type ExportGetableNodeExtensionType = Node;
 export declare function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNodeExtensionType>>(Base: T): Constructor<ExtendsClauseableNode> & T;
 
 export interface ExtendsClauseableNode {
@@ -1211,7 +1211,7 @@ export interface ExtendsClauseableNode {
   removeExtends(extendsNode: ExpressionWithTypeArguments): this;
 }
 
-declare type ExtendsClauseableNodeExtensionType = Node & HeritageClauseableNode;
+type ExtendsClauseableNodeExtensionType = Node & HeritageClauseableNode;
 export declare function GeneratorableNode<T extends Constructor<GeneratorableNodeExtensionType>>(Base: T): Constructor<GeneratorableNode> & T;
 
 export interface GeneratorableNode {
@@ -1228,7 +1228,7 @@ export interface GeneratorableNode {
   setIsGenerator(value: boolean): this;
 }
 
-declare type GeneratorableNodeExtensionType = Node<ts.Node & {
+type GeneratorableNodeExtensionType = Node<ts.Node & {
       asteriskToken?: ts.AsteriskToken;
   }>;
 export declare function HeritageClauseableNode<T extends Constructor<HeritageClauseableNodeExtensionType>>(Base: T): Constructor<HeritageClauseableNode> & T;
@@ -1248,7 +1248,7 @@ export interface HeritageClauseableNode {
   getHeritageClauseByKindOrThrow(kind: SyntaxKind.ExtendsKeyword | SyntaxKind.ImplementsKeyword): HeritageClause;
 }
 
-declare type HeritageClauseableNodeExtensionType = Node<ts.Node & {
+type HeritageClauseableNodeExtensionType = Node<ts.Node & {
       heritageClauses?: ts.NodeArray<ts.HeritageClause>;
   }>;
 export declare function ImplementsClauseableNode<T extends Constructor<ImplementsClauseableNodeExtensionType>>(Base: T): Constructor<ImplementsClauseableNode> & T;
@@ -1288,7 +1288,7 @@ export interface ImplementsClauseableNode {
   removeImplements(implementsNode: ExpressionWithTypeArguments): this;
 }
 
-declare type ImplementsClauseableNodeExtensionType = Node & HeritageClauseableNode;
+type ImplementsClauseableNodeExtensionType = Node & HeritageClauseableNode;
 export declare function InitializerExpressionableNode<T extends Constructor<InitializerExpressionableNodeExtensionType>>(Base: T): Constructor<InitializerExpressionableNode> & T;
 
 export interface InitializerExpressionableNode extends InitializerExpressionGetableNode {
@@ -1301,7 +1301,7 @@ export interface InitializerExpressionableNode extends InitializerExpressionGeta
   setInitializer(textOrWriterFunction: string | WriterFunction): this;
 }
 
-declare type InitializerExpressionableNodeExtensionType = Node<ts.Node & {
+type InitializerExpressionableNodeExtensionType = Node<ts.Node & {
       initializer?: ts.Expression;
   }>;
 export declare function InitializerExpressionGetableNode<T extends Constructor<InitializerExpressionGetableNodeExtensionType>>(Base: T): Constructor<InitializerExpressionGetableNode> & T;
@@ -1319,7 +1319,7 @@ export interface InitializerExpressionGetableNode {
   getInitializerOrThrow(message?: string | (() => string)): Expression;
 }
 
-declare type InitializerExpressionGetableNodeExtensionType = Node<ts.Node & {
+type InitializerExpressionGetableNodeExtensionType = Node<ts.Node & {
       initializer?: ts.Expression;
   }>;
 export declare function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>(Base: T): Constructor<JSDocableNode> & T;
@@ -1351,7 +1351,7 @@ export interface JSDocableNode {
   insertJsDocs(index: number, structures: ReadonlyArray<OptionalKind<JSDocStructure> | string | WriterFunction>): JSDoc[];
 }
 
-declare type JSDocableNodeExtensionType = Node<ts.Node & {
+type JSDocableNodeExtensionType = Node<ts.Node & {
       jsDoc?: ts.NodeArray<ts.JSDoc>;
   }>;
 export declare function LiteralLikeNode<T extends Constructor<LiteralLikeNodeExtensionType>>(Base: T): Constructor<LiteralLikeNode> & T;
@@ -1365,7 +1365,7 @@ export interface LiteralLikeNode {
   hasExtendedUnicodeEscape(): boolean;
 }
 
-declare type LiteralLikeNodeExtensionType = Node<ts.LiteralLikeNode>;
+type LiteralLikeNodeExtensionType = Node<ts.LiteralLikeNode>;
 export declare function ModifierableNode<T extends Constructor<ModifierableNodeExtensionType>>(Base: T): Constructor<ModifierableNode> & T;
 
 export interface ModifierableNode {
@@ -1399,8 +1399,8 @@ export interface ModifierableNode {
   toggleModifier(text: ModifierTexts, value?: boolean): this;
 }
 
-declare type ModifierableNodeExtensionType = Node;
-export declare type ModifierTexts = "export" | "default" | "declare" | "abstract" | "public" | "protected" | "private" | "readonly" | "static" | "async" | "const" | "override" | "in" | "out" | "accessor";
+type ModifierableNodeExtensionType = Node;
+export type ModifierTexts = "export" | "default" | "declare" | "abstract" | "public" | "protected" | "private" | "readonly" | "static" | "async" | "const" | "override" | "in" | "out" | "accessor";
 export declare function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Base: T): Constructor<ModuledNode> & T;
 
 export interface ModuledNode {
@@ -1541,34 +1541,34 @@ export interface ModuledNode {
   removeDefaultExport(defaultExportSymbol?: Symbol | undefined): this;
 }
 
-declare type ModuledNodeExtensionType = Node<ts.SourceFile | ts.ModuleDeclaration> & StatementedNode;
+type ModuledNodeExtensionType = Node<ts.SourceFile | ts.ModuleDeclaration> & StatementedNode;
 export declare function AssertionKeyNamedNode<T extends Constructor<AssertionKeyNamedNodeExtensionType>>(Base: T): Constructor<AssertionKeyNamedNode> & T;
 
 export interface AssertionKeyNamedNode extends AssertionKeyNamedNodeSpecific, ReferenceFindableNode, RenameableNode {
 }
 
-declare type AssertionKeyNamedNodeExtensionType = NamedNodeBaseExtensionType<ts.AssertionKey>;
-export declare type AssertionKeyNamedNodeSpecific = NamedNodeSpecificBase<AssertionKey>;
+type AssertionKeyNamedNodeExtensionType = NamedNodeBaseExtensionType<ts.AssertionKey>;
+export type AssertionKeyNamedNodeSpecific = NamedNodeSpecificBase<AssertionKey>;
 export declare function BindingNamedNode<T extends Constructor<BindingNamedNodeExtensionType>>(Base: T): Constructor<BindingNamedNode> & T;
 
 export interface BindingNamedNode extends BindingNamedNodeSpecific, ReferenceFindableNode, RenameableNode {
 }
 
-declare type BindingNamedNodeExtensionType = NamedNodeBaseExtensionType<ts.BindingName>;
-export declare type BindingNamedNodeSpecific = NamedNodeSpecificBase<BindingName>;
+type BindingNamedNodeExtensionType = NamedNodeBaseExtensionType<ts.BindingName>;
+export type BindingNamedNodeSpecific = NamedNodeSpecificBase<BindingName>;
 export declare function ModuleNamedNode<T extends Constructor<ModuleNamedNodeExtensionType>>(Base: T): Constructor<ModuleNamedNode> & T;
 
 export interface ModuleNamedNode extends ModuleNamedNodeSpecific, ReferenceFindableNode, RenameableNode {
 }
 
-declare type ModuleNamedNodeExtensionType = NamedNodeBaseExtensionType<ts.ModuleName>;
-export declare type ModuleNamedNodeSpecific = NamedNodeSpecificBase<ModuleName>;
+type ModuleNamedNodeExtensionType = NamedNodeBaseExtensionType<ts.ModuleName>;
+export type ModuleNamedNodeSpecific = NamedNodeSpecificBase<ModuleName>;
 export declare function NameableNode<T extends Constructor<NameableNodeExtensionType>>(Base: T): Constructor<NameableNode> & T;
 
 export interface NameableNode extends NameableNodeSpecific, ReferenceFindableNode, RenameableNode {
 }
 
-declare type NameableNodeExtensionType = Node<ts.Node & {
+type NameableNodeExtensionType = Node<ts.Node & {
       name?: ts.Identifier;
   }>;
 
@@ -1590,8 +1590,8 @@ export declare function NamedNode<T extends Constructor<NamedNodeExtensionType>>
 export interface NamedNode extends NamedNodeSpecific, ReferenceFindableNode, RenameableNode {
 }
 
-declare type NamedNodeExtensionType = NamedNodeBaseExtensionType<ts.Identifier>;
-export declare type NamedNodeSpecific = NamedNodeSpecificBase<Identifier>;
+type NamedNodeExtensionType = NamedNodeBaseExtensionType<ts.Identifier>;
+export type NamedNodeSpecific = NamedNodeSpecificBase<Identifier>;
 export declare function NamedNodeBase<TCompilerNode extends ts.Node, U extends Constructor<NamedNodeBaseExtensionType<TCompilerNode>>>(Base: U): Constructor<NamedNodeSpecificBase<CompilerNodeToWrappedType<TCompilerNode>>> & U;
 
 export interface NamedNodeSpecificBase<TNode extends Node> {
@@ -1601,7 +1601,7 @@ export interface NamedNodeSpecificBase<TNode extends Node> {
   getName(): string;
 }
 
-declare type NamedNodeBaseExtensionType<TCompilerNode extends ts.Node> = Node<ts.Node & {
+type NamedNodeBaseExtensionType<TCompilerNode extends ts.Node> = Node<ts.Node & {
       name: TCompilerNode;
   }>;
 export declare function PropertyNamedNode<T extends Constructor<PropertyNamedNodeExtensionType>>(Base: T): Constructor<PropertyNamedNode> & T;
@@ -1609,8 +1609,8 @@ export declare function PropertyNamedNode<T extends Constructor<PropertyNamedNod
 export interface PropertyNamedNode extends PropertyNamedNodeSpecific, ReferenceFindableNode, RenameableNode {
 }
 
-declare type PropertyNamedNodeExtensionType = NamedNodeBaseExtensionType<ts.PropertyName>;
-export declare type PropertyNamedNodeSpecific = NamedNodeSpecificBase<PropertyName>;
+type PropertyNamedNodeExtensionType = NamedNodeBaseExtensionType<ts.PropertyName>;
+export type PropertyNamedNodeSpecific = NamedNodeSpecificBase<PropertyName>;
 export declare function ReferenceFindableNode<T extends Constructor<ReferenceFindableNodeExtensionType>>(Base: T): Constructor<ReferenceFindableNode> & T;
 
 export interface ReferenceFindableNode {
@@ -1620,7 +1620,7 @@ export interface ReferenceFindableNode {
   findReferencesAsNodes(): Node[];
 }
 
-declare type ReferenceFindableNodeExtensionType = Node<ts.Node & {
+type ReferenceFindableNodeExtensionType = Node<ts.Node & {
       name?: ts.PropertyName | ts.BindingName | ts.DeclarationName | ts.StringLiteral;
   }>;
 export declare function RenameableNode<T extends Constructor<RenameableNodeExtensionType>>(Base: T): Constructor<RenameableNode> & T;
@@ -1634,7 +1634,7 @@ export interface RenameableNode {
   rename(newName: string, options?: RenameOptions): this;
 }
 
-declare type RenameableNodeExtensionType = Node<ts.Node>;
+type RenameableNodeExtensionType = Node<ts.Node>;
 export declare function OverrideableNode<T extends Constructor<OverrideableNodeExtensionType>>(Base: T): Constructor<OverrideableNode> & T;
 
 export interface OverrideableNode {
@@ -1651,7 +1651,7 @@ export interface OverrideableNode {
   setHasOverrideKeyword(value: boolean): this;
 }
 
-declare type OverrideableNodeExtensionType = Node & ModifierableNode;
+type OverrideableNodeExtensionType = Node & ModifierableNode;
 export declare function ParameteredNode<T extends Constructor<ParameteredNodeExtensionType>>(Base: T): Constructor<ParameteredNode> & T;
 
 export interface ParameteredNode {
@@ -1701,7 +1701,7 @@ export interface ParameteredNode {
   insertParameter(index: number, structure: OptionalKind<ParameterDeclarationStructure>): ParameterDeclaration;
 }
 
-declare type ParameteredNodeExtensionType = Node<ts.Node & {
+type ParameteredNodeExtensionType = Node<ts.Node & {
       parameters: ts.NodeArray<ts.ParameterDeclaration>;
   }>;
 export declare function QuestionDotTokenableNode<T extends Constructor<QuestionDotTokenableNodeExtensionType>>(Base: T): Constructor<QuestionDotTokenableNode> & T;
@@ -1720,7 +1720,7 @@ export interface QuestionDotTokenableNode {
   setHasQuestionDotToken(value: boolean): this;
 }
 
-declare type QuestionDotTokenableNodeExtensionType = Node<ts.Node & {
+type QuestionDotTokenableNodeExtensionType = Node<ts.Node & {
       questionDotToken?: ts.QuestionDotToken;
   }>;
 export declare function QuestionTokenableNode<T extends Constructor<QuestionTokenableNodeExtensionType>>(Base: T): Constructor<QuestionTokenableNode> & T;
@@ -1739,7 +1739,7 @@ export interface QuestionTokenableNode {
   setHasQuestionToken(value: boolean): this;
 }
 
-declare type QuestionTokenableNodeExtensionType = Node<ts.Node & {
+type QuestionTokenableNodeExtensionType = Node<ts.Node & {
       questionToken?: ts.QuestionToken;
   }>;
 export declare function ReadonlyableNode<T extends Constructor<ReadonlyableNodeExtensionType>>(Base: T): Constructor<ReadonlyableNode> & T;
@@ -1758,7 +1758,7 @@ export interface ReadonlyableNode {
   setIsReadonly(value: boolean): this;
 }
 
-declare type ReadonlyableNodeExtensionType = Node & ModifierableNode;
+type ReadonlyableNodeExtensionType = Node & ModifierableNode;
 export declare function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionType>>(Base: T): Constructor<ReturnTypedNode> & T;
 
 export interface ReturnTypedNode {
@@ -1779,7 +1779,7 @@ export interface ReturnTypedNode {
   getSignature(): Signature;
 }
 
-declare type ReturnTypedNodeExtensionType = Node<ts.SignatureDeclaration>;
+type ReturnTypedNodeExtensionType = Node<ts.SignatureDeclaration>;
 export declare function ScopeableNode<T extends Constructor<ScopeableNodeExtensionType>>(Base: T): Constructor<ScopeableNode> & T;
 
 export interface ScopeableNode {
@@ -1796,7 +1796,7 @@ export interface ScopeableNode {
   hasScopeKeyword(): boolean;
 }
 
-declare type ScopeableNodeExtensionType = Node & ModifierableNode;
+type ScopeableNodeExtensionType = Node & ModifierableNode;
 export declare function ScopedNode<T extends Constructor<ScopedNodeExtensionType>>(Base: T): Constructor<ScopedNode> & T;
 
 export interface ScopedNode {
@@ -1811,13 +1811,13 @@ export interface ScopedNode {
   hasScopeKeyword(): boolean;
 }
 
-declare type ScopedNodeExtensionType = Node & ModifierableNode;
+type ScopedNodeExtensionType = Node & ModifierableNode;
 export declare function SignaturedDeclaration<T extends Constructor<SignaturedDeclarationExtensionType>>(Base: T): Constructor<SignaturedDeclaration> & T;
 
 export interface SignaturedDeclaration extends ParameteredNode, ReturnTypedNode {
 }
 
-declare type SignaturedDeclarationExtensionType = Node<ts.SignatureDeclaration>;
+type SignaturedDeclarationExtensionType = Node<ts.SignatureDeclaration>;
 export declare function StaticableNode<T extends Constructor<StaticableNodeExtensionType>>(Base: T): Constructor<StaticableNode> & T;
 
 export interface StaticableNode {
@@ -1834,7 +1834,7 @@ export interface StaticableNode {
   setIsStatic(value: boolean): this;
 }
 
-declare type StaticableNodeExtensionType = Node & ModifierableNode;
+type StaticableNodeExtensionType = Node & ModifierableNode;
 export declare function TextInsertableNode<T extends Constructor<TextInsertableNodeExtensionType>>(Base: T): Constructor<TextInsertableNode> & T;
 
 export interface TextInsertableNode {
@@ -1866,7 +1866,7 @@ export interface TextInsertableNode {
   removeText(pos: number, end: number): this;
 }
 
-declare type TextInsertableNodeExtensionType = Node;
+type TextInsertableNodeExtensionType = Node;
 export declare function TypeArgumentedNode<T extends Constructor<TypeArgumentedNodeExtensionType>>(Base: T): Constructor<TypeArgumentedNode> & T;
 
 export interface TypeArgumentedNode {
@@ -1906,7 +1906,7 @@ export interface TypeArgumentedNode {
   removeTypeArgument(index: number): this;
 }
 
-declare type TypeArgumentedNodeExtensionType = Node<ts.Node & {
+type TypeArgumentedNodeExtensionType = Node<ts.Node & {
       typeArguments?: ts.NodeArray<ts.TypeNode>;
   }>;
 export declare function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T): Constructor<TypedNode> & T;
@@ -1925,7 +1925,7 @@ export interface TypedNode {
   removeType(): this;
 }
 
-declare type TypedNodeExtensionType = Node<ts.Node & {
+type TypedNodeExtensionType = Node<ts.Node & {
       type?: ts.TypeNode;
   }>;
 export declare function TypeElementMemberedNode<T extends Constructor<TypeElementMemberedNodeExtensionType>>(Base: T): Constructor<TypeElementMemberedNode> & T;
@@ -2149,7 +2149,7 @@ export interface TypeElementMemberedNode {
   getMembersWithComments(): (TypeElementTypes | CommentTypeElement)[];
 }
 
-declare type TypeElementMemberedNodeExtensionType = Node<ts.Node & {
+type TypeElementMemberedNodeExtensionType = Node<ts.Node & {
       members: ts.NodeArray<ts.TypeElement>;
   }>;
 export declare function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExtensionType>>(Base: T): Constructor<TypeParameteredNode> & T;
@@ -2201,7 +2201,7 @@ export interface TypeParameteredNode {
   insertTypeParameters(index: number, structures: ReadonlyArray<OptionalKind<TypeParameterDeclarationStructure> | string>): TypeParameterDeclaration[];
 }
 
-declare type TypeParameteredNodeExtensionType = Node<ts.Node & {
+type TypeParameteredNodeExtensionType = Node<ts.Node & {
       typeParameters?: ts.NodeArray<ts.TypeParameterDeclaration>;
   }>;
 export declare function UnwrappableNode<T extends Constructor<UnwrappableNodeExtensionType>>(Base: T): Constructor<UnwrappableNode> & T;
@@ -2211,7 +2211,7 @@ export interface UnwrappableNode {
   unwrap(): void;
 }
 
-declare type UnwrappableNodeExtensionType = Node;
+type UnwrappableNodeExtensionType = Node;
 
 export declare class ArrayBindingPattern extends Node<ts.ArrayBindingPattern> {
   /** Gets the array binding pattern's elements. */
@@ -2268,7 +2268,7 @@ export interface AbstractableNode {
   setIsAbstract(isAbstract: boolean): this;
 }
 
-declare type AbstractableNodeExtensionType = Node & ModifierableNode;
+type AbstractableNodeExtensionType = Node & ModifierableNode;
 export declare function ClassLikeDeclarationBase<T extends Constructor<ClassLikeDeclarationBaseExtensionType>>(Base: T): Constructor<ClassLikeDeclarationBase> & T;
 
 export interface ClassLikeDeclarationBase extends NameableNode, TextInsertableNode, ImplementsClauseableNode, HeritageClauseableNode, AbstractableNode, JSDocableNode, TypeParameteredNode, DecoratableNode, ModifierableNode, ClassLikeDeclarationBaseSpecific {
@@ -2712,14 +2712,14 @@ interface ClassLikeDeclarationBaseSpecific {
   getDerivedClasses(): ClassDeclaration[];
 }
 
-export declare type ClassPropertyTypes = PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration;
-export declare type ClassInstancePropertyTypes = ClassPropertyTypes | ParameterDeclaration;
-export declare type ClassInstanceMemberTypes = MethodDeclaration | ClassInstancePropertyTypes;
-export declare type ClassStaticPropertyTypes = PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration;
-export declare type ClassStaticMemberTypes = MethodDeclaration | ClassStaticBlockDeclaration | ClassStaticPropertyTypes;
-export declare type ClassMemberTypes = MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration | ClassStaticBlockDeclaration;
-declare type ClassLikeDeclarationBaseExtensionType = Node<ts.ClassLikeDeclarationBase>;
-declare type ClassLikeDeclarationBaseSpecificExtensionType = Node<ts.ClassLikeDeclarationBase> & HeritageClauseableNode & ModifierableNode & NameableNode;
+export type ClassPropertyTypes = PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration;
+export type ClassInstancePropertyTypes = ClassPropertyTypes | ParameterDeclaration;
+export type ClassInstanceMemberTypes = MethodDeclaration | ClassInstancePropertyTypes;
+export type ClassStaticPropertyTypes = PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration;
+export type ClassStaticMemberTypes = MethodDeclaration | ClassStaticBlockDeclaration | ClassStaticPropertyTypes;
+export type ClassMemberTypes = MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration | ClassStaticBlockDeclaration;
+type ClassLikeDeclarationBaseExtensionType = Node<ts.ClassLikeDeclarationBase>;
+type ClassLikeDeclarationBaseSpecificExtensionType = Node<ts.ClassLikeDeclarationBase> & HeritageClauseableNode & ModifierableNode & NameableNode;
 declare const ClassDeclarationBase: Constructor<ModuleChildableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ClassLikeDeclarationBase> & typeof Statement;
 
 export declare class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> {
@@ -2986,8 +2986,8 @@ export declare class CompilerCommentObjectLiteralElement extends CompilerComment
 export declare class CompilerCommentEnumMember extends CompilerCommentNode implements ts.Node {
 }
 
-export declare type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName extends keyof NodeType, NonNullableNodeType = NonNullable<NodeType[KeyName]>> = NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeTypeForNullable> | undefined ? CompilerNodeToWrappedType<ArrayNodeTypeForNullable>[] | undefined : NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeType> ? CompilerNodeToWrappedType<ArrayNodeType>[] : NodeType[KeyName] extends ts.Node ? CompilerNodeToWrappedType<NodeType[KeyName]> : NonNullableNodeType extends ts.Node ? CompilerNodeToWrappedType<NonNullableNodeType> | undefined : NodeType[KeyName];
-export declare type NodeParentType<NodeType extends ts.Node> = NodeType extends ts.SourceFile ? undefined : ts.Node extends NodeType ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined : CompilerNodeToWrappedType<NodeType["parent"]>;
+export type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName extends keyof NodeType, NonNullableNodeType = NonNullable<NodeType[KeyName]>> = NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeTypeForNullable> | undefined ? CompilerNodeToWrappedType<ArrayNodeTypeForNullable>[] | undefined : NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeType> ? CompilerNodeToWrappedType<ArrayNodeType>[] : NodeType[KeyName] extends ts.Node ? CompilerNodeToWrappedType<NodeType[KeyName]> : NonNullableNodeType extends ts.Node ? CompilerNodeToWrappedType<NonNullableNodeType> | undefined : NodeType[KeyName];
+export type NodeParentType<NodeType extends ts.Node> = NodeType extends ts.SourceFile ? undefined : ts.Node extends NodeType ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined : CompilerNodeToWrappedType<NodeType["parent"]>;
 
 export declare class Node<NodeType extends ts.Node = ts.Node> {
   /** Gets if the node is an AnyKeyword. */
@@ -4578,7 +4578,7 @@ export interface TransformTraversalControl {
   visitChildren(): ts.Node;
 }
 
-export declare type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ObjectDestructuringAssignment ? ObjectDestructuringAssignment : T extends ts.ArrayDestructuringAssignment ? ArrayDestructuringAssignment : T extends ts.SuperElementAccessExpression ? SuperElementAccessExpression : T extends ts.SuperPropertyAccessExpression ? SuperPropertyAccessExpression : T extends ts.AssignmentExpression<infer U> ? AssignmentExpression<ts.AssignmentExpression<U>> : T["kind"] extends keyof ImplementedKindToNodeMappings ? ImplementedKindToNodeMappings[T["kind"]] : T extends ts.SyntaxList ? SyntaxList : T extends ts.JSDocTypeExpression ? JSDocTypeExpression : T extends ts.JSDocType ? JSDocType : T extends ts.NodeWithTypeArguments ? NodeWithTypeArguments : T extends ts.TypeNode ? TypeNode : T extends ts.JSDocTag ? JSDocTag : T extends ts.LiteralExpression ? LiteralExpression : T extends ts.PrimaryExpression ? PrimaryExpression : T extends ts.MemberExpression ? MemberExpression : T extends ts.LeftHandSideExpression ? LeftHandSideExpression : T extends ts.UpdateExpression ? UpdateExpression : T extends ts.UnaryExpression ? UnaryExpression : T extends ts.Expression ? Expression : T extends ts.IterationStatement ? IterationStatement : T extends CompilerCommentStatement ? CommentStatement : T extends CompilerCommentClassElement ? CommentClassElement : T extends CompilerCommentTypeElement ? CommentTypeElement : T extends CompilerCommentObjectLiteralElement ? CommentObjectLiteralElement : T extends CompilerCommentEnumMember ? CommentEnumMember : T extends ts.TypeElement ? TypeElement : T extends ts.Statement ? Statement : T extends ts.ClassElement ? ClassElement : T extends ts.ObjectLiteralElement ? ObjectLiteralElement : Node<T>;
+export type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ObjectDestructuringAssignment ? ObjectDestructuringAssignment : T extends ts.ArrayDestructuringAssignment ? ArrayDestructuringAssignment : T extends ts.SuperElementAccessExpression ? SuperElementAccessExpression : T extends ts.SuperPropertyAccessExpression ? SuperPropertyAccessExpression : T extends ts.AssignmentExpression<infer U> ? AssignmentExpression<ts.AssignmentExpression<U>> : T["kind"] extends keyof ImplementedKindToNodeMappings ? ImplementedKindToNodeMappings[T["kind"]] : T extends ts.SyntaxList ? SyntaxList : T extends ts.JSDocTypeExpression ? JSDocTypeExpression : T extends ts.JSDocType ? JSDocType : T extends ts.NodeWithTypeArguments ? NodeWithTypeArguments : T extends ts.TypeNode ? TypeNode : T extends ts.JSDocTag ? JSDocTag : T extends ts.LiteralExpression ? LiteralExpression : T extends ts.PrimaryExpression ? PrimaryExpression : T extends ts.MemberExpression ? MemberExpression : T extends ts.LeftHandSideExpression ? LeftHandSideExpression : T extends ts.UpdateExpression ? UpdateExpression : T extends ts.UnaryExpression ? UnaryExpression : T extends ts.Expression ? Expression : T extends ts.IterationStatement ? IterationStatement : T extends CompilerCommentStatement ? CommentStatement : T extends CompilerCommentClassElement ? CommentClassElement : T extends CompilerCommentTypeElement ? CommentTypeElement : T extends CompilerCommentObjectLiteralElement ? CommentObjectLiteralElement : T extends CompilerCommentEnumMember ? CommentEnumMember : T extends ts.TypeElement ? TypeElement : T extends ts.Statement ? Statement : T extends ts.ClassElement ? ClassElement : T extends ts.ObjectLiteralElement ? ObjectLiteralElement : Node<T>;
 declare const DecoratorBase: Constructor<LeftHandSideExpressionedNode> & typeof Node;
 
 export declare class Decorator extends DecoratorBase<ts.Decorator> {
@@ -4698,7 +4698,7 @@ export interface JSDocPropertyLikeTag {
   isBracketed(): boolean;
 }
 
-declare type JSDocPropertyLikeTagExtensionType = Node<ts.JSDocPropertyLikeTag> & JSDocTag;
+type JSDocPropertyLikeTagExtensionType = Node<ts.JSDocPropertyLikeTag> & JSDocTag;
 export declare function JSDocTypeExpressionableTag<T extends Constructor<JSDocTypeExpressionableTagExtensionType>>(Base: T): Constructor<JSDocTypeExpressionableTag> & T;
 
 export interface JSDocTypeExpressionableTag {
@@ -4708,7 +4708,7 @@ export interface JSDocTypeExpressionableTag {
   getTypeExpressionOrThrow(message?: string | (() => string)): JSDocTypeExpression;
 }
 
-declare type JSDocTypeExpressionableTagExtensionType = Node<ts.Node & {
+type JSDocTypeExpressionableTagExtensionType = Node<ts.Node & {
       typeExpression: ts.JSDocTypeExpression | undefined;
   }> & JSDocTag;
 export declare function JSDocTypeParameteredTag<T extends Constructor<JSDocTypeParameteredTagExtensionType>>(Base: T): Constructor<JSDocTypeParameteredTag> & T;
@@ -4718,7 +4718,7 @@ export interface JSDocTypeParameteredTag {
   getTypeParameters(): TypeParameterDeclaration[];
 }
 
-declare type JSDocTypeParameteredTagExtensionType = Node<ts.Node & {
+type JSDocTypeParameteredTagExtensionType = Node<ts.Node & {
       typeParameters: ts.NodeArray<ts.TypeParameterDeclaration>;
   }> & JSDocTag;
 declare const JSDocBase: typeof Node;
@@ -5472,7 +5472,7 @@ export interface ExpressionableNode {
   getExpressionIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToExpressionMappings[TKind];
 }
 
-declare type ExpressionableNodeExtensionType = Node<ts.Node & {
+type ExpressionableNodeExtensionType = Node<ts.Node & {
       expression?: ts.Expression;
   }>;
 export declare function BaseExpressionedNode<T extends Constructor<ExpressionedNodeExtensionType>, TExpression extends Node = CompilerNodeToWrappedType<InstanceOf<T>["compilerNode"]>>(Base: T): Constructor<BaseExpressionedNode<TExpression>> & T;
@@ -5502,7 +5502,7 @@ export declare function ExpressionedNode<T extends Constructor<ExpressionedNodeE
 export interface ExpressionedNode extends BaseExpressionedNode<Expression> {
 }
 
-declare type ExpressionedNodeExtensionType = Node<ts.Node & {
+type ExpressionedNodeExtensionType = Node<ts.Node & {
       expression: ts.Expression;
   }>;
 export declare function ImportExpressionedNode<T extends Constructor<ImportExpressionedNodeExtensionType>>(Base: T): Constructor<ImportExpressionedNode> & T;
@@ -5510,7 +5510,7 @@ export declare function ImportExpressionedNode<T extends Constructor<ImportExpre
 export interface ImportExpressionedNode extends BaseExpressionedNode<ImportExpression> {
 }
 
-declare type ImportExpressionedNodeExtensionType = Node<ts.Node & {
+type ImportExpressionedNodeExtensionType = Node<ts.Node & {
       expression: ts.ImportExpression;
   }>;
 export declare function LeftHandSideExpressionedNode<T extends Constructor<LeftHandSideExpressionedNodeExtensionType>>(Base: T): Constructor<LeftHandSideExpressionedNode> & T;
@@ -5518,7 +5518,7 @@ export declare function LeftHandSideExpressionedNode<T extends Constructor<LeftH
 export interface LeftHandSideExpressionedNode extends BaseExpressionedNode<LeftHandSideExpression> {
 }
 
-declare type LeftHandSideExpressionedNodeExtensionType = Node<ts.Node & {
+type LeftHandSideExpressionedNodeExtensionType = Node<ts.Node & {
       expression: ts.LeftHandSideExpression;
   }>;
 export declare function SuperExpressionedNode<T extends Constructor<SuperExpressionedNodeExtensionType>>(Base: T): Constructor<SuperExpressionedNode> & T;
@@ -5526,7 +5526,7 @@ export declare function SuperExpressionedNode<T extends Constructor<SuperExpress
 export interface SuperExpressionedNode extends BaseExpressionedNode<SuperExpression> {
 }
 
-declare type SuperExpressionedNodeExtensionType = Node<ts.Node & {
+type SuperExpressionedNodeExtensionType = Node<ts.Node & {
       expression: ts.SuperExpression;
   }>;
 export declare function UnaryExpressionedNode<T extends Constructor<UnaryExpressionedNodeExtensionType>>(Base: T): Constructor<UnaryExpressionedNode> & T;
@@ -5534,7 +5534,7 @@ export declare function UnaryExpressionedNode<T extends Constructor<UnaryExpress
 export interface UnaryExpressionedNode extends BaseExpressionedNode<UnaryExpression> {
 }
 
-declare type UnaryExpressionedNodeExtensionType = Node<ts.Node & {
+type UnaryExpressionedNodeExtensionType = Node<ts.Node & {
       expression: ts.UnaryExpression;
   }>;
 declare const ImportExpressionBase: typeof PrimaryExpression;
@@ -6105,7 +6105,7 @@ export declare function FunctionLikeDeclaration<T extends Constructor<FunctionLi
 export interface FunctionLikeDeclaration extends JSDocableNode, TypeParameteredNode, SignaturedDeclaration, StatementedNode, ModifierableNode {
 }
 
-declare type FunctionLikeDeclarationExtensionType = Node<ts.FunctionLikeDeclaration>;
+type FunctionLikeDeclarationExtensionType = Node<ts.FunctionLikeDeclaration>;
 export declare function OverloadableNode<T extends Constructor<OverloadableNodeExtensionType>>(Base: T): Constructor<OverloadableNode> & T;
 
 /** Node that supports overloads. */
@@ -6122,7 +6122,7 @@ export interface OverloadableNode {
   isImplementation(): boolean;
 }
 
-declare type OverloadableNodeExtensionType = Node & BodyableNode;
+type OverloadableNodeExtensionType = Node & BodyableNode;
 declare const ParameterDeclarationBase: Constructor<OverrideableNode> & Constructor<QuestionTokenableNode> & Constructor<DecoratableNode> & Constructor<ScopeableNode> & Constructor<ReadonlyableNode> & Constructor<ModifierableNode> & Constructor<DotDotDotTokenableNode> & Constructor<TypedNode> & Constructor<InitializerExpressionableNode> & Constructor<BindingNamedNode> & typeof Node;
 
 export declare class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterDeclaration> {
@@ -6355,7 +6355,7 @@ export interface JsxAttributedNode {
   insertAttributes(index: number, attributes: ReadonlyArray<OptionalKind<JsxAttributeStructure> | OptionalKind<JsxSpreadAttributeStructure>>): JsxAttributeLike[];
 }
 
-declare type JsxAttributedNodeExtensionType = Node<ts.Node & {
+type JsxAttributedNodeExtensionType = Node<ts.Node & {
       attributes: ts.JsxAttributes;
   }> & JsxTagNamedNode;
 export declare function JsxTagNamedNode<T extends Constructor<JsxTagNamedNodeExtensionType>>(Base: T): Constructor<JsxTagNamedNode> & T;
@@ -6365,7 +6365,7 @@ export interface JsxTagNamedNode {
   getTagNameNode(): JsxTagNameExpression;
 }
 
-declare type JsxTagNamedNodeExtensionType = Node<ts.Node & {
+type JsxTagNamedNodeExtensionType = Node<ts.Node & {
       tagName: ts.JsxTagNameExpression;
   }>;
 declare const JsxAttributeBase: Constructor<NamedNode> & typeof Node;
@@ -7471,7 +7471,7 @@ export interface ModuleChildableNode {
   getParentModuleOrThrow(message?: string | (() => string)): ModuleDeclaration;
 }
 
-declare type ModuleChildableNodeExtensionType = Node;
+type ModuleChildableNodeExtensionType = Node;
 declare const ModuleDeclarationBase: Constructor<ModuledNode> & Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<BodyableNode> & Constructor<ModuleChildableNode> & Constructor<StatementedNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<ModuleNamedNode> & typeof Statement;
 
 export declare class ModuleDeclaration extends ModuleDeclarationBase<ts.ModuleDeclaration> {
@@ -7910,7 +7910,7 @@ interface CommonIdentifierBase {
   getDefinitions(): DefinitionInfo[];
 }
 
-declare type CommonIdentifierBaseExtensionType = Node<ts.Node & {
+type CommonIdentifierBaseExtensionType = Node<ts.Node & {
       text: string;
   }>;
 declare const ComputedPropertyNameBase: Constructor<ExpressionedNode> & typeof Node;
@@ -8579,7 +8579,7 @@ export interface StatementedNode {
   getVariableDeclarationOrThrow(findFunction: (declaration: VariableDeclaration) => boolean): VariableDeclaration;
 }
 
-declare type StatementedNodeExtensionType = Node<ts.SourceFile | ts.FunctionDeclaration | ts.ModuleDeclaration | ts.FunctionLikeDeclaration | ts.CaseClause | ts.DefaultClause | ts.ModuleBlock>;
+type StatementedNodeExtensionType = Node<ts.SourceFile | ts.FunctionDeclaration | ts.ModuleDeclaration | ts.FunctionLikeDeclaration | ts.CaseClause | ts.DefaultClause | ts.ModuleBlock>;
 
 export interface KindToNodeMappingsWithCommentStatements extends ImplementedKindToNodeMappings {
   [kind: number]: Node;
@@ -10287,13 +10287,13 @@ export declare class ManipulationSettingsContainer extends SettingsContainer<Man
   set(settings: Partial<ManipulationSettings>): void;
 }
 
-export declare type StatementStructures = ClassDeclarationStructure | EnumDeclarationStructure | FunctionDeclarationStructure | InterfaceDeclarationStructure | ModuleDeclarationStructure | TypeAliasDeclarationStructure | ImportDeclarationStructure | ExportDeclarationStructure | ExportAssignmentStructure | VariableStatementStructure;
-export declare type ClassMemberStructures = ConstructorDeclarationStructure | GetAccessorDeclarationStructure | SetAccessorDeclarationStructure | MethodDeclarationStructure | PropertyDeclarationStructure | ClassStaticBlockDeclarationStructure;
-export declare type TypeElementMemberStructures = CallSignatureDeclarationStructure | ConstructSignatureDeclarationStructure | IndexSignatureDeclarationStructure | MethodSignatureStructure | PropertySignatureStructure;
-export declare type InterfaceMemberStructures = TypeElementMemberStructures;
-export declare type ObjectLiteralExpressionPropertyStructures = PropertyAssignmentStructure | ShorthandPropertyAssignmentStructure | SpreadAssignmentStructure | GetAccessorDeclarationStructure | SetAccessorDeclarationStructure | MethodDeclarationStructure;
-export declare type JsxStructures = JsxAttributeStructure | JsxSpreadAttributeStructure | JsxElementStructure | JsxSelfClosingElementStructure;
-export declare type Structures = AssertEntryStructure | StatementStructures | ClassMemberStructures | EnumMemberStructure | InterfaceMemberStructures | ObjectLiteralExpressionPropertyStructures | JsxStructures | FunctionDeclarationOverloadStructure | MethodDeclarationOverloadStructure | ConstructorDeclarationOverloadStructure | ParameterDeclarationStructure | TypeParameterDeclarationStructure | SourceFileStructure | ExportSpecifierStructure | ImportSpecifierStructure | VariableDeclarationStructure | JSDocStructure | JSDocTagStructure | DecoratorStructure;
+export type StatementStructures = ClassDeclarationStructure | EnumDeclarationStructure | FunctionDeclarationStructure | InterfaceDeclarationStructure | ModuleDeclarationStructure | TypeAliasDeclarationStructure | ImportDeclarationStructure | ExportDeclarationStructure | ExportAssignmentStructure | VariableStatementStructure;
+export type ClassMemberStructures = ConstructorDeclarationStructure | GetAccessorDeclarationStructure | SetAccessorDeclarationStructure | MethodDeclarationStructure | PropertyDeclarationStructure | ClassStaticBlockDeclarationStructure;
+export type TypeElementMemberStructures = CallSignatureDeclarationStructure | ConstructSignatureDeclarationStructure | IndexSignatureDeclarationStructure | MethodSignatureStructure | PropertySignatureStructure;
+export type InterfaceMemberStructures = TypeElementMemberStructures;
+export type ObjectLiteralExpressionPropertyStructures = PropertyAssignmentStructure | ShorthandPropertyAssignmentStructure | SpreadAssignmentStructure | GetAccessorDeclarationStructure | SetAccessorDeclarationStructure | MethodDeclarationStructure;
+export type JsxStructures = JsxAttributeStructure | JsxSpreadAttributeStructure | JsxElementStructure | JsxSelfClosingElementStructure;
+export type Structures = AssertEntryStructure | StatementStructures | ClassMemberStructures | EnumMemberStructure | InterfaceMemberStructures | ObjectLiteralExpressionPropertyStructures | JsxStructures | FunctionDeclarationOverloadStructure | MethodDeclarationOverloadStructure | ConstructorDeclarationOverloadStructure | ParameterDeclarationStructure | TypeParameterDeclarationStructure | SourceFileStructure | ExportSpecifierStructure | ImportSpecifierStructure | VariableDeclarationStructure | JSDocStructure | JSDocTagStructure | DecoratorStructure;
 
 export interface AbstractableNodeStructure {
   isAbstract?: boolean;
@@ -11006,7 +11006,7 @@ interface TypeParameterDeclarationSpecificStructure extends KindedStructure<Stru
   variance?: TypeParameterVariance;
 }
 
-export declare type OptionalKind<TStructure extends {
+export type OptionalKind<TStructure extends {
       kind?: StructureKind;
   }> = Pick<TStructure, Exclude<keyof TStructure, "kind">> & Partial<Pick<TStructure, "kind">>;
 /**
