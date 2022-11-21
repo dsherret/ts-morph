@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="17.0.1"></a>
+## [17.0.1](https://github.com/dsherret/ts-morph/compare/17.0.0...17.0.1) (2022-11-21)
+
+
+### Bug Fixes
+
+* revert rollup from v3 to v2 to fix `esModuleInterop: true` ([#1358](https://github.com/dsherret/ts-morph/issues/1358)) ([5c544a2](https://github.com/dsherret/ts-morph/commit/5c544a2))
+
+
+
 <a name="17.0.0"></a>
 # [17.0.0](https://github.com/dsherret/ts-morph/compare/16.0.0...17.0.0) (2022-11-19)
 
