@@ -44,7 +44,7 @@
   },
   "homepage": "https://github.com/dsherret/ts-morph#readme",
   "dependencies": {
-    "@ts-morph/common": "~0.18.0",
+    "@ts-morph/common": "~0.18.1",
     "code-block-writer": "^11.0.3"
   },
   "devDependencies": {
