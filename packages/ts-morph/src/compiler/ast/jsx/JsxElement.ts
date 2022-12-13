@@ -111,8 +111,8 @@ export class JsxElement extends JsxElementBase<ts.JsxElement> {
   remove() {
     const parentKind = this.getParent()?.getKind()
 
-    if (!(parentKind === SyntaxKind.JsxElement || parentKind === SyntaxKind.JsxOpeningElement)) {
-      throw new errors.InvalidOperationError(`Error removing JsxElement: parent is ${this.getParent()?.getKindName() ?? '(no parent)'} and therefore the node cannot be removed. Only JsxElements with JsxElement parent can be removed`)
+    if (!(parentKind === SyntaxKind.JsxElement || parentKind === SyntaxKind.JsxOpeningElement || parentKind === SyntaxKind.JsxFragment)) {
+      throw new errors.InvalidOperationError(`Error removing JsxElement: parent is ${this.getParent()?.getKindName() ?? '(no parent)'} and therefore the node cannot be removed. Only JsxElements with JsxElement/JsxOpeningElement/JsxFragment parent can be removed`)
     }
 
     return removeChildren({

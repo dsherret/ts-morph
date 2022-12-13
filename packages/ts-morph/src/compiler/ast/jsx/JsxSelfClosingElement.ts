@@ -30,11 +30,11 @@ export class JsxSelfClosingElement extends JsxSelfClosingElementBase<ts.JsxSelfC
   /**
    * Removes the JSX self-closing element.
    */
-  remove() {
+   remove() {
     const parentKind = this.getParent()?.getKind()
 
-    if (!(parentKind === SyntaxKind.JsxElement || parentKind === SyntaxKind.JsxOpeningElement)) {
-      throw new errors.InvalidOperationError(`Error removing JsxSelfClosingElement: parent is ${this.getParent()?.getKindName() ?? '(no parent)'} and therefore the node cannot be removed. Only JsxSelfClosingElements with JsxElement parent can be removed`)
+    if (!(parentKind === SyntaxKind.JsxElement || parentKind === SyntaxKind.JsxOpeningElement || parentKind === SyntaxKind.JsxFragment)) {
+      throw new errors.InvalidOperationError(`Error removing JsxSelfClosingElement: parent is ${this.getParent()?.getKindName() ?? '(no parent)'} and therefore the node cannot be removed. Only JsxSelfClosingElements with JsxElement/JsxOpeningElement/JsxFragment parent can be removed`)
     }
 
     return removeChildren({
