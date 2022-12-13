@@ -34,7 +34,7 @@ export class JsxSelfClosingElement extends JsxSelfClosingElementBase<ts.JsxSelfC
     const parentKind = this.getParent()?.getKind()
 
     if (!(parentKind === SyntaxKind.JsxElement || parentKind === SyntaxKind.JsxOpeningElement)) {
-      throw new errors.InvalidOperationError(`Error removing JsxElement: parent is ${this.getParent()?.getKindName() ?? '(no parent)'} and therefore the node cannot be removed. Only JsxElements with JsxElement parent can be removed`)
+      throw new errors.InvalidOperationError(`Error removing JsxSelfClosingElement: parent is ${this.getParent()?.getKindName() ?? '(no parent)'} and therefore the node cannot be removed. Only JsxSelfClosingElements with JsxElement parent can be removed`)
     }
 
     return removeChildren({
