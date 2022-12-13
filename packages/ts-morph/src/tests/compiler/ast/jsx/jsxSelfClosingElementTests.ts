@@ -1,4 +1,4 @@
-import { nameof, SyntaxKind } from "@ts-morph/common";
+import { errors,  nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { JsxSelfClosingElement } from "../../../../compiler";
 import { JsxAttributeStructure, JsxSelfClosingElementStructure, StructureKind } from "../../../../structures";
@@ -165,6 +165,36 @@ describe("JsxSelfClosingElement", () => {
       }]);
 
       expect(descendant.getFullText()).to.equal(`<jsx // comment1\n    {...props1} // comment2\n    {...props2} />`);
+    });
+  });
+
+  describe(nameof<JsxSelfClosingElement>("remove"), () => {
+    function doRemove(text: string) {
+      const { descendant, sourceFile } = getInfo(text);
+      descendant.remove();
+    }
+
+    function doTestWithJsxSelfClosingElementChild(text: string, expected: string) {
+      const { descendant, sourceFile } = getInfo(text);
+      descendant.remove();
+      expect(sourceFile.getFullText()).to.equal(expected);
+    }
+
+    it("should not remove the root JsxSelfClosingElement", () => {
+      let error = null;
+
+      try {
+        doRemove(`var t = (<jsx />);`);
+      }
+      catch (err) {
+        error = err;
+      }
+
+      expect(error).to.be.instanceOf(errors.InvalidOperationError);
+    });
+
+    it("should remove the JsxSelfClosingElement child", () => {
+      doTestWithJsxSelfClosingElementChild(`var t = (<jsx><jsx2 /></jsx>);`, `var t = (<jsx></jsx>);`);
     });
   });
 });
