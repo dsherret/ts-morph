@@ -1,5 +1,5 @@
 import { errors, nameof, SyntaxKind, ts } from "@ts-morph/common";
-import { FormattingKind, insertIntoParentTextRange, removeChildrenWithFormatting } from "../../../manipulation";
+import { insertIntoParentTextRange, removeChildren } from "../../../manipulation";
 import { JsxElementSpecificStructure, JsxElementStructure, StructureKind } from "../../../structures";
 import { WriterFunction } from "../../../types";
 import { printTextFromStringOrWriter } from "../../../utils";
@@ -109,18 +109,15 @@ export class JsxElement extends JsxElementBase<ts.JsxElement> {
    * Removes the JSX element.
    */
   remove() {
-    removeChildrenWithFormatting({
+    const parentKind = this.getParent()?.getKind()
+
+    if (!(parentKind === SyntaxKind.JsxElement || parentKind === SyntaxKind.JsxOpeningElement)) {
+      throw new errors.InvalidOperationError(`Error removing JsxElement: parent is ${this.getParent()?.getKindName() ?? '(no parent)'} and therefore the node cannot be removed. Only JsxElements with JsxElement parent can be removed`)
+    }
+
+    return removeChildren({
       children: [this],
-      getSiblingFormatting: parent => {
-        const parentKind = parent.getKind()
-
-        if (parentKind === SyntaxKind.JsxElement || parentKind === SyntaxKind.JsxOpeningElement) {
-          return FormattingKind.None
-        }
-
-        throw new errors.InvalidOperationError(`Error removing JsxElement: parent is ${parent.getKindName()} and therefore the node cannot be removed. Only JsxElements with JsxElement parent can be removed`)
-      }
-    });
+    })
   }
 }
 

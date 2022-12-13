@@ -1,6 +1,6 @@
 import { errors, ts, SyntaxKind } from "@ts-morph/common";
 import { JsxSelfClosingElementSpecificStructure, JsxSelfClosingElementStructure, StructureKind } from "../../../structures";
-import { FormattingKind, removeChildrenWithFormatting } from "../../../manipulation";
+import { removeChildren } from "../../../manipulation";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { PrimaryExpression } from "../expression";
@@ -31,17 +31,14 @@ export class JsxSelfClosingElement extends JsxSelfClosingElementBase<ts.JsxSelfC
    * Removes the JSX self-closing element.
    */
   remove() {
-    removeChildrenWithFormatting({
+    const parentKind = this.getParent()?.getKind()
+
+    if (!(parentKind === SyntaxKind.JsxElement || parentKind === SyntaxKind.JsxOpeningElement)) {
+      throw new errors.InvalidOperationError(`Error removing JsxElement: parent is ${this.getParent()?.getKindName() ?? '(no parent)'} and therefore the node cannot be removed. Only JsxElements with JsxElement parent can be removed`)
+    }
+
+    return removeChildren({
       children: [this],
-      getSiblingFormatting: parent => {
-        const parentKind = parent.getKind()
-
-        if (parentKind === SyntaxKind.JsxElement || parentKind === SyntaxKind.JsxOpeningElement) {
-          return FormattingKind.None
-        }
-
-        throw new errors.InvalidOperationError(`Error removing JsxSelfClosingElement: parent is ${parent.getKindName()} and therefore the node cannot be removed. Only JsxSelfClosingElements with JsxElement parent can be removed`)
-      }
-    });
+    })
   }
 }
