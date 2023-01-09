@@ -10081,7 +10081,8 @@ function TypedNode(Base) {
             });
             return this;
             function getInsertPosWhenNoType(node) {
-                const identifier = node.getFirstChildByKindOrThrow(SyntaxKind.Identifier);
+                var _a;
+                let identifier = (_a = node.getFirstChildByKind(SyntaxKind.Identifier)) !== null && _a !== void 0 ? _a : node.getFirstChildIfKindOrThrow(SyntaxKind.ObjectBindingPattern, "A first child of the kind Identifier or ObjectBindingPattern was expected.");
                 const nextSibling = identifier.getNextSibling();
                 const insertAfterNode = isQuestionOrExclamation(nextSibling) ? nextSibling : identifier;
                 return insertAfterNode.getEnd();
