@@ -20,7 +20,7 @@ sourceFile.transform(traversal => {
 
   if (ts.isNumericLiteral(node)) {
     const incrementedValue = parseInt(node.text, 10) + 1;
-    return ts.createNumericLiteral(incrementedValue.toString());
+    return traversal.factory.createNumericLiteral(incrementedValue.toString());
   }
 
   return node;
