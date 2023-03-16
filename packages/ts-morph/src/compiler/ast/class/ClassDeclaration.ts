@@ -91,7 +91,8 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
    */
   extractInterface(name?: string): InterfaceDeclarationStructure {
     const { constructors, properties, methods, accessors } = getExtractedClassDetails(this, false);
-    const parameterProperties = ArrayUtils.flatten(constructors.map(c => c.getParameters().filter(p => p.isParameterProperty())))
+    const parameterProperties = constructors.map(c => c.getParameters().filter(p => p.isParameterProperty()))
+      .flat()
       .filter(p => p.getName() != null && p.getScope() === Scope.Public);
 
     return {
@@ -101,7 +102,8 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
       typeParameters: this.getTypeParameters().map(p => p.getStructure()),
       properties: [
         ...parameterProperties.map(p => {
-          const jsDocComment = ArrayUtils.flatten((p.getParentOrThrow() as ConstructorDeclaration).getJsDocs().map(j => j.getTags()))
+          const jsDocComment = (p.getParentOrThrow() as ConstructorDeclaration).getJsDocs().map(j => j.getTags())
+            .flat()
             .filter(Node.isJSDocParameterTag)
             .filter(t => t.getTagName() === "param" && t.getName() === p.getName() && t.getComment() != null)
             .map(t => t.getCommentText()!.trim())[0];
@@ -152,13 +154,11 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
 }
 
 function getExtractedClassDetails(classDec: ClassDeclaration, isStatic: boolean) {
-  const constructors = ArrayUtils.flatten(classDec.getConstructors().map(c => c.getOverloads().length > 0 ? c.getOverloads() : [c]));
+  const constructors = classDec.getConstructors().map(c => c.getOverloads().length > 0 ? c.getOverloads() : [c]).flat();
   const properties = classDec.getProperties().filter(p => p.isStatic() === isStatic && p.getScope() === Scope.Public);
-  const methods = ArrayUtils.flatten(
-    classDec.getMethods()
-      .filter(p => p.isStatic() === isStatic && p.getScope() === Scope.Public)
-      .map(m => m.getOverloads().length > 0 ? m.getOverloads() : [m]),
-  );
+  const methods = classDec.getMethods()
+    .filter(p => p.isStatic() === isStatic && p.getScope() === Scope.Public)
+    .map(m => m.getOverloads().length > 0 ? m.getOverloads() : [m]).flat();
 
   return { constructors, properties, methods, accessors: getAccessors() };
 

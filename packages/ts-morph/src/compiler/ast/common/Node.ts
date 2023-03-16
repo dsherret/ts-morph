@@ -307,7 +307,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         const locals = this._getCompilerLocals();
         if (locals == null)
             return [];
-        return ArrayUtils.from(locals.values()).map(symbol => this._context.compilerFactory.getSymbol(symbol));
+        return Array.from(locals.values()).map(symbol => this._context.compilerFactory.getSymbol(symbol));
     }
 
     /** @internal */

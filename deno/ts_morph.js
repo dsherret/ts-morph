@@ -3077,7 +3077,7 @@ class Node {
         const locals = this._getCompilerLocals();
         if (locals == null)
             return [];
-        return ArrayUtils.from(locals.values()).map(symbol => this._context.compilerFactory.getSymbol(symbol));
+        return Array.from(locals.values()).map(symbol => this._context.compilerFactory.getSymbol(symbol));
     }
     _getCompilerLocals() {
         this._ensureBound();
@@ -14370,7 +14370,7 @@ function ClassLikeDeclarationBaseSpecific(Base) {
             return errors.throwIfNullOrUndefined(this.getBaseClass(), message !== null && message !== void 0 ? message : `Expected to find the base class of ${this.getName()}.`, this);
         }
         getBaseClass() {
-            const baseTypes = ArrayUtils.flatten(this.getBaseTypes().map(t => t.isIntersection() ? t.getIntersectionTypes() : [t]));
+            const baseTypes = this.getBaseTypes().map(t => t.isIntersection() ? t.getIntersectionTypes() : [t]).flat();
             const declarations = baseTypes
                 .map(t => t.getSymbol())
                 .filter(s => s != null)
@@ -14492,7 +14492,8 @@ class ClassDeclaration extends ClassDeclarationBase {
     }
     extractInterface(name) {
         const { constructors, properties, methods, accessors } = getExtractedClassDetails(this, false);
-        const parameterProperties = ArrayUtils.flatten(constructors.map(c => c.getParameters().filter(p => p.isParameterProperty())))
+        const parameterProperties = constructors.map(c => c.getParameters().filter(p => p.isParameterProperty()))
+            .flat()
             .filter(p => p.getName() != null && p.getScope() === Scope.Public);
         return {
             kind: StructureKind.Interface,
@@ -14501,7 +14502,8 @@ class ClassDeclaration extends ClassDeclarationBase {
             typeParameters: this.getTypeParameters().map(p => p.getStructure()),
             properties: [
                 ...parameterProperties.map(p => {
-                    const jsDocComment = ArrayUtils.flatten(p.getParentOrThrow().getJsDocs().map(j => j.getTags()))
+                    const jsDocComment = p.getParentOrThrow().getJsDocs().map(j => j.getTags())
+                        .flat()
                         .filter(Node.isJSDocParameterTag)
                         .filter(t => t.getTagName() === "param" && t.getName() === p.getName() && t.getComment() != null)
                         .map(t => t.getCommentText().trim())[0];
@@ -14545,11 +14547,11 @@ class ClassDeclaration extends ClassDeclarationBase {
     }
 }
 function getExtractedClassDetails(classDec, isStatic) {
-    const constructors = ArrayUtils.flatten(classDec.getConstructors().map(c => c.getOverloads().length > 0 ? c.getOverloads() : [c]));
+    const constructors = classDec.getConstructors().map(c => c.getOverloads().length > 0 ? c.getOverloads() : [c]).flat();
     const properties = classDec.getProperties().filter(p => p.isStatic() === isStatic && p.getScope() === Scope.Public);
-    const methods = ArrayUtils.flatten(classDec.getMethods()
+    const methods = classDec.getMethods()
         .filter(p => p.isStatic() === isStatic && p.getScope() === Scope.Public)
-        .map(m => m.getOverloads().length > 0 ? m.getOverloads() : [m]));
+        .map(m => m.getOverloads().length > 0 ? m.getOverloads() : [m]).flat();
     return { constructors, properties, methods, accessors: getAccessors() };
     function getAccessors() {
         const result = new KeyValueCache();
@@ -16122,10 +16124,10 @@ class InterfaceDeclaration extends InterfaceDeclarationBase {
         return this.getType().getBaseTypes();
     }
     getBaseDeclarations() {
-        return ArrayUtils.flatten(this.getType().getBaseTypes().map(t => {
+        return this.getType().getBaseTypes().map(t => {
             var _a, _b;
             return (_b = (_a = t.getSymbol()) === null || _a === void 0 ? void 0 : _a.getDeclarations()) !== null && _b !== void 0 ? _b : [];
-        }));
+        }).flat();
     }
     getImplementations() {
         return this.getNameNode().getImplementations();
@@ -16921,7 +16923,7 @@ class Symbol {
     getExports() {
         if (this.compilerSymbol.exports == null)
             return [];
-        return ArrayUtils.from(this.compilerSymbol.exports.values()).map(symbol => this._context.compilerFactory.getSymbol(symbol));
+        return Array.from(this.compilerSymbol.exports.values()).map(symbol => this._context.compilerFactory.getSymbol(symbol));
     }
     getGlobalExportOrThrow(name, message) {
         return errors.throwIfNullOrUndefined(this.getGlobalExport(name), message !== null && message !== void 0 ? message : (() => `Expected to find global export with name: ${name}`));
@@ -16935,7 +16937,7 @@ class Symbol {
     getGlobalExports() {
         if (this.compilerSymbol.globalExports == null)
             return [];
-        return ArrayUtils.from(this.compilerSymbol.globalExports.values()).map(symbol => this._context.compilerFactory.getSymbol(symbol));
+        return Array.from(this.compilerSymbol.globalExports.values()).map(symbol => this._context.compilerFactory.getSymbol(symbol));
     }
     getMemberOrThrow(name, message) {
         return errors.throwIfNullOrUndefined(this.getMember(name), message !== null && message !== void 0 ? message : `Expected to find member with name: ${name}`);
@@ -16949,7 +16951,7 @@ class Symbol {
     getMembers() {
         if (this.compilerSymbol.members == null)
             return [];
-        return ArrayUtils.from(this.compilerSymbol.members.values()).map(symbol => this._context.compilerFactory.getSymbol(symbol));
+        return Array.from(this.compilerSymbol.members.values()).map(symbol => this._context.compilerFactory.getSymbol(symbol));
     }
     getDeclaredType() {
         return this._context.typeChecker.getDeclaredTypeOfSymbol(this);

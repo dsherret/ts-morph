@@ -20,7 +20,7 @@ for (const entry of Deno.readDirSync(libFolderPath)) {
 
   libFileText += `{\n`
     + `    fileName: "${entry.name}",\n`
-    + `    text: \`${minifier.minify(fileText).replace(/\r?\n/g, "\\n").replace(/`/g, "\\`")}\`\n`
+    + `    text: "${minifier.minify(fileText).replace(/\r?\n/g, "\\n").replace(/"/g, "\\\"")}"\n`
     + `}`;
 }
 

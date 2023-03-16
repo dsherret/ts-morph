@@ -1191,7 +1191,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
     }
 
     getBaseClass() {
-      const baseTypes = ArrayUtils.flatten(this.getBaseTypes().map(t => t.isIntersection() ? t.getIntersectionTypes() : [t]));
+      const baseTypes = this.getBaseTypes().map(t => t.isIntersection() ? t.getIntersectionTypes() : [t]).flat();
       const declarations = baseTypes
         .map(t => t.getSymbol())
         .filter(s => s != null)

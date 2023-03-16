@@ -8874,9 +8874,9 @@ export declare class MappedTypeNode extends TypeNode<ts.MappedTypeNode> {
   /** Gets the mapped type node's name type node or throws if it doesn't exist. */
   getNameTypeNodeOrThrow(message?: string | (() => string)): TypeNode;
   /** Gets the mapped type's readonly token. */
-  getReadonlyToken(): Node<ts.ReadonlyKeyword> | Node<ts.PlusToken> | Node<ts.MinusToken> | undefined;
+  getReadonlyToken(): Node<ts.PlusToken> | Node<ts.MinusToken> | Node<ts.ReadonlyKeyword> | undefined;
   /** Gets the mapped type's readonly token or throws if not exist. */
-  getReadonlyTokenOrThrow(message?: string | (() => string)): Node<ts.ReadonlyKeyword> | Node<ts.PlusToken> | Node<ts.MinusToken>;
+  getReadonlyTokenOrThrow(message?: string | (() => string)): Node<ts.PlusToken> | Node<ts.MinusToken> | Node<ts.ReadonlyKeyword>;
   /** Gets the mapped type's question token. */
   getQuestionToken(): Node<ts.QuestionToken> | Node<ts.PlusToken> | Node<ts.MinusToken> | undefined;
   /** Gets the mapped type's question token or throws if not exist. */
@@ -10113,25 +10113,25 @@ export declare class Type<TType extends ts.Type = ts.Type> {
    *
    * Note: I have no idea what this means. Please help contribute to these js docs if you know.
    */
-  getLiteralFreshType(): Type<ts.LiteralType> | undefined;
+  getLiteralFreshType(): Type<ts.FreshableType> | undefined;
   /**
    * Gets the fresh type of the literal or throws if this is not a literal type.
    *
    * Note: I have no idea what this means. Please help contribute to these js docs if you know.
    */
-  getLiteralFreshTypeOrThrow(message?: string | (() => string)): Type<ts.LiteralType>;
+  getLiteralFreshTypeOrThrow(message?: string | (() => string)): Type<ts.FreshableType>;
   /**
    * Gets the regular type of the literal or returns undefined if this is not a literal type.
    *
    * Note: I have no idea what this means. Please help contribute to these js docs if you know.
    */
-  getLiteralRegularType(): Type<ts.LiteralType> | undefined;
+  getLiteralRegularType(): Type<ts.FreshableType> | undefined;
   /**
    * Gets the regular type of the literal or throws if this is not a literal type.
    *
    * Note: I have no idea what this means. Please help contribute to these js docs if you know.
    */
-  getLiteralRegularTypeOrThrow(message?: string | (() => string)): Type<ts.LiteralType>;
+  getLiteralRegularTypeOrThrow(message?: string | (() => string)): Type<ts.FreshableType>;
   /** Gets the symbol of the type. */
   getSymbol(): Symbol | undefined;
   /** Gets the symbol of the type or throws. */
@@ -10196,7 +10196,7 @@ export declare class Type<TType extends ts.Type = ts.Type> {
    * Gets the object flags.
    * @remarks Returns 0 for a non-object type.
    */
-  getObjectFlags(): 0 | ObjectFlags;
+  getObjectFlags(): 0 | ObjectFlags.Class | ObjectFlags.Interface | ObjectFlags.Reference | ObjectFlags.Tuple | ObjectFlags.Anonymous | ObjectFlags.Mapped | ObjectFlags.Instantiated | ObjectFlags.ObjectLiteral | ObjectFlags.EvolvingArray | ObjectFlags.ObjectLiteralPatternWithComputedProperties | ObjectFlags.ReverseMapped | ObjectFlags.JsxAttributes | ObjectFlags.JSLiteral | ObjectFlags.FreshLiteral | ObjectFlags.ArrayLiteral | ObjectFlags.ClassOrInterface | ObjectFlags.ContainsSpread | ObjectFlags.ObjectRestType | ObjectFlags.InstantiationExpressionType;
 }
 
 export declare class TypeParameter extends Type<ts.TypeParameter> {

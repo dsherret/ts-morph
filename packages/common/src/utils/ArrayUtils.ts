@@ -1,5 +1,4 @@
 import { Comparer, StoredComparer } from "../comparers";
-import { ts } from "../typescript";
 
 export class ArrayUtils {
   private constructor() {
@@ -34,18 +33,6 @@ export class ArrayUtils {
       }
     }
     return removedItems;
-  }
-
-  // can't use ReadonlyArray here for some reason
-  static flatten<T>(items: T[][]): T[] {
-    return items.reduce((a, b) => a.concat(b), []);
-  }
-
-  static from<T>(items: ts.Iterator<T>) {
-    const a: T[] = [];
-    for (const item of items as any) // it will work
-      a.push(item);
-    return a;
   }
 
   static *toIterator<T>(items: ReadonlyArray<T>) {
