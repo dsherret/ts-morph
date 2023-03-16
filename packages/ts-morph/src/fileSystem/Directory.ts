@@ -891,13 +891,14 @@ export class Directory {
 
       function getPathForDirectory(dir: Directory) {
         switch (moduleResolution) {
-          case ModuleResolutionKind.NodeJs:
+          case ModuleResolutionKind.Node10:
             if (dir === thisDirectory)
               return FileUtils.pathJoin(dir.getPath(), "index.ts");
             return dir.getPath();
           case ModuleResolutionKind.Classic:
           case ModuleResolutionKind.Node16:
           case ModuleResolutionKind.NodeNext:
+          case ModuleResolutionKind.Bundler:
             return FileUtils.pathJoin(dir.getPath(), "index.ts");
           default:
             return errors.throwNotImplementedForNeverValueError(moduleResolution);
@@ -907,13 +908,14 @@ export class Directory {
       function getPathForFilePath(filePath: StandardizedFilePath) {
         const dirPath = FileUtils.getDirPath(filePath);
         switch (moduleResolution) {
-          case ModuleResolutionKind.NodeJs:
+          case ModuleResolutionKind.Node10:
             if (dirPath === thisDirectory.getPath())
               return filePath;
             return filePath.replace(/\/index?(\.d\.ts|\.ts|\.js)$/i, "") as StandardizedFilePath;
           case ModuleResolutionKind.Classic:
           case ModuleResolutionKind.Node16:
           case ModuleResolutionKind.NodeNext:
+          case ModuleResolutionKind.Bundler:
             return filePath;
           default:
             return errors.throwNotImplementedForNeverValueError(moduleResolution);
