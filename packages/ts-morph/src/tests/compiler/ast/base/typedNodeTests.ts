@@ -102,6 +102,14 @@ describe("TypedNode", () => {
         doTest(`function Identifier(param, param2) {}`, "number", `function Identifier(param: number, param2) {}`);
       });
 
+      it("should set with object binding pattern", () => {
+        doTest(`function Identifier({ foo }) {}`, "Record<string, any>", `function Identifier({ foo }: Record<string, any>) {}`);
+      });
+
+      it("should set with array binding pattern", () => {
+        doTest(`function Identifier([foo]) {}`, "number[]", `function Identifier([foo]: number[]) {}`);
+      });
+
       it("should set when explicit", () => {
         doTest(`function Identifier(param: string) {}`, "number", `function Identifier(param: number) {}`);
       });

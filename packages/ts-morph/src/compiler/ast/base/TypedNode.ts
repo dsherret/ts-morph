@@ -77,7 +77,13 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
       return this;
 
       function getInsertPosWhenNoType(node: Node) {
-        const identifier = node.getFirstChildByKindOrThrow(SyntaxKind.Identifier);
+        let identifier = node.getFirstChildByKind(SyntaxKind.Identifier) ?? node.getFirstChildByKind(
+          SyntaxKind.ArrayBindingPattern,
+        ) ?? node.getFirstChildIfKindOrThrow(
+          SyntaxKind.ObjectBindingPattern,
+          "A first child of the kind Identifier, ArrayBindingPattern, or ObjectBindingPattern was expected.",
+        );
+
         const nextSibling = identifier.getNextSibling();
         const insertAfterNode = isQuestionOrExclamation(nextSibling) ? nextSibling : identifier;
 
