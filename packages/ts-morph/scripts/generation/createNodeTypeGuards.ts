@@ -63,7 +63,7 @@ export function createNodeTypeGuards(inspector: TsMorphInspector, tsInspector: T
         ...common,
         kind: tsMorph.StructureKind.Method,
         docs: [{
-          description: description + "\r\n@param node - Node to check.",
+          description,
         }],
         typeParameters: method.isMixin ? [{ name: "T", constraint: "compiler.Node" }] : [],
         parameters: [{ name: "node", type: method.isMixin ? "T | undefined" : "compiler.Node | undefined" }],

@@ -73,14 +73,14 @@ function getOverloadsAndImplementation(node: OverloadableNodeExtensionType & Ove
 }
 
 function getNameIfNamedNode(node: Node) {
-  const nodeAsNamedNode = (node as any as NamedNode);
+  const nodeAsNamedNode = node as any as NamedNode;
   if (nodeAsNamedNode.getName instanceof Function)
     return nodeAsNamedNode.getName();
   return undefined;
 }
 
 function getStaticIfStaticable(node: Node) {
-  const nodeAsStaticableNode = (node as any as StaticableNode);
+  const nodeAsStaticableNode = node as any as StaticableNode;
   if (nodeAsStaticableNode.isStatic instanceof Function)
     return nodeAsStaticableNode.isStatic();
   return false;

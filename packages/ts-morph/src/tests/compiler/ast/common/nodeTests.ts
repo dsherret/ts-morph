@@ -1185,7 +1185,7 @@ class MyClass {
     function doTest(startText: string, replaceText: string | WriterFunction, expectedText: string) {
       const { sourceFile } = getInfoFromText(startText);
       const varDeclaration = sourceFile.getVariableDeclarations()[0];
-      const propAccess = (varDeclaration.getInitializerOrThrow() as PropertyAccessExpression);
+      const propAccess = varDeclaration.getInitializerOrThrow() as PropertyAccessExpression;
       let newNode: Node;
       if (typeof replaceText === "string")
         newNode = propAccess.replaceWithText(replaceText);
@@ -1238,7 +1238,7 @@ class MyClass {
     it("should throw when replacing with more than one node", () => {
       const { sourceFile } = getInfoFromText("var t = Some.Prop.Access;");
       const varDeclaration = sourceFile.getVariableDeclarations()[0];
-      const propAccess = (varDeclaration.getInitializerOrThrow() as PropertyAccessExpression);
+      const propAccess = varDeclaration.getInitializerOrThrow() as PropertyAccessExpression;
       expect(() => {
         propAccess.replaceWithText("SomeTest; Test");
       }).to.throw();

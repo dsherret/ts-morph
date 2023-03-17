@@ -8,7 +8,7 @@ describe("ChildOrderableNode", () => {
     describe("enum", () => {
       function doThrowTest(startCode: string, newIndex: number) {
         const { sourceFile } = getInfoFromText(startCode);
-        const enumDec = (sourceFile.getChildSyntaxListOrThrow().getChildren()[0] as EnumDeclaration);
+        const enumDec = sourceFile.getChildSyntaxListOrThrow().getChildren()[0] as EnumDeclaration;
         expect(() => enumDec.setOrder(newIndex)).to.throw();
       }
 

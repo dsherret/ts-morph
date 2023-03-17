@@ -13,7 +13,7 @@ describe("PrivateIdentifier", () => {
   describe(nameof<PrivateIdentifier>("getText"), () => {
     function doTest(text: string, expectedText: string) {
       const { firstProp } = getInfoFromTextWithFirstProperty(text);
-      const identifier = (firstProp.getNameNode() as PrivateIdentifier);
+      const identifier = firstProp.getNameNode() as PrivateIdentifier;
       expect(identifier.getText()).to.equal(expectedText);
     }
 
@@ -25,7 +25,7 @@ describe("PrivateIdentifier", () => {
   describe(nameof<PrivateIdentifier>("rename"), () => {
     function doTest(text: string, newName: string, expectedText: string) {
       const { sourceFile, firstProp } = getInfoFromTextWithFirstProperty(text);
-      const identifier = (firstProp.getNameNode() as PrivateIdentifier);
+      const identifier = firstProp.getNameNode() as PrivateIdentifier;
       identifier.rename(newName);
       if (!newName.startsWith("#"))
         expect(identifier.wasForgotten()).to.be.true;

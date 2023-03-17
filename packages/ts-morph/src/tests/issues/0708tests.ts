@@ -12,7 +12,7 @@ describe("tests for issue #706", () => {
     statement;
 }`,
     );
-    const ifStatement = (file.getStatements()[0] as IfStatement);
+    const ifStatement = file.getStatements()[0] as IfStatement;
     const elseStatement = ifStatement.getElseStatement()!;
     elseStatement.remove();
 
