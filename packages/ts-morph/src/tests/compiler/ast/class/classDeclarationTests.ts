@@ -280,8 +280,8 @@ abstract class Test<T extends string = number, U> extends Base implements IBase 
           name: "Test",
           docs: [{ kind: StructureKind.JSDoc, description: "Test", tags: [] }],
           typeParameters: [
-            { kind: StructureKind.TypeParameter, name: "T", constraint: "string", default: "number", variance: TypeParameterVariance.None },
-            { kind: StructureKind.TypeParameter, name: "U", constraint: undefined, default: undefined, variance: TypeParameterVariance.None },
+            { kind: StructureKind.TypeParameter, name: "T", isConst: false, constraint: "string", default: "number", variance: TypeParameterVariance.None },
+            { kind: StructureKind.TypeParameter, name: "U", isConst: false, constraint: undefined, default: undefined, variance: TypeParameterVariance.None },
           ],
           properties: [{
             kind: StructureKind.PropertySignature,
@@ -359,8 +359,8 @@ abstract class Test<T extends string = number, U> extends Base implements IBase 
               scope: undefined,
             }],
             typeParameters: [
-              { kind: StructureKind.TypeParameter, name: "T", constraint: "string", default: "number", variance: TypeParameterVariance.None },
-              { kind: StructureKind.TypeParameter, name: "U", constraint: undefined, default: undefined, variance: TypeParameterVariance.None },
+              { kind: StructureKind.TypeParameter, name: "T", isConst: false, constraint: "string", default: "number", variance: TypeParameterVariance.None },
+              { kind: StructureKind.TypeParameter, name: "U", isConst: false, constraint: undefined, default: undefined, variance: TypeParameterVariance.None },
             ],
           }, {
             kind: StructureKind.MethodSignature,
@@ -657,12 +657,14 @@ class Test<T extends string = number, U> extends Base implements IBase {
             typeParameters: [{
               kind: StructureKind.TypeParameter,
               name: "T",
+              isConst: false,
               constraint: "string",
               default: "number",
               variance: TypeParameterVariance.None,
             }, {
               kind: StructureKind.TypeParameter,
               name: "U",
+              isConst: false,
               constraint: undefined,
               default: undefined,
               variance: TypeParameterVariance.None,

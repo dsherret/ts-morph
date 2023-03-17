@@ -220,9 +220,9 @@ function getAddAfterModifierTexts(text: ModifierTexts): ModifierTexts[] {
     case "readonly":
       return ["export", "default", "declare", "public", "private", "protected", "static", "override", "abstract"];
     case "out":
-      return ["in"];
+      return ["const", "in"];
     case "in":
-      return [];
+      return ["const"];
     case "accessor":
       return ["public", "private", "protected", "declare", "override", "static", "abstract", "readonly"];
     /* istanbul ignore next */

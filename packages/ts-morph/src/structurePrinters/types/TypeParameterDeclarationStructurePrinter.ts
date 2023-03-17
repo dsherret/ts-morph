@@ -27,6 +27,8 @@ export class TypeParameterDeclarationStructurePrinter extends NodePrinter<Option
     }
 
     writer.hangingIndent(() => {
+      if (structure.isConst)
+        writer.write("const ");
       if (structure.variance != null) {
         if ((structure.variance & TypeParameterVariance.In) !== 0)
           writer.write("in ");
