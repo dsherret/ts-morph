@@ -362,6 +362,10 @@ describe("Decorator", () => {
         doTest("@decorator(2, 5, 3)\nclass T {}", 0, "class T {}");
       });
 
+      it("should remove when it's after the export keyword", () => {
+        doTest("export @decorator(2, 5, 3) class T {}", 0, "export class T {}");
+      });
+
       it("should remove when it's the first class decorator on the same line", () => {
         doTest("@dec1 @dec2 @dec3\nclass T {}", 0, "@dec2 @dec3\nclass T {}");
       });
@@ -464,6 +468,15 @@ describe("Decorator", () => {
       };
       doTest("@dec class T {}", structure, "@NewName<T>(1) class T {}");
     });
+
+    it("should set when decorator is after export keyword", () => {
+      const structure: OptionalKindAndTrivia<MakeRequired<DecoratorStructure>> = {
+        name: "NewName",
+        arguments: ["1"],
+        typeArguments: ["T"],
+      };
+      doTest("export @dec class T {}", structure, "export @NewName<T>(1) class T {}");
+    });
   });
 
   describe(nameof<Decorator>("getStructure"), () => {
@@ -483,7 +496,7 @@ describe("Decorator", () => {
     });
 
     it("should get when has everything", () => {
-      doTest("@dec<T>(test) class T {}", {
+      doTest("export @dec<T>(test) class T {}", {
         kind: StructureKind.Decorator,
         name: "dec",
         arguments: ["test"],
