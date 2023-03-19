@@ -3001,6 +3001,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.JSDocSeeTag:
       case SyntaxKind.JSDocTemplateTag:
       case SyntaxKind.JSDocThisTag:
+      case SyntaxKind.JSDocThrowsTag:
       case SyntaxKind.JSDocTypedefTag:
       case SyntaxKind.JSDocTypeTag:
       case SyntaxKind.JSDocTag:
@@ -3016,6 +3017,11 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isJSDocText: (node: compiler.Node | undefined) => node is compiler.JSDocText = Node.is(SyntaxKind.JSDocText);
   /** Gets if the node is a JSDocThisTag. */
   static readonly isJSDocThisTag: (node: compiler.Node | undefined) => node is compiler.JSDocThisTag = Node.is(SyntaxKind.JSDocThisTag);
+
+  /** Gets if the node is a JSDocThrowsTag. */
+  static isJSDocThrowsTag(node: compiler.Node | undefined): node is compiler.JSDocThrowsTag {
+    return node?.getKind() === SyntaxKind.JSDocThrowsTag;
+  }
 
   /** Gets if the node is a JSDocType. */
   static isJSDocType(node: compiler.Node | undefined): node is compiler.JSDocType {
@@ -3049,6 +3055,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.JSDocSatisfiesTag:
       case SyntaxKind.JSDocSeeTag:
       case SyntaxKind.JSDocThisTag:
+      case SyntaxKind.JSDocThrowsTag:
         return true;
       default:
         return false;

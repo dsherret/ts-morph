@@ -97,6 +97,7 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.JSDocPublicTag]: compiler.JSDocPublicTag;
   [SyntaxKind.JSDocReturnTag]: compiler.JSDocReturnTag;
   [SyntaxKind.JSDocReadonlyTag]: compiler.JSDocReadonlyTag;
+  [SyntaxKind.JSDocThrowsTag]: compiler.JSDocThrowsTag;
   [SyntaxKind.JSDocOverloadTag]: compiler.JSDocOverloadTag;
   [SyntaxKind.JSDocSatisfiesTag]: compiler.JSDocSatisfiesTag;
   [SyntaxKind.JSDocSeeTag]: compiler.JSDocSeeTag;

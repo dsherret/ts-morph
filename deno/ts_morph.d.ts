@@ -4044,6 +4044,8 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   static isJSDocPropertyLikeTag<T extends Node>(node: T | undefined): node is JSDocPropertyLikeTag & JSDocPropertyLikeTagExtensionType & T;
   /** Gets if the node is a JSDocTag. */
   static isJSDocTag(node: Node | undefined): node is JSDocTag;
+  /** Gets if the node is a JSDocThrowsTag. */
+  static isJSDocThrowsTag(node: Node | undefined): node is JSDocThrowsTag;
   /** Gets if the node is a JSDocType. */
   static isJSDocType(node: Node | undefined): node is JSDocType;
   /** Gets if the node is a JSDocTypeExpressionableTag. */
@@ -4793,6 +4795,16 @@ export declare class JSDocThisTag extends JSDocThisTagBase<ts.JSDocThisTag> {
   getParent(): NodeParentType<ts.JSDocThisTag>;
   /** @inheritdoc **/
   getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.JSDocThisTag>>;
+}
+
+declare const JSDocThrowsTagBase: Constructor<JSDocTypeExpressionableTag> & typeof JSDocTag;
+
+/** JS doc return tag node. */
+export declare class JSDocThrowsTag extends JSDocThrowsTagBase<ts.JSDocThrowsTag> {
+  /** @inheritdoc **/
+  getParent(): NodeParentType<ts.JSDocThrowsTag>;
+  /** @inheritdoc **/
+  getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.JSDocThrowsTag>>;
 }
 
 /** JS doc type node. */
@@ -6312,6 +6324,7 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.JSDocPublicTag]: JSDocPublicTag;
   [SyntaxKind.JSDocReturnTag]: JSDocReturnTag;
   [SyntaxKind.JSDocReadonlyTag]: JSDocReadonlyTag;
+  [SyntaxKind.JSDocThrowsTag]: JSDocThrowsTag;
   [SyntaxKind.JSDocOverloadTag]: JSDocOverloadTag;
   [SyntaxKind.JSDocSatisfiesTag]: JSDocSatisfiesTag;
   [SyntaxKind.JSDocSeeTag]: JSDocSeeTag;

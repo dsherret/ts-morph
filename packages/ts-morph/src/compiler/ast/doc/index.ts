@@ -35,6 +35,7 @@ export * from "./JSDocTagInfo";
 export * from "./JSDocTemplateTag";
 export * from "./JSDocText";
 export * from "./JSDocThisTag";
+export * from "./JSDocThrowsTag";
 export * from "./JSDocType";
 export * from "./JSDocTypedefTag";
 export * from "./JSDocTypeExpression";
