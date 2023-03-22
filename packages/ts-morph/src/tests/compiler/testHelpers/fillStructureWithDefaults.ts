@@ -440,6 +440,7 @@ export namespace fillStructures {
     if (typeof structure === "string")
       structure = { name: structure };
 
+    setIfNull(structure, "isConst", false);
     setIfNull(structure, "constraint", undefined);
     setIfNull(structure, "default", undefined);
 

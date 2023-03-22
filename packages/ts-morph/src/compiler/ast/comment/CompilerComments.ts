@@ -106,6 +106,7 @@ export abstract class CompilerCommentNode implements ts.Node {
 }
 
 export class CompilerCommentStatement extends CompilerCommentNode implements ts.Statement {
+  _jsdocContainerBrand: any;
   _statementBrand: any;
   /** @internal */
   _commentKind = CommentNodeKind.Statement;

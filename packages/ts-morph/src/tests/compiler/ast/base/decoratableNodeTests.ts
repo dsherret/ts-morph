@@ -65,6 +65,10 @@ describe("DecoratableNode", () => {
         doTest("class MyClass {}", 0, [{ name: "dec" }], "@dec\nclass MyClass {}");
       });
 
+      it("should insert when there is an export keyword before", () => {
+        doTest("export @dec2 class MyClass {}", 0, [{ name: "dec1" }], "export @dec1 @dec2 class MyClass {}");
+      });
+
       it("should insert with arguments", () => {
         doTest("class MyClass {}", 0, [
           { name: "dec", arguments: [] },
@@ -182,6 +186,10 @@ describe("DecoratableNode", () => {
     it("should add when one exists", () => {
       doTest("@dec\nclass MyClass {}", { name: "dec2" }, "@dec\n@dec2\nclass MyClass {}");
     });
+
+    it("should add when one exists and the export keyword is first", () => {
+      doTest("export @dec class MyClass {}", { name: "dec2" }, "export @dec @dec2 class MyClass {}");
+    });
   });
 
   describe(nameof<DecoratableNode>("addDecorators"), () => {
@@ -208,6 +216,10 @@ describe("DecoratableNode", () => {
       doTest("class Identifier {}", { decorators: [{ name: "dec1" }, { name: "dec2" }] }, "@dec1\n@dec2\nclass Identifier {}");
     });
 
+    it("should modify when setting and has export keyword", () => {
+      doTest("export class Identifier {}", { decorators: [{ name: "dec1" }, { name: "dec2" }] }, "@dec1\n@dec2\nexport class Identifier {}");
+    });
+
     it("should not modify anything if the structure doesn't change anything", () => {
       doTest("class Identifier {}", {}, "class Identifier {}");
     });
@@ -218,6 +230,11 @@ describe("DecoratableNode", () => {
 
     it("should remove existing decorators when specifying a value", () => {
       doTest("@old1 @old2 class Identifier {}", { decorators: [] }, "class Identifier {}");
+    });
+
+    it("should replace existing decorators when has export keyword", () => {
+      // todo: would be good to improve this in the future to maintain the position
+      doTest("export @old1 @old2 class Identifier {}", { decorators: [{ name: "newDec" }] }, "@newDec\nexport class Identifier {}");
     });
   });
 

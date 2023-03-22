@@ -40,11 +40,9 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
    * Gets the base declarations.
    */
   getBaseDeclarations(): (TypeAliasDeclaration | InterfaceDeclaration | ClassDeclaration)[] {
-    return ArrayUtils.flatten(
-      this.getType().getBaseTypes().map(t => {
-        return (t.getSymbol()?.getDeclarations() as (TypeAliasDeclaration | InterfaceDeclaration | ClassDeclaration)[]) ?? [];
-      }),
-    );
+    return this.getType().getBaseTypes().map(t => {
+      return (t.getSymbol()?.getDeclarations() as (TypeAliasDeclaration | InterfaceDeclaration | ClassDeclaration)[]) ?? [];
+    }).flat();
   }
 
   /**

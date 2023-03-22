@@ -1016,8 +1016,6 @@ export declare class ArrayUtils {
     static getUniqueItems<T>(a: ReadonlyArray<T>): T[];
     static removeFirst<T>(a: T[], item: T): boolean;
     static removeAll<T>(a: T[], isMatch: (item: T) => boolean): T[];
-    static flatten<T>(items: T[][]): T[];
-    static from<T>(items: ts.Iterator<T>): T[];
     static toIterator<T>(items: ReadonlyArray<T>): Generator<T, void, unknown>;
     static sortByProperty<T>(items: T[], getProp: (item: T) => string | number): T[];
     static groupBy<T>(items: ReadonlyArray<T>, getGroup: (item: T) => string | number): T[][];

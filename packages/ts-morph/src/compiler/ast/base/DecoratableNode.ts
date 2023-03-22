@@ -111,7 +111,7 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
 
       insertIntoParentTextRange({
         parent: decorators[0]?.getParentSyntaxListOrThrow() ?? this.getModifiers()[0]?.getParentSyntaxListOrThrow() ?? this,
-        insertPos: decorators[index - 1] == null ? this.getStart() : decorators[index - 1].getEnd(),
+        insertPos: index === 0 ? (decorators[0] ?? this).getStart() : decorators[index - 1].getEnd(),
         newText: decoratorCode,
       });
 
@@ -159,6 +159,11 @@ function getDecoratorFormattingKind(parent: DecoratableNode & Node, currentDecor
 }
 
 function areDecoratorsOnSameLine(parent: DecoratableNode & Node, currentDecorators: Node[]) {
+  if (currentDecorators.length === 1) {
+    const previousNode = currentDecorators[0].getPreviousSibling();
+    if (previousNode != null && previousNode.getStartLinePos() === currentDecorators[0].getStartLinePos())
+      return true;
+  }
   if (currentDecorators.length <= 1)
     return parent.getKind() === SyntaxKind.Parameter;
 

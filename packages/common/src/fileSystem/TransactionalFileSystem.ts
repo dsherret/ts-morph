@@ -52,8 +52,8 @@ class Directory {
 
   getExternalOperations() {
     return [
-      ...ArrayUtils.flatten(this.getAncestors().map(a => getMoveCopyOrDeleteOperations(a))).filter(o => isAncestorAffectedOperation(this, o)),
-      ...ArrayUtils.flatten([this, ...this.getDescendants()].map(d => getMoveOrCopyOperations(d))).filter(o => !isInternalOperation(this, o)),
+      ...this.getAncestors().map(a => getMoveCopyOrDeleteOperations(a)).flat().filter(o => isAncestorAffectedOperation(this, o)),
+      ...[this, ...this.getDescendants()].map(d => getMoveOrCopyOperations(d)).flat().filter(o => !isInternalOperation(this, o)),
     ];
 
     function isInternalOperation(thisDir: Directory, operation: MoveDirectoryOperation | CopyDirectoryOperation) {

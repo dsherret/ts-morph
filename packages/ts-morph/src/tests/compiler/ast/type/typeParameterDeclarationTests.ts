@@ -18,6 +18,43 @@ describe("TypeParameterDeclaration", () => {
     });
   });
 
+  describe(nameof<TypeParameterDeclaration>("setIsConst"), () => {
+    function doTest(text: string, value: boolean, expected: string) {
+      const typeParameterDeclaration = getTypeParameterFromText(text);
+      typeParameterDeclaration.setIsConst(value);
+      expect(typeParameterDeclaration.getSourceFile().getFullText()).to.equal(expected);
+
+      // now do the opposite and it should equal the original text
+      typeParameterDeclaration.setIsConst(!value);
+      expect(typeParameterDeclaration.getSourceFile().getFullText()).to.equal(text);
+    }
+
+    it("should set and remove when it doesn't exist", () => {
+      doTest("function func<T>() {}", true, "function func<const T>() {}");
+      doTest("function func<in T>() {}", true, "function func<const in T>() {}");
+      doTest("function func<out T>() {}", true, "function func<const out T>() {}");
+      doTest("function func<in out T>() {}", true, "function func<const in out T>() {}");
+    });
+  });
+
+  describe(nameof<TypeParameterDeclaration>("isConst"), () => {
+    function doTest(text: string, expectedValue: boolean) {
+      const typeParameterDeclaration = getTypeParameterFromText(text);
+      expect(typeParameterDeclaration.isConst()).to.equal(expectedValue);
+    }
+
+    it("should get", () => {
+      doTest("function func<T>() {}", false);
+      doTest("function func<in T>() {}", false);
+      doTest("function func<out T>() {}", false);
+      doTest("function func<in out T>() {}", false);
+      doTest("function func<const T>() {}", true);
+      doTest("function func<const out T>() {}", true);
+      doTest("function func<const in T>() {}", true);
+      doTest("function func<const in out T>() {}", true);
+    });
+  });
+
   describe(nameof<TypeParameterDeclaration>("getConstraint"), () => {
     it("should return undefined when there's no constraint", () => {
       const typeParameterDeclaration = getTypeParameterFromText("function func<T>() {}\n");
@@ -286,6 +323,7 @@ describe("TypeParameterDeclaration", () => {
       doTest("class C<T> {}", {
         kind: StructureKind.TypeParameter,
         name: "T",
+        isConst: false,
         constraint: undefined,
         default: undefined,
         variance: TypeParameterVariance.None,
@@ -293,9 +331,10 @@ describe("TypeParameterDeclaration", () => {
     });
 
     it("should get when it has everything", () => {
-      doTest("class C<in T extends string = number> {}", {
+      doTest("class C<const in T extends string = number> {}", {
         kind: StructureKind.TypeParameter,
         name: "T",
+        isConst: true,
         constraint: "string",
         default: "number",
         variance: TypeParameterVariance.In,
@@ -306,6 +345,7 @@ describe("TypeParameterDeclaration", () => {
       doTest("class C<T extends {\n        prop: string;\n    } = {\n    }> {}", {
         kind: StructureKind.TypeParameter,
         name: "T",
+        isConst: false,
         constraint: "{\n    prop: string;\n}",
         default: "{\n}",
         variance: TypeParameterVariance.None,

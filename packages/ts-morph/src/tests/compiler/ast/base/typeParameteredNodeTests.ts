@@ -149,8 +149,9 @@ describe("TypeParameteredNode", () => {
         constraint: "string",
         default: "number",
         variance: TypeParameterVariance.InOut,
+        isConst: true,
       };
-      doTest("function identifier() {}", 0, structure, "function identifier<in out V extends string = number>() {}");
+      doTest("function identifier() {}", 0, structure, "function identifier<const in out V extends string = number>() {}");
     });
   });
 

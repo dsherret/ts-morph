@@ -6,7 +6,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Exist
 
-**Total:** 223
+**Total:** 222
 
 * [ArrayBindingPattern](src/compiler/ast/binding/ArrayBindingPattern.ts)
     * :heavy_check_mark: elements
@@ -159,8 +159,6 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: body
 * FunctionLikeDeclarationBase - Implemented via mixin.
 * [FunctionTypeNode](src/compiler/ast/type/FunctionTypeNode.ts)
-* [FunctionTypeNode](src/compiler/ast/type/FunctionTypeNode.ts)
-    * :heavy_check_mark: modifiers
 * [GetAccessorDeclaration](src/compiler/ast/class/GetAccessorDeclaration.ts)
     * :heavy_check_mark: modifiers
     * :heavy_check_mark: name
@@ -170,10 +168,11 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: types
 * [Identifier](src/compiler/ast/name/Identifier.ts)
     * :x: escapedText
-    * :x: originalKeywordKind
-    * :x: isInJSDocNamespace
 * [Identifier](src/compiler/ast/name/Identifier.ts)
     * :heavy_check_mark: text
+* [Identifier](src/compiler/ast/name/Identifier.ts)
+    * :x: originalKeywordKind
+    * :x: isInJSDocNamespace
 * [IfStatement](src/compiler/ast/statement/IfStatement.ts)
     * :heavy_check_mark: expression
     * :heavy_check_mark: thenStatement
@@ -265,6 +264,8 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: postfix
 * [JSDocOptionalType](src/compiler/ast/doc/JSDocOptionalType.ts)
     * :heavy_check_mark: type
+* [JSDocOverloadTag](src/compiler/ast/doc/JSDocOverloadTag.ts)
+    * :heavy_check_mark: typeExpression
 * [JSDocOverrideTag](src/compiler/ast/doc/JSDocOverrideTag.ts)
 * [JSDocParameterTag](src/compiler/ast/doc/JSDocParameterTag.ts)
 * [JSDocPrivateTag](src/compiler/ast/doc/JSDocPrivateTag.ts)
@@ -273,6 +274,8 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [JSDocPublicTag](src/compiler/ast/doc/JSDocPublicTag.ts)
 * [JSDocReadonlyTag](src/compiler/ast/doc/JSDocReadonlyTag.ts)
 * [JSDocReturnTag](src/compiler/ast/doc/JSDocReturnTag.ts)
+    * :heavy_check_mark: typeExpression
+* [JSDocSatisfiesTag](src/compiler/ast/doc/JSDocSatisfiesTag.ts)
     * :heavy_check_mark: typeExpression
 * [JSDocSeeTag](src/compiler/ast/doc/JSDocSeeTag.ts)
     * :x: name
@@ -355,16 +358,16 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: keywordToken
     * :heavy_check_mark: name
 * [MethodDeclaration](src/compiler/ast/class/MethodDeclaration.ts)
-    * :heavy_check_mark: modifiers
+    * :x: modifiers
     * :heavy_check_mark: name
     * :heavy_check_mark: body
 * [MethodSignature](src/compiler/ast/interface/MethodSignature.ts)
-    * :heavy_check_mark: modifiers
+    * :x: modifiers
     * :heavy_check_mark: name
 * [ModuleBlock](src/compiler/ast/module/ModuleBlock.ts)
     * :heavy_check_mark: statements
 * [ModuleDeclaration](src/compiler/ast/module/ModuleDeclaration.ts)
-    * :heavy_check_mark: modifiers
+    * :x: modifiers
     * :heavy_check_mark: name
     * :heavy_check_mark: body
 * NamedDeclaration - Implemented via mixin.
@@ -402,7 +405,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [ObjectLiteralExpression](src/compiler/ast/expression/object/ObjectLiteralExpression.ts)
 * [OmittedExpression](src/compiler/ast/expression/OmittedExpression.ts)
 * [ParameterDeclaration](src/compiler/ast/function/ParameterDeclaration.ts)
-    * :heavy_check_mark: modifiers
+    * :x: modifiers
     * :heavy_check_mark: dotDotDotToken
     * :heavy_check_mark: name
     * :heavy_check_mark: questionToken
@@ -432,9 +435,6 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [PropertyAssignment](src/compiler/ast/expression/object/PropertyAssignment.ts)
     * :heavy_check_mark: name
     * :heavy_check_mark: initializer
-* [PropertyAssignment](src/compiler/ast/expression/object/PropertyAssignment.ts)
-    * :heavy_check_mark: questionToken
-    * :x: exclamationToken
 * [PropertyDeclaration](src/compiler/ast/class/PropertyDeclaration.ts)
     * :heavy_check_mark: modifiers
     * :heavy_check_mark: name
@@ -447,8 +447,6 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: name
     * :heavy_check_mark: questionToken
     * :heavy_check_mark: type
-* [PropertySignature](src/compiler/ast/interface/PropertySignature.ts)
-    * :heavy_check_mark: initializer
 * [QualifiedName](src/compiler/ast/name/QualifiedName.ts)
     * :heavy_check_mark: left
     * :heavy_check_mark: right
@@ -466,10 +464,6 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: name
     * :heavy_check_mark: equalsToken
     * :heavy_check_mark: objectAssignmentInitializer
-* [ShorthandPropertyAssignment](src/compiler/ast/expression/object/ShorthandPropertyAssignment.ts)
-    * :heavy_check_mark: modifiers
-    * :heavy_check_mark: questionToken
-    * :x: exclamationToken
 * SignatureDeclarationBase - Implemented via mixin.
 * [SourceFile](src/compiler/ast/module/SourceFile.ts)
     * :heavy_check_mark: statements
@@ -587,14 +581,18 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Not Exist
 
-**Total:** 22
+**Total:** 26
 
 * AutoAccessorPropertyDeclaration
+* FlowContainer
+* JSDocContainer
+* JSDocThrowsTag
 * JsxAttributes
 * JsxTagNamePropertyAccess
 * KeywordToken
 * KeywordTypeNode
 * LiteralLikeNode
+* LocalsContainer
 * MissingDeclaration
 * ModifierToken
 * NamespaceDeclaration

@@ -23,6 +23,16 @@ export enum TypeParameterVariance {
 const createBase = <T extends typeof Node>(ctor: T) => ModifierableNode(NamedNode(ctor));
 export const TypeParameterDeclarationBase = createBase(Node);
 export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.TypeParameterDeclaration> {
+  /** Gets if this is a const type parameter. */
+  isConst() {
+    return this.hasModifier(SyntaxKind.ConstKeyword);
+  }
+
+  /** Sets if this is a const type parameter or not. */
+  setIsConst(value: boolean) {
+    return this.toggleModifier("const", value);
+  }
+
   /**
    * Gets the constraint of the type parameter.
    */
@@ -131,9 +141,9 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
   /** Gets the variance of the type parameter. */
   getVariance() {
     let variance = TypeParameterVariance.None;
-    if (this.hasModifier("in"))
+    if (this.hasModifier(SyntaxKind.InKeyword))
       variance |= TypeParameterVariance.In;
-    if (this.hasModifier("out"))
+    if (this.hasModifier(SyntaxKind.OutKeyword))
       variance |= TypeParameterVariance.Out;
     return variance;
   }
@@ -168,6 +178,9 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
   set(structure: Partial<TypeParameterDeclarationStructure>) {
     callBaseSet(TypeParameterDeclarationBase.prototype, this, structure);
 
+    if (structure.isConst != null)
+      this.setIsConst(structure.isConst);
+
     if (structure.constraint != null)
       this.setConstraint(structure.constraint);
     else if (structure.hasOwnProperty(nameof(structure, "constraint")))
@@ -193,6 +206,7 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
 
     return callBaseGetStructure<TypeParameterDeclarationSpecificStructure>(TypeParameterDeclarationBase.prototype, this, {
       kind: StructureKind.TypeParameter,
+      isConst: this.isConst(),
       constraint: constraintNode != null ? constraintNode.getText({ trimLeadingIndentation: true }) : undefined,
       default: defaultNode ? defaultNode.getText({ trimLeadingIndentation: true }) : undefined,
       variance: this.getVariance(),

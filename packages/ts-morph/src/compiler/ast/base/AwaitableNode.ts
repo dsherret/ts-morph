@@ -5,7 +5,7 @@ import { Constructor } from "../../../types";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 
-export type AwaitableNodeExtensionType = Node<ts.Node & { awaitModifier?: ts.AwaitKeywordToken }>;
+export type AwaitableNodeExtensionType = Node<ts.Node & { awaitModifier?: ts.AwaitKeyword }>;
 
 export interface AwaitableNode {
   /**
@@ -15,11 +15,11 @@ export interface AwaitableNode {
   /**
    * Gets the await token or undefined if none exists.
    */
-  getAwaitKeyword(): Node<ts.AwaitKeywordToken> | undefined;
+  getAwaitKeyword(): Node<ts.AwaitKeyword> | undefined;
   /**
    * Gets the await token or throws if none exists.
    */
-  getAwaitKeywordOrThrow(message?: string | (() => string)): Node<ts.AwaitKeywordToken>;
+  getAwaitKeywordOrThrow(message?: string | (() => string)): Node<ts.AwaitKeyword>;
   /**
    * Sets if the node is awaited.
    * @param value - If it should be awaited or not.
@@ -33,13 +33,13 @@ export function AwaitableNode<T extends Constructor<AwaitableNodeExtensionType>>
       return this.compilerNode.awaitModifier != null;
     }
 
-    getAwaitKeyword(): Node<ts.AwaitKeywordToken> | undefined {
+    getAwaitKeyword(): Node<ts.AwaitKeyword> | undefined {
       const awaitModifier = this.compilerNode.awaitModifier;
       return this._getNodeFromCompilerNodeIfExists(awaitModifier);
     }
 
-    getAwaitKeywordOrThrow(message?: string | (() => string)): Node<ts.AwaitKeywordToken> {
-      return errors.throwIfNullOrUndefined(this.getAwaitKeyword(), "Expected to find an await token.");
+    getAwaitKeywordOrThrow(message?: string | (() => string)): Node<ts.AwaitKeyword> {
+      return errors.throwIfNullOrUndefined(this.getAwaitKeyword(), message ?? "Expected to find an await token.");
     }
 
     setIsAwaited(value: boolean) {

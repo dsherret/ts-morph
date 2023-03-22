@@ -170,7 +170,7 @@ export class Symbol {
   getExports(): Symbol[] {
     if (this.compilerSymbol.exports == null)
       return [];
-    return ArrayUtils.from(this.compilerSymbol.exports.values()).map(symbol => this._context.compilerFactory.getSymbol(symbol));
+    return Array.from(this.compilerSymbol.exports.values()).map(symbol => this._context.compilerFactory.getSymbol(symbol));
   }
 
   /**
@@ -199,7 +199,7 @@ export class Symbol {
   getGlobalExports(): Symbol[] {
     if (this.compilerSymbol.globalExports == null)
       return [];
-    return ArrayUtils.from(this.compilerSymbol.globalExports.values()).map(symbol => this._context.compilerFactory.getSymbol(symbol));
+    return Array.from(this.compilerSymbol.globalExports.values()).map(symbol => this._context.compilerFactory.getSymbol(symbol));
   }
 
   /**
@@ -228,7 +228,7 @@ export class Symbol {
   getMembers(): Symbol[] {
     if (this.compilerSymbol.members == null)
       return [];
-    return ArrayUtils.from(this.compilerSymbol.members.values()).map(symbol => this._context.compilerFactory.getSymbol(symbol));
+    return Array.from(this.compilerSymbol.members.values()).map(symbol => this._context.compilerFactory.getSymbol(symbol));
   }
 
   /**
