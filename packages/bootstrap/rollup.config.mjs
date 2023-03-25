@@ -9,6 +9,7 @@ export default {
   output: {
     file: outputFolder + "/ts-morph-bootstrap.js",
     format: moduleKind,
+    interop: "compat",
   },
   plugins: [
     typescript({

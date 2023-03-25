@@ -35,7 +35,7 @@
     "cross-env": "^7.0.3",
     "mocha": "^10.2.0",
     "rimraf": "^4.4.1",
-    "rollup": "=3.20.0",
+    "rollup": "=3.20.2",
     "ts-node": "^10.9.1",
     "tslib": "^2.5.0",
     "typescript": "~5.0.2"

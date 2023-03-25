@@ -12,6 +12,7 @@ export default {
   output: {
     file: outputFolder + "/ts-morph.js",
     format: moduleKind,
+    interop: "compat",
   },
   plugins: [
     typescript({
