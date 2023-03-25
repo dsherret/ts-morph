@@ -1,3 +1,10 @@
 {
-  "prettier.enable": false
+  "prettier.enable": false,
+  "deno.enablePaths": [
+    "deno",
+    "packages/bootstrap/scripts/",
+    "packages/common/scripts/",
+    "packages/scripts/",
+    "packages/ts-morph/scripts/"
+  ]
 }

@@ -6,7 +6,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Exist
 
-**Total:** 222
+**Total:** 223
 
 * [ArrayBindingPattern](src/compiler/ast/binding/ArrayBindingPattern.ts)
     * :heavy_check_mark: elements
@@ -292,6 +292,8 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [JSDocText](src/compiler/ast/doc/JSDocText.ts)
     * :x: text
 * [JSDocThisTag](src/compiler/ast/doc/JSDocThisTag.ts)
+    * :heavy_check_mark: typeExpression
+* [JSDocThrowsTag](src/compiler/ast/doc/JSDocThrowsTag.ts)
     * :heavy_check_mark: typeExpression
 * [JSDocType](src/compiler/ast/doc/JSDocType.ts)
 * [JSDocTypedefTag](src/compiler/ast/doc/JSDocTypedefTag.ts)
@@ -581,12 +583,11 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Not Exist
 
-**Total:** 26
+**Total:** 25
 
 * AutoAccessorPropertyDeclaration
 * FlowContainer
 * JSDocContainer
-* JSDocThrowsTag
 * JsxAttributes
 * JsxTagNamePropertyAccess
 * KeywordToken

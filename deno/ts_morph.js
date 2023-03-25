@@ -1,7 +1,7 @@
 import { errors, SyntaxKind, ts, NewLineKind, EmitHint, ScriptTarget, ScriptKind, SettingsContainer, KeyValueCache, getCompilerOptionsFromTsConfig as getCompilerOptionsFromTsConfig$1, StringUtils, getSyntaxKindName, ArrayUtils, nameof, ObjectUtils, EventContainer, FileUtils, libFolderInMemoryPath, Memoize, SymbolFlags, TypeFormatFlags, getEmitModuleResolutionKind, createHosts, ObjectFlags, TypeFlags, matchGlobs, ModuleResolutionKind, SortedKeyValueArray, LocaleStringComparer, WeakCache, DocumentRegistry, createModuleResolutionHost, TransactionalFileSystem, TsConfigResolver, CompilerOptionsContainer, InMemoryFileSystemHost, RealFileSystemHost, IterableUtils, runtime } from './common/mod.ts';
 export { CompilerOptionsContainer, DiagnosticCategory, EmitHint, InMemoryFileSystemHost, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, NodeFlags, ObjectFlags, ResolutionHosts, ScriptKind, ScriptTarget, SettingsContainer, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags, ts } from './common/mod.ts';
-import CodeBlockWriter from 'https://deno.land/x/code_block_writer@11.0.3/mod.ts';
-export { default as CodeBlockWriter } from 'https://deno.land/x/code_block_writer@11.0.3/mod.ts';
+import CodeBlockWriter from 'https://deno.land/x/code_block_writer@12.0.0/mod.ts';
+export { default as CodeBlockWriter } from 'https://deno.land/x/code_block_writer@12.0.0/mod.ts';
 
 class AdvancedIterator {
     constructor(iterator) {
@@ -10097,8 +10097,8 @@ function TypedNode(Base) {
             });
             return this;
             function getInsertPosWhenNoType(node) {
-                var _a;
-                let identifier = (_a = node.getFirstChildByKind(SyntaxKind.Identifier)) !== null && _a !== void 0 ? _a : node.getFirstChildIfKindOrThrow(SyntaxKind.ObjectBindingPattern, "A first child of the kind Identifier or ObjectBindingPattern was expected.");
+                var _a, _b;
+                let identifier = (_b = (_a = node.getFirstChildByKind(SyntaxKind.Identifier)) !== null && _a !== void 0 ? _a : node.getFirstChildByKind(SyntaxKind.ArrayBindingPattern)) !== null && _b !== void 0 ? _b : node.getFirstChildIfKindOrThrow(SyntaxKind.ObjectBindingPattern, "A first child of the kind Identifier, ArrayBindingPattern, or ObjectBindingPattern was expected.");
                 const nextSibling = identifier.getNextSibling();
                 const insertAfterNode = isQuestionOrExclamation(nextSibling) ? nextSibling : identifier;
                 return insertAfterNode.getEnd();
