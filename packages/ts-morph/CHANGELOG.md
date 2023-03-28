@@ -9,12 +9,15 @@ All notable changes to this project will be documented in this file. See [standa
 ### Bug Fixes
 
 * allow setType on binding patterns ([#1380](https://github.com/dsherret/ts-morph/issues/1380)) ([d58f238](https://github.com/dsherret/ts-morph/commit/d58f238))
-* upgrade to TypeScript 4.9.4 ([42d811e](https://github.com/dsherret/ts-morph/commit/42d811e))
 
 
 ### Features
 
 * upgrade to TypeScript 5.0.2 ([#1390](https://github.com/dsherret/ts-morph/issues/1390)) ([b4ce145](https://github.com/dsherret/ts-morph/commit/b4ce145))
+
+### BREAKING CHANGES
+
+- Upgraded to TS 5.0.2
 
 
 
