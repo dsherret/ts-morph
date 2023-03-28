@@ -2248,13 +2248,11 @@ class TransactionalFileSystem {
         }
         return ArrayUtils.sortByProperty(Array.from(uniqueDirPaths.values()), e => e.path);
     }
-    async *glob(patterns) {
+    async glob(patterns) {
         const filePaths = await this.fileSystem.glob(patterns);
-        for (const filePath of filePaths) {
-            const standardizedFilePath = this.getStandardizedAbsolutePath(filePath);
-            if (!this.isPathQueuedForDeletion(standardizedFilePath))
-                yield standardizedFilePath;
-        }
+        return filePaths
+            .map(filePath => this.getStandardizedAbsolutePath(filePath))
+            .filter(filePath => !this.isPathQueuedForDeletion(filePath));
     }
     *globSync(patterns) {
         const filePaths = this.fileSystem.globSync(patterns);

@@ -1,4 +1,4 @@
-import { tsMorph } from "./deps.ts";
+import { folders, path, tsMorph } from "./deps.ts";
 const { Node, Project } = tsMorph;
 
 const project = new Project();
@@ -19,8 +19,9 @@ for (const varDecl of commonFile.getVariableDeclarations()) {
 
 commonFile.saveSync();
 
-fileSystem.copySync("node_modules/typescript/lib/typescript.js", "./dist/typescript.js");
-fileSystem.copySync("node_modules/typescript/lib/typescript.d.ts", "./lib/typescript.d.ts");
+const typescriptLibFolderPath = path.join(folders.root, "node_modules/typescript/lib");
+fileSystem.copySync(path.join(typescriptLibFolderPath, "typescript.js"), "./dist/typescript.js");
+fileSystem.copySync(path.join(typescriptLibFolderPath, "typescript.d.ts"), "./lib/typescript.d.ts");
 
 // add a _nodeWithTypeArgumentsBrand to NodeWithTypeArguments
 // in order to distinguish it from TypeNode

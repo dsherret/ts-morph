@@ -5,6 +5,10 @@ const declarationProject = createDeclarationProject({
 });
 const emitMainFile = declarationProject.getSourceFileOrThrow("./dist/index.d.ts");
 const writeProject = new tsMorph.Project({
+  compilerOptions: {
+    target: tsMorph.ts.ScriptTarget.ES2018,
+    moduleResolution: tsMorph.ts.ModuleResolutionKind.Node16,
+  },
   manipulationSettings: {
     indentationText: tsMorph.IndentationText.TwoSpaces,
     newLineKind: tsMorph.NewLineKind.LineFeed,
@@ -43,7 +47,7 @@ declarationFile.replaceWithText(writer.toString());
 makeConstructorsPrivate(declarationFile);
 declarationFile.saveSync();
 
-const diagnostics = writeProject.getPreEmitDiagnostics();
+const diagnostics = writeProject.getPreEmitDiagnostics().filter(d => !d.getSourceFile()?.isInNodeModules());
 if (diagnostics.length > 0) {
   console.log(writeProject.formatDiagnosticsWithColorAndContext(diagnostics));
   Deno.exit(1);
