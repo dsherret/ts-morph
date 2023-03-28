@@ -1,9 +1,14 @@
 name: CI
 
 on:
-  push:
-    latest
   pull_request:
+    branches:
+      - latest
+  push:
+    branches:
+      - latest
+    tags:
+      - '*'
 
 jobs:
   build:
