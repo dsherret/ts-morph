@@ -278,7 +278,7 @@ export class Project {
     const sourceFilePromises: Promise<void>[] = [];
     const sourceFiles: ts.SourceFile[] = [];
 
-    for await (const filePath of this._fileSystemWrapper.glob(fileGlobs)) {
+    for (const filePath of await this._fileSystemWrapper.glob(fileGlobs)) {
       sourceFilePromises.push(
         this.addSourceFileAtPathIfExists(filePath).then(sourceFile => {
           if (sourceFile != null)
