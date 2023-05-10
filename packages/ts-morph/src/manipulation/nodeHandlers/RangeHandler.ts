@@ -56,7 +56,7 @@ export class RangeHandler implements NodeHandler {
       newNodeChildren.next();
 
     // handle the rest
-    while (!currentNodeChildren.done)
+    while (!currentNodeChildren.done && !newNodeChildren.done)
       this.straightReplace(currentNodeChildren.next(), newNodeChildren.next(), newSourceFile);
 
     // ensure the new children iterator is done too
