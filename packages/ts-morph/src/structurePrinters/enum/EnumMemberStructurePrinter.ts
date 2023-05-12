@@ -28,7 +28,9 @@ export class EnumMemberStructurePrinter extends NodePrinter<OptionalKind<EnumMem
     this.factory.forJSDoc().printDocs(writer, structure.docs);
     // Adds quotes if structure is not a valid variable name
     // AND the string is not enclosed in quotation marks
-    if (isValidVariableName(structure.name) || StringUtils.isQuoted(structure.name))
+    if (structure.name instanceof Function)
+      structure.name(writer);
+    else if (isValidVariableName(structure.name) || StringUtils.isQuoted(structure.name))
       writer.write(structure.name);
     else
       writer.quote(structure.name);

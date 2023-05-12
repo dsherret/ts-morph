@@ -12,7 +12,7 @@ export class MethodSignatureStructurePrinter extends NodePrinter<OptionalKind<Me
 
   protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<MethodSignatureStructure>) {
     this.factory.forJSDoc().printDocs(writer, structure.docs);
-    writer.write(structure.name);
+    this.printTextOrWriterFunc(writer, structure.name);
     writer.conditionalWrite(structure.hasQuestionToken, "?");
     this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
     this.factory.forParameterDeclaration().printTextsWithParenthesis(writer, structure.parameters);

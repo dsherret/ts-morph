@@ -1,3 +1,5 @@
+import { WriterFunction } from "../../../types";
+
 export interface PropertyNameableNodeStructure {
-  name?: string;
+  name?: string | WriterFunction;
 }

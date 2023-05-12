@@ -15,7 +15,7 @@ export class PropertyDeclarationStructurePrinter extends NodePrinter<OptionalKin
     this.factory.forDecorator().printTexts(writer, structure.decorators);
 
     this.factory.forModifierableNode().printText(writer, structure);
-    writer.write(structure.name);
+    this.printTextOrWriterFunc(writer, structure.name);
     writer.conditionalWrite(structure.hasQuestionToken, "?");
     writer.conditionalWrite(structure.hasExclamationToken && !structure.hasQuestionToken, "!");
     this.factory.forTypedNode(":").printText(writer, structure);
