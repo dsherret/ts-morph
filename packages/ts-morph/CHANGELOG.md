@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="18.0.0"></a>
+# [18.0.0](https://github.com/dsherret/ts-morph/compare/17.0.1...18.0.0) (2023-03-22)
+
+
+### Bug Fixes
+
+* allow setType on binding patterns ([#1380](https://github.com/dsherret/ts-morph/issues/1380)) ([d58f238](https://github.com/dsherret/ts-morph/commit/d58f238))
+
+
+### Features
+
+* upgrade to TypeScript 5.0.2 ([#1390](https://github.com/dsherret/ts-morph/issues/1390)) ([b4ce145](https://github.com/dsherret/ts-morph/commit/b4ce145))
+
+### BREAKING CHANGES
+
+- Upgraded to TS 5.0.2
+
+
+
 <a name="17.0.1"></a>
 ## [17.0.1](https://github.com/dsherret/ts-morph/compare/17.0.0...17.0.1) (2022-11-21)
 

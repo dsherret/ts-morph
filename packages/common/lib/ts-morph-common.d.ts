@@ -819,7 +819,7 @@ export declare class TransactionalFileSystem {
     readFile(filePath: StandardizedFilePath, encoding: string | undefined): Promise<string>;
     private _verifyCanReadFile;
     readDirSync(dirPath: StandardizedFilePath): DirEntry[];
-    glob(patterns: ReadonlyArray<string>): AsyncGenerator<StandardizedFilePath, void, unknown>;
+    glob(patterns: ReadonlyArray<string>): Promise<StandardizedFilePath[]>;
     globSync(patterns: ReadonlyArray<string>): Generator<StandardizedFilePath, void, unknown>;
     getFileSystem(): FileSystemHost;
     getCurrentDirectory(): StandardizedFilePath;

@@ -3,7 +3,7 @@ const { ts } = tsMorph;
 
 const libFilesFilePath = path.join(folders.common, "src/data/libFiles.ts");
 // todo: grab this from the TypeScript repo's tag
-const libFolderPath = path.join(folders.common, "node_modules/typescript/lib");
+const libFolderPath = path.join(folders.root, "node_modules/typescript/lib");
 const minifier = createDtsMinifier(ts);
 
 let libFileText = "// dprint-ignore-file\nexport const libFiles: { fileName: string; text: string; }[] = [";

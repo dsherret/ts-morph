@@ -1,6 +1,12 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  pull_request:
+  push:
+    branches:
+      - latest
+    tags:
+      - '*'
 
 jobs:
   build:
@@ -16,15 +22,14 @@ jobs:
     - name: Build
       run: |
         npm ci
-        npm run bootstrap
-        npm run build
-        npx lerna run ensure-no-project-compile-errors
+        npm run --workspaces build
+        npm run --workspaces --if-present ensure-no-project-compile-errors
     - name: Test
       run: |
-        npx lerna run test:ci
-        npx lerna run test:ts-versions
+        npm run --workspaces --if-present test:ci
+        npm run --workspaces --if-present test:ts-versions
     - name: Deno Test
       run: deno test --allow-read deno
     - name: Code Verification
       run: |
-        npx lerna run code-verification
+        npm run --workspaces --if-present code-verification

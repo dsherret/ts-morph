@@ -1,6 +1,8 @@
-import { ensureDir, ensureDirSync } from "https://deno.land/std@0.140.0/fs/ensure_dir.ts";
-import { expandGlob, expandGlobSync } from "https://deno.land/std@0.140.0/fs/expand_glob.ts";
-import * as stdPath from "https://deno.land/std@0.140.0/path/mod.ts";
+import { ensureDir, ensureDirSync } from "https://deno.land/std@0.181.0/fs/ensure_dir.ts";
+import { expandGlob, expandGlobSync } from "https://deno.land/std@0.181.0/fs/expand_glob.ts";
+import * as stdPath from "https://deno.land/std@0.181.0/path/mod.ts";
+
+// deno-lint-ignore no-explicit-any
 
 export class DenoRuntime {
   fs = new DenoRuntimeFileSystem();
@@ -100,6 +102,7 @@ class DenoRuntimeFileSystem {
     return this._toStat(stat);
   }
 
+  // deno-lint-ignore no-explicit-any
   private _toStat(stat: any) {
     return {
       isFile() {

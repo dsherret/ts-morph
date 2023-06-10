@@ -1,4 +1,4 @@
-import { tsMorph } from "./deps.ts";
+import { folders, path, tsMorph } from "./deps.ts";
 const { Node, Project } = tsMorph;
 
 const project = new Project();
@@ -45,9 +45,10 @@ fileSystem.mkdirSync(`${copyDirPath}/data`);
 fileSystem.copySync(`${folderPath}/ts-morph-common.js`, `${copyDirPath}/ts_morph_common.js`);
 fileSystem.copySync(`${folderPath}/DenoRuntime.ts`, `${copyDirPath}/DenoRuntime.ts`);
 
-const typeScriptSourceFile = fileSystem.readFileSync("node_modules/typescript/lib/typescript.js");
+const tsNodeModulesLibDir = path.join(folders.root, "node_modules/typescript/lib/");
+const typeScriptSourceFile = fileSystem.readFileSync(path.join(tsNodeModulesLibDir, "typescript.js"));
 fileSystem.writeFileSync(`${copyDirPath}/typescript.js`, typeScriptSourceFile + "\nexport { ts };\n");
-fileSystem.copySync("node_modules/typescript/lib/typescript.d.ts", `${copyDirPath}/typescript.d.ts`);
+fileSystem.copySync(path.join(tsNodeModulesLibDir, "typescript.d.ts"), `${copyDirPath}/typescript.d.ts`);
 fileSystem.copySync(`./lib/ts-morph-common.d.ts`, `${copyDirPath}/ts_morph_common.d.ts`);
 fileSystem.writeFileSync(`${copyDirPath}/mod.ts`, `// @deno-types="./ts_morph_common.d.ts"\nexport * from "./ts_morph_common.js";\n`);
 

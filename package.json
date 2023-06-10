@@ -4,11 +4,9 @@
   "version": "0.0.0",
   "description": "Main github repo for ts-morph packages.",
   "scripts": {
-    "setup": "npm install && npm run bootstrap && npm run build",
-    "bootstrap": "lerna bootstrap",
-    "build": "lerna run build",
-    "clean": "lerna clean",
-    "test": "lerna run test",
+    "setup": "npm install && npm run build",
+    "build": "npm run --workspaces build",
+    "test": "npm run --workspaces test",
     "format": "dprint fmt"
   },
   "repository": {
@@ -21,9 +19,12 @@
     "url": "https://github.com/dsherret/ts-morph/issues"
   },
   "homepage": "https://github.com/dsherret/ts-morph#readme",
+  "workspaces": [
+    "packages/common",
+    "packages/bootstrap",
+    "packages/ts-morph"
+  ],
   "devDependencies": {
-    "@types/node": "16.11.7",
-    "dprint": "^0.31.1",
-    "lerna": "^5.0.0"
+    "dprint": "^0.31.1"
   }
 }

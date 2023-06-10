@@ -285,7 +285,7 @@ export class Type<TType extends ts.Type = ts.Type> {
     if (!this.isUnion())
       return [];
 
-    return (this.compilerType as any as ts.UnionType).types.map(t => this._context.compilerFactory.getType(t));
+    return this.compilerType.types.map(t => this._context.compilerFactory.getType(t));
   }
 
   /**
@@ -411,7 +411,7 @@ export class Type<TType extends ts.Type = ts.Type> {
   /**
    * Gets if this is a template literal type.
    */
-  isTemplateLiteral() {
+  isTemplateLiteral(): this is Type<ts.TemplateLiteralType> {
     return this._hasTypeFlag(TypeFlags.TemplateLiteral);
   }
 
@@ -462,28 +462,28 @@ export class Type<TType extends ts.Type = ts.Type> {
   /**
    * Gets if this is a number literal type.
    */
-  isNumberLiteral() {
+  isNumberLiteral(): this is Type<ts.NumberLiteralType> {
     return this._hasTypeFlag(TypeFlags.NumberLiteral);
   }
 
   /**
    * Gets if this is a string literal type.
    */
-  isStringLiteral() {
+  isStringLiteral(): this is Type<ts.StringLiteralType> {
     return this.compilerType.isStringLiteral();
   }
 
   /**
    * Gets if this is a class type.
    */
-  isClass() {
+  isClass(): this is Type<ts.InterfaceType> {
     return this.compilerType.isClass();
   }
 
   /**
    * Gets if this is a class or interface type.
    */
-  isClassOrInterface() {
+  isClassOrInterface(): this is Type<ts.InterfaceType> {
     return this.compilerType.isClassOrInterface();
   }
 
@@ -509,14 +509,14 @@ export class Type<TType extends ts.Type = ts.Type> {
   /**
    * Gets if this is an interface type.
    */
-  isInterface() {
+  isInterface(): this is Type<ts.InterfaceType> {
     return this._hasObjectFlag(ObjectFlags.Interface);
   }
 
   /**
    * Gets if this is an object type.
    */
-  isObject() {
+  isObject(): this is Type<ts.ObjectType> {
     return this._hasTypeFlag(TypeFlags.Object);
   }
 
@@ -530,7 +530,7 @@ export class Type<TType extends ts.Type = ts.Type> {
   /**
    * Gets if this is a tuple type.
    */
-  isTuple() {
+  isTuple(): this is Type<ts.TupleType> {
     const targetType = this.getTargetType();
     if (targetType == null)
       return false;
@@ -540,21 +540,21 @@ export class Type<TType extends ts.Type = ts.Type> {
   /**
    * Gets if this is a union type.
    */
-  isUnion() {
+  isUnion(): this is Type<ts.UnionType> {
     return this.compilerType.isUnion();
   }
 
   /**
    * Gets if this is an intersection type.
    */
-  isIntersection() {
+  isIntersection(): this is Type<ts.IntersectionType> {
     return this.compilerType.isIntersection();
   }
 
   /**
    * Gets if this is a union or intersection type.
    */
-  isUnionOrIntersection() {
+  isUnionOrIntersection(): this is Type<ts.UnionOrIntersectionType> {
     return this.compilerType.isUnionOrIntersection();
   }
 
@@ -578,6 +578,13 @@ export class Type<TType extends ts.Type = ts.Type> {
   isUndefined() {
     return this._hasTypeFlag(TypeFlags.Undefined);
   }
+  
+  /**
+   * Gets if this is the void type.
+   */
+  isVoid() {
+    return this._hasTypeFlag(TypeFlags.Void);
+  }  
 
   /**
    * Gets the type flags.

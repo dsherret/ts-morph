@@ -9855,7 +9855,7 @@ export declare class Type<TType extends ts.Type = ts.Type> {
   /** Gets if this is a readonly array type. */
   isReadonlyArray(): boolean;
   /** Gets if this is a template literal type. */
-  isTemplateLiteral(): boolean;
+  isTemplateLiteral(): this is Type<ts.TemplateLiteralType>;
   /** Gets if this is a boolean type. */
   isBoolean(): boolean;
   /** Gets if this is a string type. */
@@ -9869,35 +9869,37 @@ export declare class Type<TType extends ts.Type = ts.Type> {
   /** Gets if this is an enum literal type. */
   isEnumLiteral(): boolean;
   /** Gets if this is a number literal type. */
-  isNumberLiteral(): boolean;
+  isNumberLiteral(): this is Type<ts.NumberLiteralType>;
   /** Gets if this is a string literal type. */
-  isStringLiteral(): boolean;
+  isStringLiteral(): this is Type<ts.StringLiteralType>;
   /** Gets if this is a class type. */
-  isClass(): boolean;
+  isClass(): this is Type<ts.InterfaceType>;
   /** Gets if this is a class or interface type. */
-  isClassOrInterface(): boolean;
+  isClassOrInterface(): this is Type<ts.InterfaceType>;
   /** Gets if this is an enum type. */
   isEnum(): boolean;
   /** Gets if this is an interface type. */
-  isInterface(): boolean;
+  isInterface(): this is Type<ts.InterfaceType>;
   /** Gets if this is an object type. */
-  isObject(): boolean;
+  isObject(): this is Type<ts.ObjectType>;
   /** Gets if this is a type parameter. */
   isTypeParameter(): this is TypeParameter;
   /** Gets if this is a tuple type. */
-  isTuple(): boolean;
+  isTuple(): this is Type<ts.TupleType>;
   /** Gets if this is a union type. */
-  isUnion(): boolean;
+  isUnion(): this is Type<ts.UnionType>;
   /** Gets if this is an intersection type. */
-  isIntersection(): boolean;
+  isIntersection(): this is Type<ts.IntersectionType>;
   /** Gets if this is a union or intersection type. */
-  isUnionOrIntersection(): boolean;
+  isUnionOrIntersection(): this is Type<ts.UnionOrIntersectionType>;
   /** Gets if this is the unknown type. */
   isUnknown(): boolean;
   /** Gets if this is the null type. */
   isNull(): boolean;
   /** Gets if this is the undefined type. */
   isUndefined(): boolean;
+  /** Gets if this is the void type. */
+  isVoid(): boolean;
   /** Gets the type flags. */
   getFlags(): TypeFlags;
   /**
