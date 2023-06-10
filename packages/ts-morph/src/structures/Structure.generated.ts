@@ -325,7 +325,6 @@ export const Structure = {
     switch ((structure as any)?.kind) {
       case StructureKind.Enum:
       case StructureKind.Interface:
-      case StructureKind.JsxAttribute:
       case StructureKind.ShorthandPropertyAssignment:
       case StructureKind.TypeAlias:
       case StructureKind.TypeParameter:

@@ -3104,12 +3104,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isJsxExpression: (node: compiler.Node | undefined) => node is compiler.JsxExpression = Node.is(SyntaxKind.JsxExpression);
   /** Gets if the node is a JsxFragment. */
   static readonly isJsxFragment: (node: compiler.Node | undefined) => node is compiler.JsxFragment = Node.is(SyntaxKind.JsxFragment);
-
   /** Gets if the node is a JsxNamespacedName. */
-  static isJsxNamespacedName(node: compiler.Node | undefined): node is compiler.JsxNamespacedName {
-    return node?.getKind() === SyntaxKind.JsxNamespacedName;
-  }
-
+  static readonly isJsxNamespacedName: (node: compiler.Node | undefined) => node is compiler.JsxNamespacedName = Node.is(SyntaxKind.JsxNamespacedName);
   /** Gets if the node is a JsxOpeningElement. */
   static readonly isJsxOpeningElement: (node: compiler.Node | undefined) => node is compiler.JsxOpeningElement = Node.is(SyntaxKind.JsxOpeningElement);
   /** Gets if the node is a JsxOpeningFragment. */
@@ -3362,7 +3358,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.EnumDeclaration:
       case SyntaxKind.ImportEqualsDeclaration:
       case SyntaxKind.InterfaceDeclaration:
-      case SyntaxKind.JsxNamespacedName:
       case SyntaxKind.MetaProperty:
       case SyntaxKind.NamedTupleMember:
       case SyntaxKind.PropertyAccessExpression:
@@ -3610,7 +3605,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.Identifier:
       case SyntaxKind.ImportEqualsDeclaration:
       case SyntaxKind.InterfaceDeclaration:
-      case SyntaxKind.JsxNamespacedName:
       case SyntaxKind.MetaProperty:
       case SyntaxKind.MethodDeclaration:
       case SyntaxKind.MethodSignature:
@@ -3651,7 +3645,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.Identifier:
       case SyntaxKind.ImportEqualsDeclaration:
       case SyntaxKind.InterfaceDeclaration:
-      case SyntaxKind.JsxNamespacedName:
       case SyntaxKind.MetaProperty:
       case SyntaxKind.MethodDeclaration:
       case SyntaxKind.MethodSignature:
@@ -4244,6 +4237,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.JSDoc:
       case SyntaxKind.JsxAttribute:
       case SyntaxKind.JsxElement:
+      case SyntaxKind.JsxNamespacedName:
       case SyntaxKind.JsxSelfClosingElement:
       case SyntaxKind.JsxSpreadAttribute:
       case SyntaxKind.MethodDeclaration:

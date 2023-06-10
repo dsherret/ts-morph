@@ -1,7 +1,7 @@
 import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ExportAssignment } from "../../../../compiler";
-import { ExportAssignmentStructure, StructureKind } from "../../../../structures";
+import { ExportAssignmentSpecificStructure, ExportAssignmentStructure, StructureKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
@@ -89,15 +89,16 @@ describe("ExportAssignment", () => {
 
     it("should set everything when specified", () => {
       const structure: OptionalKindAndTrivia<MakeRequired<ExportAssignmentStructure>> = {
+        docs: [{ description: "Test" }],
         expression: "6",
         isExportEquals: false,
       };
-      doTest("export = 5;", structure, "export default 6;");
+      doTest("export = 5;", structure, "/** Test */\nexport default 6;");
     });
   });
 
   describe(nameof<ExportAssignment>("getStructure"), () => {
-    function doTest(text: string, expected: OptionalTrivia<MakeRequired<ExportAssignmentStructure>>) {
+    function doTest(text: string, expected: OptionalKindAndTrivia<MakeRequired<ExportAssignmentSpecificStructure>>) {
       const structure = getInfoFromText<ExportAssignment>(text).firstChild.getStructure();
       expect(structure).to.deep.equals(expected);
     }
