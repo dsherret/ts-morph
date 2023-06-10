@@ -877,15 +877,16 @@ export type BindingPattern = ObjectBindingPattern | ArrayBindingPattern;
 export type BooleanLiteral = TrueLiteral | FalseLiteral;
 export type CallLikeExpression = CallExpression | NewExpression | TaggedTemplateExpression | Decorator | JsxOpeningLikeElement;
 export type EntityNameExpression = Identifier | PropertyAccessExpression;
-export type DeclarationName = Identifier | PrivateIdentifier | StringLiteralLike | NumericLiteral | ComputedPropertyName | ElementAccessExpression | BindingPattern | EntityNameExpression;
+export type DeclarationName = PropertyName | JsxAttributeName | StringLiteralLike | ElementAccessExpression | BindingPattern | EntityNameExpression;
 export type EntityName = Identifier | QualifiedName;
 export type JsxChild = JsxText | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment;
+export type JsxAttributeName = Identifier | JsxNamespacedName;
 export type JsxAttributeLike = JsxAttribute | JsxSpreadAttribute;
 export type JsxOpeningLikeElement = JsxSelfClosingElement | JsxOpeningElement;
-export type JsxTagNameExpression = Identifier | ThisExpression | JsxTagNamePropertyAccess;
+export type JsxTagNameExpression = Identifier | ThisExpression | JsxTagNamePropertyAccess | JsxNamespacedName;
 
 export interface JsxTagNamePropertyAccess extends PropertyAccessExpression {
-  getExpression(): JsxTagNameExpression;
+  getExpression(): Identifier | ThisExpression | JsxTagNamePropertyAccess;
 }
 
 export type ObjectLiteralElementLike = PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment | MethodDeclaration | AccessorDeclaration;
@@ -3169,6 +3170,8 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isJSDocText: (node: Node | undefined) => node is JSDocText;
   /** Gets if the node is a JSDocThisTag. */
   static readonly isJSDocThisTag: (node: Node | undefined) => node is JSDocThisTag;
+  /** Gets if the node is a JSDocThrowsTag. */
+  static readonly isJSDocThrowsTag: (node: Node | undefined) => node is JSDocThrowsTag;
   /** Gets if the node is a JSDocTypedefTag. */
   static readonly isJSDocTypedefTag: (node: Node | undefined) => node is JSDocTypedefTag;
   /** Gets if the node is a JSDocTypeExpression. */
@@ -3193,6 +3196,8 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isJsxExpression: (node: Node | undefined) => node is JsxExpression;
   /** Gets if the node is a JsxFragment. */
   static readonly isJsxFragment: (node: Node | undefined) => node is JsxFragment;
+  /** Gets if the node is a JsxNamespacedName. */
+  static readonly isJsxNamespacedName: (node: Node | undefined) => node is JsxNamespacedName;
   /** Gets if the node is a JsxOpeningElement. */
   static readonly isJsxOpeningElement: (node: Node | undefined) => node is JsxOpeningElement;
   /** Gets if the node is a JsxOpeningFragment. */
@@ -4044,8 +4049,6 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   static isJSDocPropertyLikeTag<T extends Node>(node: T | undefined): node is JSDocPropertyLikeTag & JSDocPropertyLikeTagExtensionType & T;
   /** Gets if the node is a JSDocTag. */
   static isJSDocTag(node: Node | undefined): node is JSDocTag;
-  /** Gets if the node is a JSDocThrowsTag. */
-  static isJSDocThrowsTag(node: Node | undefined): node is JSDocThrowsTag;
   /** Gets if the node is a JSDocType. */
   static isJSDocType(node: Node | undefined): node is JSDocType;
   /** Gets if the node is a JSDocTypeExpressionableTag. */
@@ -6069,9 +6072,13 @@ export interface JsxTagNamedNode {
 type JsxTagNamedNodeExtensionType = Node<ts.Node & {
       tagName: ts.JsxTagNameExpression;
   }>;
-declare const JsxAttributeBase: Constructor<NamedNode> & typeof Node;
+declare const JsxAttributeBase: typeof Node;
 
 export declare class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
+  /** Gets the name node of the JSX attribute. */
+  getNameNode(): JsxAttributeName;
+  /** Sets the name of the JSX attribute. */
+  setName(name: string | JsxNamespacedNameStructure): this;
   /** Gets the JSX attribute's initializer or throws if it doesn't exist. */
   getInitializerOrThrow(message?: string | (() => string)): StringLiteral | JsxElement | JsxSelfClosingElement | JsxFragment | JsxExpression;
   /** Gets the JSX attribute's initializer or returns undefined if it doesn't exist. */
@@ -6167,6 +6174,21 @@ export declare class JsxFragment extends PrimaryExpression<ts.JsxFragment> {
   getParent(): NodeParentType<ts.JsxFragment>;
   /** @inheritdoc **/
   getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.JsxFragment>>;
+}
+
+declare const JsxNamespacedNameBase: typeof Node;
+
+export declare class JsxNamespacedName extends JsxNamespacedNameBase<ts.JsxNamespacedName> {
+  /** Gets the namespace name node. */
+  getNamespaceNode(): Identifier;
+  /** Gets the name node. */
+  getNameNode(): Identifier;
+  set(structure: JsxNamespacedNameStructure): this;
+  getStructure(): JsxNamespacedNameStructure;
+  /** @inheritdoc **/
+  getParent(): NodeParentType<ts.JsxNamespacedName>;
+  /** @inheritdoc **/
+  getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.JsxNamespacedName>>;
 }
 
 declare const JsxOpeningElementBase: Constructor<JsxAttributedNode> & Constructor<JsxTagNamedNode> & typeof Expression;
@@ -6345,6 +6367,7 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.JsxElement]: JsxElement;
   [SyntaxKind.JsxExpression]: JsxExpression;
   [SyntaxKind.JsxFragment]: JsxFragment;
+  [SyntaxKind.JsxNamespacedName]: JsxNamespacedName;
   [SyntaxKind.JsxOpeningElement]: JsxOpeningElement;
   [SyntaxKind.JsxOpeningFragment]: JsxOpeningFragment;
   [SyntaxKind.JsxSelfClosingElement]: JsxSelfClosingElement;
@@ -10355,10 +10378,11 @@ export interface JsxTagNamedNodeStructure {
   name: string;
 }
 
-export interface JsxAttributeStructure extends Structure, JsxAttributeSpecificStructure, NamedNodeStructure {
+export interface JsxAttributeStructure extends Structure, JsxAttributeSpecificStructure {
 }
 
 interface JsxAttributeSpecificStructure extends KindedStructure<StructureKind.JsxAttribute> {
+  name: string | JsxNamespacedNameStructure;
   initializer?: string;
 }
 
@@ -10370,6 +10394,11 @@ interface JsxElementSpecificStructure extends KindedStructure<StructureKind.JsxE
   attributes?: (OptionalKind<JsxAttributeStructure> | JsxSpreadAttributeStructure)[];
   children?: (OptionalKind<JsxElementStructure> | JsxSelfClosingElementStructure)[];
   bodyText?: string;
+}
+
+export interface JsxNamespacedNameStructure {
+  namespace: string;
+  name: string;
 }
 
 export interface JsxSelfClosingElementStructure extends Structure, JsxTagNamedNodeStructure, JsxSelfClosingElementSpecificStructure, JsxAttributedNodeStructure {
@@ -10393,7 +10422,7 @@ interface AssertEntryStructureSpecificStructure extends KindedStructure<Structur
   value: string;
 }
 
-export interface ExportAssignmentStructure extends Structure, ExportAssignmentSpecificStructure {
+export interface ExportAssignmentStructure extends Structure, ExportAssignmentSpecificStructure, JSDocableNodeStructure {
 }
 
 interface ExportAssignmentSpecificStructure extends KindedStructure<StructureKind.ExportAssignment> {

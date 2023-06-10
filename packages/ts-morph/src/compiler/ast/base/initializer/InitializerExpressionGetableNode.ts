@@ -2,7 +2,7 @@ import { errors, getSyntaxKindName, SyntaxKind, ts } from "@ts-morph/common";
 import { Constructor } from "../../../../types";
 import { Node } from "../../common";
 import { Expression } from "../../expression";
-import { KindToExpressionMappings } from "../../kindToNodeMappings";
+import { KindToExpressionMappings } from "../../kindToNodeMappings.generated";
 
 export type InitializerExpressionGetableNodeExtensionType = Node<ts.Node & { initializer?: ts.Expression }>;
 

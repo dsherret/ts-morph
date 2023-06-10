@@ -2,7 +2,7 @@ import { errors, getSyntaxKindName, SyntaxKind, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange, removeChildren } from "../../../manipulation";
 import { Constructor } from "../../../types";
 import { Node } from "../common";
-import { KindToNodeMappings } from "../kindToNodeMappings";
+import { KindToNodeMappings } from "../kindToNodeMappings.generated";
 
 export type ModifierableNodeExtensionType = Node;
 export type ModifierTexts =

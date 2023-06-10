@@ -119,6 +119,7 @@ export const kindToWrapperMappings: { [key: number]: unknown } = {
   [SyntaxKind.JsxElement]: compiler.JsxElement,
   [SyntaxKind.JsxExpression]: compiler.JsxExpression,
   [SyntaxKind.JsxFragment]: compiler.JsxFragment,
+  [SyntaxKind.JsxNamespacedName]: compiler.JsxNamespacedName,
   [SyntaxKind.JsxOpeningElement]: compiler.JsxOpeningElement,
   [SyntaxKind.JsxOpeningFragment]: compiler.JsxOpeningFragment,
   [SyntaxKind.JsxSelfClosingElement]: compiler.JsxSelfClosingElement,

@@ -4,7 +4,7 @@ import { Constructor, InstanceOf, WriterFunction } from "../../../../types";
 import { callBaseSet } from "../../callBaseSet";
 import { Node } from "../../common";
 import { CompilerNodeToWrappedType } from "../../CompilerNodeToWrappedType";
-import { KindToExpressionMappings } from "../../kindToNodeMappings";
+import { KindToExpressionMappings } from "../../kindToNodeMappings.generated";
 import { Expression } from "../Expression";
 
 export type ExpressionedNodeExtensionType = Node<ts.Node & { expression: ts.Expression }>;

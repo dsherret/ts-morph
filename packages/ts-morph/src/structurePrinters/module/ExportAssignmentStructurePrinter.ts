@@ -11,6 +11,7 @@ export class ExportAssignmentStructurePrinter extends NodePrinter<OptionalKind<E
   }
 
   protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<ExportAssignmentStructure>) {
+    this.factory.forJSDoc().printDocs(writer, structure.docs);
     writer.write("export");
     if (structure.isExportEquals !== false)
       writer.write(" = ");

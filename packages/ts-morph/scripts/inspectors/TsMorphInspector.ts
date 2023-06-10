@@ -139,7 +139,7 @@ export class TsMorphInspector {
 
   @Memoize
   getImplementedKindToNodeMappingsNames(): Map<string, string> {
-    const sourceFile = this.project.getSourceFileOrThrow("kindToNodeMappings.ts");
+    const sourceFile = this.project.getSourceFileOrThrow("kindToNodeMappings.generated.ts");
     const mappings = sourceFile.getInterfaceOrThrow("ImplementedKindToNodeMappings");
     const result = new Map<string, string>();
 

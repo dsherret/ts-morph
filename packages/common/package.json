@@ -38,7 +38,7 @@
     "rollup": "=3.20.2",
     "ts-node": "^10.9.1",
     "tslib": "^2.5.0",
-    "typescript": "5.0.2"
+    "typescript": "5.1.3"
   },
   "publishConfig": {
     "access": "public"

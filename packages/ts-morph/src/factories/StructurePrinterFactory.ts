@@ -188,6 +188,11 @@ export class StructurePrinterFactory {
   }
 
   @Memoize
+  forJsxNamespacedName(): structurePrinters.JsxNamespacedNameStructurePrinter {
+    return new structurePrinters.JsxNamespacedNameStructurePrinter(this);
+  }
+
+  @Memoize
   forJsxSelfClosingElement(): structurePrinters.JsxSelfClosingElementStructurePrinter {
     return new structurePrinters.JsxSelfClosingElementStructurePrinter(this);
   }

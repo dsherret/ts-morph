@@ -1,6 +1,6 @@
-import { errors, nameof, SyntaxKind } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
-import { JsxAttribute, JsxSelfClosingElement } from "../../../../compiler";
+import { Identifier, JsxAttribute, JsxSelfClosingElement } from "../../../../compiler";
 import { JsxAttributeStructure, StructureKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
@@ -14,10 +14,10 @@ function getInfoForSelfClosingElement(text: string) {
 }
 
 describe("JsxAttribute", () => {
-  describe(nameof<JsxAttribute>("getName"), () => {
+  describe(nameof<JsxAttribute>("getNameNode"), () => {
     function doTest(text: string, expected: string) {
       const { descendant } = getInfo(text);
-      expect(descendant.getName()).to.equal(expected);
+      expect(descendant.getNameNode().getText()).to.equal(expected);
     }
 
     it("should get the name", () => {
@@ -25,10 +25,10 @@ describe("JsxAttribute", () => {
     });
   });
 
-  describe(nameof<JsxAttribute>("rename"), () => {
+  describe("rename", () => {
     function doTest(text: string, newName: string, expected: string) {
       const { descendant, sourceFile } = getInfo(text);
-      descendant.rename(newName);
+      (descendant.getNameNode() as Identifier).rename(newName);
       expect(sourceFile.getFullText()).to.equal(expected);
     }
 
@@ -156,11 +156,20 @@ describe("JsxAttribute", () => {
     });
 
     it("should set everything when provided", () => {
-      const structure: OptionalKindAndTrivia<MakeRequired<JsxAttributeStructure>> = {
+      let structure: OptionalKindAndTrivia<MakeRequired<JsxAttributeStructure>> = {
         initializer: "{6}",
         name: "newName",
       };
       doTest(`var t = (<jsx a1={5} />);`, structure, `var t = (<jsx newName={6} />);`);
+
+      structure = {
+        initializer: "{6}",
+        name: {
+          namespace: "test",
+          name: "newName",
+        },
+      };
+      doTest(`var t = (<jsx a1={5} />);`, structure, `var t = (<jsx test:newName={6} />);`);
     });
 
     it("should remove the initializer when providing undefined", () => {
@@ -195,6 +204,17 @@ describe("JsxAttribute", () => {
       doTest(`var t = (<jsx a1={1} />`, {
         kind: StructureKind.JsxAttribute,
         name: "a1",
+        initializer: `{1}`,
+      });
+    });
+
+    it("should get when namespaced", () => {
+      doTest(`var t = (<jsx n:a1={1} />`, {
+        kind: StructureKind.JsxAttribute,
+        name: {
+          namespace: "n",
+          name: "a1",
+        },
         initializer: `{1}`,
       });
     });
