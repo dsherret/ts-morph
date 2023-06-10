@@ -578,6 +578,13 @@ export class Type<TType extends ts.Type = ts.Type> {
   isUndefined() {
     return this._hasTypeFlag(TypeFlags.Undefined);
   }
+  
+  /**
+   * Gets if this is the void type.
+   */
+  isVoid() {
+    return this._hasTypeFlag(TypeFlags.Void);
+  }  
 
   /**
    * Gets the type flags.
