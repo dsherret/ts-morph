@@ -6760,7 +6760,7 @@ export declare class AssertEntry extends AssertEntryBase<ts.AssertEntry> {
   getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.AssertEntry>>;
 }
 
-declare const ExportAssignmentBase: Constructor<ExpressionedNode> & typeof Statement;
+declare const ExportAssignmentBase: Constructor<ExpressionedNode> & Constructor<JSDocableNode> & typeof Statement;
 
 export declare class ExportAssignment extends ExportAssignmentBase<ts.ExportAssignment> {
   /**
