@@ -1,6 +1,6 @@
 import { errors, nameof, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange, removeChildren } from "../../../manipulation";
-import { JsxAttributeSpecificStructure, JsxAttributeStructure, StructureKind } from "../../../structures";
+import { JsxAttributeSpecificStructure, JsxAttributeStructure, JsxNamespacedNameStructure, StructureKind } from "../../../structures";
 import { WriterFunction } from "../../../types";
 import { getTextFromStringOrWriter } from "../../../utils";
 import { JsxAttributeName } from "../aliases";
@@ -8,6 +8,7 @@ import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { StringLiteral } from "../literal";
+import { Identifier } from "../name";
 import { JsxElement } from "./JsxElement";
 import { JsxExpression } from "./JsxExpression";
 import { JsxFragment } from "./JsxFragment";
@@ -18,6 +19,17 @@ export class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
   /** Gets the name node of the JSX attribute. */
   getNameNode(): JsxAttributeName {
     return this._getNodeFromCompilerNode(this.compilerNode.name);
+  }
+
+  /** Sets the name of the JSX attribute. */
+  setName(name: string | JsxNamespacedNameStructure): this {
+    this.getNameNode().replaceWithText(writer => {
+      if (typeof name === "object")
+        this._context.structurePrinterFactory.forJsxNamespacedName().printText(writer, name);
+      else
+        writer.write(name);
+    });
+    return this;
   }
 
   /**
@@ -101,6 +113,9 @@ export class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
   set(structure: Partial<JsxAttributeStructure>) {
     callBaseSet(JsxAttributeBase.prototype, this, structure);
 
+    if (structure.name != null)
+      this.setName(structure.name);
+
     if (structure.initializer != null)
       this.setInitializer(structure.initializer);
     else if (structure.hasOwnProperty(nameof(structure, "initializer")))
@@ -114,7 +129,9 @@ export class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
    */
   getStructure(): JsxAttributeStructure {
     const initializer = this.getInitializer();
+    const nameNode = this.getNameNode();
     return callBaseGetStructure<JsxAttributeSpecificStructure>(JsxAttributeBase.prototype, this, {
+      name: nameNode instanceof Identifier ? nameNode.getText() : nameNode.getStructure(),
       kind: StructureKind.JsxAttribute,
       initializer: initializer?.getText(),
     });
