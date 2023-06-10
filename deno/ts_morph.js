@@ -18155,6 +18155,9 @@ class Type {
     isUndefined() {
         return this._hasTypeFlag(TypeFlags.Undefined);
     }
+    isVoid() {
+        return this._hasTypeFlag(TypeFlags.Void);
+    }
     getFlags() {
         return this.compilerType.flags;
     }
