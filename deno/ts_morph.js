@@ -11761,7 +11761,7 @@ class AssertEntry extends AssertEntryBase {
     }
 }
 
-const ExportAssignmentBase = ExpressionedNode(Statement);
+const ExportAssignmentBase = ExpressionedNode(JSDocableNode(Statement));
 class ExportAssignment extends ExportAssignmentBase {
     isExportEquals() {
         return this.compilerNode.isExportEquals || false;
