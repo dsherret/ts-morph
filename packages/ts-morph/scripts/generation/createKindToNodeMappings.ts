@@ -1,7 +1,7 @@
 /**
  * Code Manipulation - Create kind to node mappings
  * ------------------------------------------------
- * This creates the kindToNodeMappings.ts file so that type assertions are necessary in
+ * This creates the kindToNodeMappings.generated.ts file so that type assertions are necessary in
  * the getDescendantsOfKind, getChildrenOfKind, etc... methods.
  * ----------------------------------------------
  */
@@ -11,7 +11,7 @@ import { TsInspector, TsMorphInspector } from "../inspectors/mod.ts";
 
 export function createKindToNodeMappings(inspector: TsMorphInspector, tsInspector: TsInspector) {
   const project = inspector.getProject();
-  const kindToNodeMappingsFile = project.getSourceFileOrThrow("kindToNodeMappings.ts");
+  const kindToNodeMappingsFile = project.getSourceFileOrThrow("kindToNodeMappings.generated.ts");
   const kindToWrapperMappings = inspector.getKindToWrapperMappings();
 
   const interfaceStructures: tsMorph.InterfaceDeclarationStructure[] = [];

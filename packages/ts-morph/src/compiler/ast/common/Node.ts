@@ -14,7 +14,7 @@ import { Type } from "../../types";
 import { ExtendedParser, hasParsedTokens } from "../utils";
 import { CompilerNodeToWrappedType } from "../CompilerNodeToWrappedType";
 import { Expression } from "../expression";
-import { KindToNodeMappings } from "../kindToNodeMappings";
+import { KindToNodeMappings } from "../kindToNodeMappings.generated";
 import { SourceFile } from "../module";
 import { Statement, StatementedNode } from "../statement";
 import { CommentRange } from "../comment/CommentRange";
@@ -2882,6 +2882,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.ConstructSignature:
       case SyntaxKind.EnumDeclaration:
       case SyntaxKind.EnumMember:
+      case SyntaxKind.ExportAssignment:
       case SyntaxKind.ExpressionStatement:
       case SyntaxKind.FunctionDeclaration:
       case SyntaxKind.FunctionExpression:
@@ -3017,11 +3018,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isJSDocText: (node: compiler.Node | undefined) => node is compiler.JSDocText = Node.is(SyntaxKind.JSDocText);
   /** Gets if the node is a JSDocThisTag. */
   static readonly isJSDocThisTag: (node: compiler.Node | undefined) => node is compiler.JSDocThisTag = Node.is(SyntaxKind.JSDocThisTag);
-
   /** Gets if the node is a JSDocThrowsTag. */
-  static isJSDocThrowsTag(node: compiler.Node | undefined): node is compiler.JSDocThrowsTag {
-    return node?.getKind() === SyntaxKind.JSDocThrowsTag;
-  }
+  static readonly isJSDocThrowsTag: (node: compiler.Node | undefined) => node is compiler.JSDocThrowsTag = Node.is(SyntaxKind.JSDocThrowsTag);
 
   /** Gets if the node is a JSDocType. */
   static isJSDocType(node: compiler.Node | undefined): node is compiler.JSDocType {
@@ -3106,6 +3104,12 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isJsxExpression: (node: compiler.Node | undefined) => node is compiler.JsxExpression = Node.is(SyntaxKind.JsxExpression);
   /** Gets if the node is a JsxFragment. */
   static readonly isJsxFragment: (node: compiler.Node | undefined) => node is compiler.JsxFragment = Node.is(SyntaxKind.JsxFragment);
+
+  /** Gets if the node is a JsxNamespacedName. */
+  static isJsxNamespacedName(node: compiler.Node | undefined): node is compiler.JsxNamespacedName {
+    return node?.getKind() === SyntaxKind.JsxNamespacedName;
+  }
+
   /** Gets if the node is a JsxOpeningElement. */
   static readonly isJsxOpeningElement: (node: compiler.Node | undefined) => node is compiler.JsxOpeningElement = Node.is(SyntaxKind.JsxOpeningElement);
   /** Gets if the node is a JsxOpeningFragment. */
@@ -3358,7 +3362,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.EnumDeclaration:
       case SyntaxKind.ImportEqualsDeclaration:
       case SyntaxKind.InterfaceDeclaration:
-      case SyntaxKind.JsxAttribute:
+      case SyntaxKind.JsxNamespacedName:
       case SyntaxKind.MetaProperty:
       case SyntaxKind.NamedTupleMember:
       case SyntaxKind.PropertyAccessExpression:
@@ -3606,7 +3610,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.Identifier:
       case SyntaxKind.ImportEqualsDeclaration:
       case SyntaxKind.InterfaceDeclaration:
-      case SyntaxKind.JsxAttribute:
+      case SyntaxKind.JsxNamespacedName:
       case SyntaxKind.MetaProperty:
       case SyntaxKind.MethodDeclaration:
       case SyntaxKind.MethodSignature:
@@ -3647,7 +3651,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.Identifier:
       case SyntaxKind.ImportEqualsDeclaration:
       case SyntaxKind.InterfaceDeclaration:
-      case SyntaxKind.JsxAttribute:
+      case SyntaxKind.JsxNamespacedName:
       case SyntaxKind.MetaProperty:
       case SyntaxKind.MethodDeclaration:
       case SyntaxKind.MethodSignature:

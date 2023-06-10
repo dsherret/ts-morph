@@ -1,4 +1,4 @@
-import { errors, nameof, SyntaxKind } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { JsxAttribute, JsxSelfClosingElement } from "../../../../compiler";
 import { JsxAttributeStructure, StructureKind } from "../../../../structures";
@@ -14,10 +14,10 @@ function getInfoForSelfClosingElement(text: string) {
 }
 
 describe("JsxAttribute", () => {
-  describe(nameof<JsxAttribute>("getName"), () => {
+  describe(nameof<JsxAttribute>("getNameNode"), () => {
     function doTest(text: string, expected: string) {
       const { descendant } = getInfo(text);
-      expect(descendant.getName()).to.equal(expected);
+      expect(descendant.getNameNode().getText()).to.equal(expected);
     }
 
     it("should get the name", () => {
@@ -25,10 +25,10 @@ describe("JsxAttribute", () => {
     });
   });
 
-  describe(nameof<JsxAttribute>("rename"), () => {
+  describe("rename", () => {
     function doTest(text: string, newName: string, expected: string) {
       const { descendant, sourceFile } = getInfo(text);
-      descendant.rename(newName);
+      descendant.getNameNode().rename(newName);
       expect(sourceFile.getFullText()).to.equal(expected);
     }
 

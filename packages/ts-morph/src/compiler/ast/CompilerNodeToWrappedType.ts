@@ -7,7 +7,7 @@ import {
   CompilerCommentTypeElement,
 } from "./comment";
 import * as compiler from "./index";
-import { ImplementedKindToNodeMappings } from "./kindToNodeMappings";
+import { ImplementedKindToNodeMappings } from "./kindToNodeMappings.generated";
 
 export type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ObjectDestructuringAssignment ? compiler.ObjectDestructuringAssignment
   : T extends ts.ArrayDestructuringAssignment ? compiler.ArrayDestructuringAssignment

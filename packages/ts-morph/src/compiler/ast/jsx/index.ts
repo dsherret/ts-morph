@@ -5,6 +5,7 @@ export * from "./JsxClosingFragment";
 export * from "./JsxElement";
 export * from "./JsxExpression";
 export * from "./JsxFragment";
+export * from "./JsxNamespacedName";
 export * from "./JsxOpeningElement";
 export * from "./JsxOpeningFragment";
 export * from "./JsxSelfClosingElement";

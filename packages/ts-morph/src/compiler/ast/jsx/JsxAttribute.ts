@@ -3,7 +3,7 @@ import { insertIntoParentTextRange, removeChildren } from "../../../manipulation
 import { JsxAttributeSpecificStructure, JsxAttributeStructure, StructureKind } from "../../../structures";
 import { WriterFunction } from "../../../types";
 import { getTextFromStringOrWriter } from "../../../utils";
-import { NamedNode } from "../base";
+import { JsxAttributeName } from "../aliases";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
@@ -13,13 +13,22 @@ import { JsxExpression } from "./JsxExpression";
 import { JsxFragment } from "./JsxFragment";
 import { JsxSelfClosingElement } from "./JsxSelfClosingElement";
 
-export const JsxAttributeBase = NamedNode(Node);
+export const JsxAttributeBase = Node;
 export class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
+  /** Gets the name node of the JSX attribute. */
+  getNameNode(): JsxAttributeName {
+    return this._getNodeFromCompilerNode(this.compilerNode.name);
+  }
+
   /**
    * Gets the JSX attribute's initializer or throws if it doesn't exist.
    */
   getInitializerOrThrow(message?: string | (() => string)) {
-    return errors.throwIfNullOrUndefined(this.getInitializer(), message ?? `Expected to find an initializer for the JSX attribute '${this.getName()}'`, this);
+    return errors.throwIfNullOrUndefined(
+      this.getInitializer(),
+      message ?? `Expected to find an initializer for the JSX attribute '${this.getNameNode().getText()}'`,
+      this,
+    );
   }
 
   /**

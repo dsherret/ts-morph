@@ -26,7 +26,17 @@ import {
   MethodSignature,
   PropertySignature,
 } from "./interface";
-import { JsxAttribute, JsxElement, JsxExpression, JsxFragment, JsxOpeningElement, JsxSelfClosingElement, JsxSpreadAttribute, JsxText } from "./jsx";
+import {
+  JsxAttribute,
+  JsxElement,
+  JsxExpression,
+  JsxFragment,
+  JsxNamespacedName,
+  JsxOpeningElement,
+  JsxSelfClosingElement,
+  JsxSpreadAttribute,
+  JsxText,
+} from "./jsx";
 import {
   FalseLiteral,
   NoSubstitutionTemplateLiteral,
@@ -77,11 +87,9 @@ type _EntityNameExpressionTest = AssertTrue<IsExact<WrappedToCompilerNodeType<En
 type MapPropAccessEntityNameExpr<T> = T extends ts.PropertyAccessEntityNameExpression ? ts.PropertyAccessExpression : T;
 
 export type DeclarationName =
-  | Identifier
-  | PrivateIdentifier
+  | PropertyName
+  | JsxAttributeName
   | StringLiteralLike
-  | NumericLiteral
-  | ComputedPropertyName
   | ElementAccessExpression
   | BindingPattern
   | EntityNameExpression;
@@ -93,18 +101,25 @@ type _EntityNameTest = AssertTrue<IsExact<WrappedToCompilerNodeType<EntityName>,
 export type JsxChild = JsxText | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment;
 type _JsxChildTest = AssertTrue<IsExact<WrappedToCompilerNodeType<JsxChild>, ts.JsxChild>>;
 
+export type JsxAttributeName = Identifier | JsxNamespacedName;
+type _JsxAttributeNameTest = AssertTrue<IsExact<WrappedToCompilerNodeType<JsxAttributeName>, ts.JsxAttributeName>>;
+
 export type JsxAttributeLike = JsxAttribute | JsxSpreadAttribute;
 type _JsxAttributeLikeTest = AssertTrue<IsExact<WrappedToCompilerNodeType<JsxAttributeLike>, ts.JsxAttributeLike>>;
 
 export type JsxOpeningLikeElement = JsxSelfClosingElement | JsxOpeningElement;
 type _JsxOpeningLikeElementTest = AssertTrue<IsExact<WrappedToCompilerNodeType<JsxOpeningLikeElement>, ts.JsxOpeningLikeElement>>;
 
-export type JsxTagNameExpression = Identifier | ThisExpression | JsxTagNamePropertyAccess;
-type _JsxTagNameExpressionTest = AssertTrue<IsExact<ts.Identifier | ts.ThisExpression | ts.JsxTagNamePropertyAccess, ts.JsxTagNameExpression>>;
+export type JsxTagNameExpression = Identifier | ThisExpression | JsxTagNamePropertyAccess | JsxNamespacedName;
+type _JsxTagNameExpressionTest = AssertTrue<
+  IsExact<ts.Identifier | ts.ThisExpression | ts.JsxTagNamePropertyAccess | ts.JsxNamespacedName, ts.JsxTagNameExpression>
+>;
 export interface JsxTagNamePropertyAccess extends PropertyAccessExpression {
-  getExpression(): JsxTagNameExpression;
+  getExpression(): Identifier | ThisExpression | JsxTagNamePropertyAccess;
 }
-type _JsxTagNamePropertyAccess = AssertTrue<IsExact<ts.PropertyAccessExpression & { expression: ts.JsxTagNameExpression }, ts.JsxTagNamePropertyAccess>>;
+type _JsxTagNamePropertyAccess = AssertTrue<
+  IsExact<ts.PropertyAccessExpression & { expression: ts.Identifier | ts.ThisExpression | ts.JsxTagNamePropertyAccess }, ts.JsxTagNamePropertyAccess>
+>;
 
 export type ObjectLiteralElementLike = PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment | MethodDeclaration | AccessorDeclaration;
 type _ObjectLiteralElementLikeTest = AssertTrue<IsExact<WrappedToCompilerNodeType<ObjectLiteralElementLike>, ts.ObjectLiteralElementLike>>;

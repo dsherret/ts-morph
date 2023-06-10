@@ -13,7 +13,7 @@ export * from "./function";
 export * from "./general";
 export * from "./interface";
 export * from "./jsx";
-export * from "./kindToNodeMappings";
+export * from "./kindToNodeMappings.generated";
 export * from "./literal";
 export * from "./module";
 export * from "./name";
