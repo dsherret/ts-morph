@@ -57,6 +57,7 @@ let explicitReadonlyArrayType: ReadonlyArray<string>;
 let neverType: never;
 let arrayTypeOfTuples: [string][];
 let undefinedType: undefined;
+let voidType: void;
 let classType: MyClass;
 let functionType: () => string;
 let constructorType: { new(): MyClass; };
@@ -515,6 +516,20 @@ let unknownType: unknown;
 
       it("should get when it's not", () => {
         doTest("anyType", false);
+      });
+    });
+
+    describe(nameof<Type>("isVoid"), () => {
+      function doTest(typeName: string, expected: boolean) {
+        expect(typesByName[typeName].isVoid()).to.equal(expected);
+      }
+
+      it("should be when is", () => {
+        doTest("voidType", true);
+      });
+
+      it("should not be when not", () => {
+        doTest("stringType", false);
       });
     });
 
