@@ -3736,7 +3736,7 @@ class Node {
             let lastPos = replaceRange[0];
             for (const transform of transformations) {
                 finalText += fileText.substring(lastPos, transform.start);
-                finalText += printer.printNode(ts.EmitHint.Unspecified, transform.compilerNode, compilerSourceFile);
+                finalText += printer.printNode(ts.EmitHint.Unspecified, transform.compilerNode, transform.compilerNode.getSourceFile());
                 lastPos = transform.end;
             }
             finalText += fileText.substring(lastPos, replaceRange[1]);
