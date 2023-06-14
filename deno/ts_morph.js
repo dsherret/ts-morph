@@ -3731,12 +3731,13 @@ class Node {
             }
         }
         function getTransformedText(replaceRange) {
+            var _a;
             const fileText = compilerSourceFile.getFullText();
             let finalText = "";
             let lastPos = replaceRange[0];
             for (const transform of transformations) {
                 finalText += fileText.substring(lastPos, transform.start);
-                finalText += printer.printNode(ts.EmitHint.Unspecified, transform.compilerNode, compilerSourceFile);
+                finalText += printer.printNode(ts.EmitHint.Unspecified, transform.compilerNode, (_a = transform.compilerNode.getSourceFile()) !== null && _a !== void 0 ? _a : compilerSourceFile);
                 lastPos = transform.end;
             }
             finalText += fileText.substring(lastPos, replaceRange[1]);
