@@ -6,7 +6,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Exist
 
-**Total:** 223
+**Total:** 224
 
 * [ArrayBindingPattern](src/compiler/ast/binding/ArrayBindingPattern.ts)
     * :heavy_check_mark: elements
@@ -328,6 +328,9 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: openingFragment
     * :heavy_check_mark: children
     * :heavy_check_mark: closingFragment
+* [JsxNamespacedName](src/compiler/ast/jsx/JsxNamespacedName.ts)
+    * :heavy_check_mark: name
+    * :heavy_check_mark: namespace
 * [JsxOpeningElement](src/compiler/ast/jsx/JsxOpeningElement.ts)
     * :heavy_check_mark: tagName
     * :x: typeArguments
@@ -338,6 +341,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :x: typeArguments
     * :heavy_check_mark: attributes
 * [JsxSpreadAttribute](src/compiler/ast/jsx/JsxSpreadAttribute.ts)
+    * :heavy_check_mark: name
     * :heavy_check_mark: expression
 * [JsxText](src/compiler/ast/jsx/JsxText.ts)
     * :heavy_check_mark: containsOnlyTriviaWhiteSpaces

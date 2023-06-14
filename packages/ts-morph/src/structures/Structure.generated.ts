@@ -70,6 +70,7 @@ export const Structure = {
       case StructureKind.ConstructSignature:
       case StructureKind.Enum:
       case StructureKind.EnumMember:
+      case StructureKind.ExportAssignment:
       case StructureKind.FunctionOverload:
       case StructureKind.Function:
       case StructureKind.GetAccessor:

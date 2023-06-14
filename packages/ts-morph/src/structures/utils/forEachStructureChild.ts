@@ -12,7 +12,7 @@ import { FunctionDeclarationStructure, FunctionLikeDeclarationStructure, Functio
 import { InterfaceDeclarationStructure, CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructure, MethodSignatureStructure,
     IndexSignatureDeclarationStructure, PropertySignatureStructure } from "../interface";
 import { JsxElementStructure, JsxSelfClosingElementStructure, JsxAttributedNodeStructure } from "../jsx";
-import { ExportDeclarationStructure, ImportDeclarationStructure, ModuleDeclarationStructure, SourceFileStructure } from "../module";
+import { ExportAssignmentStructure, ExportDeclarationStructure, ImportDeclarationStructure, ModuleDeclarationStructure, SourceFileStructure } from "../module";
 import { VariableStatementStructure, StatementedNodeStructure } from "../statement";
 import { TypeAliasDeclarationStructure } from "../type";
 import { OptionalKind } from "../types";
@@ -58,6 +58,8 @@ export function forEachStructureChild<TStructure>(structure: Structures | Readon
       return forEnumDeclaration(structure, callback);
     case StructureKind.EnumMember:
       return forEnumMember(structure, callback);
+    case StructureKind.ExportAssignment:
+      return forExportAssignment(structure, callback);
     case StructureKind.ExportDeclaration:
       return forExportDeclaration(structure, callback);
     case StructureKind.FunctionOverload:
@@ -201,6 +203,11 @@ function forEnumDeclaration<TStructure>(structure: EnumDeclarationStructure, cal
 
 /** @generated */
 function forEnumMember<TStructure>(structure: EnumMemberStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
+  return forJSDocableNode(structure, callback);
+}
+
+/** @generated */
+function forExportAssignment<TStructure>(structure: ExportAssignmentStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
   return forJSDocableNode(structure, callback);
 }
 

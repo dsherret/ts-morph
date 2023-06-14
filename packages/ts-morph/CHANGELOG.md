@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="19.0.0"></a>
+# [19.0.0](https://github.com/dsherret/ts-morph/compare/18.0.0...19.0.0) (2023-06-14)
+
+
+### Features
+
+* add IsVoid method to Type ([#1398](https://github.com/dsherret/ts-morph/issues/1398)) ([f837790](https://github.com/dsherret/ts-morph/commit/f837790))
+* add JSDocable to ExportAssignment ([#1397](https://github.com/dsherret/ts-morph/issues/1397)) ([611c8b6](https://github.com/dsherret/ts-morph/commit/611c8b6))
+* upgrade to TS 5.1 ([#1415](https://github.com/dsherret/ts-morph/issues/1415)) ([46e50b0](https://github.com/dsherret/ts-morph/commit/46e50b0))
+* fix: allow .tranform to work with Nodes from another parsed sourcefile (#1417) ([225ff58](https://github.com/dsherret/ts-morph/commit/225ff58))
+
+### BREAKING CHANGES
+
+- Upgraded to TS 5.1, which has Jsx namespaces.
+
 <a name="18.0.0"></a>
 # [18.0.0](https://github.com/dsherret/ts-morph/compare/17.0.1...18.0.0) (2023-03-22)
 
