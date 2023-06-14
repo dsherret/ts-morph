@@ -6542,6 +6542,7 @@ const Structure = {
             case StructureKind.ConstructSignature:
             case StructureKind.Enum:
             case StructureKind.EnumMember:
+            case StructureKind.ExportAssignment:
             case StructureKind.FunctionOverload:
             case StructureKind.Function:
             case StructureKind.GetAccessor:
@@ -7057,6 +7058,8 @@ function forEachStructureChild(structure, callback) {
             return forEnumDeclaration(structure, callback);
         case StructureKind.EnumMember:
             return forEnumMember(structure, callback);
+        case StructureKind.ExportAssignment:
+            return forExportAssignment(structure, callback);
         case StructureKind.ExportDeclaration:
             return forExportDeclaration(structure, callback);
         case StructureKind.FunctionOverload:
@@ -7168,6 +7171,9 @@ function forEnumDeclaration(structure, callback) {
         || forAll(structure.members, callback, StructureKind.EnumMember);
 }
 function forEnumMember(structure, callback) {
+    return forJSDocableNode(structure, callback);
+}
+function forExportAssignment(structure, callback) {
     return forJSDocableNode(structure, callback);
 }
 function forExportDeclaration(structure, callback) {
