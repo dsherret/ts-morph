@@ -2211,10 +2211,8 @@ class MyClass {
           traversal.factory.createBlock([]),
         );
       });
-      expect(newNode.getText()).to.equal(`function test() {
-}`);
-      expect(sourceFile.getText()).to.equal(`function test() {
-}`);
+      expect(newNode.getText()).to.equal(`function test() { }`);
+      expect(sourceFile.getText()).to.equal(`function test() { }`);
       expect(node.wasForgotten()).to.be.true;
     });
 
@@ -2233,10 +2231,8 @@ class MyClass {
           traversal.factory.createBlock([]),
         );
       });
-      expect(newNode.getText()).to.equal(`function test() {
-}`);
-      expect(sourceFile.getText()).to.equal(`function test() {
-}`);
+      expect(newNode.getText()).to.equal(`function test() { }`);
+      expect(sourceFile.getText()).to.equal(`function test() { }`);
       expect(node.wasForgotten()).to.be.false;
       expect(node === newNode).to.be.true;
     });

@@ -1565,7 +1565,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
         for (const transform of transformations) {
           finalText += fileText.substring(lastPos, transform.start);
-          finalText += printer.printNode(ts.EmitHint.Unspecified, transform.compilerNode, transform.compilerNode.getSourceFile());
+          finalText += printer.printNode(ts.EmitHint.Unspecified, transform.compilerNode, transform.compilerNode.getSourceFile() ?? compilerSourceFile);
           lastPos = transform.end;
         }
 
