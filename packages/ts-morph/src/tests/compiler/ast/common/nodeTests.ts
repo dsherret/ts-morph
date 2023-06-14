@@ -2139,6 +2139,27 @@ class MyClass {
       }, `interface A {\n} class B {}`);
     });
 
+    it("should not forget StringLiterals", () => {
+      const parseCode = (code: string) =>
+        new Project()
+          .createSourceFile("test.ts", code, { overwrite: true })
+          .getStatement(Node.isVariableStatement)
+          ?.getDeclarationList()
+          .getDeclarations()[0]
+          .getInitializer()!;
+
+      const replaceWith = parseCode("const y = console.log(\"test\")");
+
+      doTest("const y = 1", sourceFile => sourceFile, traversal => {
+        const node = traversal.visitChildren();
+
+        if (ts.isNumericLiteral(node))
+          return replaceWith.compilerNode;
+
+        return node;
+      }, "const y = console.log(\"test\")");
+    });
+
     it("should handle comments", () => {
       doTest("// test\nclass C {}\n// test2\nclass B {}", sourceFile => sourceFile, traversal => {
         const node = traversal.visitChildren();
@@ -2190,8 +2211,8 @@ class MyClass {
           traversal.factory.createBlock([]),
         );
       });
-      expect(newNode.getText()).to.equal("function test() { }");
-      expect(sourceFile.getText()).to.equal("function test() { }");
+      expect(newNode.getText()).to.equal(`function test() { }`);
+      expect(sourceFile.getText()).to.equal(`function test() { }`);
       expect(node.wasForgotten()).to.be.true;
     });
 
@@ -2210,8 +2231,8 @@ class MyClass {
           traversal.factory.createBlock([]),
         );
       });
-      expect(newNode.getText()).to.equal("function test() { }");
-      expect(sourceFile.getText()).to.equal("function test() { }");
+      expect(newNode.getText()).to.equal(`function test() { }`);
+      expect(sourceFile.getText()).to.equal(`function test() { }`);
       expect(node.wasForgotten()).to.be.false;
       expect(node === newNode).to.be.true;
     });
