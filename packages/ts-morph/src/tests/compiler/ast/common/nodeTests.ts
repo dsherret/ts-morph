@@ -1484,6 +1484,8 @@ class MyClass {
         foundKinds.push(child.getKind());
         if (callback)
           return callback(child);
+        else
+          return undefined;
       });
       expect(foundKinds).to.deep.equal(expectedKinds);
       expect(returnValue).to.deep.equal(expectedReturnValue);

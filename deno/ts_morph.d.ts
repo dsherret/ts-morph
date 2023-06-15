@@ -638,7 +638,10 @@ export declare class Project {
    * @param moduleName - The ambient module name with or without quotes.
    */
   getAmbientModuleOrThrow(moduleName: string, message?: string | (() => string)): Symbol;
-  /** Gets the ambient module symbols (ex. modules in the @types folder or node_modules). */
+  /**
+   * Gets the ambient module symbols (ex. modules in the
+   * @types folder or node_modules).
+   */
   getAmbientModules(): Symbol[];
   /** Saves all the unsaved source files to the file system and deletes all deleted files. */
   save(): Promise<void>;
@@ -719,9 +722,15 @@ export interface ProjectOptions {
   compilerOptions?: CompilerOptions;
   /** File path to the tsconfig.json file. */
   tsConfigFilePath?: string;
-  /** Whether to skip adding the source files from the specified tsconfig.json. @default false */
+  /**
+   * Whether to skip adding the source files from the specified tsconfig.json.
+   * @default false
+   */
   skipAddingFilesFromTsConfig?: boolean;
-  /** Skip resolving file dependencies when providing a ts config file path and adding the files from tsconfig. @default false */
+  /**
+   * Skip resolving file dependencies when providing a ts config file path and adding the files from tsconfig.
+   * @default false
+   */
   skipFileDependencyResolution?: boolean;
   /**
    * Skip loading the lib files. Unlike the compiler API, ts-morph does not load these
@@ -735,7 +744,10 @@ export interface ProjectOptions {
   libFolderPath?: string;
   /** Manipulation settings */
   manipulationSettings?: Partial<ManipulationSettings>;
-  /** Whether to use an in-memory file system. @default false */
+  /**
+   * Whether to use an in-memory file system.
+   * @default false
+   */
   useInMemoryFileSystem?: boolean;
   /**
    * Optional file system host. Useful for mocking access to the file system.
@@ -9595,7 +9607,10 @@ export declare class TypeChecker {
   private constructor();
   /** Gets the compiler's TypeChecker. */
   get compilerObject(): ts.TypeChecker;
-  /** Gets the ambient module symbols (ex. modules in the @types folder or node_modules). */
+  /**
+   * Gets the ambient module symbols (ex. modules in the
+   * @types folder or node_modules).
+   */
   getAmbientModules(): Symbol[];
   /**
    * Gets the apparent type of a type.
