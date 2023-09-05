@@ -3064,7 +3064,7 @@ class Node {
         return this._context.typeChecker.getSymbolsInScope(this, meaning);
     }
     getLocalOrThrow(name, message) {
-        return errors.throwIfNullOrUndefined(this.getLocal(name), message !== null && message !== void 0 ? message : `Expected to find local symbol with name: ${name}`, this);
+        return errors.throwIfNullOrUndefined(this.getLocal(name), message !== null && message !== void 0 ? message : (() => `Expected to find local symbol with name: ${name}`), this);
     }
     getLocal(name) {
         const locals = this._getCompilerLocals();
@@ -3548,7 +3548,7 @@ class Node {
         return node;
     }
     getParentWhileKindOrThrow(kind, message) {
-        return errors.throwIfNullOrUndefined(this.getParentWhileKind(kind), message !== null && message !== void 0 ? message : `The initial parent was not a syntax kind of ${getSyntaxKindName(kind)}.`, this);
+        return errors.throwIfNullOrUndefined(this.getParentWhileKind(kind), message !== null && message !== void 0 ? message : (() => `The initial parent was not a syntax kind of ${getSyntaxKindName(kind)}.`), this);
     }
     getParentWhileKind(kind) {
         return this.getParentWhile(n => n.getKind() === kind);
@@ -3768,21 +3768,21 @@ class Node {
         return this._getCompilerChildrenOfKind(kind).map(c => this._getNodeFromCompilerNode(c));
     }
     getFirstChildByKindOrThrow(kind, message) {
-        return errors.throwIfNullOrUndefined(this.getFirstChildByKind(kind), message !== null && message !== void 0 ? message : `A child of the kind ${getSyntaxKindName(kind)} was expected.`, this);
+        return errors.throwIfNullOrUndefined(this.getFirstChildByKind(kind), message !== null && message !== void 0 ? message : (() => `A child of the kind ${getSyntaxKindName(kind)} was expected.`), this);
     }
     getFirstChildByKind(kind) {
         const child = this._getCompilerChildrenOfKind(kind)[0];
         return child == null ? undefined : this._getNodeFromCompilerNode(child);
     }
     getFirstChildIfKindOrThrow(kind, message) {
-        return errors.throwIfNullOrUndefined(this.getFirstChildIfKind(kind), message !== null && message !== void 0 ? message : `A first child of the kind ${getSyntaxKindName(kind)} was expected.`, this);
+        return errors.throwIfNullOrUndefined(this.getFirstChildIfKind(kind), message !== null && message !== void 0 ? message : (() => `A first child of the kind ${getSyntaxKindName(kind)} was expected.`), this);
     }
     getFirstChildIfKind(kind) {
         const firstChild = this._getCompilerFirstChild();
         return firstChild != null && firstChild.kind === kind ? this._getNodeFromCompilerNode(firstChild) : undefined;
     }
     getLastChildByKindOrThrow(kind, message) {
-        return errors.throwIfNullOrUndefined(this.getLastChildByKind(kind), message !== null && message !== void 0 ? message : `A child of the kind ${getSyntaxKindName(kind)} was expected.`, this);
+        return errors.throwIfNullOrUndefined(this.getLastChildByKind(kind), message !== null && message !== void 0 ? message : (() => `A child of the kind ${getSyntaxKindName(kind)} was expected.`), this);
     }
     getLastChildByKind(kind) {
         const children = this._getCompilerChildrenOfKind(kind);
@@ -3790,24 +3790,24 @@ class Node {
         return this._getNodeFromCompilerNodeIfExists(lastChild);
     }
     getLastChildIfKindOrThrow(kind, message) {
-        return errors.throwIfNullOrUndefined(this.getLastChildIfKind(kind), message !== null && message !== void 0 ? message : `A last child of the kind ${getSyntaxKindName(kind)} was expected.`, this);
+        return errors.throwIfNullOrUndefined(this.getLastChildIfKind(kind), message !== null && message !== void 0 ? message : (() => `A last child of the kind ${getSyntaxKindName(kind)} was expected.`), this);
     }
     getLastChildIfKind(kind) {
         const lastChild = this._getCompilerLastChild();
         return lastChild != null && lastChild.kind === kind ? this._getNodeFromCompilerNode(lastChild) : undefined;
     }
     getChildAtIndexIfKindOrThrow(index, kind, message) {
-        return errors.throwIfNullOrUndefined(this.getChildAtIndexIfKind(index, kind), message !== null && message !== void 0 ? message : `Child at index ${index} was expected to be ${getSyntaxKindName(kind)}`, this);
+        return errors.throwIfNullOrUndefined(this.getChildAtIndexIfKind(index, kind), message !== null && message !== void 0 ? message : (() => `Child at index ${index} was expected to be ${getSyntaxKindName(kind)}`), this);
     }
     getChildAtIndexIfKind(index, kind) {
         const node = this._getCompilerChildAtIndex(index);
         return node.kind === kind ? this._getNodeFromCompilerNode(node) : undefined;
     }
     getPreviousSiblingIfKindOrThrow(kind, message) {
-        return errors.throwIfNullOrUndefined(this.getPreviousSiblingIfKind(kind), message !== null && message !== void 0 ? message : `A previous sibling of kind ${getSyntaxKindName(kind)} was expected.`, this);
+        return errors.throwIfNullOrUndefined(this.getPreviousSiblingIfKind(kind), message !== null && message !== void 0 ? message : (() => `A previous sibling of kind ${getSyntaxKindName(kind)} was expected.`), this);
     }
     getNextSiblingIfKindOrThrow(kind, message) {
-        return errors.throwIfNullOrUndefined(this.getNextSiblingIfKind(kind), message !== null && message !== void 0 ? message : `A next sibling of kind ${getSyntaxKindName(kind)} was expected.`, this);
+        return errors.throwIfNullOrUndefined(this.getNextSiblingIfKind(kind), message !== null && message !== void 0 ? message : (() => `A next sibling of kind ${getSyntaxKindName(kind)} was expected.`), this);
     }
     getPreviousSiblingIfKind(kind) {
         const previousSibling = this._getCompilerPreviousSibling();
@@ -3826,13 +3826,13 @@ class Node {
         return condition(this.getParent(), this) ? this.getParent() : undefined;
     }
     getParentIfKindOrThrow(kind, message) {
-        return errors.throwIfNullOrUndefined(this.getParentIfKind(kind), message !== null && message !== void 0 ? message : `The parent was not a syntax kind of ${getSyntaxKindName(kind)}.`, this);
+        return errors.throwIfNullOrUndefined(this.getParentIfKind(kind), message !== null && message !== void 0 ? message : (() => `The parent was not a syntax kind of ${getSyntaxKindName(kind)}.`), this);
     }
     getParentIfKind(kind) {
         return this.getParentIf(n => n !== undefined && n.getKind() === kind);
     }
     getFirstAncestorByKindOrThrow(kind, message) {
-        return errors.throwIfNullOrUndefined(this.getFirstAncestorByKind(kind), message !== null && message !== void 0 ? message : `Expected an ancestor with a syntax kind of ${getSyntaxKindName(kind)}.`, this);
+        return errors.throwIfNullOrUndefined(this.getFirstAncestorByKind(kind), message !== null && message !== void 0 ? message : (() => `Expected an ancestor with a syntax kind of ${getSyntaxKindName(kind)}.`), this);
     }
     getFirstAncestorByKind(kind) {
         for (const parent of this._getAncestorsIterator(kind === SyntaxKind.SyntaxList)) {
@@ -3858,7 +3858,7 @@ class Node {
         return descendants;
     }
     getFirstDescendantByKindOrThrow(kind, message) {
-        return errors.throwIfNullOrUndefined(this.getFirstDescendantByKind(kind), message !== null && message !== void 0 ? message : `A descendant of kind ${getSyntaxKindName(kind)} was expected to be found.`, this);
+        return errors.throwIfNullOrUndefined(this.getFirstDescendantByKind(kind), message !== null && message !== void 0 ? message : (() => `A descendant of kind ${getSyntaxKindName(kind)} was expected to be found.`), this);
     }
     getFirstDescendantByKind(kind) {
         for (const descendant of this._getCompilerDescendantsOfKindIterator(kind))
@@ -8582,6 +8582,8 @@ var VariableDeclarationKind;
     VariableDeclarationKind["Var"] = "var";
     VariableDeclarationKind["Let"] = "let";
     VariableDeclarationKind["Const"] = "const";
+    VariableDeclarationKind["AwaitUsing"] = "await using";
+    VariableDeclarationKind["Using"] = "using";
 })(VariableDeclarationKind || (VariableDeclarationKind = {}));
 
 class VariableStatementStructurePrinter extends NodePrinter {
@@ -13616,8 +13618,8 @@ class VariableStatement extends VariableStatementBase {
     getDeclarationKind() {
         return this.getDeclarationList().getDeclarationKind();
     }
-    getDeclarationKindKeyword() {
-        return this.getDeclarationList().getDeclarationKindKeyword();
+    getDeclarationKindKeywords() {
+        return this.getDeclarationList().getDeclarationKindKeywords();
     }
     setDeclarationKind(type) {
         return this.getDeclarationList().setDeclarationKind(type);
@@ -16854,18 +16856,28 @@ class VariableDeclarationList extends VariableDeclarationListBase {
             return VariableDeclarationKind.Let;
         else if (nodeFlags & ts.NodeFlags.Const)
             return VariableDeclarationKind.Const;
+        else if (nodeFlags & ts.NodeFlags.Using)
+            return VariableDeclarationKind.Using;
+        else if (nodeFlags & ts.NodeFlags.AwaitUsing)
+            return VariableDeclarationKind.AwaitUsing;
         else
             return VariableDeclarationKind.Var;
     }
-    getDeclarationKindKeyword() {
+    getDeclarationKindKeywords() {
         const declarationKind = this.getDeclarationKind();
         switch (declarationKind) {
             case VariableDeclarationKind.Const:
-                return this.getFirstChildByKindOrThrow(SyntaxKind.ConstKeyword);
+                return [this.getFirstChildByKindOrThrow(SyntaxKind.ConstKeyword)];
             case VariableDeclarationKind.Let:
-                return this.getFirstChildByKindOrThrow(SyntaxKind.LetKeyword);
+                return [this.getFirstChildByKindOrThrow(SyntaxKind.LetKeyword)];
             case VariableDeclarationKind.Var:
-                return this.getFirstChildByKindOrThrow(SyntaxKind.VarKeyword);
+                return [this.getFirstChildByKindOrThrow(SyntaxKind.VarKeyword)];
+            case VariableDeclarationKind.Using:
+                return [this.getFirstChildByKindOrThrow(SyntaxKind.UsingKeyword)];
+            case VariableDeclarationKind.AwaitUsing:
+                const awaitKeyword = this.getFirstChildByKindOrThrow(SyntaxKind.AwaitKeyword);
+                const usingKeyword = awaitKeyword.getNextSiblingIfKindOrThrow(SyntaxKind.UndefinedKeyword);
+                return [awaitKeyword, usingKeyword];
             default:
                 return errors.throwNotImplementedForNeverValueError(declarationKind);
         }
@@ -16873,13 +16885,15 @@ class VariableDeclarationList extends VariableDeclarationListBase {
     setDeclarationKind(type) {
         if (this.getDeclarationKind() === type)
             return this;
-        const keyword = this.getDeclarationKindKeyword();
+        const keywords = this.getDeclarationKindKeywords();
+        const start = keywords[0].getStart();
+        const end = keywords[keywords.length - 1].getEnd();
         insertIntoParentTextRange({
-            insertPos: keyword.getStart(),
+            insertPos: start,
             newText: type,
             parent: this,
             replacing: {
-                textLength: keyword.getWidth(),
+                textLength: end - start,
             },
         });
         return this;

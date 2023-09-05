@@ -12,7 +12,7 @@ Certain nodes can have JS docs. For example:
  * @param person - Person to get the name from.
  */
 function getName(person: Person) {
-    // ...
+  // ...
 }
 ```
 

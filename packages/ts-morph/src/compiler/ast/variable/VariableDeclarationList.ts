@@ -26,22 +26,32 @@ export class VariableDeclarationList extends VariableDeclarationListBase<ts.Vari
       return VariableDeclarationKind.Let;
     else if (nodeFlags & ts.NodeFlags.Const)
       return VariableDeclarationKind.Const;
+    else if (nodeFlags & ts.NodeFlags.Using)
+      return VariableDeclarationKind.Using;
+    else if (nodeFlags & ts.NodeFlags.AwaitUsing)
+      return VariableDeclarationKind.AwaitUsing;
     else
       return VariableDeclarationKind.Var;
   }
 
   /**
-   * Gets the variable declaration kind keyword.
+   * Gets the variable declaration kind keywords.
    */
-  getDeclarationKindKeyword(): Node {
+  getDeclarationKindKeywords(): Node[] {
     const declarationKind = this.getDeclarationKind();
     switch (declarationKind) {
       case VariableDeclarationKind.Const:
-        return this.getFirstChildByKindOrThrow(SyntaxKind.ConstKeyword);
+        return [this.getFirstChildByKindOrThrow(SyntaxKind.ConstKeyword)];
       case VariableDeclarationKind.Let:
-        return this.getFirstChildByKindOrThrow(SyntaxKind.LetKeyword);
+        return [this.getFirstChildByKindOrThrow(SyntaxKind.LetKeyword)];
       case VariableDeclarationKind.Var:
-        return this.getFirstChildByKindOrThrow(SyntaxKind.VarKeyword);
+        return [this.getFirstChildByKindOrThrow(SyntaxKind.VarKeyword)];
+      case VariableDeclarationKind.Using:
+        return [this.getFirstChildByKindOrThrow(SyntaxKind.UsingKeyword)];
+      case VariableDeclarationKind.AwaitUsing:
+        const awaitKeyword = this.getFirstChildByKindOrThrow(SyntaxKind.AwaitKeyword);
+        const usingKeyword = awaitKeyword.getNextSiblingIfKindOrThrow(SyntaxKind.UndefinedKeyword);
+        return [awaitKeyword, usingKeyword];
       default:
         return errors.throwNotImplementedForNeverValueError(declarationKind);
     }
@@ -55,13 +65,15 @@ export class VariableDeclarationList extends VariableDeclarationListBase<ts.Vari
     if (this.getDeclarationKind() === type)
       return this;
 
-    const keyword = this.getDeclarationKindKeyword();
+    const keywords = this.getDeclarationKindKeywords();
+    const start = keywords[0].getStart();
+    const end = keywords[keywords.length - 1].getEnd();
     insertIntoParentTextRange({
-      insertPos: keyword.getStart(),
+      insertPos: start,
       newText: type,
       parent: this,
       replacing: {
-        textLength: keyword.getWidth(),
+        textLength: end - start,
       },
     });
 

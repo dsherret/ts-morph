@@ -8386,8 +8386,8 @@ export declare class VariableStatement extends VariableStatementBase<ts.Variable
   getDeclarations(): VariableDeclaration[];
   /** Gets the variable declaration kind. */
   getDeclarationKind(): VariableDeclarationKind;
-  /** Gets the variable declaration kind keyword. */
-  getDeclarationKindKeyword(): Node<ts.Node>;
+  /** Gets the variable declaration kind keywords. */
+  getDeclarationKindKeywords(): Node<ts.Node>[];
   /**
    * Sets the variable declaration kind.
    * @param type - Type to set.
@@ -8881,7 +8881,9 @@ export declare class VariableDeclaration extends VariableDeclarationBase<ts.Vari
 export declare enum VariableDeclarationKind {
   Var = "var",
   Let = "let",
-  Const = "const"
+  Const = "const",
+  AwaitUsing = "await using",
+  Using = "using"
 }
 
 declare const VariableDeclarationListBase: Constructor<ModifierableNode> & typeof Node;
@@ -8891,8 +8893,8 @@ export declare class VariableDeclarationList extends VariableDeclarationListBase
   getDeclarations(): VariableDeclaration[];
   /** Gets the variable declaration kind. */
   getDeclarationKind(): VariableDeclarationKind;
-  /** Gets the variable declaration kind keyword. */
-  getDeclarationKindKeyword(): Node;
+  /** Gets the variable declaration kind keywords. */
+  getDeclarationKindKeywords(): Node[];
   /**
    * Sets the variable declaration kind.
    * @param type - Type to set.

@@ -35,10 +35,10 @@ export class VariableStatement extends VariableStatementBase<ts.VariableStatemen
   }
 
   /**
-   * Gets the variable declaration kind keyword.
+   * Gets the variable declaration kind keywords.
    */
-  getDeclarationKindKeyword() {
-    return this.getDeclarationList().getDeclarationKindKeyword();
+  getDeclarationKindKeywords() {
+    return this.getDeclarationList().getDeclarationKindKeywords();
   }
 
   /**

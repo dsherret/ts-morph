@@ -132,9 +132,9 @@ default: 5
 Export declarations look like this:
 
 ```ts setup: class OtherClass {}
+export { MyClass } from "./other-file";
 export * from "./some-file";
-export {MyClass} from "./other-file";
-export {OtherClass};
+export { OtherClass };
 ```
 
 Get the export declarations by calling:
