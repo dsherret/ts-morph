@@ -4127,6 +4127,8 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   static isReferenceFindable<T extends Node>(node: T | undefined): node is ReferenceFindableNode & ReferenceFindableNodeExtensionType & T;
   /** Gets if the node is a RenameableNode. */
   static isRenameable<T extends Node>(node: T | undefined): node is RenameableNode & RenameableNodeExtensionType & T;
+  /** Gets if the node is a RestTypeNode. */
+  static isRestTypeNode(node: Node | undefined): node is RestTypeNode;
   /** Gets if the node is a ReturnTypedNode. */
   static isReturnTyped<T extends Node>(node: T | undefined): node is ReturnTypedNode & ReturnTypedNodeExtensionType & T;
   /** Gets if the node is a ScopeableNode. */
@@ -6418,6 +6420,7 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.PropertyDeclaration]: PropertyDeclaration;
   [SyntaxKind.PropertySignature]: PropertySignature;
   [SyntaxKind.RegularExpressionLiteral]: RegularExpressionLiteral;
+  [SyntaxKind.RestType]: RestTypeNode;
   [SyntaxKind.ReturnStatement]: ReturnStatement;
   [SyntaxKind.SatisfiesExpression]: SatisfiesExpression;
   [SyntaxKind.SetAccessor]: SetAccessorDeclaration;
@@ -8662,6 +8665,15 @@ export declare class ParenthesizedTypeNode extends TypeNode<ts.ParenthesizedType
   getParent(): NodeParentType<ts.ParenthesizedTypeNode>;
   /** @inheritdoc **/
   getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.ParenthesizedTypeNode>>;
+}
+
+export declare class RestTypeNode extends TypeNode<ts.RestTypeNode> {
+  /** Gets the rest type node's inner type. */
+  getTypeNode(): TypeNode<ts.TypeNode>;
+  /** @inheritdoc **/
+  getParent(): NodeParentType<ts.RestTypeNode>;
+  /** @inheritdoc **/
+  getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.RestTypeNode>>;
 }
 
 export declare class TemplateLiteralTypeNode extends TypeNode<ts.TemplateLiteralTypeNode> {
