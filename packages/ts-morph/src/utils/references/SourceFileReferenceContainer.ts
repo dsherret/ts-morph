@@ -84,7 +84,11 @@ export class SourceFileReferenceContainer {
       return parent.getModuleSpecifierSourceFile();
     else if (grandParent != null && Node.isImportEqualsDeclaration(grandParent))
       return grandParent.getExternalModuleReferenceSourceFile();
-    else if (Node.isCallExpression(parent)) {
+    else if (grandParent != null && Node.isImportTypeNode(grandParent)) {
+      const importTypeSymbol = grandParent.getSymbol()
+      if (importTypeSymbol != null)
+        return ModuleUtils.getReferencedSourceFileFromSymbol(importTypeSymbol);
+    } else if (Node.isCallExpression(parent)) {
       const literalSymbol = literal.getSymbol();
       if (literalSymbol != null)
         return ModuleUtils.getReferencedSourceFileFromSymbol(literalSymbol);
