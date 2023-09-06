@@ -3669,6 +3669,11 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
   }
 
+  /** Gets if the node is a RestTypeNode. */
+  static isRestTypeNode(node: compiler.Node | undefined): node is compiler.RestTypeNode {
+    return node?.getKind() === SyntaxKind.RestType;
+  }
+
   /** Gets if the node is a ReturnStatement. */
   static readonly isReturnStatement: (node: compiler.Node | undefined) => node is compiler.ReturnStatement = Node.is(SyntaxKind.ReturnStatement);
 
@@ -4019,6 +4024,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.MappedType:
       case SyntaxKind.NamedTupleMember:
       case SyntaxKind.ParenthesizedType:
+      case SyntaxKind.RestType:
       case SyntaxKind.TemplateLiteralType:
       case SyntaxKind.ThisType:
       case SyntaxKind.TupleType:

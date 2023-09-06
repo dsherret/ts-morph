@@ -457,6 +457,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: left
     * :heavy_check_mark: right
 * [RegularExpressionLiteral](src/compiler/ast/literal/RegularExpressionLiteral.ts)
+* [RestTypeNode](src/compiler/ast/type/RestTypeNode.ts)
 * [ReturnStatement](src/compiler/ast/statement/ReturnStatement.ts)
     * :heavy_check_mark: expression
 * [SatisfiesExpression](src/compiler/ast/expression/SatisfiesExpression.ts)
@@ -606,7 +607,6 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * OptionalTypeNode
 * PropertyAccessEntityNameExpression
 * PunctuationToken
-* RestTypeNode
 * SemicolonClassElement
 * SyntheticExpression
 * TemplateLiteralLikeNode

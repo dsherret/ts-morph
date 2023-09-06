@@ -157,6 +157,7 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.PropertyDeclaration]: compiler.PropertyDeclaration;
   [SyntaxKind.PropertySignature]: compiler.PropertySignature;
   [SyntaxKind.RegularExpressionLiteral]: compiler.RegularExpressionLiteral;
+  [SyntaxKind.RestType]: compiler.RestTypeNode;
   [SyntaxKind.ReturnStatement]: compiler.ReturnStatement;
   [SyntaxKind.SatisfiesExpression]: compiler.SatisfiesExpression;
   [SyntaxKind.SetAccessor]: compiler.SetAccessorDeclaration;
