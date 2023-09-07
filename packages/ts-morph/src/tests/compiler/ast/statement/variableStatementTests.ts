@@ -22,6 +22,14 @@ describe("VariableStatement", () => {
     it("should get const for a const variable", () => {
       doTest("const myVar = 3;", VariableDeclarationKind.Const);
     });
+
+    it("should get for a using variable", () => {
+      doTest("using myVar = 3;", VariableDeclarationKind.Using);
+    });
+
+    it("should get for an await using variable", () => {
+      doTest("await using myVar = 3;", VariableDeclarationKind.AwaitUsing);
+    });
   });
 
   describe(nameof<VariableStatement>("getDeclarationKindKeywords"), () => {
@@ -40,6 +48,14 @@ describe("VariableStatement", () => {
 
     it("should get const for a const variable", () => {
       doTest("const myVar = 3;", VariableDeclarationKind.Const);
+    });
+
+    it("should get for a using variable", () => {
+      doTest("using myVar = 3;", VariableDeclarationKind.Using);
+    });
+
+    it("should get for an await using variable", () => {
+      doTest("await using myVar = 3;", VariableDeclarationKind.AwaitUsing);
     });
   });
 
@@ -64,6 +80,18 @@ describe("VariableStatement", () => {
 
     it("should change to var", () => {
       doTest("let myVar;", VariableDeclarationKind.Var, "var myVar;");
+    });
+
+    it("should change to using", () => {
+      doTest("var myVar;", VariableDeclarationKind.Using, "using myVar;");
+    });
+
+    it("should change to await using", () => {
+      doTest("var myVar;", VariableDeclarationKind.AwaitUsing, "await using myVar;");
+    });
+
+    it("should change away from await using", () => {
+      doTest("await using myVar;", VariableDeclarationKind.Var, "var myVar;");
     });
   });
 
@@ -148,6 +176,10 @@ describe("VariableStatement", () => {
 
     it("should set the variable declaration kind", () => {
       doTest("const t = '';", { declarationKind: VariableDeclarationKind.Let }, "let t = '';");
+    });
+
+    it("should set the variable declaration kind to await using", () => {
+      doTest("const t = '';", { declarationKind: VariableDeclarationKind.AwaitUsing }, "await using t = '';");
     });
 
     it("should replace the existing declarations when setting new ones", () => {

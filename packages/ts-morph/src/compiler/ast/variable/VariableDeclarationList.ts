@@ -24,12 +24,12 @@ export class VariableDeclarationList extends VariableDeclarationListBase<ts.Vari
 
     if (nodeFlags & ts.NodeFlags.Let)
       return VariableDeclarationKind.Let;
-    else if (nodeFlags & ts.NodeFlags.Const)
-      return VariableDeclarationKind.Const;
     else if (nodeFlags & ts.NodeFlags.Using)
       return VariableDeclarationKind.Using;
     else if (nodeFlags & ts.NodeFlags.AwaitUsing)
       return VariableDeclarationKind.AwaitUsing;
+    else if (nodeFlags & ts.NodeFlags.Const)
+      return VariableDeclarationKind.Const;
     else
       return VariableDeclarationKind.Var;
   }
