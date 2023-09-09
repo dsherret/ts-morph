@@ -83,11 +83,11 @@ describe("VariableStatement", () => {
     });
 
     it("should change to using", () => {
-      doTest("var myVar;", VariableDeclarationKind.Using, "using myVar;");
+      doTest("var myVar = 2;", VariableDeclarationKind.Using, "using myVar = 2;");
     });
 
     it("should change to await using", () => {
-      doTest("var myVar;", VariableDeclarationKind.AwaitUsing, "await using myVar;");
+      doTest("var myVar = 2;", VariableDeclarationKind.AwaitUsing, "await using myVar = 2;");
     });
 
     it("should change away from await using", () => {
