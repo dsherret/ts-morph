@@ -1,4 +1,6 @@
+import { StringUtils } from "@ts-morph/common";
 import { CodeBlockWriter } from "../codeBlockWriter";
+import { isValidVariableName } from "./namingValidator";
 
 /** Utilities for code block writer. */
 export class WriterUtils {
@@ -18,5 +20,14 @@ export class WriterUtils {
       return undefined;
     });
     return chars.join("");
+  }
+
+  /* Adds quotes if structure is not a valid variable name
+   * AND the string is not enclosed in quotation marks */
+  static writePropertyName(writer: CodeBlockWriter, text: string) {
+    if (isValidVariableName(text) || StringUtils.isQuoted(text))
+      writer.write(text);
+    else
+      writer.quote(text);
   }
 }

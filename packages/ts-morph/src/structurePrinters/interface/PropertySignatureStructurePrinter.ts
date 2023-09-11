@@ -1,5 +1,6 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { OptionalKind, PropertySignatureStructure } from "../../structures";
+import { WriterUtils } from "../../utils";
 import { NewLineFormattingStructuresPrinter } from "../formatting";
 import { NodePrinter } from "../NodePrinter";
 
@@ -13,7 +14,7 @@ export class PropertySignatureStructurePrinter extends NodePrinter<OptionalKind<
   protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<PropertySignatureStructure>) {
     this.factory.forJSDoc().printDocs(writer, structure.docs);
     this.factory.forModifierableNode().printText(writer, structure);
-    writer.write(structure.name);
+    WriterUtils.writePropertyName(writer, structure.name);
     writer.conditionalWrite(structure.hasQuestionToken, "?");
     this.factory.forTypedNode(":").printText(writer, structure);
     // why would someone write an initializer? I guess let them do it...
