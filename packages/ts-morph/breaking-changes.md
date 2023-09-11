@@ -2,6 +2,10 @@
 
 View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only a high level overview of breaking changes.
 
+## Version 20
+
+- Upgraded to TS 5.2
+
 ## Version 16
 
 - Upgraded to TS 4.8

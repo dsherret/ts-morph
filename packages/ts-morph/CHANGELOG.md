@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="20.0.0"></a>
+# [20.0.0](https://github.com/dsherret/ts-morph/compare/19.0.0...20.0.0) (2023-09-11)
+
+
+### Bug Fixes
+
+* support dynamic type imports in getReferencedSourceFiles() ([#1436](https://github.com/dsherret/ts-morph/issues/1436)) ([7207de1](https://github.com/dsherret/ts-morph/commit/7207de1))
+
+
+### Features
+
+* automatically quote property keys if necessary when writing structures ([#1451](https://github.com/dsherret/ts-morph/issues/1451)) ([601f214](https://github.com/dsherret/ts-morph/commit/601f214))
+* upgrade to TypeScript 5.2 ([#1450](https://github.com/dsherret/ts-morph/issues/1450)) ([9bb94b0](https://github.com/dsherret/ts-morph/commit/9bb94b0))
+
+### BREAKING CHANGES
+
+- Upgraded to TS 5.2
+
 <a name="19.0.0"></a>
 # [19.0.0](https://github.com/dsherret/ts-morph/compare/18.0.0...19.0.0) (2023-06-14)
 
