@@ -55,10 +55,10 @@ This is because, the `lib` compiler option must be specified, similar to when yo
 
 ```ts setup: let mySetDecl: Node;
 const project = new Project({
-    useInMemoryFileSystem: true,
-    compilerOptions: {
-        lib: ["lib.es2015.d.ts"],
-    },
+  useInMemoryFileSystem: true,
+  compilerOptions: {
+    lib: ["lib.es2015.d.ts"],
+  },
 });
 /// ...omitted... same as above...
 console.log(mySetDecl.getType().getText()); // Set<string>, good
@@ -70,10 +70,10 @@ Or you may specify a target that will implicitly load in the lib files that you 
 import { Project, ts } from "ts-morph";
 
 const project = new Project({
-    useInMemoryFileSystem: true,
-    compilerOptions: {
-        target: ts.ScriptTarget.ES2015,
-    },
+  useInMemoryFileSystem: true,
+  compilerOptions: {
+    target: ts.ScriptTarget.ES2015,
+  },
 });
 /// ...omitted... same as above...
 console.log(mySetDecl.getType().getText()); // Set<string>, good
@@ -95,10 +95,10 @@ const project = new Project({
 It's possible to use your own custom file system by implementing the `FileSystemHost` interface then passing in an instance of this when creating a new `Project` instance:
 
 ```ts ignore-error: 2420, 2345, 2740
-import { Project, FileSystemHost } from "ts-morph";
+import { FileSystemHost, Project } from "ts-morph";
 
 class MyCustomFileSystem implements FileSystemHost {
-    // implement it
+  // implement it
 }
 
 const fs = new MyCustomFileSystem();

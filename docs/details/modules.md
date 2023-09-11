@@ -79,10 +79,10 @@ moduleDeclaration.getDeclarationKindKeyword();
 
 ```ts ignore-error: 2664, 2669
 declare module "my-library" {
-    // this is a global namespace declaration
-    global {
-        const foo: string;
-    }
+  // this is a global namespace declaration
+  global {
+    const foo: string;
+  }
 }
 ```
 

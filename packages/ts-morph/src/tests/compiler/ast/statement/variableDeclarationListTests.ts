@@ -24,10 +24,10 @@ describe("VariableDeclarationList", () => {
     });
   });
 
-  describe(nameof<VariableDeclarationList>("getDeclarationKindKeyword"), () => {
+  describe(nameof<VariableDeclarationList>("getDeclarationKindKeywords"), () => {
     function doTest(code: string, expectedType: VariableDeclarationKind) {
       const { firstChild } = getInfoFromText<VariableDeclarationList>(code);
-      expect(firstChild.getDeclarationKindKeyword().getText()).to.equal(expectedType);
+      expect(firstChild.getDeclarationKindKeywords().map(k => k.getText()).join(" ")).to.equal(expectedType);
     }
 
     it("should get var for a var variable", () => {

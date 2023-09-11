@@ -4127,6 +4127,8 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   static isReferenceFindable<T extends Node>(node: T | undefined): node is ReferenceFindableNode & ReferenceFindableNodeExtensionType & T;
   /** Gets if the node is a RenameableNode. */
   static isRenameable<T extends Node>(node: T | undefined): node is RenameableNode & RenameableNodeExtensionType & T;
+  /** Gets if the node is a RestTypeNode. */
+  static isRestTypeNode(node: Node | undefined): node is RestTypeNode;
   /** Gets if the node is a ReturnTypedNode. */
   static isReturnTyped<T extends Node>(node: T | undefined): node is ReturnTypedNode & ReturnTypedNodeExtensionType & T;
   /** Gets if the node is a ScopeableNode. */
@@ -6418,6 +6420,7 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.PropertyDeclaration]: PropertyDeclaration;
   [SyntaxKind.PropertySignature]: PropertySignature;
   [SyntaxKind.RegularExpressionLiteral]: RegularExpressionLiteral;
+  [SyntaxKind.RestType]: RestTypeNode;
   [SyntaxKind.ReturnStatement]: ReturnStatement;
   [SyntaxKind.SatisfiesExpression]: SatisfiesExpression;
   [SyntaxKind.SetAccessor]: SetAccessorDeclaration;
@@ -8386,8 +8389,8 @@ export declare class VariableStatement extends VariableStatementBase<ts.Variable
   getDeclarations(): VariableDeclaration[];
   /** Gets the variable declaration kind. */
   getDeclarationKind(): VariableDeclarationKind;
-  /** Gets the variable declaration kind keyword. */
-  getDeclarationKindKeyword(): Node<ts.Node>;
+  /** Gets the variable declaration kind keywords. */
+  getDeclarationKindKeywords(): Node<ts.Node>[];
   /**
    * Sets the variable declaration kind.
    * @param type - Type to set.
@@ -8664,6 +8667,15 @@ export declare class ParenthesizedTypeNode extends TypeNode<ts.ParenthesizedType
   getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.ParenthesizedTypeNode>>;
 }
 
+export declare class RestTypeNode extends TypeNode<ts.RestTypeNode> {
+  /** Gets the rest type node's inner type. */
+  getTypeNode(): TypeNode<ts.TypeNode>;
+  /** @inheritdoc **/
+  getParent(): NodeParentType<ts.RestTypeNode>;
+  /** @inheritdoc **/
+  getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.RestTypeNode>>;
+}
+
 export declare class TemplateLiteralTypeNode extends TypeNode<ts.TemplateLiteralTypeNode> {
   /** Gets the template head. */
   getHead(): TemplateHead;
@@ -8881,7 +8893,9 @@ export declare class VariableDeclaration extends VariableDeclarationBase<ts.Vari
 export declare enum VariableDeclarationKind {
   Var = "var",
   Let = "let",
-  Const = "const"
+  Const = "const",
+  AwaitUsing = "await using",
+  Using = "using"
 }
 
 declare const VariableDeclarationListBase: Constructor<ModifierableNode> & typeof Node;
@@ -8891,8 +8905,8 @@ export declare class VariableDeclarationList extends VariableDeclarationListBase
   getDeclarations(): VariableDeclaration[];
   /** Gets the variable declaration kind. */
   getDeclarationKind(): VariableDeclarationKind;
-  /** Gets the variable declaration kind keyword. */
-  getDeclarationKindKeyword(): Node;
+  /** Gets the variable declaration kind keywords. */
+  getDeclarationKindKeywords(): Node[];
   /**
    * Sets the variable declaration kind.
    * @param type - Type to set.

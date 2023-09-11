@@ -187,7 +187,7 @@ export function ModifierableNode<T extends Constructor<ModifierableNodeExtension
     }
 
     private getCompilerModifiers(): ts.NodeArray<ts.ModifierLike> {
-      return (this.compilerNode as any).modifiers || [];
+      return (this.compilerNode as any).modifiers ?? [];
     }
   };
 }

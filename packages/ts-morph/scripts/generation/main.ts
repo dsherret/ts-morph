@@ -14,8 +14,6 @@ const factory = new InspectorFactory();
 const inspector = factory.getTsMorphInspector();
 const tsInspector = factory.getTsInspector();
 
-console.log(`TypeScript version: ${tsMorph.ts.version}`);
-
 if (checkHasArg("create-get-structure-functions")) {
   console.log("Creating get structure functions...");
   createGetStructureFunctions(inspector.getStructures());
