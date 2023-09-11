@@ -14,7 +14,7 @@ import { Type } from "../../types";
 import { ExtendedParser, hasParsedTokens } from "../utils";
 import { CompilerNodeToWrappedType } from "../CompilerNodeToWrappedType";
 import { Expression } from "../expression";
-import { KindToNodeMappings } from "../kindToNodeMappings";
+import { KindToNodeMappings } from "../kindToNodeMappings.generated";
 import { SourceFile } from "../module";
 import { Statement, StatementedNode } from "../statement";
 import { CommentRange } from "../comment/CommentRange";
@@ -280,7 +280,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param name - Name of the local symbol.
      */
     getLocalOrThrow(name: string, message?: string | (() => string)): Symbol {
-        return errors.throwIfNullOrUndefined(this.getLocal(name), message ?? `Expected to find local symbol with name: ${name}`, this);
+        return errors.throwIfNullOrUndefined(this.getLocal(name), message ?? (() => `Expected to find local symbol with name: ${name}`), this);
     }
 
     /**
@@ -1219,7 +1219,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind to check for.
      */
     getParentWhileKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string | (() => string)) {
-        return errors.throwIfNullOrUndefined(this.getParentWhileKind(kind), message ?? `The initial parent was not a syntax kind of ${getSyntaxKindName(kind)}.`, this);
+        return errors.throwIfNullOrUndefined(this.getParentWhileKind(kind), message ?? (() => `The initial parent was not a syntax kind of ${getSyntaxKindName(kind)}.`), this);
     }
 
     /**
@@ -1565,7 +1565,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
         for (const transform of transformations) {
           finalText += fileText.substring(lastPos, transform.start);
-          finalText += printer.printNode(ts.EmitHint.Unspecified, transform.compilerNode, compilerSourceFile);
+          finalText += printer.printNode(ts.EmitHint.Unspecified, transform.compilerNode, transform.compilerNode.getSourceFile() ?? compilerSourceFile);
           lastPos = transform.end;
         }
 
@@ -1619,7 +1619,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind.
      */
     getFirstChildByKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string | (() => string)): KindToNodeMappings[TKind] {
-        return errors.throwIfNullOrUndefined(this.getFirstChildByKind(kind), message ?? `A child of the kind ${getSyntaxKindName(kind)} was expected.`, this);
+        return errors.throwIfNullOrUndefined(this.getFirstChildByKind(kind), message ?? (() => `A child of the kind ${getSyntaxKindName(kind)} was expected.`), this);
     }
 
     /**
@@ -1636,7 +1636,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind.
      */
     getFirstChildIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string | (() => string)): KindToNodeMappings[TKind] {
-        return errors.throwIfNullOrUndefined(this.getFirstChildIfKind(kind), message ?? `A first child of the kind ${getSyntaxKindName(kind)} was expected.`, this);
+        return errors.throwIfNullOrUndefined(this.getFirstChildIfKind(kind), message ?? (() => `A first child of the kind ${getSyntaxKindName(kind)} was expected.`), this);
     }
 
     /**
@@ -1653,7 +1653,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind.
      */
     getLastChildByKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string | (() => string)) {
-        return errors.throwIfNullOrUndefined(this.getLastChildByKind(kind), message ?? `A child of the kind ${getSyntaxKindName(kind)} was expected.`, this);
+        return errors.throwIfNullOrUndefined(this.getLastChildByKind(kind), message ?? (() => `A child of the kind ${getSyntaxKindName(kind)} was expected.`), this);
     }
 
     /**
@@ -1671,7 +1671,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind.
      */
     getLastChildIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string | (() => string)) {
-        return errors.throwIfNullOrUndefined(this.getLastChildIfKind(kind), message ?? `A last child of the kind ${getSyntaxKindName(kind)} was expected.`, this);
+        return errors.throwIfNullOrUndefined(this.getLastChildIfKind(kind), message ?? (() => `A last child of the kind ${getSyntaxKindName(kind)} was expected.`), this);
     }
 
     /**
@@ -1689,7 +1689,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Expected kind.
      */
     getChildAtIndexIfKindOrThrow<TKind extends SyntaxKind>(index: number, kind: TKind, message?: string | (() => string)) {
-        return errors.throwIfNullOrUndefined(this.getChildAtIndexIfKind(index, kind), message ?? `Child at index ${index} was expected to be ${getSyntaxKindName(kind)}`, this);
+        return errors.throwIfNullOrUndefined(this.getChildAtIndexIfKind(index, kind), message ?? (() => `Child at index ${index} was expected to be ${getSyntaxKindName(kind)}`), this);
     }
 
     /**
@@ -1707,7 +1707,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Kind to check.
      */
     getPreviousSiblingIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string | (() => string)) {
-        return errors.throwIfNullOrUndefined(this.getPreviousSiblingIfKind(kind), message ?? `A previous sibling of kind ${getSyntaxKindName(kind)} was expected.`, this);
+        return errors.throwIfNullOrUndefined(this.getPreviousSiblingIfKind(kind), message ?? (() => `A previous sibling of kind ${getSyntaxKindName(kind)} was expected.`), this);
     }
 
     /**
@@ -1715,7 +1715,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Kind to check.
      */
     getNextSiblingIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string | (() => string)) {
-        return errors.throwIfNullOrUndefined(this.getNextSiblingIfKind(kind), message ?? `A next sibling of kind ${getSyntaxKindName(kind)} was expected.`, this);
+        return errors.throwIfNullOrUndefined(this.getNextSiblingIfKind(kind), message ?? (() => `A next sibling of kind ${getSyntaxKindName(kind)} was expected.`), this);
     }
 
     /**
@@ -1766,7 +1766,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the parent if it's a certain syntax kind or throws.
      */
     getParentIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string | (() => string)): KindToNodeMappings[TKind] {
-        return errors.throwIfNullOrUndefined(this.getParentIfKind(kind), message ?? `The parent was not a syntax kind of ${getSyntaxKindName(kind)}.`, this);
+        return errors.throwIfNullOrUndefined(this.getParentIfKind(kind), message ?? (() => `The parent was not a syntax kind of ${getSyntaxKindName(kind)}.`), this);
     }
 
     /**
@@ -1781,7 +1781,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind.
      */
     getFirstAncestorByKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string | (() => string)): KindToNodeMappings[TKind] {
-        return errors.throwIfNullOrUndefined(this.getFirstAncestorByKind(kind), message ?? `Expected an ancestor with a syntax kind of ${getSyntaxKindName(kind)}.`, this);
+        return errors.throwIfNullOrUndefined(this.getFirstAncestorByKind(kind), message ?? (() => `Expected an ancestor with a syntax kind of ${getSyntaxKindName(kind)}.`), this);
     }
 
     /**
@@ -1844,7 +1844,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind.
      */
     getFirstDescendantByKindOrThrow<TKind extends SyntaxKind>(kind: TKind, message?: string | (() => string)) {
-        return errors.throwIfNullOrUndefined(this.getFirstDescendantByKind(kind), message ?? `A descendant of kind ${getSyntaxKindName(kind)} was expected to be found.`, this);
+        return errors.throwIfNullOrUndefined(this.getFirstDescendantByKind(kind), message ?? (() => `A descendant of kind ${getSyntaxKindName(kind)} was expected to be found.`), this);
     }
 
     /**
@@ -2882,6 +2882,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.ConstructSignature:
       case SyntaxKind.EnumDeclaration:
       case SyntaxKind.EnumMember:
+      case SyntaxKind.ExportAssignment:
       case SyntaxKind.ExpressionStatement:
       case SyntaxKind.FunctionDeclaration:
       case SyntaxKind.FunctionExpression:
@@ -3017,11 +3018,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isJSDocText: (node: compiler.Node | undefined) => node is compiler.JSDocText = Node.is(SyntaxKind.JSDocText);
   /** Gets if the node is a JSDocThisTag. */
   static readonly isJSDocThisTag: (node: compiler.Node | undefined) => node is compiler.JSDocThisTag = Node.is(SyntaxKind.JSDocThisTag);
-
   /** Gets if the node is a JSDocThrowsTag. */
-  static isJSDocThrowsTag(node: compiler.Node | undefined): node is compiler.JSDocThrowsTag {
-    return node?.getKind() === SyntaxKind.JSDocThrowsTag;
-  }
+  static readonly isJSDocThrowsTag: (node: compiler.Node | undefined) => node is compiler.JSDocThrowsTag = Node.is(SyntaxKind.JSDocThrowsTag);
 
   /** Gets if the node is a JSDocType. */
   static isJSDocType(node: compiler.Node | undefined): node is compiler.JSDocType {
@@ -3106,6 +3104,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isJsxExpression: (node: compiler.Node | undefined) => node is compiler.JsxExpression = Node.is(SyntaxKind.JsxExpression);
   /** Gets if the node is a JsxFragment. */
   static readonly isJsxFragment: (node: compiler.Node | undefined) => node is compiler.JsxFragment = Node.is(SyntaxKind.JsxFragment);
+  /** Gets if the node is a JsxNamespacedName. */
+  static readonly isJsxNamespacedName: (node: compiler.Node | undefined) => node is compiler.JsxNamespacedName = Node.is(SyntaxKind.JsxNamespacedName);
   /** Gets if the node is a JsxOpeningElement. */
   static readonly isJsxOpeningElement: (node: compiler.Node | undefined) => node is compiler.JsxOpeningElement = Node.is(SyntaxKind.JsxOpeningElement);
   /** Gets if the node is a JsxOpeningFragment. */
@@ -3358,7 +3358,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.EnumDeclaration:
       case SyntaxKind.ImportEqualsDeclaration:
       case SyntaxKind.InterfaceDeclaration:
-      case SyntaxKind.JsxAttribute:
       case SyntaxKind.MetaProperty:
       case SyntaxKind.NamedTupleMember:
       case SyntaxKind.PropertyAccessExpression:
@@ -3606,7 +3605,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.Identifier:
       case SyntaxKind.ImportEqualsDeclaration:
       case SyntaxKind.InterfaceDeclaration:
-      case SyntaxKind.JsxAttribute:
       case SyntaxKind.MetaProperty:
       case SyntaxKind.MethodDeclaration:
       case SyntaxKind.MethodSignature:
@@ -3647,7 +3645,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.Identifier:
       case SyntaxKind.ImportEqualsDeclaration:
       case SyntaxKind.InterfaceDeclaration:
-      case SyntaxKind.JsxAttribute:
       case SyntaxKind.MetaProperty:
       case SyntaxKind.MethodDeclaration:
       case SyntaxKind.MethodSignature:
@@ -3670,6 +3667,11 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       default:
         return false;
     }
+  }
+
+  /** Gets if the node is a RestTypeNode. */
+  static isRestTypeNode(node: compiler.Node | undefined): node is compiler.RestTypeNode {
+    return node?.getKind() === SyntaxKind.RestType;
   }
 
   /** Gets if the node is a ReturnStatement. */
@@ -4022,6 +4024,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.MappedType:
       case SyntaxKind.NamedTupleMember:
       case SyntaxKind.ParenthesizedType:
+      case SyntaxKind.RestType:
       case SyntaxKind.TemplateLiteralType:
       case SyntaxKind.ThisType:
       case SyntaxKind.TupleType:
@@ -4240,6 +4243,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.JSDoc:
       case SyntaxKind.JsxAttribute:
       case SyntaxKind.JsxElement:
+      case SyntaxKind.JsxNamespacedName:
       case SyntaxKind.JsxSelfClosingElement:
       case SyntaxKind.JsxSpreadAttribute:
       case SyntaxKind.MethodDeclaration:

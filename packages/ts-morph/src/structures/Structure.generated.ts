@@ -70,6 +70,7 @@ export const Structure = {
       case StructureKind.ConstructSignature:
       case StructureKind.Enum:
       case StructureKind.EnumMember:
+      case StructureKind.ExportAssignment:
       case StructureKind.FunctionOverload:
       case StructureKind.Function:
       case StructureKind.GetAccessor:
@@ -325,7 +326,6 @@ export const Structure = {
     switch ((structure as any)?.kind) {
       case StructureKind.Enum:
       case StructureKind.Interface:
-      case StructureKind.JsxAttribute:
       case StructureKind.ShorthandPropertyAssignment:
       case StructureKind.TypeAlias:
       case StructureKind.TypeParameter:

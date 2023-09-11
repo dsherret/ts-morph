@@ -638,7 +638,10 @@ export declare class Project {
    * @param moduleName - The ambient module name with or without quotes.
    */
   getAmbientModuleOrThrow(moduleName: string, message?: string | (() => string)): Symbol;
-  /** Gets the ambient module symbols (ex. modules in the @types folder or node_modules). */
+  /**
+   * Gets the ambient module symbols (ex. modules in the
+   * @types folder or node_modules).
+   */
   getAmbientModules(): Symbol[];
   /** Saves all the unsaved source files to the file system and deletes all deleted files. */
   save(): Promise<void>;
@@ -719,9 +722,15 @@ export interface ProjectOptions {
   compilerOptions?: CompilerOptions;
   /** File path to the tsconfig.json file. */
   tsConfigFilePath?: string;
-  /** Whether to skip adding the source files from the specified tsconfig.json. @default false */
+  /**
+   * Whether to skip adding the source files from the specified tsconfig.json.
+   * @default false
+   */
   skipAddingFilesFromTsConfig?: boolean;
-  /** Skip resolving file dependencies when providing a ts config file path and adding the files from tsconfig. @default false */
+  /**
+   * Skip resolving file dependencies when providing a ts config file path and adding the files from tsconfig.
+   * @default false
+   */
   skipFileDependencyResolution?: boolean;
   /**
    * Skip loading the lib files. Unlike the compiler API, ts-morph does not load these
@@ -735,7 +744,10 @@ export interface ProjectOptions {
   libFolderPath?: string;
   /** Manipulation settings */
   manipulationSettings?: Partial<ManipulationSettings>;
-  /** Whether to use an in-memory file system. @default false */
+  /**
+   * Whether to use an in-memory file system.
+   * @default false
+   */
   useInMemoryFileSystem?: boolean;
   /**
    * Optional file system host. Useful for mocking access to the file system.
@@ -877,15 +889,16 @@ export type BindingPattern = ObjectBindingPattern | ArrayBindingPattern;
 export type BooleanLiteral = TrueLiteral | FalseLiteral;
 export type CallLikeExpression = CallExpression | NewExpression | TaggedTemplateExpression | Decorator | JsxOpeningLikeElement;
 export type EntityNameExpression = Identifier | PropertyAccessExpression;
-export type DeclarationName = Identifier | PrivateIdentifier | StringLiteralLike | NumericLiteral | ComputedPropertyName | ElementAccessExpression | BindingPattern | EntityNameExpression;
+export type DeclarationName = PropertyName | JsxAttributeName | StringLiteralLike | ElementAccessExpression | BindingPattern | EntityNameExpression;
 export type EntityName = Identifier | QualifiedName;
 export type JsxChild = JsxText | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment;
+export type JsxAttributeName = Identifier | JsxNamespacedName;
 export type JsxAttributeLike = JsxAttribute | JsxSpreadAttribute;
 export type JsxOpeningLikeElement = JsxSelfClosingElement | JsxOpeningElement;
-export type JsxTagNameExpression = Identifier | ThisExpression | JsxTagNamePropertyAccess;
+export type JsxTagNameExpression = Identifier | ThisExpression | JsxTagNamePropertyAccess | JsxNamespacedName;
 
 export interface JsxTagNamePropertyAccess extends PropertyAccessExpression {
-  getExpression(): JsxTagNameExpression;
+  getExpression(): Identifier | ThisExpression | JsxTagNamePropertyAccess;
 }
 
 export type ObjectLiteralElementLike = PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment | MethodDeclaration | AccessorDeclaration;
@@ -3169,6 +3182,8 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isJSDocText: (node: Node | undefined) => node is JSDocText;
   /** Gets if the node is a JSDocThisTag. */
   static readonly isJSDocThisTag: (node: Node | undefined) => node is JSDocThisTag;
+  /** Gets if the node is a JSDocThrowsTag. */
+  static readonly isJSDocThrowsTag: (node: Node | undefined) => node is JSDocThrowsTag;
   /** Gets if the node is a JSDocTypedefTag. */
   static readonly isJSDocTypedefTag: (node: Node | undefined) => node is JSDocTypedefTag;
   /** Gets if the node is a JSDocTypeExpression. */
@@ -3193,6 +3208,8 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isJsxExpression: (node: Node | undefined) => node is JsxExpression;
   /** Gets if the node is a JsxFragment. */
   static readonly isJsxFragment: (node: Node | undefined) => node is JsxFragment;
+  /** Gets if the node is a JsxNamespacedName. */
+  static readonly isJsxNamespacedName: (node: Node | undefined) => node is JsxNamespacedName;
   /** Gets if the node is a JsxOpeningElement. */
   static readonly isJsxOpeningElement: (node: Node | undefined) => node is JsxOpeningElement;
   /** Gets if the node is a JsxOpeningFragment. */
@@ -4044,8 +4061,6 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   static isJSDocPropertyLikeTag<T extends Node>(node: T | undefined): node is JSDocPropertyLikeTag & JSDocPropertyLikeTagExtensionType & T;
   /** Gets if the node is a JSDocTag. */
   static isJSDocTag(node: Node | undefined): node is JSDocTag;
-  /** Gets if the node is a JSDocThrowsTag. */
-  static isJSDocThrowsTag(node: Node | undefined): node is JSDocThrowsTag;
   /** Gets if the node is a JSDocType. */
   static isJSDocType(node: Node | undefined): node is JSDocType;
   /** Gets if the node is a JSDocTypeExpressionableTag. */
@@ -4112,6 +4127,8 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   static isReferenceFindable<T extends Node>(node: T | undefined): node is ReferenceFindableNode & ReferenceFindableNodeExtensionType & T;
   /** Gets if the node is a RenameableNode. */
   static isRenameable<T extends Node>(node: T | undefined): node is RenameableNode & RenameableNodeExtensionType & T;
+  /** Gets if the node is a RestTypeNode. */
+  static isRestTypeNode(node: Node | undefined): node is RestTypeNode;
   /** Gets if the node is a ReturnTypedNode. */
   static isReturnTyped<T extends Node>(node: T | undefined): node is ReturnTypedNode & ReturnTypedNodeExtensionType & T;
   /** Gets if the node is a ScopeableNode. */
@@ -6069,9 +6086,13 @@ export interface JsxTagNamedNode {
 type JsxTagNamedNodeExtensionType = Node<ts.Node & {
       tagName: ts.JsxTagNameExpression;
   }>;
-declare const JsxAttributeBase: Constructor<NamedNode> & typeof Node;
+declare const JsxAttributeBase: typeof Node;
 
 export declare class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
+  /** Gets the name node of the JSX attribute. */
+  getNameNode(): JsxAttributeName;
+  /** Sets the name of the JSX attribute. */
+  setName(name: string | JsxNamespacedNameStructure): this;
   /** Gets the JSX attribute's initializer or throws if it doesn't exist. */
   getInitializerOrThrow(message?: string | (() => string)): StringLiteral | JsxElement | JsxSelfClosingElement | JsxFragment | JsxExpression;
   /** Gets the JSX attribute's initializer or returns undefined if it doesn't exist. */
@@ -6167,6 +6188,21 @@ export declare class JsxFragment extends PrimaryExpression<ts.JsxFragment> {
   getParent(): NodeParentType<ts.JsxFragment>;
   /** @inheritdoc **/
   getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.JsxFragment>>;
+}
+
+declare const JsxNamespacedNameBase: typeof Node;
+
+export declare class JsxNamespacedName extends JsxNamespacedNameBase<ts.JsxNamespacedName> {
+  /** Gets the namespace name node. */
+  getNamespaceNode(): Identifier;
+  /** Gets the name node. */
+  getNameNode(): Identifier;
+  set(structure: JsxNamespacedNameStructure): this;
+  getStructure(): JsxNamespacedNameStructure;
+  /** @inheritdoc **/
+  getParent(): NodeParentType<ts.JsxNamespacedName>;
+  /** @inheritdoc **/
+  getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.JsxNamespacedName>>;
 }
 
 declare const JsxOpeningElementBase: Constructor<JsxAttributedNode> & Constructor<JsxTagNamedNode> & typeof Expression;
@@ -6345,6 +6381,7 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.JsxElement]: JsxElement;
   [SyntaxKind.JsxExpression]: JsxExpression;
   [SyntaxKind.JsxFragment]: JsxFragment;
+  [SyntaxKind.JsxNamespacedName]: JsxNamespacedName;
   [SyntaxKind.JsxOpeningElement]: JsxOpeningElement;
   [SyntaxKind.JsxOpeningFragment]: JsxOpeningFragment;
   [SyntaxKind.JsxSelfClosingElement]: JsxSelfClosingElement;
@@ -6383,6 +6420,7 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.PropertyDeclaration]: PropertyDeclaration;
   [SyntaxKind.PropertySignature]: PropertySignature;
   [SyntaxKind.RegularExpressionLiteral]: RegularExpressionLiteral;
+  [SyntaxKind.RestType]: RestTypeNode;
   [SyntaxKind.ReturnStatement]: ReturnStatement;
   [SyntaxKind.SatisfiesExpression]: SatisfiesExpression;
   [SyntaxKind.SetAccessor]: SetAccessorDeclaration;
@@ -6760,7 +6798,7 @@ export declare class AssertEntry extends AssertEntryBase<ts.AssertEntry> {
   getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.AssertEntry>>;
 }
 
-declare const ExportAssignmentBase: Constructor<ExpressionedNode> & typeof Statement;
+declare const ExportAssignmentBase: Constructor<ExpressionedNode> & Constructor<JSDocableNode> & typeof Statement;
 
 export declare class ExportAssignment extends ExportAssignmentBase<ts.ExportAssignment> {
   /**
@@ -8351,8 +8389,8 @@ export declare class VariableStatement extends VariableStatementBase<ts.Variable
   getDeclarations(): VariableDeclaration[];
   /** Gets the variable declaration kind. */
   getDeclarationKind(): VariableDeclarationKind;
-  /** Gets the variable declaration kind keyword. */
-  getDeclarationKindKeyword(): Node<ts.Node>;
+  /** Gets the variable declaration kind keywords. */
+  getDeclarationKindKeywords(): Node<ts.Node>[];
   /**
    * Sets the variable declaration kind.
    * @param type - Type to set.
@@ -8629,6 +8667,15 @@ export declare class ParenthesizedTypeNode extends TypeNode<ts.ParenthesizedType
   getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.ParenthesizedTypeNode>>;
 }
 
+export declare class RestTypeNode extends TypeNode<ts.RestTypeNode> {
+  /** Gets the rest type node's inner type. */
+  getTypeNode(): TypeNode<ts.TypeNode>;
+  /** @inheritdoc **/
+  getParent(): NodeParentType<ts.RestTypeNode>;
+  /** @inheritdoc **/
+  getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.RestTypeNode>>;
+}
+
 export declare class TemplateLiteralTypeNode extends TypeNode<ts.TemplateLiteralTypeNode> {
   /** Gets the template head. */
   getHead(): TemplateHead;
@@ -8846,7 +8893,9 @@ export declare class VariableDeclaration extends VariableDeclarationBase<ts.Vari
 export declare enum VariableDeclarationKind {
   Var = "var",
   Let = "let",
-  Const = "const"
+  Const = "const",
+  AwaitUsing = "await using",
+  Using = "using"
 }
 
 declare const VariableDeclarationListBase: Constructor<ModifierableNode> & typeof Node;
@@ -8856,8 +8905,8 @@ export declare class VariableDeclarationList extends VariableDeclarationListBase
   getDeclarations(): VariableDeclaration[];
   /** Gets the variable declaration kind. */
   getDeclarationKind(): VariableDeclarationKind;
-  /** Gets the variable declaration kind keyword. */
-  getDeclarationKindKeyword(): Node;
+  /** Gets the variable declaration kind keywords. */
+  getDeclarationKindKeywords(): Node[];
   /**
    * Sets the variable declaration kind.
    * @param type - Type to set.
@@ -9572,7 +9621,10 @@ export declare class TypeChecker {
   private constructor();
   /** Gets the compiler's TypeChecker. */
   get compilerObject(): ts.TypeChecker;
-  /** Gets the ambient module symbols (ex. modules in the @types folder or node_modules). */
+  /**
+   * Gets the ambient module symbols (ex. modules in the
+   * @types folder or node_modules).
+   */
   getAmbientModules(): Symbol[];
   /**
    * Gets the apparent type of a type.
@@ -9855,7 +9907,7 @@ export declare class Type<TType extends ts.Type = ts.Type> {
   /** Gets if this is a readonly array type. */
   isReadonlyArray(): boolean;
   /** Gets if this is a template literal type. */
-  isTemplateLiteral(): boolean;
+  isTemplateLiteral(): this is Type<ts.TemplateLiteralType>;
   /** Gets if this is a boolean type. */
   isBoolean(): boolean;
   /** Gets if this is a string type. */
@@ -9869,35 +9921,37 @@ export declare class Type<TType extends ts.Type = ts.Type> {
   /** Gets if this is an enum literal type. */
   isEnumLiteral(): boolean;
   /** Gets if this is a number literal type. */
-  isNumberLiteral(): boolean;
+  isNumberLiteral(): this is Type<ts.NumberLiteralType>;
   /** Gets if this is a string literal type. */
-  isStringLiteral(): boolean;
+  isStringLiteral(): this is Type<ts.StringLiteralType>;
   /** Gets if this is a class type. */
-  isClass(): boolean;
+  isClass(): this is Type<ts.InterfaceType>;
   /** Gets if this is a class or interface type. */
-  isClassOrInterface(): boolean;
+  isClassOrInterface(): this is Type<ts.InterfaceType>;
   /** Gets if this is an enum type. */
   isEnum(): boolean;
   /** Gets if this is an interface type. */
-  isInterface(): boolean;
+  isInterface(): this is Type<ts.InterfaceType>;
   /** Gets if this is an object type. */
-  isObject(): boolean;
+  isObject(): this is Type<ts.ObjectType>;
   /** Gets if this is a type parameter. */
   isTypeParameter(): this is TypeParameter;
   /** Gets if this is a tuple type. */
-  isTuple(): boolean;
+  isTuple(): this is Type<ts.TupleType>;
   /** Gets if this is a union type. */
-  isUnion(): boolean;
+  isUnion(): this is Type<ts.UnionType>;
   /** Gets if this is an intersection type. */
-  isIntersection(): boolean;
+  isIntersection(): this is Type<ts.IntersectionType>;
   /** Gets if this is a union or intersection type. */
-  isUnionOrIntersection(): boolean;
+  isUnionOrIntersection(): this is Type<ts.UnionOrIntersectionType>;
   /** Gets if this is the unknown type. */
   isUnknown(): boolean;
   /** Gets if this is the null type. */
   isNull(): boolean;
   /** Gets if this is the undefined type. */
   isUndefined(): boolean;
+  /** Gets if this is the void type. */
+  isVoid(): boolean;
   /** Gets the type flags. */
   getFlags(): TypeFlags;
   /**
@@ -10353,10 +10407,11 @@ export interface JsxTagNamedNodeStructure {
   name: string;
 }
 
-export interface JsxAttributeStructure extends Structure, JsxAttributeSpecificStructure, NamedNodeStructure {
+export interface JsxAttributeStructure extends Structure, JsxAttributeSpecificStructure {
 }
 
 interface JsxAttributeSpecificStructure extends KindedStructure<StructureKind.JsxAttribute> {
+  name: string | JsxNamespacedNameStructure;
   initializer?: string;
 }
 
@@ -10368,6 +10423,11 @@ interface JsxElementSpecificStructure extends KindedStructure<StructureKind.JsxE
   attributes?: (OptionalKind<JsxAttributeStructure> | JsxSpreadAttributeStructure)[];
   children?: (OptionalKind<JsxElementStructure> | JsxSelfClosingElementStructure)[];
   bodyText?: string;
+}
+
+export interface JsxNamespacedNameStructure {
+  namespace: string;
+  name: string;
 }
 
 export interface JsxSelfClosingElementStructure extends Structure, JsxTagNamedNodeStructure, JsxSelfClosingElementSpecificStructure, JsxAttributedNodeStructure {
@@ -10391,7 +10451,7 @@ interface AssertEntryStructureSpecificStructure extends KindedStructure<Structur
   value: string;
 }
 
-export interface ExportAssignmentStructure extends Structure, ExportAssignmentSpecificStructure {
+export interface ExportAssignmentStructure extends Structure, ExportAssignmentSpecificStructure, JSDocableNodeStructure {
 }
 
 interface ExportAssignmentSpecificStructure extends KindedStructure<StructureKind.ExportAssignment> {

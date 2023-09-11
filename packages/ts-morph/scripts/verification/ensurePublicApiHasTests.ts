@@ -26,7 +26,7 @@ export function ensurePublicApiHasTests(inspector: TsMorphInspector, addProblem:
     // ignore paths that don't need testing
     if (
       filePath.endsWith("src/typescript/typescript.ts")
-      || filePath.endsWith("src/compiler/kindToNodeMappings.ts")
+      || filePath.endsWith("src/compiler/kindToNodeMappings.generated.ts")
       || filePath.endsWith("src/codeBlockWriter/code-block-writer.ts")
     ) {
       continue;

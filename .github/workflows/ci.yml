@@ -2,8 +2,6 @@ name: CI
 
 on:
   pull_request:
-    branches:
-      - latest
   push:
     branches:
       - latest
@@ -25,6 +23,8 @@ jobs:
       run: |
         npm ci
         npm run --workspaces build
+    - name: Type check
+      run: |
         npm run --workspaces --if-present ensure-no-project-compile-errors
     - name: Test
       run: |

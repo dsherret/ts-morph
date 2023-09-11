@@ -28,7 +28,7 @@ import { Node } from "../common";
 import { EnumDeclaration } from "../enum";
 import { FunctionDeclaration } from "../function";
 import { InterfaceDeclaration } from "../interface";
-import { ImplementedKindToNodeMappings } from "../kindToNodeMappings";
+import { ImplementedKindToNodeMappings } from "../kindToNodeMappings.generated";
 import { ModuleDeclaration } from "../module";
 import { CommentStatement, Statement, VariableStatement } from "../statement";
 import { TypeAliasDeclaration } from "../type";

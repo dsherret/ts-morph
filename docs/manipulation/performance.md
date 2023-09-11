@@ -57,7 +57,7 @@ For example, instead of writing code like this:
 
 ```ts setup: const classStructures: ClassDeclarationStructure[];
 for (const classStructure of classStructures)
-	sourceFile.addClass(classStructure);
+  sourceFile.addClass(classStructure);
 ```
 
 Write this instead:
@@ -74,10 +74,10 @@ For example, given the following code:
 
 ```ts setup: const sourceFiles: SourceFile[]; const someCheckOnSymbol: any;
 for (const sourceFile of sourceFiles) {
-    for (const classDec of sourceFile.getClasses()) {
-        if (someCheckOnSymbol(classDec.getSymbolOrThrow()))
-            classDec.remove();
-    }
+  for (const classDec of sourceFile.getClasses()) {
+    if (someCheckOnSymbol(classDec.getSymbolOrThrow()))
+      classDec.remove();
+  }
 }
 ```
 
@@ -85,19 +85,19 @@ Write it this way instead:
 
 ```ts setup: const sourceFiles: SourceFile[]; const someCheckOnSymbol: any;
 for (const classDec of getClassesToRemove())
-    classDec.remove();
+  classDec.remove();
 
 function getClassesToRemove() {
-    const classesToRemove: ClassDeclaration[] = [];
+  const classesToRemove: ClassDeclaration[] = [];
 
-    for (const sourceFile of sourceFiles) {
-        for (const classDec of sourceFile.getClasses()) {
-            if (someCheckOnSymbol(classDec.getSymbolOrThrow()))
-                classesToRemove.push(classDec);
-        }
+  for (const sourceFile of sourceFiles) {
+    for (const classDec of sourceFile.getClasses()) {
+      if (someCheckOnSymbol(classDec.getSymbolOrThrow()))
+        classesToRemove.push(classDec);
     }
+  }
 
-    return classesToRemove;
+  return classesToRemove;
 }
 ```
 

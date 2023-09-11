@@ -75,7 +75,7 @@ import { Structure } from "ts-morph";
 // ...etc...
 
 if (Structure.isExportable(structure))
-    structure.isExported = false;
+  structure.isExported = false;
 ```
 
 #### `forEachStructureChild`
@@ -113,6 +113,5 @@ Some structures have optional kinds. For example, in `parameters: [{ name: "myPa
 Note that unlike ts-morph's `forEachChild`, this function acts like the `forEachChild` in the compiler API and will return any truthy value returned in the second argument's function:
 
 ```ts setup: const structure: SourceFileStructure;
-const firstClassDecStructure = forEachStructureChild(structure,
-    child => Structure.isClass(child) ? child : undefined);
+const firstClassDecStructure = forEachStructureChild(structure, child => Structure.isClass(child) ? child : undefined);
 ```

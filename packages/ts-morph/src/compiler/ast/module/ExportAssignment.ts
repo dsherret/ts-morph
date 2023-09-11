@@ -1,11 +1,12 @@
 import { SyntaxKind, ts } from "@ts-morph/common";
 import { ExportAssignmentSpecificStructure, ExportAssignmentStructure, StructureKind } from "../../../structures";
+import { JSDocableNode } from "../base";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { ExpressionedNode } from "../expression";
 import { Statement } from "../statement";
 
-export const ExportAssignmentBase = ExpressionedNode(Statement);
+export const ExportAssignmentBase = ExpressionedNode(JSDocableNode(Statement));
 export class ExportAssignment extends ExportAssignmentBase<ts.ExportAssignment> {
   /**
    * Gets if this is an export equals assignment.

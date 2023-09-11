@@ -1,11 +1,11 @@
 {
   "name": "ts-morph",
-  "version": "18.0.0",
+  "version": "19.0.0",
   "description": "TypeScript compiler wrapper for static analysis and code manipulation.",
   "main": "dist/ts-morph.js",
   "typings": "lib/ts-morph.d.ts",
   "scripts": {
-    "dopublish": "npm run type-check-docs && npm run package && npm run publish-code-verification && echo \"Run: npm publish --otp\"",
+    "dopublish": "npm run type-check-docs && npm run package && npm run publish-code-verification && echo \"Run: npm publish\"",
     "build": "npm run build:declarations && npm run build:deno && npm run build:node",
     "build:node": "rimraf dist && rollup -c ",
     "build:deno": "rimraf dist-deno && rollup -c --environment BUILD:deno && deno run -A scripts/buildDeno.ts",
@@ -44,7 +44,7 @@
   },
   "homepage": "https://github.com/dsherret/ts-morph#readme",
   "dependencies": {
-    "@ts-morph/common": "~0.19.0",
+    "@ts-morph/common": "~0.20.0",
     "code-block-writer": "^12.0.0"
   },
   "devDependencies": {
@@ -61,7 +61,7 @@
     "rimraf": "^4.4.1",
     "rollup": "=3.20.2",
     "ts-node": "10.9.1",
-    "typescript": "~5.0.2"
+    "typescript": "~5.2.2"
   },
   "standard-version": {
     "tagPrefix": "",

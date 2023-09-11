@@ -31,6 +31,10 @@ export class Mixin {
       names.push(parent.getName());
     }
 
+    // the parent types will have this defined, but not the ModifierableNode
+    if (this.getName() === "ModifierableNode")
+      names.push("modifiers");
+
     return [...names, ...this.getMixins().map(m => m.getCoveredTsNodePropertyNames()).flat()];
   }
 }

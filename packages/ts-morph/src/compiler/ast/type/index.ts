@@ -13,6 +13,7 @@ export * from "./LiteralTypeNode";
 export * from "./MappedTypeNode";
 export * from "./NamedTupleMember";
 export * from "./ParenthesizedTypeNode";
+export * from "./RestTypeNode";
 export * from "./TemplateLiteralTypeNode";
 export * from "./ThisTypeNode";
 export * from "./TupleTypeNode";

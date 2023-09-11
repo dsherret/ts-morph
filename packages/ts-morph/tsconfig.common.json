@@ -12,8 +12,6 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "stripInternal": true,
-    "typeRoots": ["node_modules/@types"],
-    "types": ["node", "mocha"],
     "downlevelIteration": true,
     "importHelpers": false
   },

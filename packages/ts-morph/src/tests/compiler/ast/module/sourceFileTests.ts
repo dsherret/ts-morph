@@ -1281,12 +1281,14 @@ function myFunction(param: MyClass) {
       const file2 = project.createSourceFile("/file2.ts", `import {MyInterface} from "./MyInterface";`);
       const file3 = project.createSourceFile("/file3.ts", `export * from "./MyInterface";`);
       const file4 = project.createSourceFile("/file4.ts", `const t = import("./MyInterface");`);
+      const file5 = project.createSourceFile("/file5.ts", `declare const t: import("./MyInterface").MyInterface;`);
 
       expectResult(sourceFile, []);
       expectResult(file1, [sourceFile]);
       expectResult(file2, [sourceFile]);
       expectResult(file3, [sourceFile]);
       expectResult(file4, [sourceFile]);
+      expectResult(file5, [sourceFile]);
     });
   });
 

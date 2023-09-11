@@ -38,8 +38,8 @@ Set the `renameInComments` and `renameInStrings` options to `true` (they are `fa
 
 ```ts setup: let myEnum: EnumDeclaration;
 myEnum.rename("SomeOtherName", {
-    renameInComments: true,
-    renameInStrings: true
+  renameInComments: true,
+  renameInStrings: true,
 });
 ```
 
@@ -80,7 +80,7 @@ This behaviour change can be specified when renaming:
 
 ```ts setup: let varA: VariableDeclaration;
 varA.rename("SomeOtherName", {
-    usePrefixAndSuffixText: true
+  usePrefixAndSuffixText: true,
 });
 ```
 
