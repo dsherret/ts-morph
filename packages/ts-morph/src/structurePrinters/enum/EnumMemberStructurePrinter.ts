@@ -2,7 +2,7 @@ import { StringUtils } from "@ts-morph/common";
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { EnumMemberStructure, OptionalKind } from "../../structures";
 import { WriterFunction } from "../../types";
-import { isValidVariableName } from "../../utils";
+import { isValidVariableName, WriterUtils } from "../../utils";
 import { CommaNewLineSeparatedStructuresPrinter } from "../formatting";
 import { NodePrinter } from "../NodePrinter";
 
@@ -26,12 +26,7 @@ export class EnumMemberStructurePrinter extends NodePrinter<OptionalKind<EnumMem
     }
 
     this.factory.forJSDoc().printDocs(writer, structure.docs);
-    // Adds quotes if structure is not a valid variable name
-    // AND the string is not enclosed in quotation marks
-    if (isValidVariableName(structure.name) || StringUtils.isQuoted(structure.name))
-      writer.write(structure.name);
-    else
-      writer.quote(structure.name);
+    WriterUtils.writePropertyName(writer, structure.name);
 
     if (typeof structure.value === "string") {
       const { value } = structure;

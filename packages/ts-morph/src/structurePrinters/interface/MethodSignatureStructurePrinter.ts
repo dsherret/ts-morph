@@ -1,5 +1,6 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { MethodSignatureStructure, OptionalKind } from "../../structures";
+import { WriterUtils } from "../../utils";
 import { NewLineFormattingStructuresPrinter } from "../formatting";
 import { NodePrinter } from "../NodePrinter";
 
@@ -12,7 +13,7 @@ export class MethodSignatureStructurePrinter extends NodePrinter<OptionalKind<Me
 
   protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<MethodSignatureStructure>) {
     this.factory.forJSDoc().printDocs(writer, structure.docs);
-    writer.write(structure.name);
+    WriterUtils.writePropertyName(writer, structure.name);
     writer.conditionalWrite(structure.hasQuestionToken, "?");
     this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
     this.factory.forParameterDeclaration().printTextsWithParenthesis(writer, structure.parameters);
