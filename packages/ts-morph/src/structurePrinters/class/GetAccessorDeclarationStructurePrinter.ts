@@ -1,7 +1,6 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { StructurePrinterFactory } from "../../factories";
 import { GetAccessorDeclarationStructure, OptionalKind } from "../../structures";
-import { WriterUtils } from "../../utils";
 import { BlankLineFormattingStructuresPrinter } from "../formatting";
 import { NodePrinter } from "../NodePrinter";
 
@@ -20,8 +19,7 @@ export class GetAccessorDeclarationStructurePrinter extends NodePrinter<Optional
     this.factory.forJSDoc().printDocs(writer, structure.docs);
     this.factory.forDecorator().printTexts(writer, structure.decorators);
     this.factory.forModifierableNode().printText(writer, structure);
-    writer.write("get ");
-    WriterUtils.writePropertyName(writer, structure.name);
+    writer.write(`get ${structure.name}`);
     this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
     this.factory.forParameterDeclaration().printTextsWithParenthesis(writer, structure.parameters);
     this.factory.forReturnTypedNode().printText(writer, structure);

@@ -1,6 +1,5 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { OptionalKind, PropertyDeclarationStructure } from "../../structures";
-import { WriterUtils } from "../../utils";
 import { NewLineFormattingStructuresPrinter } from "../formatting";
 import { NodePrinter } from "../NodePrinter";
 
@@ -16,7 +15,7 @@ export class PropertyDeclarationStructurePrinter extends NodePrinter<OptionalKin
     this.factory.forDecorator().printTexts(writer, structure.decorators);
 
     this.factory.forModifierableNode().printText(writer, structure);
-    WriterUtils.writePropertyName(writer, structure.name);
+    writer.write(structure.name);
     writer.conditionalWrite(structure.hasQuestionToken, "?");
     writer.conditionalWrite(structure.hasExclamationToken && !structure.hasQuestionToken, "!");
     this.factory.forTypedNode(":").printText(writer, structure);

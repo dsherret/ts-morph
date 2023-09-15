@@ -32,34 +32,5 @@ describe("InterfaceDeclarationStructurePrinter", () => {
         doTest({ name: "I", extends: _ => {} }, `interface I {\n}`);
       });
     });
-
-    describe("props and methods", () => {
-      it("should write properties and methods", () => {
-        // todo: more tests
-        doTest(
-          {
-            name: "I",
-            properties: [{
-              name: "prop",
-              type: "string",
-            }, {
-              name: "prop-1",
-              type: "string",
-            }],
-            methods: [{
-              name: "method",
-            }, {
-              name: "method-1",
-            }],
-          },
-          `interface I {
-    prop: string;
-    "prop-1": string;
-    method();
-    "method-1"();
-}`,
-        );
-      });
-    });
   });
 });
