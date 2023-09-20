@@ -13,7 +13,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Features
 
-* automatically quote property keys if necessary when writing structures ([#1451](https://github.com/dsherret/ts-morph/issues/1451)) ([601f214](https://github.com/dsherret/ts-morph/commit/601f214))
 * upgrade to TypeScript 5.2 ([#1450](https://github.com/dsherret/ts-morph/issues/1450)) ([9bb94b0](https://github.com/dsherret/ts-morph/commit/9bb94b0))
 
 ### BREAKING CHANGES
