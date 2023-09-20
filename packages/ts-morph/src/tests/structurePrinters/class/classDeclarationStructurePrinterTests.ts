@@ -34,7 +34,7 @@ describe("ClassDeclarationStructurePrinter", () => {
             name: "pPrivate",
           }, {
             scope: Scope.Protected,
-            name: "p-Protected",
+            name: "pProtected",
           }],
           ctors: [{}],
           methods: [{
@@ -45,10 +45,10 @@ describe("ClassDeclarationStructurePrinter", () => {
             name: "m2",
           }, {
             scope: Scope.Public,
-            name: "m3-2",
+            name: "m3",
           }],
-          getAccessors: [{ name: "g" }, { name: "g-2" }],
-          setAccessors: [{ name: "s" }, { name: "s-2" }],
+          getAccessors: [{ name: "g" }],
+          setAccessors: [{ name: "s" }],
         };
 
         doTest(
@@ -57,7 +57,7 @@ describe("ClassDeclarationStructurePrinter", () => {
     pNoKeyword;
     public pPublic;
     private pPrivate;
-    protected "p-Protected";
+    protected pProtected;
 
     constructor() {
     }
@@ -65,13 +65,7 @@ describe("ClassDeclarationStructurePrinter", () => {
     get g() {
     }
 
-    get "g-2"() {
-    }
-
     set s() {
-    }
-
-    set "s-2"() {
     }
 
     private m1() {
@@ -80,7 +74,7 @@ describe("ClassDeclarationStructurePrinter", () => {
     protected m2() {
     }
 
-    public "m3-2"() {
+    public m3() {
     }
 }`,
         );

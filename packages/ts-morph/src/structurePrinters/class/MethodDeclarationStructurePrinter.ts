@@ -2,7 +2,7 @@ import { ObjectUtils } from "@ts-morph/common";
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { StructurePrinterFactory } from "../../factories";
 import { MethodDeclarationOverloadStructure, MethodDeclarationStructure, OptionalKind } from "../../structures";
-import { setValueIfUndefined, WriterUtils } from "../../utils";
+import { setValueIfUndefined } from "../../utils";
 import { NodePrinter } from "../NodePrinter";
 
 export class MethodDeclarationStructurePrinter extends NodePrinter<OptionalKind<MethodDeclarationStructure>> {
@@ -81,7 +81,7 @@ export class MethodDeclarationStructurePrinter extends NodePrinter<OptionalKind<
       this.factory.forDecorator().printTexts(writer, (structure as MethodDeclarationStructure).decorators);
 
     this.factory.forModifierableNode().printText(writer, structure);
-    WriterUtils.writePropertyName(writer, name);
+    writer.write(name);
     writer.conditionalWrite(structure.hasQuestionToken, "?");
     this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
     this.factory.forParameterDeclaration().printTextsWithParenthesis(writer, structure.parameters);
