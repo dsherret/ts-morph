@@ -19,7 +19,8 @@ export class GetAccessorDeclarationStructurePrinter extends NodePrinter<Optional
     this.factory.forJSDoc().printDocs(writer, structure.docs);
     this.factory.forDecorator().printTexts(writer, structure.decorators);
     this.factory.forModifierableNode().printText(writer, structure);
-    writer.write(`get ${structure.name}`);
+    writer.write("get ");
+    this.printTextOrWriterFunc(writer, structure.name);
     this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
     this.factory.forParameterDeclaration().printTextsWithParenthesis(writer, structure.parameters);
     this.factory.forReturnTypedNode().printText(writer, structure);

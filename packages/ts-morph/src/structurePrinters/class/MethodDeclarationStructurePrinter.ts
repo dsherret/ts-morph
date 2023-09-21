@@ -2,6 +2,7 @@ import { ObjectUtils } from "@ts-morph/common";
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { StructurePrinterFactory } from "../../factories";
 import { MethodDeclarationOverloadStructure, MethodDeclarationStructure, OptionalKind } from "../../structures";
+import { WriterFunction } from "../../types";
 import { setValueIfUndefined } from "../../utils";
 import { NodePrinter } from "../NodePrinter";
 
@@ -54,7 +55,11 @@ export class MethodDeclarationStructurePrinter extends NodePrinter<OptionalKind<
     }
   }
 
-  private printOverloads(writer: CodeBlockWriter, name: string, structures: ReadonlyArray<OptionalKind<MethodDeclarationOverloadStructure>> | undefined) {
+  private printOverloads(
+    writer: CodeBlockWriter,
+    name: string | WriterFunction,
+    structures: ReadonlyArray<OptionalKind<MethodDeclarationOverloadStructure>> | undefined,
+  ) {
     if (structures == null || structures.length === 0)
       return;
 
@@ -64,7 +69,7 @@ export class MethodDeclarationStructurePrinter extends NodePrinter<OptionalKind<
     }
   }
 
-  printOverload(writer: CodeBlockWriter, name: string, structure: OptionalKind<MethodDeclarationOverloadStructure>) {
+  printOverload(writer: CodeBlockWriter, name: string | WriterFunction, structure: OptionalKind<MethodDeclarationOverloadStructure>) {
     this.printLeadingTrivia(writer, structure);
     this.printHeader(writer, name, structure);
     writer.write(";");
@@ -73,7 +78,7 @@ export class MethodDeclarationStructurePrinter extends NodePrinter<OptionalKind<
 
   private printHeader(
     writer: CodeBlockWriter,
-    name: string,
+    name: string | WriterFunction,
     structure: OptionalKind<MethodDeclarationOverloadStructure> | OptionalKind<MethodDeclarationStructure>,
   ) {
     this.factory.forJSDoc().printDocs(writer, structure.docs);
@@ -81,7 +86,7 @@ export class MethodDeclarationStructurePrinter extends NodePrinter<OptionalKind<
       this.factory.forDecorator().printTexts(writer, (structure as MethodDeclarationStructure).decorators);
 
     this.factory.forModifierableNode().printText(writer, structure);
-    writer.write(name);
+    this.printTextOrWriterFunc(writer, name);
     writer.conditionalWrite(structure.hasQuestionToken, "?");
     this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
     this.factory.forParameterDeclaration().printTextsWithParenthesis(writer, structure.parameters);
