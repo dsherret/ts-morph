@@ -263,4 +263,12 @@ export class TypeChecker {
 
     return formatFlags;
   }
+
+  /**
+   * Gets the shorthand assignment value symbol of the provided node.
+   */
+  getShorthandAssignmentValueSymbol(node: Node) {
+    const symbol = this.compilerObject.getShorthandAssignmentValueSymbol(node.compilerNode)
+    return symbol ? this._context.compilerFactory.getSymbol(symbol) : undefined
+  }
 }
