@@ -1,3 +1,7 @@
+# Prerequisites
+
+This project requires [Deno](https://docs.deno.com/runtime/manual/getting_started/installation)
+
 # Getting Started
 
 Run in root of repo:
