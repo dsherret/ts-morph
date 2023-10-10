@@ -101,7 +101,7 @@ export class Project {
 
     // compiler options initialization
     const compilerOptions = getCompilerOptions();
-    const compilerOptionsContainer = new CompilerOptionsContainer();
+    const compilerOptionsContainer = new CompilerOptionsContainer(options.defaultCompilerOptions);
     compilerOptionsContainer.set(compilerOptions);
 
     // setup context
@@ -141,7 +141,6 @@ export class Project {
 
     function getCompilerOptions(): CompilerOptions {
       return {
-        ...options.defaultCompilerOptions,
         ...getTsConfigCompilerOptions(),
         ...(options.compilerOptions ?? {}) as CompilerOptions,
       };
