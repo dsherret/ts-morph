@@ -10180,9 +10180,11 @@ export interface TypedNodeStructure {
 export interface TypeElementMemberedNodeStructure {
   callSignatures?: OptionalKind<CallSignatureDeclarationStructure>[];
   constructSignatures?: OptionalKind<ConstructSignatureDeclarationStructure>[];
+  getterSignatures?: OptionalKind<GetAccessorSignatureStructure>[];
   indexSignatures?: OptionalKind<IndexSignatureDeclarationStructure>[];
   methods?: OptionalKind<MethodSignatureStructure>[];
   properties?: OptionalKind<PropertySignatureStructure>[];
+  setterSignatures?: OptionalKind<SetAccessorSignatureStructure>[];
 }
 
 export interface TypeParameteredNodeStructure {
@@ -10373,6 +10375,12 @@ export interface ConstructSignatureDeclarationStructure extends Structure, Const
 interface ConstructSignatureDeclarationSpecificStructure extends KindedStructure<StructureKind.ConstructSignature> {
 }
 
+export interface GetAccessorSignatureStructure extends Structure, GetAccessorSignatureSpecificStructure, PropertyNamedNodeStructure, TypeParameteredNodeStructure, ReturnTypedNodeStructure, QuestionTokenableNodeStructure, JSDocableNodeStructure {
+}
+
+interface GetAccessorSignatureSpecificStructure extends KindedStructure<StructureKind.GetAccessorSignature> {
+}
+
 export interface IndexSignatureDeclarationStructure extends Structure, IndexSignatureDeclarationSpecificStructure, JSDocableNodeStructure, ReadonlyableNodeStructure, ReturnTypedNodeStructure {
 }
 
@@ -10397,6 +10405,12 @@ export interface PropertySignatureStructure extends Structure, PropertySignature
 }
 
 interface PropertySignatureSpecificStructure extends KindedStructure<StructureKind.PropertySignature> {
+}
+
+export interface SetAccessorSignatureStructure extends Structure, SetAccessorSignatureSpecificStructure, PropertyNamedNodeStructure, TypeParameteredNodeStructure, ParameteredNodeStructure, QuestionTokenableNodeStructure, JSDocableNodeStructure {
+}
+
+interface SetAccessorSignatureSpecificStructure extends KindedStructure<StructureKind.SetAccessorSignature> {
 }
 
 export interface JsxAttributedNodeStructure {
@@ -10754,7 +10768,9 @@ export declare enum StructureKind {
   TypeAlias = 38,
   TypeParameter = 39,
   VariableDeclaration = 40,
-  VariableStatement = 41
+  VariableStatement = 41,
+  GetAccessorSignature = 42,
+  SetAccessorSignature = 43
 }
 
 export interface TypeAliasDeclarationStructure extends Structure, TypeAliasDeclarationSpecificStructure, NamedNodeStructure, TypedNodeStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {
