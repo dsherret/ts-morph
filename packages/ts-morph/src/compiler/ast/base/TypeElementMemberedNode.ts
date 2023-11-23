@@ -401,6 +401,11 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
         .map(m => this._getNodeFromCompilerNode(m as ts.CallSignatureDeclaration));
     }
 
+    getGetAccessors() {
+      return this.compilerNode.members.filter(m => m.kind === SyntaxKind.GetAccessor)
+        .map(m => this._getNodeFromCompilerNode(m as ts.GetAccessorDeclaration));
+    }
+
     addIndexSignature(structure: OptionalKind<IndexSignatureDeclarationStructure>) {
       return this.addIndexSignatures([structure])[0];
     }
@@ -516,6 +521,11 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
         .map(m => this._getNodeFromCompilerNode(m as ts.PropertySignature));
     }
 
+    getSetAccessors() {
+      return this.compilerNode.members.filter(m => m.kind === SyntaxKind.SetAccessor)
+        .map(m => this._getNodeFromCompilerNode(m as ts.SetAccessorDeclaration));
+    }
+
     getMembers() {
       return this.compilerNode.members.map(m => this._getNodeFromCompilerNode(m)) as TypeElementTypes[];
     }
@@ -557,9 +567,11 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
       return callBaseGetStructure<TypeElementMemberedNodeStructure>(Base.prototype, this, {
         callSignatures: this.getCallSignatures().map(node => node.getStructure()),
         constructSignatures: this.getConstructSignatures().map(node => node.getStructure()),
+        getAccessors: this.getGetAccessors().map(node => node.getStructure()),
         indexSignatures: this.getIndexSignatures().map(node => node.getStructure()),
         methods: this.getMethods().map(node => node.getStructure()),
         properties: this.getProperties().map(node => node.getStructure()),
+        setAccessors: this.getSetAccessors().map(node => node.getStructure()),
       });
     }
   };

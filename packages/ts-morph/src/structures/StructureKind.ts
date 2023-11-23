@@ -41,6 +41,4 @@ export enum StructureKind {
   TypeParameter,
   VariableDeclaration,
   VariableStatement,
-  GetAccessorSignature,
-  SetAccessorSignature,
 }

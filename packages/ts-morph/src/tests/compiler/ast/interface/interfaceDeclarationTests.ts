@@ -1,4 +1,4 @@
-import { nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { InterfaceDeclaration, TypeParameterVariance } from "../../../../compiler";
 import {
@@ -117,6 +117,7 @@ describe("InterfaceDeclaration", () => {
         constructSignatures: [],
         docs: [],
         extends: [],
+        getAccessors: [],
         hasDeclareKeyword: false,
         indexSignatures: [],
         isDefaultExport: false,
@@ -124,6 +125,7 @@ describe("InterfaceDeclaration", () => {
         methods: [],
         name: "Test",
         properties: [],
+        setAccessors: [],
         typeParameters: [],
       });
     });
@@ -134,6 +136,8 @@ describe("InterfaceDeclaration", () => {
 export default interface Test<T> extends Test2 {
     (): void;
     new(): Test;
+    get foo(): number;
+    set foo(value: number);
     [key: string]: string;
     method(): void;
     property: string;
@@ -145,6 +149,19 @@ export default interface Test<T> extends Test2 {
         constructSignatures: [{ returnType: "Test" }],
         docs: [{ description: "Test" }],
         extends: ["Test2"],
+        getAccessors: [{
+          decorators: [],
+          docs: [],
+          isAbstract: false,
+          isStatic: false,
+          kind: StructureKind.GetAccessor,
+          name: "foo",
+          parameters: [],
+          returnType: "number",
+          scope: undefined,
+          statements: undefined,
+          typeParameters: [],
+        }],
         hasDeclareKeyword: false,
         indexSignatures: [{ keyName: "key", returnType: "string" }],
         isDefaultExport: true,
@@ -153,6 +170,27 @@ export default interface Test<T> extends Test2 {
         name: "Test",
         properties: [{ name: "property", type: "string" }],
         typeParameters: [{ name: "T", variance: TypeParameterVariance.None }],
+        setAccessors: [{
+          decorators: [],
+          docs: [],
+          isAbstract: false,
+          isStatic: false,
+          kind: StructureKind.SetAccessor,
+          name: "foo",
+          parameters: [{
+            decorators: [],
+            hasOverrideKeyword: false,
+            hasQuestionToken: false,
+            initializer: undefined,
+            isReadonly: false,
+            isRestParameter: false,
+            kind: StructureKind.Parameter,
+            name: "value",
+            scope: undefined,
+            type: "number",
+          }],
+          typeParameters: [],
+        }],
       });
     });
   });
