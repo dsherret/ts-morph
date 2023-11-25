@@ -8,8 +8,8 @@ export class AdvancedIterator<T> {
   #nextCount = 0;
 
   constructor(iterator: IterableIterator<T>) {
-    this.#advance();
     this.#iterator = iterator;
+    this.#advance();
   }
 
   get done() {

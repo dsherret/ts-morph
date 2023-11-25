@@ -49,8 +49,8 @@ describe("ImportDeclarationStructurePrinter", () => {
   describe("asserts clause", () => {
     it("should write", () => {
       doTest(
-        { namedImports: ["test"], assertElements: [{ name: "type", value: "test" }], moduleSpecifier: "test" },
-        "import { test } from \"test\" assert {\n    type: \"test\"\n};",
+        { namedImports: ["test"], attributes: [{ name: "type", value: "test" }], moduleSpecifier: "test" },
+        "import { test } from \"test\" with {\n    type: \"test\"\n};",
       );
     });
   });

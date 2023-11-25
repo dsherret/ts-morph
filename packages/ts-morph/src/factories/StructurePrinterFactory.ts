@@ -5,14 +5,11 @@ import * as structurePrinters from "../structurePrinters";
 
 /** Cached lazy factory for StructurePrinters. */
 export class StructurePrinterFactory {
-  readonly #getFormatCodeSettings: () => SupportedFormatCodeSettings;
-
-  constructor(_getFormatCodeSettings: () => SupportedFormatCodeSettings) {
-    this.#getFormatCodeSettings = _getFormatCodeSettings;
+  constructor(private readonly _getFormatCodeSettings: () => SupportedFormatCodeSettings) {
   }
 
   getFormatCodeSettings(): SupportedFormatCodeSettings {
-    return this.#getFormatCodeSettings();
+    return this._getFormatCodeSettings();
   }
 
   @Memoize
@@ -206,11 +203,6 @@ export class StructurePrinterFactory {
   }
 
   @Memoize
-  forAssertEntry(): structurePrinters.AssertEntryStructurePrinter {
-    return new structurePrinters.AssertEntryStructurePrinter(this);
-  }
-
-  @Memoize
   forExportAssignment(): structurePrinters.ExportAssignmentStructurePrinter {
     return new structurePrinters.ExportAssignmentStructurePrinter(this);
   }
@@ -218,6 +210,11 @@ export class StructurePrinterFactory {
   @Memoize
   forExportDeclaration(): structurePrinters.ExportDeclarationStructurePrinter {
     return new structurePrinters.ExportDeclarationStructurePrinter(this);
+  }
+
+  @Memoize
+  forImportAttribute(): structurePrinters.ImportAttributeStructurePrinter {
+    return new structurePrinters.ImportAttributeStructurePrinter(this);
   }
 
   @Memoize

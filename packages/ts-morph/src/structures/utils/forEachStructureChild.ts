@@ -214,7 +214,7 @@ function forExportAssignment<TStructure>(structure: ExportAssignmentStructure, c
 /** @generated */
 function forExportDeclaration<TStructure>(structure: ExportDeclarationStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
   return forAllIfStructure(structure.namedExports, callback, StructureKind.ExportSpecifier)
-    || forAll(structure.assertElements, callback, StructureKind.AssertEntry);
+    || forAll(structure.attributes, callback, StructureKind.ImportAttribute);
 }
 
 /** @generated */
@@ -239,7 +239,7 @@ function forGetAccessorDeclaration<TStructure>(structure: GetAccessorDeclaration
 /** @generated */
 function forImportDeclaration<TStructure>(structure: ImportDeclarationStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
   return forAllIfStructure(structure.namedImports, callback, StructureKind.ImportSpecifier)
-    || forAll(structure.assertElements, callback, StructureKind.AssertEntry);
+    || forAll(structure.attributes, callback, StructureKind.ImportAttribute);
 }
 
 /** @generated */

@@ -65,15 +65,15 @@ export class ImportTypeNode extends NodeWithTypeArguments<ts.ImportTypeNode> {
     return this._getNodeFromCompilerNodeIfExists(this.compilerNode.qualifier);
   }
 
-  /** Gets the import type assertion container if it exists. */
-  getAssertions() {
-    return this._getNodeFromCompilerNodeIfExists(this.compilerNode.assertions);
+  /** Gets the import attributes container if it exists. */
+  getAttributes() {
+    return this._getNodeFromCompilerNodeIfExists(this.compilerNode.attributes);
   }
 
-  /** Gets the import type assertion container if it exists or throws. */
-  getAssertionsOrThrow(message?: string | (() => string)) {
+  /** Gets the import attributes container if it exists or throws. */
+  getAttributesOrThrow(message?: string | (() => string)) {
     return errors.throwIfNullOrUndefined(
-      this._getNodeFromCompilerNodeIfExists(this.compilerNode.assertions),
+      this._getNodeFromCompilerNodeIfExists(this.compilerNode.attributes),
       message ?? "Could not find import type assertion container.",
       this,
     );

@@ -1,7 +1,7 @@
 import { ArrayUtils, errors, nameof, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, removeChildren, verifyAndGetIndex } from "../../../manipulation";
 import {
-  AssertEntryStructure,
+  ImportAttributeStructure,
   ImportDeclarationSpecificStructure,
   ImportDeclarationStructure,
   ImportSpecifierStructure,
@@ -403,19 +403,19 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
     return this._getNodeFromCompilerNodeIfExists(this.compilerNode.importClause);
   }
 
-  /** Sets the elements in an assert clause. */
-  setAssertElements(elements: ReadonlyArray<OptionalKind<AssertEntryStructure>> | undefined) {
-    let assertClause = this.getAssertClause();
-    if (assertClause) {
+  /** Sets the import attributes. */
+  setAttributes(elements: ReadonlyArray<OptionalKind<ImportAttributeStructure>> | undefined) {
+    let attributes = this.getAttributes();
+    if (attributes) {
       if (elements)
-        assertClause.setElements(elements);
+        attributes.setElements(elements);
       else
-        assertClause.remove();
+        attributes.remove();
     } else if (elements) {
-      const printer = this._context.structurePrinterFactory.forAssertEntry();
+      const printer = this._context.structurePrinterFactory.forImportAttribute();
       const writer = this._context.createWriter();
       writer.space();
-      printer.printAssertClause(writer, elements);
+      printer.printAttributes(writer, elements);
       insertIntoParentTextRange({
         parent: this,
         newText: writer.toString(),
@@ -425,9 +425,9 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
     return this;
   }
 
-  /** Gets the assert clause or returns undefined if it doesn't exist. */
-  getAssertClause() {
-    return this._getNodeFromCompilerNodeIfExists(this.compilerNode.assertClause);
+  /** Gets the import attributes or returns undefined if it doesn't exist. */
+  getAttributes() {
+    return this._getNodeFromCompilerNodeIfExists(this.compilerNode.attributes);
   }
 
   /**
@@ -461,8 +461,8 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
     if (structure.isTypeOnly != null)
       this.setIsTypeOnly(structure.isTypeOnly);
 
-    if (structure.hasOwnProperty(nameof(structure, "assertElements")))
-      this.setAssertElements(structure.assertElements);
+    if (structure.hasOwnProperty(nameof(structure, "attributes")))
+      this.setAttributes(structure.attributes);
 
     return this;
   }
@@ -473,7 +473,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
   getStructure(): ImportDeclarationStructure {
     const namespaceImport = this.getNamespaceImport();
     const defaultImport = this.getDefaultImport();
-    const assertClause = this.getAssertClause();
+    const attributes = this.getAttributes();
 
     return callBaseGetStructure<ImportDeclarationSpecificStructure>(ImportDeclarationBase.prototype, this, {
       kind: StructureKind.ImportDeclaration,
@@ -482,7 +482,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
       moduleSpecifier: this.getModuleSpecifier().getLiteralText(),
       namedImports: this.getNamedImports().map(node => node.getStructure()),
       namespaceImport: namespaceImport ? namespaceImport.getText() : undefined,
-      assertElements: assertClause ? assertClause.getElements().map(e => e.getStructure()) : undefined,
+      attributes: attributes ? attributes.getElements().map(e => e.getStructure()) : undefined,
     });
   }
 }

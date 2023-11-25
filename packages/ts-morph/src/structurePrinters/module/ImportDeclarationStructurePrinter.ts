@@ -40,9 +40,9 @@ export class ImportDeclarationStructurePrinter extends NodePrinter<OptionalKind<
     writer.write(" ");
     writer.quote(structure.moduleSpecifier);
     // assert clause
-    if (structure.assertElements) {
+    if (structure.attributes) {
       writer.space();
-      this.factory.forAssertEntry().printAssertClause(writer, structure.assertElements);
+      this.factory.forImportAttribute().printAttributes(writer, structure.attributes);
     }
     writer.write(";");
   }

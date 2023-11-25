@@ -2241,15 +2241,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   }
 
   /** Gets if the provided node is a comment node. */
-  static isCommentNode(
-    node: compiler.Node | undefined,
-  ): node is
-    | compiler.CommentStatement
-    | compiler.CommentClassElement
-    | compiler.CommentTypeElement
-    | compiler.CommentObjectLiteralElement
-    | compiler.CommentEnumMember
-  {
+  static isCommentNode(node: compiler.Node | undefined): node is compiler.CommentStatement | compiler.CommentClassElement | compiler.CommentTypeElement | compiler.CommentObjectLiteralElement | compiler.CommentEnumMember {
     const kind = node?.getKind();
     return kind === SyntaxKind.SingleLineCommentTrivia || kind === SyntaxKind.MultiLineCommentTrivia;
   }
@@ -2329,9 +2321,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   /** Gets if the node is an ArrayBindingPattern. */
   static readonly isArrayBindingPattern: (node: compiler.Node | undefined) => node is compiler.ArrayBindingPattern = Node.is(SyntaxKind.ArrayBindingPattern);
   /** Gets if the node is an ArrayLiteralExpression. */
-  static readonly isArrayLiteralExpression: (node: compiler.Node | undefined) => node is compiler.ArrayLiteralExpression = Node.is(
-    SyntaxKind.ArrayLiteralExpression,
-  );
+  static readonly isArrayLiteralExpression: (node: compiler.Node | undefined) => node is compiler.ArrayLiteralExpression = Node.is(SyntaxKind.ArrayLiteralExpression);
 
   /** Gets if the node is an ArrayTypeNode. */
   static isArrayTypeNode(node: compiler.Node | undefined): node is compiler.ArrayTypeNode {
@@ -2342,17 +2332,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isArrowFunction: (node: compiler.Node | undefined) => node is compiler.ArrowFunction = Node.is(SyntaxKind.ArrowFunction);
   /** Gets if the node is an AsExpression. */
   static readonly isAsExpression: (node: compiler.Node | undefined) => node is compiler.AsExpression = Node.is(SyntaxKind.AsExpression);
-  /** Gets if the node is an AssertClause. */
-  static readonly isAssertClause: (node: compiler.Node | undefined) => node is compiler.AssertClause = Node.is(SyntaxKind.AssertClause);
-  /** Gets if the node is an AssertEntry. */
-  static readonly isAssertEntry: (node: compiler.Node | undefined) => node is compiler.AssertEntry = Node.is(SyntaxKind.AssertEntry);
-
-  /** Gets if the node is an AssertionKeyNamedNode. */
-  static isAssertionKeyNamed<T extends compiler.Node>(
-    node: T | undefined,
-  ): node is compiler.AssertionKeyNamedNode & compiler.AssertionKeyNamedNodeExtensionType & T {
-    return node?.getKind() === SyntaxKind.AssertEntry;
-  }
 
   /** Gets if the node is an AsyncableNode. */
   static isAsyncable<T extends compiler.Node>(node: T | undefined): node is compiler.AsyncableNode & compiler.AsyncableNodeExtensionType & T {
@@ -2499,9 +2478,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isClassExpression: (node: compiler.Node | undefined) => node is compiler.ClassExpression = Node.is(SyntaxKind.ClassExpression);
 
   /** Gets if the node is a ClassLikeDeclarationBase. */
-  static isClassLikeDeclarationBase<T extends compiler.Node>(
-    node: T | undefined,
-  ): node is compiler.ClassLikeDeclarationBase & compiler.ClassLikeDeclarationBaseExtensionType & T {
+  static isClassLikeDeclarationBase<T extends compiler.Node>(node: T | undefined): node is compiler.ClassLikeDeclarationBase & compiler.ClassLikeDeclarationBaseExtensionType & T {
     switch (node?.getKind()) {
       case SyntaxKind.ClassDeclaration:
       case SyntaxKind.ClassExpression:
@@ -2512,17 +2489,13 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   }
 
   /** Gets if the node is a ClassStaticBlockDeclaration. */
-  static readonly isClassStaticBlockDeclaration: (node: compiler.Node | undefined) => node is compiler.ClassStaticBlockDeclaration = Node.is(
-    SyntaxKind.ClassStaticBlockDeclaration,
-  );
+  static readonly isClassStaticBlockDeclaration: (node: compiler.Node | undefined) => node is compiler.ClassStaticBlockDeclaration = Node.is(SyntaxKind.ClassStaticBlockDeclaration);
   /** Gets if the node is a CommaListExpression. */
   static readonly isCommaListExpression: (node: compiler.Node | undefined) => node is compiler.CommaListExpression = Node.is(SyntaxKind.CommaListExpression);
   /** Gets if the node is a ComputedPropertyName. */
   static readonly isComputedPropertyName: (node: compiler.Node | undefined) => node is compiler.ComputedPropertyName = Node.is(SyntaxKind.ComputedPropertyName);
   /** Gets if the node is a ConditionalExpression. */
-  static readonly isConditionalExpression: (node: compiler.Node | undefined) => node is compiler.ConditionalExpression = Node.is(
-    SyntaxKind.ConditionalExpression,
-  );
+  static readonly isConditionalExpression: (node: compiler.Node | undefined) => node is compiler.ConditionalExpression = Node.is(SyntaxKind.ConditionalExpression);
 
   /** Gets if the node is a ConditionalTypeNode. */
   static isConditionalTypeNode(node: compiler.Node | undefined): node is compiler.ConditionalTypeNode {
@@ -2575,9 +2548,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isDoStatement: (node: compiler.Node | undefined) => node is compiler.DoStatement = Node.is(SyntaxKind.DoStatement);
 
   /** Gets if the node is a DotDotDotTokenableNode. */
-  static isDotDotDotTokenable<T extends compiler.Node>(
-    node: T | undefined,
-  ): node is compiler.DotDotDotTokenableNode & compiler.DotDotDotTokenableNodeExtensionType & T {
+  static isDotDotDotTokenable<T extends compiler.Node>(node: T | undefined): node is compiler.DotDotDotTokenableNode & compiler.DotDotDotTokenableNodeExtensionType & T {
     switch (node?.getKind()) {
       case SyntaxKind.BindingElement:
       case SyntaxKind.JsxExpression:
@@ -2590,9 +2561,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   }
 
   /** Gets if the node is an ElementAccessExpression. */
-  static readonly isElementAccessExpression: (node: compiler.Node | undefined) => node is compiler.ElementAccessExpression = Node.is(
-    SyntaxKind.ElementAccessExpression,
-  );
+  static readonly isElementAccessExpression: (node: compiler.Node | undefined) => node is compiler.ElementAccessExpression = Node.is(SyntaxKind.ElementAccessExpression);
   /** Gets if the node is an EmptyStatement. */
   static readonly isEmptyStatement: (node: compiler.Node | undefined) => node is compiler.EmptyStatement = Node.is(SyntaxKind.EmptyStatement);
   /** Gets if the node is an EnumDeclaration. */
@@ -2601,9 +2570,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isEnumMember: (node: compiler.Node | undefined) => node is compiler.EnumMember = Node.is(SyntaxKind.EnumMember);
 
   /** Gets if the node is an ExclamationTokenableNode. */
-  static isExclamationTokenable<T extends compiler.Node>(
-    node: T | undefined,
-  ): node is compiler.ExclamationTokenableNode & compiler.ExclamationTokenableNodeExtensionType & T {
+  static isExclamationTokenable<T extends compiler.Node>(node: T | undefined): node is compiler.ExclamationTokenableNode & compiler.ExclamationTokenableNodeExtensionType & T {
     switch (node?.getKind()) {
       case SyntaxKind.PropertyDeclaration:
       case SyntaxKind.VariableDeclaration:
@@ -2767,21 +2734,15 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   /** Gets if the node is an ExpressionStatement. */
   static readonly isExpressionStatement: (node: compiler.Node | undefined) => node is compiler.ExpressionStatement = Node.is(SyntaxKind.ExpressionStatement);
   /** Gets if the node is an ExpressionWithTypeArguments. */
-  static readonly isExpressionWithTypeArguments: (node: compiler.Node | undefined) => node is compiler.ExpressionWithTypeArguments = Node.is(
-    SyntaxKind.ExpressionWithTypeArguments,
-  );
+  static readonly isExpressionWithTypeArguments: (node: compiler.Node | undefined) => node is compiler.ExpressionWithTypeArguments = Node.is(SyntaxKind.ExpressionWithTypeArguments);
 
   /** Gets if the node is an ExtendsClauseableNode. */
-  static isExtendsClauseable<T extends compiler.Node>(
-    node: T | undefined,
-  ): node is compiler.ExtendsClauseableNode & compiler.ExtendsClauseableNodeExtensionType & T {
+  static isExtendsClauseable<T extends compiler.Node>(node: T | undefined): node is compiler.ExtendsClauseableNode & compiler.ExtendsClauseableNodeExtensionType & T {
     return node?.getKind() === SyntaxKind.InterfaceDeclaration;
   }
 
   /** Gets if the node is an ExternalModuleReference. */
-  static readonly isExternalModuleReference: (node: compiler.Node | undefined) => node is compiler.ExternalModuleReference = Node.is(
-    SyntaxKind.ExternalModuleReference,
-  );
+  static readonly isExternalModuleReference: (node: compiler.Node | undefined) => node is compiler.ExternalModuleReference = Node.is(SyntaxKind.ExternalModuleReference);
 
   /** Gets if the node is a FalseLiteral. */
   static isFalseLiteral(node: compiler.Node | undefined): node is compiler.FalseLiteral {
@@ -2800,9 +2761,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isFunctionExpression: (node: compiler.Node | undefined) => node is compiler.FunctionExpression = Node.is(SyntaxKind.FunctionExpression);
 
   /** Gets if the node is a FunctionLikeDeclaration. */
-  static isFunctionLikeDeclaration<T extends compiler.Node>(
-    node: T | undefined,
-  ): node is compiler.FunctionLikeDeclaration & compiler.FunctionLikeDeclarationExtensionType & T {
+  static isFunctionLikeDeclaration<T extends compiler.Node>(node: T | undefined): node is compiler.FunctionLikeDeclaration & compiler.FunctionLikeDeclarationExtensionType & T {
     switch (node?.getKind()) {
       case SyntaxKind.ArrowFunction:
       case SyntaxKind.Constructor:
@@ -2843,9 +2802,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isHeritageClause: (node: compiler.Node | undefined) => node is compiler.HeritageClause = Node.is(SyntaxKind.HeritageClause);
 
   /** Gets if the node is a HeritageClauseableNode. */
-  static isHeritageClauseable<T extends compiler.Node>(
-    node: T | undefined,
-  ): node is compiler.HeritageClauseableNode & compiler.HeritageClauseableNodeExtensionType & T {
+  static isHeritageClauseable<T extends compiler.Node>(node: T | undefined): node is compiler.HeritageClauseableNode & compiler.HeritageClauseableNodeExtensionType & T {
     switch (node?.getKind()) {
       case SyntaxKind.ClassDeclaration:
       case SyntaxKind.ClassExpression:
@@ -2862,9 +2819,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isIfStatement: (node: compiler.Node | undefined) => node is compiler.IfStatement = Node.is(SyntaxKind.IfStatement);
 
   /** Gets if the node is a ImplementsClauseableNode. */
-  static isImplementsClauseable<T extends compiler.Node>(
-    node: T | undefined,
-  ): node is compiler.ImplementsClauseableNode & compiler.ImplementsClauseableNodeExtensionType & T {
+  static isImplementsClauseable<T extends compiler.Node>(node: T | undefined): node is compiler.ImplementsClauseableNode & compiler.ImplementsClauseableNodeExtensionType & T {
     switch (node?.getKind()) {
       case SyntaxKind.ClassDeclaration:
       case SyntaxKind.ClassExpression:
@@ -2874,14 +2829,19 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
   }
 
+  /** Gets if the node is a ImportAttribute. */
+  static isImportAttribute(node: compiler.Node | undefined): node is compiler.ImportAttribute {
+    return node?.getKind() === SyntaxKind.ImportAttribute;
+  }
+
+  /** Gets if the node is a ImportAttributes. */
+  static readonly isImportAttributes: (node: compiler.Node | undefined) => node is compiler.ImportAttributes = Node.is(SyntaxKind.ImportAttributes);
   /** Gets if the node is a ImportClause. */
   static readonly isImportClause: (node: compiler.Node | undefined) => node is compiler.ImportClause = Node.is(SyntaxKind.ImportClause);
   /** Gets if the node is a ImportDeclaration. */
   static readonly isImportDeclaration: (node: compiler.Node | undefined) => node is compiler.ImportDeclaration = Node.is(SyntaxKind.ImportDeclaration);
   /** Gets if the node is a ImportEqualsDeclaration. */
-  static readonly isImportEqualsDeclaration: (node: compiler.Node | undefined) => node is compiler.ImportEqualsDeclaration = Node.is(
-    SyntaxKind.ImportEqualsDeclaration,
-  );
+  static readonly isImportEqualsDeclaration: (node: compiler.Node | undefined) => node is compiler.ImportEqualsDeclaration = Node.is(SyntaxKind.ImportEqualsDeclaration);
 
   /** Gets if the node is a ImportExpression. */
   static isImportExpression(node: compiler.Node | undefined): node is compiler.ImportExpression {
@@ -2890,10 +2850,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
   /** Gets if the node is a ImportSpecifier. */
   static readonly isImportSpecifier: (node: compiler.Node | undefined) => node is compiler.ImportSpecifier = Node.is(SyntaxKind.ImportSpecifier);
-  /** Gets if the node is a ImportTypeAssertionContainer. */
-  static readonly isImportTypeAssertionContainer: (node: compiler.Node | undefined) => node is compiler.ImportTypeAssertionContainer = Node.is(
-    SyntaxKind.ImportTypeAssertionContainer,
-  );
 
   /** Gets if the node is a ImportTypeNode. */
   static isImportTypeNode(node: compiler.Node | undefined): node is compiler.ImportTypeNode {
@@ -2911,9 +2867,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   }
 
   /** Gets if the node is a InferKeyword. */
-  static readonly isInferKeyword: (node: compiler.Node | undefined) => node is compiler.Node<ts.Token<SyntaxKind.InferKeyword>> = Node.is(
-    SyntaxKind.InferKeyword,
-  );
+  static readonly isInferKeyword: (node: compiler.Node | undefined) => node is compiler.Node<ts.Token<SyntaxKind.InferKeyword>> = Node.is(SyntaxKind.InferKeyword);
 
   /** Gets if the node is a InferTypeNode. */
   static isInferTypeNode(node: compiler.Node | undefined): node is compiler.InferTypeNode {
@@ -2921,9 +2875,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   }
 
   /** Gets if the node is a InitializerExpressionableNode. */
-  static isInitializerExpressionable<T extends compiler.Node>(
-    node: T | undefined,
-  ): node is compiler.InitializerExpressionableNode & compiler.InitializerExpressionableNodeExtensionType & T {
+  static isInitializerExpressionable<T extends compiler.Node>(node: T | undefined): node is compiler.InitializerExpressionableNode & compiler.InitializerExpressionableNodeExtensionType & T {
     switch (node?.getKind()) {
       case SyntaxKind.BindingElement:
       case SyntaxKind.EnumMember:
@@ -2938,9 +2890,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   }
 
   /** Gets if the node is a InitializerExpressionGetableNode. */
-  static isInitializerExpressionGetable<T extends compiler.Node>(
-    node: T | undefined,
-  ): node is compiler.InitializerExpressionGetableNode & compiler.InitializerExpressionGetableNodeExtensionType & T {
+  static isInitializerExpressionGetable<T extends compiler.Node>(node: T | undefined): node is compiler.InitializerExpressionGetableNode & compiler.InitializerExpressionGetableNodeExtensionType & T {
     switch (node?.getKind()) {
       case SyntaxKind.BindingElement:
       case SyntaxKind.EnumMember:
@@ -3064,9 +3014,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isJSDocPrivateTag: (node: compiler.Node | undefined) => node is compiler.JSDocPrivateTag = Node.is(SyntaxKind.JSDocPrivateTag);
 
   /** Gets if the node is a JSDocPropertyLikeTag. */
-  static isJSDocPropertyLikeTag<T extends compiler.Node>(
-    node: T | undefined,
-  ): node is compiler.JSDocPropertyLikeTag & compiler.JSDocPropertyLikeTagExtensionType & T {
+  static isJSDocPropertyLikeTag<T extends compiler.Node>(node: T | undefined): node is compiler.JSDocPropertyLikeTag & compiler.JSDocPropertyLikeTagExtensionType & T {
     switch (node?.getKind()) {
       case SyntaxKind.JSDocParameterTag:
       case SyntaxKind.JSDocPropertyTag:
@@ -3160,9 +3108,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isJSDocTypeExpression: (node: compiler.Node | undefined) => node is compiler.JSDocTypeExpression = Node.is(SyntaxKind.JSDocTypeExpression);
 
   /** Gets if the node is a JSDocTypeExpressionableTag. */
-  static isJSDocTypeExpressionableTag<T extends compiler.Node>(
-    node: T | undefined,
-  ): node is compiler.JSDocTypeExpressionableTag & compiler.JSDocTypeExpressionableTagExtensionType & T {
+  static isJSDocTypeExpressionableTag<T extends compiler.Node>(node: T | undefined): node is compiler.JSDocTypeExpressionableTag & compiler.JSDocTypeExpressionableTagExtensionType & T {
     switch (node?.getKind()) {
       case SyntaxKind.JSDocOverloadTag:
       case SyntaxKind.JSDocReturnTag:
@@ -3180,9 +3126,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isJSDocTypeLiteral: (node: compiler.Node | undefined) => node is compiler.JSDocTypeLiteral = Node.is(SyntaxKind.JSDocTypeLiteral);
 
   /** Gets if the node is a JSDocTypeParameteredTag. */
-  static isJSDocTypeParameteredTag<T extends compiler.Node>(
-    node: T | undefined,
-  ): node is compiler.JSDocTypeParameteredTag & compiler.JSDocTypeParameteredTagExtensionType & T {
+  static isJSDocTypeParameteredTag<T extends compiler.Node>(node: T | undefined): node is compiler.JSDocTypeParameteredTag & compiler.JSDocTypeParameteredTagExtensionType & T {
     return node?.getKind() === SyntaxKind.JSDocTemplateTag;
   }
 
@@ -3229,9 +3173,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   /** Gets if the node is a JsxOpeningFragment. */
   static readonly isJsxOpeningFragment: (node: compiler.Node | undefined) => node is compiler.JsxOpeningFragment = Node.is(SyntaxKind.JsxOpeningFragment);
   /** Gets if the node is a JsxSelfClosingElement. */
-  static readonly isJsxSelfClosingElement: (node: compiler.Node | undefined) => node is compiler.JsxSelfClosingElement = Node.is(
-    SyntaxKind.JsxSelfClosingElement,
-  );
+  static readonly isJsxSelfClosingElement: (node: compiler.Node | undefined) => node is compiler.JsxSelfClosingElement = Node.is(SyntaxKind.JsxSelfClosingElement);
   /** Gets if the node is a JsxSpreadAttribute. */
   static readonly isJsxSpreadAttribute: (node: compiler.Node | undefined) => node is compiler.JsxSpreadAttribute = Node.is(SyntaxKind.JsxSpreadAttribute);
 
@@ -3289,9 +3231,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   }
 
   /** Gets if the node is a LeftHandSideExpressionedNode. */
-  static isLeftHandSideExpressioned<T extends compiler.Node>(
-    node: T | undefined,
-  ): node is compiler.LeftHandSideExpressionedNode & compiler.LeftHandSideExpressionedNodeExtensionType & T {
+  static isLeftHandSideExpressioned<T extends compiler.Node>(node: T | undefined): node is compiler.LeftHandSideExpressionedNode & compiler.LeftHandSideExpressionedNodeExtensionType & T {
     switch (node?.getKind()) {
       case SyntaxKind.CallExpression:
       case SyntaxKind.Decorator:
@@ -3499,9 +3439,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   /** Gets if the node is a NamespaceImport. */
   static readonly isNamespaceImport: (node: compiler.Node | undefined) => node is compiler.NamespaceImport = Node.is(SyntaxKind.NamespaceImport);
   /** Gets if the node is a NeverKeyword. */
-  static readonly isNeverKeyword: (node: compiler.Node | undefined) => node is compiler.Node<ts.Token<SyntaxKind.NeverKeyword>> = Node.is(
-    SyntaxKind.NeverKeyword,
-  );
+  static readonly isNeverKeyword: (node: compiler.Node | undefined) => node is compiler.Node<ts.Token<SyntaxKind.NeverKeyword>> = Node.is(SyntaxKind.NeverKeyword);
   /** Gets if the node is a NewExpression. */
   static readonly isNewExpression: (node: compiler.Node | undefined) => node is compiler.NewExpression = Node.is(SyntaxKind.NewExpression);
 
@@ -3521,9 +3459,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   /** Gets if the node is a NonNullExpression. */
   static readonly isNonNullExpression: (node: compiler.Node | undefined) => node is compiler.NonNullExpression = Node.is(SyntaxKind.NonNullExpression);
   /** Gets if the node is a NoSubstitutionTemplateLiteral. */
-  static readonly isNoSubstitutionTemplateLiteral: (node: compiler.Node | undefined) => node is compiler.NoSubstitutionTemplateLiteral = Node.is(
-    SyntaxKind.NoSubstitutionTemplateLiteral,
-  );
+  static readonly isNoSubstitutionTemplateLiteral: (node: compiler.Node | undefined) => node is compiler.NoSubstitutionTemplateLiteral = Node.is(SyntaxKind.NoSubstitutionTemplateLiteral);
   /** Gets if the node is a NotEmittedStatement. */
   static readonly isNotEmittedStatement: (node: compiler.Node | undefined) => node is compiler.NotEmittedStatement = Node.is(SyntaxKind.NotEmittedStatement);
 
@@ -3541,9 +3477,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   /** Gets if the node is a ObjectKeyword. */
   static readonly isObjectKeyword: (node: compiler.Node | undefined) => node is compiler.Expression = Node.is(SyntaxKind.ObjectKeyword);
   /** Gets if the node is a ObjectLiteralExpression. */
-  static readonly isObjectLiteralExpression: (node: compiler.Node | undefined) => node is compiler.ObjectLiteralExpression = Node.is(
-    SyntaxKind.ObjectLiteralExpression,
-  );
+  static readonly isObjectLiteralExpression: (node: compiler.Node | undefined) => node is compiler.ObjectLiteralExpression = Node.is(SyntaxKind.ObjectLiteralExpression);
   /** Gets if the node is a OmittedExpression. */
   static readonly isOmittedExpression: (node: compiler.Node | undefined) => node is compiler.OmittedExpression = Node.is(SyntaxKind.OmittedExpression);
 
@@ -3599,9 +3533,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   }
 
   /** Gets if the node is a ParenthesizedExpression. */
-  static readonly isParenthesizedExpression: (node: compiler.Node | undefined) => node is compiler.ParenthesizedExpression = Node.is(
-    SyntaxKind.ParenthesizedExpression,
-  );
+  static readonly isParenthesizedExpression: (node: compiler.Node | undefined) => node is compiler.ParenthesizedExpression = Node.is(SyntaxKind.ParenthesizedExpression);
 
   /** Gets if the node is a ParenthesizedTypeNode. */
   static isParenthesizedTypeNode(node: compiler.Node | undefined): node is compiler.ParenthesizedTypeNode {
@@ -3609,17 +3541,11 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   }
 
   /** Gets if the node is a PartiallyEmittedExpression. */
-  static readonly isPartiallyEmittedExpression: (node: compiler.Node | undefined) => node is compiler.PartiallyEmittedExpression = Node.is(
-    SyntaxKind.PartiallyEmittedExpression,
-  );
+  static readonly isPartiallyEmittedExpression: (node: compiler.Node | undefined) => node is compiler.PartiallyEmittedExpression = Node.is(SyntaxKind.PartiallyEmittedExpression);
   /** Gets if the node is a PostfixUnaryExpression. */
-  static readonly isPostfixUnaryExpression: (node: compiler.Node | undefined) => node is compiler.PostfixUnaryExpression = Node.is(
-    SyntaxKind.PostfixUnaryExpression,
-  );
+  static readonly isPostfixUnaryExpression: (node: compiler.Node | undefined) => node is compiler.PostfixUnaryExpression = Node.is(SyntaxKind.PostfixUnaryExpression);
   /** Gets if the node is a PrefixUnaryExpression. */
-  static readonly isPrefixUnaryExpression: (node: compiler.Node | undefined) => node is compiler.PrefixUnaryExpression = Node.is(
-    SyntaxKind.PrefixUnaryExpression,
-  );
+  static readonly isPrefixUnaryExpression: (node: compiler.Node | undefined) => node is compiler.PrefixUnaryExpression = Node.is(SyntaxKind.PrefixUnaryExpression);
 
   /** Gets if the node is a PrimaryExpression. */
   static isPrimaryExpression(node: compiler.Node | undefined): node is compiler.PrimaryExpression {
@@ -3655,9 +3581,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   /** Gets if the node is a PrivateIdentifier. */
   static readonly isPrivateIdentifier: (node: compiler.Node | undefined) => node is compiler.PrivateIdentifier = Node.is(SyntaxKind.PrivateIdentifier);
   /** Gets if the node is a PropertyAccessExpression. */
-  static readonly isPropertyAccessExpression: (node: compiler.Node | undefined) => node is compiler.PropertyAccessExpression = Node.is(
-    SyntaxKind.PropertyAccessExpression,
-  );
+  static readonly isPropertyAccessExpression: (node: compiler.Node | undefined) => node is compiler.PropertyAccessExpression = Node.is(SyntaxKind.PropertyAccessExpression);
   /** Gets if the node is a PropertyAssignment. */
   static readonly isPropertyAssignment: (node: compiler.Node | undefined) => node is compiler.PropertyAssignment = Node.is(SyntaxKind.PropertyAssignment);
   /** Gets if the node is a PropertyDeclaration. */
@@ -3686,9 +3610,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isQualifiedName: (node: compiler.Node | undefined) => node is compiler.QualifiedName = Node.is(SyntaxKind.QualifiedName);
 
   /** Gets if the node is a QuestionDotTokenableNode. */
-  static isQuestionDotTokenable<T extends compiler.Node>(
-    node: T | undefined,
-  ): node is compiler.QuestionDotTokenableNode & compiler.QuestionDotTokenableNodeExtensionType & T {
+  static isQuestionDotTokenable<T extends compiler.Node>(node: T | undefined): node is compiler.QuestionDotTokenableNode & compiler.QuestionDotTokenableNodeExtensionType & T {
     switch (node?.getKind()) {
       case SyntaxKind.CallExpression:
       case SyntaxKind.ElementAccessExpression:
@@ -3700,9 +3622,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   }
 
   /** Gets if the node is a QuestionTokenableNode. */
-  static isQuestionTokenable<T extends compiler.Node>(
-    node: T | undefined,
-  ): node is compiler.QuestionTokenableNode & compiler.QuestionTokenableNodeExtensionType & T {
+  static isQuestionTokenable<T extends compiler.Node>(node: T | undefined): node is compiler.QuestionTokenableNode & compiler.QuestionTokenableNodeExtensionType & T {
     switch (node?.getKind()) {
       case SyntaxKind.MethodDeclaration:
       case SyntaxKind.MethodSignature:
@@ -3732,11 +3652,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   }
 
   /** Gets if the node is a ReferenceFindableNode. */
-  static isReferenceFindable<T extends compiler.Node>(
-    node: T | undefined,
-  ): node is compiler.ReferenceFindableNode & compiler.ReferenceFindableNodeExtensionType & T {
+  static isReferenceFindable<T extends compiler.Node>(node: T | undefined): node is compiler.ReferenceFindableNode & compiler.ReferenceFindableNodeExtensionType & T {
     switch (node?.getKind()) {
-      case SyntaxKind.AssertEntry:
       case SyntaxKind.BindingElement:
       case SyntaxKind.ClassDeclaration:
       case SyntaxKind.ClassExpression:
@@ -3772,14 +3689,11 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   }
 
   /** Gets if the node is a RegularExpressionLiteral. */
-  static readonly isRegularExpressionLiteral: (node: compiler.Node | undefined) => node is compiler.RegularExpressionLiteral = Node.is(
-    SyntaxKind.RegularExpressionLiteral,
-  );
+  static readonly isRegularExpressionLiteral: (node: compiler.Node | undefined) => node is compiler.RegularExpressionLiteral = Node.is(SyntaxKind.RegularExpressionLiteral);
 
   /** Gets if the node is a RenameableNode. */
   static isRenameable<T extends compiler.Node>(node: T | undefined): node is compiler.RenameableNode & compiler.RenameableNodeExtensionType & T {
     switch (node?.getKind()) {
-      case SyntaxKind.AssertEntry:
       case SyntaxKind.BindingElement:
       case SyntaxKind.ClassDeclaration:
       case SyntaxKind.ClassExpression:
@@ -3869,9 +3783,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   }
 
   /** Gets if the node is a SemicolonToken. */
-  static readonly isSemicolonToken: (node: compiler.Node | undefined) => node is compiler.Node<ts.Token<SyntaxKind.SemicolonToken>> = Node.is(
-    SyntaxKind.SemicolonToken,
-  );
+  static readonly isSemicolonToken: (node: compiler.Node | undefined) => node is compiler.Node<ts.Token<SyntaxKind.SemicolonToken>> = Node.is(SyntaxKind.SemicolonToken);
 
   /** Gets if the node is a SetAccessorDeclaration. */
   static isSetAccessorDeclaration(node: compiler.Node | undefined): node is compiler.SetAccessorDeclaration {
@@ -3879,14 +3791,10 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   }
 
   /** Gets if the node is a ShorthandPropertyAssignment. */
-  static readonly isShorthandPropertyAssignment: (node: compiler.Node | undefined) => node is compiler.ShorthandPropertyAssignment = Node.is(
-    SyntaxKind.ShorthandPropertyAssignment,
-  );
+  static readonly isShorthandPropertyAssignment: (node: compiler.Node | undefined) => node is compiler.ShorthandPropertyAssignment = Node.is(SyntaxKind.ShorthandPropertyAssignment);
 
   /** Gets if the node is a SignaturedDeclaration. */
-  static isSignaturedDeclaration<T extends compiler.Node>(
-    node: T | undefined,
-  ): node is compiler.SignaturedDeclaration & compiler.SignaturedDeclarationExtensionType & T {
+  static isSignaturedDeclaration<T extends compiler.Node>(node: T | undefined): node is compiler.SignaturedDeclaration & compiler.SignaturedDeclarationExtensionType & T {
     switch (node?.getKind()) {
       case SyntaxKind.ArrowFunction:
       case SyntaxKind.CallSignature:
@@ -4007,9 +3915,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   /** Gets if the node is a SyntaxList. */
   static readonly isSyntaxList: (node: compiler.Node | undefined) => node is compiler.SyntaxList = Node.is(SyntaxKind.SyntaxList);
   /** Gets if the node is a TaggedTemplateExpression. */
-  static readonly isTaggedTemplateExpression: (node: compiler.Node | undefined) => node is compiler.TaggedTemplateExpression = Node.is(
-    SyntaxKind.TaggedTemplateExpression,
-  );
+  static readonly isTaggedTemplateExpression: (node: compiler.Node | undefined) => node is compiler.TaggedTemplateExpression = Node.is(SyntaxKind.TaggedTemplateExpression);
   /** Gets if the node is a TemplateExpression. */
   static readonly isTemplateExpression: (node: compiler.Node | undefined) => node is compiler.TemplateExpression = Node.is(SyntaxKind.TemplateExpression);
   /** Gets if the node is a TemplateHead. */
@@ -4136,9 +4042,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   }
 
   /** Gets if the node is a TypeElementMemberedNode. */
-  static isTypeElementMembered<T extends compiler.Node>(
-    node: T | undefined,
-  ): node is compiler.TypeElementMemberedNode & compiler.TypeElementMemberedNodeExtensionType & T {
+  static isTypeElementMembered<T extends compiler.Node>(node: T | undefined): node is compiler.TypeElementMemberedNode & compiler.TypeElementMemberedNodeExtensionType & T {
     switch (node?.getKind()) {
       case SyntaxKind.InterfaceDeclaration:
       case SyntaxKind.TypeLiteral:
@@ -4292,9 +4196,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   }
 
   /** Gets if the node is a UnaryExpressionedNode. */
-  static isUnaryExpressioned<T extends compiler.Node>(
-    node: T | undefined,
-  ): node is compiler.UnaryExpressionedNode & compiler.UnaryExpressionedNodeExtensionType & T {
+  static isUnaryExpressioned<T extends compiler.Node>(node: T | undefined): node is compiler.UnaryExpressionedNode & compiler.UnaryExpressionedNodeExtensionType & T {
     switch (node?.getKind()) {
       case SyntaxKind.AwaitExpression:
       case SyntaxKind.DeleteExpression:
@@ -4365,9 +4267,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   /** Gets if the node is a VariableDeclaration. */
   static readonly isVariableDeclaration: (node: compiler.Node | undefined) => node is compiler.VariableDeclaration = Node.is(SyntaxKind.VariableDeclaration);
   /** Gets if the node is a VariableDeclarationList. */
-  static readonly isVariableDeclarationList: (node: compiler.Node | undefined) => node is compiler.VariableDeclarationList = Node.is(
-    SyntaxKind.VariableDeclarationList,
-  );
+  static readonly isVariableDeclarationList: (node: compiler.Node | undefined) => node is compiler.VariableDeclarationList = Node.is(SyntaxKind.VariableDeclarationList);
   /** Gets if the node is a VariableStatement. */
   static readonly isVariableStatement: (node: compiler.Node | undefined) => node is compiler.VariableStatement = Node.is(SyntaxKind.VariableStatement);
   /** Gets if the node is a VoidExpression. */
@@ -4380,9 +4280,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isYieldExpression: (node: compiler.Node | undefined) => node is compiler.YieldExpression = Node.is(SyntaxKind.YieldExpression);
 
   /** @internal */
-  static _hasStructure(node: compiler.Node | undefined): node is compiler.Node & { getStructure(): Structure } {
+  static _hasStructure(node: compiler.Node | undefined): node is compiler.Node & { getStructure(): Structure; } {
     switch (node?.getKind()) {
-      case SyntaxKind.AssertEntry:
       case SyntaxKind.CallSignature:
       case SyntaxKind.ClassDeclaration:
       case SyntaxKind.ClassStaticBlockDeclaration:
@@ -4396,6 +4295,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.ExportSpecifier:
       case SyntaxKind.FunctionDeclaration:
       case SyntaxKind.GetAccessor:
+      case SyntaxKind.ImportAttribute:
       case SyntaxKind.ImportDeclaration:
       case SyntaxKind.ImportSpecifier:
       case SyntaxKind.IndexSignature:

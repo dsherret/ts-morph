@@ -6,7 +6,7 @@ import { NameableNodeStructure, AsyncableNodeStructure, ImplementsClauseableNode
     PropertyNamedNodeStructure, StaticableNodeStructure, TypeParameteredNodeStructure, GeneratorableNodeStructure, QuestionTokenableNodeStructure,
     TypedNodeStructure, ExclamationTokenableNodeStructure, ReadonlyableNodeStructure, InitializerExpressionableNodeStructure, NamedNodeStructure,
     BindingNamedNodeStructure, ScopeableNodeStructure, ExtendsClauseableNodeStructure, TypeElementMemberedNodeStructure,
-    DecoratableNodeStructure, ModuleNamedNodeStructure, OverrideableNodeStructure, AssertionKeyNamedNodeStructure} from "./base";
+    DecoratableNodeStructure, ModuleNamedNodeStructure, OverrideableNodeStructure, ImportAttributeKeyNamedNodeStructure} from "./base";
 import { ClassDeclarationStructure, ClassLikeDeclarationBaseStructure, ConstructorDeclarationStructure, ConstructorDeclarationOverloadStructure,
     GetAccessorDeclarationStructure, MethodDeclarationStructure, MethodDeclarationOverloadStructure, PropertyDeclarationStructure,
     SetAccessorDeclarationStructure, ClassStaticBlockDeclarationStructure} from "./class";
@@ -20,7 +20,7 @@ import { InterfaceDeclarationStructure, CallSignatureDeclarationStructure, Const
     MethodSignatureStructure, PropertySignatureStructure } from "./interface";
 import { JsxAttributeStructure, JsxElementStructure, JsxSelfClosingElementStructure, JsxTagNamedNodeStructure, JsxAttributedNodeStructure,
     JsxSpreadAttributeStructure } from "./jsx";
-import { AssertEntryStructure, ExportAssignmentStructure, ExportDeclarationStructure, ExportSpecifierStructure, ImportDeclarationStructure, ImportSpecifierStructure,
+import { ImportAttributeStructure, ExportAssignmentStructure, ExportDeclarationStructure, ExportSpecifierStructure, ImportDeclarationStructure, ImportSpecifierStructure,
     ModuleDeclarationStructure, SourceFileStructure } from "./module";
 import { VariableDeclarationStructure, StatementedNodeStructure, VariableStatementStructure } from "./statement";
 import { TypeAliasDeclarationStructure, TypeParameterDeclarationStructure } from "./type";
@@ -47,14 +47,6 @@ export const Structure = {
     hasName<T extends Structure>(structure: T): structure is T & { name: string; } {
         return typeof (structure as any).name === "string";
     },
-  /** Gets if the provided structure is a AssertEntryStructure. */
-  isAssertEntry(structure: unknown): structure is AssertEntryStructure {
-    return (structure as any)?.kind === StructureKind.AssertEntry;
-  },
-  /** Gets if the provided structure is a AssertionKeyNamedNodeStructure. */
-  isAssertionKeyNamed<T>(structure: T): structure is T & AssertionKeyNamedNodeStructure {
-    return (structure as any)?.kind === StructureKind.AssertEntry;
-  },
   /** Gets if the provided structure is a CallSignatureDeclarationStructure. */
   isCallSignature(structure: unknown): structure is CallSignatureDeclarationStructure {
     return (structure as any)?.kind === StructureKind.CallSignature;
@@ -427,6 +419,14 @@ export const Structure = {
       default:
         return false;
     }
+  },
+  /** Gets if the provided structure is a ImportAttributeStructure. */
+  isImportAttribute(structure: unknown): structure is ImportAttributeStructure {
+    return (structure as any)?.kind === StructureKind.ImportAttribute;
+  },
+  /** Gets if the provided structure is a ImportAttributeKeyNamedNodeStructure. */
+  isImportAttributeKeyNamed<T>(structure: T): structure is T & ImportAttributeKeyNamedNodeStructure {
+    return (structure as any)?.kind === StructureKind.ImportAttribute;
   },
   /** Gets if the provided structure is a ImportDeclarationStructure. */
   isImportDeclaration(structure: unknown): structure is ImportDeclarationStructure {

@@ -108,14 +108,14 @@ describe("ImportTypeNode", () => {
     });
   });
 
-  describe(nameof<ImportTypeNode>("getAssertions"), () => {
+  describe(nameof<ImportTypeNode>("getAttributes"), () => {
     function doTest(text: string, expected: string | undefined) {
       const { descendant } = getNode(text);
-      expect(descendant.getAssertions()?.getText()).to.equal(expected);
+      expect(descendant.getAttributes()?.getText()).to.equal(expected);
     }
 
-    it("should get the assertions when it exists", () => {
-      doTest("var t: import('testing', { assert: {} });", "{ assert: {} }");
+    it("should get when it exists", () => {
+      doTest("var t: import('testing', { with: {} });", "{}");
     });
 
     it("should be undefined when it doesn't exist", () => {
@@ -123,17 +123,17 @@ describe("ImportTypeNode", () => {
     });
   });
 
-  describe(nameof<ImportTypeNode>("getAssertionsOrThrow"), () => {
+  describe(nameof<ImportTypeNode>("getAttributesOrThrow"), () => {
     function doTest(text: string, expected: string | undefined) {
       const { descendant } = getNode(text);
       if (expected == null)
-        expect(() => descendant.getAssertionsOrThrow()).to.throw();
+        expect(() => descendant.getAttributesOrThrow()).to.throw();
       else
-        expect(descendant.getAssertionsOrThrow().getText()).to.equal(expected);
+        expect(descendant.getAttributesOrThrow().getText()).to.equal(expected);
     }
 
-    it("should get the qualifier when it exists", () => {
-      doTest("var t: import('testing', { assert: {} }).Test;", "{ assert: {} }");
+    it("should get when it exists", () => {
+      doTest("var t: import('testing', { with: {} }).Test;", "{}");
     });
 
     it("should throw when it doesn't exist", () => {
