@@ -12253,13 +12253,13 @@ class ImportAttribute extends ImportAttributeBase {
         return this._getNodeFromCompilerNode(this.compilerNode.value);
     }
     set(structure) {
-        callBaseSet(ImportAttribute.prototype, this, structure);
+        callBaseSet(ImportAttributeBase.prototype, this, structure);
         if (structure.value)
             this.getValue().replaceWithText(structure.value);
         return this;
     }
     getStructure() {
-        return callBaseGetStructure(ImportAttribute.prototype, this, {
+        return callBaseGetStructure(ImportAttributeBase.prototype, this, {
             kind: StructureKind.ImportAttribute,
             value: this.getValue().getText(),
         });
@@ -17520,9 +17520,9 @@ __decorate([
 
 class MemoryEmitResult extends EmitResult {
     #files;
-    constructor(context, compilerObject, _files) {
+    constructor(context, compilerObject, files) {
         super(context, compilerObject);
-        this.#files = _files;
+        this.#files = files;
     }
     getFiles() {
         return this.#files;
@@ -18338,9 +18338,9 @@ class TypeParameter extends Type {
 class DirectoryEmitResult {
     #outputFilePaths;
     #skippedFilePaths;
-    constructor(_skippedFilePaths, _outputFilePaths) {
-        this.#skippedFilePaths = _skippedFilePaths;
-        this.#outputFilePaths = _outputFilePaths;
+    constructor(skippedFilePaths, outputFilePaths) {
+        this.#skippedFilePaths = skippedFilePaths;
+        this.#outputFilePaths = outputFilePaths;
     }
     getSkippedFilePaths() {
         return this.#skippedFilePaths;

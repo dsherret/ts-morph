@@ -2,7 +2,6 @@ import { DenoRuntime } from "./DenoRuntime.ts";
 
 // @deno-types="./typescript.d.ts"
 import { ts } from "./typescript.js";
-const ScriptTarget = ts.ScriptTarget;
 export { ts };
 const DiagnosticCategory = ts.DiagnosticCategory;
 const EmitHint = ts.EmitHint;
@@ -13,6 +12,7 @@ const NewLineKind = ts.NewLineKind;
 const NodeFlags = ts.NodeFlags;
 const ObjectFlags = ts.ObjectFlags;
 const ScriptKind = ts.ScriptKind;
+const ScriptTarget = ts.ScriptTarget;
 const SymbolFlags = ts.SymbolFlags;
 const SyntaxKind = ts.SyntaxKind;
 const TypeFlags = ts.TypeFlags;
@@ -759,8 +759,8 @@ class WeakCache {
     }
 }
 
-function createCompilerSourceFile(filePath, scriptSnapshot, scriptTarget, version, setParentNodes, scriptKind) {
-    return ts.createLanguageServiceSourceFile(filePath, scriptSnapshot, scriptTarget ?? ScriptTarget.Latest, version, setParentNodes, scriptKind);
+function createCompilerSourceFile(filePath, scriptSnapshot, optionsOrScriptTarget, version, setParentNodes, scriptKind) {
+    return ts.createLanguageServiceSourceFile(filePath, scriptSnapshot, optionsOrScriptTarget ?? ts.ScriptTarget.Latest, version, setParentNodes, scriptKind);
 }
 
 function createDocumentCache(files) {
