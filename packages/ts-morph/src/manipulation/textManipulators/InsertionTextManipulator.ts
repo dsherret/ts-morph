@@ -8,15 +8,18 @@ export interface InsertionTextManipulatorOptions {
 }
 
 export class InsertionTextManipulator implements TextManipulator {
-  constructor(private readonly opts: InsertionTextManipulatorOptions) {
+    readonly #opts: InsertionTextManipulatorOptions;
+
+  constructor(opts: InsertionTextManipulatorOptions) {
+      this.#opts = opts;
   }
 
   getNewText(inputText: string) {
-    const { insertPos, newText, replacingLength = 0 } = this.opts;
+    const { insertPos, newText, replacingLength = 0 } = this.#opts;
     return inputText.substring(0, insertPos) + newText + inputText.substring(insertPos + replacingLength);
   }
 
   getTextForError(newText: string) {
-    return getTextForError(newText, this.opts.insertPos, this.opts.newText.length);
+    return getTextForError(newText, this.#opts.insertPos, this.#opts.newText.length);
   }
 }

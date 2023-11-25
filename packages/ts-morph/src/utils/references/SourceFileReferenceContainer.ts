@@ -4,15 +4,17 @@ import { ModuleUtils } from "../compiler";
 export type SourceFileReferencingNodes = ImportDeclaration | ExportDeclaration | ImportEqualsDeclaration | CallExpression;
 
 export class SourceFileReferenceContainer {
+    readonly #sourceFile: SourceFile;
   private readonly nodesInThis = new KeyValueCache<StringLiteral, SourceFile>();
   private readonly nodesInOther = new KeyValueCache<StringLiteral, SourceFile>();
   private readonly unresolvedLiterals: StringLiteral[] = [];
 
-  constructor(private readonly sourceFile: SourceFile) {
+  constructor(sourceFile: SourceFile) {
+      this.#sourceFile = sourceFile;
   }
 
   getDependentSourceFiles() {
-    this.sourceFile._context.lazyReferenceCoordinator.refreshDirtySourceFiles();
+    this.#sourceFile._context.lazyReferenceCoordinator.refreshDirtySourceFiles();
     const hashSet = new Set<SourceFile>();
     for (const nodeInOther of this.nodesInOther.getKeys())
       hashSet.add(nodeInOther._sourceFile);
@@ -20,24 +22,24 @@ export class SourceFileReferenceContainer {
   }
 
   getLiteralsReferencingOtherSourceFilesEntries() {
-    this.sourceFile._context.lazyReferenceCoordinator.refreshSourceFileIfDirty(this.sourceFile);
+    this.#sourceFile._context.lazyReferenceCoordinator.refreshSourceFileIfDirty(this.#sourceFile);
     return this.nodesInThis.getEntries();
   }
 
   getReferencingLiteralsInOtherSourceFiles() {
-    this.sourceFile._context.lazyReferenceCoordinator.refreshDirtySourceFiles();
+    this.#sourceFile._context.lazyReferenceCoordinator.refreshDirtySourceFiles();
     return this.nodesInOther.getKeys();
   }
 
   refresh() {
     if (this.unresolvedLiterals.length > 0)
-      this.sourceFile._context.compilerFactory.onSourceFileAdded(this.resolveUnresolved, false);
+      this.#sourceFile._context.compilerFactory.onSourceFileAdded(this.resolveUnresolved, false);
 
     this.clear();
     this.populateReferences();
 
     if (this.unresolvedLiterals.length > 0)
-      this.sourceFile._context.compilerFactory.onSourceFileAdded(this.resolveUnresolved);
+      this.#sourceFile._context.compilerFactory.onSourceFileAdded(this.resolveUnresolved);
   }
 
   clear() {
@@ -59,12 +61,12 @@ export class SourceFileReferenceContainer {
     }
 
     if (this.unresolvedLiterals.length === 0)
-      this.sourceFile._context.compilerFactory.onSourceFileAdded(this.resolveUnresolved, false);
+      this.#sourceFile._context.compilerFactory.onSourceFileAdded(this.resolveUnresolved, false);
   };
 
   private populateReferences() {
-    this.sourceFile._context.compilerFactory.forgetNodesCreatedInBlock(remember => {
-      for (const literal of this.sourceFile.getImportStringLiterals()) {
+    this.#sourceFile._context.compilerFactory.forgetNodesCreatedInBlock(remember => {
+      for (const literal of this.#sourceFile.getImportStringLiterals()) {
         const sourceFile = this.getSourceFileForLiteral(literal);
         remember(literal);
 
@@ -93,7 +95,7 @@ export class SourceFileReferenceContainer {
       if (literalSymbol != null)
         return ModuleUtils.getReferencedSourceFileFromSymbol(literalSymbol);
     } else {
-      this.sourceFile._context.logger.warn(`Unknown import string literal parent: ${parent.getKindName()}`);
+      this.#sourceFile._context.logger.warn(`Unknown import string literal parent: ${parent.getKindName()}`);
     }
 
     return undefined;

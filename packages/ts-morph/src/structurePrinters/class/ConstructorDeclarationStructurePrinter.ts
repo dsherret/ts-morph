@@ -6,8 +6,11 @@ import { setValueIfUndefined } from "../../utils";
 import { NodePrinter } from "../NodePrinter";
 
 export class ConstructorDeclarationStructurePrinter extends NodePrinter<OptionalKind<ConstructorDeclarationStructure>> {
-  constructor(factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean }) {
+    readonly #options: { isAmbient: boolean };
+
+  constructor(factory: StructurePrinterFactory, options: { isAmbient: boolean }) {
     super(factory);
+      this.#options = options;
   }
 
   printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<ConstructorDeclarationStructure>> | undefined) {
@@ -17,7 +20,7 @@ export class ConstructorDeclarationStructurePrinter extends NodePrinter<Optional
 
     for (let i = 0; i < structures.length; i++) {
       if (i > 0) {
-        if (this.options.isAmbient)
+        if (this.#options.isAmbient)
           writer.newLine();
         else
           writer.blankLine();
@@ -29,11 +32,11 @@ export class ConstructorDeclarationStructurePrinter extends NodePrinter<Optional
   protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<ConstructorDeclarationStructure>) {
     this.printOverloads(writer, getOverloadStructures());
     this.printHeader(writer, structure);
-    if (this.options.isAmbient)
+    if (this.#options.isAmbient)
       writer.write(";");
     else {
       writer.space().inlineBlock(() => {
-        this.factory.forStatementedNode(this.options).printText(writer, structure);
+        this.factory.forStatementedNode(this.#options).printText(writer, structure);
       });
     }
 

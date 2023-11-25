@@ -16,13 +16,15 @@ export interface RemoveChildrenTextManipulatorOptions {
 }
 
 export class RemoveChildrenTextManipulator implements TextManipulator {
+    readonly #opts: RemoveChildrenTextManipulatorOptions;
   private removalPos: number | undefined;
 
-  constructor(private readonly opts: RemoveChildrenTextManipulatorOptions) {
+  constructor(opts: RemoveChildrenTextManipulatorOptions) {
+      this.#opts = opts;
   }
 
   getNewText(inputText: string) {
-    const opts = this.opts;
+    const opts = this.#opts;
     const {
       children,
       removePrecedingSpaces = false,

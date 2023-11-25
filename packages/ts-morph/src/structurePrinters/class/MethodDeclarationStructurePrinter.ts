@@ -6,8 +6,11 @@ import { setValueIfUndefined } from "../../utils";
 import { NodePrinter } from "../NodePrinter";
 
 export class MethodDeclarationStructurePrinter extends NodePrinter<OptionalKind<MethodDeclarationStructure>> {
-  constructor(factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean }) {
+    readonly #options: { isAmbient: boolean };
+
+  constructor(factory: StructurePrinterFactory, options: { isAmbient: boolean }) {
     super(factory);
+      this.#options = options;
   }
 
   printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>> | undefined) {
@@ -16,7 +19,7 @@ export class MethodDeclarationStructurePrinter extends NodePrinter<OptionalKind<
 
     for (let i = 0; i < structures.length; i++) {
       if (i > 0) {
-        if (this.options.isAmbient)
+        if (this.#options.isAmbient)
           writer.newLine();
         else
           writer.blankLine();
@@ -29,11 +32,11 @@ export class MethodDeclarationStructurePrinter extends NodePrinter<OptionalKind<
     this.printOverloads(writer, structure.name, getOverloadStructures());
     this.printHeader(writer, structure.name, structure);
 
-    if (this.options.isAmbient || structure.isAbstract)
+    if (this.#options.isAmbient || structure.isAbstract)
       writer.write(";");
     else {
       writer.spaceIfLastNot().inlineBlock(() => {
-        this.factory.forStatementedNode(this.options).printText(writer, structure);
+        this.factory.forStatementedNode(this.#options).printText(writer, structure);
       });
     }
 

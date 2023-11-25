@@ -6,7 +6,10 @@ import { NodeHandler } from "./NodeHandler";
  * Attempts to use a node handler, but if it fails it will forget all the nodes' children.
  */
 export class TryOrForgetNodeHandler implements NodeHandler {
-  constructor(private readonly handler: NodeHandler) {
+    readonly #handler: NodeHandler;
+
+  constructor(handler: NodeHandler) {
+      this.#handler = handler;
   }
 
   handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
@@ -15,7 +18,7 @@ export class TryOrForgetNodeHandler implements NodeHandler {
       throw new errors.InvalidOperationError(`Can only use a TryOrForgetNodeHandler with a source file.`);
 
     try {
-      this.handler.handleNode(currentNode, newNode, newSourceFile);
+      this.#handler.handleNode(currentNode, newNode, newSourceFile);
     } catch (ex) {
       currentNode._context.logger.warn("Could not replace tree, so forgetting all nodes instead. Message: " + ex);
       // forget all the source file's nodes

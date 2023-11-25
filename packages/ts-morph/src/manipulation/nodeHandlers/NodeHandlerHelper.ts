@@ -6,23 +6,26 @@ import { AdvancedIterator } from "../../utils";
 import { NodeHandler } from "./NodeHandler";
 
 export class NodeHandlerHelper {
-  constructor(private readonly compilerFactory: CompilerFactory) {
+    readonly #compilerFactory: CompilerFactory;
+
+  constructor(compilerFactory: CompilerFactory) {
+      this.#compilerFactory = compilerFactory;
   }
 
   handleForValues(handler: NodeHandler, currentNode: ts.Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
-    if (this.compilerFactory.hasCompilerNode(currentNode))
-      handler.handleNode(this.compilerFactory.getExistingNodeFromCompilerNode(currentNode)!, newNode, newSourceFile);
+    if (this.#compilerFactory.hasCompilerNode(currentNode))
+      handler.handleNode(this.#compilerFactory.getExistingNodeFromCompilerNode(currentNode)!, newNode, newSourceFile);
     else if (currentNode.kind === SyntaxKind.SyntaxList) {
       // always handle syntax lists because their children might be in the cache
       // todo: pass this in for performance reasons
-      const sourceFile = this.compilerFactory.getExistingNodeFromCompilerNode(currentNode.getSourceFile())! as SourceFile;
-      handler.handleNode(this.compilerFactory.getNodeFromCompilerNode(currentNode, sourceFile), newNode, newSourceFile);
+      const sourceFile = this.#compilerFactory.getExistingNodeFromCompilerNode(currentNode.getSourceFile())! as SourceFile;
+      handler.handleNode(this.#compilerFactory.getNodeFromCompilerNode(currentNode, sourceFile), newNode, newSourceFile);
     }
   }
 
   forgetNodeIfNecessary(currentNode: ts.Node) {
-    if (this.compilerFactory.hasCompilerNode(currentNode))
-      this.compilerFactory.getExistingNodeFromCompilerNode(currentNode)!.forget();
+    if (this.#compilerFactory.hasCompilerNode(currentNode))
+      this.#compilerFactory.getExistingNodeFromCompilerNode(currentNode)!.forget();
   }
 
   getCompilerChildrenAsIterators(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile): [AdvancedIterator<ts.Node>, AdvancedIterator<ts.Node>] {

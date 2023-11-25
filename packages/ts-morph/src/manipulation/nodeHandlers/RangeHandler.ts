@@ -16,18 +16,20 @@ export interface RangeHandlerOptions {
  * Handler for deailing with a node that is going to have a descendant replaced based on the range.
  */
 export class RangeHandler implements NodeHandler {
+    readonly #compilerFactory: CompilerFactory;
   private readonly straightReplacementNodeHandler: StraightReplacementNodeHandler;
   private readonly helper: NodeHandlerHelper;
   private readonly start: number;
   private readonly end: number;
   // private readonly replacingLength: number | undefined;
 
-  constructor(private readonly compilerFactory: CompilerFactory, opts: RangeHandlerOptions) {
+  constructor(compilerFactory: CompilerFactory, opts: RangeHandlerOptions) {
     this.straightReplacementNodeHandler = new StraightReplacementNodeHandler(compilerFactory);
     this.helper = new NodeHandlerHelper(compilerFactory);
     this.start = opts.start;
     this.end = opts.end;
     // this.replacingLength = opts.replacingLength;
+      this.#compilerFactory = compilerFactory;
   }
 
   handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
@@ -63,7 +65,7 @@ export class RangeHandler implements NodeHandler {
     if (!newNodeChildren.done)
       throw new Error("Error replacing tree: Should not have children left over.");
 
-    this.compilerFactory.replaceCompilerNode(currentNode, newNode);
+    this.#compilerFactory.replaceCompilerNode(currentNode, newNode);
   }
 
   private straightReplace(currentNode: ts.Node, nextNode: ts.Node, newSourceFile: ts.SourceFile) {

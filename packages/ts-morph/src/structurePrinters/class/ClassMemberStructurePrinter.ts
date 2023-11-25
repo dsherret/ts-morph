@@ -9,8 +9,13 @@ import { Printer } from "../Printer";
 export type ClassMemberStructuresArrayItem = string | WriterFunction | ClassMemberStructures;
 
 export class ClassMemberStructurePrinter extends Printer<ClassMemberStructuresArrayItem> {
-  constructor(private readonly factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean }) {
+    readonly #options: { isAmbient: boolean };
+    readonly #factory: StructurePrinterFactory;
+
+  constructor(factory: StructurePrinterFactory, options: { isAmbient: boolean }) {
     super();
+      this.#factory = factory;
+      this.#options = options;
   }
 
   printTexts(writer: CodeBlockWriter, members: ReadonlyArray<ClassMemberStructuresArrayItem> | string | WriterFunction | undefined) {
@@ -39,32 +44,32 @@ export class ClassMemberStructurePrinter extends Printer<ClassMemberStructuresAr
 
     switch (member.kind) {
       case StructureKind.Method:
-        if (!this.options.isAmbient)
+        if (!this.#options.isAmbient)
           ensureBlankLine();
-        this.factory.forMethodDeclaration(this.options).printText(writer, member);
+        this.#factory.forMethodDeclaration(this.#options).printText(writer, member);
         break;
       case StructureKind.Property:
-        this.factory.forPropertyDeclaration().printText(writer, member);
+        this.#factory.forPropertyDeclaration().printText(writer, member);
         break;
       case StructureKind.GetAccessor:
-        if (!this.options.isAmbient)
+        if (!this.#options.isAmbient)
           ensureBlankLine();
-        this.factory.forGetAccessorDeclaration(this.options).printText(writer, member);
+        this.#factory.forGetAccessorDeclaration(this.#options).printText(writer, member);
         break;
       case StructureKind.SetAccessor:
-        if (!this.options.isAmbient)
+        if (!this.#options.isAmbient)
           ensureBlankLine();
-        this.factory.forSetAccessorDeclaration(this.options).printText(writer, member);
+        this.#factory.forSetAccessorDeclaration(this.#options).printText(writer, member);
         break;
       case StructureKind.Constructor:
-        if (!this.options.isAmbient)
+        if (!this.#options.isAmbient)
           ensureBlankLine();
-        this.factory.forConstructorDeclaration(this.options).printText(writer, member);
+        this.#factory.forConstructorDeclaration(this.#options).printText(writer, member);
         break;
       case StructureKind.ClassStaticBlock:
         // always does this even in ambient contexts
         ensureBlankLine();
-        this.factory.forClassStaticBlockDeclaration().printText(writer, member);
+        this.#factory.forClassStaticBlockDeclaration().printText(writer, member);
         break;
       default:
         errors.throwNotImplementedForNeverValueError(member);

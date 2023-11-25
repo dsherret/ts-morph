@@ -58,11 +58,13 @@ export interface FileSystemSpecificDocumentCache {
 type DocumentKey = string & { _documentKeyBrand: undefined };
 
 class FileSystemDocumentCache implements FileSystemSpecificDocumentCache {
+    readonly #documentCache: InternalDocumentCache;
   private readonly absoluteToOriginalPath = new Map<StandardizedFilePath, string>();
 
-  constructor(fileSystem: TransactionalFileSystem, private readonly documentCache: InternalDocumentCache) {
+  constructor(fileSystem: TransactionalFileSystem, documentCache: InternalDocumentCache) {
     for (const filePath of documentCache._getFilePaths())
       this.absoluteToOriginalPath.set(fileSystem.getStandardizedAbsolutePath(filePath), filePath);
+      this.#documentCache = documentCache;
   }
 
   getDocumentIfMatch(
@@ -75,7 +77,7 @@ class FileSystemDocumentCache implements FileSystemSpecificDocumentCache {
     if (originalFilePath == null)
       return;
 
-    return this.documentCache._getDocumentIfMatch(originalFilePath, filePath, scriptSnapshot, scriptTarget, scriptKind);
+    return this.#documentCache._getDocumentIfMatch(originalFilePath, filePath, scriptSnapshot, scriptTarget, scriptKind);
   }
 }
 

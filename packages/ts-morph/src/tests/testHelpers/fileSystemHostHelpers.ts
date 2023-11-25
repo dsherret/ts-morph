@@ -21,12 +21,13 @@ export function getFileSystemHostWithFiles(
 }
 
 class VirtualFileSystemForTest extends InMemoryFileSystemHost implements CustomFileSystemProps {
+    readonly #initialDirectories: string[];
   private readonly writeLog: { filePath: string; fileText: string }[] = [];
   private readonly deleteLog: { path: string }[] = [];
   private readonly trackedDirectories = new Set<string>();
   private readonly files = new KeyValueCache<string, string>();
 
-  constructor(initialFiles: { filePath: string; text: string }[], private readonly initialDirectories: string[] = []) {
+  constructor(initialFiles: { filePath: string; text: string }[], initialDirectories: string[] = []) {
     super();
 
     for (const item of initialDirectories)
@@ -36,6 +37,7 @@ class VirtualFileSystemForTest extends InMemoryFileSystemHost implements CustomF
       const filePath = file.filePath[0] === "/" ? file.filePath : "/" + file.filePath;
       this.writeFileSync(filePath, file.text);
     });
+      this.#initialDirectories = initialDirectories;
   }
 
   deleteSync(path: string) {
@@ -67,7 +69,7 @@ class VirtualFileSystemForTest extends InMemoryFileSystemHost implements CustomF
   }
 
   getCreatedDirectories() {
-    return [...this.trackedDirectories.values()].filter(path => this.initialDirectories.indexOf(path) === -1);
+    return [...this.trackedDirectories.values()].filter(path => this.#initialDirectories.indexOf(path) === -1);
   }
 
   clearCreatedDirectories() {

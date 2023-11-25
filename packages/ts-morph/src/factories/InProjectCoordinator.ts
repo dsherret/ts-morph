@@ -9,12 +9,14 @@ import { CompilerFactory } from "./CompilerFactory";
  * todo: Move this to a different folder.
  */
 export class InProjectCoordinator {
+    readonly #compilerFactory: CompilerFactory;
   private readonly notInProjectFiles = new Set<SourceFile>();
 
-  constructor(private readonly compilerFactory: CompilerFactory) {
+  constructor(compilerFactory: CompilerFactory) {
     compilerFactory.onSourceFileRemoved(sourceFile => {
       this.notInProjectFiles.delete(sourceFile);
     });
+      this.#compilerFactory = compilerFactory;
   }
 
   /** Sets the source file as not being in the project. */
@@ -38,7 +40,7 @@ export class InProjectCoordinator {
    */
   markSourceFilesAsInProjectForResolution() {
     const nodeModulesSearchName = "/node_modules/";
-    const compilerFactory = this.compilerFactory;
+    const compilerFactory = this.#compilerFactory;
     const changedSourceFiles: SourceFile[] = [];
     const unchangedSourceFiles: SourceFile[] = [];
 
@@ -110,7 +112,7 @@ export class InProjectCoordinator {
       return;
 
     const inProjectCoordinator = this;
-    const compilerFactory = this.compilerFactory;
+    const compilerFactory = this.#compilerFactory;
     (directory as any)._inProject = true;
     markAncestorDirs(directory);
 

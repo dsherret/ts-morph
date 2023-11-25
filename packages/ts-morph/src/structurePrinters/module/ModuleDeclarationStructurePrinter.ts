@@ -8,10 +8,12 @@ import { BlankLineFormattingStructuresPrinter } from "../formatting";
 import { NodePrinter } from "../NodePrinter";
 
 export class ModuleDeclarationStructurePrinter extends NodePrinter<OptionalKind<ModuleDeclarationStructure>> {
+    readonly #options: { isAmbient: boolean };
   private readonly blankLineFormattingWriter = new BlankLineFormattingStructuresPrinter(this);
 
-  constructor(factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean }) {
+  constructor(factory: StructurePrinterFactory, options: { isAmbient: boolean }) {
     super(factory);
+      this.#options = options;
   }
 
   printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<ModuleDeclarationStructure>> | undefined) {
@@ -37,7 +39,7 @@ export class ModuleDeclarationStructurePrinter extends NodePrinter<OptionalKind<
       writer.write(" ");
       writer.inlineBlock(() => {
         this.factory.forStatementedNode({
-          isAmbient: structure.hasDeclareKeyword || this.options.isAmbient,
+          isAmbient: structure.hasDeclareKeyword || this.#options.isAmbient,
         }).printText(writer, structure);
       });
     }

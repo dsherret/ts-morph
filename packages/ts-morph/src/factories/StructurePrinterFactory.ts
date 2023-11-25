@@ -5,11 +5,14 @@ import * as structurePrinters from "../structurePrinters";
 
 /** Cached lazy factory for StructurePrinters. */
 export class StructurePrinterFactory {
-  constructor(private readonly _getFormatCodeSettings: () => SupportedFormatCodeSettings) {
+    readonly #_getFormatCodeSettings: () => SupportedFormatCodeSettings;
+
+  constructor(_getFormatCodeSettings: () => SupportedFormatCodeSettings) {
+      this.#_getFormatCodeSettings = _getFormatCodeSettings;
   }
 
   getFormatCodeSettings(): SupportedFormatCodeSettings {
-    return this._getFormatCodeSettings();
+    return this.#_getFormatCodeSettings();
   }
 
   @Memoize

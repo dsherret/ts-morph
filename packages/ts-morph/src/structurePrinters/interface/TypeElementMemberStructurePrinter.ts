@@ -9,8 +9,11 @@ import { Printer } from "../Printer";
 export type TypeElementStructuresArrayItem = string | WriterFunction | TypeElementMemberStructures;
 
 export class TypeElementMemberStructurePrinter extends Printer<TypeElementStructuresArrayItem> {
-  constructor(private readonly factory: StructurePrinterFactory) {
+    readonly #factory: StructurePrinterFactory;
+
+  constructor(factory: StructurePrinterFactory) {
     super();
+      this.#factory = factory;
   }
 
   printTexts(writer: CodeBlockWriter, members: ReadonlyArray<TypeElementStructuresArrayItem> | string | WriterFunction | undefined) {
@@ -39,19 +42,19 @@ export class TypeElementMemberStructurePrinter extends Printer<TypeElementStruct
 
     switch (members.kind) {
       case StructureKind.PropertySignature:
-        this.factory.forPropertySignature().printText(writer, members);
+        this.#factory.forPropertySignature().printText(writer, members);
         break;
       case StructureKind.MethodSignature:
-        this.factory.forMethodSignature().printText(writer, members);
+        this.#factory.forMethodSignature().printText(writer, members);
         break;
       case StructureKind.CallSignature:
-        this.factory.forCallSignatureDeclaration().printText(writer, members);
+        this.#factory.forCallSignatureDeclaration().printText(writer, members);
         break;
       case StructureKind.IndexSignature:
-        this.factory.forIndexSignatureDeclaration().printText(writer, members);
+        this.#factory.forIndexSignatureDeclaration().printText(writer, members);
         break;
       case StructureKind.ConstructSignature:
-        this.factory.forConstructSignatureDeclaration().printText(writer, members);
+        this.#factory.forConstructSignatureDeclaration().printText(writer, members);
         break;
       default:
         errors.throwNotImplementedForNeverValueError(members);

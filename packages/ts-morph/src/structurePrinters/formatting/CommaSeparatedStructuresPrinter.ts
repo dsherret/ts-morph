@@ -5,12 +5,15 @@ import { WriterUtils } from "../../utils";
 import { Printer } from "../Printer";
 
 export class CommaSeparatedStructuresPrinter<T> extends Printer<ReadonlyArray<T | WriterFunction | string> | WriterFunction | string> {
-  constructor(private readonly printer: Printer<T | WriterFunction>) {
+    readonly #printer: Printer<T | WriterFunction>;
+
+  constructor(printer: Printer<T | WriterFunction>) {
     super();
+      this.#printer = printer;
   }
 
   printText(writer: CodeBlockWriter, structures: ReadonlyArray<T | WriterFunction | string> | WriterFunction | string | undefined) {
-    printTextWithSeparator(this.printer, writer, structures, () => writer.spaceIfLastNot());
+    printTextWithSeparator(this.#printer, writer, structures, () => writer.spaceIfLastNot());
   }
 }
 

@@ -7,8 +7,11 @@ import { printTextFromStringOrWriter } from "../../utils";
 import { NodePrinter } from "../NodePrinter";
 
 export class JSDocTagStructurePrinter extends NodePrinter<OptionalKind<JSDocTagStructure> | string | WriterFunction> {
-  constructor(factory: StructurePrinterFactory, private readonly options: { printStarsOnNewLine: boolean }) {
+    readonly #options: { printStarsOnNewLine: boolean };
+
+  constructor(factory: StructurePrinterFactory, options: { printStarsOnNewLine: boolean }) {
     super(factory);
+      this.#options = options;
   }
 
   printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<JSDocTagStructure> | string | WriterFunction> | undefined) {
@@ -18,7 +21,7 @@ export class JSDocTagStructurePrinter extends NodePrinter<OptionalKind<JSDocTagS
     for (let i = 0; i < structures.length; i++) {
       if (i > 0) {
         writer.newLine();
-        writer.conditionalWrite(this.options.printStarsOnNewLine, " * ");
+        writer.conditionalWrite(this.#options.printStarsOnNewLine, " * ");
       }
 
       this.printText(writer, structures[i]);
@@ -32,12 +35,12 @@ export class JSDocTagStructurePrinter extends NodePrinter<OptionalKind<JSDocTagS
     for (let i = 0; i < lines.length; i++) {
       if (i > 0) {
         writer.newLine();
-        if (this.options.printStarsOnNewLine)
+        if (this.#options.printStarsOnNewLine)
           writer.write(` *`);
       }
 
       if (lines[i].length > 0) {
-        if (this.options.printStarsOnNewLine && i > 0)
+        if (this.#options.printStarsOnNewLine && i > 0)
           writer.space();
 
         writer.write(lines[i]);

@@ -16,6 +16,7 @@ export interface DefaultParentHandlerOptions {
  * Handler for deailing with a parent that is going to have a child replaced.
  */
 export class DefaultParentHandler implements NodeHandler {
+    readonly #compilerFactory: CompilerFactory;
   private readonly straightReplacementNodeHandler: StraightReplacementNodeHandler;
   private readonly helper: NodeHandlerHelper;
   private readonly childCount: number;
@@ -23,13 +24,14 @@ export class DefaultParentHandler implements NodeHandler {
   private readonly replacingNodes?: ts.Node[];
   private readonly customMappings?: (newParentNode: ts.Node) => { currentNode: Node; newNode: ts.Node }[];
 
-  constructor(private readonly compilerFactory: CompilerFactory, opts: DefaultParentHandlerOptions) {
+  constructor(compilerFactory: CompilerFactory, opts: DefaultParentHandlerOptions) {
     this.straightReplacementNodeHandler = new StraightReplacementNodeHandler(compilerFactory);
     this.helper = new NodeHandlerHelper(compilerFactory);
     this.childCount = opts.childCount;
     this.isFirstChild = opts.isFirstChild;
     this.replacingNodes = opts.replacingNodes?.map(n => n.compilerNode);
     this.customMappings = opts.customMappings;
+      this.#compilerFactory = compilerFactory;
   }
 
   handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
@@ -68,7 +70,7 @@ export class DefaultParentHandler implements NodeHandler {
     if (!newChildren.done)
       throw new Error("Error replacing tree: Should not have children left over.");
 
-    this.compilerFactory.replaceCompilerNode(currentNode, newNode);
+    this.#compilerFactory.replaceCompilerNode(currentNode, newNode);
   }
 
   private handleCustomMappings(newParentNode: ts.Node) {
@@ -77,7 +79,7 @@ export class DefaultParentHandler implements NodeHandler {
     const customMappings = this.customMappings(newParentNode);
 
     for (const mapping of customMappings)
-      this.compilerFactory.replaceCompilerNode(mapping.currentNode, mapping.newNode);
+      this.#compilerFactory.replaceCompilerNode(mapping.currentNode, mapping.newNode);
   }
 
   private tryReplaceNode(currentCompilerNode: ts.Node) {

@@ -14,16 +14,18 @@ export interface ChangeChildOrderParentHandlerOptions {
  * Node handler for dealing with a parent who has a child that will change order.
  */
 export class ChangeChildOrderParentHandler implements NodeHandler {
+    readonly #compilerFactory: CompilerFactory;
   private readonly straightReplacementNodeHandler: NodeHandler;
   private readonly helper: NodeHandlerHelper;
   private readonly oldIndex: number;
   private readonly newIndex: number;
 
-  constructor(private readonly compilerFactory: CompilerFactory, opts: ChangeChildOrderParentHandlerOptions) {
+  constructor(compilerFactory: CompilerFactory, opts: ChangeChildOrderParentHandlerOptions) {
     this.straightReplacementNodeHandler = new StraightReplacementNodeHandler(compilerFactory);
     this.helper = new NodeHandlerHelper(compilerFactory);
     this.oldIndex = opts.oldIndex;
     this.newIndex = opts.newIndex;
+      this.#compilerFactory = compilerFactory;
   }
 
   handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
@@ -35,7 +37,7 @@ export class ChangeChildOrderParentHandler implements NodeHandler {
     for (let i = 0; i < newChildren.length; i++)
       this.helper.handleForValues(this.straightReplacementNodeHandler, currentChildrenInNewOrder[i], newChildren[i], newSourceFile);
 
-    this.compilerFactory.replaceCompilerNode(currentNode, newNode);
+    this.#compilerFactory.replaceCompilerNode(currentNode, newNode);
   }
 
   private getChildrenInNewOrder(children: ts.Node[]) {

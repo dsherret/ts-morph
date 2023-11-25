@@ -19,6 +19,7 @@ export interface RangeParentHandlerOptions {
  * Handler for deailing with a parent that is going to have a child replaced based on the range.
  */
 export class RangeParentHandler implements NodeHandler {
+    readonly #compilerFactory: CompilerFactory;
   private readonly straightReplacementNodeHandler: StraightReplacementNodeHandler;
   private readonly helper: NodeHandlerHelper;
   private readonly start: number;
@@ -27,7 +28,7 @@ export class RangeParentHandler implements NodeHandler {
   private readonly replacingNodes: ts.Node[] | undefined;
   private readonly customMappings?: (newParentNode: ts.Node, newSourceFile: ts.SourceFile) => { currentNode: Node; newNode: ts.Node }[];
 
-  constructor(private readonly compilerFactory: CompilerFactory, opts: RangeParentHandlerOptions) {
+  constructor(compilerFactory: CompilerFactory, opts: RangeParentHandlerOptions) {
     this.straightReplacementNodeHandler = new StraightReplacementNodeHandler(compilerFactory);
     this.helper = new NodeHandlerHelper(compilerFactory);
     this.start = opts.start;
@@ -35,6 +36,7 @@ export class RangeParentHandler implements NodeHandler {
     this.replacingLength = opts.replacingLength;
     this.replacingNodes = opts.replacingNodes?.map(n => n.compilerNode);
     this.customMappings = opts.customMappings;
+      this.#compilerFactory = compilerFactory;
   }
 
   handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
@@ -74,10 +76,10 @@ export class RangeParentHandler implements NodeHandler {
       // if the new node kinds and the old node kinds are the same, then don't forget the existing nodes
       if (oldNodes.length === newNodes.length && oldNodes.every((node, i) => node.kind === newNodes[i].kind)) {
         for (let i = 0; i < oldNodes.length; i++) {
-          const node = this.compilerFactory.getExistingNodeFromCompilerNode(oldNodes[i]);
+          const node = this.#compilerFactory.getExistingNodeFromCompilerNode(oldNodes[i]);
           if (node != null) {
             node.forgetDescendants();
-            this.compilerFactory.replaceCompilerNode(oldNodes[i], newNodes[i]);
+            this.#compilerFactory.replaceCompilerNode(oldNodes[i], newNodes[i]);
           }
         }
       } else {
@@ -93,7 +95,7 @@ export class RangeParentHandler implements NodeHandler {
     if (!newNodeChildren.done)
       throw new Error("Error replacing tree: Should not have children left over.");
 
-    this.compilerFactory.replaceCompilerNode(currentNode, newNode);
+    this.#compilerFactory.replaceCompilerNode(currentNode, newNode);
   }
 
   private handleCustomMappings(newParentNode: ts.Node, newSourceFile: ts.SourceFile) {

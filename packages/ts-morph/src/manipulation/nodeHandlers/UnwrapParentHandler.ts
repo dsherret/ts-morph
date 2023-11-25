@@ -10,12 +10,16 @@ import { StraightReplacementNodeHandler } from "./StraightReplacementNodeHandler
  * Parent handler used to unwrap a node.
  */
 export class UnwrapParentHandler implements NodeHandler {
+    readonly #childIndex: number;
+    readonly #compilerFactory: CompilerFactory;
   private readonly straightReplacementNodeHandler: StraightReplacementNodeHandler;
   private readonly helper: NodeHandlerHelper;
 
-  constructor(private readonly compilerFactory: CompilerFactory, private readonly childIndex: number) {
+  constructor(compilerFactory: CompilerFactory, childIndex: number) {
     this.straightReplacementNodeHandler = new StraightReplacementNodeHandler(compilerFactory);
     this.helper = new NodeHandlerHelper(compilerFactory);
+      this.#compilerFactory = compilerFactory;
+      this.#childIndex = childIndex;
   }
 
   handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
@@ -23,11 +27,11 @@ export class UnwrapParentHandler implements NodeHandler {
     let index = 0;
 
     // replace normally until reaching the first child
-    while (!currentChildren.done && !newChildren.done && index++ < this.childIndex)
+    while (!currentChildren.done && !newChildren.done && index++ < this.#childIndex)
       this.helper.handleForValues(this.straightReplacementNodeHandler, currentChildren.next(), newChildren.next(), newSourceFile);
 
     // the child syntax list's children should map to the newNodes next children
-    const currentChild = this.compilerFactory.getExistingNodeFromCompilerNode(currentChildren.next())!;
+    const currentChild = this.#compilerFactory.getExistingNodeFromCompilerNode(currentChildren.next())!;
     const childSyntaxList = currentChild.getChildSyntaxListOrThrow();
     for (const child of ExtendedParser.getCompilerChildren(childSyntaxList.compilerNode, childSyntaxList._sourceFile.compilerNode))
       this.helper.handleForValues(this.straightReplacementNodeHandler, child, newChildren.next(), newSourceFile);
@@ -54,6 +58,6 @@ export class UnwrapParentHandler implements NodeHandler {
     if (!newChildren.done)
       throw new Error("Error replacing tree: Should not have children left over.");
 
-    this.compilerFactory.replaceCompilerNode(currentNode, newNode);
+    this.#compilerFactory.replaceCompilerNode(currentNode, newNode);
   }
 }

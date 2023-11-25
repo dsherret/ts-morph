@@ -6,10 +6,12 @@ import { BlankLineFormattingStructuresPrinter } from "../formatting";
 import { NodePrinter } from "../NodePrinter";
 
 export class ClassDeclarationStructurePrinter extends NodePrinter<OptionalKind<ClassDeclarationStructure>> {
+    readonly #options: { isAmbient: boolean };
   private readonly multipleWriter = new BlankLineFormattingStructuresPrinter(this);
 
-  constructor(factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean }) {
+  constructor(factory: StructurePrinterFactory, options: { isAmbient: boolean }) {
     super(factory);
+      this.#options = options;
   }
 
   printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<ClassDeclarationStructure>> | undefined) {
@@ -17,7 +19,7 @@ export class ClassDeclarationStructurePrinter extends NodePrinter<OptionalKind<C
   }
 
   protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<ClassDeclarationStructure>) {
-    const isAmbient = structure.hasDeclareKeyword || this.options.isAmbient;
+    const isAmbient = structure.hasDeclareKeyword || this.#options.isAmbient;
     this.factory.forJSDoc().printDocs(writer, structure.docs);
     this.factory.forDecorator().printTexts(writer, structure.decorators);
     this.printHeader(writer, structure);

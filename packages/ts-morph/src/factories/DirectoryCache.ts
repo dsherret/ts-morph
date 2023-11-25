@@ -8,12 +8,14 @@ import { ProjectContext } from "../ProjectContext";
  * @internal
  */
 export class DirectoryCache {
+    readonly #context: ProjectContext;
   private readonly directoriesByPath = new KeyValueCache<StandardizedFilePath, Directory>();
   private readonly sourceFilesByDirPath = new KeyValueCache<StandardizedFilePath, SortedKeyValueArray<string, SourceFile>>();
   private readonly directoriesByDirPath = new KeyValueCache<StandardizedFilePath, SortedKeyValueArray<string, Directory>>();
   private readonly orphanDirs = new KeyValueCache<StandardizedFilePath, Directory>();
 
-  constructor(private readonly context: ProjectContext) {
+  constructor(context: ProjectContext) {
+      this.#context = context;
   }
 
   has(dirPath: StandardizedFilePath) {
@@ -120,7 +122,7 @@ export class DirectoryCache {
   }
 
   private createDirectory(path: StandardizedFilePath) {
-    const newDirectory = new Directory(this.context, path);
+    const newDirectory = new Directory(this.#context, path);
     this.addDirectory(newDirectory);
     return newDirectory;
   }
@@ -146,8 +148,8 @@ export class DirectoryCache {
       this.orphanDirs.set(path, directory);
 
     this.directoriesByPath.set(path, directory);
-    if (!this.context.fileSystemWrapper.directoryExistsSync(path))
-      this.context.fileSystemWrapper.queueMkdir(path);
+    if (!this.#context.fileSystemWrapper.directoryExistsSync(path))
+      this.#context.fileSystemWrapper.queueMkdir(path);
 
     for (const orphanDir of this.orphanDirs.getValues()) {
       if (directory.isAncestorOf(orphanDir))

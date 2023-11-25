@@ -1,13 +1,15 @@
 import { errors } from "@ts-morph/common";
 
 export class AdvancedIterator<T> {
+    readonly #iterator: IterableIterator<T>;
   private readonly buffer: (T | undefined)[] = [undefined, undefined, undefined]; // previous, current, next
   private bufferIndex = 0;
   private isDone = false;
   private nextCount = 0;
 
-  constructor(private readonly iterator: IterableIterator<T>) {
+  constructor(iterator: IterableIterator<T>) {
     this.advance();
+      this.#iterator = iterator;
   }
 
   get done() {
@@ -48,7 +50,7 @@ export class AdvancedIterator<T> {
   }
 
   private advance() {
-    const next = this.iterator.next();
+    const next = this.#iterator.next();
     this.bufferIndex = this.getNextBufferIndex();
 
     if (next.done) {

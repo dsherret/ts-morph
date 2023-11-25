@@ -54,6 +54,7 @@ import { kindToWrapperMappings } from "./kindToWrapperMappings";
  * @internal
  */
 export class CompilerFactory {
+    readonly #context: ProjectContext;
   private readonly sourceFileCacheByFilePath = new Map<StandardizedFilePath, SourceFile>();
   private readonly diagnosticCache = new WeakCache<ts.Diagnostic, Diagnostic>();
   private readonly definitionInfoCache = new WeakCache<ts.DefinitionInfo, DefinitionInfo>();
@@ -79,12 +80,12 @@ export class CompilerFactory {
    * Initializes a new instance of CompilerFactory.
    * @param context - Project context.
    */
-  constructor(private readonly context: ProjectContext) {
+  constructor(context: ProjectContext) {
     this.documentRegistry = new DocumentRegistry(context.fileSystemWrapper);
     this.directoryCache = new DirectoryCache(context);
 
     // prevent memory leaks when the document registry key changes by just resetting it
-    this.context.compilerOptions.onModified(() => {
+    this.#context.compilerOptions.onModified(() => {
       // repopulate the cache
       const currentSourceFiles = Array.from(this.sourceFileCacheByFilePath.values()); // store this to prevent modifying while iterating
       for (const sourceFile of currentSourceFiles) {
@@ -92,6 +93,7 @@ export class CompilerFactory {
         replaceSourceFileForCacheUpdate(sourceFile);
       }
     });
+      this.#context = context;
   }
 
   /**
@@ -156,12 +158,12 @@ export class CompilerFactory {
     sourceFileText: string | OptionalKind<SourceFileStructure> | WriterFunction,
     options: SourceFileCreateOptions & { markInProject: boolean },
   ) {
-    sourceFileText = sourceFileText instanceof Function ? getTextFromStringOrWriter(this.context.createWriter(), sourceFileText) : sourceFileText || "";
+    sourceFileText = sourceFileText instanceof Function ? getTextFromStringOrWriter(this.#context.createWriter(), sourceFileText) : sourceFileText || "";
     if (typeof sourceFileText === "string")
       return this.createSourceFileFromText(filePath, sourceFileText, options);
 
-    const writer = this.context.createWriter();
-    const structurePrinter = this.context.structurePrinterFactory.forSourceFile({
+    const writer = this.#context.createWriter();
+    const structurePrinter = this.#context.structurePrinterFactory.forSourceFile({
       isAmbient: FileUtils.getExtension(filePath) === ".d.ts",
     });
     structurePrinter.printText(writer, sourceFileText);
@@ -178,7 +180,7 @@ export class CompilerFactory {
    * @throws InvalidOperationError if the file exists.
    */
   createSourceFileFromText(filePath: StandardizedFilePath, sourceText: string, options: SourceFileCreateOptions & { markInProject: boolean }) {
-    filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
+    filePath = this.#context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
     if (options.overwrite === true)
       return this.createOrOverwriteSourceFileFromText(filePath, sourceText, options as MakeOptionalUndefined<typeof options>);
     this.throwIfFileExists(filePath, "Did you mean to provide the overwrite option?");
@@ -191,7 +193,7 @@ export class CompilerFactory {
    * @param prefixMessage - Message to attach on as a prefix.
    */
   throwIfFileExists(filePath: StandardizedFilePath, prefixMessage?: string) {
-    if (!this.containsSourceFileAtPath(filePath) && !this.context.fileSystemWrapper.fileExistsSync(filePath))
+    if (!this.containsSourceFileAtPath(filePath) && !this.#context.fileSystemWrapper.fileExistsSync(filePath))
       return;
     prefixMessage = prefixMessage == null ? "" : prefixMessage + " ";
     throw new errors.InvalidOperationError(`${prefixMessage}A source file already exists at the provided file path: ${filePath}`);
@@ -202,7 +204,7 @@ export class CompilerFactory {
     sourceText: string,
     options: { markInProject: boolean; scriptKind: ScriptKind | undefined },
   ) {
-    filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
+    filePath = this.#context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
     const existingSourceFile = this.addOrGetSourceFileFromFilePath(filePath, options);
     if (existingSourceFile != null) {
       existingSourceFile.getChildren().forEach(c => c.forget());
@@ -218,7 +220,7 @@ export class CompilerFactory {
    * @param filePath - File path.
    */
   getSourceFileFromCacheFromFilePath(filePath: StandardizedFilePath): SourceFile | undefined {
-    filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
+    filePath = this.#context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
     return this.sourceFileCacheByFilePath.get(filePath);
   }
 
@@ -230,12 +232,12 @@ export class CompilerFactory {
     | SourceFile
     | undefined
   {
-    filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
+    filePath = this.#context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
     let sourceFile = this.sourceFileCacheByFilePath.get(filePath);
     if (sourceFile == null) {
-      const fileText = this.context.fileSystemWrapper.readFileIfExistsSync(filePath, this.context.getEncoding());
+      const fileText = this.#context.fileSystemWrapper.readFileIfExistsSync(filePath, this.#context.getEncoding());
       if (fileText != null) {
-        this.context.logger.log(`Loaded file: ${filePath}`);
+        this.#context.logger.log(`Loaded file: ${filePath}`);
         sourceFile = this.createSourceFileFromTextInternal(filePath, fileText, options);
         sourceFile._setIsSaved(true); // source files loaded from the disk are saved to start with
       }
@@ -252,7 +254,7 @@ export class CompilerFactory {
    * @param filePath - File path to check.
    */
   containsSourceFileAtPath(filePath: StandardizedFilePath) {
-    filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
+    filePath = this.#context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
     return this.sourceFileCacheByFilePath.has(filePath);
   }
 
@@ -261,7 +263,7 @@ export class CompilerFactory {
    * @param dirPath - Directory path to check.
    */
   containsDirectoryAtPath(dirPath: StandardizedFilePath) {
-    dirPath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
+    dirPath = this.#context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
     return this.directoryCache.has(dirPath);
   }
 
@@ -313,20 +315,20 @@ export class CompilerFactory {
       // todo: improve kind to wrapper mappings to handle this scenario
       if (isCommentNode(compilerNode)) {
         if (CommentNodeParser.isCommentStatement(compilerNode))
-          return new CommentStatement(this.context, compilerNode, sourceFile) as any as Node<NodeType>;
+          return new CommentStatement(this.#context, compilerNode, sourceFile) as any as Node<NodeType>;
         if (CommentNodeParser.isCommentClassElement(compilerNode))
-          return new CommentClassElement(this.context, compilerNode, sourceFile) as any as Node<NodeType>;
+          return new CommentClassElement(this.#context, compilerNode, sourceFile) as any as Node<NodeType>;
         if (CommentNodeParser.isCommentTypeElement(compilerNode))
-          return new CommentTypeElement(this.context, compilerNode, sourceFile) as any as Node<NodeType>;
+          return new CommentTypeElement(this.#context, compilerNode, sourceFile) as any as Node<NodeType>;
         if (CommentNodeParser.isCommentObjectLiteralElement(compilerNode))
-          return new CommentObjectLiteralElement(this.context, compilerNode, sourceFile) as any as Node<NodeType>;
+          return new CommentObjectLiteralElement(this.#context, compilerNode, sourceFile) as any as Node<NodeType>;
         if (CommentNodeParser.isCommentEnumMember(compilerNode))
-          return new CommentEnumMember(this.context, compilerNode, sourceFile) as any as Node<NodeType>;
+          return new CommentEnumMember(this.#context, compilerNode, sourceFile) as any as Node<NodeType>;
         return errors.throwNotImplementedForNeverValueError(compilerNode);
       }
 
       const ctor = kindToWrapperMappings[compilerNode.kind] || Node as any;
-      return new ctor(this.context, compilerNode, sourceFile) as Node<NodeType>;
+      return new ctor(this.#context, compilerNode, sourceFile) as Node<NodeType>;
     }
 
     function isCommentNode(node: ts.Node): node is CompilerCommentNode {
@@ -367,7 +369,7 @@ export class CompilerFactory {
   }
 
   createCompilerSourceFileFromText(filePath: StandardizedFilePath, text: string, scriptKind: ScriptKind | undefined): ts.SourceFile {
-    return this.documentRegistry.createOrUpdateSourceFile(filePath, this.context.compilerOptions.get(), ts.ScriptSnapshot.fromString(text), scriptKind);
+    return this.documentRegistry.createOrUpdateSourceFile(filePath, this.#context.compilerOptions.get(), ts.ScriptSnapshot.fromString(text), scriptKind);
   }
 
   /**
@@ -379,10 +381,10 @@ export class CompilerFactory {
     // check the file path cache first in case this source file object is for an old manipulation (see issue 1164)
     const sourceFile = this.sourceFileCacheByFilePath.get(compilerSourceFile.fileName as StandardizedFilePath)
       ?? this.nodeCache.getOrCreate<SourceFile>(compilerSourceFile, () => {
-        const createdSourceFile = new SourceFile(this.context, compilerSourceFile);
+        const createdSourceFile = new SourceFile(this.#context, compilerSourceFile);
 
         if (!options.markInProject)
-          this.context.inProjectCoordinator.setSourceFileNotInProject(createdSourceFile);
+          this.#context.inProjectCoordinator.setSourceFileNotInProject(createdSourceFile);
 
         this.addSourceFileToCache(createdSourceFile);
         wasAdded = true;
@@ -400,7 +402,7 @@ export class CompilerFactory {
 
   private addSourceFileToCache(sourceFile: SourceFile) {
     this.sourceFileCacheByFilePath.set(sourceFile.getFilePath(), sourceFile);
-    this.context.fileSystemWrapper.removeFileDelete(sourceFile.getFilePath());
+    this.#context.fileSystemWrapper.removeFileDelete(sourceFile.getFilePath());
     this.directoryCache.addSourceFile(sourceFile);
   }
 
@@ -409,10 +411,10 @@ export class CompilerFactory {
    * @param dirPath - Directory path.
    */
   getDirectoryFromPath(dirPath: StandardizedFilePath, options: { markInProject: boolean }) {
-    dirPath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
+    dirPath = this.#context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
     let directory = this.directoryCache.get(dirPath);
 
-    if (directory == null && this.context.fileSystemWrapper.directoryExistsSync(dirPath))
+    if (directory == null && this.#context.fileSystemWrapper.directoryExistsSync(dirPath))
       directory = this.directoryCache.createOrAddIfExists(dirPath);
 
     if (directory != null && options.markInProject)
@@ -479,7 +481,7 @@ export class CompilerFactory {
   getType<TType extends ts.Type>(type: TType): Type<TType> {
     if ((type.flags & TypeFlags.TypeParameter) === TypeFlags.TypeParameter)
       return this.getTypeParameter(type as any as ts.TypeParameter) as any as Type<TType>;
-    return this.typeCache.getOrCreate(type, () => new Type<TType>(this.context, type));
+    return this.typeCache.getOrCreate(type, () => new Type<TType>(this.#context, type));
   }
 
   /**
@@ -487,7 +489,7 @@ export class CompilerFactory {
    * @param typeParameter - Compiler type parameter
    */
   getTypeParameter(typeParameter: ts.TypeParameter): TypeParameter {
-    return this.typeParameterCache.getOrCreate(typeParameter, () => new TypeParameter(this.context, typeParameter));
+    return this.typeParameterCache.getOrCreate(typeParameter, () => new TypeParameter(this.#context, typeParameter));
   }
 
   /**
@@ -495,7 +497,7 @@ export class CompilerFactory {
    * @param signature - Compiler signature.
    */
   getSignature(signature: ts.Signature): Signature {
-    return this.signatureCache.getOrCreate(signature, () => new Signature(this.context, signature));
+    return this.signatureCache.getOrCreate(signature, () => new Signature(this.#context, signature));
   }
 
   /**
@@ -503,7 +505,7 @@ export class CompilerFactory {
    * @param symbol - Compiler symbol.
    */
   getSymbol(symbol: ts.Symbol): Symbol {
-    return this.symbolCache.getOrCreate(symbol, () => new Symbol(this.context, symbol));
+    return this.symbolCache.getOrCreate(symbol, () => new Symbol(this.#context, symbol));
   }
 
   /**
@@ -511,7 +513,7 @@ export class CompilerFactory {
    * @param compilerObject - Compiler definition info.
    */
   getDefinitionInfo(compilerObject: ts.DefinitionInfo): DefinitionInfo {
-    return this.definitionInfoCache.getOrCreate(compilerObject, () => new DefinitionInfo(this.context, compilerObject));
+    return this.definitionInfoCache.getOrCreate(compilerObject, () => new DefinitionInfo(this.#context, compilerObject));
   }
 
   /**
@@ -519,7 +521,7 @@ export class CompilerFactory {
    * @param compilerObject - Compiler document span.
    */
   getDocumentSpan(compilerObject: ts.DocumentSpan): DocumentSpan {
-    return this.documentSpanCache.getOrCreate(compilerObject, () => new DocumentSpan(this.context, compilerObject));
+    return this.documentSpanCache.getOrCreate(compilerObject, () => new DocumentSpan(this.#context, compilerObject));
   }
 
   /**
@@ -527,7 +529,7 @@ export class CompilerFactory {
    * @param compilerObject - Compiler referenced entry.
    */
   getReferencedSymbolEntry(compilerObject: ts.ReferencedSymbolEntry): ReferencedSymbolEntry {
-    return this.referencedSymbolEntryCache.getOrCreate(compilerObject, () => new ReferencedSymbolEntry(this.context, compilerObject));
+    return this.referencedSymbolEntryCache.getOrCreate(compilerObject, () => new ReferencedSymbolEntry(this.#context, compilerObject));
   }
 
   /**
@@ -535,7 +537,7 @@ export class CompilerFactory {
    * @param compilerObject - Compiler referenced symbol.
    */
   getReferencedSymbol(compilerObject: ts.ReferencedSymbol): ReferencedSymbol {
-    return this.referencedSymbolCache.getOrCreate(compilerObject, () => new ReferencedSymbol(this.context, compilerObject));
+    return this.referencedSymbolCache.getOrCreate(compilerObject, () => new ReferencedSymbol(this.#context, compilerObject));
   }
 
   /**
@@ -543,7 +545,7 @@ export class CompilerFactory {
    * @param compilerObject - Compiler referenced symbol definition info.
    */
   getReferencedSymbolDefinitionInfo(compilerObject: ts.ReferencedSymbolDefinitionInfo): ReferencedSymbolDefinitionInfo {
-    return this.referencedSymbolDefinitionInfoCache.getOrCreate(compilerObject, () => new ReferencedSymbolDefinitionInfo(this.context, compilerObject));
+    return this.referencedSymbolDefinitionInfoCache.getOrCreate(compilerObject, () => new ReferencedSymbolDefinitionInfo(this.#context, compilerObject));
   }
 
   /**
@@ -553,8 +555,8 @@ export class CompilerFactory {
   getDiagnostic(diagnostic: ts.Diagnostic): Diagnostic {
     return this.diagnosticCache.getOrCreate(diagnostic, () => {
       if (diagnostic.start != null)
-        return new DiagnosticWithLocation(this.context, diagnostic as ts.DiagnosticWithLocation);
-      return new Diagnostic(this.context, diagnostic);
+        return new DiagnosticWithLocation(this.#context, diagnostic as ts.DiagnosticWithLocation);
+      return new Diagnostic(this.#context, diagnostic);
     });
   }
 
@@ -563,7 +565,7 @@ export class CompilerFactory {
    * @param diagnostic - Compiler diagnostic.
    */
   getDiagnosticWithLocation(diagnostic: ts.DiagnosticWithLocation): DiagnosticWithLocation {
-    return this.diagnosticCache.getOrCreate(diagnostic, () => new DiagnosticWithLocation(this.context, diagnostic));
+    return this.diagnosticCache.getOrCreate(diagnostic, () => new DiagnosticWithLocation(this.#context, diagnostic));
   }
 
   /**
@@ -622,7 +624,7 @@ export class CompilerFactory {
 
     if (compilerNode.kind === SyntaxKind.SourceFile) {
       const sourceFile = compilerNode as ts.SourceFile;
-      const standardizedFilePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(sourceFile.fileName);
+      const standardizedFilePath = this.#context.fileSystemWrapper.getStandardizedAbsolutePath(sourceFile.fileName);
       this.directoryCache.removeSourceFile(standardizedFilePath);
       const wrappedSourceFile = this.sourceFileCacheByFilePath.get(standardizedFilePath);
       this.sourceFileCacheByFilePath.delete(standardizedFilePath);

@@ -9,8 +9,13 @@ import { Printer } from "../Printer";
 export type StatementStructuresArrayItem = string | WriterFunction | StatementStructures;
 
 export class StatementStructurePrinter extends Printer<StatementStructuresArrayItem> {
-  constructor(private readonly factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean }) {
+    readonly #options: { isAmbient: boolean };
+    readonly #factory: StructurePrinterFactory;
+
+  constructor(factory: StructurePrinterFactory, options: { isAmbient: boolean }) {
     super();
+      this.#factory = factory;
+      this.#options = options;
   }
 
   printTexts(writer: CodeBlockWriter, statements: ReadonlyArray<StatementStructuresArrayItem> | string | WriterFunction | undefined) {
@@ -39,40 +44,40 @@ export class StatementStructurePrinter extends Printer<StatementStructuresArrayI
 
     switch (statement.kind) {
       case StructureKind.Function:
-        if (!this.options.isAmbient)
+        if (!this.#options.isAmbient)
           ensureBlankLine();
-        this.factory.forFunctionDeclaration(this.options).printText(writer, statement);
+        this.#factory.forFunctionDeclaration(this.#options).printText(writer, statement);
         break;
       case StructureKind.Class:
         ensureBlankLine();
-        this.factory.forClassDeclaration(this.options).printText(writer, statement);
+        this.#factory.forClassDeclaration(this.#options).printText(writer, statement);
         break;
       case StructureKind.Interface:
         ensureBlankLine();
-        this.factory.forInterfaceDeclaration().printText(writer, statement);
+        this.#factory.forInterfaceDeclaration().printText(writer, statement);
         break;
       case StructureKind.TypeAlias:
-        this.factory.forTypeAliasDeclaration().printText(writer, statement);
+        this.#factory.forTypeAliasDeclaration().printText(writer, statement);
         break;
       case StructureKind.VariableStatement:
-        this.factory.forVariableStatement().printText(writer, statement);
+        this.#factory.forVariableStatement().printText(writer, statement);
         break;
       case StructureKind.ImportDeclaration:
-        this.factory.forImportDeclaration().printText(writer, statement);
+        this.#factory.forImportDeclaration().printText(writer, statement);
         break;
       case StructureKind.Module:
         ensureBlankLine();
-        this.factory.forModuleDeclaration(this.options).printText(writer, statement);
+        this.#factory.forModuleDeclaration(this.#options).printText(writer, statement);
         break;
       case StructureKind.Enum:
         ensureBlankLine();
-        this.factory.forEnumDeclaration().printText(writer, statement);
+        this.#factory.forEnumDeclaration().printText(writer, statement);
         break;
       case StructureKind.ExportDeclaration:
-        this.factory.forExportDeclaration().printText(writer, statement);
+        this.#factory.forExportDeclaration().printText(writer, statement);
         break;
       case StructureKind.ExportAssignment:
-        this.factory.forExportAssignment().printText(writer, statement);
+        this.#factory.forExportAssignment().printText(writer, statement);
         break;
       default:
         errors.throwNotImplementedForNeverValueError(statement);
