@@ -5,12 +5,12 @@ import { BlankLineFormattingStructuresPrinter } from "../formatting";
 import { NodePrinter } from "../NodePrinter";
 
 export class GetAccessorDeclarationStructurePrinter extends NodePrinter<OptionalKind<GetAccessorDeclarationStructure>> {
-    readonly #options: { isAmbient: boolean };
+  readonly #options: { isAmbient: boolean };
   readonly #blankLineWriter = new BlankLineFormattingStructuresPrinter(this);
 
   constructor(factory: StructurePrinterFactory, options: { isAmbient: boolean }) {
     super(factory);
-      this.#options = options;
+    this.#options = options;
   }
 
   printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<GetAccessorDeclarationStructure>> | undefined) {

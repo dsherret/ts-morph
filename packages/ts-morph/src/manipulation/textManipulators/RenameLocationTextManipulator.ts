@@ -2,12 +2,12 @@ import { RenameLocation } from "../../compiler";
 import { TextManipulator } from "./TextManipulator";
 
 export class RenameLocationTextManipulator implements TextManipulator {
-    readonly #newName: string;
-    readonly #renameLocations: RenameLocation[];
+  readonly #newName: string;
+  readonly #renameLocations: RenameLocation[];
 
   constructor(renameLocations: RenameLocation[], newName: string) {
-      this.#renameLocations = renameLocations;
-      this.#newName = newName;
+    this.#renameLocations = renameLocations;
+    this.#newName = newName;
   }
 
   getNewText(inputText: string) {

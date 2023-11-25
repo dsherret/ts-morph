@@ -10,16 +10,16 @@ import { StraightReplacementNodeHandler } from "./StraightReplacementNodeHandler
  * Parent handler used to unwrap a node.
  */
 export class UnwrapParentHandler implements NodeHandler {
-    readonly #childIndex: number;
-    readonly #compilerFactory: CompilerFactory;
+  readonly #childIndex: number;
+  readonly #compilerFactory: CompilerFactory;
   readonly #straightReplacementNodeHandler: StraightReplacementNodeHandler;
   readonly #helper: NodeHandlerHelper;
 
   constructor(compilerFactory: CompilerFactory, childIndex: number) {
     this.#straightReplacementNodeHandler = new StraightReplacementNodeHandler(compilerFactory);
     this.#helper = new NodeHandlerHelper(compilerFactory);
-      this.#compilerFactory = compilerFactory;
-      this.#childIndex = childIndex;
+    this.#compilerFactory = compilerFactory;
+    this.#childIndex = childIndex;
   }
 
   handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {

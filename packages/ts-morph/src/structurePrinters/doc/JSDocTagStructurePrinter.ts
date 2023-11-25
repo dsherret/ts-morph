@@ -7,11 +7,11 @@ import { printTextFromStringOrWriter } from "../../utils";
 import { NodePrinter } from "../NodePrinter";
 
 export class JSDocTagStructurePrinter extends NodePrinter<OptionalKind<JSDocTagStructure> | string | WriterFunction> {
-    readonly #options: { printStarsOnNewLine: boolean };
+  readonly #options: { printStarsOnNewLine: boolean };
 
   constructor(factory: StructurePrinterFactory, options: { printStarsOnNewLine: boolean }) {
     super(factory);
-      this.#options = options;
+    this.#options = options;
   }
 
   printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<JSDocTagStructure> | string | WriterFunction> | undefined) {

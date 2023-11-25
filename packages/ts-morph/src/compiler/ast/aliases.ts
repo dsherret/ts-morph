@@ -6,9 +6,11 @@ import { Node } from "./common";
 import { Decorator } from "./decorator";
 import { EnumDeclaration } from "./enum";
 import {
+  BinaryExpression,
   CallExpression,
   ElementAccessExpression,
   Expression,
+  InstanceofExpression,
   NewExpression,
   OmittedExpression,
   PropertyAccessExpression,
@@ -57,7 +59,7 @@ type WrappedToCompilerNodeType<T extends Node> = T["compilerNode"];
 export type AssertionKey = Identifier | StringLiteral;
 type _AssertionKeyTest = AssertTrue<IsExact<WrappedToCompilerNodeType<AssertionKey>, ts.AssertionKey>>;
 
-export type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName | PrivateIdentifier;
+export type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName | PrivateIdentifier | NoSubstitutionTemplateLiteral;
 type _PropertyNameTest = AssertTrue<IsExact<WrappedToCompilerNodeType<PropertyName>, ts.PropertyName>>;
 
 export type ModuleName = Identifier | StringLiteral;
@@ -78,7 +80,7 @@ type _BindingPatternTest = AssertTrue<IsExact<WrappedToCompilerNodeType<BindingP
 export type BooleanLiteral = TrueLiteral | FalseLiteral;
 type _BooleanLiteralTest = AssertTrue<IsExact<WrappedToCompilerNodeType<BooleanLiteral>, ts.BooleanLiteral>>;
 
-export type CallLikeExpression = CallExpression | NewExpression | TaggedTemplateExpression | Decorator | JsxOpeningLikeElement;
+export type CallLikeExpression = CallExpression | NewExpression | TaggedTemplateExpression | Decorator | JsxOpeningLikeElement | InstanceofExpression;
 type _CallLikeExpressionTest = AssertTrue<IsExact<WrappedToCompilerNodeType<CallLikeExpression>, ts.CallLikeExpression>>;
 
 export type EntityNameExpression = Identifier | PropertyAccessExpression;

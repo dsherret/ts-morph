@@ -12,10 +12,10 @@ export interface ChangingChildOrderTextManipulatorOptions<TParentNode extends No
 }
 
 export class ChangingChildOrderTextManipulator<TParentNode extends Node> implements TextManipulator {
-    readonly #opts: ChangingChildOrderTextManipulatorOptions<TParentNode>;
+  readonly #opts: ChangingChildOrderTextManipulatorOptions<TParentNode>;
 
   constructor(opts: ChangingChildOrderTextManipulatorOptions<TParentNode>) {
-      this.#opts = opts;
+    this.#opts = opts;
   }
 
   getNewText(inputText: string) {

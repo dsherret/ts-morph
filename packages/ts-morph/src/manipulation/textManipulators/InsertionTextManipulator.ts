@@ -8,10 +8,10 @@ export interface InsertionTextManipulatorOptions {
 }
 
 export class InsertionTextManipulator implements TextManipulator {
-    readonly #opts: InsertionTextManipulatorOptions;
+  readonly #opts: InsertionTextManipulatorOptions;
 
   constructor(opts: InsertionTextManipulatorOptions) {
-      this.#opts = opts;
+    this.#opts = opts;
   }
 
   getNewText(inputText: string) {

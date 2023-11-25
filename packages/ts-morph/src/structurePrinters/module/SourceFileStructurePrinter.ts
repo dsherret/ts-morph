@@ -4,11 +4,11 @@ import { OptionalKind, SourceFileStructure } from "../../structures";
 import { NodePrinter } from "../NodePrinter";
 
 export class SourceFileStructurePrinter extends NodePrinter<OptionalKind<SourceFileStructure>> {
-    readonly #options: { isAmbient: boolean };
+  readonly #options: { isAmbient: boolean };
 
   constructor(factory: StructurePrinterFactory, options: { isAmbient: boolean }) {
     super(factory);
-      this.#options = options;
+    this.#options = options;
   }
 
   protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<SourceFileStructure>) {

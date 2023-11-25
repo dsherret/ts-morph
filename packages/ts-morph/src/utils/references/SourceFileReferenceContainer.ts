@@ -4,13 +4,13 @@ import { ModuleUtils } from "../compiler";
 export type SourceFileReferencingNodes = ImportDeclaration | ExportDeclaration | ImportEqualsDeclaration | CallExpression;
 
 export class SourceFileReferenceContainer {
-    readonly #sourceFile: SourceFile;
+  readonly #sourceFile: SourceFile;
   readonly #nodesInThis = new KeyValueCache<StringLiteral, SourceFile>();
   readonly #nodesInOther = new KeyValueCache<StringLiteral, SourceFile>();
   readonly #unresolvedLiterals: StringLiteral[] = [];
 
   constructor(sourceFile: SourceFile) {
-      this.#sourceFile = sourceFile;
+    this.#sourceFile = sourceFile;
   }
 
   getDependentSourceFiles() {
@@ -46,7 +46,7 @@ export class SourceFileReferenceContainer {
     this.#unresolvedLiterals.length = 0;
     for (const [node, sourceFile] of this.#nodesInThis.getEntries()) {
       this.#nodesInThis.removeByKey(node);
-      sourceFile._referenceContainer.nodesInOther.removeByKey(node);
+      sourceFile._referenceContainer.#nodesInOther.removeByKey(node);
     }
   }
 

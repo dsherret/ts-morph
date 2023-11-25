@@ -1,7 +1,7 @@
 import { errors } from "@ts-morph/common";
 
 export class AdvancedIterator<T> {
-    readonly #iterator: IterableIterator<T>;
+  readonly #iterator: IterableIterator<T>;
   readonly #buffer: (T | undefined)[] = [undefined, undefined, undefined]; // previous, current, next
   #bufferIndex = 0;
   #isDone = false;
@@ -9,7 +9,7 @@ export class AdvancedIterator<T> {
 
   constructor(iterator: IterableIterator<T>) {
     this.#advance();
-      this.#iterator = iterator;
+    this.#iterator = iterator;
   }
 
   get done() {

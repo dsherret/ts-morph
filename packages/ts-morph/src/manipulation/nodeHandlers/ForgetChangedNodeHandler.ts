@@ -8,12 +8,12 @@ import { NodeHandlerHelper } from "./NodeHandlerHelper";
  * Replacement handler that goes through the tree and forgets any nodes that have changed kind.
  */
 export class ForgetChangedNodeHandler implements NodeHandler {
-    readonly #compilerFactory: CompilerFactory;
+  readonly #compilerFactory: CompilerFactory;
   readonly #helper: NodeHandlerHelper;
 
   constructor(compilerFactory: CompilerFactory) {
     this.#helper = new NodeHandlerHelper(compilerFactory);
-      this.#compilerFactory = compilerFactory;
+    this.#compilerFactory = compilerFactory;
   }
 
   handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {

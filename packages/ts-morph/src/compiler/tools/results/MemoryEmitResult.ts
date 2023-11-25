@@ -24,14 +24,14 @@ export interface MemoryEmitResultFile {
  * Result of an emit to memory.
  */
 export class MemoryEmitResult extends EmitResult {
-    readonly #files: ReadonlyArray<MemoryEmitResultFile>;
+  readonly #files: ReadonlyArray<MemoryEmitResultFile>;
 
   /**
    * @private
    */
   constructor(context: ProjectContext, compilerObject: ts.EmitResult, _files: ReadonlyArray<MemoryEmitResultFile>) {
     super(context, compilerObject);
-      this.#files = _files;
+    this.#files = _files;
   }
 
   /**

@@ -21,7 +21,7 @@ export function getFileSystemHostWithFiles(
 }
 
 class VirtualFileSystemForTest extends InMemoryFileSystemHost implements CustomFileSystemProps {
-    readonly #initialDirectories: string[];
+  readonly #initialDirectories: string[];
   readonly #writeLog: { filePath: string; fileText: string }[] = [];
   readonly #deleteLog: { path: string }[] = [];
   readonly #trackedDirectories = new Set<string>();
@@ -37,7 +37,7 @@ class VirtualFileSystemForTest extends InMemoryFileSystemHost implements CustomF
       const filePath = file.filePath[0] === "/" ? file.filePath : "/" + file.filePath;
       this.writeFileSync(filePath, file.text);
     });
-      this.#initialDirectories = initialDirectories;
+    this.#initialDirectories = initialDirectories;
   }
 
   deleteSync(path: string) {

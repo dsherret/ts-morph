@@ -5,11 +5,11 @@ import { TypeElementMemberedNodeStructure } from "../../structures";
 import { Printer } from "../Printer";
 
 export class TypeElementMemberedNodeStructurePrinter extends Printer<TypeElementMemberedNodeStructure> {
-    readonly #factory: StructurePrinterFactory;
+  readonly #factory: StructurePrinterFactory;
 
   constructor(factory: StructurePrinterFactory) {
     super();
-      this.#factory = factory;
+    this.#factory = factory;
   }
 
   printText(writer: CodeBlockWriter, structure: TypeElementMemberedNodeStructure) {

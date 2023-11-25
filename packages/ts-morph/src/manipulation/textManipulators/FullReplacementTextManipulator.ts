@@ -1,10 +1,10 @@
 import { TextManipulator } from "./TextManipulator";
 
 export class FullReplacementTextManipulator implements TextManipulator {
-    readonly #newText: string;
+  readonly #newText: string;
 
   constructor(newText: string) {
-      this.#newText = newText;
+    this.#newText = newText;
   }
 
   getNewText(inputText: string) {

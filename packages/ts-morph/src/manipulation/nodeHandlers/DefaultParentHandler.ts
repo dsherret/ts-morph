@@ -16,7 +16,7 @@ export interface DefaultParentHandlerOptions {
  * Handler for deailing with a parent that is going to have a child replaced.
  */
 export class DefaultParentHandler implements NodeHandler {
-    readonly #compilerFactory: CompilerFactory;
+  readonly #compilerFactory: CompilerFactory;
   readonly #straightReplacementNodeHandler: StraightReplacementNodeHandler;
   readonly #helper: NodeHandlerHelper;
   readonly #childCount: number;
@@ -31,7 +31,7 @@ export class DefaultParentHandler implements NodeHandler {
     this.#isFirstChild = opts.isFirstChild;
     this.#replacingNodes = opts.replacingNodes?.map(n => n.compilerNode);
     this.#customMappings = opts.customMappings;
-      this.#compilerFactory = compilerFactory;
+    this.#compilerFactory = compilerFactory;
   }
 
   handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {

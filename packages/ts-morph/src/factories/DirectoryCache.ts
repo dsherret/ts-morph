@@ -8,14 +8,14 @@ import { ProjectContext } from "../ProjectContext";
  * @internal
  */
 export class DirectoryCache {
-    readonly #context: ProjectContext;
+  readonly #context: ProjectContext;
   readonly #directoriesByPath = new KeyValueCache<StandardizedFilePath, Directory>();
   readonly #sourceFilesByDirPath = new KeyValueCache<StandardizedFilePath, SortedKeyValueArray<string, SourceFile>>();
   readonly #directoriesByDirPath = new KeyValueCache<StandardizedFilePath, SortedKeyValueArray<string, Directory>>();
   readonly #orphanDirs = new KeyValueCache<StandardizedFilePath, Directory>();
 
   constructor(context: ProjectContext) {
-      this.#context = context;
+    this.#context = context;
   }
 
   has(dirPath: StandardizedFilePath) {

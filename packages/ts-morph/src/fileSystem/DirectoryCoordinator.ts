@@ -9,12 +9,12 @@ import { DirectoryAddOptions } from "./Directory";
  * I'll definitely need to refactor this in the future... just putting these methods in a common place for now.
  */
 export class DirectoryCoordinator {
-    readonly #fileSystemWrapper: TransactionalFileSystem;
-    readonly #compilerFactory: CompilerFactory;
+  readonly #fileSystemWrapper: TransactionalFileSystem;
+  readonly #compilerFactory: CompilerFactory;
 
   constructor(compilerFactory: CompilerFactory, fileSystemWrapper: TransactionalFileSystem) {
-      this.#compilerFactory = compilerFactory;
-      this.#fileSystemWrapper = fileSystemWrapper;
+    this.#compilerFactory = compilerFactory;
+    this.#fileSystemWrapper = fileSystemWrapper;
   }
 
   addDirectoryAtPathIfExists(dirPath: StandardizedFilePath, options: DirectoryAddOptions & { markInProject: boolean }) {

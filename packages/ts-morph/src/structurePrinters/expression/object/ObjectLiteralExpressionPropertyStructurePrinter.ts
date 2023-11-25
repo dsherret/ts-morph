@@ -9,13 +9,13 @@ import { Printer } from "../../Printer";
 export type ObjectLiteralExpressionStructuresArrayItem = string | WriterFunction | ObjectLiteralExpressionPropertyStructures;
 
 export class ObjectLiteralExpressionPropertyStructurePrinter extends Printer<ObjectLiteralExpressionStructuresArrayItem> {
-    readonly #factory: StructurePrinterFactory;
+  readonly #factory: StructurePrinterFactory;
   readonly #multipleWriter = new CommaNewLineSeparatedStructuresPrinter(this);
   readonly #options = { isAmbient: false }; // always false for object literal expressions
 
   constructor(factory: StructurePrinterFactory) {
     super();
-      this.#factory = factory;
+    this.#factory = factory;
   }
 
   printTexts(writer: CodeBlockWriter, members: ReadonlyArray<ObjectLiteralExpressionStructuresArrayItem> | string | WriterFunction | undefined) {

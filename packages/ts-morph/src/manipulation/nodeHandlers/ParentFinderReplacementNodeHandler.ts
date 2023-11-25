@@ -9,18 +9,18 @@ import { StraightReplacementNodeHandler } from "./StraightReplacementNodeHandler
  * Replacement handler that tries to find the parents.
  */
 export class ParentFinderReplacementNodeHandler extends StraightReplacementNodeHandler {
-    readonly #changingParent: Node;
-    readonly #parentNodeHandler: NodeHandler;
+  readonly #changingParent: Node;
+  readonly #parentNodeHandler: NodeHandler;
   readonly #changingParentParent: Node | undefined;
   #foundParent = false;
   readonly #parentsAtSamePos: boolean;
 
   constructor(compilerFactory: CompilerFactory, parentNodeHandler: NodeHandler, changingParent: Node) {
     super(compilerFactory);
-    this.#changingParentParent = this.#changingParent.getParentSyntaxList() || this.#changingParent.getParent();
-    this.#parentsAtSamePos = this.#changingParentParent != null && this.#changingParentParent.getPos() === this.#changingParent.getPos();
-      this.#parentNodeHandler = parentNodeHandler;
-      this.#changingParent = changingParent;
+    this.#changingParentParent = changingParent.getParentSyntaxList() ?? changingParent.getParent();
+    this.#parentsAtSamePos = this.#changingParentParent != null && this.#changingParentParent.getPos() === changingParent.getPos();
+    this.#parentNodeHandler = parentNodeHandler;
+    this.#changingParent = changingParent;
   }
 
   handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {

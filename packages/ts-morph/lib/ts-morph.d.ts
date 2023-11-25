@@ -73,6 +73,7 @@ export interface FileSystemHost {
 
 /** An implementation of a file system that exists in memory only. */
 export declare class InMemoryFileSystemHost implements FileSystemHost {
+  #private;
   /** Constructor. */
   constructor();
   /** @inheritdoc */
@@ -146,6 +147,7 @@ export interface RuntimeDirEntry {
 }
 
 export declare abstract class SettingsContainer<T extends object> {
+  #private;
   protected _settings: T;
   /**
    * Constructor.
@@ -181,24 +183,7 @@ declare const NotSupportedError: typeof errors.NotSupportedError;
 declare const PathNotFoundError: typeof errors.PathNotFoundError;
 
 export declare class Directory {
-  private __context;
-  private _path;
-  private _pathParts;
-  private _emitInternal;
-  /** @internal */
-  private _copyInternal;
-  /** @internal */
-  private _moveInternal;
-  /** @internal */
-  private _deleteDescendants;
-  /** @internal */
-  private _throwIfDeletedOrRemoved;
-  /** @internal */
-  private _getReferencesForCopy;
-  /** @internal */
-  private _getReferencesForMove;
-  /** @internal */
-  private static _isAncestorOfDir;
+  #private;
   private constructor();
   /** @internal */
   get _context(): ProjectContext;
@@ -534,8 +519,7 @@ export interface DirectoryCopyOptions extends SourceFileCopyOptions {
 }
 
 export declare class DirectoryEmitResult {
-  private readonly _skippedFilePaths;
-  private readonly _outputFilePaths;
+  #private;
   private constructor();
   /** Gets a collections of skipped file paths. */
   getSkippedFilePaths(): StandardizedFilePath[];
@@ -556,16 +540,9 @@ export declare class ManipulationError extends errors.InvalidOperationError {
 
 /** Project that holds source files. */
 export declare class Project {
+  #private;
   /** @internal */
   readonly _context: ProjectContext;
-  /** @internal */
-  private _addSourceFilesForTsConfigResolver;
-  /** @internal */
-  private _getProjectSourceFilesByDirectoryDepth;
-  /** @internal */
-  private _getProjectDirectoriesByDirectoryDepth;
-  /** @internal */
-  private _getUnsavedSourceFiles;
   /**
    * Initializes a new instance.
    * @param options - Optional options.
@@ -963,14 +940,14 @@ export declare class Writers {
 
 export type WriterFunctionOrValue = string | number | WriterFunction;
 export type AssertionKey = Identifier | StringLiteral;
-export type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName | PrivateIdentifier;
+export type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName | PrivateIdentifier | NoSubstitutionTemplateLiteral;
 export type ModuleName = Identifier | StringLiteral;
 export type AccessorDeclaration = GetAccessorDeclaration | SetAccessorDeclaration;
 export type ArrayBindingElement = BindingElement | OmittedExpression;
 export type BindingName = Identifier | BindingPattern;
 export type BindingPattern = ObjectBindingPattern | ArrayBindingPattern;
 export type BooleanLiteral = TrueLiteral | FalseLiteral;
-export type CallLikeExpression = CallExpression | NewExpression | TaggedTemplateExpression | Decorator | JsxOpeningLikeElement;
+export type CallLikeExpression = CallExpression | NewExpression | TaggedTemplateExpression | Decorator | JsxOpeningLikeElement | InstanceofExpression;
 export type EntityNameExpression = Identifier | PropertyAccessExpression;
 export type DeclarationName = PropertyName | JsxAttributeName | StringLiteralLike | ElementAccessExpression | BindingPattern | EntityNameExpression;
 export type EntityName = Identifier | QualifiedName;
@@ -3331,9 +3308,7 @@ export declare enum CommentNodeKind {
 }
 
 export declare abstract class CompilerCommentNode implements ts.Node {
-  private _fullStart;
-  private _start;
-  private _sourceFile;
+  #private;
   /** @internal */
   abstract _commentKind: CommentNodeKind;
   pos: number;
@@ -3405,30 +3380,12 @@ export type NodeParentType<NodeType extends ts.Node> = NodeType extends ts.Sourc
   : CompilerNodeToWrappedType<NodeType["parent"]>;
 
 export declare class Node<NodeType extends ts.Node = ts.Node> {
+  #private;
+  _wrappedChildCount: number;
   /** @internal */
   readonly _context: ProjectContext;
   /** @internal */
-  private _compilerNode;
-  /** @internal */
-  private _forgottenText;
-  /** @internal */
-  private _childStringRanges;
-  /** @internal */
-  private _leadingCommentRanges;
-  /** @internal */
-  private _trailingCommentRanges;
-  /** @internal */
-  _wrappedChildCount: number;
-  /** @internal */
   protected __sourceFile: SourceFile | undefined;
-  /** @internal */
-  private _storeTextForForgetting;
-  /** @internal */
-  private _getCompilerLocals;
-  /** @internal */
-  private _getIndentationTextForLevel;
-  /** @internal */
-  private _getCommentsAtPos;
   /** Gets if the node is an AnyKeyword. */
   static readonly isAnyKeyword: (node: Node | undefined) => node is Expression;
   /** Gets if the node is an ArrayBindingPattern. */
@@ -4830,12 +4787,7 @@ export declare class SyntaxList extends Node<ts.SyntaxList> {
 }
 
 export declare class TextRange<TRange extends ts.TextRange = ts.TextRange> {
-  /** @internal */
-  private _compilerObject;
-  /** @internal */
-  private _sourceFile;
-  /** @internal */
-  private _throwIfForgotten;
+  #private;
   protected constructor();
   /** Gets the underlying compiler object. */
   get compilerObject(): TRange;
@@ -5429,8 +5381,7 @@ export declare class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extend
 
 /** JS doc tag info. */
 export declare class JSDocTagInfo {
-  /** @internal */
-  private readonly _compilerObject;
+  #private;
   private constructor();
   /** Gets the compiler JS doc tag info. */
   get compilerObject(): ts.JSDocTagInfo;
@@ -5781,6 +5732,11 @@ export declare class AwaitExpression extends AwaitExpressionBase<ts.AwaitExpress
   getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.AwaitExpression>>;
 }
 
+export interface InstanceofExpression extends BinaryExpression {
+  compilerNode: ts.InstanceofExpression;
+  getOperatorToken(): Node<ts.Token<SyntaxKind.InstanceOfKeyword>>;
+}
+
 declare const BinaryExpressionBase: typeof Expression;
 
 export declare class BinaryExpression<T extends ts.BinaryExpression = ts.BinaryExpression> extends BinaryExpressionBase<T> {
@@ -6027,10 +5983,7 @@ export declare class ObjectLiteralElement<T extends ts.ObjectLiteralElement = ts
 declare const ObjectLiteralExpressionBase: typeof PrimaryExpression;
 
 export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.ObjectLiteralExpression> {
-  /** @internal */
-  private _getAddIndex;
-  /** @internal */
-  private _insertProperty;
+  #private;
   /**
    * Gets the first property by the provided name or throws.
    * @param name - Name of the property.
@@ -8231,25 +8184,11 @@ export interface SourceFileReferences {
 declare const SourceFileBase: Constructor<ModuledNode> & Constructor<StatementedNode> & Constructor<TextInsertableNode> & typeof Node;
 
 export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
-  /** @internal */
-  private _isSaved;
-  /** @internal */
-  private readonly _modifiedEventContainer;
-  /** @internal */
-  private readonly _preModifiedEventContainer;
+  #private;
   /** @internal */
   readonly _referenceContainer: SourceFileReferenceContainer;
   /** @internal */
-  private _referencedFiles;
-  /** @internal */
-  private _libReferenceDirectives;
-  /** @internal */
-  private _typeReferenceDirectives;
-  /** @internal */
   _hasBom: true | undefined;
-  /** @internal */
-  private _getTextForSave;
-  private _refreshFromFileSystemInternal;
   private constructor();
   /** @internal WARNING: This should only be called by the compiler factory! */
   _replaceCompilerNodeFromFactory(compilerNode: ts.SourceFile): void;
@@ -9943,10 +9882,7 @@ export declare class VariableDeclarationList extends VariableDeclarationListBase
 }
 
 export declare class Signature {
-  /** @internal */
-  private readonly _context;
-  /** @internal */
-  private readonly _compilerSignature;
+  #private;
   private constructor();
   /** Gets the underlying compiler signature. */
   get compilerSignature(): ts.Signature;
@@ -9979,10 +9915,7 @@ export declare class Signature {
 }
 
 export declare class Symbol {
-  /** @internal */
-  private readonly _context;
-  /** @internal */
-  private readonly _compilerSymbol;
+  #private;
   private constructor();
   /** Gets the underlying compiler symbol. */
   get compilerSymbol(): ts.Symbol;
@@ -10113,22 +10046,7 @@ export interface LanguageServiceCreationParams {
 }
 
 export declare class LanguageService {
-  /** @internal */
-  private readonly _compilerObject;
-  /** @internal */
-  private readonly _compilerHost;
-  /** @internal */
-  private _program;
-  /** @internal */
-  private _context;
-  /** @internal */
-  private _projectVersion;
-  /** @internal */
-  private _getFilePathFromFilePathOrSourceFile;
-  /** @internal */
-  private _getFilledSettings;
-  /** @internal */
-  private _getFilledUserPreferences;
+  #private;
   private constructor();
   /** Gets the compiler language service. */
   get compilerObject(): ts.LanguageService;
@@ -10331,20 +10249,7 @@ export interface ProgramCreationData {
 
 /** Wrapper around Program. */
 export declare class Program {
-  /** @internal */
-  private readonly _context;
-  /** @internal */
-  private readonly _typeChecker;
-  /** @internal */
-  private _createdCompilerObject;
-  /** @internal */
-  private _oldProgram;
-  /** @internal */
-  private _getOrCreateCompilerObject;
-  /** @internal */
-  private _configFileParsingDiagnostics;
-  /** @internal */
-  private _emit;
+  #private;
   private constructor();
   /** Gets the underlying compiler program. */
   get compilerObject(): ts.Program;
@@ -10406,10 +10311,7 @@ export declare class Program {
 
 /** Represents a code action. */
 export declare class CodeAction<TCompilerObject extends ts.CodeAction = ts.CodeAction> {
-  /** @internal */
-  private readonly _context;
-  /** @internal */
-  private readonly _compilerObject;
+  #private;
   protected constructor();
   /** Gets the compiler object. */
   get compilerObject(): TCompilerObject;
@@ -10438,10 +10340,7 @@ export declare class CodeFixAction extends CodeAction<ts.CodeFixAction> {
  * @remarks Commands are currently not implemented.
  */
 export declare class CombinedCodeActions {
-  /** @internal */
-  private readonly _context;
-  /** @internal */
-  private readonly _compilerObject;
+  #private;
   private constructor();
   /** Gets the compiler object. */
   get compilerObject(): ts.CombinedCodeActions;
@@ -10552,10 +10451,7 @@ export declare class DocumentSpan<TCompilerObject extends ts.DocumentSpan = ts.D
 
 /** Output of an emit on a single file. */
 export declare class EmitOutput {
-  /** @internal */
-  private readonly _context;
-  /** @internal */
-  private readonly _compilerObject;
+  #private;
   private constructor();
   /** TypeScript compiler emit result. */
   get compilerObject(): ts.EmitOutput;
@@ -10591,16 +10487,7 @@ export interface ApplyFileTextChangesOptions {
 }
 
 export declare class FileTextChanges {
-  /** @internal */
-  private readonly _context;
-  /** @internal */
-  private readonly _compilerObject;
-  /** @internal */
-  private readonly _sourceFile;
-  /** @internal */
-  private readonly _existingFileExists;
-  /** @internal */
-  private _isApplied;
+  #private;
   private constructor();
   /** Gets the file path. */
   getFilePath(): string;
@@ -10639,7 +10526,7 @@ export interface MemoryEmitResultFile {
 
 /** Result of an emit to memory. */
 export declare class MemoryEmitResult extends EmitResult {
-  private readonly _files;
+  #private;
   private constructor();
   /** Gets the files that were emitted to memory. */
   getFiles(): MemoryEmitResultFile[];
@@ -10654,10 +10541,7 @@ export declare class MemoryEmitResult extends EmitResult {
 
 /** Output file of an emit. */
 export declare class OutputFile {
-  /** @internal */
-  private readonly _compilerObject;
-  /** @internal */
-  private readonly _context;
+  #private;
   private constructor();
   /** TypeScript compiler output file. */
   get compilerObject(): ts.OutputFile;
@@ -10671,10 +10555,7 @@ export declare class OutputFile {
 
 /** Set of edits to make in response to a refactor action, plus an optional location where renaming should be invoked from. */
 export declare class RefactorEditInfo {
-  /** @internal */
-  private readonly _context;
-  /** @internal */
-  private readonly _compilerObject;
+  #private;
   private constructor();
   /** Gets the compiler refactor edit info. */
   get compilerObject(): ts.RefactorEditInfo;
@@ -10695,12 +10576,9 @@ export declare class RefactorEditInfo {
 
 /** Referenced symbol. */
 export declare class ReferencedSymbol {
+  #private;
   /** @internal */
   protected readonly _context: ProjectContext;
-  /** @internal */
-  private readonly _compilerObject;
-  /** @internal */
-  private readonly _references;
   private constructor();
   /** Gets the compiler referenced symbol. */
   get compilerObject(): ts.ReferencedSymbol;
@@ -10738,8 +10616,7 @@ export declare class RenameLocation extends DocumentSpan<ts.RenameLocation> {
 
 /** Symbol display part. */
 export declare class SymbolDisplayPart {
-  /** @internal */
-  private readonly _compilerObject;
+  #private;
   private constructor();
   /** Gets the compiler symbol display part. */
   get compilerObject(): ts.SymbolDisplayPart;
@@ -10755,8 +10632,7 @@ export declare class SymbolDisplayPart {
 
 /** Represents a text change. */
 export declare class TextChange {
-  /** @internal */
-  private readonly _compilerObject;
+  #private;
   private constructor();
   /** Gets the compiler text change. */
   get compilerObject(): ts.TextChange;
@@ -10768,8 +10644,7 @@ export declare class TextChange {
 
 /** Represents a span of text. */
 export declare class TextSpan {
-  /** @internal */
-  private readonly _compilerObject;
+  #private;
   private constructor();
   /** Gets the compiler text span. */
   get compilerObject(): ts.TextSpan;
@@ -10783,12 +10658,7 @@ export declare class TextSpan {
 
 /** Wrapper around the TypeChecker. */
 export declare class TypeChecker {
-  /** @internal */
-  private readonly _context;
-  /** @internal */
-  private _getCompilerObject;
-  /** @internal */
-  private _getDefaultTypeFormatFlags;
+  #private;
   private constructor();
   /** Gets the compiler's TypeChecker. */
   get compilerObject(): ts.TypeChecker;
@@ -10930,14 +10800,9 @@ export declare class TypeChecker {
 }
 
 export declare class Type<TType extends ts.Type = ts.Type> {
+  #private;
   /** @internal */
   readonly _context: ProjectContext;
-  /** @internal */
-  private readonly _compilerType;
-  /** @internal */
-  private _hasTypeFlag;
-  /** @internal */
-  private _hasObjectFlag;
   protected constructor();
   /** Gets the underlying compiler type. */
   get compilerType(): TType;
@@ -11170,8 +11035,7 @@ export declare class Type<TType extends ts.Type = ts.Type> {
 }
 
 export declare class TypeParameter extends Type<ts.TypeParameter> {
-  /** @internal */
-  private _getTypeParameterDeclaration;
+  #private;
   /** Gets the constraint or throws if it doesn't exist. */
   getConstraintOrThrow(message?: string | (() => string)): Type;
   /** Gets the constraint type. */
@@ -11230,9 +11094,7 @@ export interface SupportedFormatCodeSettingsOnly {
 
 /** Holds the manipulation settings. */
 export declare class ManipulationSettingsContainer extends SettingsContainer<ManipulationSettings> {
-  private _editorSettings;
-  private _formatCodeSettings;
-  private _userPreferences;
+  #private;
   constructor();
   /** Gets the editor settings based on the current manipulation settings. */
   getEditorSettings(): Readonly<EditorSettings>;

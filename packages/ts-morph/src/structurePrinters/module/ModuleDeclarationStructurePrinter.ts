@@ -8,12 +8,12 @@ import { BlankLineFormattingStructuresPrinter } from "../formatting";
 import { NodePrinter } from "../NodePrinter";
 
 export class ModuleDeclarationStructurePrinter extends NodePrinter<OptionalKind<ModuleDeclarationStructure>> {
-    readonly #options: { isAmbient: boolean };
+  readonly #options: { isAmbient: boolean };
   readonly #blankLineFormattingWriter = new BlankLineFormattingStructuresPrinter(this);
 
   constructor(factory: StructurePrinterFactory, options: { isAmbient: boolean }) {
     super(factory);
-      this.#options = options;
+    this.#options = options;
   }
 
   printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<ModuleDeclarationStructure>> | undefined) {

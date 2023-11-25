@@ -16,11 +16,11 @@ export interface RemoveChildrenTextManipulatorOptions {
 }
 
 export class RemoveChildrenTextManipulator implements TextManipulator {
-    readonly #opts: RemoveChildrenTextManipulatorOptions;
+  readonly #opts: RemoveChildrenTextManipulatorOptions;
   #removalPos: number | undefined;
 
   constructor(opts: RemoveChildrenTextManipulatorOptions) {
-      this.#opts = opts;
+    this.#opts = opts;
   }
 
   getNewText(inputText: string) {

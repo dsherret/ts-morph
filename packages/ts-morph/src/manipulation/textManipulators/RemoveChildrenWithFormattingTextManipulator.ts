@@ -12,11 +12,11 @@ export interface RemoveChildrenWithFormattingTextManipulatorOptions<TNode extend
 }
 
 export class RemoveChildrenWithFormattingTextManipulator<TNode extends Node> implements TextManipulator {
-    readonly #opts: RemoveChildrenWithFormattingTextManipulatorOptions<TNode>;
+  readonly #opts: RemoveChildrenWithFormattingTextManipulatorOptions<TNode>;
   #removalPos: number | undefined;
 
   constructor(opts: RemoveChildrenWithFormattingTextManipulatorOptions<TNode>) {
-      this.#opts = opts;
+    this.#opts = opts;
   }
 
   getNewText(inputText: string) {

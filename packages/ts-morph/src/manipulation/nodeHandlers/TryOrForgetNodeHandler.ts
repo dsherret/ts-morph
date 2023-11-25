@@ -6,10 +6,10 @@ import { NodeHandler } from "./NodeHandler";
  * Attempts to use a node handler, but if it fails it will forget all the nodes' children.
  */
 export class TryOrForgetNodeHandler implements NodeHandler {
-    readonly #handler: NodeHandler;
+  readonly #handler: NodeHandler;
 
   constructor(handler: NodeHandler) {
-      this.#handler = handler;
+    this.#handler = handler;
   }
 
   handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {

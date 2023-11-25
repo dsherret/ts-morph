@@ -59,19 +59,13 @@ export const SourceFileBase: Constructor<ModuledNode> & Constructor<StatementedN
   TextInsertableNode(StatementedNode(Node)),
 );
 export class SourceFile extends SourceFileBase<ts.SourceFile> {
-  /** @internal */
   #isSaved = false;
-  /** @internal */
   readonly #modifiedEventContainer = new EventContainer<SourceFile>();
-  /** @internal */
   readonly #preModifiedEventContainer = new EventContainer<SourceFile>();
   /** @internal */
   readonly _referenceContainer = new SourceFileReferenceContainer(this);
-  /** @internal */
   #referencedFiles: FileReference[] | undefined;
-  /** @internal */
   #libReferenceDirectives: FileReference[] | undefined;
-  /** @internal */
   #typeReferenceDirectives: FileReference[] | undefined;
 
   /** @internal */
@@ -117,9 +111,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     clearTextRanges(this.#referencedFiles);
     clearTextRanges(this.#typeReferenceDirectives);
     clearTextRanges(this.#libReferenceDirectives);
-    delete this.#referencedFiles;
-    delete this.#typeReferenceDirectives;
-    delete this.#libReferenceDirectives;
+    this.#referencedFiles = undefined;
+    this.#typeReferenceDirectives = undefined;
+    this.#libReferenceDirectives = undefined;
 
     function clearTextRanges(textRanges: ReadonlyArray<TextRange> | undefined) {
       textRanges?.forEach(r => r._forget());

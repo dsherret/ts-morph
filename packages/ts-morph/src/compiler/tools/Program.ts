@@ -97,7 +97,7 @@ export class Program {
           this.#oldProgram,
           this.#configFileParsingDiagnostics,
         );
-        delete this.#oldProgram;
+        this.#oldProgram = undefined;
       }
 
       return this.#createdCompilerObject;
@@ -105,7 +105,7 @@ export class Program {
 
     if (this.#createdCompilerObject != null) {
       this.#oldProgram = this.#createdCompilerObject;
-      delete this.#createdCompilerObject;
+      this.#createdCompilerObject = undefined;
     }
 
     this.#typeChecker._reset(() => this.compilerObject.getTypeChecker());

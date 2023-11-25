@@ -2,11 +2,11 @@ import { CodeBlockWriter } from "../../codeBlockWriter";
 import { Printer } from "../Printer";
 
 export class NewLineFormattingStructuresPrinter<T> extends Printer<ReadonlyArray<T>> {
-    readonly #printer: Printer<T>;
+  readonly #printer: Printer<T>;
 
   constructor(printer: Printer<T>) {
     super();
-      this.#printer = printer;
+    this.#printer = printer;
   }
 
   printText(writer: CodeBlockWriter, structures: ReadonlyArray<T> | undefined) {

@@ -9,13 +9,13 @@ import { Printer } from "../Printer";
 export type StatementStructuresArrayItem = string | WriterFunction | StatementStructures;
 
 export class StatementStructurePrinter extends Printer<StatementStructuresArrayItem> {
-    readonly #options: { isAmbient: boolean };
-    readonly #factory: StructurePrinterFactory;
+  readonly #options: { isAmbient: boolean };
+  readonly #factory: StructurePrinterFactory;
 
   constructor(factory: StructurePrinterFactory, options: { isAmbient: boolean }) {
     super();
-      this.#factory = factory;
-      this.#options = options;
+    this.#factory = factory;
+    this.#options = options;
   }
 
   printTexts(writer: CodeBlockWriter, statements: ReadonlyArray<StatementStructuresArrayItem> | string | WriterFunction | undefined) {

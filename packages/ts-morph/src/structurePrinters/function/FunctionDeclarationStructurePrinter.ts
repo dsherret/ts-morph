@@ -6,11 +6,11 @@ import { setValueIfUndefined } from "../../utils";
 import { NodePrinter } from "../NodePrinter";
 
 export class FunctionDeclarationStructurePrinter extends NodePrinter<OptionalKind<FunctionDeclarationStructure>> {
-    readonly #options: { isAmbient: boolean };
+  readonly #options: { isAmbient: boolean };
 
   constructor(factory: StructurePrinterFactory, options: { isAmbient: boolean }) {
     super(factory);
-      this.#options = options;
+    this.#options = options;
   }
 
   printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<FunctionDeclarationStructure>> | undefined) {

@@ -16,7 +16,7 @@ export interface RangeHandlerOptions {
  * Handler for deailing with a node that is going to have a descendant replaced based on the range.
  */
 export class RangeHandler implements NodeHandler {
-    readonly #compilerFactory: CompilerFactory;
+  readonly #compilerFactory: CompilerFactory;
   readonly #straightReplacementNodeHandler: StraightReplacementNodeHandler;
   readonly #helper: NodeHandlerHelper;
   readonly #start: number;
@@ -29,7 +29,7 @@ export class RangeHandler implements NodeHandler {
     this.#start = opts.start;
     this.#end = opts.end;
     // this.replacingLength = opts.replacingLength;
-      this.#compilerFactory = compilerFactory;
+    this.#compilerFactory = compilerFactory;
   }
 
   handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {

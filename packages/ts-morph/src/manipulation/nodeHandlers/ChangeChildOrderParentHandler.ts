@@ -14,7 +14,7 @@ export interface ChangeChildOrderParentHandlerOptions {
  * Node handler for dealing with a parent who has a child that will change order.
  */
 export class ChangeChildOrderParentHandler implements NodeHandler {
-    readonly #compilerFactory: CompilerFactory;
+  readonly #compilerFactory: CompilerFactory;
   readonly #straightReplacementNodeHandler: NodeHandler;
   readonly #helper: NodeHandlerHelper;
   readonly #oldIndex: number;
@@ -25,7 +25,7 @@ export class ChangeChildOrderParentHandler implements NodeHandler {
     this.#helper = new NodeHandlerHelper(compilerFactory);
     this.#oldIndex = opts.oldIndex;
     this.#newIndex = opts.newIndex;
-      this.#compilerFactory = compilerFactory;
+    this.#compilerFactory = compilerFactory;
   }
 
   handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {

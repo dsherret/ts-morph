@@ -6,10 +6,10 @@ import { AdvancedIterator } from "../../utils";
 import { NodeHandler } from "./NodeHandler";
 
 export class NodeHandlerHelper {
-    readonly #compilerFactory: CompilerFactory;
+  readonly #compilerFactory: CompilerFactory;
 
   constructor(compilerFactory: CompilerFactory) {
-      this.#compilerFactory = compilerFactory;
+    this.#compilerFactory = compilerFactory;
   }
 
   handleForValues(handler: NodeHandler, currentNode: ts.Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {

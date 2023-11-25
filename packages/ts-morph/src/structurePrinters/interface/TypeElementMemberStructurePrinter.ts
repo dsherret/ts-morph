@@ -9,11 +9,11 @@ import { Printer } from "../Printer";
 export type TypeElementStructuresArrayItem = string | WriterFunction | TypeElementMemberStructures;
 
 export class TypeElementMemberStructurePrinter extends Printer<TypeElementStructuresArrayItem> {
-    readonly #factory: StructurePrinterFactory;
+  readonly #factory: StructurePrinterFactory;
 
   constructor(factory: StructurePrinterFactory) {
     super();
-      this.#factory = factory;
+    this.#factory = factory;
   }
 
   printTexts(writer: CodeBlockWriter, members: ReadonlyArray<TypeElementStructuresArrayItem> | string | WriterFunction | undefined) {

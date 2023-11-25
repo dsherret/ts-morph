@@ -9,14 +9,14 @@ import { CompilerFactory } from "./CompilerFactory";
  * todo: Move this to a different folder.
  */
 export class InProjectCoordinator {
-    readonly #compilerFactory: CompilerFactory;
+  readonly #compilerFactory: CompilerFactory;
   readonly #notInProjectFiles = new Set<SourceFile>();
 
   constructor(compilerFactory: CompilerFactory) {
     compilerFactory.onSourceFileRemoved(sourceFile => {
       this.#notInProjectFiles.delete(sourceFile);
     });
-      this.#compilerFactory = compilerFactory;
+    this.#compilerFactory = compilerFactory;
   }
 
   /** Sets the source file as not being in the project. */

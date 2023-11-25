@@ -19,7 +19,7 @@ export interface RangeParentHandlerOptions {
  * Handler for deailing with a parent that is going to have a child replaced based on the range.
  */
 export class RangeParentHandler implements NodeHandler {
-    readonly #compilerFactory: CompilerFactory;
+  readonly #compilerFactory: CompilerFactory;
   readonly #straightReplacementNodeHandler: StraightReplacementNodeHandler;
   readonly #helper: NodeHandlerHelper;
   readonly #start: number;
@@ -36,7 +36,7 @@ export class RangeParentHandler implements NodeHandler {
     this.#replacingLength = opts.replacingLength;
     this.#replacingNodes = opts.replacingNodes?.map(n => n.compilerNode);
     this.#customMappings = opts.customMappings;
-      this.#compilerFactory = compilerFactory;
+    this.#compilerFactory = compilerFactory;
   }
 
   handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {

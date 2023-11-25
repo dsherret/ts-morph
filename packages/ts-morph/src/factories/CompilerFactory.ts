@@ -54,7 +54,7 @@ import { kindToWrapperMappings } from "./kindToWrapperMappings";
  * @internal
  */
 export class CompilerFactory {
-    readonly #context: ProjectContext;
+  readonly #context: ProjectContext;
   readonly #sourceFileCacheByFilePath = new Map<StandardizedFilePath, SourceFile>();
   readonly #diagnosticCache = new WeakCache<ts.Diagnostic, Diagnostic>();
   readonly #definitionInfoCache = new WeakCache<ts.DefinitionInfo, DefinitionInfo>();
@@ -85,7 +85,7 @@ export class CompilerFactory {
     this.#directoryCache = new DirectoryCache(context);
 
     // prevent memory leaks when the document registry key changes by just resetting it
-    this.#context.compilerOptions.onModified(() => {
+    context.compilerOptions.onModified(() => {
       // repopulate the cache
       const currentSourceFiles = Array.from(this.#sourceFileCacheByFilePath.values()); // store this to prevent modifying while iterating
       for (const sourceFile of currentSourceFiles) {
@@ -93,7 +93,7 @@ export class CompilerFactory {
         replaceSourceFileForCacheUpdate(sourceFile);
       }
     });
-      this.#context = context;
+    this.#context = context;
   }
 
   /**
