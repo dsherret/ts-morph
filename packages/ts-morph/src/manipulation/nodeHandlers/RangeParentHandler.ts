@@ -45,11 +45,11 @@ export class RangeParentHandler implements NodeHandler {
     const [currentNodeChildren, newNodeChildren] = this.#helper.getCompilerChildrenAsIterators(currentNode, newNode, newSourceFile);
 
     // handle any custom mappings
-    this.handleCustomMappings(newNode, newSourceFile);
+    this.#handleCustomMappings(newNode, newSourceFile);
 
     // get the first child
     while (!currentNodeChildren.done && !newNodeChildren.done && newNodeChildren.peek.getStart(newSourceFile) < this.#start)
-      this.straightReplace(currentNodeChildren.next(), newNodeChildren.next(), newSourceFile);
+      this.#straightReplace(currentNodeChildren.next(), newNodeChildren.next(), newSourceFile);
 
     // handle the new nodes
     const newNodes: ts.Node[] = [];
@@ -89,7 +89,7 @@ export class RangeParentHandler implements NodeHandler {
 
     // handle the rest
     while (!currentNodeChildren.done)
-      this.straightReplace(currentNodeChildren.next(), newNodeChildren.next(), newSourceFile);
+      this.#straightReplace(currentNodeChildren.next(), newNodeChildren.next(), newSourceFile);
 
     // ensure the new children iterator is done too
     if (!newNodeChildren.done)
@@ -98,7 +98,7 @@ export class RangeParentHandler implements NodeHandler {
     this.#compilerFactory.replaceCompilerNode(currentNode, newNode);
   }
 
-  private handleCustomMappings(newParentNode: ts.Node, newSourceFile: ts.SourceFile) {
+  #handleCustomMappings(newParentNode: ts.Node, newSourceFile: ts.SourceFile) {
     if (this.#customMappings == null)
       return;
     const customMappings = this.#customMappings(newParentNode, newSourceFile);
@@ -107,12 +107,12 @@ export class RangeParentHandler implements NodeHandler {
       mapping.currentNode._context.compilerFactory.replaceCompilerNode(mapping.currentNode, mapping.newNode);
   }
 
-  private straightReplace(currentNode: ts.Node, nextNode: ts.Node, newSourceFile: ts.SourceFile) {
-    if (!this.tryReplaceNode(currentNode))
+  #straightReplace(currentNode: ts.Node, nextNode: ts.Node, newSourceFile: ts.SourceFile) {
+    if (!this.#tryReplaceNode(currentNode))
       this.#helper.handleForValues(this.#straightReplacementNodeHandler, currentNode, nextNode, newSourceFile);
   }
 
-  private tryReplaceNode(currentCompilerNode: ts.Node) {
+  #tryReplaceNode(currentCompilerNode: ts.Node) {
     if (this.#replacingNodes == null || this.#replacingNodes.length === 0)
       return false;
     const index = this.#replacingNodes.indexOf(currentCompilerNode);

@@ -4,20 +4,20 @@ import { NodePrinter } from "../NodePrinter";
 
 export class DecoratorStructurePrinter extends NodePrinter<OptionalKind<DecoratorStructure>> {
   printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<DecoratorStructure>> | undefined) {
-    this.printMultiple(writer, structures, () => writer.newLine());
+    this.#printMultiple(writer, structures, () => writer.newLine());
   }
 
   printTextsInline(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<DecoratorStructure>> | undefined) {
-    this.printMultiple(writer, structures, () => writer.space());
+    this.#printMultiple(writer, structures, () => writer.space());
   }
 
   protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<DecoratorStructure>) {
     writer.write(`@${structure.name}`);
-    this.printTypeArguments(writer, structure);
-    this.printArguments(writer, structure);
+    this.#printTypeArguments(writer, structure);
+    this.#printArguments(writer, structure);
   }
 
-  private printTypeArguments(writer: CodeBlockWriter, structure: OptionalKind<DecoratorStructure>) {
+  #printTypeArguments(writer: CodeBlockWriter, structure: OptionalKind<DecoratorStructure>) {
     if (structure.typeArguments == null || structure.typeArguments.length === 0)
       return;
 
@@ -29,7 +29,7 @@ export class DecoratorStructurePrinter extends NodePrinter<OptionalKind<Decorato
     writer.write(">");
   }
 
-  private printArguments(writer: CodeBlockWriter, structure: OptionalKind<DecoratorStructure>) {
+  #printArguments(writer: CodeBlockWriter, structure: OptionalKind<DecoratorStructure>) {
     if (structure.arguments == null)
       return;
 
@@ -45,7 +45,7 @@ export class DecoratorStructurePrinter extends NodePrinter<OptionalKind<Decorato
     writer.write(")");
   }
 
-  private printMultiple(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<DecoratorStructure>> | undefined, separator: () => void) {
+  #printMultiple(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<DecoratorStructure>> | undefined, separator: () => void) {
     if (structures == null || structures.length === 0)
       return;
     for (const structure of structures) {

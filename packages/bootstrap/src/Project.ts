@@ -315,7 +315,7 @@ export class Project {
    * @param tsConfigFilePath - File path to the tsconfig.json file.
    */
   addSourceFilesFromTsConfig(tsConfigFilePath: string): Promise<ts.SourceFile[]> {
-    const resolver = this._getTsConfigResolver(tsConfigFilePath);
+    const resolver = this.#getTsConfigResolver(tsConfigFilePath);
     return this._addSourceFilesForTsConfigResolver(resolver, resolver.getCompilerOptions());
   }
 
@@ -327,12 +327,11 @@ export class Project {
    * @param tsConfigFilePath - File path to the tsconfig.json file.
    */
   addSourceFilesFromTsConfigSync(tsConfigFilePath: string): ts.SourceFile[] {
-    const resolver = this._getTsConfigResolver(tsConfigFilePath);
+    const resolver = this.#getTsConfigResolver(tsConfigFilePath);
     return this._addSourceFilesForTsConfigResolverSync(resolver, resolver.getCompilerOptions());
   }
 
-  /** @internal */
-  private _getTsConfigResolver(tsConfigFilePath: string) {
+  #getTsConfigResolver(tsConfigFilePath: string) {
     const standardizedFilePath = this.#fileSystemWrapper.getStandardizedAbsolutePath(tsConfigFilePath);
     return new TsConfigResolver(this.#fileSystemWrapper, standardizedFilePath, this.compilerOptions.getEncoding());
   }
@@ -442,14 +441,14 @@ export class Project {
   }
 
   /** @internal */
-  #_oldProgram: ts.Program | undefined;
+  #oldProgram: ts.Program | undefined;
 
   /**
    * Creates a new program.
    * Note: You should get a new program any time source files are added, removed, or changed.
    */
   createProgram(options?: ts.CreateProgramOptions): ts.Program {
-    const oldProgram = this.#_oldProgram;
+    const oldProgram = this.#oldProgram;
     const program = ts.createProgram({
       rootNames: Array.from(this.#sourceFileCache.getSourceFilePaths()),
       options: this.compilerOptions.get(),
@@ -458,7 +457,7 @@ export class Project {
       configFileParsingDiagnostics: this.#configFileParsingDiagnostics,
       ...options,
     });
-    this.#_oldProgram = program;
+    this.#oldProgram = program;
     return program;
   }
 

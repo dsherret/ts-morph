@@ -31,12 +31,12 @@ export class StraightReplacementNodeHandler implements NodeHandler {
     }
 
     if (currentNode._hasWrappedChildren())
-      this.handleChildren(currentNode, newNode, newSourceFile);
+      this.#handleChildren(currentNode, newNode, newSourceFile);
 
     this.compilerFactory.replaceCompilerNode(currentNode, newNode);
   }
 
-  private handleChildren(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
+  #handleChildren(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
     const [currentChildren, newChildren] = this.helper.getChildrenFast(currentNode, newNode, newSourceFile);
 
     if (currentChildren.length !== newChildren.length) {

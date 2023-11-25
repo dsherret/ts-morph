@@ -198,7 +198,7 @@ export class LanguageService {
    * @param filePathOrSourceFile - The source file or file path to get suggestions for.
    */
   getSuggestionDiagnostics(filePathOrSourceFile: SourceFile | string): DiagnosticWithLocation[] {
-    const filePath = this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
+    const filePath = this.#_getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
     const suggestionDiagnostics = this.compilerObject.getSuggestionDiagnostics(filePath);
     return suggestionDiagnostics.map(d => this.#_context.compilerFactory.getDiagnosticWithLocation(d));
   }
@@ -214,7 +214,7 @@ export class LanguageService {
       filePath,
       range[0],
       range[1],
-      this._getFilledSettings(formatSettings),
+      this.#_getFilledSettings(formatSettings),
     ) || []).map(e => new TextChange(e));
   }
 
@@ -225,7 +225,7 @@ export class LanguageService {
    */
   getFormattingEditsForDocument(filePath: string, formatSettings: FormatCodeSettings) {
     const standardizedFilePath = this.#_context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
-    return (this.compilerObject.getFormattingEditsForDocument(standardizedFilePath, this._getFilledSettings(formatSettings)) || [])
+    return (this.compilerObject.getFormattingEditsForDocument(standardizedFilePath, this.#_getFilledSettings(formatSettings)) || [])
       .map(e => new TextChange(e));
   }
 
@@ -240,7 +240,7 @@ export class LanguageService {
     if (sourceFile == null)
       throw new errors.FileNotFoundError(standardizedFilePath);
 
-    formatSettings = this._getFilledSettings(formatSettings);
+    formatSettings = this.#_getFilledSettings(formatSettings);
     const formattingEdits = this.getFormattingEditsForDocument(standardizedFilePath, formatSettings);
     let newText = getTextFromTextChanges(sourceFile, formattingEdits);
     const newLineChar = formatSettings.newLineCharacter!;
@@ -266,7 +266,7 @@ export class LanguageService {
   /** @internal */
   getEmitOutput(filePathOrSourceFile: SourceFile | string, emitOnlyDtsFiles?: boolean): EmitOutput;
   getEmitOutput(filePathOrSourceFile: SourceFile | string, emitOnlyDtsFiles?: boolean): EmitOutput {
-    const filePath = this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
+    const filePath = this.#_getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
     const compilerObject = this.compilerObject;
     return new EmitOutput(this.#_context, getCompilerEmitOutput());
 
@@ -293,7 +293,7 @@ export class LanguageService {
    */
   getIdentationAtPosition(filePath: string, position: number, settings?: EditorSettings): number;
   getIdentationAtPosition(filePathOrSourceFile: SourceFile | string, position: number, settings?: EditorSettings): number {
-    const filePath = this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
+    const filePath = this.#_getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
     if (settings == null)
       settings = this.#_context.manipulationSettings.getEditorSettings();
     else
@@ -324,9 +324,9 @@ export class LanguageService {
   ): FileTextChanges[] {
     const scope: ts.OrganizeImportsArgs = {
       type: "file",
-      fileName: this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile),
+      fileName: this.#_getFilePathFromFilePathOrSourceFile(filePathOrSourceFile),
     };
-    return this.compilerObject.organizeImports(scope, this._getFilledSettings(formatSettings), this._getFilledUserPreferences(userPreferences))
+    return this.compilerObject.organizeImports(scope, this.#_getFilledSettings(formatSettings), this.#_getFilledUserPreferences(userPreferences))
       .map(fileTextChanges => new FileTextChanges(this.#_context, fileTextChanges));
   }
 
@@ -347,15 +347,15 @@ export class LanguageService {
     actionName: string,
     preferences: UserPreferences = {},
   ): RefactorEditInfo | undefined {
-    const filePath = this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
+    const filePath = this.#_getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
     const position = typeof positionOrRange === "number" ? positionOrRange : { pos: positionOrRange.getPos(), end: positionOrRange.getEnd() };
     const compilerObject = this.compilerObject.getEditsForRefactor(
       filePath,
-      this._getFilledSettings(formatSettings),
+      this.#_getFilledSettings(formatSettings),
       position,
       refactorName,
       actionName,
-      this._getFilledUserPreferences(preferences),
+      this.#_getFilledUserPreferences(preferences),
     );
 
     return compilerObject != null ? new RefactorEditInfo(this.#_context, compilerObject) : undefined;
@@ -372,11 +372,11 @@ export class LanguageService {
     const compilerResult = this.compilerObject.getCombinedCodeFix(
       {
         type: "file",
-        fileName: this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile),
+        fileName: this.#_getFilePathFromFilePathOrSourceFile(filePathOrSourceFile),
       },
       fixId,
-      this._getFilledSettings(formatSettings),
-      this._getFilledUserPreferences(preferences || {}),
+      this.#_getFilledSettings(formatSettings),
+      this.#_getFilledUserPreferences(preferences || {}),
     );
 
     return new CombinedCodeActions(this.#_context, compilerResult);
@@ -399,21 +399,21 @@ export class LanguageService {
     formatOptions: FormatCodeSettings = {},
     preferences: UserPreferences = {},
   ): CodeFixAction[] {
-    const filePath = this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
+    const filePath = this.#_getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
     const compilerResult = this.compilerObject.getCodeFixesAtPosition(
       filePath,
       start,
       end,
       errorCodes,
-      this._getFilledSettings(formatOptions),
-      this._getFilledUserPreferences(preferences || {}),
+      this.#_getFilledSettings(formatOptions),
+      this.#_getFilledUserPreferences(preferences || {}),
     );
 
     return compilerResult.map(compilerObject => new CodeFixAction(this.#_context, compilerObject));
   }
 
   /** @internal */
-  private _getFilePathFromFilePathOrSourceFile(filePathOrSourceFile: SourceFile | string) {
+  #_getFilePathFromFilePathOrSourceFile(filePathOrSourceFile: SourceFile | string) {
     const filePath = typeof filePathOrSourceFile === "string"
       ? this.#_context.fileSystemWrapper.getStandardizedAbsolutePath(filePathOrSourceFile)
       : filePathOrSourceFile.getFilePath();
@@ -423,7 +423,7 @@ export class LanguageService {
   }
 
   /** @internal */
-  private _getFilledSettings(settings: FormatCodeSettings) {
+  #_getFilledSettings(settings: FormatCodeSettings) {
     if ((settings as any)["_filled"]) // optimization
       return settings;
 
@@ -434,7 +434,7 @@ export class LanguageService {
   }
 
   /** @internal */
-  private _getFilledUserPreferences(userPreferences: UserPreferences) {
+  #_getFilledUserPreferences(userPreferences: UserPreferences) {
     return Object.assign(this.#_context.getUserPreferences(), userPreferences);
   }
 }

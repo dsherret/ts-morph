@@ -41,7 +41,7 @@ class VirtualFileSystemForTest extends InMemoryFileSystemHost implements CustomF
   }
 
   deleteSync(path: string) {
-    this.doDelete(path);
+    this.#doDelete(path);
     super.deleteSync(path);
   }
 
@@ -80,7 +80,7 @@ class VirtualFileSystemForTest extends InMemoryFileSystemHost implements CustomF
     this.#deleteLog.length = 0;
   }
 
-  private doDelete(path: string) {
+  #doDelete(path: string) {
     this.#deleteLog.push({ path });
     this.#files.removeByKey(path);
     this.#trackedDirectories.delete(path);

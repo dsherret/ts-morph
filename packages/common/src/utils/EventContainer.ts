@@ -14,7 +14,7 @@ export class EventContainer<EventArgType = undefined> {
    * @param subscription - Subscription.
    */
   subscribe(subscription: EventContainerSubscription<EventArgType>) {
-    const index = this.getIndex(subscription);
+    const index = this.#getIndex(subscription);
     if (index === -1)
       this.#subscriptions.push(subscription);
   }
@@ -24,7 +24,7 @@ export class EventContainer<EventArgType = undefined> {
    * @param subscription - Subscription.
    */
   unsubscribe(subscription: EventContainerSubscription<EventArgType>) {
-    const index = this.getIndex(subscription);
+    const index = this.#getIndex(subscription);
     if (index >= 0)
       this.#subscriptions.splice(index, 1);
   }
@@ -37,7 +37,7 @@ export class EventContainer<EventArgType = undefined> {
       subscription(arg);
   }
 
-  private getIndex(subscription: EventContainerSubscription<EventArgType>) {
+  #getIndex(subscription: EventContainerSubscription<EventArgType>) {
     return this.#subscriptions.indexOf(subscription);
   }
 }

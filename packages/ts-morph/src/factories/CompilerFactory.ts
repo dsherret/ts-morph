@@ -182,9 +182,9 @@ export class CompilerFactory {
   createSourceFileFromText(filePath: StandardizedFilePath, sourceText: string, options: SourceFileCreateOptions & { markInProject: boolean }) {
     filePath = this.#context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
     if (options.overwrite === true)
-      return this.createOrOverwriteSourceFileFromText(filePath, sourceText, options as MakeOptionalUndefined<typeof options>);
+      return this.#createOrOverwriteSourceFileFromText(filePath, sourceText, options as MakeOptionalUndefined<typeof options>);
     this.throwIfFileExists(filePath, "Did you mean to provide the overwrite option?");
-    return this.createSourceFileFromTextInternal(filePath, sourceText, options as MakeOptionalUndefined<typeof options>);
+    return this.#createSourceFileFromTextInternal(filePath, sourceText, options as MakeOptionalUndefined<typeof options>);
   }
 
   /**
@@ -199,7 +199,7 @@ export class CompilerFactory {
     throw new errors.InvalidOperationError(`${prefixMessage}A source file already exists at the provided file path: ${filePath}`);
   }
 
-  private createOrOverwriteSourceFileFromText(
+  #createOrOverwriteSourceFileFromText(
     filePath: StandardizedFilePath,
     sourceText: string,
     options: { markInProject: boolean; scriptKind: ScriptKind | undefined },
@@ -212,7 +212,7 @@ export class CompilerFactory {
       return existingSourceFile;
     }
 
-    return this.createSourceFileFromTextInternal(filePath, sourceText, options);
+    return this.#createSourceFileFromTextInternal(filePath, sourceText, options);
   }
 
   /**
@@ -238,7 +238,7 @@ export class CompilerFactory {
       const fileText = this.#context.fileSystemWrapper.readFileIfExistsSync(filePath, this.#context.getEncoding());
       if (fileText != null) {
         this.#context.logger.log(`Loaded file: ${filePath}`);
-        sourceFile = this.createSourceFileFromTextInternal(filePath, fileText, options);
+        sourceFile = this.#createSourceFileFromTextInternal(filePath, fileText, options);
         sourceFile._setIsSaved(true); // source files loaded from the disk are saved to start with
       }
     }
@@ -354,7 +354,7 @@ export class CompilerFactory {
     }
   }
 
-  private createSourceFileFromTextInternal(
+  #createSourceFileFromTextInternal(
     filePath: StandardizedFilePath,
     text: string,
     options: { markInProject: boolean; scriptKind: ScriptKind | undefined },
@@ -386,7 +386,7 @@ export class CompilerFactory {
         if (!options.markInProject)
           this.#context.inProjectCoordinator.setSourceFileNotInProject(createdSourceFile);
 
-        this.addSourceFileToCache(createdSourceFile);
+        this.#addSourceFileToCache(createdSourceFile);
         wasAdded = true;
         return createdSourceFile;
       });
@@ -400,7 +400,7 @@ export class CompilerFactory {
     return sourceFile;
   }
 
-  private addSourceFileToCache(sourceFile: SourceFile) {
+  #addSourceFileToCache(sourceFile: SourceFile) {
     this.#sourceFileCacheByFilePath.set(sourceFile.getFilePath(), sourceFile);
     this.#context.fileSystemWrapper.removeFileDelete(sourceFile.getFilePath());
     this.#directoryCache.addSourceFile(sourceFile);
@@ -595,10 +595,10 @@ export class CompilerFactory {
 
     if (nodeToReplace.kind === SyntaxKind.SourceFile && (nodeToReplace as ts.SourceFile).fileName !== (newNode as ts.SourceFile).fileName) {
       const sourceFile = node! as SourceFile;
-      this.removeCompilerNodeFromCache(nodeToReplace);
+      this.#removeCompilerNodeFromCache(nodeToReplace);
       sourceFile._replaceCompilerNodeFromFactory(newNode as ts.SourceFile);
       this.#nodeCache.set(newNode, sourceFile);
-      this.addSourceFileToCache(sourceFile);
+      this.#addSourceFileToCache(sourceFile);
       this.#sourceFileAddedEventContainer.fire(sourceFile);
     } else {
       this.#nodeCache.replaceKey(nodeToReplace, newNode);
@@ -612,14 +612,14 @@ export class CompilerFactory {
    * @param node - Node to remove.
    */
   removeNodeFromCache(node: Node) {
-    this.removeCompilerNodeFromCache(node.compilerNode);
+    this.#removeCompilerNodeFromCache(node.compilerNode);
   }
 
   /**
    * Removes a compiler node from the cache.
    * @param compilerNode - Compiler node to remove.
    */
-  private removeCompilerNodeFromCache(compilerNode: ts.Node) {
+  #removeCompilerNodeFromCache(compilerNode: ts.Node) {
     this.#nodeCache.removeByKey(compilerNode);
 
     if (compilerNode.kind === SyntaxKind.SourceFile) {

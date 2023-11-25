@@ -70,7 +70,7 @@ export class DirectoryCache {
   }
 
   remove(dirPath: StandardizedFilePath) {
-    this.removeFromDirectoriesByDirPath(dirPath);
+    this.#removeFromDirectoriesByDirPath(dirPath);
     this.#directoriesByPath.removeByKey(dirPath);
     this.#orphanDirs.removeByKey(dirPath);
   }
@@ -117,11 +117,11 @@ export class DirectoryCache {
     if (this.has(dirPath))
       return this.get(dirPath)!;
 
-    this.fillParentsOfDirPath(dirPath);
-    return this.createDirectory(dirPath);
+    this.#fillParentsOfDirPath(dirPath);
+    return this.#createDirectory(dirPath);
   }
 
-  private createDirectory(path: StandardizedFilePath) {
+  #createDirectory(path: StandardizedFilePath) {
     const newDirectory = new Directory(this.#context, path);
     this.addDirectory(newDirectory);
     return newDirectory;
@@ -142,7 +142,7 @@ export class DirectoryCache {
     }
 
     if (!isRootDir)
-      this.addToDirectoriesByDirPath(directory);
+      this.#addToDirectoriesByDirPath(directory);
 
     if (!this.has(parentDirPath))
       this.#orphanDirs.set(path, directory);
@@ -153,11 +153,11 @@ export class DirectoryCache {
 
     for (const orphanDir of this.#orphanDirs.getValues()) {
       if (directory.isAncestorOf(orphanDir))
-        this.fillParentsOfDirPath(orphanDir.getPath());
+        this.#fillParentsOfDirPath(orphanDir.getPath());
     }
   }
 
-  private addToDirectoriesByDirPath(directory: Directory) {
+  #addToDirectoriesByDirPath(directory: Directory) {
     if (FileUtils.isRootDirPath(directory.getPath()))
       return;
     const parentDirPath = FileUtils.getDirPath(directory.getPath());
@@ -168,7 +168,7 @@ export class DirectoryCache {
     directories.set(directory);
   }
 
-  private removeFromDirectoriesByDirPath(dirPath: StandardizedFilePath) {
+  #removeFromDirectoriesByDirPath(dirPath: StandardizedFilePath) {
     if (FileUtils.isRootDirPath(dirPath))
       return;
     const parentDirPath = FileUtils.getDirPath(dirPath);
@@ -182,7 +182,7 @@ export class DirectoryCache {
       this.#directoriesByDirPath.removeByKey(parentDirPath);
   }
 
-  private fillParentsOfDirPath(dirPath: StandardizedFilePath) {
+  #fillParentsOfDirPath(dirPath: StandardizedFilePath) {
     const passedDirPaths: StandardizedFilePath[] = [];
     let parentDir = FileUtils.getDirPath(dirPath);
     while (dirPath !== parentDir) {
@@ -190,7 +190,7 @@ export class DirectoryCache {
       parentDir = FileUtils.getDirPath(dirPath);
       if (this.#directoriesByPath.has(dirPath)) {
         for (const currentDirPath of passedDirPaths)
-          this.createDirectory(currentDirPath);
+          this.#createDirectory(currentDirPath);
         break;
       }
 

@@ -94,16 +94,16 @@ class DenoRuntimeFileSystem {
 
   async stat(filePath: string) {
     const stat = await Deno.stat(filePath);
-    return this._toStat(stat);
+    return this.#toStat(stat);
   }
 
   statSync(path: string) {
     const stat = Deno.statSync(path);
-    return this._toStat(stat);
+    return this.#toStat(stat);
   }
 
   // deno-lint-ignore no-explicit-any
-  private _toStat(stat: any) {
+  #toStat(stat: any) {
     return {
       isFile() {
         return stat.isFile;

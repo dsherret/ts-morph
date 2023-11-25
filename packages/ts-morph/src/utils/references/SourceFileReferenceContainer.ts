@@ -36,7 +36,7 @@ export class SourceFileReferenceContainer {
       this.#sourceFile._context.compilerFactory.onSourceFileAdded(this.#resolveUnresolved, false);
 
     this.clear();
-    this.populateReferences();
+    this.#populateReferences();
 
     if (this.#unresolvedLiterals.length > 0)
       this.#sourceFile._context.compilerFactory.onSourceFileAdded(this.#resolveUnresolved);
@@ -53,10 +53,10 @@ export class SourceFileReferenceContainer {
   #resolveUnresolved = () => {
     for (let i = this.#unresolvedLiterals.length - 1; i >= 0; i--) {
       const literal = this.#unresolvedLiterals[i];
-      const sourceFile = this.getSourceFileForLiteral(literal);
+      const sourceFile = this.#getSourceFileForLiteral(literal);
       if (sourceFile != null) {
         this.#unresolvedLiterals.splice(i, 1);
-        this.addNodeInThis(literal, sourceFile);
+        this.#addNodeInThis(literal, sourceFile);
       }
     }
 
@@ -64,21 +64,21 @@ export class SourceFileReferenceContainer {
       this.#sourceFile._context.compilerFactory.onSourceFileAdded(this.#resolveUnresolved, false);
   };
 
-  private populateReferences() {
+  #populateReferences() {
     this.#sourceFile._context.compilerFactory.forgetNodesCreatedInBlock(remember => {
       for (const literal of this.#sourceFile.getImportStringLiterals()) {
-        const sourceFile = this.getSourceFileForLiteral(literal);
+        const sourceFile = this.#getSourceFileForLiteral(literal);
         remember(literal);
 
         if (sourceFile == null)
           this.#unresolvedLiterals.push(literal);
         else
-          this.addNodeInThis(literal, sourceFile);
+          this.#addNodeInThis(literal, sourceFile);
       }
     });
   }
 
-  private getSourceFileForLiteral(literal: StringLiteral) {
+  #getSourceFileForLiteral(literal: StringLiteral) {
     const parent = literal.getParentOrThrow();
     const grandParent = parent.getParent();
 
@@ -101,7 +101,7 @@ export class SourceFileReferenceContainer {
     return undefined;
   }
 
-  private addNodeInThis(literal: StringLiteral, sourceFile: SourceFile) {
+  #addNodeInThis(literal: StringLiteral, sourceFile: SourceFile) {
     this.#nodesInThis.set(literal, sourceFile);
     sourceFile._referenceContainer.#nodesInOther.set(literal, sourceFile);
   }

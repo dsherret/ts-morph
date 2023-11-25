@@ -129,8 +129,8 @@ export class FileUtils {
    * @param endsWithPath - Ends with path.
    */
   static pathEndsWith(fileOrDirPath: string | undefined, endsWithPath: string | undefined) {
-    const pathItems = FileUtils.splitPathBySlashes(fileOrDirPath);
-    const endsWithItems = FileUtils.splitPathBySlashes(endsWithPath);
+    const pathItems = FileUtils.#splitPathBySlashes(fileOrDirPath);
+    const endsWithItems = FileUtils.#splitPathBySlashes(endsWithPath);
 
     if (endsWithItems.length > pathItems.length)
       return false;
@@ -151,8 +151,8 @@ export class FileUtils {
   static pathStartsWith(fileOrDirPath: string | undefined, startsWithPath: string | undefined) {
     const isfileOrDirPathEmpty = StringUtils.isNullOrWhitespace(fileOrDirPath);
     const isStartsWithPathEmpty = StringUtils.isNullOrWhitespace(startsWithPath);
-    const pathItems = FileUtils.splitPathBySlashes(fileOrDirPath);
-    const startsWithItems = FileUtils.splitPathBySlashes(startsWithPath);
+    const pathItems = FileUtils.#splitPathBySlashes(fileOrDirPath);
+    const startsWithItems = FileUtils.#splitPathBySlashes(startsWithPath);
 
     if (isfileOrDirPathEmpty && isStartsWithPathEmpty)
       return true;
@@ -172,7 +172,7 @@ export class FileUtils {
     return startsWithItems.length > 0;
   }
 
-  private static splitPathBySlashes(fileOrDirPath: string | undefined) {
+  static #splitPathBySlashes(fileOrDirPath: string | undefined) {
     fileOrDirPath = (fileOrDirPath || "").replace(FileUtils.#trimSlashStartRegex, "").replace(FileUtils.#trimSlashEndRegex, "");
     return FileUtils.standardizeSlashes(fileOrDirPath).replace(/^\//, "").split("/");
   }

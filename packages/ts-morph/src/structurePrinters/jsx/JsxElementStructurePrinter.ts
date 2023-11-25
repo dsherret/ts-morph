@@ -7,16 +7,16 @@ export class JsxElementStructurePrinter extends NodePrinter<OptionalKind<JsxElem
     writer.hangingIndent(() => {
       writer.write(`<${structure.name}`);
       if (structure.attributes)
-        this.printAttributes(writer, structure.attributes);
+        this.#printAttributes(writer, structure.attributes);
       writer.write(">");
     });
 
-    this.printChildren(writer, structure.children);
+    this.#printChildren(writer, structure.children);
 
     writer.write(`</${structure.name}>`);
   }
 
-  private printAttributes(writer: CodeBlockWriter, attributes: ReadonlyArray<OptionalKind<JsxAttributeStructure> | JsxSpreadAttributeStructure>) {
+  #printAttributes(writer: CodeBlockWriter, attributes: ReadonlyArray<OptionalKind<JsxAttributeStructure> | JsxSpreadAttributeStructure>) {
     const attributePrinter = this.factory.forJsxAttributeDecider();
     for (const attrib of attributes) {
       writer.space();
@@ -24,7 +24,7 @@ export class JsxElementStructurePrinter extends NodePrinter<OptionalKind<JsxElem
     }
   }
 
-  private printChildren(writer: CodeBlockWriter, children: JsxElementStructure["children"]) {
+  #printChildren(writer: CodeBlockWriter, children: JsxElementStructure["children"]) {
     if (children == null)
       return;
 

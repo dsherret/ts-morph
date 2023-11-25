@@ -30,7 +30,7 @@ export class ChangeChildOrderParentHandler implements NodeHandler {
 
   handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
     const [currentChildren, newChildren] = this.#helper.getCompilerChildren(currentNode, newNode, newSourceFile);
-    const currentChildrenInNewOrder = this.getChildrenInNewOrder(currentChildren);
+    const currentChildrenInNewOrder = this.#getChildrenInNewOrder(currentChildren);
 
     errors.throwIfNotEqual(newChildren.length, currentChildrenInNewOrder.length, "New children length should match the old children length.");
 
@@ -40,7 +40,7 @@ export class ChangeChildOrderParentHandler implements NodeHandler {
     this.#compilerFactory.replaceCompilerNode(currentNode, newNode);
   }
 
-  private getChildrenInNewOrder(children: ts.Node[]) {
+  #getChildrenInNewOrder(children: ts.Node[]) {
     const result = [...children];
     const movingNode = result.splice(this.#oldIndex, 1)[0];
     result.splice(this.#newIndex, 0, movingNode);

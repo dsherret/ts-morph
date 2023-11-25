@@ -138,7 +138,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     if (parentSyntaxList != null)
       parentSyntaxList._wrappedChildCount--;
 
-    this._storeTextForForgetting();
+    this.#_storeTextForForgetting();
     this._context.compilerFactory.removeNodeFromCache(this);
     this._clearInternals();
   }
@@ -167,13 +167,13 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    */
   _replaceCompilerNodeFromFactory(compilerNode: NodeType) {
     if (compilerNode == null)
-      this._storeTextForForgetting();
+      this.#_storeTextForForgetting();
     this._clearInternals();
     this.#_compilerNode = compilerNode;
   }
 
   /** @internal */
-  private _storeTextForForgetting() {
+  #_storeTextForForgetting() {
     // check for undefined here just in case
     const sourceFileCompilerNode = this._sourceFile && this._sourceFile.compilerNode;
     const compilerNode = this.#_compilerNode;
@@ -296,7 +296,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    * @param name - Name of the local symbol.
    */
   getLocal(name: string): Symbol | undefined {
-    const locals = this._getCompilerLocals();
+    const locals = this.#_getCompilerLocals();
     if (locals == null)
       return undefined;
 
@@ -310,14 +310,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    * WARNING: The symbol table of locals is not exposed publicly by the compiler. Use this at your own risk knowing it may break.
    */
   getLocals(): Symbol[] {
-    const locals = this._getCompilerLocals();
+    const locals = this.#_getCompilerLocals();
     if (locals == null)
       return [];
     return Array.from(locals.values()).map(symbol => this._context.compilerFactory.getSymbol(symbol));
   }
 
   /** @internal */
-  private _getCompilerLocals() {
+  #_getCompilerLocals() {
     this._ensureBound();
     return (this.compilerNode as any).locals as ts.SymbolTable | undefined;
   }
@@ -1332,7 +1332,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    * @param offset - Optional number of levels of indentation to add or remove.
    */
   getIndentationText(offset = 0): string {
-    return this._getIndentationTextForLevel(this.getIndentationLevel() + offset);
+    return this.#_getIndentationTextForLevel(this.getIndentationLevel() + offset);
   }
 
   /**
@@ -1340,13 +1340,13 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    * @param offset - Optional number of levels of indentation to add or remove.
    */
   getChildIndentationText(offset = 0): string {
-    return this._getIndentationTextForLevel(this.getChildIndentationLevel() + offset);
+    return this.#_getIndentationTextForLevel(this.getChildIndentationLevel() + offset);
   }
 
   /**
    * @internal
    */
-  private _getIndentationTextForLevel(level: number) {
+  #_getIndentationTextForLevel(level: number) {
     return this._context.manipulationSettings.getIndentationText().repeat(level);
   }
 
@@ -1601,7 +1601,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    * Gets the leading comment ranges of the current node.
    */
   getLeadingCommentRanges(): CommentRange[] {
-    return this.#_leadingCommentRanges || (this.#_leadingCommentRanges = this._getCommentsAtPos(this.getFullStart(), (text: string, pos: number) => {
+    return this.#_leadingCommentRanges || (this.#_leadingCommentRanges = this.#_getCommentsAtPos(this.getFullStart(), (text: string, pos: number) => {
       const comments = ts.getLeadingCommentRanges(text, pos) || [];
       // if this is a comment, then only include leading comment ranges before this one
       if (this.getKind() === SyntaxKind.SingleLineCommentTrivia || this.getKind() === SyntaxKind.MultiLineCommentTrivia) {
@@ -1617,11 +1617,11 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    * Gets the trailing comment ranges of the current node.
    */
   getTrailingCommentRanges(): CommentRange[] {
-    return this.#_trailingCommentRanges ?? (this.#_trailingCommentRanges = this._getCommentsAtPos(this.getEnd(), ts.getTrailingCommentRanges));
+    return this.#_trailingCommentRanges ?? (this.#_trailingCommentRanges = this.#_getCommentsAtPos(this.getEnd(), ts.getTrailingCommentRanges));
   }
 
   /** @internal */
-  private _getCommentsAtPos(pos: number, getComments: (text: string, pos: number) => ReadonlyArray<ts.CommentRange> | undefined) {
+  #_getCommentsAtPos(pos: number, getComments: (text: string, pos: number) => ReadonlyArray<ts.CommentRange> | undefined) {
     if (this.getKind() === SyntaxKind.SourceFile)
       return [];
 

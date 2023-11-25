@@ -7,13 +7,13 @@ export class JsxSelfClosingElementStructurePrinter extends NodePrinter<OptionalK
     writer.hangingIndent(() => {
       writer.write(`<${structure.name}`);
       if (structure.attributes)
-        this.printAttributes(writer, structure.attributes);
+        this.#printAttributes(writer, structure.attributes);
 
       writer.write(" />");
     });
   }
 
-  private printAttributes(writer: CodeBlockWriter, attributes: ReadonlyArray<OptionalKind<JsxAttributeStructure> | JsxSpreadAttributeStructure>) {
+  #printAttributes(writer: CodeBlockWriter, attributes: ReadonlyArray<OptionalKind<JsxAttributeStructure> | JsxSpreadAttributeStructure>) {
     const attributePrinter = this.factory.forJsxAttributeDecider();
     for (const attrib of attributes) {
       writer.space();

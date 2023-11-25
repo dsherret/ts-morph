@@ -30,8 +30,8 @@ export class ConstructorDeclarationStructurePrinter extends NodePrinter<Optional
   }
 
   protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<ConstructorDeclarationStructure>) {
-    this.printOverloads(writer, getOverloadStructures());
-    this.printHeader(writer, structure);
+    this.#printOverloads(writer, getOverloadStructures());
+    this.#printHeader(writer, structure);
     if (this.#options.isAmbient)
       writer.write(";");
     else {
@@ -53,7 +53,7 @@ export class ConstructorDeclarationStructurePrinter extends NodePrinter<Optional
     }
   }
 
-  private printOverloads(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<ConstructorDeclarationOverloadStructure>> | undefined) {
+  #printOverloads(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<ConstructorDeclarationOverloadStructure>> | undefined) {
     if (structures == null || structures.length === 0)
       return;
 
@@ -65,12 +65,12 @@ export class ConstructorDeclarationStructurePrinter extends NodePrinter<Optional
 
   printOverload(writer: CodeBlockWriter, structure: OptionalKind<ConstructorDeclarationOverloadStructure>) {
     this.printLeadingTrivia(writer, structure);
-    this.printHeader(writer, structure);
+    this.#printHeader(writer, structure);
     writer.write(";");
     this.printTrailingTrivia(writer, structure);
   }
 
-  private printHeader(writer: CodeBlockWriter, structure: OptionalKind<ConstructorDeclarationStructure | ConstructorDeclarationOverloadStructure>) {
+  #printHeader(writer: CodeBlockWriter, structure: OptionalKind<ConstructorDeclarationStructure | ConstructorDeclarationOverloadStructure>) {
     this.factory.forJSDoc().printDocs(writer, structure.docs);
     this.factory.forModifierableNode().printText(writer, structure);
     writer.write("constructor");

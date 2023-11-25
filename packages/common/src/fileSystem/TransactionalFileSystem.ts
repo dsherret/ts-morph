@@ -175,10 +175,10 @@ class Directory {
   }
 
   isFileQueuedForDelete(filePath: StandardizedFilePath) {
-    return this.hasOperation(operation => operation.kind === "deleteFile" && operation.filePath === filePath);
+    return this.#hasOperation(operation => operation.kind === "deleteFile" && operation.filePath === filePath);
   }
 
-  private hasOperation(operationMatches: (operation: Operation) => boolean) {
+  #hasOperation(operationMatches: (operation: Operation) => boolean) {
     for (const operation of this.operations) {
       if (operationMatches(operation))
         return true;
@@ -187,18 +187,18 @@ class Directory {
   }
 
   dequeueFileDelete(filePath: StandardizedFilePath) {
-    this.removeMatchingOperations(operation => operation.kind === "deleteFile" && operation.filePath === filePath);
+    this.#removeMatchingOperations(operation => operation.kind === "deleteFile" && operation.filePath === filePath);
   }
 
   dequeueDirDelete(dirPath: StandardizedFilePath) {
-    this.removeMatchingOperations(operation => operation.kind === "deleteDir" && operation.dir.path === dirPath);
+    this.#removeMatchingOperations(operation => operation.kind === "deleteDir" && operation.dir.path === dirPath);
   }
 
   isRootDir() {
     return FileUtils.isRootDirPath(this.path);
   }
 
-  private removeMatchingOperations(operationMatches: (operation: Operation) => boolean) {
+  #removeMatchingOperations(operationMatches: (operation: Operation) => boolean) {
     ArrayUtils.removeAll(this.operations, operationMatches);
   }
 }
@@ -248,38 +248,38 @@ export class TransactionalFileSystem {
   }
 
   queueFileDelete(filePath: StandardizedFilePath) {
-    this.throwIfLibFile(filePath);
-    const parentDir = this.getOrCreateParentDirectory(filePath);
+    this.#throwIfLibFile(filePath);
+    const parentDir = this.#getOrCreateParentDirectory(filePath);
     parentDir.operations.push({
       kind: "deleteFile",
-      index: this.getNextOperationIndex(),
+      index: this.#getNextOperationIndex(),
       filePath,
     });
     this.#pathCasingMaintainer.removePath(filePath);
   }
 
   removeFileDelete(filePath: StandardizedFilePath) {
-    this.getOrCreateParentDirectory(filePath).dequeueFileDelete(filePath);
+    this.#getOrCreateParentDirectory(filePath).dequeueFileDelete(filePath);
   }
 
   queueMkdir(dirPath: StandardizedFilePath) {
-    const dir = this.getOrCreateDirectory(dirPath);
+    const dir = this.#getOrCreateDirectory(dirPath);
     dir.setIsDeleted(false);
-    const parentDir = this.getOrCreateParentDirectory(dirPath);
+    const parentDir = this.#getOrCreateParentDirectory(dirPath);
     parentDir.operations.push({
       kind: "mkdir",
-      index: this.getNextOperationIndex(),
+      index: this.#getNextOperationIndex(),
       dir,
     });
   }
 
   queueDirectoryDelete(dirPath: StandardizedFilePath) {
-    const dir = this.getOrCreateDirectory(dirPath);
+    const dir = this.#getOrCreateDirectory(dirPath);
     dir.setIsDeleted(true);
-    const parentDir = this.getOrCreateParentDirectory(dirPath);
+    const parentDir = this.#getOrCreateParentDirectory(dirPath);
     parentDir.operations.push({
       kind: "deleteDir",
-      index: this.getNextOperationIndex(),
+      index: this.#getNextOperationIndex(),
       dir,
     });
     this.#pathCasingMaintainer.removePath(dirPath);
@@ -287,13 +287,13 @@ export class TransactionalFileSystem {
 
   queueMoveDirectory(srcPath: StandardizedFilePath, destPath: StandardizedFilePath) {
     // todo: tests for the root directory
-    const parentDir = this.getOrCreateParentDirectory(srcPath);
-    const moveDir = this.getOrCreateDirectory(srcPath);
-    const destinationDir = this.getOrCreateDirectory(destPath);
+    const parentDir = this.#getOrCreateParentDirectory(srcPath);
+    const moveDir = this.#getOrCreateDirectory(srcPath);
+    const destinationDir = this.#getOrCreateDirectory(destPath);
 
     const moveOperation: MoveDirectoryOperation = {
       kind: "move",
-      index: this.getNextOperationIndex(),
+      index: this.#getNextOperationIndex(),
       oldDir: moveDir,
       newDir: destinationDir,
     };
@@ -304,13 +304,13 @@ export class TransactionalFileSystem {
   }
 
   queueCopyDirectory(srcPath: StandardizedFilePath, destPath: StandardizedFilePath) {
-    const parentDir = this.getOrCreateParentDirectory(srcPath);
-    const copyDir = this.getOrCreateDirectory(srcPath);
-    const destinationDir = this.getOrCreateDirectory(destPath);
+    const parentDir = this.#getOrCreateParentDirectory(srcPath);
+    const copyDir = this.#getOrCreateDirectory(srcPath);
+    const destinationDir = this.#getOrCreateDirectory(destPath);
 
     const copyOperation: CopyDirectoryOperation = {
       kind: "copy",
-      index: this.getNextOperationIndex(),
+      index: this.#getNextOperationIndex(),
       oldDir: copyDir,
       newDir: destinationDir,
     };
@@ -319,43 +319,43 @@ export class TransactionalFileSystem {
   }
 
   async flush() {
-    const operations = this.getAndClearOperations();
+    const operations = this.#getAndClearOperations();
     for (const operation of operations)
-      await this.executeOperation(operation);
+      await this.#executeOperation(operation);
   }
 
   flushSync() {
-    for (const operation of this.getAndClearOperations())
-      this.executeOperationSync(operation);
+    for (const operation of this.#getAndClearOperations())
+      this.#executeOperationSync(operation);
   }
 
   async saveForDirectory(dirPath: StandardizedFilePath) {
-    const dir = this.getOrCreateDirectory(dirPath);
-    this.throwIfHasExternalOperations(dir, "save directory");
-    const operations = this.getAndClearOperationsForDir(dir);
+    const dir = this.#getOrCreateDirectory(dirPath);
+    this.#throwIfHasExternalOperations(dir, "save directory");
+    const operations = this.#getAndClearOperationsForDir(dir);
 
     // await after the state is set
-    await this.ensureDirectoryExists(dir);
+    await this.#ensureDirectoryExists(dir);
     for (const operation of operations)
-      await this.executeOperation(operation);
+      await this.#executeOperation(operation);
   }
 
   saveForDirectorySync(dirPath: StandardizedFilePath) {
-    const dir = this.getOrCreateDirectory(dirPath);
-    this.throwIfHasExternalOperations(dir, "save directory");
+    const dir = this.#getOrCreateDirectory(dirPath);
+    this.#throwIfHasExternalOperations(dir, "save directory");
 
-    this.ensureDirectoryExistsSync(dir);
+    this.#ensureDirectoryExistsSync(dir);
 
-    for (const operation of this.getAndClearOperationsForDir(dir))
-      this.executeOperationSync(operation);
+    for (const operation of this.#getAndClearOperationsForDir(dir))
+      this.#executeOperationSync(operation);
   }
 
-  private getAndClearOperationsForDir(dir: Directory) {
+  #getAndClearOperationsForDir(dir: Directory) {
     const operations: Operation[] = getAndClearParentMkDirOperations(dir.getParent(), dir);
     for (const currentDir of [dir, ...dir.getDescendants()])
       operations.push(...currentDir.operations);
     ArrayUtils.sortByProperty(operations, item => item.index);
-    this.removeDirAndSubDirs(dir);
+    this.#removeDirAndSubDirs(dir);
     return operations;
 
     function getAndClearParentMkDirOperations(parentDir: Directory | undefined, childDir: Directory): Operation[] {
@@ -367,13 +367,13 @@ export class TransactionalFileSystem {
     }
   }
 
-  private async executeOperation(operation: Operation) {
+  async #executeOperation(operation: Operation) {
     switch (operation.kind) {
       case "deleteDir":
-        await this.deleteSuppressNotFound(operation.dir.path);
+        await this.#deleteSuppressNotFound(operation.dir.path);
         break;
       case "deleteFile":
-        await this.deleteSuppressNotFound(operation.filePath);
+        await this.#deleteSuppressNotFound(operation.filePath);
         break;
       case "move":
         await this.#fileSystem.move(operation.oldDir.path, operation.newDir.path);
@@ -389,13 +389,13 @@ export class TransactionalFileSystem {
     }
   }
 
-  private executeOperationSync(operation: Operation) {
+  #executeOperationSync(operation: Operation) {
     switch (operation.kind) {
       case "deleteDir":
-        this.deleteSuppressNotFoundSync(operation.dir.path);
+        this.#deleteSuppressNotFoundSync(operation.dir.path);
         break;
       case "deleteFile":
-        this.deleteSuppressNotFoundSync(operation.filePath);
+        this.#deleteSuppressNotFoundSync(operation.filePath);
         break;
       case "move":
         this.#fileSystem.moveSync(operation.oldDir.path, operation.newDir.path);
@@ -411,7 +411,7 @@ export class TransactionalFileSystem {
     }
   }
 
-  private getAndClearOperations() {
+  #getAndClearOperations() {
     const operations: Operation[] = [];
     for (const dir of this.#directories.getValues())
       operations.push(...dir.operations);
@@ -421,33 +421,33 @@ export class TransactionalFileSystem {
   }
 
   async moveFileImmediately(oldFilePath: StandardizedFilePath, newFilePath: StandardizedFilePath, fileText: string) {
-    this.throwIfLibFile(newFilePath);
-    this.throwIfHasExternalOperations(this.getOrCreateParentDirectory(oldFilePath), "move file");
-    this.throwIfHasExternalOperations(this.getOrCreateParentDirectory(newFilePath), "move file");
+    this.#throwIfLibFile(newFilePath);
+    this.#throwIfHasExternalOperations(this.#getOrCreateParentDirectory(oldFilePath), "move file");
+    this.#throwIfHasExternalOperations(this.#getOrCreateParentDirectory(newFilePath), "move file");
 
     await this.writeFile(newFilePath, fileText);
     await this.deleteFileImmediately(oldFilePath);
   }
 
   moveFileImmediatelySync(oldFilePath: StandardizedFilePath, newFilePath: StandardizedFilePath, fileText: string) {
-    this.throwIfLibFile(newFilePath);
-    this.throwIfHasExternalOperations(this.getOrCreateParentDirectory(oldFilePath), "move file");
-    this.throwIfHasExternalOperations(this.getOrCreateParentDirectory(newFilePath), "move file");
+    this.#throwIfLibFile(newFilePath);
+    this.#throwIfHasExternalOperations(this.#getOrCreateParentDirectory(oldFilePath), "move file");
+    this.#throwIfHasExternalOperations(this.#getOrCreateParentDirectory(newFilePath), "move file");
 
     this.writeFileSync(newFilePath, fileText);
     this.deleteFileImmediatelySync(oldFilePath);
   }
 
   async deleteFileImmediately(filePath: StandardizedFilePath) {
-    this.throwIfLibFile(filePath);
-    const dir = this.getOrCreateParentDirectory(filePath);
+    this.#throwIfLibFile(filePath);
+    const dir = this.#getOrCreateParentDirectory(filePath);
 
-    this.throwIfHasExternalOperations(dir, "delete file");
+    this.#throwIfHasExternalOperations(dir, "delete file");
     dir.dequeueFileDelete(filePath);
     this.#pathCasingMaintainer.removePath(filePath);
 
     try {
-      await this.deleteSuppressNotFound(filePath);
+      await this.#deleteSuppressNotFound(filePath);
     } catch (err) {
       this.queueFileDelete(filePath);
       throw err;
@@ -455,15 +455,15 @@ export class TransactionalFileSystem {
   }
 
   deleteFileImmediatelySync(filePath: StandardizedFilePath) {
-    this.throwIfLibFile(filePath);
-    const dir = this.getOrCreateParentDirectory(filePath);
+    this.#throwIfLibFile(filePath);
+    const dir = this.#getOrCreateParentDirectory(filePath);
 
-    this.throwIfHasExternalOperations(dir, "delete file");
+    this.#throwIfHasExternalOperations(dir, "delete file");
     dir.dequeueFileDelete(filePath);
     this.#pathCasingMaintainer.removePath(filePath);
 
     try {
-      this.deleteSuppressNotFoundSync(filePath);
+      this.#deleteSuppressNotFoundSync(filePath);
     } catch (err) {
       this.queueFileDelete(filePath);
       throw err;
@@ -471,14 +471,14 @@ export class TransactionalFileSystem {
   }
 
   async copyDirectoryImmediately(srcDirPath: StandardizedFilePath, destDirPath: StandardizedFilePath) {
-    const srcDir = this.getOrCreateDirectory(srcDirPath);
-    const destDir = this.getOrCreateDirectory(destDirPath);
+    const srcDir = this.#getOrCreateDirectory(srcDirPath);
+    const destDir = this.#getOrCreateDirectory(destDirPath);
 
-    this.throwIfHasExternalOperations(srcDir, "copy directory");
-    this.throwIfHasExternalOperations(destDir, "copy directory");
+    this.#throwIfHasExternalOperations(srcDir, "copy directory");
+    this.#throwIfHasExternalOperations(destDir, "copy directory");
 
     const saveTask = Promise.all([this.saveForDirectory(srcDirPath), this.saveForDirectory(destDirPath)]);
-    this.removeDirAndSubDirs(srcDir);
+    this.#removeDirAndSubDirs(srcDir);
 
     // await after the state is set
     await saveTask;
@@ -486,28 +486,28 @@ export class TransactionalFileSystem {
   }
 
   copyDirectoryImmediatelySync(srcDirPath: StandardizedFilePath, destDirPath: StandardizedFilePath) {
-    const srcDir = this.getOrCreateDirectory(srcDirPath);
-    const destDir = this.getOrCreateDirectory(destDirPath);
+    const srcDir = this.#getOrCreateDirectory(srcDirPath);
+    const destDir = this.#getOrCreateDirectory(destDirPath);
 
-    this.throwIfHasExternalOperations(srcDir, "copy directory");
-    this.throwIfHasExternalOperations(destDir, "copy directory");
+    this.#throwIfHasExternalOperations(srcDir, "copy directory");
+    this.#throwIfHasExternalOperations(destDir, "copy directory");
 
     this.saveForDirectorySync(srcDirPath);
     this.saveForDirectorySync(destDirPath);
-    this.removeDirAndSubDirs(srcDir);
+    this.#removeDirAndSubDirs(srcDir);
 
     this.#fileSystem.copySync(srcDirPath, destDirPath);
   }
 
   async moveDirectoryImmediately(srcDirPath: StandardizedFilePath, destDirPath: StandardizedFilePath) {
-    const srcDir = this.getOrCreateDirectory(srcDirPath);
-    const destDir = this.getOrCreateDirectory(destDirPath);
+    const srcDir = this.#getOrCreateDirectory(srcDirPath);
+    const destDir = this.#getOrCreateDirectory(destDirPath);
 
-    this.throwIfHasExternalOperations(srcDir, "move directory");
-    this.throwIfHasExternalOperations(destDir, "move directory");
+    this.#throwIfHasExternalOperations(srcDir, "move directory");
+    this.#throwIfHasExternalOperations(destDir, "move directory");
 
     const saveTask = Promise.all([this.saveForDirectory(srcDirPath), this.saveForDirectory(destDirPath)]);
-    this.removeDirAndSubDirs(srcDir);
+    this.#removeDirAndSubDirs(srcDir);
     this.#pathCasingMaintainer.removePath(srcDirPath);
 
     // await after the state is set
@@ -516,31 +516,31 @@ export class TransactionalFileSystem {
   }
 
   moveDirectoryImmediatelySync(srcDirPath: StandardizedFilePath, destDirPath: StandardizedFilePath) {
-    const srcDir = this.getOrCreateDirectory(srcDirPath);
-    const destDir = this.getOrCreateDirectory(destDirPath);
+    const srcDir = this.#getOrCreateDirectory(srcDirPath);
+    const destDir = this.#getOrCreateDirectory(destDirPath);
 
-    this.throwIfHasExternalOperations(srcDir, "move directory");
-    this.throwIfHasExternalOperations(destDir, "move directory");
+    this.#throwIfHasExternalOperations(srcDir, "move directory");
+    this.#throwIfHasExternalOperations(destDir, "move directory");
 
     this.saveForDirectorySync(srcDirPath);
     this.saveForDirectorySync(destDirPath);
-    this.removeDirAndSubDirs(srcDir);
+    this.#removeDirAndSubDirs(srcDir);
     this.#pathCasingMaintainer.removePath(srcDirPath);
 
     this.#fileSystem.moveSync(srcDirPath, destDirPath);
   }
 
   async deleteDirectoryImmediately(dirPath: StandardizedFilePath) {
-    const dir = this.getOrCreateDirectory(dirPath);
+    const dir = this.#getOrCreateDirectory(dirPath);
 
-    this.throwIfHasExternalOperations(dir, "delete");
-    this.removeDirAndSubDirs(dir);
+    this.#throwIfHasExternalOperations(dir, "delete");
+    this.#removeDirAndSubDirs(dir);
     this.#pathCasingMaintainer.removePath(dirPath);
 
     try {
-      await this.deleteSuppressNotFound(dirPath);
+      await this.#deleteSuppressNotFound(dirPath);
     } catch (err) {
-      this.addBackDirAndSubDirs(dir);
+      this.#addBackDirAndSubDirs(dir);
       this.queueDirectoryDelete(dirPath);
     }
   }
@@ -548,34 +548,34 @@ export class TransactionalFileSystem {
   /** Recreates a directory on the underlying file system asynchronously. */
   async clearDirectoryImmediately(dirPath: StandardizedFilePath) {
     await this.deleteDirectoryImmediately(dirPath);
-    this.getOrCreateDirectory(dirPath).setIsDeleted(false);
+    this.#getOrCreateDirectory(dirPath).setIsDeleted(false);
     await this.#fileSystem.mkdir(dirPath);
   }
 
   /** Recreates a directory on the underlying file system synchronously. */
   clearDirectoryImmediatelySync(dirPath: StandardizedFilePath) {
     this.deleteDirectoryImmediatelySync(dirPath);
-    this.getOrCreateDirectory(dirPath).setIsDeleted(false);
+    this.#getOrCreateDirectory(dirPath).setIsDeleted(false);
     this.#fileSystem.mkdirSync(dirPath);
   }
 
   deleteDirectoryImmediatelySync(dirPath: StandardizedFilePath) {
-    const dir = this.getOrCreateDirectory(dirPath);
+    const dir = this.#getOrCreateDirectory(dirPath);
 
-    this.throwIfHasExternalOperations(dir, "delete");
-    this.removeDirAndSubDirs(dir);
+    this.#throwIfHasExternalOperations(dir, "delete");
+    this.#removeDirAndSubDirs(dir);
     this.#pathCasingMaintainer.removePath(dirPath);
 
     try {
-      this.deleteSuppressNotFoundSync(dirPath);
+      this.#deleteSuppressNotFoundSync(dirPath);
     } catch (err) {
-      this.addBackDirAndSubDirs(dir);
+      this.#addBackDirAndSubDirs(dir);
       this.queueDirectoryDelete(dirPath);
     }
   }
 
-  private async deleteSuppressNotFound(path: StandardizedFilePath) {
-    this.throwIfLibFile(path);
+  async #deleteSuppressNotFound(path: StandardizedFilePath) {
+    this.#throwIfLibFile(path);
     try {
       await this.#fileSystem.delete(path);
     } catch (err) {
@@ -584,8 +584,8 @@ export class TransactionalFileSystem {
     }
   }
 
-  private deleteSuppressNotFoundSync(path: StandardizedFilePath) {
-    this.throwIfLibFile(path);
+  #deleteSuppressNotFoundSync(path: StandardizedFilePath) {
+    this.#throwIfLibFile(path);
     try {
       this.#fileSystem.deleteSync(path);
     } catch (err) {
@@ -595,43 +595,43 @@ export class TransactionalFileSystem {
   }
 
   fileExists(filePath: StandardizedFilePath) {
-    if (this.libFileExists(filePath))
+    if (this.#libFileExists(filePath))
       return true;
-    if (this._fileDeletedInMemory(filePath))
+    if (this.#_fileDeletedInMemory(filePath))
       return false;
     return this.#fileSystem.fileExists(filePath);
   }
 
   fileExistsSync(filePath: StandardizedFilePath) {
-    if (this.libFileExists(filePath))
+    if (this.#libFileExists(filePath))
       return true;
-    if (this._fileDeletedInMemory(filePath))
+    if (this.#_fileDeletedInMemory(filePath))
       return false;
     return this.#fileSystem.fileExistsSync(filePath);
   }
 
-  private _fileDeletedInMemory(filePath: StandardizedFilePath) {
-    if (this.isPathQueuedForDeletion(filePath))
+  #_fileDeletedInMemory(filePath: StandardizedFilePath) {
+    if (this.#isPathQueuedForDeletion(filePath))
       return true;
-    const parentDir = this.getParentDirectoryIfExists(filePath);
+    const parentDir = this.#getParentDirectoryIfExists(filePath);
     if (parentDir != null && parentDir.getWasEverDeleted())
       return true;
     return false;
   }
 
   directoryExistsSync(dirPath: StandardizedFilePath) {
-    if (this.isPathQueuedForDeletion(dirPath))
+    if (this.#isPathQueuedForDeletion(dirPath))
       return false;
-    if (this.isPathDirectoryInQueueThatExists(dirPath))
+    if (this.#isPathDirectoryInQueueThatExists(dirPath))
       return true;
-    const dir = this.getDirectoryIfExists(dirPath);
+    const dir = this.#getDirectoryIfExists(dirPath);
     if (dir != null && dir.getWasEverDeleted())
       return false;
     return this.#fileSystem.directoryExistsSync(dirPath);
   }
 
   readFileIfExistsSync(filePath: StandardizedFilePath, encoding: string | undefined) {
-    if (this._fileDeletedInMemory(filePath))
+    if (this.#_fileDeletedInMemory(filePath))
       return undefined;
     try {
       return this.readFileSync(filePath, encoding);
@@ -644,16 +644,16 @@ export class TransactionalFileSystem {
   }
 
   readFileSync(filePath: StandardizedFilePath, encoding: string | undefined) {
-    const libFileText = this.readLibFile(filePath);
+    const libFileText = this.#readLibFile(filePath);
     if (libFileText != null)
       return libFileText;
 
-    this._verifyCanReadFile(filePath);
+    this.#_verifyCanReadFile(filePath);
     return this.#fileSystem.readFileSync(filePath, encoding);
   }
 
   readFileIfExists(filePath: StandardizedFilePath, encoding: string | undefined) {
-    if (this._fileDeletedInMemory(filePath))
+    if (this.#_fileDeletedInMemory(filePath))
       return Promise.resolve(undefined);
     return this.readFile(filePath, encoding)
       .catch(err => {
@@ -665,23 +665,23 @@ export class TransactionalFileSystem {
   }
 
   readFile(filePath: StandardizedFilePath, encoding: string | undefined) {
-    const libFileText = this.readLibFile(filePath);
+    const libFileText = this.#readLibFile(filePath);
     if (libFileText != null)
       return Promise.resolve(libFileText);
 
-    this._verifyCanReadFile(filePath);
+    this.#_verifyCanReadFile(filePath);
     return this.#fileSystem.readFile(filePath, encoding);
   }
 
-  private _verifyCanReadFile(filePath: StandardizedFilePath) {
-    if (this.isPathQueuedForDeletion(filePath))
+  #_verifyCanReadFile(filePath: StandardizedFilePath) {
+    if (this.#isPathQueuedForDeletion(filePath))
       throw new errors.InvalidOperationError(`Cannot read file at ${filePath} when it is queued for deletion.`);
-    if (this.getOrCreateParentDirectory(filePath).getWasEverDeleted())
+    if (this.#getOrCreateParentDirectory(filePath).getWasEverDeleted())
       throw new errors.InvalidOperationError(`Cannot read file at ${filePath} because one of its ancestor directories was once deleted or moved.`);
   }
 
   readDirSync(dirPath: StandardizedFilePath): DirEntry[] {
-    const dir = this.getOrCreateDirectory(dirPath);
+    const dir = this.#getOrCreateDirectory(dirPath);
     if (dir.getIsDeleted())
       throw new errors.InvalidOperationError(`Cannot read directory at ${dirPath} when it is queued for deletion.`);
     if (dir.getWasEverDeleted())
@@ -692,7 +692,7 @@ export class TransactionalFileSystem {
       uniqueDirPaths.set(entry.path, entry);
     for (const runtimeDirEntry of this.#fileSystem.readDirSync(dirPath)) {
       const standardizedChildDirOrFilePath = this.getStandardizedAbsolutePath(runtimeDirEntry.name);
-      if (!this.isPathQueuedForDeletion(standardizedChildDirOrFilePath)) {
+      if (!this.#isPathQueuedForDeletion(standardizedChildDirOrFilePath)) {
         uniqueDirPaths.set(standardizedChildDirOrFilePath, {
           path: standardizedChildDirOrFilePath,
           isDirectory: runtimeDirEntry.isDirectory,
@@ -708,14 +708,14 @@ export class TransactionalFileSystem {
     const filePaths = await this.#fileSystem.glob(patterns);
     return filePaths
       .map(filePath => this.getStandardizedAbsolutePath(filePath))
-      .filter(filePath => !this.isPathQueuedForDeletion(filePath));
+      .filter(filePath => !this.#isPathQueuedForDeletion(filePath));
   }
 
   *globSync(patterns: ReadonlyArray<string>) {
     const filePaths = this.#fileSystem.globSync(patterns);
     for (const filePath of filePaths) {
       const standardizedFilePath = this.getStandardizedAbsolutePath(filePath);
-      if (!this.isPathQueuedForDeletion(standardizedFilePath))
+      if (!this.#isPathQueuedForDeletion(standardizedFilePath))
         yield standardizedFilePath;
     }
   }
@@ -733,7 +733,7 @@ export class TransactionalFileSystem {
   }
 
   realpathSync(path: StandardizedFilePath) {
-    if (this.libFileExists(path))
+    if (this.#libFileExists(path))
       return path;
 
     // The TypeScript compiler does a try catch in ts.sys.realpathSync, so do that here too.
@@ -751,60 +751,60 @@ export class TransactionalFileSystem {
   }
 
   readFileOrNotExists(filePath: StandardizedFilePath, encoding: string) {
-    const libFileText = this.readLibFile(filePath);
+    const libFileText = this.#readLibFile(filePath);
     if (libFileText != null)
       return Promise.resolve(libFileText);
-    if (this.isPathQueuedForDeletion(filePath))
+    if (this.#isPathQueuedForDeletion(filePath))
       return false;
     return FileUtils.readFileOrNotExists(this.#fileSystem, filePath, encoding);
   }
 
   readFileOrNotExistsSync(filePath: StandardizedFilePath, encoding: string) {
-    const libFileText = this.readLibFile(filePath);
+    const libFileText = this.#readLibFile(filePath);
     if (libFileText != null)
       return libFileText;
-    if (this.isPathQueuedForDeletion(filePath))
+    if (this.#isPathQueuedForDeletion(filePath))
       return false;
     return FileUtils.readFileOrNotExistsSync(this.#fileSystem, filePath, encoding);
   }
 
   async writeFile(filePath: StandardizedFilePath, fileText: string) {
-    this.throwIfLibFile(filePath);
-    const parentDir = this.getOrCreateParentDirectory(filePath);
-    this.throwIfHasExternalOperations(parentDir, "write file");
+    this.#throwIfLibFile(filePath);
+    const parentDir = this.#getOrCreateParentDirectory(filePath);
+    this.#throwIfHasExternalOperations(parentDir, "write file");
     parentDir.dequeueFileDelete(filePath);
-    await this.ensureDirectoryExists(parentDir);
+    await this.#ensureDirectoryExists(parentDir);
     await this.#fileSystem.writeFile(filePath, fileText);
   }
 
   writeFileSync(filePath: StandardizedFilePath, fileText: string) {
-    this.throwIfLibFile(filePath);
-    const parentDir = this.getOrCreateParentDirectory(filePath);
-    this.throwIfHasExternalOperations(parentDir, "write file");
+    this.#throwIfLibFile(filePath);
+    const parentDir = this.#getOrCreateParentDirectory(filePath);
+    this.#throwIfHasExternalOperations(parentDir, "write file");
     parentDir.dequeueFileDelete(filePath);
-    this.ensureDirectoryExistsSync(parentDir);
+    this.#ensureDirectoryExistsSync(parentDir);
     this.#fileSystem.writeFileSync(filePath, fileText);
   }
 
-  private isPathDirectoryInQueueThatExists(path: StandardizedFilePath) {
-    const pathDir = this.getDirectoryIfExists(path);
+  #isPathDirectoryInQueueThatExists(path: StandardizedFilePath) {
+    const pathDir = this.#getDirectoryIfExists(path);
     return pathDir == null ? false : !pathDir.getIsDeleted();
   }
 
-  private isPathQueuedForDeletion(path: StandardizedFilePath) {
+  #isPathQueuedForDeletion(path: StandardizedFilePath) {
     // check if the provided path is a dir and if it's deleted
-    const pathDir = this.getDirectoryIfExists(path);
+    const pathDir = this.#getDirectoryIfExists(path);
     if (pathDir != null)
       return pathDir.getIsDeleted();
 
     // check if the provided path is a file or if it or its parent is deleted
-    const parentDir = this.getParentDirectoryIfExists(path);
+    const parentDir = this.#getParentDirectoryIfExists(path);
     if (parentDir == null)
       return false;
     return parentDir.isFileQueuedForDelete(path) || parentDir.getIsDeleted();
   }
 
-  private removeDirAndSubDirs(dir: Directory) {
+  #removeDirAndSubDirs(dir: Directory) {
     const originalParent = dir.getParent();
     dir.removeParent();
     for (const dirToRemove of [dir, ...dir.getDescendants()])
@@ -813,32 +813,32 @@ export class TransactionalFileSystem {
       originalParent.dequeueDirDelete(dir.path);
   }
 
-  private addBackDirAndSubDirs(dir: Directory) {
+  #addBackDirAndSubDirs(dir: Directory) {
     for (const dirToAdd of [dir, ...dir.getDescendants()])
       this.#directories.set(dirToAdd.path, dirToAdd);
     if (!dir.isRootDir())
-      dir.setParent(this.getOrCreateParentDirectory(dir.path));
+      dir.setParent(this.#getOrCreateParentDirectory(dir.path));
   }
 
   #operationIndex = 0;
 
-  private getNextOperationIndex() {
+  #getNextOperationIndex() {
     return this.#operationIndex++;
   }
 
-  private getParentDirectoryIfExists(filePath: StandardizedFilePath) {
-    return this.getDirectoryIfExists(FileUtils.getDirPath(filePath));
+  #getParentDirectoryIfExists(filePath: StandardizedFilePath) {
+    return this.#getDirectoryIfExists(FileUtils.getDirPath(filePath));
   }
 
-  private getOrCreateParentDirectory(filePath: StandardizedFilePath) {
-    return this.getOrCreateDirectory(FileUtils.getDirPath(filePath));
+  #getOrCreateParentDirectory(filePath: StandardizedFilePath) {
+    return this.#getOrCreateDirectory(FileUtils.getDirPath(filePath));
   }
 
-  private getDirectoryIfExists(dirPath: StandardizedFilePath) {
+  #getDirectoryIfExists(dirPath: StandardizedFilePath) {
     return this.#directories.get(dirPath);
   }
 
-  private getOrCreateDirectory(dirPath: StandardizedFilePath) {
+  #getOrCreateDirectory(dirPath: StandardizedFilePath) {
     let dir = this.#directories.get(dirPath);
     if (dir != null)
       return dir;
@@ -865,7 +865,7 @@ export class TransactionalFileSystem {
     return dir;
   }
 
-  private throwIfHasExternalOperations(dir: Directory, commandName: string) {
+  #throwIfHasExternalOperations(dir: Directory, commandName: string) {
     const operations = dir.getExternalOperations();
     if (operations.length === 0)
       return;
@@ -896,44 +896,44 @@ export class TransactionalFileSystem {
     }
   }
 
-  private async ensureDirectoryExists(dir: Directory) {
+  async #ensureDirectoryExists(dir: Directory) {
     if (dir.isRootDir())
       return;
 
-    this.removeMkDirOperationsForDir(dir);
+    this.#removeMkDirOperationsForDir(dir);
     await this.#fileSystem.mkdir(dir.path);
   }
 
-  private ensureDirectoryExistsSync(dir: Directory) {
+  #ensureDirectoryExistsSync(dir: Directory) {
     if (dir.isRootDir())
       return;
 
-    this.removeMkDirOperationsForDir(dir);
+    this.#removeMkDirOperationsForDir(dir);
     this.#fileSystem.mkdirSync(dir.path);
   }
 
-  private removeMkDirOperationsForDir(dir: Directory) {
+  #removeMkDirOperationsForDir(dir: Directory) {
     const parentDir = dir.getParent();
 
     if (parentDir != null) {
       ArrayUtils.removeAll(parentDir.operations, operation => operation.kind === "mkdir" && operation.dir === dir);
-      this.removeMkDirOperationsForDir(parentDir);
+      this.#removeMkDirOperationsForDir(parentDir);
     }
   }
 
-  private libFileExists(filePath: StandardizedFilePath) {
+  #libFileExists(filePath: StandardizedFilePath) {
     return this.#libFileMap != null && this.#libFileMap.has(filePath);
   }
 
-  private readLibFile(filePath: StandardizedFilePath) {
+  #readLibFile(filePath: StandardizedFilePath) {
     if (this.#libFileMap != null)
       return this.#libFileMap.get(filePath);
     else
       return undefined;
   }
 
-  private throwIfLibFile(filePath: StandardizedFilePath) {
-    if (this.libFileExists(filePath))
+  #throwIfLibFile(filePath: StandardizedFilePath) {
+    if (this.#libFileExists(filePath))
       throw new errors.InvalidOperationError(`This operation is not permitted on an in memory lib folder file.`);
   }
 }

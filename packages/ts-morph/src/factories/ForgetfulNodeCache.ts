@@ -23,7 +23,7 @@ export class ForgetfulNodeCache extends KeyValueCache<ts.Node, Node> {
   forgetLastPoint() {
     const nodes = this.#forgetStack.pop();
     if (nodes != null)
-      this.forgetNodes(nodes.values());
+      this.#forgetNodes(nodes.values());
   }
 
   rememberNode(node: Node) {
@@ -39,18 +39,18 @@ export class ForgetfulNodeCache extends KeyValueCache<ts.Node, Node> {
     }
 
     if (wasInForgetStack)
-      this.rememberParentOfNode(node);
+      this.#rememberParentOfNode(node);
 
     return wasInForgetStack;
   }
 
-  private rememberParentOfNode(node: Node) {
+  #rememberParentOfNode(node: Node) {
     const parent = node.getParentSyntaxList() || node.getParent();
     if (parent != null)
       this.rememberNode(parent);
   }
 
-  private forgetNodes(nodes: IterableIterator<Node>) {
+  #forgetNodes(nodes: IterableIterator<Node>) {
     for (const node of nodes) {
       if (node.wasForgotten() || node.getKind() === SyntaxKind.SourceFile)
         continue;

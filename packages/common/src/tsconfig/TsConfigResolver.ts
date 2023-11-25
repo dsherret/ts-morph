@@ -18,14 +18,12 @@ export class TsConfigResolver {
     this.#encoding = encoding;
   }
 
-  @Memoize
   getCompilerOptions() {
-    return this.parseJsonConfigFileContent().options;
+    return this._parseJsonConfigFileContent().options;
   }
 
-  @Memoize
   getErrors() {
-    return this.parseJsonConfigFileContent().errors || [];
+    return this._parseJsonConfigFileContent().errors || [];
   }
 
   @Memoize
@@ -34,9 +32,9 @@ export class TsConfigResolver {
     const fileSystem = this.#fileSystem;
     const directories = new Set<StandardizedFilePath>();
 
-    compilerOptions = compilerOptions || this.getCompilerOptions();
+    compilerOptions = compilerOptions ?? this.getCompilerOptions();
 
-    const configFileContent = this.parseJsonConfigFileContent();
+    const configFileContent = this._parseJsonConfigFileContent();
 
     for (let dirName of configFileContent.directories) {
       const dirPath = fileSystem.getStandardizedAbsolutePath(dirName);
@@ -60,14 +58,13 @@ export class TsConfigResolver {
   }
 
   @Memoize
-  private parseJsonConfigFileContent() {
+  private _parseJsonConfigFileContent() {
     this.#host.clearDirectories();
-    const result = ts.parseJsonConfigFileContent(this.getTsConfigFileJson(), this.#host, this.#tsConfigDirPath, undefined, this.#tsConfigFilePath);
+    const result = ts.parseJsonConfigFileContent(this.#getTsConfigFileJson(), this.#host, this.#tsConfigDirPath, undefined, this.#tsConfigFilePath);
     return { ...result, directories: this.#host.getDirectories() };
   }
 
-  @Memoize
-  private getTsConfigFileJson() {
+  #getTsConfigFileJson() {
     const text = this.#fileSystem.readFileSync(this.#tsConfigFilePath, this.#encoding);
     const parseResult = ts.parseConfigFileTextToJson(this.#tsConfigFilePath, text);
     if (parseResult.error != null)

@@ -162,7 +162,7 @@ export class TypeChecker {
    */
   getTypeText(type: Type, enclosingNode?: Node, typeFormatFlags?: TypeFormatFlags) {
     if (typeFormatFlags == null)
-      typeFormatFlags = this._getDefaultTypeFormatFlags(enclosingNode);
+      typeFormatFlags = this.#_getDefaultTypeFormatFlags(enclosingNode);
 
     return this.compilerObject.typeToString(type.compilerType, enclosingNode?.compilerNode, typeFormatFlags);
   }
@@ -254,7 +254,7 @@ export class TypeChecker {
   }
 
   /** @internal */
-  private _getDefaultTypeFormatFlags(enclosingNode?: Node) {
+  #_getDefaultTypeFormatFlags(enclosingNode?: Node) {
     let formatFlags = (TypeFormatFlags.UseTypeOfFunction | TypeFormatFlags.NoTruncation | TypeFormatFlags.UseFullyQualifiedType
       | TypeFormatFlags.WriteTypeArgumentsOfSignature) as TypeFormatFlags;
 

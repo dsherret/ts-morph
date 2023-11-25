@@ -32,8 +32,8 @@ export class FunctionDeclarationStructurePrinter extends NodePrinter<OptionalKin
   }
 
   protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<FunctionDeclarationStructure>) {
-    this.printOverloads(writer, structure.name, getOverloadStructures());
-    this.printHeader(writer, structure.name, structure);
+    this.#printOverloads(writer, structure.name, getOverloadStructures());
+    this.#printHeader(writer, structure.name, structure);
     if (this.#options.isAmbient || structure.hasDeclareKeyword)
       writer.write(";");
     else {
@@ -58,7 +58,7 @@ export class FunctionDeclarationStructurePrinter extends NodePrinter<OptionalKin
     }
   }
 
-  private printOverloads(
+  #printOverloads(
     writer: CodeBlockWriter,
     name: string | undefined,
     structures: ReadonlyArray<OptionalKind<FunctionDeclarationOverloadStructure>> | undefined,
@@ -74,12 +74,12 @@ export class FunctionDeclarationStructurePrinter extends NodePrinter<OptionalKin
 
   printOverload(writer: CodeBlockWriter, name: string | undefined, structure: OptionalKind<FunctionDeclarationOverloadStructure>) {
     this.printLeadingTrivia(writer, structure);
-    this.printHeader(writer, name, structure);
+    this.#printHeader(writer, name, structure);
     writer.write(";");
     this.printTrailingTrivia(writer, structure);
   }
 
-  private printHeader(
+  #printHeader(
     writer: CodeBlockWriter,
     name: string | undefined,
     structure: OptionalKind<FunctionDeclarationOverloadStructure> | OptionalKind<FunctionDeclarationStructure>,

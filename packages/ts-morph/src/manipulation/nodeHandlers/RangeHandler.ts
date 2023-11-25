@@ -40,7 +40,7 @@ export class RangeHandler implements NodeHandler {
 
     // get the first child
     while (!currentNodeChildren.done && !newNodeChildren.done && newNodeChildren.peek.getEnd() <= this.#start)
-      this.straightReplace(currentNodeChildren.next(), newNodeChildren.next(), newSourceFile);
+      this.#straightReplace(currentNodeChildren.next(), newNodeChildren.next(), newSourceFile);
 
     // go down into the children if before the node or in a surrounding node
     while (
@@ -50,7 +50,7 @@ export class RangeHandler implements NodeHandler {
         || currentNodeChildren.peek.getStart(currentSourceFile) === this.#start && newNodeChildren.peek.end > this.#end
       )
     ) {
-      this.rangeHandlerReplace(currentNodeChildren.next(), newNodeChildren.next(), newSourceFile);
+      this.#rangeHandlerReplace(currentNodeChildren.next(), newNodeChildren.next(), newSourceFile);
     }
 
     // skip over the new children while they're within the range
@@ -59,7 +59,7 @@ export class RangeHandler implements NodeHandler {
 
     // handle the rest
     while (!currentNodeChildren.done)
-      this.straightReplace(currentNodeChildren.next(), newNodeChildren.next(), newSourceFile);
+      this.#straightReplace(currentNodeChildren.next(), newNodeChildren.next(), newSourceFile);
 
     // ensure the new children iterator is done too
     if (!newNodeChildren.done)
@@ -68,11 +68,11 @@ export class RangeHandler implements NodeHandler {
     this.#compilerFactory.replaceCompilerNode(currentNode, newNode);
   }
 
-  private straightReplace(currentNode: ts.Node, nextNode: ts.Node, newSourceFile: ts.SourceFile) {
+  #straightReplace(currentNode: ts.Node, nextNode: ts.Node, newSourceFile: ts.SourceFile) {
     this.#helper.handleForValues(this.#straightReplacementNodeHandler, currentNode, nextNode, newSourceFile);
   }
 
-  private rangeHandlerReplace(currentNode: ts.Node, nextNode: ts.Node, newSourceFile: ts.SourceFile) {
+  #rangeHandlerReplace(currentNode: ts.Node, nextNode: ts.Node, newSourceFile: ts.SourceFile) {
     this.#helper.handleForValues(this, currentNode, nextNode, newSourceFile);
   }
 }

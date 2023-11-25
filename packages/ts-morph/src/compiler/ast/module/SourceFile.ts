@@ -472,7 +472,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     if (this._isLibFileInMemory())
       return;
 
-    await this._context.fileSystemWrapper.writeFile(this.getFilePath(), this._getTextForSave());
+    await this._context.fileSystemWrapper.writeFile(this.getFilePath(), this.#_getTextForSave());
     this.#_isSaved = true;
   }
 
@@ -483,12 +483,12 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     if (this._isLibFileInMemory())
       return;
 
-    this._context.fileSystemWrapper.writeFileSync(this.getFilePath(), this._getTextForSave());
+    this._context.fileSystemWrapper.writeFileSync(this.getFilePath(), this.#_getTextForSave());
     this.#_isSaved = true;
   }
 
   /** @internal */
-  private _getTextForSave() {
+  #_getTextForSave() {
     const text = this.getFullText();
     return this._hasBom ? "\uFEFF" + text : text;
   }
@@ -789,7 +789,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    */
   async refreshFromFileSystem(): Promise<FileSystemRefreshResult> {
     const fileReadResult = await this._context.fileSystemWrapper.readFileOrNotExists(this.getFilePath(), this._context.getEncoding());
-    return this._refreshFromFileSystemInternal(fileReadResult);
+    return this.#_refreshFromFileSystemInternal(fileReadResult);
   }
 
   /**
@@ -800,7 +800,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    */
   refreshFromFileSystemSync(): FileSystemRefreshResult {
     const fileReadResult = this._context.fileSystemWrapper.readFileOrNotExistsSync(this.getFilePath(), this._context.getEncoding());
-    return this._refreshFromFileSystemInternal(fileReadResult);
+    return this.#_refreshFromFileSystemInternal(fileReadResult);
   }
 
   /**
@@ -990,7 +990,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     });
   }
 
-  private _refreshFromFileSystemInternal(fileReadResult: string | false): FileSystemRefreshResult {
+  #_refreshFromFileSystemInternal(fileReadResult: string | false): FileSystemRefreshResult {
     if (fileReadResult === false) {
       this.forget();
       return FileSystemRefreshResult.Deleted;

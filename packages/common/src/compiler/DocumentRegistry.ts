@@ -34,9 +34,9 @@ export class DocumentRegistry implements ts.DocumentRegistry {
   ) {
     let sourceFile = this.#sourceFileCacheByFilePath.get(fileName);
     if (sourceFile == null)
-      sourceFile = this.updateSourceFile(fileName, compilationSettings, scriptSnapshot, DocumentRegistry.#initialVersion, scriptKind);
+      sourceFile = this.#updateSourceFile(fileName, compilationSettings, scriptSnapshot, DocumentRegistry.#initialVersion, scriptKind);
     else
-      sourceFile = this.updateSourceFile(fileName, compilationSettings, scriptSnapshot, this.getNextSourceFileVersion(sourceFile), scriptKind);
+      sourceFile = this.#updateSourceFile(fileName, compilationSettings, scriptSnapshot, this.#getNextSourceFileVersion(sourceFile), scriptKind);
     return sourceFile;
   }
 
@@ -59,7 +59,7 @@ export class DocumentRegistry implements ts.DocumentRegistry {
     const standardizedFilePath = this.#transactionalFileSystem.getStandardizedAbsolutePath(fileName);
     let sourceFile = this.#sourceFileCacheByFilePath.get(standardizedFilePath);
     if (sourceFile == null || this.getSourceFileVersion(sourceFile) !== version)
-      sourceFile = this.updateSourceFile(standardizedFilePath, compilationSettings, scriptSnapshot, version, scriptKind);
+      sourceFile = this.#updateSourceFile(standardizedFilePath, compilationSettings, scriptSnapshot, version, scriptKind);
     return sourceFile;
   }
 
@@ -126,12 +126,12 @@ export class DocumentRegistry implements ts.DocumentRegistry {
     return (sourceFile as any).version || "0";
   }
 
-  private getNextSourceFileVersion(sourceFile: ts.SourceFile) {
+  #getNextSourceFileVersion(sourceFile: ts.SourceFile) {
     const currentVersion = parseInt(this.getSourceFileVersion(sourceFile), 10) || 0;
     return (currentVersion + 1).toString();
   }
 
-  private updateSourceFile(
+  #updateSourceFile(
     fileName: StandardizedFilePath,
     compilationSettings: ts.CompilerOptions,
     scriptSnapshot: ts.IScriptSnapshot,

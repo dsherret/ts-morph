@@ -19,7 +19,7 @@ export class TextRange<TRange extends ts.TextRange = ts.TextRange> {
    * Gets the underlying compiler object.
    */
   get compilerObject(): TRange {
-    this._throwIfForgotten();
+    this.#_throwIfForgotten();
     return this.#_compilerObject!;
   }
 
@@ -27,7 +27,7 @@ export class TextRange<TRange extends ts.TextRange = ts.TextRange> {
    * Gets the source file of the text range.
    */
   getSourceFile() {
-    this._throwIfForgotten();
+    this.#_throwIfForgotten();
     return this.#_sourceFile!;
   }
 
@@ -79,7 +79,7 @@ export class TextRange<TRange extends ts.TextRange = ts.TextRange> {
   }
 
   /** @internal */
-  private _throwIfForgotten() {
+  #_throwIfForgotten() {
     if (this.#_compilerObject != null)
       return;
     const message = "Attempted to get a text range that was forgotten. "

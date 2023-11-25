@@ -26,8 +26,7 @@ export declare class TsConfigResolver {
         filePaths: StandardizedFilePath[];
         directoryPaths: StandardizedFilePath[];
     };
-    private parseJsonConfigFileContent;
-    private getTsConfigFileJson;
+    private _parseJsonConfigFileContent;
 }
 
 /**
@@ -255,8 +254,6 @@ export declare class DocumentRegistry implements ts.DocumentRegistry {
     reportStats(): string;
     /** @inheritdoc */
     getSourceFileVersion(sourceFile: ts.SourceFile): string;
-    private getNextSourceFileVersion;
-    private updateSourceFile;
 }
 
 /** Host for implementing custom module and/or type reference directive resolution. */
@@ -579,7 +576,6 @@ export declare class FileUtils {
      * @param startsWithPath - Starts with path.
      */
     static pathStartsWith(fileOrDirPath: string | undefined, startsWithPath: string | undefined): boolean;
-    private static splitPathBySlashes;
     /**
      * Gets the parent most paths out of the list of paths.
      * @param paths - File or directory paths.
@@ -691,6 +687,7 @@ export declare function matchGlobs(paths: ReadonlyArray<string>, patterns: strin
 
 /** An implementation of a file host that interacts with the actual file system. */
 export declare class RealFileSystemHost implements FileSystemHost {
+    #private;
     /** @inheritdoc */
     delete(path: string): Promise<void>;
     /** @inheritdoc */
@@ -735,8 +732,6 @@ export declare class RealFileSystemHost implements FileSystemHost {
     globSync(patterns: ReadonlyArray<string>): string[];
     /** @inheritdoc */
     isCaseSensitive(): boolean;
-    private getDirectoryNotFoundErrorIfNecessary;
-    private getFileNotFoundErrorIfNecessary;
 }
 
 /** Nominal type to denote a file path that has been standardized. */
@@ -777,10 +772,6 @@ export declare class TransactionalFileSystem {
     flushSync(): void;
     saveForDirectory(dirPath: StandardizedFilePath): Promise<void>;
     saveForDirectorySync(dirPath: StandardizedFilePath): void;
-    private getAndClearOperationsForDir;
-    private executeOperation;
-    private executeOperationSync;
-    private getAndClearOperations;
     moveFileImmediately(oldFilePath: StandardizedFilePath, newFilePath: StandardizedFilePath, fileText: string): Promise<void>;
     moveFileImmediatelySync(oldFilePath: StandardizedFilePath, newFilePath: StandardizedFilePath, fileText: string): void;
     deleteFileImmediately(filePath: StandardizedFilePath): Promise<void>;
@@ -795,17 +786,13 @@ export declare class TransactionalFileSystem {
     /** Recreates a directory on the underlying file system synchronously. */
     clearDirectoryImmediatelySync(dirPath: StandardizedFilePath): void;
     deleteDirectoryImmediatelySync(dirPath: StandardizedFilePath): void;
-    private deleteSuppressNotFound;
-    private deleteSuppressNotFoundSync;
     fileExists(filePath: StandardizedFilePath): boolean | Promise<boolean>;
     fileExistsSync(filePath: StandardizedFilePath): boolean;
-    private _fileDeletedInMemory;
     directoryExistsSync(dirPath: StandardizedFilePath): boolean;
     readFileIfExistsSync(filePath: StandardizedFilePath, encoding: string | undefined): string | undefined;
     readFileSync(filePath: StandardizedFilePath, encoding: string | undefined): string;
     readFileIfExists(filePath: StandardizedFilePath, encoding: string | undefined): Promise<string | undefined>;
     readFile(filePath: StandardizedFilePath, encoding: string | undefined): Promise<string>;
-    private _verifyCanReadFile;
     readDirSync(dirPath: StandardizedFilePath): DirEntry[];
     glob(patterns: ReadonlyArray<string>): Promise<StandardizedFilePath[]>;
     globSync(patterns: ReadonlyArray<string>): Generator<StandardizedFilePath, void, unknown>;
@@ -818,22 +805,6 @@ export declare class TransactionalFileSystem {
     readFileOrNotExistsSync(filePath: StandardizedFilePath, encoding: string): string | false;
     writeFile(filePath: StandardizedFilePath, fileText: string): Promise<void>;
     writeFileSync(filePath: StandardizedFilePath, fileText: string): void;
-    private isPathDirectoryInQueueThatExists;
-    private isPathQueuedForDeletion;
-    private removeDirAndSubDirs;
-    private addBackDirAndSubDirs;
-    private getNextOperationIndex;
-    private getParentDirectoryIfExists;
-    private getOrCreateParentDirectory;
-    private getDirectoryIfExists;
-    private getOrCreateDirectory;
-    private throwIfHasExternalOperations;
-    private ensureDirectoryExists;
-    private ensureDirectoryExistsSync;
-    private removeMkDirOperationsForDir;
-    private libFileExists;
-    private readLibFile;
-    private throwIfLibFile;
 }
 
 /** Gets the TypeScript lib files (.d.ts files). */
@@ -1042,7 +1013,6 @@ export declare class EventContainer<EventArgType = undefined> {
      * Fire an event.
      */
     fire(arg: EventArgType): void;
-    private getIndex;
 }
 
 export declare class IterableUtils {

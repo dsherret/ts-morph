@@ -23,12 +23,12 @@ export class ForgetChangedNodeHandler implements NodeHandler {
     }
 
     if (currentNode._hasWrappedChildren())
-      this.handleChildren(currentNode, newNode, newSourceFile);
+      this.#handleChildren(currentNode, newNode, newSourceFile);
 
     this.#compilerFactory.replaceCompilerNode(currentNode, newNode);
   }
 
-  private handleChildren(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
+  #handleChildren(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
     const [currentNodeChildren, newNodeChildrenArray] = this.#helper.getChildrenFast(currentNode, newNode, newSourceFile);
     const newNodeChildren = ArrayUtils.toIterator(newNodeChildrenArray);
 

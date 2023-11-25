@@ -77,6 +77,7 @@ export interface FileSystemHost {
 
 /** An implementation of a file system that exists in memory only. */
 export declare class InMemoryFileSystemHost implements FileSystemHost {
+    #private;
     /**
      * Constructor.
      */
@@ -146,6 +147,7 @@ export declare const ResolutionHosts: {
 };
 
 export declare abstract class SettingsContainer<T extends object> {
+    #private;
     protected _settings: T;
     /**
      * Constructor.
@@ -223,6 +225,7 @@ export interface ProjectOptions {
 
 /** Project that holds source files. */
 export declare class Project {
+    #private;
     private constructor();
     /** Gets the compiler options for modification. */
     readonly compilerOptions: CompilerOptionsContainer;
@@ -346,6 +349,10 @@ export declare class Project {
      * not specifying to not add the source files.
      */
     resolveSourceFileDependencies(): void;
+    /** @internal */
+    _addSourceFilesForTsConfigResolver(tsConfigResolver: TsConfigResolver, compilerOptions: ts.CompilerOptions): Promise<ts.SourceFile[]>;
+    /** @internal */
+    _addSourceFilesForTsConfigResolverSync(tsConfigResolver: TsConfigResolver, compilerOptions: ts.CompilerOptions): ts.SourceFile[];
     /**
      * Creates a new program.
      * Note: You should get a new program any time source files are added, removed, or changed.
@@ -375,6 +382,10 @@ export declare class Project {
      * @param searchFunction - Search function.
      */
     getSourceFile(searchFunction: (file: ts.SourceFile) => boolean): ts.SourceFile | undefined;
+    /**
+     * @internal
+     */
+    getSourceFile(fileNameOrSearchFunction: string | ((file: ts.SourceFile) => boolean)): ts.SourceFile | undefined;
     /** Gets the source files in the project. */
     getSourceFiles(): ts.SourceFile[];
     /**

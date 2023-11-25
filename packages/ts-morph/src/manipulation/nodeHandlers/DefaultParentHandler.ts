@@ -39,14 +39,14 @@ export class DefaultParentHandler implements NodeHandler {
     let count = this.#childCount;
 
     // handle any custom mappings
-    this.handleCustomMappings(newNode);
+    this.#handleCustomMappings(newNode);
 
     // get the first child
     while (!currentChildren.done && !newChildren.done && !this.#isFirstChild(currentChildren.peek, newChildren.peek))
       this.#helper.handleForValues(this.#straightReplacementNodeHandler, currentChildren.next(), newChildren.next(), newSourceFile);
 
     // try replacing any nodes
-    while (!currentChildren.done && this.tryReplaceNode(currentChildren.peek))
+    while (!currentChildren.done && this.#tryReplaceNode(currentChildren.peek))
       currentChildren.next();
 
     // add or remove the items
@@ -73,7 +73,7 @@ export class DefaultParentHandler implements NodeHandler {
     this.#compilerFactory.replaceCompilerNode(currentNode, newNode);
   }
 
-  private handleCustomMappings(newParentNode: ts.Node) {
+  #handleCustomMappings(newParentNode: ts.Node) {
     if (this.#customMappings == null)
       return;
     const customMappings = this.#customMappings(newParentNode);
@@ -82,7 +82,7 @@ export class DefaultParentHandler implements NodeHandler {
       this.#compilerFactory.replaceCompilerNode(mapping.currentNode, mapping.newNode);
   }
 
-  private tryReplaceNode(currentCompilerNode: ts.Node) {
+  #tryReplaceNode(currentCompilerNode: ts.Node) {
     if (this.#replacingNodes == null || this.#replacingNodes.length === 0)
       return false;
     const index = this.#replacingNodes.indexOf(currentCompilerNode);

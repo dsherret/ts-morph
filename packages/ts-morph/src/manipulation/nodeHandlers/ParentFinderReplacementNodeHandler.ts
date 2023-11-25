@@ -24,7 +24,7 @@ export class ParentFinderReplacementNodeHandler extends StraightReplacementNodeH
   }
 
   handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
-    if (!this.#foundParent && this.isParentNode(newNode, newSourceFile)) {
+    if (!this.#foundParent && this.#isParentNode(newNode, newSourceFile)) {
       this.#foundParent = true; // don't bother checking for the parent once it's found
       this.#parentNodeHandler.handleNode(currentNode, newNode, newSourceFile);
     } else {
@@ -32,7 +32,7 @@ export class ParentFinderReplacementNodeHandler extends StraightReplacementNodeH
     }
   }
 
-  private isParentNode(newNode: ts.Node, newSourceFile: ts.SourceFile) {
+  #isParentNode(newNode: ts.Node, newSourceFile: ts.SourceFile) {
     const positionsAndKindsEqual = areNodesEqual(newNode, this.#changingParent)
       && areNodesEqual(getParentSyntaxList(newNode, newSourceFile) || newNode.parent, this.#changingParentParent);
 

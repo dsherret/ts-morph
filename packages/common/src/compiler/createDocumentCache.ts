@@ -58,13 +58,13 @@ export interface FileSystemSpecificDocumentCache {
 type DocumentKey = string & { _documentKeyBrand: undefined };
 
 class FileSystemDocumentCache implements FileSystemSpecificDocumentCache {
-    readonly #documentCache: InternalDocumentCache;
+  readonly #documentCache: InternalDocumentCache;
   readonly #absoluteToOriginalPath = new Map<StandardizedFilePath, string>();
 
   constructor(fileSystem: TransactionalFileSystem, documentCache: InternalDocumentCache) {
     for (const filePath of documentCache._getFilePaths())
       this.#absoluteToOriginalPath.set(fileSystem.getStandardizedAbsolutePath(filePath), filePath);
-      this.#documentCache = documentCache;
+    this.#documentCache = documentCache;
   }
 
   getDocumentIfMatch(
@@ -113,17 +113,17 @@ class InternalDocumentCache implements DocumentCache {
     if (fileText !== scriptSnapshot.getText(0, scriptSnapshot.getLength()))
       return undefined; // not a match
 
-    return this._getDocument(filePath, absoluteFilePath, scriptSnapshot, scriptTarget, scriptKind);
+    return this.#getDocument(filePath, absoluteFilePath, scriptSnapshot, scriptTarget, scriptKind);
   }
 
-  private _getDocument(
+  #getDocument(
     filePath: string,
     absoluteFilePath: StandardizedFilePath,
     scriptSnapshot: ts.IScriptSnapshot,
     scriptTarget: ScriptTarget | undefined,
     scriptKind: ScriptKind | undefined,
   ) {
-    const documentKey = this._getKey(filePath, scriptTarget, scriptKind);
+    const documentKey = this.#_getKey(filePath, scriptTarget, scriptKind);
     let document = this.#documents.get(documentKey);
     if (document == null) {
       document = createCompilerSourceFile(absoluteFilePath, scriptSnapshot, scriptTarget, "-1", false, scriptKind);
@@ -137,8 +137,7 @@ class InternalDocumentCache implements DocumentCache {
     return document;
   }
 
-  /** @internal */
-  private _getKey(filePath: string, scriptTarget: ScriptTarget | undefined, scriptKind: ScriptKind | undefined): DocumentKey {
+  #_getKey(filePath: string, scriptTarget: ScriptTarget | undefined, scriptKind: ScriptKind | undefined): DocumentKey {
     return (filePath + (scriptTarget?.toString() ?? "-1") + (scriptKind?.toString() ?? "-1")) as DocumentKey;
   }
 }

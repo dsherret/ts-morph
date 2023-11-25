@@ -27,8 +27,7 @@ export declare class TsConfigResolver {
         filePaths: StandardizedFilePath[];
         directoryPaths: StandardizedFilePath[];
     };
-    private parseJsonConfigFileContent;
-    private getTsConfigFileJson;
+    private _parseJsonConfigFileContent;
 }
 
 /**
@@ -159,46 +158,6 @@ export interface StoredComparer<T> {
 }
 
 /**
- * Creates a document cache with an initial list of files using the specified options.
- * @param files - Files to use in the cache.
- * @internal - Temporarily internal.
- */
-export declare function createDocumentCache(files: DocumentCacheItem[]): DocumentCache;
-
-/**
- * A cache of reusable source files that can be used across projects.
- * @remarks Use `createDocumentCache` to create one of these.
- * @internal - Temporarily internal.
- */
-export interface DocumentCache {
-    __documentCacheBrand: undefined;
-    /** @internal */
-    _getCacheForFileSystem(fileSystem: TransactionalFileSystem): FileSystemSpecificDocumentCache;
-}
-
-/**
- * An item for the document cache.
- * @internal - Temporarily internal.
- */
-export interface DocumentCacheItem {
-    /**
-     * This may be a relative path (ex. `./node_modules/package/file.js`). The path
-     * will be resolved for each project based on its file system's current
-     * working directory.
-     */
-    fileName: string;
-    /**
-     * The text of the file.
-     */
-    text: string;
-}
-
-/** @internal */
-export interface FileSystemSpecificDocumentCache {
-    getDocumentIfMatch(filePath: StandardizedFilePath, scriptSnapshot: ts.IScriptSnapshot, scriptTarget: ScriptTarget | undefined, scriptKind: ScriptKind | undefined): ts.SourceFile | undefined;
-}
-
-/**
  * Creates a language service host and compiler host.
  * @param options - Options for creating the hosts.
  */
@@ -296,8 +255,6 @@ export declare class DocumentRegistry implements ts.DocumentRegistry {
     reportStats(): string;
     /** @inheritdoc */
     getSourceFileVersion(sourceFile: ts.SourceFile): string;
-    private getNextSourceFileVersion;
-    private updateSourceFile;
 }
 
 /** Host for implementing custom module and/or type reference directive resolution. */
@@ -620,7 +577,6 @@ export declare class FileUtils {
      * @param startsWithPath - Starts with path.
      */
     static pathStartsWith(fileOrDirPath: string | undefined, startsWithPath: string | undefined): boolean;
-    private static splitPathBySlashes;
     /**
      * Gets the parent most paths out of the list of paths.
      * @param paths - File or directory paths.
@@ -697,7 +653,6 @@ export declare class InMemoryFileSystemHost implements FileSystemHost {
     writeFile(filePath: string, fileText: string): Promise<void>;
     /** @inheritdoc */
     writeFileSync(filePath: string, fileText: string): void;
-    private _writeFileSync;
     /** @inheritdoc */
     mkdir(dirPath: string): Promise<void>;
     /** @inheritdoc */
@@ -710,8 +665,6 @@ export declare class InMemoryFileSystemHost implements FileSystemHost {
     copy(srcPath: string, destPath: string): Promise<void>;
     /** @inheritdoc */
     copySync(srcPath: string, destPath: string): void;
-    /** @internal */
-    private _copyDirInternal;
     /** @inheritdoc */
     fileExists(filePath: string): Promise<boolean>;
     /** @inheritdoc */
@@ -728,8 +681,6 @@ export declare class InMemoryFileSystemHost implements FileSystemHost {
     glob(patterns: ReadonlyArray<string>): Promise<string[]>;
     /** @inheritdoc */
     globSync(patterns: ReadonlyArray<string>): string[];
-    /** @internal */
-    private getOrCreateDir;
 }
 
 /** Checks the specified file paths to see if the match any of the specified patterns. */
@@ -737,6 +688,7 @@ export declare function matchGlobs(paths: ReadonlyArray<string>, patterns: strin
 
 /** An implementation of a file host that interacts with the actual file system. */
 export declare class RealFileSystemHost implements FileSystemHost {
+    #private;
     /** @inheritdoc */
     delete(path: string): Promise<void>;
     /** @inheritdoc */
@@ -781,8 +733,6 @@ export declare class RealFileSystemHost implements FileSystemHost {
     globSync(patterns: ReadonlyArray<string>): string[];
     /** @inheritdoc */
     isCaseSensitive(): boolean;
-    private getDirectoryNotFoundErrorIfNecessary;
-    private getFileNotFoundErrorIfNecessary;
 }
 
 /** Nominal type to denote a file path that has been standardized. */
@@ -823,10 +773,6 @@ export declare class TransactionalFileSystem {
     flushSync(): void;
     saveForDirectory(dirPath: StandardizedFilePath): Promise<void>;
     saveForDirectorySync(dirPath: StandardizedFilePath): void;
-    private getAndClearOperationsForDir;
-    private executeOperation;
-    private executeOperationSync;
-    private getAndClearOperations;
     moveFileImmediately(oldFilePath: StandardizedFilePath, newFilePath: StandardizedFilePath, fileText: string): Promise<void>;
     moveFileImmediatelySync(oldFilePath: StandardizedFilePath, newFilePath: StandardizedFilePath, fileText: string): void;
     deleteFileImmediately(filePath: StandardizedFilePath): Promise<void>;
@@ -841,17 +787,13 @@ export declare class TransactionalFileSystem {
     /** Recreates a directory on the underlying file system synchronously. */
     clearDirectoryImmediatelySync(dirPath: StandardizedFilePath): void;
     deleteDirectoryImmediatelySync(dirPath: StandardizedFilePath): void;
-    private deleteSuppressNotFound;
-    private deleteSuppressNotFoundSync;
     fileExists(filePath: StandardizedFilePath): boolean | Promise<boolean>;
     fileExistsSync(filePath: StandardizedFilePath): boolean;
-    private _fileDeletedInMemory;
     directoryExistsSync(dirPath: StandardizedFilePath): boolean;
     readFileIfExistsSync(filePath: StandardizedFilePath, encoding: string | undefined): string | undefined;
     readFileSync(filePath: StandardizedFilePath, encoding: string | undefined): string;
     readFileIfExists(filePath: StandardizedFilePath, encoding: string | undefined): Promise<string | undefined>;
     readFile(filePath: StandardizedFilePath, encoding: string | undefined): Promise<string>;
-    private _verifyCanReadFile;
     readDirSync(dirPath: StandardizedFilePath): DirEntry[];
     glob(patterns: ReadonlyArray<string>): Promise<StandardizedFilePath[]>;
     globSync(patterns: ReadonlyArray<string>): Generator<StandardizedFilePath, void, unknown>;
@@ -864,22 +806,6 @@ export declare class TransactionalFileSystem {
     readFileOrNotExistsSync(filePath: StandardizedFilePath, encoding: string): string | false;
     writeFile(filePath: StandardizedFilePath, fileText: string): Promise<void>;
     writeFileSync(filePath: StandardizedFilePath, fileText: string): void;
-    private isPathDirectoryInQueueThatExists;
-    private isPathQueuedForDeletion;
-    private removeDirAndSubDirs;
-    private addBackDirAndSubDirs;
-    private getNextOperationIndex;
-    private getParentDirectoryIfExists;
-    private getOrCreateParentDirectory;
-    private getDirectoryIfExists;
-    private getOrCreateDirectory;
-    private throwIfHasExternalOperations;
-    private ensureDirectoryExists;
-    private ensureDirectoryExistsSync;
-    private removeMkDirOperationsForDir;
-    private libFileExists;
-    private readLibFile;
-    private throwIfLibFile;
 }
 
 /** Gets the TypeScript lib files (.d.ts files). */
@@ -946,8 +872,6 @@ export declare abstract class SettingsContainer<T extends object> {
      * @param action - Action to execute when the settings change.
      */
     onModified(action: () => void): void;
-    /** @internal */
-    private _fireModified;
 }
 
 export declare const runtime: Runtime;
@@ -1090,7 +1014,6 @@ export declare class EventContainer<EventArgType = undefined> {
      * Fire an event.
      */
     fire(arg: EventArgType): void;
-    private getIndex;
 }
 
 export declare class IterableUtils {

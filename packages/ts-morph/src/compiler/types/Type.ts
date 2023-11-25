@@ -369,21 +369,21 @@ export class Type<TType extends ts.Type = ts.Type> {
    * Gets if this is an anonymous type.
    */
   isAnonymous() {
-    return this._hasObjectFlag(ObjectFlags.Anonymous);
+    return this.#_hasObjectFlag(ObjectFlags.Anonymous);
   }
 
   /**
    * Gets if this is an any type.
    */
   isAny() {
-    return this._hasTypeFlag(TypeFlags.Any);
+    return this.#_hasTypeFlag(TypeFlags.Any);
   }
 
   /**
    * Gets if this is a never type.
    */
   isNever() {
-    return this._hasTypeFlag(TypeFlags.Never);
+    return this.#_hasTypeFlag(TypeFlags.Never);
   }
 
   /**
@@ -412,28 +412,28 @@ export class Type<TType extends ts.Type = ts.Type> {
    * Gets if this is a template literal type.
    */
   isTemplateLiteral(): this is Type<ts.TemplateLiteralType> {
-    return this._hasTypeFlag(TypeFlags.TemplateLiteral);
+    return this.#_hasTypeFlag(TypeFlags.TemplateLiteral);
   }
 
   /**
    * Gets if this is a boolean type.
    */
   isBoolean() {
-    return this._hasTypeFlag(TypeFlags.Boolean);
+    return this.#_hasTypeFlag(TypeFlags.Boolean);
   }
 
   /**
    * Gets if this is a string type.
    */
   isString() {
-    return this._hasTypeFlag(TypeFlags.String);
+    return this.#_hasTypeFlag(TypeFlags.String);
   }
 
   /**
    * Gets if this is a number type.
    */
   isNumber() {
-    return this._hasTypeFlag(TypeFlags.Number);
+    return this.#_hasTypeFlag(TypeFlags.Number);
   }
 
   /**
@@ -449,21 +449,21 @@ export class Type<TType extends ts.Type = ts.Type> {
    * Gets if this is a boolean literal type.
    */
   isBooleanLiteral() {
-    return this._hasTypeFlag(TypeFlags.BooleanLiteral);
+    return this.#_hasTypeFlag(TypeFlags.BooleanLiteral);
   }
 
   /**
    * Gets if this is an enum literal type.
    */
   isEnumLiteral() {
-    return this._hasTypeFlag(TypeFlags.EnumLiteral) && !this.isUnion();
+    return this.#_hasTypeFlag(TypeFlags.EnumLiteral) && !this.isUnion();
   }
 
   /**
    * Gets if this is a number literal type.
    */
   isNumberLiteral(): this is Type<ts.NumberLiteralType> {
-    return this._hasTypeFlag(TypeFlags.NumberLiteral);
+    return this.#_hasTypeFlag(TypeFlags.NumberLiteral);
   }
 
   /**
@@ -491,7 +491,7 @@ export class Type<TType extends ts.Type = ts.Type> {
    * Gets if this is an enum type.
    */
   isEnum() {
-    const hasEnumFlag = this._hasTypeFlag(TypeFlags.Enum);
+    const hasEnumFlag = this.#_hasTypeFlag(TypeFlags.Enum);
     if (hasEnumFlag)
       return true;
 
@@ -510,14 +510,14 @@ export class Type<TType extends ts.Type = ts.Type> {
    * Gets if this is an interface type.
    */
   isInterface(): this is Type<ts.InterfaceType> {
-    return this._hasObjectFlag(ObjectFlags.Interface);
+    return this.#_hasObjectFlag(ObjectFlags.Interface);
   }
 
   /**
    * Gets if this is an object type.
    */
   isObject(): this is Type<ts.ObjectType> {
-    return this._hasTypeFlag(TypeFlags.Object);
+    return this.#_hasTypeFlag(TypeFlags.Object);
   }
 
   /**
@@ -534,7 +534,7 @@ export class Type<TType extends ts.Type = ts.Type> {
     const targetType = this.getTargetType();
     if (targetType == null)
       return false;
-    return targetType._hasObjectFlag(ObjectFlags.Tuple);
+    return targetType.#_hasObjectFlag(ObjectFlags.Tuple);
   }
 
   /**
@@ -562,28 +562,28 @@ export class Type<TType extends ts.Type = ts.Type> {
    * Gets if this is the unknown type.
    */
   isUnknown() {
-    return this._hasTypeFlag(TypeFlags.Unknown);
+    return this.#_hasTypeFlag(TypeFlags.Unknown);
   }
 
   /**
    * Gets if this is the null type.
    */
   isNull() {
-    return this._hasTypeFlag(TypeFlags.Null);
+    return this.#_hasTypeFlag(TypeFlags.Null);
   }
 
   /**
    * Gets if this is the undefined type.
    */
   isUndefined() {
-    return this._hasTypeFlag(TypeFlags.Undefined);
+    return this.#_hasTypeFlag(TypeFlags.Undefined);
   }
 
   /**
    * Gets if this is the void type.
    */
   isVoid() {
-    return this._hasTypeFlag(TypeFlags.Void);
+    return this.#_hasTypeFlag(TypeFlags.Void);
   }
 
   /**
@@ -605,12 +605,12 @@ export class Type<TType extends ts.Type = ts.Type> {
   }
 
   /** @internal */
-  private _hasTypeFlag(flag: TypeFlags) {
+  #_hasTypeFlag(flag: TypeFlags) {
     return (this.compilerType.flags & flag) === flag;
   }
 
   /** @internal */
-  private _hasObjectFlag(flag: ObjectFlags) {
+  #_hasObjectFlag(flag: ObjectFlags) {
     return (this.getObjectFlags() & flag) === flag;
   }
 }

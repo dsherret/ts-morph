@@ -8,7 +8,7 @@ export class AdvancedIterator<T> {
   #nextCount = 0;
 
   constructor(iterator: IterableIterator<T>) {
-    this.advance();
+    this.#advance();
       this.#iterator = iterator;
   }
 
@@ -38,8 +38,8 @@ export class AdvancedIterator<T> {
     if (this.done)
       throw new errors.InvalidOperationError("Cannot get the next when at the end of the iterator.");
 
-    const next = this.#buffer[this.getNextBufferIndex()]!;
-    this.advance();
+    const next = this.#buffer[this.#getNextBufferIndex()]!;
+    this.#advance();
     this.#nextCount++;
     return next;
   }
@@ -49,19 +49,19 @@ export class AdvancedIterator<T> {
       yield this.next();
   }
 
-  private advance() {
+  #advance() {
     const next = this.#iterator.next();
-    this.#bufferIndex = this.getNextBufferIndex();
+    this.#bufferIndex = this.#getNextBufferIndex();
 
     if (next.done) {
       this.#isDone = true;
       return;
     }
 
-    this.#buffer[this.getNextBufferIndex()] = next.value;
+    this.#buffer[this.#getNextBufferIndex()] = next.value;
   }
 
-  private getNextBufferIndex() {
+  #getNextBufferIndex() {
     return (this.#bufferIndex + 1) % this.#buffer.length;
   }
 }

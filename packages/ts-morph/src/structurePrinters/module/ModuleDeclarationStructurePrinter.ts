@@ -21,7 +21,7 @@ export class ModuleDeclarationStructurePrinter extends NodePrinter<OptionalKind<
   }
 
   protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<ModuleDeclarationStructure>) {
-    structure = this.validateAndGetStructure(structure);
+    structure = this.#validateAndGetStructure(structure);
 
     this.factory.forJSDoc().printDocs(writer, structure.docs);
     this.factory.forModifierableNode().printText(writer, structure);
@@ -45,7 +45,7 @@ export class ModuleDeclarationStructurePrinter extends NodePrinter<OptionalKind<
     }
   }
 
-  private validateAndGetStructure(structure: OptionalKind<ModuleDeclarationStructure>) {
+  #validateAndGetStructure(structure: OptionalKind<ModuleDeclarationStructure>) {
     if (StringUtils.isQuoted(structure.name.trim())) {
       if (structure.declarationKind === ModuleDeclarationKind.Namespace) {
         throw new errors.InvalidOperationError(

@@ -285,18 +285,19 @@ function deepClone(objToClone) {
     }
 }
 
-var _EventContainer_subscriptions;
+var _EventContainer_instances, _EventContainer_subscriptions, _EventContainer_getIndex;
 class EventContainer {
     constructor() {
+        _EventContainer_instances.add(this);
         _EventContainer_subscriptions.set(this, []);
     }
     subscribe(subscription) {
-        const index = this.getIndex(subscription);
+        const index = __classPrivateFieldGet(this, _EventContainer_instances, "m", _EventContainer_getIndex).call(this, subscription);
         if (index === -1)
             __classPrivateFieldGet(this, _EventContainer_subscriptions, "f").push(subscription);
     }
     unsubscribe(subscription) {
-        const index = this.getIndex(subscription);
+        const index = __classPrivateFieldGet(this, _EventContainer_instances, "m", _EventContainer_getIndex).call(this, subscription);
         if (index >= 0)
             __classPrivateFieldGet(this, _EventContainer_subscriptions, "f").splice(index, 1);
     }
@@ -304,11 +305,10 @@ class EventContainer {
         for (const subscription of __classPrivateFieldGet(this, _EventContainer_subscriptions, "f"))
             subscription(arg);
     }
-    getIndex(subscription) {
-        return __classPrivateFieldGet(this, _EventContainer_subscriptions, "f").indexOf(subscription);
-    }
 }
-_EventContainer_subscriptions = new WeakMap();
+_EventContainer_subscriptions = new WeakMap(), _EventContainer_instances = new WeakSet(), _EventContainer_getIndex = function _EventContainer_getIndex(subscription) {
+    return __classPrivateFieldGet(this, _EventContainer_subscriptions, "f").indexOf(subscription);
+};
 
 class IterableUtils {
     static find(items, condition) {
@@ -824,7 +824,7 @@ function createCompilerSourceFile(filePath, scriptSnapshot, scriptTarget, versio
     return ts.createLanguageServiceSourceFile(filePath, scriptSnapshot, scriptTarget !== null && scriptTarget !== void 0 ? scriptTarget : ScriptTarget.Latest, version, setParentNodes, scriptKind);
 }
 
-var _FileSystemDocumentCache_documentCache, _FileSystemDocumentCache_absoluteToOriginalPath, _InternalDocumentCache_fileTexts, _InternalDocumentCache_documents;
+var _FileSystemDocumentCache_documentCache, _FileSystemDocumentCache_absoluteToOriginalPath, _InternalDocumentCache_instances, _InternalDocumentCache_fileTexts, _InternalDocumentCache_documents, _InternalDocumentCache__getDocument, _InternalDocumentCache__getKey;
 function createDocumentCache(files) {
     const cache = new InternalDocumentCache();
     cache._addFiles(files);
@@ -848,6 +848,7 @@ class FileSystemDocumentCache {
 _FileSystemDocumentCache_documentCache = new WeakMap(), _FileSystemDocumentCache_absoluteToOriginalPath = new WeakMap();
 class InternalDocumentCache {
     constructor() {
+        _InternalDocumentCache_instances.add(this);
         _InternalDocumentCache_fileTexts.set(this, new Map());
         _InternalDocumentCache_documents.set(this, new Map());
     }
@@ -867,25 +868,23 @@ class InternalDocumentCache {
             return undefined;
         if (fileText !== scriptSnapshot.getText(0, scriptSnapshot.getLength()))
             return undefined;
-        return this._getDocument(filePath, absoluteFilePath, scriptSnapshot, scriptTarget, scriptKind);
-    }
-    _getDocument(filePath, absoluteFilePath, scriptSnapshot, scriptTarget, scriptKind) {
-        const documentKey = this._getKey(filePath, scriptTarget, scriptKind);
-        let document = __classPrivateFieldGet(this, _InternalDocumentCache_documents, "f").get(documentKey);
-        if (document == null) {
-            document = createCompilerSourceFile(absoluteFilePath, scriptSnapshot, scriptTarget, "-1", false, scriptKind);
-            __classPrivateFieldGet(this, _InternalDocumentCache_documents, "f").set(documentKey, document);
-        }
-        document = deepClone(document);
-        document.fileName = absoluteFilePath;
-        return document;
-    }
-    _getKey(filePath, scriptTarget, scriptKind) {
-        var _a, _b;
-        return (filePath + ((_a = scriptTarget === null || scriptTarget === void 0 ? void 0 : scriptTarget.toString()) !== null && _a !== void 0 ? _a : "-1") + ((_b = scriptKind === null || scriptKind === void 0 ? void 0 : scriptKind.toString()) !== null && _b !== void 0 ? _b : "-1"));
+        return __classPrivateFieldGet(this, _InternalDocumentCache_instances, "m", _InternalDocumentCache__getDocument).call(this, filePath, absoluteFilePath, scriptSnapshot, scriptTarget, scriptKind);
     }
 }
-_InternalDocumentCache_fileTexts = new WeakMap(), _InternalDocumentCache_documents = new WeakMap();
+_InternalDocumentCache_fileTexts = new WeakMap(), _InternalDocumentCache_documents = new WeakMap(), _InternalDocumentCache_instances = new WeakSet(), _InternalDocumentCache__getDocument = function _InternalDocumentCache__getDocument(filePath, absoluteFilePath, scriptSnapshot, scriptTarget, scriptKind) {
+    const documentKey = __classPrivateFieldGet(this, _InternalDocumentCache_instances, "m", _InternalDocumentCache__getKey).call(this, filePath, scriptTarget, scriptKind);
+    let document = __classPrivateFieldGet(this, _InternalDocumentCache_documents, "f").get(documentKey);
+    if (document == null) {
+        document = createCompilerSourceFile(absoluteFilePath, scriptSnapshot, scriptTarget, "-1", false, scriptKind);
+        __classPrivateFieldGet(this, _InternalDocumentCache_documents, "f").set(documentKey, document);
+    }
+    document = deepClone(document);
+    document.fileName = absoluteFilePath;
+    return document;
+}, _InternalDocumentCache__getKey = function _InternalDocumentCache__getKey(filePath, scriptTarget, scriptKind) {
+    var _a, _b;
+    return (filePath + ((_a = scriptTarget === null || scriptTarget === void 0 ? void 0 : scriptTarget.toString()) !== null && _a !== void 0 ? _a : "-1") + ((_b = scriptKind === null || scriptKind === void 0 ? void 0 : scriptKind.toString()) !== null && _b !== void 0 ? _b : "-1"));
+};
 
 const libFiles = [{
         fileName: "lib.d.ts",
@@ -1231,7 +1230,7 @@ function createHosts(options) {
     return { languageServiceHost, compilerHost };
 }
 
-var _a$1, _FileUtils_standardizeSlashesRegex, _FileUtils_trimSlashStartRegex, _FileUtils_trimSlashEndRegex;
+var _a$1, _FileUtils_standardizeSlashesRegex, _FileUtils_trimSlashStartRegex, _FileUtils_trimSlashEndRegex, _FileUtils_splitPathBySlashes;
 const isWindowsRootDirRegex = /^[a-z]+:[\\\/]$/i;
 const path = runtime.path;
 class FileUtils {
@@ -1292,8 +1291,8 @@ class FileUtils {
         return result;
     }
     static pathEndsWith(fileOrDirPath, endsWithPath) {
-        const pathItems = _a$1.splitPathBySlashes(fileOrDirPath);
-        const endsWithItems = _a$1.splitPathBySlashes(endsWithPath);
+        const pathItems = __classPrivateFieldGet(_a$1, _a$1, "m", _FileUtils_splitPathBySlashes).call(_a$1, fileOrDirPath);
+        const endsWithItems = __classPrivateFieldGet(_a$1, _a$1, "m", _FileUtils_splitPathBySlashes).call(_a$1, endsWithPath);
         if (endsWithItems.length > pathItems.length)
             return false;
         for (let i = 0; i < endsWithItems.length; i++) {
@@ -1305,8 +1304,8 @@ class FileUtils {
     static pathStartsWith(fileOrDirPath, startsWithPath) {
         const isfileOrDirPathEmpty = StringUtils.isNullOrWhitespace(fileOrDirPath);
         const isStartsWithPathEmpty = StringUtils.isNullOrWhitespace(startsWithPath);
-        const pathItems = _a$1.splitPathBySlashes(fileOrDirPath);
-        const startsWithItems = _a$1.splitPathBySlashes(startsWithPath);
+        const pathItems = __classPrivateFieldGet(_a$1, _a$1, "m", _FileUtils_splitPathBySlashes).call(_a$1, fileOrDirPath);
+        const startsWithItems = __classPrivateFieldGet(_a$1, _a$1, "m", _FileUtils_splitPathBySlashes).call(_a$1, startsWithPath);
         if (isfileOrDirPathEmpty && isStartsWithPathEmpty)
             return true;
         if (isStartsWithPathEmpty || startsWithItems.length > pathItems.length)
@@ -1318,10 +1317,6 @@ class FileUtils {
                 return false;
         }
         return startsWithItems.length > 0;
-    }
-    static splitPathBySlashes(fileOrDirPath) {
-        fileOrDirPath = (fileOrDirPath || "").replace(__classPrivateFieldGet(_a$1, _a$1, "f", _FileUtils_trimSlashStartRegex), "").replace(__classPrivateFieldGet(_a$1, _a$1, "f", _FileUtils_trimSlashEndRegex), "");
-        return _a$1.standardizeSlashes(fileOrDirPath).replace(/^\//, "").split("/");
     }
     static getParentMostPaths(paths) {
         const finalPaths = [];
@@ -1390,7 +1385,10 @@ class FileUtils {
         return glob[0] === "!" && glob[1] !== "(";
     }
 }
-_a$1 = FileUtils;
+_a$1 = FileUtils, _FileUtils_splitPathBySlashes = function _FileUtils_splitPathBySlashes(fileOrDirPath) {
+    fileOrDirPath = (fileOrDirPath || "").replace(__classPrivateFieldGet(_a$1, _a$1, "f", _FileUtils_trimSlashStartRegex), "").replace(__classPrivateFieldGet(_a$1, _a$1, "f", _FileUtils_trimSlashEndRegex), "");
+    return _a$1.standardizeSlashes(fileOrDirPath).replace(/^\//, "").split("/");
+};
 _FileUtils_standardizeSlashesRegex = { value: /\\/g };
 _FileUtils_trimSlashStartRegex = { value: /^\// };
 _FileUtils_trimSlashEndRegex = { value: /\/$/ };
@@ -1448,11 +1446,12 @@ function removeArray(items, removeItem) {
         items.splice(index, 1);
 }
 
-var _InMemoryFileSystemHost_directories;
+var _InMemoryFileSystemHost_instances, _InMemoryFileSystemHost_directories, _InMemoryFileSystemHost_writeFileSync, _InMemoryFileSystemHost_copyDirInternal, _InMemoryFileSystemHost_getOrCreateDir;
 class InMemoryFileSystemHost {
     constructor() {
+        _InMemoryFileSystemHost_instances.add(this);
         _InMemoryFileSystemHost_directories.set(this, new Map());
-        this.getOrCreateDir("/");
+        __classPrivateFieldGet(this, _InMemoryFileSystemHost_instances, "m", _InMemoryFileSystemHost_getOrCreateDir).call(this, "/");
     }
     isCaseSensitive() {
         return true;
@@ -1530,19 +1529,14 @@ class InMemoryFileSystemHost {
         return Promise.resolve();
     }
     writeFileSync(filePath, fileText) {
-        this._writeFileSync(filePath, fileText);
-    }
-    _writeFileSync(filePath, fileText) {
-        const standardizedFilePath = FileUtils.getStandardizedAbsolutePath(this, filePath);
-        const dirPath = FileUtils.getDirPath(standardizedFilePath);
-        this.getOrCreateDir(dirPath).files.set(standardizedFilePath, fileText);
+        __classPrivateFieldGet(this, _InMemoryFileSystemHost_instances, "m", _InMemoryFileSystemHost_writeFileSync).call(this, filePath, fileText);
     }
     mkdir(dirPath) {
         this.mkdirSync(dirPath);
         return Promise.resolve();
     }
     mkdirSync(dirPath) {
-        this.getOrCreateDir(FileUtils.getStandardizedAbsolutePath(this, dirPath));
+        __classPrivateFieldGet(this, _InMemoryFileSystemHost_instances, "m", _InMemoryFileSystemHost_getOrCreateDir).call(this, FileUtils.getStandardizedAbsolutePath(this, dirPath));
     }
     move(srcPath, destPath) {
         this.moveSync(srcPath, destPath);
@@ -1558,7 +1552,7 @@ class InMemoryFileSystemHost {
         }
         else if (__classPrivateFieldGet(this, _InMemoryFileSystemHost_directories, "f").has(standardizedSrcPath)) {
             const moveDirectory = (from, to) => {
-                this._copyDirInternal(from, to);
+                __classPrivateFieldGet(this, _InMemoryFileSystemHost_instances, "m", _InMemoryFileSystemHost_copyDirInternal).call(this, from, to);
                 __classPrivateFieldGet(this, _InMemoryFileSystemHost_directories, "f").delete(from);
             };
             moveDirectory(standardizedSrcPath, standardizedDestPath);
@@ -1581,22 +1575,14 @@ class InMemoryFileSystemHost {
         if (this.fileExistsSync(standardizedSrcPath))
             this.writeFileSync(standardizedDestPath, this.readFileSync(standardizedSrcPath));
         else if (__classPrivateFieldGet(this, _InMemoryFileSystemHost_directories, "f").has(standardizedSrcPath)) {
-            this._copyDirInternal(standardizedSrcPath, standardizedDestPath);
+            __classPrivateFieldGet(this, _InMemoryFileSystemHost_instances, "m", _InMemoryFileSystemHost_copyDirInternal).call(this, standardizedSrcPath, standardizedDestPath);
             for (const descendantDirPath of getDescendantDirectories(__classPrivateFieldGet(this, _InMemoryFileSystemHost_directories, "f").keys(), standardizedSrcPath)) {
                 const relativePath = FileUtils.getRelativePathTo(standardizedSrcPath, descendantDirPath);
-                this._copyDirInternal(descendantDirPath, FileUtils.pathJoin(standardizedDestPath, relativePath));
+                __classPrivateFieldGet(this, _InMemoryFileSystemHost_instances, "m", _InMemoryFileSystemHost_copyDirInternal).call(this, descendantDirPath, FileUtils.pathJoin(standardizedDestPath, relativePath));
             }
         }
         else {
             throw new errors.PathNotFoundError(standardizedSrcPath);
-        }
-    }
-    _copyDirInternal(from, to) {
-        const dir = __classPrivateFieldGet(this, _InMemoryFileSystemHost_directories, "f").get(from);
-        const newDir = this.getOrCreateDir(to);
-        for (const [filePath, text] of dir.files.entries()) {
-            const toDir = FileUtils.pathJoin(to, FileUtils.getBaseName(filePath));
-            newDir.files.set(toDir, text);
         }
     }
     fileExists(filePath) {
@@ -1638,19 +1624,29 @@ class InMemoryFileSystemHost {
                 yield* dir.files.keys();
         }
     }
-    getOrCreateDir(dirPath) {
-        let dir = __classPrivateFieldGet(this, _InMemoryFileSystemHost_directories, "f").get(dirPath);
-        if (dir == null) {
-            dir = { path: dirPath, files: new Map() };
-            __classPrivateFieldGet(this, _InMemoryFileSystemHost_directories, "f").set(dirPath, dir);
-            const parentDirPath = FileUtils.getDirPath(dirPath);
-            if (parentDirPath !== dirPath)
-                this.getOrCreateDir(parentDirPath);
-        }
-        return dir;
-    }
 }
-_InMemoryFileSystemHost_directories = new WeakMap();
+_InMemoryFileSystemHost_directories = new WeakMap(), _InMemoryFileSystemHost_instances = new WeakSet(), _InMemoryFileSystemHost_writeFileSync = function _InMemoryFileSystemHost_writeFileSync(filePath, fileText) {
+    const standardizedFilePath = FileUtils.getStandardizedAbsolutePath(this, filePath);
+    const dirPath = FileUtils.getDirPath(standardizedFilePath);
+    __classPrivateFieldGet(this, _InMemoryFileSystemHost_instances, "m", _InMemoryFileSystemHost_getOrCreateDir).call(this, dirPath).files.set(standardizedFilePath, fileText);
+}, _InMemoryFileSystemHost_copyDirInternal = function _InMemoryFileSystemHost_copyDirInternal(from, to) {
+    const dir = __classPrivateFieldGet(this, _InMemoryFileSystemHost_directories, "f").get(from);
+    const newDir = __classPrivateFieldGet(this, _InMemoryFileSystemHost_instances, "m", _InMemoryFileSystemHost_getOrCreateDir).call(this, to);
+    for (const [filePath, text] of dir.files.entries()) {
+        const toDir = FileUtils.pathJoin(to, FileUtils.getBaseName(filePath));
+        newDir.files.set(toDir, text);
+    }
+}, _InMemoryFileSystemHost_getOrCreateDir = function _InMemoryFileSystemHost_getOrCreateDir(dirPath) {
+    let dir = __classPrivateFieldGet(this, _InMemoryFileSystemHost_directories, "f").get(dirPath);
+    if (dir == null) {
+        dir = { path: dirPath, files: new Map() };
+        __classPrivateFieldGet(this, _InMemoryFileSystemHost_directories, "f").set(dirPath, dir);
+        const parentDirPath = FileUtils.getDirPath(dirPath);
+        if (parentDirPath !== dirPath)
+            __classPrivateFieldGet(this, _InMemoryFileSystemHost_instances, "m", _InMemoryFileSystemHost_getOrCreateDir).call(this, parentDirPath);
+    }
+    return dir;
+};
 function* getDescendantDirectories(directoryPaths, dirPath) {
     for (const path of directoryPaths) {
         if (FileUtils.pathStartsWith(path, dirPath))
@@ -1658,14 +1654,18 @@ function* getDescendantDirectories(directoryPaths, dirPath) {
     }
 }
 
+var _RealFileSystemHost_instances, _RealFileSystemHost_getDirectoryNotFoundErrorIfNecessary, _RealFileSystemHost_getFileNotFoundErrorIfNecessary;
 const fs = runtime.fs;
 class RealFileSystemHost {
+    constructor() {
+        _RealFileSystemHost_instances.add(this);
+    }
     async delete(path) {
         try {
             await fs.delete(path);
         }
         catch (err) {
-            throw this.getFileNotFoundErrorIfNecessary(err, path);
+            throw __classPrivateFieldGet(this, _RealFileSystemHost_instances, "m", _RealFileSystemHost_getFileNotFoundErrorIfNecessary).call(this, err, path);
         }
     }
     deleteSync(path) {
@@ -1673,7 +1673,7 @@ class RealFileSystemHost {
             fs.deleteSync(path);
         }
         catch (err) {
-            throw this.getFileNotFoundErrorIfNecessary(err, path);
+            throw __classPrivateFieldGet(this, _RealFileSystemHost_instances, "m", _RealFileSystemHost_getFileNotFoundErrorIfNecessary).call(this, err, path);
         }
     }
     readDirSync(dirPath) {
@@ -1694,7 +1694,7 @@ class RealFileSystemHost {
             return entries;
         }
         catch (err) {
-            throw this.getDirectoryNotFoundErrorIfNecessary(err, dirPath);
+            throw __classPrivateFieldGet(this, _RealFileSystemHost_instances, "m", _RealFileSystemHost_getDirectoryNotFoundErrorIfNecessary).call(this, err, dirPath);
         }
     }
     async readFile(filePath, encoding = "utf-8") {
@@ -1702,7 +1702,7 @@ class RealFileSystemHost {
             return await fs.readFile(filePath, encoding);
         }
         catch (err) {
-            throw this.getFileNotFoundErrorIfNecessary(err, filePath);
+            throw __classPrivateFieldGet(this, _RealFileSystemHost_instances, "m", _RealFileSystemHost_getFileNotFoundErrorIfNecessary).call(this, err, filePath);
         }
     }
     readFileSync(filePath, encoding = "utf-8") {
@@ -1710,7 +1710,7 @@ class RealFileSystemHost {
             return fs.readFileSync(filePath, encoding);
         }
         catch (err) {
-            throw this.getFileNotFoundErrorIfNecessary(err, filePath);
+            throw __classPrivateFieldGet(this, _RealFileSystemHost_instances, "m", _RealFileSystemHost_getFileNotFoundErrorIfNecessary).call(this, err, filePath);
         }
     }
     async writeFile(filePath, fileText) {
@@ -1784,20 +1784,20 @@ class RealFileSystemHost {
     isCaseSensitive() {
         return fs.isCaseSensitive();
     }
-    getDirectoryNotFoundErrorIfNecessary(err, path) {
-        return FileUtils.isNotExistsError(err) ? new errors.DirectoryNotFoundError(FileUtils.getStandardizedAbsolutePath(this, path)) : err;
-    }
-    getFileNotFoundErrorIfNecessary(err, path) {
-        return FileUtils.isNotExistsError(err) ? new errors.FileNotFoundError(FileUtils.getStandardizedAbsolutePath(this, path)) : err;
-    }
 }
+_RealFileSystemHost_instances = new WeakSet(), _RealFileSystemHost_getDirectoryNotFoundErrorIfNecessary = function _RealFileSystemHost_getDirectoryNotFoundErrorIfNecessary(err, path) {
+    return FileUtils.isNotExistsError(err) ? new errors.DirectoryNotFoundError(FileUtils.getStandardizedAbsolutePath(this, path)) : err;
+}, _RealFileSystemHost_getFileNotFoundErrorIfNecessary = function _RealFileSystemHost_getFileNotFoundErrorIfNecessary(err, path) {
+    return FileUtils.isNotExistsError(err) ? new errors.FileNotFoundError(FileUtils.getStandardizedAbsolutePath(this, path)) : err;
+};
 function backSlashesToForward(patterns) {
     return patterns.map(p => p.replace(/\\/g, "/"));
 }
 
-var _Directory_isDeleted, _Directory_wasEverDeleted, _Directory_parent, _Directory_childDirs, _TransactionalFileSystem_directories, _TransactionalFileSystem_pathCasingMaintainer, _TransactionalFileSystem_fileSystem, _TransactionalFileSystem_libFileMap, _TransactionalFileSystem_operationIndex, _PathCasingMaintainer_caseInsensitiveMappings;
+var _Directory_instances, _Directory_isDeleted, _Directory_wasEverDeleted, _Directory_parent, _Directory_childDirs, _Directory_hasOperation, _Directory_removeMatchingOperations, _TransactionalFileSystem_instances, _TransactionalFileSystem_directories, _TransactionalFileSystem_pathCasingMaintainer, _TransactionalFileSystem_fileSystem, _TransactionalFileSystem_libFileMap, _TransactionalFileSystem_getAndClearOperationsForDir, _TransactionalFileSystem_executeOperation, _TransactionalFileSystem_executeOperationSync, _TransactionalFileSystem_getAndClearOperations, _TransactionalFileSystem_deleteSuppressNotFound, _TransactionalFileSystem_deleteSuppressNotFoundSync, _TransactionalFileSystem__fileDeletedInMemory, _TransactionalFileSystem__verifyCanReadFile, _TransactionalFileSystem_isPathDirectoryInQueueThatExists, _TransactionalFileSystem_isPathQueuedForDeletion, _TransactionalFileSystem_removeDirAndSubDirs, _TransactionalFileSystem_addBackDirAndSubDirs, _TransactionalFileSystem_operationIndex, _TransactionalFileSystem_getNextOperationIndex, _TransactionalFileSystem_getParentDirectoryIfExists, _TransactionalFileSystem_getOrCreateParentDirectory, _TransactionalFileSystem_getDirectoryIfExists, _TransactionalFileSystem_getOrCreateDirectory, _TransactionalFileSystem_throwIfHasExternalOperations, _TransactionalFileSystem_ensureDirectoryExists, _TransactionalFileSystem_ensureDirectoryExistsSync, _TransactionalFileSystem_removeMkDirOperationsForDir, _TransactionalFileSystem_libFileExists, _TransactionalFileSystem_readLibFile, _TransactionalFileSystem_throwIfLibFile, _PathCasingMaintainer_caseInsensitiveMappings;
 class Directory {
     constructor(path) {
+        _Directory_instances.add(this);
         this.path = path;
         this.operations = [];
         this.inboundOperations = [];
@@ -1911,31 +1911,30 @@ class Directory {
         return descendants;
     }
     isFileQueuedForDelete(filePath) {
-        return this.hasOperation(operation => operation.kind === "deleteFile" && operation.filePath === filePath);
-    }
-    hasOperation(operationMatches) {
-        for (const operation of this.operations) {
-            if (operationMatches(operation))
-                return true;
-        }
-        return false;
+        return __classPrivateFieldGet(this, _Directory_instances, "m", _Directory_hasOperation).call(this, operation => operation.kind === "deleteFile" && operation.filePath === filePath);
     }
     dequeueFileDelete(filePath) {
-        this.removeMatchingOperations(operation => operation.kind === "deleteFile" && operation.filePath === filePath);
+        __classPrivateFieldGet(this, _Directory_instances, "m", _Directory_removeMatchingOperations).call(this, operation => operation.kind === "deleteFile" && operation.filePath === filePath);
     }
     dequeueDirDelete(dirPath) {
-        this.removeMatchingOperations(operation => operation.kind === "deleteDir" && operation.dir.path === dirPath);
+        __classPrivateFieldGet(this, _Directory_instances, "m", _Directory_removeMatchingOperations).call(this, operation => operation.kind === "deleteDir" && operation.dir.path === dirPath);
     }
     isRootDir() {
         return FileUtils.isRootDirPath(this.path);
     }
-    removeMatchingOperations(operationMatches) {
-        ArrayUtils.removeAll(this.operations, operationMatches);
-    }
 }
-_Directory_isDeleted = new WeakMap(), _Directory_wasEverDeleted = new WeakMap(), _Directory_parent = new WeakMap(), _Directory_childDirs = new WeakMap();
+_Directory_isDeleted = new WeakMap(), _Directory_wasEverDeleted = new WeakMap(), _Directory_parent = new WeakMap(), _Directory_childDirs = new WeakMap(), _Directory_instances = new WeakSet(), _Directory_hasOperation = function _Directory_hasOperation(operationMatches) {
+    for (const operation of this.operations) {
+        if (operationMatches(operation))
+            return true;
+    }
+    return false;
+}, _Directory_removeMatchingOperations = function _Directory_removeMatchingOperations(operationMatches) {
+    ArrayUtils.removeAll(this.operations, operationMatches);
+};
 class TransactionalFileSystem {
     constructor(options) {
+        _TransactionalFileSystem_instances.add(this);
         _TransactionalFileSystem_directories.set(this, new KeyValueCache());
         _TransactionalFileSystem_pathCasingMaintainer.set(this, void 0);
         _TransactionalFileSystem_fileSystem.set(this, void 0);
@@ -1953,46 +1952,46 @@ class TransactionalFileSystem {
         }
     }
     queueFileDelete(filePath) {
-        this.throwIfLibFile(filePath);
-        const parentDir = this.getOrCreateParentDirectory(filePath);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_throwIfLibFile).call(this, filePath);
+        const parentDir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateParentDirectory).call(this, filePath);
         parentDir.operations.push({
             kind: "deleteFile",
-            index: this.getNextOperationIndex(),
+            index: __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getNextOperationIndex).call(this),
             filePath,
         });
         __classPrivateFieldGet(this, _TransactionalFileSystem_pathCasingMaintainer, "f").removePath(filePath);
     }
     removeFileDelete(filePath) {
-        this.getOrCreateParentDirectory(filePath).dequeueFileDelete(filePath);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateParentDirectory).call(this, filePath).dequeueFileDelete(filePath);
     }
     queueMkdir(dirPath) {
-        const dir = this.getOrCreateDirectory(dirPath);
+        const dir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateDirectory).call(this, dirPath);
         dir.setIsDeleted(false);
-        const parentDir = this.getOrCreateParentDirectory(dirPath);
+        const parentDir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateParentDirectory).call(this, dirPath);
         parentDir.operations.push({
             kind: "mkdir",
-            index: this.getNextOperationIndex(),
+            index: __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getNextOperationIndex).call(this),
             dir,
         });
     }
     queueDirectoryDelete(dirPath) {
-        const dir = this.getOrCreateDirectory(dirPath);
+        const dir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateDirectory).call(this, dirPath);
         dir.setIsDeleted(true);
-        const parentDir = this.getOrCreateParentDirectory(dirPath);
+        const parentDir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateParentDirectory).call(this, dirPath);
         parentDir.operations.push({
             kind: "deleteDir",
-            index: this.getNextOperationIndex(),
+            index: __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getNextOperationIndex).call(this),
             dir,
         });
         __classPrivateFieldGet(this, _TransactionalFileSystem_pathCasingMaintainer, "f").removePath(dirPath);
     }
     queueMoveDirectory(srcPath, destPath) {
-        const parentDir = this.getOrCreateParentDirectory(srcPath);
-        const moveDir = this.getOrCreateDirectory(srcPath);
-        const destinationDir = this.getOrCreateDirectory(destPath);
+        const parentDir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateParentDirectory).call(this, srcPath);
+        const moveDir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateDirectory).call(this, srcPath);
+        const destinationDir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateDirectory).call(this, destPath);
         const moveOperation = {
             kind: "move",
-            index: this.getNextOperationIndex(),
+            index: __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getNextOperationIndex).call(this),
             oldDir: moveDir,
             newDir: destinationDir,
         };
@@ -2002,12 +2001,12 @@ class TransactionalFileSystem {
         __classPrivateFieldGet(this, _TransactionalFileSystem_pathCasingMaintainer, "f").removePath(srcPath);
     }
     queueCopyDirectory(srcPath, destPath) {
-        const parentDir = this.getOrCreateParentDirectory(srcPath);
-        const copyDir = this.getOrCreateDirectory(srcPath);
-        const destinationDir = this.getOrCreateDirectory(destPath);
+        const parentDir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateParentDirectory).call(this, srcPath);
+        const copyDir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateDirectory).call(this, srcPath);
+        const destinationDir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateDirectory).call(this, destPath);
         const copyOperation = {
             kind: "copy",
-            index: this.getNextOperationIndex(),
+            index: __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getNextOperationIndex).call(this),
             oldDir: copyDir,
             newDir: destinationDir,
         };
@@ -2015,115 +2014,51 @@ class TransactionalFileSystem {
         (destinationDir.getParent() || destinationDir).inboundOperations.push(copyOperation);
     }
     async flush() {
-        const operations = this.getAndClearOperations();
+        const operations = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getAndClearOperations).call(this);
         for (const operation of operations)
-            await this.executeOperation(operation);
+            await __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_executeOperation).call(this, operation);
     }
     flushSync() {
-        for (const operation of this.getAndClearOperations())
-            this.executeOperationSync(operation);
+        for (const operation of __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getAndClearOperations).call(this))
+            __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_executeOperationSync).call(this, operation);
     }
     async saveForDirectory(dirPath) {
-        const dir = this.getOrCreateDirectory(dirPath);
-        this.throwIfHasExternalOperations(dir, "save directory");
-        const operations = this.getAndClearOperationsForDir(dir);
-        await this.ensureDirectoryExists(dir);
+        const dir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateDirectory).call(this, dirPath);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_throwIfHasExternalOperations).call(this, dir, "save directory");
+        const operations = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getAndClearOperationsForDir).call(this, dir);
+        await __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_ensureDirectoryExists).call(this, dir);
         for (const operation of operations)
-            await this.executeOperation(operation);
+            await __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_executeOperation).call(this, operation);
     }
     saveForDirectorySync(dirPath) {
-        const dir = this.getOrCreateDirectory(dirPath);
-        this.throwIfHasExternalOperations(dir, "save directory");
-        this.ensureDirectoryExistsSync(dir);
-        for (const operation of this.getAndClearOperationsForDir(dir))
-            this.executeOperationSync(operation);
-    }
-    getAndClearOperationsForDir(dir) {
-        const operations = getAndClearParentMkDirOperations(dir.getParent(), dir);
-        for (const currentDir of [dir, ...dir.getDescendants()])
-            operations.push(...currentDir.operations);
-        ArrayUtils.sortByProperty(operations, item => item.index);
-        this.removeDirAndSubDirs(dir);
-        return operations;
-        function getAndClearParentMkDirOperations(parentDir, childDir) {
-            if (parentDir == null)
-                return [];
-            const parentOperations = ArrayUtils.removeAll(parentDir.operations, operation => operation.kind === "mkdir" && operation.dir === childDir);
-            return [...parentOperations, ...getAndClearParentMkDirOperations(parentDir.getParent(), parentDir)];
-        }
-    }
-    async executeOperation(operation) {
-        switch (operation.kind) {
-            case "deleteDir":
-                await this.deleteSuppressNotFound(operation.dir.path);
-                break;
-            case "deleteFile":
-                await this.deleteSuppressNotFound(operation.filePath);
-                break;
-            case "move":
-                await __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").move(operation.oldDir.path, operation.newDir.path);
-                break;
-            case "copy":
-                await __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").copy(operation.oldDir.path, operation.newDir.path);
-                break;
-            case "mkdir":
-                await __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").mkdir(operation.dir.path);
-                break;
-            default:
-                errors.throwNotImplementedForNeverValueError(operation);
-        }
-    }
-    executeOperationSync(operation) {
-        switch (operation.kind) {
-            case "deleteDir":
-                this.deleteSuppressNotFoundSync(operation.dir.path);
-                break;
-            case "deleteFile":
-                this.deleteSuppressNotFoundSync(operation.filePath);
-                break;
-            case "move":
-                __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").moveSync(operation.oldDir.path, operation.newDir.path);
-                break;
-            case "copy":
-                __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").copySync(operation.oldDir.path, operation.newDir.path);
-                break;
-            case "mkdir":
-                __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").mkdirSync(operation.dir.path);
-                break;
-            default:
-                errors.throwNotImplementedForNeverValueError(operation);
-        }
-    }
-    getAndClearOperations() {
-        const operations = [];
-        for (const dir of __classPrivateFieldGet(this, _TransactionalFileSystem_directories, "f").getValues())
-            operations.push(...dir.operations);
-        ArrayUtils.sortByProperty(operations, item => item.index);
-        __classPrivateFieldGet(this, _TransactionalFileSystem_directories, "f").clear();
-        return operations;
+        const dir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateDirectory).call(this, dirPath);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_throwIfHasExternalOperations).call(this, dir, "save directory");
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_ensureDirectoryExistsSync).call(this, dir);
+        for (const operation of __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getAndClearOperationsForDir).call(this, dir))
+            __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_executeOperationSync).call(this, operation);
     }
     async moveFileImmediately(oldFilePath, newFilePath, fileText) {
-        this.throwIfLibFile(newFilePath);
-        this.throwIfHasExternalOperations(this.getOrCreateParentDirectory(oldFilePath), "move file");
-        this.throwIfHasExternalOperations(this.getOrCreateParentDirectory(newFilePath), "move file");
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_throwIfLibFile).call(this, newFilePath);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_throwIfHasExternalOperations).call(this, __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateParentDirectory).call(this, oldFilePath), "move file");
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_throwIfHasExternalOperations).call(this, __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateParentDirectory).call(this, newFilePath), "move file");
         await this.writeFile(newFilePath, fileText);
         await this.deleteFileImmediately(oldFilePath);
     }
     moveFileImmediatelySync(oldFilePath, newFilePath, fileText) {
-        this.throwIfLibFile(newFilePath);
-        this.throwIfHasExternalOperations(this.getOrCreateParentDirectory(oldFilePath), "move file");
-        this.throwIfHasExternalOperations(this.getOrCreateParentDirectory(newFilePath), "move file");
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_throwIfLibFile).call(this, newFilePath);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_throwIfHasExternalOperations).call(this, __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateParentDirectory).call(this, oldFilePath), "move file");
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_throwIfHasExternalOperations).call(this, __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateParentDirectory).call(this, newFilePath), "move file");
         this.writeFileSync(newFilePath, fileText);
         this.deleteFileImmediatelySync(oldFilePath);
     }
     async deleteFileImmediately(filePath) {
-        this.throwIfLibFile(filePath);
-        const dir = this.getOrCreateParentDirectory(filePath);
-        this.throwIfHasExternalOperations(dir, "delete file");
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_throwIfLibFile).call(this, filePath);
+        const dir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateParentDirectory).call(this, filePath);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_throwIfHasExternalOperations).call(this, dir, "delete file");
         dir.dequeueFileDelete(filePath);
         __classPrivateFieldGet(this, _TransactionalFileSystem_pathCasingMaintainer, "f").removePath(filePath);
         try {
-            await this.deleteSuppressNotFound(filePath);
+            await __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_deleteSuppressNotFound).call(this, filePath);
         }
         catch (err) {
             this.queueFileDelete(filePath);
@@ -2131,13 +2066,13 @@ class TransactionalFileSystem {
         }
     }
     deleteFileImmediatelySync(filePath) {
-        this.throwIfLibFile(filePath);
-        const dir = this.getOrCreateParentDirectory(filePath);
-        this.throwIfHasExternalOperations(dir, "delete file");
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_throwIfLibFile).call(this, filePath);
+        const dir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateParentDirectory).call(this, filePath);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_throwIfHasExternalOperations).call(this, dir, "delete file");
         dir.dequeueFileDelete(filePath);
         __classPrivateFieldGet(this, _TransactionalFileSystem_pathCasingMaintainer, "f").removePath(filePath);
         try {
-            this.deleteSuppressNotFoundSync(filePath);
+            __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_deleteSuppressNotFoundSync).call(this, filePath);
         }
         catch (err) {
             this.queueFileDelete(filePath);
@@ -2145,137 +2080,109 @@ class TransactionalFileSystem {
         }
     }
     async copyDirectoryImmediately(srcDirPath, destDirPath) {
-        const srcDir = this.getOrCreateDirectory(srcDirPath);
-        const destDir = this.getOrCreateDirectory(destDirPath);
-        this.throwIfHasExternalOperations(srcDir, "copy directory");
-        this.throwIfHasExternalOperations(destDir, "copy directory");
+        const srcDir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateDirectory).call(this, srcDirPath);
+        const destDir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateDirectory).call(this, destDirPath);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_throwIfHasExternalOperations).call(this, srcDir, "copy directory");
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_throwIfHasExternalOperations).call(this, destDir, "copy directory");
         const saveTask = Promise.all([this.saveForDirectory(srcDirPath), this.saveForDirectory(destDirPath)]);
-        this.removeDirAndSubDirs(srcDir);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_removeDirAndSubDirs).call(this, srcDir);
         await saveTask;
         await __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").copy(srcDirPath, destDirPath);
     }
     copyDirectoryImmediatelySync(srcDirPath, destDirPath) {
-        const srcDir = this.getOrCreateDirectory(srcDirPath);
-        const destDir = this.getOrCreateDirectory(destDirPath);
-        this.throwIfHasExternalOperations(srcDir, "copy directory");
-        this.throwIfHasExternalOperations(destDir, "copy directory");
+        const srcDir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateDirectory).call(this, srcDirPath);
+        const destDir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateDirectory).call(this, destDirPath);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_throwIfHasExternalOperations).call(this, srcDir, "copy directory");
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_throwIfHasExternalOperations).call(this, destDir, "copy directory");
         this.saveForDirectorySync(srcDirPath);
         this.saveForDirectorySync(destDirPath);
-        this.removeDirAndSubDirs(srcDir);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_removeDirAndSubDirs).call(this, srcDir);
         __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").copySync(srcDirPath, destDirPath);
     }
     async moveDirectoryImmediately(srcDirPath, destDirPath) {
-        const srcDir = this.getOrCreateDirectory(srcDirPath);
-        const destDir = this.getOrCreateDirectory(destDirPath);
-        this.throwIfHasExternalOperations(srcDir, "move directory");
-        this.throwIfHasExternalOperations(destDir, "move directory");
+        const srcDir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateDirectory).call(this, srcDirPath);
+        const destDir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateDirectory).call(this, destDirPath);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_throwIfHasExternalOperations).call(this, srcDir, "move directory");
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_throwIfHasExternalOperations).call(this, destDir, "move directory");
         const saveTask = Promise.all([this.saveForDirectory(srcDirPath), this.saveForDirectory(destDirPath)]);
-        this.removeDirAndSubDirs(srcDir);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_removeDirAndSubDirs).call(this, srcDir);
         __classPrivateFieldGet(this, _TransactionalFileSystem_pathCasingMaintainer, "f").removePath(srcDirPath);
         await saveTask;
         await __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").move(srcDirPath, destDirPath);
     }
     moveDirectoryImmediatelySync(srcDirPath, destDirPath) {
-        const srcDir = this.getOrCreateDirectory(srcDirPath);
-        const destDir = this.getOrCreateDirectory(destDirPath);
-        this.throwIfHasExternalOperations(srcDir, "move directory");
-        this.throwIfHasExternalOperations(destDir, "move directory");
+        const srcDir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateDirectory).call(this, srcDirPath);
+        const destDir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateDirectory).call(this, destDirPath);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_throwIfHasExternalOperations).call(this, srcDir, "move directory");
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_throwIfHasExternalOperations).call(this, destDir, "move directory");
         this.saveForDirectorySync(srcDirPath);
         this.saveForDirectorySync(destDirPath);
-        this.removeDirAndSubDirs(srcDir);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_removeDirAndSubDirs).call(this, srcDir);
         __classPrivateFieldGet(this, _TransactionalFileSystem_pathCasingMaintainer, "f").removePath(srcDirPath);
         __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").moveSync(srcDirPath, destDirPath);
     }
     async deleteDirectoryImmediately(dirPath) {
-        const dir = this.getOrCreateDirectory(dirPath);
-        this.throwIfHasExternalOperations(dir, "delete");
-        this.removeDirAndSubDirs(dir);
+        const dir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateDirectory).call(this, dirPath);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_throwIfHasExternalOperations).call(this, dir, "delete");
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_removeDirAndSubDirs).call(this, dir);
         __classPrivateFieldGet(this, _TransactionalFileSystem_pathCasingMaintainer, "f").removePath(dirPath);
         try {
-            await this.deleteSuppressNotFound(dirPath);
+            await __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_deleteSuppressNotFound).call(this, dirPath);
         }
         catch (err) {
-            this.addBackDirAndSubDirs(dir);
+            __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_addBackDirAndSubDirs).call(this, dir);
             this.queueDirectoryDelete(dirPath);
         }
     }
     async clearDirectoryImmediately(dirPath) {
         await this.deleteDirectoryImmediately(dirPath);
-        this.getOrCreateDirectory(dirPath).setIsDeleted(false);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateDirectory).call(this, dirPath).setIsDeleted(false);
         await __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").mkdir(dirPath);
     }
     clearDirectoryImmediatelySync(dirPath) {
         this.deleteDirectoryImmediatelySync(dirPath);
-        this.getOrCreateDirectory(dirPath).setIsDeleted(false);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateDirectory).call(this, dirPath).setIsDeleted(false);
         __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").mkdirSync(dirPath);
     }
     deleteDirectoryImmediatelySync(dirPath) {
-        const dir = this.getOrCreateDirectory(dirPath);
-        this.throwIfHasExternalOperations(dir, "delete");
-        this.removeDirAndSubDirs(dir);
+        const dir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateDirectory).call(this, dirPath);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_throwIfHasExternalOperations).call(this, dir, "delete");
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_removeDirAndSubDirs).call(this, dir);
         __classPrivateFieldGet(this, _TransactionalFileSystem_pathCasingMaintainer, "f").removePath(dirPath);
         try {
-            this.deleteSuppressNotFoundSync(dirPath);
+            __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_deleteSuppressNotFoundSync).call(this, dirPath);
         }
         catch (err) {
-            this.addBackDirAndSubDirs(dir);
+            __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_addBackDirAndSubDirs).call(this, dir);
             this.queueDirectoryDelete(dirPath);
         }
     }
-    async deleteSuppressNotFound(path) {
-        this.throwIfLibFile(path);
-        try {
-            await __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").delete(path);
-        }
-        catch (err) {
-            if (!FileUtils.isNotExistsError(err))
-                throw err;
-        }
-    }
-    deleteSuppressNotFoundSync(path) {
-        this.throwIfLibFile(path);
-        try {
-            __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").deleteSync(path);
-        }
-        catch (err) {
-            if (!FileUtils.isNotExistsError(err))
-                throw err;
-        }
-    }
     fileExists(filePath) {
-        if (this.libFileExists(filePath))
+        if (__classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_libFileExists).call(this, filePath))
             return true;
-        if (this._fileDeletedInMemory(filePath))
+        if (__classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem__fileDeletedInMemory).call(this, filePath))
             return false;
         return __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").fileExists(filePath);
     }
     fileExistsSync(filePath) {
-        if (this.libFileExists(filePath))
+        if (__classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_libFileExists).call(this, filePath))
             return true;
-        if (this._fileDeletedInMemory(filePath))
+        if (__classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem__fileDeletedInMemory).call(this, filePath))
             return false;
         return __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").fileExistsSync(filePath);
     }
-    _fileDeletedInMemory(filePath) {
-        if (this.isPathQueuedForDeletion(filePath))
-            return true;
-        const parentDir = this.getParentDirectoryIfExists(filePath);
-        if (parentDir != null && parentDir.getWasEverDeleted())
-            return true;
-        return false;
-    }
     directoryExistsSync(dirPath) {
-        if (this.isPathQueuedForDeletion(dirPath))
+        if (__classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_isPathQueuedForDeletion).call(this, dirPath))
             return false;
-        if (this.isPathDirectoryInQueueThatExists(dirPath))
+        if (__classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_isPathDirectoryInQueueThatExists).call(this, dirPath))
             return true;
-        const dir = this.getDirectoryIfExists(dirPath);
+        const dir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getDirectoryIfExists).call(this, dirPath);
         if (dir != null && dir.getWasEverDeleted())
             return false;
         return __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").directoryExistsSync(dirPath);
     }
     readFileIfExistsSync(filePath, encoding) {
-        if (this._fileDeletedInMemory(filePath))
+        if (__classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem__fileDeletedInMemory).call(this, filePath))
             return undefined;
         try {
             return this.readFileSync(filePath, encoding);
@@ -2288,14 +2195,14 @@ class TransactionalFileSystem {
         }
     }
     readFileSync(filePath, encoding) {
-        const libFileText = this.readLibFile(filePath);
+        const libFileText = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_readLibFile).call(this, filePath);
         if (libFileText != null)
             return libFileText;
-        this._verifyCanReadFile(filePath);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem__verifyCanReadFile).call(this, filePath);
         return __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").readFileSync(filePath, encoding);
     }
     readFileIfExists(filePath, encoding) {
-        if (this._fileDeletedInMemory(filePath))
+        if (__classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem__fileDeletedInMemory).call(this, filePath))
             return Promise.resolve(undefined);
         return this.readFile(filePath, encoding)
             .catch(err => {
@@ -2306,20 +2213,14 @@ class TransactionalFileSystem {
         });
     }
     readFile(filePath, encoding) {
-        const libFileText = this.readLibFile(filePath);
+        const libFileText = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_readLibFile).call(this, filePath);
         if (libFileText != null)
             return Promise.resolve(libFileText);
-        this._verifyCanReadFile(filePath);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem__verifyCanReadFile).call(this, filePath);
         return __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").readFile(filePath, encoding);
     }
-    _verifyCanReadFile(filePath) {
-        if (this.isPathQueuedForDeletion(filePath))
-            throw new errors.InvalidOperationError(`Cannot read file at ${filePath} when it is queued for deletion.`);
-        if (this.getOrCreateParentDirectory(filePath).getWasEverDeleted())
-            throw new errors.InvalidOperationError(`Cannot read file at ${filePath} because one of its ancestor directories was once deleted or moved.`);
-    }
     readDirSync(dirPath) {
-        const dir = this.getOrCreateDirectory(dirPath);
+        const dir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateDirectory).call(this, dirPath);
         if (dir.getIsDeleted())
             throw new errors.InvalidOperationError(`Cannot read directory at ${dirPath} when it is queued for deletion.`);
         if (dir.getWasEverDeleted())
@@ -2329,7 +2230,7 @@ class TransactionalFileSystem {
             uniqueDirPaths.set(entry.path, entry);
         for (const runtimeDirEntry of __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").readDirSync(dirPath)) {
             const standardizedChildDirOrFilePath = this.getStandardizedAbsolutePath(runtimeDirEntry.name);
-            if (!this.isPathQueuedForDeletion(standardizedChildDirOrFilePath)) {
+            if (!__classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_isPathQueuedForDeletion).call(this, standardizedChildDirOrFilePath)) {
                 uniqueDirPaths.set(standardizedChildDirOrFilePath, {
                     path: standardizedChildDirOrFilePath,
                     isDirectory: runtimeDirEntry.isDirectory,
@@ -2344,13 +2245,13 @@ class TransactionalFileSystem {
         const filePaths = await __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").glob(patterns);
         return filePaths
             .map(filePath => this.getStandardizedAbsolutePath(filePath))
-            .filter(filePath => !this.isPathQueuedForDeletion(filePath));
+            .filter(filePath => !__classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_isPathQueuedForDeletion).call(this, filePath));
     }
     *globSync(patterns) {
         const filePaths = __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").globSync(patterns);
         for (const filePath of filePaths) {
             const standardizedFilePath = this.getStandardizedAbsolutePath(filePath);
-            if (!this.isPathQueuedForDeletion(standardizedFilePath))
+            if (!__classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_isPathQueuedForDeletion).call(this, standardizedFilePath))
                 yield standardizedFilePath;
         }
     }
@@ -2364,7 +2265,7 @@ class TransactionalFileSystem {
         return this.readDirSync(dirPath).filter(entry => entry.isDirectory).map(d => d.path);
     }
     realpathSync(path) {
-        if (this.libFileExists(path))
+        if (__classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_libFileExists).call(this, path))
             return path;
         try {
             return this.getStandardizedAbsolutePath(__classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").realpathSync(path));
@@ -2378,157 +2279,231 @@ class TransactionalFileSystem {
         return __classPrivateFieldGet(this, _TransactionalFileSystem_pathCasingMaintainer, "f").getPath(standardizedFileOrDirPath);
     }
     readFileOrNotExists(filePath, encoding) {
-        const libFileText = this.readLibFile(filePath);
+        const libFileText = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_readLibFile).call(this, filePath);
         if (libFileText != null)
             return Promise.resolve(libFileText);
-        if (this.isPathQueuedForDeletion(filePath))
+        if (__classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_isPathQueuedForDeletion).call(this, filePath))
             return false;
         return FileUtils.readFileOrNotExists(__classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f"), filePath, encoding);
     }
     readFileOrNotExistsSync(filePath, encoding) {
-        const libFileText = this.readLibFile(filePath);
+        const libFileText = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_readLibFile).call(this, filePath);
         if (libFileText != null)
             return libFileText;
-        if (this.isPathQueuedForDeletion(filePath))
+        if (__classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_isPathQueuedForDeletion).call(this, filePath))
             return false;
         return FileUtils.readFileOrNotExistsSync(__classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f"), filePath, encoding);
     }
     async writeFile(filePath, fileText) {
-        this.throwIfLibFile(filePath);
-        const parentDir = this.getOrCreateParentDirectory(filePath);
-        this.throwIfHasExternalOperations(parentDir, "write file");
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_throwIfLibFile).call(this, filePath);
+        const parentDir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateParentDirectory).call(this, filePath);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_throwIfHasExternalOperations).call(this, parentDir, "write file");
         parentDir.dequeueFileDelete(filePath);
-        await this.ensureDirectoryExists(parentDir);
+        await __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_ensureDirectoryExists).call(this, parentDir);
         await __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").writeFile(filePath, fileText);
     }
     writeFileSync(filePath, fileText) {
-        this.throwIfLibFile(filePath);
-        const parentDir = this.getOrCreateParentDirectory(filePath);
-        this.throwIfHasExternalOperations(parentDir, "write file");
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_throwIfLibFile).call(this, filePath);
+        const parentDir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateParentDirectory).call(this, filePath);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_throwIfHasExternalOperations).call(this, parentDir, "write file");
         parentDir.dequeueFileDelete(filePath);
-        this.ensureDirectoryExistsSync(parentDir);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_ensureDirectoryExistsSync).call(this, parentDir);
         __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").writeFileSync(filePath, fileText);
     }
-    isPathDirectoryInQueueThatExists(path) {
-        const pathDir = this.getDirectoryIfExists(path);
-        return pathDir == null ? false : !pathDir.getIsDeleted();
-    }
-    isPathQueuedForDeletion(path) {
-        const pathDir = this.getDirectoryIfExists(path);
-        if (pathDir != null)
-            return pathDir.getIsDeleted();
-        const parentDir = this.getParentDirectoryIfExists(path);
-        if (parentDir == null)
-            return false;
-        return parentDir.isFileQueuedForDelete(path) || parentDir.getIsDeleted();
-    }
-    removeDirAndSubDirs(dir) {
-        const originalParent = dir.getParent();
-        dir.removeParent();
-        for (const dirToRemove of [dir, ...dir.getDescendants()])
-            __classPrivateFieldGet(this, _TransactionalFileSystem_directories, "f").removeByKey(dirToRemove.path);
-        if (originalParent != null)
-            originalParent.dequeueDirDelete(dir.path);
-    }
-    addBackDirAndSubDirs(dir) {
-        for (const dirToAdd of [dir, ...dir.getDescendants()])
-            __classPrivateFieldGet(this, _TransactionalFileSystem_directories, "f").set(dirToAdd.path, dirToAdd);
-        if (!dir.isRootDir())
-            dir.setParent(this.getOrCreateParentDirectory(dir.path));
-    }
-    getNextOperationIndex() {
-        var _a, _b;
-        return __classPrivateFieldSet(this, _TransactionalFileSystem_operationIndex, (_b = __classPrivateFieldGet(this, _TransactionalFileSystem_operationIndex, "f"), _a = _b++, _b), "f"), _a;
-    }
-    getParentDirectoryIfExists(filePath) {
-        return this.getDirectoryIfExists(FileUtils.getDirPath(filePath));
-    }
-    getOrCreateParentDirectory(filePath) {
-        return this.getOrCreateDirectory(FileUtils.getDirPath(filePath));
-    }
-    getDirectoryIfExists(dirPath) {
-        return __classPrivateFieldGet(this, _TransactionalFileSystem_directories, "f").get(dirPath);
-    }
-    getOrCreateDirectory(dirPath) {
-        let dir = __classPrivateFieldGet(this, _TransactionalFileSystem_directories, "f").get(dirPath);
-        if (dir != null)
-            return dir;
-        const getOrCreateDir = (creatingDirPath) => __classPrivateFieldGet(this, _TransactionalFileSystem_directories, "f").getOrCreate(creatingDirPath, () => new Directory(creatingDirPath));
-        dir = getOrCreateDir(dirPath);
-        let currentDirPath = dirPath;
-        let currentDir = dir;
-        while (!FileUtils.isRootDirPath(currentDirPath)) {
-            const nextDirPath = FileUtils.getDirPath(currentDirPath);
-            const hadNextDir = __classPrivateFieldGet(this, _TransactionalFileSystem_directories, "f").has(nextDirPath);
-            const nextDir = getOrCreateDir(nextDirPath);
-            currentDir.setParent(nextDir);
-            if (hadNextDir)
-                return dir;
-            currentDir = nextDir;
-            currentDirPath = nextDirPath;
-        }
-        return dir;
-    }
-    throwIfHasExternalOperations(dir, commandName) {
-        const operations = dir.getExternalOperations();
-        if (operations.length === 0)
-            return;
-        throw new errors.InvalidOperationError(getErrorText());
-        function getErrorText() {
-            let hasCopy = false;
-            let errorText = `Cannot execute immediate operation '${commandName}' because of the following external operations:\n`;
-            for (const operation of operations) {
-                if (operation.kind === "move")
-                    errorText += `\n* Move: ${operation.oldDir.path} --> ${operation.newDir.path}`;
-                else if (operation.kind === "copy") {
-                    errorText += `\n* Copy: ${operation.oldDir.path} --> ${operation.newDir.path}`;
-                    hasCopy = true;
-                }
-                else if (operation.kind === "deleteDir")
-                    errorText += `\n* Delete: ${operation.dir.path}`;
-                else {
-                    errorText += `\n* Unknown operation: Please report this as a bug.`;
-                }
-            }
-            if (hasCopy)
-                errorText += "\n\nNote: Copy operations can be removed from external operations by setting `includeUntrackedFiles` to `false` when copying.";
-            return errorText;
-        }
-    }
-    async ensureDirectoryExists(dir) {
-        if (dir.isRootDir())
-            return;
-        this.removeMkDirOperationsForDir(dir);
-        await __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").mkdir(dir.path);
-    }
-    ensureDirectoryExistsSync(dir) {
-        if (dir.isRootDir())
-            return;
-        this.removeMkDirOperationsForDir(dir);
-        __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").mkdirSync(dir.path);
-    }
-    removeMkDirOperationsForDir(dir) {
-        const parentDir = dir.getParent();
-        if (parentDir != null) {
-            ArrayUtils.removeAll(parentDir.operations, operation => operation.kind === "mkdir" && operation.dir === dir);
-            this.removeMkDirOperationsForDir(parentDir);
-        }
-    }
-    libFileExists(filePath) {
-        return __classPrivateFieldGet(this, _TransactionalFileSystem_libFileMap, "f") != null && __classPrivateFieldGet(this, _TransactionalFileSystem_libFileMap, "f").has(filePath);
-    }
-    readLibFile(filePath) {
-        if (__classPrivateFieldGet(this, _TransactionalFileSystem_libFileMap, "f") != null)
-            return __classPrivateFieldGet(this, _TransactionalFileSystem_libFileMap, "f").get(filePath);
-        else
-            return undefined;
-    }
-    throwIfLibFile(filePath) {
-        if (this.libFileExists(filePath))
-            throw new errors.InvalidOperationError(`This operation is not permitted on an in memory lib folder file.`);
-    }
 }
-_TransactionalFileSystem_directories = new WeakMap(), _TransactionalFileSystem_pathCasingMaintainer = new WeakMap(), _TransactionalFileSystem_fileSystem = new WeakMap(), _TransactionalFileSystem_libFileMap = new WeakMap(), _TransactionalFileSystem_operationIndex = new WeakMap();
+_TransactionalFileSystem_directories = new WeakMap(), _TransactionalFileSystem_pathCasingMaintainer = new WeakMap(), _TransactionalFileSystem_fileSystem = new WeakMap(), _TransactionalFileSystem_libFileMap = new WeakMap(), _TransactionalFileSystem_operationIndex = new WeakMap(), _TransactionalFileSystem_instances = new WeakSet(), _TransactionalFileSystem_getAndClearOperationsForDir = function _TransactionalFileSystem_getAndClearOperationsForDir(dir) {
+    const operations = getAndClearParentMkDirOperations(dir.getParent(), dir);
+    for (const currentDir of [dir, ...dir.getDescendants()])
+        operations.push(...currentDir.operations);
+    ArrayUtils.sortByProperty(operations, item => item.index);
+    __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_removeDirAndSubDirs).call(this, dir);
+    return operations;
+    function getAndClearParentMkDirOperations(parentDir, childDir) {
+        if (parentDir == null)
+            return [];
+        const parentOperations = ArrayUtils.removeAll(parentDir.operations, operation => operation.kind === "mkdir" && operation.dir === childDir);
+        return [...parentOperations, ...getAndClearParentMkDirOperations(parentDir.getParent(), parentDir)];
+    }
+}, _TransactionalFileSystem_executeOperation = async function _TransactionalFileSystem_executeOperation(operation) {
+    switch (operation.kind) {
+        case "deleteDir":
+            await __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_deleteSuppressNotFound).call(this, operation.dir.path);
+            break;
+        case "deleteFile":
+            await __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_deleteSuppressNotFound).call(this, operation.filePath);
+            break;
+        case "move":
+            await __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").move(operation.oldDir.path, operation.newDir.path);
+            break;
+        case "copy":
+            await __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").copy(operation.oldDir.path, operation.newDir.path);
+            break;
+        case "mkdir":
+            await __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").mkdir(operation.dir.path);
+            break;
+        default:
+            errors.throwNotImplementedForNeverValueError(operation);
+    }
+}, _TransactionalFileSystem_executeOperationSync = function _TransactionalFileSystem_executeOperationSync(operation) {
+    switch (operation.kind) {
+        case "deleteDir":
+            __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_deleteSuppressNotFoundSync).call(this, operation.dir.path);
+            break;
+        case "deleteFile":
+            __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_deleteSuppressNotFoundSync).call(this, operation.filePath);
+            break;
+        case "move":
+            __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").moveSync(operation.oldDir.path, operation.newDir.path);
+            break;
+        case "copy":
+            __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").copySync(operation.oldDir.path, operation.newDir.path);
+            break;
+        case "mkdir":
+            __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").mkdirSync(operation.dir.path);
+            break;
+        default:
+            errors.throwNotImplementedForNeverValueError(operation);
+    }
+}, _TransactionalFileSystem_getAndClearOperations = function _TransactionalFileSystem_getAndClearOperations() {
+    const operations = [];
+    for (const dir of __classPrivateFieldGet(this, _TransactionalFileSystem_directories, "f").getValues())
+        operations.push(...dir.operations);
+    ArrayUtils.sortByProperty(operations, item => item.index);
+    __classPrivateFieldGet(this, _TransactionalFileSystem_directories, "f").clear();
+    return operations;
+}, _TransactionalFileSystem_deleteSuppressNotFound = async function _TransactionalFileSystem_deleteSuppressNotFound(path) {
+    __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_throwIfLibFile).call(this, path);
+    try {
+        await __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").delete(path);
+    }
+    catch (err) {
+        if (!FileUtils.isNotExistsError(err))
+            throw err;
+    }
+}, _TransactionalFileSystem_deleteSuppressNotFoundSync = function _TransactionalFileSystem_deleteSuppressNotFoundSync(path) {
+    __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_throwIfLibFile).call(this, path);
+    try {
+        __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").deleteSync(path);
+    }
+    catch (err) {
+        if (!FileUtils.isNotExistsError(err))
+            throw err;
+    }
+}, _TransactionalFileSystem__fileDeletedInMemory = function _TransactionalFileSystem__fileDeletedInMemory(filePath) {
+    if (__classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_isPathQueuedForDeletion).call(this, filePath))
+        return true;
+    const parentDir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getParentDirectoryIfExists).call(this, filePath);
+    if (parentDir != null && parentDir.getWasEverDeleted())
+        return true;
+    return false;
+}, _TransactionalFileSystem__verifyCanReadFile = function _TransactionalFileSystem__verifyCanReadFile(filePath) {
+    if (__classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_isPathQueuedForDeletion).call(this, filePath))
+        throw new errors.InvalidOperationError(`Cannot read file at ${filePath} when it is queued for deletion.`);
+    if (__classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateParentDirectory).call(this, filePath).getWasEverDeleted())
+        throw new errors.InvalidOperationError(`Cannot read file at ${filePath} because one of its ancestor directories was once deleted or moved.`);
+}, _TransactionalFileSystem_isPathDirectoryInQueueThatExists = function _TransactionalFileSystem_isPathDirectoryInQueueThatExists(path) {
+    const pathDir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getDirectoryIfExists).call(this, path);
+    return pathDir == null ? false : !pathDir.getIsDeleted();
+}, _TransactionalFileSystem_isPathQueuedForDeletion = function _TransactionalFileSystem_isPathQueuedForDeletion(path) {
+    const pathDir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getDirectoryIfExists).call(this, path);
+    if (pathDir != null)
+        return pathDir.getIsDeleted();
+    const parentDir = __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getParentDirectoryIfExists).call(this, path);
+    if (parentDir == null)
+        return false;
+    return parentDir.isFileQueuedForDelete(path) || parentDir.getIsDeleted();
+}, _TransactionalFileSystem_removeDirAndSubDirs = function _TransactionalFileSystem_removeDirAndSubDirs(dir) {
+    const originalParent = dir.getParent();
+    dir.removeParent();
+    for (const dirToRemove of [dir, ...dir.getDescendants()])
+        __classPrivateFieldGet(this, _TransactionalFileSystem_directories, "f").removeByKey(dirToRemove.path);
+    if (originalParent != null)
+        originalParent.dequeueDirDelete(dir.path);
+}, _TransactionalFileSystem_addBackDirAndSubDirs = function _TransactionalFileSystem_addBackDirAndSubDirs(dir) {
+    for (const dirToAdd of [dir, ...dir.getDescendants()])
+        __classPrivateFieldGet(this, _TransactionalFileSystem_directories, "f").set(dirToAdd.path, dirToAdd);
+    if (!dir.isRootDir())
+        dir.setParent(__classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateParentDirectory).call(this, dir.path));
+}, _TransactionalFileSystem_getNextOperationIndex = function _TransactionalFileSystem_getNextOperationIndex() {
+    var _a, _b;
+    return __classPrivateFieldSet(this, _TransactionalFileSystem_operationIndex, (_b = __classPrivateFieldGet(this, _TransactionalFileSystem_operationIndex, "f"), _a = _b++, _b), "f"), _a;
+}, _TransactionalFileSystem_getParentDirectoryIfExists = function _TransactionalFileSystem_getParentDirectoryIfExists(filePath) {
+    return __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getDirectoryIfExists).call(this, FileUtils.getDirPath(filePath));
+}, _TransactionalFileSystem_getOrCreateParentDirectory = function _TransactionalFileSystem_getOrCreateParentDirectory(filePath) {
+    return __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_getOrCreateDirectory).call(this, FileUtils.getDirPath(filePath));
+}, _TransactionalFileSystem_getDirectoryIfExists = function _TransactionalFileSystem_getDirectoryIfExists(dirPath) {
+    return __classPrivateFieldGet(this, _TransactionalFileSystem_directories, "f").get(dirPath);
+}, _TransactionalFileSystem_getOrCreateDirectory = function _TransactionalFileSystem_getOrCreateDirectory(dirPath) {
+    let dir = __classPrivateFieldGet(this, _TransactionalFileSystem_directories, "f").get(dirPath);
+    if (dir != null)
+        return dir;
+    const getOrCreateDir = (creatingDirPath) => __classPrivateFieldGet(this, _TransactionalFileSystem_directories, "f").getOrCreate(creatingDirPath, () => new Directory(creatingDirPath));
+    dir = getOrCreateDir(dirPath);
+    let currentDirPath = dirPath;
+    let currentDir = dir;
+    while (!FileUtils.isRootDirPath(currentDirPath)) {
+        const nextDirPath = FileUtils.getDirPath(currentDirPath);
+        const hadNextDir = __classPrivateFieldGet(this, _TransactionalFileSystem_directories, "f").has(nextDirPath);
+        const nextDir = getOrCreateDir(nextDirPath);
+        currentDir.setParent(nextDir);
+        if (hadNextDir)
+            return dir;
+        currentDir = nextDir;
+        currentDirPath = nextDirPath;
+    }
+    return dir;
+}, _TransactionalFileSystem_throwIfHasExternalOperations = function _TransactionalFileSystem_throwIfHasExternalOperations(dir, commandName) {
+    const operations = dir.getExternalOperations();
+    if (operations.length === 0)
+        return;
+    throw new errors.InvalidOperationError(getErrorText());
+    function getErrorText() {
+        let hasCopy = false;
+        let errorText = `Cannot execute immediate operation '${commandName}' because of the following external operations:\n`;
+        for (const operation of operations) {
+            if (operation.kind === "move")
+                errorText += `\n* Move: ${operation.oldDir.path} --> ${operation.newDir.path}`;
+            else if (operation.kind === "copy") {
+                errorText += `\n* Copy: ${operation.oldDir.path} --> ${operation.newDir.path}`;
+                hasCopy = true;
+            }
+            else if (operation.kind === "deleteDir")
+                errorText += `\n* Delete: ${operation.dir.path}`;
+            else {
+                errorText += `\n* Unknown operation: Please report this as a bug.`;
+            }
+        }
+        if (hasCopy)
+            errorText += "\n\nNote: Copy operations can be removed from external operations by setting `includeUntrackedFiles` to `false` when copying.";
+        return errorText;
+    }
+}, _TransactionalFileSystem_ensureDirectoryExists = async function _TransactionalFileSystem_ensureDirectoryExists(dir) {
+    if (dir.isRootDir())
+        return;
+    __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_removeMkDirOperationsForDir).call(this, dir);
+    await __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").mkdir(dir.path);
+}, _TransactionalFileSystem_ensureDirectoryExistsSync = function _TransactionalFileSystem_ensureDirectoryExistsSync(dir) {
+    if (dir.isRootDir())
+        return;
+    __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_removeMkDirOperationsForDir).call(this, dir);
+    __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").mkdirSync(dir.path);
+}, _TransactionalFileSystem_removeMkDirOperationsForDir = function _TransactionalFileSystem_removeMkDirOperationsForDir(dir) {
+    const parentDir = dir.getParent();
+    if (parentDir != null) {
+        ArrayUtils.removeAll(parentDir.operations, operation => operation.kind === "mkdir" && operation.dir === dir);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_removeMkDirOperationsForDir).call(this, parentDir);
+    }
+}, _TransactionalFileSystem_libFileExists = function _TransactionalFileSystem_libFileExists(filePath) {
+    return __classPrivateFieldGet(this, _TransactionalFileSystem_libFileMap, "f") != null && __classPrivateFieldGet(this, _TransactionalFileSystem_libFileMap, "f").has(filePath);
+}, _TransactionalFileSystem_readLibFile = function _TransactionalFileSystem_readLibFile(filePath) {
+    if (__classPrivateFieldGet(this, _TransactionalFileSystem_libFileMap, "f") != null)
+        return __classPrivateFieldGet(this, _TransactionalFileSystem_libFileMap, "f").get(filePath);
+    else
+        return undefined;
+}, _TransactionalFileSystem_throwIfLibFile = function _TransactionalFileSystem_throwIfLibFile(filePath) {
+    if (__classPrivateFieldGet(this, _TransactionalFileSystem_instances, "m", _TransactionalFileSystem_libFileExists).call(this, filePath))
+        throw new errors.InvalidOperationError(`This operation is not permitted on an in memory lib folder file.`);
+};
 class PathCasingMaintainer {
     constructor(fileSystem) {
         _PathCasingMaintainer_caseInsensitiveMappings.set(this, void 0);
@@ -2595,9 +2570,10 @@ function createModuleResolutionHost(options) {
     };
 }
 
-var _a, _DocumentRegistry_sourceFileCacheByFilePath, _DocumentRegistry_transactionalFileSystem, _DocumentRegistry_initialVersion;
+var _DocumentRegistry_instances, _a, _DocumentRegistry_sourceFileCacheByFilePath, _DocumentRegistry_transactionalFileSystem, _DocumentRegistry_initialVersion, _DocumentRegistry_getNextSourceFileVersion, _DocumentRegistry_updateSourceFile;
 class DocumentRegistry {
     constructor(transactionalFileSystem) {
+        _DocumentRegistry_instances.add(this);
         _DocumentRegistry_sourceFileCacheByFilePath.set(this, new Map());
         _DocumentRegistry_transactionalFileSystem.set(this, void 0);
         __classPrivateFieldSet(this, _DocumentRegistry_transactionalFileSystem, transactionalFileSystem, "f");
@@ -2605,9 +2581,9 @@ class DocumentRegistry {
     createOrUpdateSourceFile(fileName, compilationSettings, scriptSnapshot, scriptKind) {
         let sourceFile = __classPrivateFieldGet(this, _DocumentRegistry_sourceFileCacheByFilePath, "f").get(fileName);
         if (sourceFile == null)
-            sourceFile = this.updateSourceFile(fileName, compilationSettings, scriptSnapshot, __classPrivateFieldGet(_a, _a, "f", _DocumentRegistry_initialVersion), scriptKind);
+            sourceFile = __classPrivateFieldGet(this, _DocumentRegistry_instances, "m", _DocumentRegistry_updateSourceFile).call(this, fileName, compilationSettings, scriptSnapshot, __classPrivateFieldGet(_a, _a, "f", _DocumentRegistry_initialVersion), scriptKind);
         else
-            sourceFile = this.updateSourceFile(fileName, compilationSettings, scriptSnapshot, this.getNextSourceFileVersion(sourceFile), scriptKind);
+            sourceFile = __classPrivateFieldGet(this, _DocumentRegistry_instances, "m", _DocumentRegistry_updateSourceFile).call(this, fileName, compilationSettings, scriptSnapshot, __classPrivateFieldGet(this, _DocumentRegistry_instances, "m", _DocumentRegistry_getNextSourceFileVersion).call(this, sourceFile), scriptKind);
         return sourceFile;
     }
     removeSourceFile(fileName) {
@@ -2617,7 +2593,7 @@ class DocumentRegistry {
         const standardizedFilePath = __classPrivateFieldGet(this, _DocumentRegistry_transactionalFileSystem, "f").getStandardizedAbsolutePath(fileName);
         let sourceFile = __classPrivateFieldGet(this, _DocumentRegistry_sourceFileCacheByFilePath, "f").get(standardizedFilePath);
         if (sourceFile == null || this.getSourceFileVersion(sourceFile) !== version)
-            sourceFile = this.updateSourceFile(standardizedFilePath, compilationSettings, scriptSnapshot, version, scriptKind);
+            sourceFile = __classPrivateFieldGet(this, _DocumentRegistry_instances, "m", _DocumentRegistry_updateSourceFile).call(this, standardizedFilePath, compilationSettings, scriptSnapshot, version, scriptKind);
         return sourceFile;
     }
     acquireDocumentWithKey(fileName, path, compilationSettings, key, scriptSnapshot, version, scriptKind) {
@@ -2642,17 +2618,15 @@ class DocumentRegistry {
     getSourceFileVersion(sourceFile) {
         return sourceFile.version || "0";
     }
-    getNextSourceFileVersion(sourceFile) {
-        const currentVersion = parseInt(this.getSourceFileVersion(sourceFile), 10) || 0;
-        return (currentVersion + 1).toString();
-    }
-    updateSourceFile(fileName, compilationSettings, scriptSnapshot, version, scriptKind) {
-        const newSourceFile = createCompilerSourceFile(fileName, scriptSnapshot, compilationSettings.target, version, true, scriptKind);
-        __classPrivateFieldGet(this, _DocumentRegistry_sourceFileCacheByFilePath, "f").set(fileName, newSourceFile);
-        return newSourceFile;
-    }
 }
-_a = DocumentRegistry, _DocumentRegistry_sourceFileCacheByFilePath = new WeakMap(), _DocumentRegistry_transactionalFileSystem = new WeakMap();
+_a = DocumentRegistry, _DocumentRegistry_sourceFileCacheByFilePath = new WeakMap(), _DocumentRegistry_transactionalFileSystem = new WeakMap(), _DocumentRegistry_instances = new WeakSet(), _DocumentRegistry_getNextSourceFileVersion = function _DocumentRegistry_getNextSourceFileVersion(sourceFile) {
+    const currentVersion = parseInt(this.getSourceFileVersion(sourceFile), 10) || 0;
+    return (currentVersion + 1).toString();
+}, _DocumentRegistry_updateSourceFile = function _DocumentRegistry_updateSourceFile(fileName, compilationSettings, scriptSnapshot, version, scriptKind) {
+    const newSourceFile = createCompilerSourceFile(fileName, scriptSnapshot, compilationSettings.target, version, true, scriptKind);
+    __classPrivateFieldGet(this, _DocumentRegistry_sourceFileCacheByFilePath, "f").set(fileName, newSourceFile);
+    return newSourceFile;
+};
 _DocumentRegistry_initialVersion = { value: "0" };
 
 const denoResolutionHostFactory = (moduleResolutionHost, getCompilerOptions) => {
@@ -2711,9 +2685,10 @@ function getNewFunction(originalFunction) {
     return decorator;
 }
 
-var _SettingsContainer__defaultSettings, _SettingsContainer__modifiedEventContainer;
+var _SettingsContainer_instances, _SettingsContainer__defaultSettings, _SettingsContainer__modifiedEventContainer, _SettingsContainer_fireModified;
 class SettingsContainer {
     constructor(defaultSettings) {
+        _SettingsContainer_instances.add(this);
         _SettingsContainer__defaultSettings.set(this, void 0);
         _SettingsContainer__modifiedEventContainer.set(this, void 0);
         __classPrivateFieldSet(this, _SettingsContainer__defaultSettings, Object.assign({}, defaultSettings), "f");
@@ -2721,26 +2696,25 @@ class SettingsContainer {
     }
     reset() {
         this._settings = Object.assign({}, __classPrivateFieldGet(this, _SettingsContainer__defaultSettings, "f"));
-        this._fireModified();
+        __classPrivateFieldGet(this, _SettingsContainer_instances, "m", _SettingsContainer_fireModified).call(this);
     }
     get() {
         return Object.assign({}, this._settings);
     }
     set(settings) {
         Object.assign(this._settings, settings);
-        this._fireModified();
+        __classPrivateFieldGet(this, _SettingsContainer_instances, "m", _SettingsContainer_fireModified).call(this);
     }
     onModified(action) {
         if (__classPrivateFieldGet(this, _SettingsContainer__modifiedEventContainer, "f") == null)
             __classPrivateFieldSet(this, _SettingsContainer__modifiedEventContainer, new EventContainer(), "f");
         __classPrivateFieldGet(this, _SettingsContainer__modifiedEventContainer, "f").subscribe(action);
     }
-    _fireModified() {
-        if (__classPrivateFieldGet(this, _SettingsContainer__modifiedEventContainer, "f") != null)
-            __classPrivateFieldGet(this, _SettingsContainer__modifiedEventContainer, "f").fire(undefined);
-    }
 }
-_SettingsContainer__defaultSettings = new WeakMap(), _SettingsContainer__modifiedEventContainer = new WeakMap();
+_SettingsContainer__defaultSettings = new WeakMap(), _SettingsContainer__modifiedEventContainer = new WeakMap(), _SettingsContainer_instances = new WeakSet(), _SettingsContainer_fireModified = function _SettingsContainer_fireModified() {
+    if (__classPrivateFieldGet(this, _SettingsContainer__modifiedEventContainer, "f") != null)
+        __classPrivateFieldGet(this, _SettingsContainer__modifiedEventContainer, "f").fire(undefined);
+};
 
 class CompilerOptionsContainer extends SettingsContainer {
     constructor() {
@@ -2815,9 +2789,10 @@ function getTsParseConfigHost(fileSystemWrapper, options) {
     return host;
 }
 
-var _TsConfigResolver_encoding, _TsConfigResolver_fileSystem, _TsConfigResolver_host, _TsConfigResolver_tsConfigFilePath, _TsConfigResolver_tsConfigDirPath;
+var _TsConfigResolver_instances, _TsConfigResolver_encoding, _TsConfigResolver_fileSystem, _TsConfigResolver_host, _TsConfigResolver_tsConfigFilePath, _TsConfigResolver_tsConfigDirPath, _TsConfigResolver_getTsConfigFileJson;
 class TsConfigResolver {
     constructor(fileSystem, tsConfigFilePath, encoding) {
+        _TsConfigResolver_instances.add(this);
         _TsConfigResolver_encoding.set(this, void 0);
         _TsConfigResolver_fileSystem.set(this, void 0);
         _TsConfigResolver_host.set(this, void 0);
@@ -2830,17 +2805,17 @@ class TsConfigResolver {
         __classPrivateFieldSet(this, _TsConfigResolver_encoding, encoding, "f");
     }
     getCompilerOptions() {
-        return this.parseJsonConfigFileContent().options;
+        return this._parseJsonConfigFileContent().options;
     }
     getErrors() {
-        return this.parseJsonConfigFileContent().errors || [];
+        return this._parseJsonConfigFileContent().errors || [];
     }
     getPaths(compilerOptions) {
         const files = new Set();
         const fileSystem = __classPrivateFieldGet(this, _TsConfigResolver_fileSystem, "f");
         const directories = new Set();
-        compilerOptions = compilerOptions || this.getCompilerOptions();
-        const configFileContent = this.parseJsonConfigFileContent();
+        compilerOptions = compilerOptions !== null && compilerOptions !== void 0 ? compilerOptions : this.getCompilerOptions();
+        const configFileContent = this._parseJsonConfigFileContent();
         for (let dirName of configFileContent.directories) {
             const dirPath = fileSystem.getStandardizedAbsolutePath(dirName);
             if (fileSystem.directoryExistsSync(dirPath))
@@ -2859,35 +2834,25 @@ class TsConfigResolver {
             directoryPaths: Array.from(directories.values()),
         };
     }
-    parseJsonConfigFileContent() {
+    _parseJsonConfigFileContent() {
         __classPrivateFieldGet(this, _TsConfigResolver_host, "f").clearDirectories();
-        const result = ts.parseJsonConfigFileContent(this.getTsConfigFileJson(), __classPrivateFieldGet(this, _TsConfigResolver_host, "f"), __classPrivateFieldGet(this, _TsConfigResolver_tsConfigDirPath, "f"), undefined, __classPrivateFieldGet(this, _TsConfigResolver_tsConfigFilePath, "f"));
+        const result = ts.parseJsonConfigFileContent(__classPrivateFieldGet(this, _TsConfigResolver_instances, "m", _TsConfigResolver_getTsConfigFileJson).call(this), __classPrivateFieldGet(this, _TsConfigResolver_host, "f"), __classPrivateFieldGet(this, _TsConfigResolver_tsConfigDirPath, "f"), undefined, __classPrivateFieldGet(this, _TsConfigResolver_tsConfigFilePath, "f"));
         return { ...result, directories: __classPrivateFieldGet(this, _TsConfigResolver_host, "f").getDirectories() };
     }
-    getTsConfigFileJson() {
-        const text = __classPrivateFieldGet(this, _TsConfigResolver_fileSystem, "f").readFileSync(__classPrivateFieldGet(this, _TsConfigResolver_tsConfigFilePath, "f"), __classPrivateFieldGet(this, _TsConfigResolver_encoding, "f"));
-        const parseResult = ts.parseConfigFileTextToJson(__classPrivateFieldGet(this, _TsConfigResolver_tsConfigFilePath, "f"), text);
-        if (parseResult.error != null)
-            throw new Error(parseResult.error.messageText.toString());
-        return parseResult.config;
-    }
 }
-_TsConfigResolver_encoding = new WeakMap(), _TsConfigResolver_fileSystem = new WeakMap(), _TsConfigResolver_host = new WeakMap(), _TsConfigResolver_tsConfigFilePath = new WeakMap(), _TsConfigResolver_tsConfigDirPath = new WeakMap();
-__decorate([
-    Memoize
-], TsConfigResolver.prototype, "getCompilerOptions", null);
-__decorate([
-    Memoize
-], TsConfigResolver.prototype, "getErrors", null);
+_TsConfigResolver_encoding = new WeakMap(), _TsConfigResolver_fileSystem = new WeakMap(), _TsConfigResolver_host = new WeakMap(), _TsConfigResolver_tsConfigFilePath = new WeakMap(), _TsConfigResolver_tsConfigDirPath = new WeakMap(), _TsConfigResolver_instances = new WeakSet(), _TsConfigResolver_getTsConfigFileJson = function _TsConfigResolver_getTsConfigFileJson() {
+    const text = __classPrivateFieldGet(this, _TsConfigResolver_fileSystem, "f").readFileSync(__classPrivateFieldGet(this, _TsConfigResolver_tsConfigFilePath, "f"), __classPrivateFieldGet(this, _TsConfigResolver_encoding, "f"));
+    const parseResult = ts.parseConfigFileTextToJson(__classPrivateFieldGet(this, _TsConfigResolver_tsConfigFilePath, "f"), text);
+    if (parseResult.error != null)
+        throw new Error(parseResult.error.messageText.toString());
+    return parseResult.config;
+};
 __decorate([
     Memoize
 ], TsConfigResolver.prototype, "getPaths", null);
 __decorate([
     Memoize
-], TsConfigResolver.prototype, "parseJsonConfigFileContent", null);
-__decorate([
-    Memoize
-], TsConfigResolver.prototype, "getTsConfigFileJson", null);
+], TsConfigResolver.prototype, "_parseJsonConfigFileContent", null);
 
 function getCompilerOptionsFromTsConfig(filePath, options = {}) {
     const fileSystemWrapper = new TransactionalFileSystem({

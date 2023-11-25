@@ -29,8 +29,8 @@ export class MethodDeclarationStructurePrinter extends NodePrinter<OptionalKind<
   }
 
   protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<MethodDeclarationStructure>) {
-    this.printOverloads(writer, structure.name, getOverloadStructures());
-    this.printHeader(writer, structure.name, structure);
+    this.#printOverloads(writer, structure.name, getOverloadStructures());
+    this.#printHeader(writer, structure.name, structure);
 
     if (this.#options.isAmbient || structure.isAbstract)
       writer.write(";");
@@ -57,7 +57,7 @@ export class MethodDeclarationStructurePrinter extends NodePrinter<OptionalKind<
     }
   }
 
-  private printOverloads(writer: CodeBlockWriter, name: string, structures: ReadonlyArray<OptionalKind<MethodDeclarationOverloadStructure>> | undefined) {
+  #printOverloads(writer: CodeBlockWriter, name: string, structures: ReadonlyArray<OptionalKind<MethodDeclarationOverloadStructure>> | undefined) {
     if (structures == null || structures.length === 0)
       return;
 
@@ -69,12 +69,12 @@ export class MethodDeclarationStructurePrinter extends NodePrinter<OptionalKind<
 
   printOverload(writer: CodeBlockWriter, name: string, structure: OptionalKind<MethodDeclarationOverloadStructure>) {
     this.printLeadingTrivia(writer, structure);
-    this.printHeader(writer, name, structure);
+    this.#printHeader(writer, name, structure);
     writer.write(";");
     this.printTrailingTrivia(writer, structure);
   }
 
-  private printHeader(
+  #printHeader(
     writer: CodeBlockWriter,
     name: string,
     structure: OptionalKind<MethodDeclarationOverloadStructure> | OptionalKind<MethodDeclarationStructure>,

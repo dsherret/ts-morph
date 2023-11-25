@@ -131,7 +131,7 @@ export class Program {
 
     const { fileSystemWrapper } = this.#_context;
     const promises: Promise<void>[] = [];
-    const emitResult = this._emit({
+    const emitResult = this.#_emit({
       writeFile: (filePath, text, writeByteOrderMark) => {
         promises
           .push(fileSystemWrapper.writeFile(fileSystemWrapper.getStandardizedAbsolutePath(filePath), writeByteOrderMark ? "\uFEFF" + text : text));
@@ -148,7 +148,7 @@ export class Program {
    * @remarks Use `emit()` as the asynchronous version will be much faster.
    */
   emitSync(options: ProgramEmitOptions = {}) {
-    return new EmitResult(this.#_context, this._emit(options));
+    return new EmitResult(this.#_context, this.#_emit(options));
   }
 
   /**
@@ -158,7 +158,7 @@ export class Program {
   emitToMemory(options: EmitOptions = {}) {
     const sourceFiles: MemoryEmitResultFile[] = [];
     const { fileSystemWrapper } = this.#_context;
-    const emitResult = this._emit({
+    const emitResult = this.#_emit({
       writeFile: (filePath, text, writeByteOrderMark) => {
         sourceFiles.push({
           filePath: fileSystemWrapper.getStandardizedAbsolutePath(filePath),
@@ -172,7 +172,7 @@ export class Program {
   }
 
   /** @internal */
-  private _emit(options: ProgramEmitOptions = {}) {
+  #_emit(options: ProgramEmitOptions = {}) {
     const targetSourceFile = options.targetSourceFile != null ? options.targetSourceFile.compilerNode : undefined;
     const { emitOnlyDtsFiles, customTransformers, writeFile } = options;
     const cancellationToken = undefined; // todo: expose this
