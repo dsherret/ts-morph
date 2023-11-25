@@ -1,4 +1,4 @@
-import minimatch from "minimatch";
+import * as minimatch from "minimatch";
 import { Runtime, RuntimeDirEntry, RuntimeFileInfo, RuntimeFileSystem, RuntimePath } from "./Runtime";
 
 const path = require("path-browserify");
@@ -16,7 +16,7 @@ export class BrowserRuntime implements Runtime {
   }
 
   getPathMatchesPattern(path: string, pattern: string) {
-    return minimatch(path, pattern);
+    return minimatch.minimatch(path, pattern);
   }
 }
 

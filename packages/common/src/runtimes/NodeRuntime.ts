@@ -1,6 +1,6 @@
 import fastGlob from "fast-glob";
 import * as fs from "fs";
-import minimatch from "minimatch";
+import * as minimatch from "minimatch";
 import * as mkdirp from "mkdirp";
 import * as os from "os";
 import * as path from "path";
@@ -19,7 +19,7 @@ export class NodeRuntime implements Runtime {
   }
 
   getPathMatchesPattern(path: string, pattern: string) {
-    return minimatch(path, pattern);
+    return minimatch.minimatch(path, pattern);
   }
 }
 
