@@ -6,7 +6,7 @@ import { NodePrinter } from "../NodePrinter";
 
 export class GetAccessorDeclarationStructurePrinter extends NodePrinter<OptionalKind<GetAccessorDeclarationStructure>> {
     readonly #options: { isAmbient: boolean };
-  private readonly blankLineWriter = new BlankLineFormattingStructuresPrinter(this);
+  readonly #blankLineWriter = new BlankLineFormattingStructuresPrinter(this);
 
   constructor(factory: StructurePrinterFactory, options: { isAmbient: boolean }) {
     super(factory);
@@ -14,7 +14,7 @@ export class GetAccessorDeclarationStructurePrinter extends NodePrinter<Optional
   }
 
   printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<GetAccessorDeclarationStructure>> | undefined) {
-    this.blankLineWriter.printText(writer, structures);
+    this.#blankLineWriter.printText(writer, structures);
   }
 
   protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<GetAccessorDeclarationStructure>) {

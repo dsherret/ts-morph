@@ -4,10 +4,10 @@ import { BlankLineFormattingStructuresPrinter } from "../formatting";
 import { NodePrinter } from "../NodePrinter";
 
 export class EnumDeclarationStructurePrinter extends NodePrinter<OptionalKind<EnumDeclarationStructure>> {
-  private readonly multipleWriter = new BlankLineFormattingStructuresPrinter(this);
+  readonly #multipleWriter = new BlankLineFormattingStructuresPrinter(this);
 
   printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<EnumDeclarationStructure>> | undefined) {
-    this.multipleWriter.printText(writer, structures);
+    this.#multipleWriter.printText(writer, structures);
   }
 
   protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<EnumDeclarationStructure>) {

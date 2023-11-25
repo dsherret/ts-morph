@@ -13,7 +13,7 @@ export interface RemoveChildrenWithFormattingTextManipulatorOptions<TNode extend
 
 export class RemoveChildrenWithFormattingTextManipulator<TNode extends Node> implements TextManipulator {
     readonly #opts: RemoveChildrenWithFormattingTextManipulatorOptions<TNode>;
-  private removalPos: number | undefined;
+  #removalPos: number | undefined;
 
   constructor(opts: RemoveChildrenWithFormattingTextManipulatorOptions<TNode>) {
       this.#opts = opts;
@@ -30,7 +30,7 @@ export class RemoveChildrenWithFormattingTextManipulator<TNode extends Node> imp
     const previousSibling = firstChild.getPreviousSibling();
     const nextSibling = lastChild.getNextSibling();
     const removalPos = getRemovalPos();
-    this.removalPos = removalPos;
+    this.#removalPos = removalPos;
 
     // console.log(JSON.stringify(fullText.substring(0, removalPos)));
     // console.log(JSON.stringify(fullText.substring(getRemovalEnd())));
@@ -95,6 +95,6 @@ export class RemoveChildrenWithFormattingTextManipulator<TNode extends Node> imp
   }
 
   getTextForError(newText: string) {
-    return getTextForError(newText, this.removalPos!);
+    return getTextForError(newText, this.#removalPos!);
   }
 }

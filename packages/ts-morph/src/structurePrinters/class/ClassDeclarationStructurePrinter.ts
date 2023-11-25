@@ -7,7 +7,7 @@ import { NodePrinter } from "../NodePrinter";
 
 export class ClassDeclarationStructurePrinter extends NodePrinter<OptionalKind<ClassDeclarationStructure>> {
     readonly #options: { isAmbient: boolean };
-  private readonly multipleWriter = new BlankLineFormattingStructuresPrinter(this);
+  readonly #multipleWriter = new BlankLineFormattingStructuresPrinter(this);
 
   constructor(factory: StructurePrinterFactory, options: { isAmbient: boolean }) {
     super(factory);
@@ -15,7 +15,7 @@ export class ClassDeclarationStructurePrinter extends NodePrinter<OptionalKind<C
   }
 
   printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<ClassDeclarationStructure>> | undefined) {
-    this.multipleWriter.printText(writer, structures);
+    this.#multipleWriter.printText(writer, structures);
   }
 
   protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<ClassDeclarationStructure>) {

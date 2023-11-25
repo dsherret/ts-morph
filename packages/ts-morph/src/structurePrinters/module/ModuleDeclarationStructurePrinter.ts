@@ -9,7 +9,7 @@ import { NodePrinter } from "../NodePrinter";
 
 export class ModuleDeclarationStructurePrinter extends NodePrinter<OptionalKind<ModuleDeclarationStructure>> {
     readonly #options: { isAmbient: boolean };
-  private readonly blankLineFormattingWriter = new BlankLineFormattingStructuresPrinter(this);
+  readonly #blankLineFormattingWriter = new BlankLineFormattingStructuresPrinter(this);
 
   constructor(factory: StructurePrinterFactory, options: { isAmbient: boolean }) {
     super(factory);
@@ -17,7 +17,7 @@ export class ModuleDeclarationStructurePrinter extends NodePrinter<OptionalKind<
   }
 
   printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<ModuleDeclarationStructure>> | undefined) {
-    this.blankLineFormattingWriter.printText(writer, structures);
+    this.#blankLineFormattingWriter.printText(writer, structures);
   }
 
   protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<ModuleDeclarationStructure>) {

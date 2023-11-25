@@ -442,14 +442,14 @@ export class Project {
   }
 
   /** @internal */
-  private _oldProgram: ts.Program | undefined;
+  #_oldProgram: ts.Program | undefined;
 
   /**
    * Creates a new program.
    * Note: You should get a new program any time source files are added, removed, or changed.
    */
   createProgram(options?: ts.CreateProgramOptions): ts.Program {
-    const oldProgram = this._oldProgram;
+    const oldProgram = this.#_oldProgram;
     const program = ts.createProgram({
       rootNames: Array.from(this.#sourceFileCache.getSourceFilePaths()),
       options: this.compilerOptions.get(),
@@ -458,7 +458,7 @@ export class Project {
       configFileParsingDiagnostics: this.#configFileParsingDiagnostics,
       ...options,
     });
-    this._oldProgram = program;
+    this.#_oldProgram = program;
     return program;
   }
 

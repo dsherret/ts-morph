@@ -12,7 +12,7 @@ export type NamedImportExportSpecifierStructureToTextItem =
   | string;
 
 export class NamedImportExportSpecifierStructurePrinter extends NodePrinter<NamedImportExportSpecifierStructureToTextItem> {
-  private readonly multipleWriter = new CommaSeparatedStructuresPrinter(this);
+  readonly #multipleWriter = new CommaSeparatedStructuresPrinter(this);
 
   printTextsWithBraces(writer: CodeBlockWriter, structures: ReadonlyArray<NamedImportExportSpecifierStructureToTextItem> | WriterFunction) {
     const formatSettings = this.factory.getFormatCodeSettings();
@@ -32,7 +32,7 @@ export class NamedImportExportSpecifierStructurePrinter extends NodePrinter<Name
     if (structures instanceof Function)
       this.printText(writer, structures);
     else
-      this.multipleWriter.printText(writer, structures);
+      this.#multipleWriter.printText(writer, structures);
   }
 
   protected printTextInternal(writer: CodeBlockWriter, structure: NamedImportExportSpecifierStructureToTextItem) {

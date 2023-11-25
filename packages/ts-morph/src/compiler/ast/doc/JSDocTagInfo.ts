@@ -5,16 +5,16 @@ import { ts } from "@ts-morph/common";
  */
 export class JSDocTagInfo {
   /** @internal */
-  private readonly _compilerObject: ts.JSDocTagInfo;
+  readonly #_compilerObject: ts.JSDocTagInfo;
 
   /** @private */
   constructor(compilerObject: ts.JSDocTagInfo) {
-    this._compilerObject = compilerObject;
+    this.#_compilerObject = compilerObject;
   }
 
   /** Gets the compiler JS doc tag info. */
   get compilerObject() {
-    return this._compilerObject;
+    return this.#_compilerObject;
   }
 
   /**

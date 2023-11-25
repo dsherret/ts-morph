@@ -5,10 +5,10 @@ import { BlankLineFormattingStructuresPrinter } from "../formatting";
 import { NodePrinter } from "../NodePrinter";
 
 export class InterfaceDeclarationStructurePrinter extends NodePrinter<OptionalKind<InterfaceDeclarationStructure>> {
-  private readonly multipleWriter = new BlankLineFormattingStructuresPrinter(this);
+  readonly #multipleWriter = new BlankLineFormattingStructuresPrinter(this);
 
   printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<InterfaceDeclarationStructure>> | undefined) {
-    this.multipleWriter.printText(writer, structures);
+    this.#multipleWriter.printText(writer, structures);
   }
 
   protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<InterfaceDeclarationStructure>) {

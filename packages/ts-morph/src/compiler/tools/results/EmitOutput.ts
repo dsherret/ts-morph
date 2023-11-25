@@ -7,23 +7,23 @@ import { OutputFile } from "./OutputFile";
  */
 export class EmitOutput {
   /** @internal */
-  private readonly _context: ProjectContext;
+  readonly #_context: ProjectContext;
   /** @internal */
-  private readonly _compilerObject: ts.EmitOutput;
+  readonly #_compilerObject: ts.EmitOutput;
 
   /**
    * @private
    */
   constructor(context: ProjectContext, compilerObject: ts.EmitOutput) {
-    this._context = context;
-    this._compilerObject = compilerObject;
+    this.#_context = context;
+    this.#_compilerObject = compilerObject;
   }
 
   /**
    * TypeScript compiler emit result.
    */
   get compilerObject() {
-    return this._compilerObject;
+    return this.#_compilerObject;
   }
 
   /**
@@ -38,6 +38,6 @@ export class EmitOutput {
    */
   @Memoize
   getOutputFiles() {
-    return this.compilerObject.outputFiles.map(f => new OutputFile(this._context, f));
+    return this.compilerObject.outputFiles.map(f => new OutputFile(this.#_context, f));
   }
 }

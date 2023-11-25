@@ -5,16 +5,16 @@ import { ts } from "@ts-morph/common";
  */
 export class TextSpan {
   /** @internal */
-  private readonly _compilerObject: ts.TextSpan;
+  readonly #_compilerObject: ts.TextSpan;
 
   /** @private */
   constructor(compilerObject: ts.TextSpan) {
-    this._compilerObject = compilerObject;
+    this.#_compilerObject = compilerObject;
   }
 
   /** Gets the compiler text span. */
   get compilerObject() {
-    return this._compilerObject;
+    return this.#_compilerObject;
   }
 
   /**

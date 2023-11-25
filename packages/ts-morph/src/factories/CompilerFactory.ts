@@ -55,24 +55,24 @@ import { kindToWrapperMappings } from "./kindToWrapperMappings";
  */
 export class CompilerFactory {
     readonly #context: ProjectContext;
-  private readonly sourceFileCacheByFilePath = new Map<StandardizedFilePath, SourceFile>();
-  private readonly diagnosticCache = new WeakCache<ts.Diagnostic, Diagnostic>();
-  private readonly definitionInfoCache = new WeakCache<ts.DefinitionInfo, DefinitionInfo>();
-  private readonly documentSpanCache = new WeakCache<ts.DocumentSpan, DocumentSpan>();
-  private readonly diagnosticMessageChainCache = new WeakCache<ts.DiagnosticMessageChain, DiagnosticMessageChain>();
-  private readonly jsDocTagInfoCache = new WeakCache<ts.JSDocTagInfo, JSDocTagInfo>();
-  private readonly signatureCache = new WeakCache<ts.Signature, Signature>();
-  private readonly symbolCache = new WeakCache<ts.Symbol, Symbol>();
-  private readonly symbolDisplayPartCache = new WeakCache<ts.SymbolDisplayPart, SymbolDisplayPart>();
-  private readonly referencedSymbolEntryCache = new WeakCache<ts.ReferencedSymbolEntry, ReferencedSymbolEntry>();
-  private readonly referencedSymbolCache = new WeakCache<ts.ReferencedSymbol, ReferencedSymbol>();
-  private readonly referencedSymbolDefinitionInfoCache = new WeakCache<ts.ReferencedSymbolDefinitionInfo, ReferencedSymbolDefinitionInfo>();
-  private readonly typeCache = new WeakCache<ts.Type, Type>();
-  private readonly typeParameterCache = new WeakCache<ts.TypeParameter, TypeParameter>();
-  private readonly nodeCache = new ForgetfulNodeCache();
-  private readonly directoryCache: DirectoryCache;
-  private readonly sourceFileAddedEventContainer = new EventContainer<SourceFile>();
-  private readonly sourceFileRemovedEventContainer = new EventContainer<SourceFile>();
+  readonly #sourceFileCacheByFilePath = new Map<StandardizedFilePath, SourceFile>();
+  readonly #diagnosticCache = new WeakCache<ts.Diagnostic, Diagnostic>();
+  readonly #definitionInfoCache = new WeakCache<ts.DefinitionInfo, DefinitionInfo>();
+  readonly #documentSpanCache = new WeakCache<ts.DocumentSpan, DocumentSpan>();
+  readonly #diagnosticMessageChainCache = new WeakCache<ts.DiagnosticMessageChain, DiagnosticMessageChain>();
+  readonly #jsDocTagInfoCache = new WeakCache<ts.JSDocTagInfo, JSDocTagInfo>();
+  readonly #signatureCache = new WeakCache<ts.Signature, Signature>();
+  readonly #symbolCache = new WeakCache<ts.Symbol, Symbol>();
+  readonly #symbolDisplayPartCache = new WeakCache<ts.SymbolDisplayPart, SymbolDisplayPart>();
+  readonly #referencedSymbolEntryCache = new WeakCache<ts.ReferencedSymbolEntry, ReferencedSymbolEntry>();
+  readonly #referencedSymbolCache = new WeakCache<ts.ReferencedSymbol, ReferencedSymbol>();
+  readonly #referencedSymbolDefinitionInfoCache = new WeakCache<ts.ReferencedSymbolDefinitionInfo, ReferencedSymbolDefinitionInfo>();
+  readonly #typeCache = new WeakCache<ts.Type, Type>();
+  readonly #typeParameterCache = new WeakCache<ts.TypeParameter, TypeParameter>();
+  readonly #nodeCache = new ForgetfulNodeCache();
+  readonly #directoryCache: DirectoryCache;
+  readonly #sourceFileAddedEventContainer = new EventContainer<SourceFile>();
+  readonly #sourceFileRemovedEventContainer = new EventContainer<SourceFile>();
 
   readonly documentRegistry: DocumentRegistry;
 
@@ -82,12 +82,12 @@ export class CompilerFactory {
    */
   constructor(context: ProjectContext) {
     this.documentRegistry = new DocumentRegistry(context.fileSystemWrapper);
-    this.directoryCache = new DirectoryCache(context);
+    this.#directoryCache = new DirectoryCache(context);
 
     // prevent memory leaks when the document registry key changes by just resetting it
     this.#context.compilerOptions.onModified(() => {
       // repopulate the cache
-      const currentSourceFiles = Array.from(this.sourceFileCacheByFilePath.values()); // store this to prevent modifying while iterating
+      const currentSourceFiles = Array.from(this.#sourceFileCacheByFilePath.values()); // store this to prevent modifying while iterating
       for (const sourceFile of currentSourceFiles) {
         // re-parse the source files in the new document registry, then populate the cache with the new nodes
         replaceSourceFileForCacheUpdate(sourceFile);
@@ -108,7 +108,7 @@ export class CompilerFactory {
    * Gets the source file paths from the internal cache.
    */
   getSourceFilePaths() {
-    return this.sourceFileCacheByFilePath.keys();
+    return this.#sourceFileCacheByFilePath.keys();
   }
 
   /**
@@ -116,7 +116,7 @@ export class CompilerFactory {
    * @param dirPath - Directory path.
    */
   getChildDirectoriesOfDirectory(dirPath: StandardizedFilePath) {
-    return this.directoryCache.getChildDirectoriesOfDirectory(dirPath);
+    return this.#directoryCache.getChildDirectoriesOfDirectory(dirPath);
   }
 
   /**
@@ -124,7 +124,7 @@ export class CompilerFactory {
    * @param dirPath - Directory path.
    */
   getChildSourceFilesOfDirectory(dirPath: StandardizedFilePath) {
-    return this.directoryCache.getChildSourceFilesOfDirectory(dirPath);
+    return this.#directoryCache.getChildSourceFilesOfDirectory(dirPath);
   }
 
   /**
@@ -134,9 +134,9 @@ export class CompilerFactory {
    */
   onSourceFileAdded(subscription: (sourceFile: SourceFile) => void, subscribe = true) {
     if (subscribe)
-      this.sourceFileAddedEventContainer.subscribe(subscription);
+      this.#sourceFileAddedEventContainer.subscribe(subscription);
     else
-      this.sourceFileAddedEventContainer.unsubscribe(subscription);
+      this.#sourceFileAddedEventContainer.unsubscribe(subscription);
   }
 
   /**
@@ -144,7 +144,7 @@ export class CompilerFactory {
    * @param subscription - Subscripton.
    */
   onSourceFileRemoved(subscription: (sourceFile: SourceFile) => void) {
-    this.sourceFileRemovedEventContainer.subscribe(subscription);
+    this.#sourceFileRemovedEventContainer.subscribe(subscription);
   }
 
   /**
@@ -221,7 +221,7 @@ export class CompilerFactory {
    */
   getSourceFileFromCacheFromFilePath(filePath: StandardizedFilePath): SourceFile | undefined {
     filePath = this.#context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
-    return this.sourceFileCacheByFilePath.get(filePath);
+    return this.#sourceFileCacheByFilePath.get(filePath);
   }
 
   /**
@@ -233,7 +233,7 @@ export class CompilerFactory {
     | undefined
   {
     filePath = this.#context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
-    let sourceFile = this.sourceFileCacheByFilePath.get(filePath);
+    let sourceFile = this.#sourceFileCacheByFilePath.get(filePath);
     if (sourceFile == null) {
       const fileText = this.#context.fileSystemWrapper.readFileIfExistsSync(filePath, this.#context.getEncoding());
       if (fileText != null) {
@@ -255,7 +255,7 @@ export class CompilerFactory {
    */
   containsSourceFileAtPath(filePath: StandardizedFilePath) {
     filePath = this.#context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
-    return this.sourceFileCacheByFilePath.has(filePath);
+    return this.#sourceFileCacheByFilePath.has(filePath);
   }
 
   /**
@@ -264,7 +264,7 @@ export class CompilerFactory {
    */
   containsDirectoryAtPath(dirPath: StandardizedFilePath) {
     dirPath = this.#context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
-    return this.directoryCache.has(dirPath);
+    return this.#directoryCache.has(dirPath);
   }
 
   /**
@@ -286,7 +286,7 @@ export class CompilerFactory {
    * @param compilerNode - Compiler node.
    */
   hasCompilerNode(compilerNode: ts.Node) {
-    return this.nodeCache.has(compilerNode);
+    return this.#nodeCache.has(compilerNode);
   }
 
   /**
@@ -294,7 +294,7 @@ export class CompilerFactory {
    * @param compilerNode - Compiler node.
    */
   getExistingNodeFromCompilerNode(compilerNode: ts.Node) {
-    return this.nodeCache.get(compilerNode);
+    return this.#nodeCache.get(compilerNode);
   }
 
   /**
@@ -305,7 +305,7 @@ export class CompilerFactory {
     if (compilerNode.kind === SyntaxKind.SourceFile)
       return this.getSourceFile(compilerNode as any as ts.SourceFile, { markInProject: false }) as Node as CompilerNodeToWrappedType<NodeType>;
 
-    return this.nodeCache.getOrCreate<Node<NodeType>>(compilerNode, () => {
+    return this.#nodeCache.getOrCreate<Node<NodeType>>(compilerNode, () => {
       const node = createNode.call(this);
       initializeNode.call(this, node);
       return node;
@@ -379,8 +379,8 @@ export class CompilerFactory {
   getSourceFile(compilerSourceFile: ts.SourceFile, options: { markInProject: boolean }): SourceFile {
     let wasAdded = false;
     // check the file path cache first in case this source file object is for an old manipulation (see issue 1164)
-    const sourceFile = this.sourceFileCacheByFilePath.get(compilerSourceFile.fileName as StandardizedFilePath)
-      ?? this.nodeCache.getOrCreate<SourceFile>(compilerSourceFile, () => {
+    const sourceFile = this.#sourceFileCacheByFilePath.get(compilerSourceFile.fileName as StandardizedFilePath)
+      ?? this.#nodeCache.getOrCreate<SourceFile>(compilerSourceFile, () => {
         const createdSourceFile = new SourceFile(this.#context, compilerSourceFile);
 
         if (!options.markInProject)
@@ -395,15 +395,15 @@ export class CompilerFactory {
       sourceFile._markAsInProject();
 
     if (wasAdded)
-      this.sourceFileAddedEventContainer.fire(sourceFile);
+      this.#sourceFileAddedEventContainer.fire(sourceFile);
 
     return sourceFile;
   }
 
   private addSourceFileToCache(sourceFile: SourceFile) {
-    this.sourceFileCacheByFilePath.set(sourceFile.getFilePath(), sourceFile);
+    this.#sourceFileCacheByFilePath.set(sourceFile.getFilePath(), sourceFile);
     this.#context.fileSystemWrapper.removeFileDelete(sourceFile.getFilePath());
-    this.directoryCache.addSourceFile(sourceFile);
+    this.#directoryCache.addSourceFile(sourceFile);
   }
 
   /**
@@ -412,10 +412,10 @@ export class CompilerFactory {
    */
   getDirectoryFromPath(dirPath: StandardizedFilePath, options: { markInProject: boolean }) {
     dirPath = this.#context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
-    let directory = this.directoryCache.get(dirPath);
+    let directory = this.#directoryCache.get(dirPath);
 
     if (directory == null && this.#context.fileSystemWrapper.directoryExistsSync(dirPath))
-      directory = this.directoryCache.createOrAddIfExists(dirPath);
+      directory = this.#directoryCache.createOrAddIfExists(dirPath);
 
     if (directory != null && options.markInProject)
       directory._markAsInProject();
@@ -428,7 +428,7 @@ export class CompilerFactory {
    * @param dirPath - Directory path.
    */
   createDirectoryOrAddIfExists(dirPath: StandardizedFilePath, options: { markInProject: boolean }) {
-    const directory = this.directoryCache.createOrAddIfExists(dirPath);
+    const directory = this.#directoryCache.createOrAddIfExists(dirPath);
     if (directory != null && options.markInProject)
       directory._markAsInProject();
     return directory;
@@ -439,7 +439,7 @@ export class CompilerFactory {
    * @param dirPath - Directory path.
    */
   getDirectoryFromCache(dirPath: StandardizedFilePath) {
-    return this.directoryCache.get(dirPath);
+    return this.#directoryCache.get(dirPath);
   }
 
   /**
@@ -447,8 +447,8 @@ export class CompilerFactory {
    * @param dirPath - Directory path.
    */
   getDirectoryFromCacheOnlyIfInCache(dirPath: StandardizedFilePath) {
-    return this.directoryCache.has(dirPath)
-      ? this.directoryCache.get(dirPath)
+    return this.#directoryCache.has(dirPath)
+      ? this.#directoryCache.get(dirPath)
       : undefined;
   }
 
@@ -456,14 +456,14 @@ export class CompilerFactory {
    * Gets all the directories iterated by depth.
    */
   getDirectoriesByDepth() {
-    return this.directoryCache.getAllByDepth();
+    return this.#directoryCache.getAllByDepth();
   }
 
   /**
    * Gets the directories without a parent.
    */
   getOrphanDirectories() {
-    return this.directoryCache.getOrphans();
+    return this.#directoryCache.getOrphans();
   }
 
   /**
@@ -471,7 +471,7 @@ export class CompilerFactory {
    * @param compilerObject - Compiler symbol display part.
    */
   getSymbolDisplayPart(compilerObject: ts.SymbolDisplayPart) {
-    return this.symbolDisplayPartCache.getOrCreate(compilerObject, () => new SymbolDisplayPart(compilerObject));
+    return this.#symbolDisplayPartCache.getOrCreate(compilerObject, () => new SymbolDisplayPart(compilerObject));
   }
 
   /**
@@ -481,7 +481,7 @@ export class CompilerFactory {
   getType<TType extends ts.Type>(type: TType): Type<TType> {
     if ((type.flags & TypeFlags.TypeParameter) === TypeFlags.TypeParameter)
       return this.getTypeParameter(type as any as ts.TypeParameter) as any as Type<TType>;
-    return this.typeCache.getOrCreate(type, () => new Type<TType>(this.#context, type));
+    return this.#typeCache.getOrCreate(type, () => new Type<TType>(this.#context, type));
   }
 
   /**
@@ -489,7 +489,7 @@ export class CompilerFactory {
    * @param typeParameter - Compiler type parameter
    */
   getTypeParameter(typeParameter: ts.TypeParameter): TypeParameter {
-    return this.typeParameterCache.getOrCreate(typeParameter, () => new TypeParameter(this.#context, typeParameter));
+    return this.#typeParameterCache.getOrCreate(typeParameter, () => new TypeParameter(this.#context, typeParameter));
   }
 
   /**
@@ -497,7 +497,7 @@ export class CompilerFactory {
    * @param signature - Compiler signature.
    */
   getSignature(signature: ts.Signature): Signature {
-    return this.signatureCache.getOrCreate(signature, () => new Signature(this.#context, signature));
+    return this.#signatureCache.getOrCreate(signature, () => new Signature(this.#context, signature));
   }
 
   /**
@@ -505,7 +505,7 @@ export class CompilerFactory {
    * @param symbol - Compiler symbol.
    */
   getSymbol(symbol: ts.Symbol): Symbol {
-    return this.symbolCache.getOrCreate(symbol, () => new Symbol(this.#context, symbol));
+    return this.#symbolCache.getOrCreate(symbol, () => new Symbol(this.#context, symbol));
   }
 
   /**
@@ -513,7 +513,7 @@ export class CompilerFactory {
    * @param compilerObject - Compiler definition info.
    */
   getDefinitionInfo(compilerObject: ts.DefinitionInfo): DefinitionInfo {
-    return this.definitionInfoCache.getOrCreate(compilerObject, () => new DefinitionInfo(this.#context, compilerObject));
+    return this.#definitionInfoCache.getOrCreate(compilerObject, () => new DefinitionInfo(this.#context, compilerObject));
   }
 
   /**
@@ -521,7 +521,7 @@ export class CompilerFactory {
    * @param compilerObject - Compiler document span.
    */
   getDocumentSpan(compilerObject: ts.DocumentSpan): DocumentSpan {
-    return this.documentSpanCache.getOrCreate(compilerObject, () => new DocumentSpan(this.#context, compilerObject));
+    return this.#documentSpanCache.getOrCreate(compilerObject, () => new DocumentSpan(this.#context, compilerObject));
   }
 
   /**
@@ -529,7 +529,7 @@ export class CompilerFactory {
    * @param compilerObject - Compiler referenced entry.
    */
   getReferencedSymbolEntry(compilerObject: ts.ReferencedSymbolEntry): ReferencedSymbolEntry {
-    return this.referencedSymbolEntryCache.getOrCreate(compilerObject, () => new ReferencedSymbolEntry(this.#context, compilerObject));
+    return this.#referencedSymbolEntryCache.getOrCreate(compilerObject, () => new ReferencedSymbolEntry(this.#context, compilerObject));
   }
 
   /**
@@ -537,7 +537,7 @@ export class CompilerFactory {
    * @param compilerObject - Compiler referenced symbol.
    */
   getReferencedSymbol(compilerObject: ts.ReferencedSymbol): ReferencedSymbol {
-    return this.referencedSymbolCache.getOrCreate(compilerObject, () => new ReferencedSymbol(this.#context, compilerObject));
+    return this.#referencedSymbolCache.getOrCreate(compilerObject, () => new ReferencedSymbol(this.#context, compilerObject));
   }
 
   /**
@@ -545,7 +545,7 @@ export class CompilerFactory {
    * @param compilerObject - Compiler referenced symbol definition info.
    */
   getReferencedSymbolDefinitionInfo(compilerObject: ts.ReferencedSymbolDefinitionInfo): ReferencedSymbolDefinitionInfo {
-    return this.referencedSymbolDefinitionInfoCache.getOrCreate(compilerObject, () => new ReferencedSymbolDefinitionInfo(this.#context, compilerObject));
+    return this.#referencedSymbolDefinitionInfoCache.getOrCreate(compilerObject, () => new ReferencedSymbolDefinitionInfo(this.#context, compilerObject));
   }
 
   /**
@@ -553,7 +553,7 @@ export class CompilerFactory {
    * @param diagnostic - Compiler diagnostic.
    */
   getDiagnostic(diagnostic: ts.Diagnostic): Diagnostic {
-    return this.diagnosticCache.getOrCreate(diagnostic, () => {
+    return this.#diagnosticCache.getOrCreate(diagnostic, () => {
       if (diagnostic.start != null)
         return new DiagnosticWithLocation(this.#context, diagnostic as ts.DiagnosticWithLocation);
       return new Diagnostic(this.#context, diagnostic);
@@ -565,7 +565,7 @@ export class CompilerFactory {
    * @param diagnostic - Compiler diagnostic.
    */
   getDiagnosticWithLocation(diagnostic: ts.DiagnosticWithLocation): DiagnosticWithLocation {
-    return this.diagnosticCache.getOrCreate(diagnostic, () => new DiagnosticWithLocation(this.#context, diagnostic));
+    return this.#diagnosticCache.getOrCreate(diagnostic, () => new DiagnosticWithLocation(this.#context, diagnostic));
   }
 
   /**
@@ -573,7 +573,7 @@ export class CompilerFactory {
    * @param diagnosticMessageChain - Compiler diagnostic message chain.
    */
   getDiagnosticMessageChain(compilerObject: ts.DiagnosticMessageChain): DiagnosticMessageChain {
-    return this.diagnosticMessageChainCache.getOrCreate(compilerObject, () => new DiagnosticMessageChain(compilerObject));
+    return this.#diagnosticMessageChainCache.getOrCreate(compilerObject, () => new DiagnosticMessageChain(compilerObject));
   }
 
   /**
@@ -581,7 +581,7 @@ export class CompilerFactory {
    * @param jsDocTagInfo - Compiler object.
    */
   getJSDocTagInfo(jsDocTagInfo: ts.JSDocTagInfo): JSDocTagInfo {
-    return this.jsDocTagInfoCache.getOrCreate(jsDocTagInfo, () => new JSDocTagInfo(jsDocTagInfo));
+    return this.#jsDocTagInfoCache.getOrCreate(jsDocTagInfo, () => new JSDocTagInfo(jsDocTagInfo));
   }
 
   /**
@@ -591,17 +591,17 @@ export class CompilerFactory {
    */
   replaceCompilerNode(oldNode: ts.Node | Node, newNode: ts.Node) {
     const nodeToReplace = oldNode instanceof Node ? oldNode.compilerNode : oldNode;
-    const node = oldNode instanceof Node ? oldNode : this.nodeCache.get(oldNode);
+    const node = oldNode instanceof Node ? oldNode : this.#nodeCache.get(oldNode);
 
     if (nodeToReplace.kind === SyntaxKind.SourceFile && (nodeToReplace as ts.SourceFile).fileName !== (newNode as ts.SourceFile).fileName) {
       const sourceFile = node! as SourceFile;
       this.removeCompilerNodeFromCache(nodeToReplace);
       sourceFile._replaceCompilerNodeFromFactory(newNode as ts.SourceFile);
-      this.nodeCache.set(newNode, sourceFile);
+      this.#nodeCache.set(newNode, sourceFile);
       this.addSourceFileToCache(sourceFile);
-      this.sourceFileAddedEventContainer.fire(sourceFile);
+      this.#sourceFileAddedEventContainer.fire(sourceFile);
     } else {
-      this.nodeCache.replaceKey(nodeToReplace, newNode);
+      this.#nodeCache.replaceKey(nodeToReplace, newNode);
       if (node != null)
         node._replaceCompilerNodeFromFactory(newNode);
     }
@@ -620,17 +620,17 @@ export class CompilerFactory {
    * @param compilerNode - Compiler node to remove.
    */
   private removeCompilerNodeFromCache(compilerNode: ts.Node) {
-    this.nodeCache.removeByKey(compilerNode);
+    this.#nodeCache.removeByKey(compilerNode);
 
     if (compilerNode.kind === SyntaxKind.SourceFile) {
       const sourceFile = compilerNode as ts.SourceFile;
       const standardizedFilePath = this.#context.fileSystemWrapper.getStandardizedAbsolutePath(sourceFile.fileName);
-      this.directoryCache.removeSourceFile(standardizedFilePath);
-      const wrappedSourceFile = this.sourceFileCacheByFilePath.get(standardizedFilePath);
-      this.sourceFileCacheByFilePath.delete(standardizedFilePath);
+      this.#directoryCache.removeSourceFile(standardizedFilePath);
+      const wrappedSourceFile = this.#sourceFileCacheByFilePath.get(standardizedFilePath);
+      this.#sourceFileCacheByFilePath.delete(standardizedFilePath);
       this.documentRegistry.removeSourceFile(standardizedFilePath);
       if (wrappedSourceFile != null)
-        this.sourceFileRemovedEventContainer.fire(wrappedSourceFile);
+        this.#sourceFileRemovedEventContainer.fire(wrappedSourceFile);
     }
   }
 
@@ -639,7 +639,7 @@ export class CompilerFactory {
    * @param directory - Directory
    */
   addDirectoryToCache(directory: Directory) {
-    this.directoryCache.addDirectory(directory);
+    this.#directoryCache.addDirectory(directory);
   }
 
   /**
@@ -647,7 +647,7 @@ export class CompilerFactory {
    * @param dirPath - Directory path.
    */
   removeDirectoryFromCache(dirPath: StandardizedFilePath) {
-    this.directoryCache.remove(dirPath);
+    this.#directoryCache.remove(dirPath);
   }
 
   /**
@@ -662,31 +662,31 @@ export class CompilerFactory {
   forgetNodesCreatedInBlock<T = void>(block: (remember: (...node: Node[]) => void) => Promise<T>): Promise<T>;
   forgetNodesCreatedInBlock<T = void>(block: (remember: (...node: Node[]) => void) => T | Promise<T>): Promise<T> | T {
     // can't use the async keyword here because exceptions that happen when doing this synchronously need to be thrown
-    this.nodeCache.setForgetPoint();
+    this.#nodeCache.setForgetPoint();
     let wasPromise = false;
     let result: T | Promise<T>;
     try {
       result = block((...nodes) => {
         for (const node of nodes)
-          this.nodeCache.rememberNode(node);
+          this.#nodeCache.rememberNode(node);
       });
 
       if (Node.isNode(result))
-        this.nodeCache.rememberNode(result);
+        this.#nodeCache.rememberNode(result);
 
       if (isPromise(result)) {
         wasPromise = true;
         return result.then(value => {
           if (Node.isNode(value))
-            this.nodeCache.rememberNode(value);
+            this.#nodeCache.rememberNode(value);
 
-          this.nodeCache.forgetLastPoint();
+          this.#nodeCache.forgetLastPoint();
           return value;
         });
       }
     } finally {
       if (!wasPromise)
-        this.nodeCache.forgetLastPoint();
+        this.#nodeCache.forgetLastPoint();
     }
     return result;
 

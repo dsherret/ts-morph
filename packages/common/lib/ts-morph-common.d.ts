@@ -18,11 +18,7 @@ export interface CompilerOptionsFromTsConfigResult {
 export declare function getCompilerOptionsFromTsConfig(filePath: string, options?: CompilerOptionsFromTsConfigOptions): CompilerOptionsFromTsConfigResult;
 
 export declare class TsConfigResolver {
-    private readonly fileSystem;
-    private readonly encoding;
-    private readonly host;
-    private readonly tsConfigFilePath;
-    private readonly tsConfigDirPath;
+    #private;
     constructor(fileSystem: TransactionalFileSystem, tsConfigFilePath: StandardizedFilePath, encoding: string);
     getCompilerOptions(): ts.CompilerOptions;
     getErrors(): ts.Diagnostic[];
@@ -40,7 +36,7 @@ export declare class TsConfigResolver {
  * this class should be removed in favour of helper functions around a Map.
  */
 export declare class KeyValueCache<T, U> {
-    private readonly cacheItems;
+    #private;
     getSize(): number;
     getValues(): IterableIterator<U>;
     getValuesAsArray(): U[];
@@ -59,9 +55,7 @@ export declare class KeyValueCache<T, U> {
  * An array where the values are sorted by a key of one of the values.
  */
 export declare class SortedKeyValueArray<TKey, TValue> {
-    private readonly getKey;
-    private readonly comparer;
-    private readonly array;
+    #private;
     constructor(getKey: (value: TValue) => TKey, comparer: Comparer<TKey>);
     set(value: TValue): void;
     removeByValue(value: TValue): void;
@@ -77,7 +71,7 @@ export declare class SortedKeyValueArray<TKey, TValue> {
  * this class should be removed in favour of helper functions around a WeakMap.
  */
 export declare class WeakCache<T extends object, U> {
-    private readonly cacheItems;
+    #private;
     getOrCreate<TCreate extends U = U>(key: T, createFunc: () => TCreate): TCreate;
     has(key: T): boolean;
     get(key: T): U | undefined;
@@ -101,8 +95,7 @@ export interface Comparer<T> {
  * Converts a comparer to a stored comparer.
  */
 export declare class ComparerToStoredComparer<T> implements StoredComparer<T> {
-    private readonly comparer;
-    private readonly storedValue;
+    #private;
     /**
      * Constructor.
      * @param comparer - Comparer to use.
@@ -127,8 +120,7 @@ export declare class LocaleStringComparer implements Comparer<string> {
  * Compares two values based on one of their properties.
  */
 export declare class PropertyComparer<TValue, TProperty> implements Comparer<TValue> {
-    private readonly getProperty;
-    private readonly comparer;
+    #private;
     /**
      * Constructor.
      * @param getProperty - Gets the property from the value to use for comparisons.
@@ -143,8 +135,7 @@ export declare class PropertyComparer<TValue, TProperty> implements Comparer<TVa
  * A stored comparer that compares a property to a stored value.
  */
 export declare class PropertyStoredComparer<TValue, TProperty> implements StoredComparer<TValue> {
-    private readonly getProperty;
-    private readonly comparer;
+    #private;
     /**
      * Constructor.
      * @param getProperty - Gets the property from the value.
@@ -227,9 +218,7 @@ export interface CreateModuleResolutionHostOptions {
  * An implementation of a ts.DocumentRegistry that uses a transactional file system.
  */
 export declare class DocumentRegistry implements ts.DocumentRegistry {
-    private readonly transactionalFileSystem;
-    private readonly sourceFileCacheByFilePath;
-    private static readonly initialVersion;
+    #private;
     /**
      * Constructor.
      * @param transactionalFileSystem - The transaction file system to use.
@@ -533,6 +522,7 @@ export interface FileSystemHost {
 
 /** Utilities for working with files. */
 export declare class FileUtils {
+    #private;
     static readonly ENOENT = "ENOENT";
     private constructor();
     /**
@@ -645,6 +635,7 @@ export declare class FileUtils {
 
 /** An implementation of a file system that exists in memory only. */
 export declare class InMemoryFileSystemHost implements FileSystemHost {
+    #private;
     /**
      * Constructor.
      */
@@ -770,10 +761,7 @@ export interface TransactionalFileSystemOptions {
  * FileSystemHost wrapper that allows transactionally queuing operations to the file system.
  */
 export declare class TransactionalFileSystem {
-    private readonly directories;
-    private readonly pathCasingMaintainer;
-    private readonly fileSystem;
-    private readonly libFileMap;
+    #private;
     /**
      * Constructor.
      * @param fileSystem - File system host to commit the operations to.
@@ -834,7 +822,6 @@ export declare class TransactionalFileSystem {
     private isPathQueuedForDeletion;
     private removeDirAndSubDirs;
     private addBackDirAndSubDirs;
-    private operationIndex;
     private getNextOperationIndex;
     private getParentDirectoryIfExists;
     private getOrCreateParentDirectory;
@@ -888,6 +875,7 @@ export declare class CompilerOptionsContainer extends SettingsContainer<ts.Compi
 }
 
 export declare abstract class SettingsContainer<T extends object> {
+    #private;
     protected _settings: T;
     /**
      * Constructor.
@@ -1039,7 +1027,7 @@ export type EventContainerSubscription<EventArgType> = (arg: EventArgType) => vo
  * Event container for event subscriptions.
  */
 export declare class EventContainer<EventArgType = undefined> {
-    private readonly subscriptions;
+    #private;
     /**
      * Subscribe to an event being fired.
      * @param subscription - Subscription.

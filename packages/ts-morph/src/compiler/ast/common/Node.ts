@@ -43,20 +43,15 @@ export type NodeParentType<NodeType extends ts.Node> = NodeType extends ts.Sourc
   : CompilerNodeToWrappedType<NodeType["parent"]>;
 
 export class Node<NodeType extends ts.Node = ts.Node> {
+  #_compilerNode: NodeType | undefined;
+  #_forgottenText: string | undefined;
+  #_childStringRanges: [number, number][] | undefined;
+  #_leadingCommentRanges: CommentRange[] | undefined;
+  #_trailingCommentRanges: CommentRange[] | undefined;
+  _wrappedChildCount = 0;
+
   /** @internal */
   readonly _context: ProjectContext;
-  /** @internal */
-  private _compilerNode: NodeType | undefined;
-  /** @internal */
-  private _forgottenText: string | undefined;
-  /** @internal */
-  private _childStringRanges: [number, number][] | undefined;
-  /** @internal */
-  private _leadingCommentRanges: CommentRange[] | undefined;
-  /** @internal */
-  private _trailingCommentRanges: CommentRange[] | undefined;
-  /** @internal */
-  _wrappedChildCount = 0;
   /** @internal */
   protected __sourceFile: SourceFile | undefined;
 
@@ -71,13 +66,13 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    * Gets the underlying compiler node.
    */
   get compilerNode(): NodeType {
-    if (this._compilerNode == null) {
+    if (this.#_compilerNode == null) {
       let message = "Attempted to get information from a node that was removed or forgotten.";
-      if (this._forgottenText != null)
-        message += `\n\nNode text: ${this._forgottenText}`;
+      if (this.#_forgottenText != null)
+        message += `\n\nNode text: ${this.#_forgottenText}`;
       throw new errors.InvalidOperationError(message);
     }
-    return this._compilerNode;
+    return this.#_compilerNode;
   }
 
   /**
@@ -100,7 +95,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     this._context = context;
-    this._compilerNode = node;
+    this.#_compilerNode = node;
     this.__sourceFile = sourceFile;
   }
 
@@ -154,7 +149,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    * This will be true when the compiler node was forgotten or removed.
    */
   wasForgotten() {
-    return this._compilerNode == null;
+    return this.#_compilerNode == null;
   }
 
   /**
@@ -174,19 +169,19 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     if (compilerNode == null)
       this._storeTextForForgetting();
     this._clearInternals();
-    this._compilerNode = compilerNode;
+    this.#_compilerNode = compilerNode;
   }
 
   /** @internal */
   private _storeTextForForgetting() {
     // check for undefined here just in case
     const sourceFileCompilerNode = this._sourceFile && this._sourceFile.compilerNode;
-    const compilerNode = this._compilerNode;
+    const compilerNode = this.#_compilerNode;
 
     if (sourceFileCompilerNode == null || compilerNode == null)
       return;
 
-    this._forgottenText = getText();
+    this.#_forgottenText = getText();
 
     function getText() {
       const start = compilerNode!.getStart(sourceFileCompilerNode);
@@ -199,12 +194,12 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
   /** @internal */
   protected _clearInternals() {
-    this._compilerNode = undefined;
-    this._childStringRanges = undefined;
-    clearTextRanges(this._leadingCommentRanges);
-    clearTextRanges(this._trailingCommentRanges);
-    delete this._leadingCommentRanges;
-    delete this._trailingCommentRanges;
+    this.#_compilerNode = undefined;
+    this.#_childStringRanges = undefined;
+    clearTextRanges(this.#_leadingCommentRanges);
+    clearTextRanges(this.#_trailingCommentRanges);
+    this.#_leadingCommentRanges = undefined;
+    this.#_trailingCommentRanges = undefined;
 
     function clearTextRanges(textRanges: ReadonlyArray<TextRange> | undefined) {
       if (textRanges == null)
@@ -350,11 +345,11 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   isInStringAtPos(pos: number) {
     errors.throwIfOutOfRange(pos, [this.getPos(), this.getEnd()], "pos");
 
-    if (this._childStringRanges == null) {
-      this._childStringRanges = [];
+    if (this.#_childStringRanges == null) {
+      this.#_childStringRanges = [];
       for (const descendant of this._getCompilerDescendantsIterator()) {
         if (isStringKind(descendant.kind))
-          this._childStringRanges.push([descendant.getStart(this._sourceFile.compilerNode), descendant.getEnd()]);
+          this.#_childStringRanges.push([descendant.getStart(this._sourceFile.compilerNode), descendant.getEnd()]);
       }
     }
 
@@ -368,7 +363,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       }
     }
 
-    return ArrayUtils.binarySearch(this._childStringRanges, new InStringRangeComparer()) !== -1;
+    return ArrayUtils.binarySearch(this.#_childStringRanges, new InStringRangeComparer()) !== -1;
   }
 
   /**
@@ -1606,7 +1601,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    * Gets the leading comment ranges of the current node.
    */
   getLeadingCommentRanges(): CommentRange[] {
-    return this._leadingCommentRanges || (this._leadingCommentRanges = this._getCommentsAtPos(this.getFullStart(), (text: string, pos: number) => {
+    return this.#_leadingCommentRanges || (this.#_leadingCommentRanges = this._getCommentsAtPos(this.getFullStart(), (text: string, pos: number) => {
       const comments = ts.getLeadingCommentRanges(text, pos) || [];
       // if this is a comment, then only include leading comment ranges before this one
       if (this.getKind() === SyntaxKind.SingleLineCommentTrivia || this.getKind() === SyntaxKind.MultiLineCommentTrivia) {
@@ -1622,7 +1617,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    * Gets the trailing comment ranges of the current node.
    */
   getTrailingCommentRanges(): CommentRange[] {
-    return this._trailingCommentRanges || (this._trailingCommentRanges = this._getCommentsAtPos(this.getEnd(), ts.getTrailingCommentRanges));
+    return this.#_trailingCommentRanges ?? (this.#_trailingCommentRanges = this._getCommentsAtPos(this.getEnd(), ts.getTrailingCommentRanges));
   }
 
   /** @internal */
@@ -1630,7 +1625,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     if (this.getKind() === SyntaxKind.SourceFile)
       return [];
 
-    return (getComments(this._sourceFile.getFullText(), pos) || []).map(r => new CommentRange(r, this._sourceFile));
+    return (getComments(this._sourceFile.getFullText(), pos) ?? []).map(r => new CommentRange(r, this._sourceFile));
   }
 
   /**

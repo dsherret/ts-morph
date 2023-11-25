@@ -27,26 +27,26 @@ export interface DirectoryCopyOptions extends SourceFileCopyOptions {
 }
 
 export class Directory {
-  private __context: ProjectContext | undefined;
-  private _path!: StandardizedFilePath;
-  private _pathParts!: string[];
+  #__context: ProjectContext | undefined;
+  #_path!: StandardizedFilePath;
+  #_pathParts!: string[];
 
   /** @private */
   constructor(context: ProjectContext, path: StandardizedFilePath) {
-    this.__context = context;
+    this.#__context = context;
     this._setPathInternal(path);
   }
 
   /** @internal */
   _setPathInternal(path: StandardizedFilePath) {
-    this._path = path;
-    this._pathParts = path.split("/").filter(p => p.length > 0);
+    this.#_path = path;
+    this.#_pathParts = path.split("/").filter(p => p.length > 0);
   }
 
   /** @internal */
   get _context() {
     this._throwIfDeletedOrRemoved();
-    return this.__context!;
+    return this.#__context!;
   }
 
   /**
@@ -70,7 +70,7 @@ export class Directory {
    * @internal
    */
   _getDepth() {
-    return this._pathParts.length;
+    return this.#_pathParts.length;
   }
 
   /**
@@ -78,14 +78,14 @@ export class Directory {
    */
   getPath() {
     this._throwIfDeletedOrRemoved();
-    return this._path;
+    return this.#_path;
   }
 
   /**
    * Gets the directory path's base name.
    */
   getBaseName() {
-    return this._pathParts[this._pathParts.length - 1];
+    return this.#_pathParts[this.#_pathParts.length - 1];
   }
 
   /**
@@ -803,7 +803,7 @@ export class Directory {
       return;
 
     this._context.compilerFactory.removeDirectoryFromCache(this.getPath());
-    this.__context = undefined;
+    this.#__context = undefined;
   }
 
   /**
@@ -933,7 +933,7 @@ export class Directory {
    * Gets if the directory was forgotten.
    */
   wasForgotten() {
-    return this.__context == null;
+    return this.#__context == null;
   }
 
   /** @internal */
@@ -980,12 +980,12 @@ export class Directory {
         return true;
     }
 
-    if (ancestor._pathParts.length >= descendant._pathParts.length)
+    if (ancestor.#_pathParts.length >= descendant.#_pathParts.length)
       return false;
 
     // more likely to be a mistake at the end, so search backwards
-    for (let i = ancestor._pathParts.length - 1; i >= 0; i--) {
-      if (ancestor._pathParts[i] !== descendant._pathParts[i])
+    for (let i = ancestor.#_pathParts.length - 1; i >= 0; i--) {
+      if (ancestor.#_pathParts[i] !== descendant.#_pathParts[i])
         return false;
     }
 

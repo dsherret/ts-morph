@@ -18,7 +18,7 @@ export class InMemoryFileSystemHost implements FileSystemHost {
    * Constructor.
    */
   constructor() {
-    this.getOrCreateDir("/" as StandardizedFilePath);
+    this.#getOrCreateDir("/" as StandardizedFilePath);
   }
 
   /** @inheritdoc */
@@ -116,15 +116,14 @@ export class InMemoryFileSystemHost implements FileSystemHost {
 
   /** @inheritdoc */
   writeFileSync(filePath: string, fileText: string) {
-    this._writeFileSync(filePath, fileText);
+    this.#writeFileSync(filePath, fileText);
   }
 
-  /* @internal */
-  private _writeFileSync(filePath: string, fileText: string) {
+  #writeFileSync(filePath: string, fileText: string) {
     // private method to avoid calling a method in the constructor that could be overwritten (virtual method)
     const standardizedFilePath = FileUtils.getStandardizedAbsolutePath(this, filePath);
     const dirPath = FileUtils.getDirPath(standardizedFilePath);
-    this.getOrCreateDir(dirPath).files.set(standardizedFilePath, fileText);
+    this.#getOrCreateDir(dirPath).files.set(standardizedFilePath, fileText);
   }
 
   /** @inheritdoc */
@@ -135,7 +134,7 @@ export class InMemoryFileSystemHost implements FileSystemHost {
 
   /** @inheritdoc */
   mkdirSync(dirPath: string) {
-    this.getOrCreateDir(FileUtils.getStandardizedAbsolutePath(this, dirPath));
+    this.#getOrCreateDir(FileUtils.getStandardizedAbsolutePath(this, dirPath));
   }
 
   /** @inheritdoc */
@@ -155,7 +154,7 @@ export class InMemoryFileSystemHost implements FileSystemHost {
       this.writeFileSync(standardizedDestPath, fileText);
     } else if (this.#directories.has(standardizedSrcPath)) {
       const moveDirectory = (from: StandardizedFilePath, to: StandardizedFilePath) => {
-        this._copyDirInternal(from, to);
+        this.#copyDirInternal(from, to);
         this.#directories.delete(from);
       };
       moveDirectory(standardizedSrcPath, standardizedDestPath);
@@ -184,22 +183,21 @@ export class InMemoryFileSystemHost implements FileSystemHost {
     if (this.fileExistsSync(standardizedSrcPath))
       this.writeFileSync(standardizedDestPath, this.readFileSync(standardizedSrcPath));
     else if (this.#directories.has(standardizedSrcPath)) {
-      this._copyDirInternal(standardizedSrcPath, standardizedDestPath);
+      this.#copyDirInternal(standardizedSrcPath, standardizedDestPath);
 
       // copy descendant dirs
       for (const descendantDirPath of getDescendantDirectories(this.#directories.keys(), standardizedSrcPath)) {
         const relativePath = FileUtils.getRelativePathTo(standardizedSrcPath, descendantDirPath);
-        this._copyDirInternal(descendantDirPath, FileUtils.pathJoin(standardizedDestPath, relativePath) as StandardizedFilePath);
+        this.#copyDirInternal(descendantDirPath, FileUtils.pathJoin(standardizedDestPath, relativePath) as StandardizedFilePath);
       }
     } else {
       throw new errors.PathNotFoundError(standardizedSrcPath);
     }
   }
 
-  /** @internal */
-  private _copyDirInternal(from: StandardizedFilePath, to: StandardizedFilePath) {
+  #copyDirInternal(from: StandardizedFilePath, to: StandardizedFilePath) {
     const dir = this.#directories.get(from)!;
-    const newDir = this.getOrCreateDir(to);
+    const newDir = this.#getOrCreateDir(to);
 
     for (const [filePath, text] of dir.files.entries()) {
       const toDir = FileUtils.pathJoin(to, FileUtils.getBaseName(filePath)) as StandardizedFilePath;
@@ -263,8 +261,7 @@ export class InMemoryFileSystemHost implements FileSystemHost {
     }
   }
 
-  /** @internal */
-  private getOrCreateDir(dirPath: StandardizedFilePath) {
+  #getOrCreateDir(dirPath: StandardizedFilePath) {
     let dir = this.#directories.get(dirPath);
 
     if (dir == null) {
@@ -272,7 +269,7 @@ export class InMemoryFileSystemHost implements FileSystemHost {
       this.#directories.set(dirPath, dir);
       const parentDirPath = FileUtils.getDirPath(dirPath);
       if (parentDirPath !== dirPath)
-        this.getOrCreateDir(parentDirPath);
+        this.#getOrCreateDir(parentDirPath);
     }
 
     return dir;

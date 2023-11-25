@@ -7,19 +7,19 @@ import { ApplyFileTextChangesOptions, FileTextChanges } from "./FileTextChanges"
  */
 export class RefactorEditInfo {
   /** @internal */
-  private readonly _context: ProjectContext;
+  readonly #_context: ProjectContext;
   /** @internal */
-  private readonly _compilerObject: ts.RefactorEditInfo;
+  readonly #_compilerObject: ts.RefactorEditInfo;
 
   /** @private */
   constructor(context: ProjectContext, compilerObject: ts.RefactorEditInfo) {
-    this._context = context;
-    this._compilerObject = compilerObject;
+    this.#_context = context;
+    this.#_compilerObject = compilerObject;
   }
 
   /** Gets the compiler refactor edit info. */
   get compilerObject() {
-    return this._compilerObject;
+    return this.#_compilerObject;
   }
 
   /**
@@ -27,7 +27,7 @@ export class RefactorEditInfo {
    */
   @Memoize
   getEdits() {
-    return this.compilerObject.edits.map(edit => new FileTextChanges(this._context, edit));
+    return this.compilerObject.edits.map(edit => new FileTextChanges(this.#_context, edit));
   }
 
   /**

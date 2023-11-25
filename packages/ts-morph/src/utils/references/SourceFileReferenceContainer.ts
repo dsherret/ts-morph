@@ -5,9 +5,9 @@ export type SourceFileReferencingNodes = ImportDeclaration | ExportDeclaration |
 
 export class SourceFileReferenceContainer {
     readonly #sourceFile: SourceFile;
-  private readonly nodesInThis = new KeyValueCache<StringLiteral, SourceFile>();
-  private readonly nodesInOther = new KeyValueCache<StringLiteral, SourceFile>();
-  private readonly unresolvedLiterals: StringLiteral[] = [];
+  readonly #nodesInThis = new KeyValueCache<StringLiteral, SourceFile>();
+  readonly #nodesInOther = new KeyValueCache<StringLiteral, SourceFile>();
+  readonly #unresolvedLiterals: StringLiteral[] = [];
 
   constructor(sourceFile: SourceFile) {
       this.#sourceFile = sourceFile;
@@ -16,52 +16,52 @@ export class SourceFileReferenceContainer {
   getDependentSourceFiles() {
     this.#sourceFile._context.lazyReferenceCoordinator.refreshDirtySourceFiles();
     const hashSet = new Set<SourceFile>();
-    for (const nodeInOther of this.nodesInOther.getKeys())
+    for (const nodeInOther of this.#nodesInOther.getKeys())
       hashSet.add(nodeInOther._sourceFile);
     return hashSet.values();
   }
 
   getLiteralsReferencingOtherSourceFilesEntries() {
     this.#sourceFile._context.lazyReferenceCoordinator.refreshSourceFileIfDirty(this.#sourceFile);
-    return this.nodesInThis.getEntries();
+    return this.#nodesInThis.getEntries();
   }
 
   getReferencingLiteralsInOtherSourceFiles() {
     this.#sourceFile._context.lazyReferenceCoordinator.refreshDirtySourceFiles();
-    return this.nodesInOther.getKeys();
+    return this.#nodesInOther.getKeys();
   }
 
   refresh() {
-    if (this.unresolvedLiterals.length > 0)
-      this.#sourceFile._context.compilerFactory.onSourceFileAdded(this.resolveUnresolved, false);
+    if (this.#unresolvedLiterals.length > 0)
+      this.#sourceFile._context.compilerFactory.onSourceFileAdded(this.#resolveUnresolved, false);
 
     this.clear();
     this.populateReferences();
 
-    if (this.unresolvedLiterals.length > 0)
-      this.#sourceFile._context.compilerFactory.onSourceFileAdded(this.resolveUnresolved);
+    if (this.#unresolvedLiterals.length > 0)
+      this.#sourceFile._context.compilerFactory.onSourceFileAdded(this.#resolveUnresolved);
   }
 
   clear() {
-    this.unresolvedLiterals.length = 0;
-    for (const [node, sourceFile] of this.nodesInThis.getEntries()) {
-      this.nodesInThis.removeByKey(node);
+    this.#unresolvedLiterals.length = 0;
+    for (const [node, sourceFile] of this.#nodesInThis.getEntries()) {
+      this.#nodesInThis.removeByKey(node);
       sourceFile._referenceContainer.nodesInOther.removeByKey(node);
     }
   }
 
-  private resolveUnresolved = () => {
-    for (let i = this.unresolvedLiterals.length - 1; i >= 0; i--) {
-      const literal = this.unresolvedLiterals[i];
+  #resolveUnresolved = () => {
+    for (let i = this.#unresolvedLiterals.length - 1; i >= 0; i--) {
+      const literal = this.#unresolvedLiterals[i];
       const sourceFile = this.getSourceFileForLiteral(literal);
       if (sourceFile != null) {
-        this.unresolvedLiterals.splice(i, 1);
+        this.#unresolvedLiterals.splice(i, 1);
         this.addNodeInThis(literal, sourceFile);
       }
     }
 
-    if (this.unresolvedLiterals.length === 0)
-      this.#sourceFile._context.compilerFactory.onSourceFileAdded(this.resolveUnresolved, false);
+    if (this.#unresolvedLiterals.length === 0)
+      this.#sourceFile._context.compilerFactory.onSourceFileAdded(this.#resolveUnresolved, false);
   };
 
   private populateReferences() {
@@ -71,7 +71,7 @@ export class SourceFileReferenceContainer {
         remember(literal);
 
         if (sourceFile == null)
-          this.unresolvedLiterals.push(literal);
+          this.#unresolvedLiterals.push(literal);
         else
           this.addNodeInThis(literal, sourceFile);
       }
@@ -102,7 +102,7 @@ export class SourceFileReferenceContainer {
   }
 
   private addNodeInThis(literal: StringLiteral, sourceFile: SourceFile) {
-    this.nodesInThis.set(literal, sourceFile);
-    sourceFile._referenceContainer.nodesInOther.set(literal, sourceFile);
+    this.#nodesInThis.set(literal, sourceFile);
+    sourceFile._referenceContainer.#nodesInOther.set(literal, sourceFile);
   }
 }

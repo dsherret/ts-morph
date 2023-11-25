@@ -820,10 +820,10 @@ export class TransactionalFileSystem {
       dir.setParent(this.getOrCreateParentDirectory(dir.path));
   }
 
-  private operationIndex = 0;
+  #operationIndex = 0;
 
   private getNextOperationIndex() {
-    return this.operationIndex++;
+    return this.#operationIndex++;
   }
 
   private getParentDirectoryIfExists(filePath: StandardizedFilePath) {

@@ -6,30 +6,30 @@ import { ProjectContext } from "../../../ProjectContext";
  */
 export class OutputFile {
   /** @internal */
-  private readonly _compilerObject: ts.OutputFile;
+  readonly #_compilerObject: ts.OutputFile;
   /** @internal */
-  private readonly _context: ProjectContext;
+  readonly #_context: ProjectContext;
 
   /**
    * @private
    */
   constructor(context: ProjectContext, compilerObject: ts.OutputFile) {
-    this._compilerObject = compilerObject;
-    this._context = context;
+    this.#_compilerObject = compilerObject;
+    this.#_context = context;
   }
 
   /**
    * TypeScript compiler output file.
    */
   get compilerObject() {
-    return this._compilerObject;
+    return this.#_compilerObject;
   }
 
   /**
    * Gets the file path.
    */
   getFilePath() {
-    return this._context.fileSystemWrapper.getStandardizedAbsolutePath(this.compilerObject.name);
+    return this.#_context.fileSystemWrapper.getStandardizedAbsolutePath(this.compilerObject.name);
   }
 
   /**

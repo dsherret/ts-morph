@@ -9,13 +9,13 @@ export class Type<TType extends ts.Type = ts.Type> {
   /** @internal */
   readonly _context: ProjectContext;
   /** @internal */
-  private readonly _compilerType: TType;
+  readonly #_compilerType: TType;
 
   /**
    * Gets the underlying compiler type.
    */
   get compilerType() {
-    return this._compilerType;
+    return this.#_compilerType;
   }
 
   /**
@@ -26,7 +26,7 @@ export class Type<TType extends ts.Type = ts.Type> {
    */
   constructor(context: ProjectContext, type: TType) {
     this._context = context;
-    this._compilerType = type;
+    this.#_compilerType = type;
   }
 
   /**

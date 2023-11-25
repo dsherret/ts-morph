@@ -5,7 +5,7 @@ import { CommaSeparatedStructuresPrinter } from "../formatting";
 import { NodePrinter } from "../NodePrinter";
 
 export class ParameterDeclarationStructurePrinter extends NodePrinter<OptionalKind<ParameterDeclarationStructure>> {
-  private readonly multipleWriter = new CommaSeparatedStructuresPrinter(this);
+  readonly #multipleWriter = new CommaSeparatedStructuresPrinter(this);
 
   printTextsWithParenthesis(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<ParameterDeclarationStructure>> | undefined) {
     writer.write("(");
@@ -18,7 +18,7 @@ export class ParameterDeclarationStructurePrinter extends NodePrinter<OptionalKi
     if (structures == null || structures.length === 0)
       return;
     writer.hangingIndent(() => {
-      this.multipleWriter.printText(writer, structures);
+      this.#multipleWriter.printText(writer, structures);
     });
   }
 

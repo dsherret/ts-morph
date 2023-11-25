@@ -59,11 +59,11 @@ type DocumentKey = string & { _documentKeyBrand: undefined };
 
 class FileSystemDocumentCache implements FileSystemSpecificDocumentCache {
     readonly #documentCache: InternalDocumentCache;
-  private readonly absoluteToOriginalPath = new Map<StandardizedFilePath, string>();
+  readonly #absoluteToOriginalPath = new Map<StandardizedFilePath, string>();
 
   constructor(fileSystem: TransactionalFileSystem, documentCache: InternalDocumentCache) {
     for (const filePath of documentCache._getFilePaths())
-      this.absoluteToOriginalPath.set(fileSystem.getStandardizedAbsolutePath(filePath), filePath);
+      this.#absoluteToOriginalPath.set(fileSystem.getStandardizedAbsolutePath(filePath), filePath);
       this.#documentCache = documentCache;
   }
 
@@ -73,7 +73,7 @@ class FileSystemDocumentCache implements FileSystemSpecificDocumentCache {
     scriptTarget: ScriptTarget | undefined,
     scriptKind: ScriptKind | undefined,
   ) {
-    const originalFilePath = this.absoluteToOriginalPath.get(filePath);
+    const originalFilePath = this.#absoluteToOriginalPath.get(filePath);
     if (originalFilePath == null)
       return;
 

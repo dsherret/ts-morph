@@ -20,24 +20,67 @@ const TypeFormatFlags = ts.TypeFormatFlags;
 
 export { DiagnosticCategory, EmitHint, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, NodeFlags, ObjectFlags, ScriptKind, ScriptTarget, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags };
 
+/******************************************************************************
+Copyright (c) Microsoft Corporation.
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+PERFORMANCE OF THIS SOFTWARE.
+***************************************************************************** */
+/* global Reflect, Promise, SuppressedError, Symbol */
+
+
+function __decorate(decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+}
+
+function __classPrivateFieldGet(receiver, state, kind, f) {
+    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+    return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+}
+
+function __classPrivateFieldSet(receiver, state, value, kind, f) {
+    if (kind === "m") throw new TypeError("Private method is not writable");
+    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+    return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
+}
+
+typeof SuppressedError === "function" ? SuppressedError : function (error, suppressed, message) {
+    var e = new Error(message);
+    return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
+};
+
+var _KeyValueCache_cacheItems;
 class KeyValueCache {
     constructor() {
-        this.cacheItems = new Map();
+        _KeyValueCache_cacheItems.set(this, new Map());
     }
     getSize() {
-        return this.cacheItems.size;
+        return __classPrivateFieldGet(this, _KeyValueCache_cacheItems, "f").size;
     }
     getValues() {
-        return this.cacheItems.values();
+        return __classPrivateFieldGet(this, _KeyValueCache_cacheItems, "f").values();
     }
     getValuesAsArray() {
         return Array.from(this.getValues());
     }
     getKeys() {
-        return this.cacheItems.keys();
+        return __classPrivateFieldGet(this, _KeyValueCache_cacheItems, "f").keys();
     }
     getEntries() {
-        return this.cacheItems.entries();
+        return __classPrivateFieldGet(this, _KeyValueCache_cacheItems, "f").entries();
     }
     getOrCreate(key, createFunc) {
         let item = this.get(key);
@@ -48,38 +91,43 @@ class KeyValueCache {
         return item;
     }
     has(key) {
-        return this.cacheItems.has(key);
+        return __classPrivateFieldGet(this, _KeyValueCache_cacheItems, "f").has(key);
     }
     get(key) {
-        return this.cacheItems.get(key);
+        return __classPrivateFieldGet(this, _KeyValueCache_cacheItems, "f").get(key);
     }
     set(key, value) {
-        this.cacheItems.set(key, value);
+        __classPrivateFieldGet(this, _KeyValueCache_cacheItems, "f").set(key, value);
     }
     replaceKey(key, newKey) {
-        if (!this.cacheItems.has(key))
+        if (!__classPrivateFieldGet(this, _KeyValueCache_cacheItems, "f").has(key))
             throw new Error("Key not found.");
-        const value = this.cacheItems.get(key);
-        this.cacheItems.delete(key);
-        this.cacheItems.set(newKey, value);
+        const value = __classPrivateFieldGet(this, _KeyValueCache_cacheItems, "f").get(key);
+        __classPrivateFieldGet(this, _KeyValueCache_cacheItems, "f").delete(key);
+        __classPrivateFieldGet(this, _KeyValueCache_cacheItems, "f").set(newKey, value);
     }
     removeByKey(key) {
-        this.cacheItems.delete(key);
+        __classPrivateFieldGet(this, _KeyValueCache_cacheItems, "f").delete(key);
     }
     clear() {
-        this.cacheItems.clear();
+        __classPrivateFieldGet(this, _KeyValueCache_cacheItems, "f").clear();
     }
 }
+_KeyValueCache_cacheItems = new WeakMap();
 
+var _ComparerToStoredComparer_comparer, _ComparerToStoredComparer_storedValue;
 class ComparerToStoredComparer {
     constructor(comparer, storedValue) {
-        this.comparer = comparer;
-        this.storedValue = storedValue;
+        _ComparerToStoredComparer_comparer.set(this, void 0);
+        _ComparerToStoredComparer_storedValue.set(this, void 0);
+        __classPrivateFieldSet(this, _ComparerToStoredComparer_comparer, comparer, "f");
+        __classPrivateFieldSet(this, _ComparerToStoredComparer_storedValue, storedValue, "f");
     }
     compareTo(value) {
-        return this.comparer.compareTo(this.storedValue, value);
+        return __classPrivateFieldGet(this, _ComparerToStoredComparer_comparer, "f").compareTo(__classPrivateFieldGet(this, _ComparerToStoredComparer_storedValue, "f"), value);
     }
 }
+_ComparerToStoredComparer_comparer = new WeakMap(), _ComparerToStoredComparer_storedValue = new WeakMap();
 
 class LocaleStringComparer {
     compareTo(a, b) {
@@ -93,25 +141,33 @@ class LocaleStringComparer {
 }
 LocaleStringComparer.instance = new LocaleStringComparer();
 
+var _PropertyComparer_comparer, _PropertyComparer_getProperty;
 class PropertyComparer {
     constructor(getProperty, comparer) {
-        this.getProperty = getProperty;
-        this.comparer = comparer;
+        _PropertyComparer_comparer.set(this, void 0);
+        _PropertyComparer_getProperty.set(this, void 0);
+        __classPrivateFieldSet(this, _PropertyComparer_getProperty, getProperty, "f");
+        __classPrivateFieldSet(this, _PropertyComparer_comparer, comparer, "f");
     }
     compareTo(a, b) {
-        return this.comparer.compareTo(this.getProperty(a), this.getProperty(b));
+        return __classPrivateFieldGet(this, _PropertyComparer_comparer, "f").compareTo(__classPrivateFieldGet(this, _PropertyComparer_getProperty, "f").call(this, a), __classPrivateFieldGet(this, _PropertyComparer_getProperty, "f").call(this, b));
     }
 }
+_PropertyComparer_comparer = new WeakMap(), _PropertyComparer_getProperty = new WeakMap();
 
+var _PropertyStoredComparer_comparer, _PropertyStoredComparer_getProperty;
 class PropertyStoredComparer {
     constructor(getProperty, comparer) {
-        this.getProperty = getProperty;
-        this.comparer = comparer;
+        _PropertyStoredComparer_comparer.set(this, void 0);
+        _PropertyStoredComparer_getProperty.set(this, void 0);
+        __classPrivateFieldSet(this, _PropertyStoredComparer_getProperty, getProperty, "f");
+        __classPrivateFieldSet(this, _PropertyStoredComparer_comparer, comparer, "f");
     }
     compareTo(value) {
-        return this.comparer.compareTo(this.getProperty(value));
+        return __classPrivateFieldGet(this, _PropertyStoredComparer_comparer, "f").compareTo(__classPrivateFieldGet(this, _PropertyStoredComparer_getProperty, "f").call(this, value));
     }
 }
+_PropertyStoredComparer_comparer = new WeakMap(), _PropertyStoredComparer_getProperty = new WeakMap();
 
 class ArrayUtils {
     constructor() {
@@ -229,28 +285,30 @@ function deepClone(objToClone) {
     }
 }
 
+var _EventContainer_subscriptions;
 class EventContainer {
     constructor() {
-        this.subscriptions = [];
+        _EventContainer_subscriptions.set(this, []);
     }
     subscribe(subscription) {
         const index = this.getIndex(subscription);
         if (index === -1)
-            this.subscriptions.push(subscription);
+            __classPrivateFieldGet(this, _EventContainer_subscriptions, "f").push(subscription);
     }
     unsubscribe(subscription) {
         const index = this.getIndex(subscription);
         if (index >= 0)
-            this.subscriptions.splice(index, 1);
+            __classPrivateFieldGet(this, _EventContainer_subscriptions, "f").splice(index, 1);
     }
     fire(arg) {
-        for (const subscription of this.subscriptions)
+        for (const subscription of __classPrivateFieldGet(this, _EventContainer_subscriptions, "f"))
             subscription(arg);
     }
     getIndex(subscription) {
-        return this.subscriptions.indexOf(subscription);
+        return __classPrivateFieldGet(this, _EventContainer_subscriptions, "f").indexOf(subscription);
     }
 }
+_EventContainer_subscriptions = new WeakMap();
 
 class IterableUtils {
     static find(items, condition) {
@@ -701,38 +759,43 @@ class StringUtils {
     }
 }
 
+var _SortedKeyValueArray_array, _SortedKeyValueArray_getKey, _SortedKeyValueArray_comparer;
 class SortedKeyValueArray {
     constructor(getKey, comparer) {
-        this.getKey = getKey;
-        this.comparer = comparer;
-        this.array = [];
+        _SortedKeyValueArray_array.set(this, []);
+        _SortedKeyValueArray_getKey.set(this, void 0);
+        _SortedKeyValueArray_comparer.set(this, void 0);
+        __classPrivateFieldSet(this, _SortedKeyValueArray_getKey, getKey, "f");
+        __classPrivateFieldSet(this, _SortedKeyValueArray_comparer, comparer, "f");
     }
     set(value) {
-        ArrayUtils.binaryInsertWithOverwrite(this.array, value, new PropertyComparer(this.getKey, this.comparer));
+        ArrayUtils.binaryInsertWithOverwrite(__classPrivateFieldGet(this, _SortedKeyValueArray_array, "f"), value, new PropertyComparer(__classPrivateFieldGet(this, _SortedKeyValueArray_getKey, "f"), __classPrivateFieldGet(this, _SortedKeyValueArray_comparer, "f")));
     }
     removeByValue(value) {
-        this.removeByKey(this.getKey(value));
+        this.removeByKey(__classPrivateFieldGet(this, _SortedKeyValueArray_getKey, "f").call(this, value));
     }
     removeByKey(key) {
-        const storedComparer = new ComparerToStoredComparer(this.comparer, key);
-        const index = ArrayUtils.binarySearch(this.array, new PropertyStoredComparer(this.getKey, storedComparer));
+        const storedComparer = new ComparerToStoredComparer(__classPrivateFieldGet(this, _SortedKeyValueArray_comparer, "f"), key);
+        const index = ArrayUtils.binarySearch(__classPrivateFieldGet(this, _SortedKeyValueArray_array, "f"), new PropertyStoredComparer(__classPrivateFieldGet(this, _SortedKeyValueArray_getKey, "f"), storedComparer));
         if (index >= 0)
-            this.array.splice(index, 1);
+            __classPrivateFieldGet(this, _SortedKeyValueArray_array, "f").splice(index, 1);
     }
     getArrayCopy() {
-        return [...this.array];
+        return [...__classPrivateFieldGet(this, _SortedKeyValueArray_array, "f")];
     }
     hasItems() {
-        return this.array.length > 0;
+        return __classPrivateFieldGet(this, _SortedKeyValueArray_array, "f").length > 0;
     }
     *entries() {
-        yield* this.array;
+        yield* __classPrivateFieldGet(this, _SortedKeyValueArray_array, "f");
     }
 }
+_SortedKeyValueArray_array = new WeakMap(), _SortedKeyValueArray_getKey = new WeakMap(), _SortedKeyValueArray_comparer = new WeakMap();
 
+var _WeakCache_cacheItems;
 class WeakCache {
     constructor() {
-        this.cacheItems = new WeakMap();
+        _WeakCache_cacheItems.set(this, new WeakMap());
     }
     getOrCreate(key, createFunc) {
         let item = this.get(key);
@@ -743,23 +806,25 @@ class WeakCache {
         return item;
     }
     has(key) {
-        return this.cacheItems.has(key);
+        return __classPrivateFieldGet(this, _WeakCache_cacheItems, "f").has(key);
     }
     get(key) {
-        return this.cacheItems.get(key);
+        return __classPrivateFieldGet(this, _WeakCache_cacheItems, "f").get(key);
     }
     set(key, value) {
-        this.cacheItems.set(key, value);
+        __classPrivateFieldGet(this, _WeakCache_cacheItems, "f").set(key, value);
     }
     removeByKey(key) {
-        this.cacheItems.delete(key);
+        __classPrivateFieldGet(this, _WeakCache_cacheItems, "f").delete(key);
     }
 }
+_WeakCache_cacheItems = new WeakMap();
 
 function createCompilerSourceFile(filePath, scriptSnapshot, scriptTarget, version, setParentNodes, scriptKind) {
     return ts.createLanguageServiceSourceFile(filePath, scriptSnapshot, scriptTarget !== null && scriptTarget !== void 0 ? scriptTarget : ScriptTarget.Latest, version, setParentNodes, scriptKind);
 }
 
+var _FileSystemDocumentCache_documentCache, _FileSystemDocumentCache_absoluteToOriginalPath, _InternalDocumentCache_fileTexts, _InternalDocumentCache_documents;
 function createDocumentCache(files) {
     const cache = new InternalDocumentCache();
     cache._addFiles(files);
@@ -767,35 +832,37 @@ function createDocumentCache(files) {
 }
 class FileSystemDocumentCache {
     constructor(fileSystem, documentCache) {
-        this.documentCache = documentCache;
-        this.absoluteToOriginalPath = new Map();
+        _FileSystemDocumentCache_documentCache.set(this, void 0);
+        _FileSystemDocumentCache_absoluteToOriginalPath.set(this, new Map());
         for (const filePath of documentCache._getFilePaths())
-            this.absoluteToOriginalPath.set(fileSystem.getStandardizedAbsolutePath(filePath), filePath);
+            __classPrivateFieldGet(this, _FileSystemDocumentCache_absoluteToOriginalPath, "f").set(fileSystem.getStandardizedAbsolutePath(filePath), filePath);
+        __classPrivateFieldSet(this, _FileSystemDocumentCache_documentCache, documentCache, "f");
     }
     getDocumentIfMatch(filePath, scriptSnapshot, scriptTarget, scriptKind) {
-        const originalFilePath = this.absoluteToOriginalPath.get(filePath);
+        const originalFilePath = __classPrivateFieldGet(this, _FileSystemDocumentCache_absoluteToOriginalPath, "f").get(filePath);
         if (originalFilePath == null)
             return;
-        return this.documentCache._getDocumentIfMatch(originalFilePath, filePath, scriptSnapshot, scriptTarget, scriptKind);
+        return __classPrivateFieldGet(this, _FileSystemDocumentCache_documentCache, "f")._getDocumentIfMatch(originalFilePath, filePath, scriptSnapshot, scriptTarget, scriptKind);
     }
 }
+_FileSystemDocumentCache_documentCache = new WeakMap(), _FileSystemDocumentCache_absoluteToOriginalPath = new WeakMap();
 class InternalDocumentCache {
     constructor() {
-        this._fileTexts = new Map();
-        this._documents = new Map();
+        _InternalDocumentCache_fileTexts.set(this, new Map());
+        _InternalDocumentCache_documents.set(this, new Map());
     }
     _addFiles(files) {
         for (const file of files)
-            this._fileTexts.set(file.fileName, file.text);
+            __classPrivateFieldGet(this, _InternalDocumentCache_fileTexts, "f").set(file.fileName, file.text);
     }
     _getFilePaths() {
-        return this._fileTexts.keys();
+        return __classPrivateFieldGet(this, _InternalDocumentCache_fileTexts, "f").keys();
     }
     _getCacheForFileSystem(fileSystem) {
         return new FileSystemDocumentCache(fileSystem, this);
     }
     _getDocumentIfMatch(filePath, absoluteFilePath, scriptSnapshot, scriptTarget, scriptKind) {
-        const fileText = this._fileTexts.get(filePath);
+        const fileText = __classPrivateFieldGet(this, _InternalDocumentCache_fileTexts, "f").get(filePath);
         if (fileText == null)
             return undefined;
         if (fileText !== scriptSnapshot.getText(0, scriptSnapshot.getLength()))
@@ -804,10 +871,10 @@ class InternalDocumentCache {
     }
     _getDocument(filePath, absoluteFilePath, scriptSnapshot, scriptTarget, scriptKind) {
         const documentKey = this._getKey(filePath, scriptTarget, scriptKind);
-        let document = this._documents.get(documentKey);
+        let document = __classPrivateFieldGet(this, _InternalDocumentCache_documents, "f").get(documentKey);
         if (document == null) {
             document = createCompilerSourceFile(absoluteFilePath, scriptSnapshot, scriptTarget, "-1", false, scriptKind);
-            this._documents.set(documentKey, document);
+            __classPrivateFieldGet(this, _InternalDocumentCache_documents, "f").set(documentKey, document);
         }
         document = deepClone(document);
         document.fileName = absoluteFilePath;
@@ -818,6 +885,7 @@ class InternalDocumentCache {
         return (filePath + ((_a = scriptTarget === null || scriptTarget === void 0 ? void 0 : scriptTarget.toString()) !== null && _a !== void 0 ? _a : "-1") + ((_b = scriptKind === null || scriptKind === void 0 ? void 0 : scriptKind.toString()) !== null && _b !== void 0 ? _b : "-1"));
     }
 }
+_InternalDocumentCache_fileTexts = new WeakMap(), _InternalDocumentCache_documents = new WeakMap();
 
 const libFiles = [{
         fileName: "lib.d.ts",
@@ -1075,6 +1143,8 @@ function getLibFolderPath(options) {
     return libFolderInMemoryPath;
 }
 
+var _BrowserRuntimeFileSystem__errorMessage;
+_BrowserRuntimeFileSystem__errorMessage = new WeakMap();
 const runtime = getRuntime();
 function getRuntime() {
     return new DenoRuntime();
@@ -1161,27 +1231,28 @@ function createHosts(options) {
     return { languageServiceHost, compilerHost };
 }
 
+var _a$1, _FileUtils_standardizeSlashesRegex, _FileUtils_trimSlashStartRegex, _FileUtils_trimSlashEndRegex;
 const isWindowsRootDirRegex = /^[a-z]+:[\\\/]$/i;
 const path = runtime.path;
 class FileUtils {
     constructor() {
     }
     static isNotExistsError(err) {
-        var _a;
-        return err != null && err.code === FileUtils.ENOENT
-            || err != null && ((_a = err === null || err === void 0 ? void 0 : err.constructor) === null || _a === void 0 ? void 0 : _a.name) === "NotFound";
+        var _b;
+        return err != null && err.code === _a$1.ENOENT
+            || err != null && ((_b = err === null || err === void 0 ? void 0 : err.constructor) === null || _b === void 0 ? void 0 : _b.name) === "NotFound";
     }
     static pathJoin(basePath, ...paths) {
-        if (FileUtils.pathIsAbsolute(basePath)) {
-            return FileUtils.standardizeSlashes(path.normalize(path.join(basePath, ...paths)));
+        if (_a$1.pathIsAbsolute(basePath)) {
+            return _a$1.standardizeSlashes(path.normalize(path.join(basePath, ...paths)));
         }
-        return FileUtils.standardizeSlashes(path.join(basePath, ...paths));
+        return _a$1.standardizeSlashes(path.join(basePath, ...paths));
     }
     static pathIsAbsolute(fileOrDirPath) {
         return isAbsolutePath(fileOrDirPath);
     }
     static getStandardizedAbsolutePath(fileSystem, fileOrDirPath, relativeBase) {
-        return FileUtils.standardizeSlashes(path.normalize(getAbsolutePath()));
+        return _a$1.standardizeSlashes(path.normalize(getAbsolutePath()));
         function getAbsolutePath() {
             if (isAbsolutePath(fileOrDirPath))
                 return fileOrDirPath;
@@ -1191,18 +1262,18 @@ class FileUtils {
         }
     }
     static getDirPath(fileOrDirPath) {
-        fileOrDirPath = FileUtils.standardizeSlashes(fileOrDirPath);
+        fileOrDirPath = _a$1.standardizeSlashes(fileOrDirPath);
         const lastIndexOfSlash = fileOrDirPath.lastIndexOf("/");
         if (lastIndexOfSlash === -1)
             return ".";
-        return FileUtils.standardizeSlashes(fileOrDirPath.substring(0, lastIndexOfSlash + 1));
+        return _a$1.standardizeSlashes(fileOrDirPath.substring(0, lastIndexOfSlash + 1));
     }
     static getBaseName(fileOrDirPath) {
         const lastIndexOfSlash = fileOrDirPath.lastIndexOf("/");
         return fileOrDirPath.substring(lastIndexOfSlash + 1);
     }
     static getExtension(fileOrDirPath) {
-        const baseName = FileUtils.getBaseName(fileOrDirPath);
+        const baseName = _a$1.getBaseName(fileOrDirPath);
         const lastDotIndex = baseName.lastIndexOf(".");
         if (lastDotIndex <= 0)
             return "";
@@ -1215,14 +1286,14 @@ class FileUtils {
         return lastExt;
     }
     static standardizeSlashes(fileOrDirPath) {
-        let result = fileOrDirPath.replace(this.standardizeSlashesRegex, "/");
-        if (!FileUtils.isRootDirPath(result) && result.endsWith("/"))
+        let result = fileOrDirPath.replace(__classPrivateFieldGet(this, _a$1, "f", _FileUtils_standardizeSlashesRegex), "/");
+        if (!_a$1.isRootDirPath(result) && result.endsWith("/"))
             result = result.substring(0, result.length - 1);
         return result;
     }
     static pathEndsWith(fileOrDirPath, endsWithPath) {
-        const pathItems = FileUtils.splitPathBySlashes(fileOrDirPath);
-        const endsWithItems = FileUtils.splitPathBySlashes(endsWithPath);
+        const pathItems = _a$1.splitPathBySlashes(fileOrDirPath);
+        const endsWithItems = _a$1.splitPathBySlashes(endsWithPath);
         if (endsWithItems.length > pathItems.length)
             return false;
         for (let i = 0; i < endsWithItems.length; i++) {
@@ -1234,8 +1305,8 @@ class FileUtils {
     static pathStartsWith(fileOrDirPath, startsWithPath) {
         const isfileOrDirPathEmpty = StringUtils.isNullOrWhitespace(fileOrDirPath);
         const isStartsWithPathEmpty = StringUtils.isNullOrWhitespace(startsWithPath);
-        const pathItems = FileUtils.splitPathBySlashes(fileOrDirPath);
-        const startsWithItems = FileUtils.splitPathBySlashes(startsWithPath);
+        const pathItems = _a$1.splitPathBySlashes(fileOrDirPath);
+        const startsWithItems = _a$1.splitPathBySlashes(startsWithPath);
         if (isfileOrDirPathEmpty && isStartsWithPathEmpty)
             return true;
         if (isStartsWithPathEmpty || startsWithItems.length > pathItems.length)
@@ -1249,13 +1320,13 @@ class FileUtils {
         return startsWithItems.length > 0;
     }
     static splitPathBySlashes(fileOrDirPath) {
-        fileOrDirPath = (fileOrDirPath || "").replace(FileUtils.trimSlashStartRegex, "").replace(FileUtils.trimSlashEndRegex, "");
-        return FileUtils.standardizeSlashes(fileOrDirPath).replace(/^\//, "").split("/");
+        fileOrDirPath = (fileOrDirPath || "").replace(__classPrivateFieldGet(_a$1, _a$1, "f", _FileUtils_trimSlashStartRegex), "").replace(__classPrivateFieldGet(_a$1, _a$1, "f", _FileUtils_trimSlashEndRegex), "");
+        return _a$1.standardizeSlashes(fileOrDirPath).replace(/^\//, "").split("/");
     }
     static getParentMostPaths(paths) {
         const finalPaths = [];
         for (const fileOrDirPath of ArrayUtils.sortByProperty(paths, p => p.length)) {
-            if (finalPaths.every(p => !FileUtils.pathStartsWith(fileOrDirPath, p)))
+            if (finalPaths.every(p => !_a$1.pathStartsWith(fileOrDirPath, p)))
                 finalPaths.push(fileOrDirPath);
         }
         return finalPaths;
@@ -1265,7 +1336,7 @@ class FileUtils {
             return await fileSystem.readFile(filePath, encoding);
         }
         catch (err) {
-            if (!FileUtils.isNotExistsError(err))
+            if (!_a$1.isNotExistsError(err))
                 throw err;
             return false;
         }
@@ -1275,7 +1346,7 @@ class FileUtils {
             return fileSystem.readFileSync(filePath, encoding);
         }
         catch (err) {
-            if (!FileUtils.isNotExistsError(err))
+            if (!_a$1.isNotExistsError(err))
                 throw err;
             return false;
         }
@@ -1286,8 +1357,8 @@ class FileUtils {
         return "\uFEFF" + text;
     }
     static getRelativePathTo(absoluteDirPathFrom, absolutePathTo) {
-        const relativePath = path.relative(absoluteDirPathFrom, FileUtils.getDirPath(absolutePathTo));
-        return FileUtils.standardizeSlashes(path.join(relativePath, FileUtils.getBaseName(absolutePathTo)));
+        const relativePath = path.relative(absoluteDirPathFrom, _a$1.getDirPath(absolutePathTo));
+        return _a$1.standardizeSlashes(path.join(relativePath, _a$1.getBaseName(absolutePathTo)));
     }
     static isRootDirPath(dirOrFilePath) {
         return dirOrFilePath === "/" || isWindowsRootDirRegex.test(dirOrFilePath);
@@ -1297,7 +1368,7 @@ class FileUtils {
             if (!entry.isDirectory)
                 continue;
             yield entry.path;
-            yield* FileUtils.getDescendantDirectories(fileSystemWrapper, entry.path);
+            yield* _a$1.getDescendantDirectories(fileSystemWrapper, entry.path);
         }
     }
     static toAbsoluteGlob(glob, cwd) {
@@ -1306,7 +1377,7 @@ class FileUtils {
         if (glob.length === 1 && glob === ".")
             glob = "";
         const suffix = glob.slice(-1);
-        const isNegated = FileUtils.isNegatedGlob(glob);
+        const isNegated = _a$1.isNegatedGlob(glob);
         if (isNegated)
             glob = glob.slice(1);
         if (!isAbsolutePath(glob) || glob.slice(0, 1) === "\\")
@@ -1319,9 +1390,10 @@ class FileUtils {
         return glob[0] === "!" && glob[1] !== "(";
     }
 }
-FileUtils.standardizeSlashesRegex = /\\/g;
-FileUtils.trimSlashStartRegex = /^\//;
-FileUtils.trimSlashEndRegex = /\/$/;
+_a$1 = FileUtils;
+_FileUtils_standardizeSlashesRegex = { value: /\\/g };
+_FileUtils_trimSlashStartRegex = { value: /^\// };
+_FileUtils_trimSlashEndRegex = { value: /\/$/ };
 FileUtils.ENOENT = "ENOENT";
 function globJoin(dir, glob) {
     if (dir.charAt(dir.length - 1) === "/")
@@ -1376,9 +1448,10 @@ function removeArray(items, removeItem) {
         items.splice(index, 1);
 }
 
+var _InMemoryFileSystemHost_directories;
 class InMemoryFileSystemHost {
     constructor() {
-        this.directories = new Map();
+        _InMemoryFileSystemHost_directories.set(this, new Map());
         this.getOrCreateDir("/");
     }
     isCaseSensitive() {
@@ -1395,24 +1468,24 @@ class InMemoryFileSystemHost {
     }
     deleteSync(path) {
         const standardizedPath = FileUtils.getStandardizedAbsolutePath(this, path);
-        if (this.directories.has(standardizedPath)) {
-            for (const descendantDirPath of getDescendantDirectories(this.directories.keys(), standardizedPath))
-                this.directories.delete(descendantDirPath);
-            this.directories.delete(standardizedPath);
+        if (__classPrivateFieldGet(this, _InMemoryFileSystemHost_directories, "f").has(standardizedPath)) {
+            for (const descendantDirPath of getDescendantDirectories(__classPrivateFieldGet(this, _InMemoryFileSystemHost_directories, "f").keys(), standardizedPath))
+                __classPrivateFieldGet(this, _InMemoryFileSystemHost_directories, "f").delete(descendantDirPath);
+            __classPrivateFieldGet(this, _InMemoryFileSystemHost_directories, "f").delete(standardizedPath);
             return;
         }
-        const parentDir = this.directories.get(FileUtils.getDirPath(standardizedPath));
+        const parentDir = __classPrivateFieldGet(this, _InMemoryFileSystemHost_directories, "f").get(FileUtils.getDirPath(standardizedPath));
         if (parentDir == null || !parentDir.files.has(standardizedPath))
             throw new errors.FileNotFoundError(standardizedPath);
         parentDir.files.delete(standardizedPath);
     }
     readDirSync(dirPath) {
         const standardizedDirPath = FileUtils.getStandardizedAbsolutePath(this, dirPath);
-        const dir = this.directories.get(standardizedDirPath);
+        const dir = __classPrivateFieldGet(this, _InMemoryFileSystemHost_directories, "f").get(standardizedDirPath);
         if (dir == null)
             throw new errors.DirectoryNotFoundError(standardizedDirPath);
         return [
-            ...getDirectories(this.directories.keys()),
+            ...getDirectories(__classPrivateFieldGet(this, _InMemoryFileSystemHost_directories, "f").keys()),
             ...Array.from(dir.files.keys()).map(name => ({
                 name,
                 isDirectory: false,
@@ -1444,7 +1517,7 @@ class InMemoryFileSystemHost {
     }
     readFileSync(filePath, encoding = "utf-8") {
         const standardizedFilePath = FileUtils.getStandardizedAbsolutePath(this, filePath);
-        const parentDir = this.directories.get(FileUtils.getDirPath(standardizedFilePath));
+        const parentDir = __classPrivateFieldGet(this, _InMemoryFileSystemHost_directories, "f").get(FileUtils.getDirPath(standardizedFilePath));
         if (parentDir == null)
             throw new errors.FileNotFoundError(standardizedFilePath);
         const fileText = parentDir.files.get(standardizedFilePath);
@@ -1483,13 +1556,13 @@ class InMemoryFileSystemHost {
             this.deleteSync(standardizedSrcPath);
             this.writeFileSync(standardizedDestPath, fileText);
         }
-        else if (this.directories.has(standardizedSrcPath)) {
+        else if (__classPrivateFieldGet(this, _InMemoryFileSystemHost_directories, "f").has(standardizedSrcPath)) {
             const moveDirectory = (from, to) => {
                 this._copyDirInternal(from, to);
-                this.directories.delete(from);
+                __classPrivateFieldGet(this, _InMemoryFileSystemHost_directories, "f").delete(from);
             };
             moveDirectory(standardizedSrcPath, standardizedDestPath);
-            for (const descendantDirPath of getDescendantDirectories(this.directories.keys(), standardizedSrcPath)) {
+            for (const descendantDirPath of getDescendantDirectories(__classPrivateFieldGet(this, _InMemoryFileSystemHost_directories, "f").keys(), standardizedSrcPath)) {
                 const relativePath = FileUtils.getRelativePathTo(standardizedSrcPath, descendantDirPath);
                 moveDirectory(descendantDirPath, FileUtils.pathJoin(standardizedDestPath, relativePath));
             }
@@ -1507,9 +1580,9 @@ class InMemoryFileSystemHost {
         const standardizedDestPath = FileUtils.getStandardizedAbsolutePath(this, destPath);
         if (this.fileExistsSync(standardizedSrcPath))
             this.writeFileSync(standardizedDestPath, this.readFileSync(standardizedSrcPath));
-        else if (this.directories.has(standardizedSrcPath)) {
+        else if (__classPrivateFieldGet(this, _InMemoryFileSystemHost_directories, "f").has(standardizedSrcPath)) {
             this._copyDirInternal(standardizedSrcPath, standardizedDestPath);
-            for (const descendantDirPath of getDescendantDirectories(this.directories.keys(), standardizedSrcPath)) {
+            for (const descendantDirPath of getDescendantDirectories(__classPrivateFieldGet(this, _InMemoryFileSystemHost_directories, "f").keys(), standardizedSrcPath)) {
                 const relativePath = FileUtils.getRelativePathTo(standardizedSrcPath, descendantDirPath);
                 this._copyDirInternal(descendantDirPath, FileUtils.pathJoin(standardizedDestPath, relativePath));
             }
@@ -1519,7 +1592,7 @@ class InMemoryFileSystemHost {
         }
     }
     _copyDirInternal(from, to) {
-        const dir = this.directories.get(from);
+        const dir = __classPrivateFieldGet(this, _InMemoryFileSystemHost_directories, "f").get(from);
         const newDir = this.getOrCreateDir(to);
         for (const [filePath, text] of dir.files.entries()) {
             const toDir = FileUtils.pathJoin(to, FileUtils.getBaseName(filePath));
@@ -1532,7 +1605,7 @@ class InMemoryFileSystemHost {
     fileExistsSync(filePath) {
         const standardizedFilePath = FileUtils.getStandardizedAbsolutePath(this, filePath);
         const dirPath = FileUtils.getDirPath(standardizedFilePath);
-        const dir = this.directories.get(dirPath);
+        const dir = __classPrivateFieldGet(this, _InMemoryFileSystemHost_directories, "f").get(dirPath);
         if (dir == null)
             return false;
         return dir.files.has(standardizedFilePath);
@@ -1541,7 +1614,7 @@ class InMemoryFileSystemHost {
         return Promise.resolve(this.directoryExistsSync(dirPath));
     }
     directoryExistsSync(dirPath) {
-        return this.directories.has(FileUtils.getStandardizedAbsolutePath(this, dirPath));
+        return __classPrivateFieldGet(this, _InMemoryFileSystemHost_directories, "f").has(FileUtils.getStandardizedAbsolutePath(this, dirPath));
     }
     realpathSync(path) {
         return path;
@@ -1558,7 +1631,7 @@ class InMemoryFileSystemHost {
         }
     }
     globSync(patterns) {
-        const allFilePaths = Array.from(getAllFilePaths(this.directories.values()));
+        const allFilePaths = Array.from(getAllFilePaths(__classPrivateFieldGet(this, _InMemoryFileSystemHost_directories, "f").values()));
         return matchGlobs(allFilePaths, patterns, this.getCurrentDirectory());
         function* getAllFilePaths(directories) {
             for (const dir of directories)
@@ -1566,10 +1639,10 @@ class InMemoryFileSystemHost {
         }
     }
     getOrCreateDir(dirPath) {
-        let dir = this.directories.get(dirPath);
+        let dir = __classPrivateFieldGet(this, _InMemoryFileSystemHost_directories, "f").get(dirPath);
         if (dir == null) {
             dir = { path: dirPath, files: new Map() };
-            this.directories.set(dirPath, dir);
+            __classPrivateFieldGet(this, _InMemoryFileSystemHost_directories, "f").set(dirPath, dir);
             const parentDirPath = FileUtils.getDirPath(dirPath);
             if (parentDirPath !== dirPath)
                 this.getOrCreateDir(parentDirPath);
@@ -1577,6 +1650,7 @@ class InMemoryFileSystemHost {
         return dir;
     }
 }
+_InMemoryFileSystemHost_directories = new WeakMap();
 function* getDescendantDirectories(directoryPaths, dirPath) {
     for (const path of directoryPaths) {
         if (FileUtils.pathStartsWith(path, dirPath))
@@ -1721,14 +1795,16 @@ function backSlashesToForward(patterns) {
     return patterns.map(p => p.replace(/\\/g, "/"));
 }
 
+var _Directory_isDeleted, _Directory_wasEverDeleted, _Directory_parent, _Directory_childDirs, _TransactionalFileSystem_directories, _TransactionalFileSystem_pathCasingMaintainer, _TransactionalFileSystem_fileSystem, _TransactionalFileSystem_libFileMap, _TransactionalFileSystem_operationIndex, _PathCasingMaintainer_caseInsensitiveMappings;
 class Directory {
     constructor(path) {
         this.path = path;
         this.operations = [];
         this.inboundOperations = [];
-        this.isDeleted = false;
-        this.wasEverDeleted = false;
-        this.childDirs = new SortedKeyValueArray(item => item.path, LocaleStringComparer.instance);
+        _Directory_isDeleted.set(this, false);
+        _Directory_wasEverDeleted.set(this, false);
+        _Directory_parent.set(this, void 0);
+        _Directory_childDirs.set(this, new SortedKeyValueArray(item => item.path, LocaleStringComparer.instance));
     }
     getExternalOperations() {
         return [
@@ -1763,61 +1839,61 @@ class Directory {
         return FileUtils.pathStartsWith(this.path, directory.path);
     }
     getIsDeleted() {
-        return this.isDeleted;
+        return __classPrivateFieldGet(this, _Directory_isDeleted, "f");
     }
     getWasEverDeleted() {
-        if (this.wasEverDeleted)
+        if (__classPrivateFieldGet(this, _Directory_wasEverDeleted, "f"))
             return true;
         for (const ancestor of this.getAncestorsIterator()) {
-            if (ancestor.wasEverDeleted)
+            if (__classPrivateFieldGet(ancestor, _Directory_wasEverDeleted, "f"))
                 return true;
         }
         return false;
     }
     setIsDeleted(isDeleted) {
-        if (this.isDeleted === isDeleted)
+        if (__classPrivateFieldGet(this, _Directory_isDeleted, "f") === isDeleted)
             return;
         if (isDeleted) {
-            this.wasEverDeleted = true;
-            for (const child of this.childDirs.entries())
+            __classPrivateFieldSet(this, _Directory_wasEverDeleted, true, "f");
+            for (const child of __classPrivateFieldGet(this, _Directory_childDirs, "f").entries())
                 child.setIsDeleted(true);
         }
         else {
-            if (this.parent != null)
-                this.parent.setIsDeleted(false);
+            if (__classPrivateFieldGet(this, _Directory_parent, "f") != null)
+                __classPrivateFieldGet(this, _Directory_parent, "f").setIsDeleted(false);
         }
-        this.isDeleted = isDeleted;
+        __classPrivateFieldSet(this, _Directory_isDeleted, isDeleted, "f");
     }
     getParent() {
-        return this.parent;
+        return __classPrivateFieldGet(this, _Directory_parent, "f");
     }
     setParent(parent) {
-        if (this.parent != null)
+        if (__classPrivateFieldGet(this, _Directory_parent, "f") != null)
             throw new errors.InvalidOperationError("For some reason, a parent was being set when the directory already had a parent. Please open an issue.");
-        this.parent = parent;
-        parent.childDirs.set(this);
-        if (parent.isDeleted && !this.isDeleted)
+        __classPrivateFieldSet(this, _Directory_parent, parent, "f");
+        __classPrivateFieldGet(parent, _Directory_childDirs, "f").set(this);
+        if (__classPrivateFieldGet(parent, _Directory_isDeleted, "f") && !__classPrivateFieldGet(this, _Directory_isDeleted, "f"))
             parent.setIsDeleted(false);
     }
     removeParent() {
-        const parent = this.parent;
+        const parent = __classPrivateFieldGet(this, _Directory_parent, "f");
         if (parent == null)
             return;
-        parent.childDirs.removeByValue(this);
-        this.parent = undefined;
+        __classPrivateFieldGet(parent, _Directory_childDirs, "f").removeByValue(this);
+        __classPrivateFieldSet(this, _Directory_parent, undefined, "f");
     }
     getAncestors() {
         return Array.from(this.getAncestorsIterator());
     }
     *getAncestorsIterator() {
-        let parent = this.parent;
+        let parent = __classPrivateFieldGet(this, _Directory_parent, "f");
         while (parent != null) {
             yield parent;
-            parent = parent.parent;
+            parent = __classPrivateFieldGet(parent, _Directory_parent, "f");
         }
     }
     *getChildrenEntriesIterator() {
-        for (const childDir of this.childDirs.entries()) {
+        for (const childDir of __classPrivateFieldGet(this, _Directory_childDirs, "f").entries()) {
             yield {
                 path: childDir.path,
                 isDirectory: true,
@@ -1828,7 +1904,7 @@ class Directory {
     }
     getDescendants() {
         const descendants = [];
-        for (const child of this.childDirs.entries()) {
+        for (const child of __classPrivateFieldGet(this, _Directory_childDirs, "f").entries()) {
             descendants.push(child);
             descendants.push(...child.getDescendants());
         }
@@ -1857,18 +1933,22 @@ class Directory {
         ArrayUtils.removeAll(this.operations, operationMatches);
     }
 }
+_Directory_isDeleted = new WeakMap(), _Directory_wasEverDeleted = new WeakMap(), _Directory_parent = new WeakMap(), _Directory_childDirs = new WeakMap();
 class TransactionalFileSystem {
     constructor(options) {
-        this.directories = new KeyValueCache();
-        this.operationIndex = 0;
-        this.fileSystem = options.fileSystem;
-        this.pathCasingMaintainer = new PathCasingMaintainer(options.fileSystem);
+        _TransactionalFileSystem_directories.set(this, new KeyValueCache());
+        _TransactionalFileSystem_pathCasingMaintainer.set(this, void 0);
+        _TransactionalFileSystem_fileSystem.set(this, void 0);
+        _TransactionalFileSystem_libFileMap.set(this, void 0);
+        _TransactionalFileSystem_operationIndex.set(this, 0);
+        __classPrivateFieldSet(this, _TransactionalFileSystem_fileSystem, options.fileSystem, "f");
+        __classPrivateFieldSet(this, _TransactionalFileSystem_pathCasingMaintainer, new PathCasingMaintainer(options.fileSystem), "f");
         if (!options.skipLoadingLibFiles && options.libFolderPath == null) {
             const libFolderPath = getLibFolderPath(options);
-            this.libFileMap = new Map();
+            __classPrivateFieldSet(this, _TransactionalFileSystem_libFileMap, new Map(), "f");
             const libFiles = getLibFiles();
             for (const libFile of libFiles) {
-                this.libFileMap.set(this.getStandardizedAbsolutePath(libFolderPath + "/" + libFile.fileName), libFile.text);
+                __classPrivateFieldGet(this, _TransactionalFileSystem_libFileMap, "f").set(this.getStandardizedAbsolutePath(libFolderPath + "/" + libFile.fileName), libFile.text);
             }
         }
     }
@@ -1880,7 +1960,7 @@ class TransactionalFileSystem {
             index: this.getNextOperationIndex(),
             filePath,
         });
-        this.pathCasingMaintainer.removePath(filePath);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_pathCasingMaintainer, "f").removePath(filePath);
     }
     removeFileDelete(filePath) {
         this.getOrCreateParentDirectory(filePath).dequeueFileDelete(filePath);
@@ -1904,7 +1984,7 @@ class TransactionalFileSystem {
             index: this.getNextOperationIndex(),
             dir,
         });
-        this.pathCasingMaintainer.removePath(dirPath);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_pathCasingMaintainer, "f").removePath(dirPath);
     }
     queueMoveDirectory(srcPath, destPath) {
         const parentDir = this.getOrCreateParentDirectory(srcPath);
@@ -1919,7 +1999,7 @@ class TransactionalFileSystem {
         parentDir.operations.push(moveOperation);
         (destinationDir.getParent() || destinationDir).inboundOperations.push(moveOperation);
         moveDir.setIsDeleted(true);
-        this.pathCasingMaintainer.removePath(srcPath);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_pathCasingMaintainer, "f").removePath(srcPath);
     }
     queueCopyDirectory(srcPath, destPath) {
         const parentDir = this.getOrCreateParentDirectory(srcPath);
@@ -1981,13 +2061,13 @@ class TransactionalFileSystem {
                 await this.deleteSuppressNotFound(operation.filePath);
                 break;
             case "move":
-                await this.fileSystem.move(operation.oldDir.path, operation.newDir.path);
+                await __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").move(operation.oldDir.path, operation.newDir.path);
                 break;
             case "copy":
-                await this.fileSystem.copy(operation.oldDir.path, operation.newDir.path);
+                await __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").copy(operation.oldDir.path, operation.newDir.path);
                 break;
             case "mkdir":
-                await this.fileSystem.mkdir(operation.dir.path);
+                await __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").mkdir(operation.dir.path);
                 break;
             default:
                 errors.throwNotImplementedForNeverValueError(operation);
@@ -2002,13 +2082,13 @@ class TransactionalFileSystem {
                 this.deleteSuppressNotFoundSync(operation.filePath);
                 break;
             case "move":
-                this.fileSystem.moveSync(operation.oldDir.path, operation.newDir.path);
+                __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").moveSync(operation.oldDir.path, operation.newDir.path);
                 break;
             case "copy":
-                this.fileSystem.copySync(operation.oldDir.path, operation.newDir.path);
+                __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").copySync(operation.oldDir.path, operation.newDir.path);
                 break;
             case "mkdir":
-                this.fileSystem.mkdirSync(operation.dir.path);
+                __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").mkdirSync(operation.dir.path);
                 break;
             default:
                 errors.throwNotImplementedForNeverValueError(operation);
@@ -2016,10 +2096,10 @@ class TransactionalFileSystem {
     }
     getAndClearOperations() {
         const operations = [];
-        for (const dir of this.directories.getValues())
+        for (const dir of __classPrivateFieldGet(this, _TransactionalFileSystem_directories, "f").getValues())
             operations.push(...dir.operations);
         ArrayUtils.sortByProperty(operations, item => item.index);
-        this.directories.clear();
+        __classPrivateFieldGet(this, _TransactionalFileSystem_directories, "f").clear();
         return operations;
     }
     async moveFileImmediately(oldFilePath, newFilePath, fileText) {
@@ -2041,7 +2121,7 @@ class TransactionalFileSystem {
         const dir = this.getOrCreateParentDirectory(filePath);
         this.throwIfHasExternalOperations(dir, "delete file");
         dir.dequeueFileDelete(filePath);
-        this.pathCasingMaintainer.removePath(filePath);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_pathCasingMaintainer, "f").removePath(filePath);
         try {
             await this.deleteSuppressNotFound(filePath);
         }
@@ -2055,7 +2135,7 @@ class TransactionalFileSystem {
         const dir = this.getOrCreateParentDirectory(filePath);
         this.throwIfHasExternalOperations(dir, "delete file");
         dir.dequeueFileDelete(filePath);
-        this.pathCasingMaintainer.removePath(filePath);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_pathCasingMaintainer, "f").removePath(filePath);
         try {
             this.deleteSuppressNotFoundSync(filePath);
         }
@@ -2072,7 +2152,7 @@ class TransactionalFileSystem {
         const saveTask = Promise.all([this.saveForDirectory(srcDirPath), this.saveForDirectory(destDirPath)]);
         this.removeDirAndSubDirs(srcDir);
         await saveTask;
-        await this.fileSystem.copy(srcDirPath, destDirPath);
+        await __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").copy(srcDirPath, destDirPath);
     }
     copyDirectoryImmediatelySync(srcDirPath, destDirPath) {
         const srcDir = this.getOrCreateDirectory(srcDirPath);
@@ -2082,7 +2162,7 @@ class TransactionalFileSystem {
         this.saveForDirectorySync(srcDirPath);
         this.saveForDirectorySync(destDirPath);
         this.removeDirAndSubDirs(srcDir);
-        this.fileSystem.copySync(srcDirPath, destDirPath);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").copySync(srcDirPath, destDirPath);
     }
     async moveDirectoryImmediately(srcDirPath, destDirPath) {
         const srcDir = this.getOrCreateDirectory(srcDirPath);
@@ -2091,9 +2171,9 @@ class TransactionalFileSystem {
         this.throwIfHasExternalOperations(destDir, "move directory");
         const saveTask = Promise.all([this.saveForDirectory(srcDirPath), this.saveForDirectory(destDirPath)]);
         this.removeDirAndSubDirs(srcDir);
-        this.pathCasingMaintainer.removePath(srcDirPath);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_pathCasingMaintainer, "f").removePath(srcDirPath);
         await saveTask;
-        await this.fileSystem.move(srcDirPath, destDirPath);
+        await __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").move(srcDirPath, destDirPath);
     }
     moveDirectoryImmediatelySync(srcDirPath, destDirPath) {
         const srcDir = this.getOrCreateDirectory(srcDirPath);
@@ -2103,14 +2183,14 @@ class TransactionalFileSystem {
         this.saveForDirectorySync(srcDirPath);
         this.saveForDirectorySync(destDirPath);
         this.removeDirAndSubDirs(srcDir);
-        this.pathCasingMaintainer.removePath(srcDirPath);
-        this.fileSystem.moveSync(srcDirPath, destDirPath);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_pathCasingMaintainer, "f").removePath(srcDirPath);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").moveSync(srcDirPath, destDirPath);
     }
     async deleteDirectoryImmediately(dirPath) {
         const dir = this.getOrCreateDirectory(dirPath);
         this.throwIfHasExternalOperations(dir, "delete");
         this.removeDirAndSubDirs(dir);
-        this.pathCasingMaintainer.removePath(dirPath);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_pathCasingMaintainer, "f").removePath(dirPath);
         try {
             await this.deleteSuppressNotFound(dirPath);
         }
@@ -2122,18 +2202,18 @@ class TransactionalFileSystem {
     async clearDirectoryImmediately(dirPath) {
         await this.deleteDirectoryImmediately(dirPath);
         this.getOrCreateDirectory(dirPath).setIsDeleted(false);
-        await this.fileSystem.mkdir(dirPath);
+        await __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").mkdir(dirPath);
     }
     clearDirectoryImmediatelySync(dirPath) {
         this.deleteDirectoryImmediatelySync(dirPath);
         this.getOrCreateDirectory(dirPath).setIsDeleted(false);
-        this.fileSystem.mkdirSync(dirPath);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").mkdirSync(dirPath);
     }
     deleteDirectoryImmediatelySync(dirPath) {
         const dir = this.getOrCreateDirectory(dirPath);
         this.throwIfHasExternalOperations(dir, "delete");
         this.removeDirAndSubDirs(dir);
-        this.pathCasingMaintainer.removePath(dirPath);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_pathCasingMaintainer, "f").removePath(dirPath);
         try {
             this.deleteSuppressNotFoundSync(dirPath);
         }
@@ -2145,7 +2225,7 @@ class TransactionalFileSystem {
     async deleteSuppressNotFound(path) {
         this.throwIfLibFile(path);
         try {
-            await this.fileSystem.delete(path);
+            await __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").delete(path);
         }
         catch (err) {
             if (!FileUtils.isNotExistsError(err))
@@ -2155,7 +2235,7 @@ class TransactionalFileSystem {
     deleteSuppressNotFoundSync(path) {
         this.throwIfLibFile(path);
         try {
-            this.fileSystem.deleteSync(path);
+            __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").deleteSync(path);
         }
         catch (err) {
             if (!FileUtils.isNotExistsError(err))
@@ -2167,14 +2247,14 @@ class TransactionalFileSystem {
             return true;
         if (this._fileDeletedInMemory(filePath))
             return false;
-        return this.fileSystem.fileExists(filePath);
+        return __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").fileExists(filePath);
     }
     fileExistsSync(filePath) {
         if (this.libFileExists(filePath))
             return true;
         if (this._fileDeletedInMemory(filePath))
             return false;
-        return this.fileSystem.fileExistsSync(filePath);
+        return __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").fileExistsSync(filePath);
     }
     _fileDeletedInMemory(filePath) {
         if (this.isPathQueuedForDeletion(filePath))
@@ -2192,7 +2272,7 @@ class TransactionalFileSystem {
         const dir = this.getDirectoryIfExists(dirPath);
         if (dir != null && dir.getWasEverDeleted())
             return false;
-        return this.fileSystem.directoryExistsSync(dirPath);
+        return __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").directoryExistsSync(dirPath);
     }
     readFileIfExistsSync(filePath, encoding) {
         if (this._fileDeletedInMemory(filePath))
@@ -2212,7 +2292,7 @@ class TransactionalFileSystem {
         if (libFileText != null)
             return libFileText;
         this._verifyCanReadFile(filePath);
-        return this.fileSystem.readFileSync(filePath, encoding);
+        return __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").readFileSync(filePath, encoding);
     }
     readFileIfExists(filePath, encoding) {
         if (this._fileDeletedInMemory(filePath))
@@ -2230,7 +2310,7 @@ class TransactionalFileSystem {
         if (libFileText != null)
             return Promise.resolve(libFileText);
         this._verifyCanReadFile(filePath);
-        return this.fileSystem.readFile(filePath, encoding);
+        return __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").readFile(filePath, encoding);
     }
     _verifyCanReadFile(filePath) {
         if (this.isPathQueuedForDeletion(filePath))
@@ -2247,7 +2327,7 @@ class TransactionalFileSystem {
         const uniqueDirPaths = new Map();
         for (const entry of dir.getChildrenEntriesIterator())
             uniqueDirPaths.set(entry.path, entry);
-        for (const runtimeDirEntry of this.fileSystem.readDirSync(dirPath)) {
+        for (const runtimeDirEntry of __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").readDirSync(dirPath)) {
             const standardizedChildDirOrFilePath = this.getStandardizedAbsolutePath(runtimeDirEntry.name);
             if (!this.isPathQueuedForDeletion(standardizedChildDirOrFilePath)) {
                 uniqueDirPaths.set(standardizedChildDirOrFilePath, {
@@ -2261,13 +2341,13 @@ class TransactionalFileSystem {
         return ArrayUtils.sortByProperty(Array.from(uniqueDirPaths.values()), e => e.path);
     }
     async glob(patterns) {
-        const filePaths = await this.fileSystem.glob(patterns);
+        const filePaths = await __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").glob(patterns);
         return filePaths
             .map(filePath => this.getStandardizedAbsolutePath(filePath))
             .filter(filePath => !this.isPathQueuedForDeletion(filePath));
     }
     *globSync(patterns) {
-        const filePaths = this.fileSystem.globSync(patterns);
+        const filePaths = __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").globSync(patterns);
         for (const filePath of filePaths) {
             const standardizedFilePath = this.getStandardizedAbsolutePath(filePath);
             if (!this.isPathQueuedForDeletion(standardizedFilePath))
@@ -2275,10 +2355,10 @@ class TransactionalFileSystem {
         }
     }
     getFileSystem() {
-        return this.fileSystem;
+        return __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f");
     }
     getCurrentDirectory() {
-        return this.getStandardizedAbsolutePath(this.fileSystem.getCurrentDirectory());
+        return this.getStandardizedAbsolutePath(__classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").getCurrentDirectory());
     }
     getDirectories(dirPath) {
         return this.readDirSync(dirPath).filter(entry => entry.isDirectory).map(d => d.path);
@@ -2287,15 +2367,15 @@ class TransactionalFileSystem {
         if (this.libFileExists(path))
             return path;
         try {
-            return this.getStandardizedAbsolutePath(this.fileSystem.realpathSync(path));
+            return this.getStandardizedAbsolutePath(__classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").realpathSync(path));
         }
         catch (_a) {
             return path;
         }
     }
     getStandardizedAbsolutePath(fileOrDirPath, relativeBase) {
-        const standardizedFileOrDirPath = FileUtils.getStandardizedAbsolutePath(this.fileSystem, fileOrDirPath, relativeBase);
-        return this.pathCasingMaintainer.getPath(standardizedFileOrDirPath);
+        const standardizedFileOrDirPath = FileUtils.getStandardizedAbsolutePath(__classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f"), fileOrDirPath, relativeBase);
+        return __classPrivateFieldGet(this, _TransactionalFileSystem_pathCasingMaintainer, "f").getPath(standardizedFileOrDirPath);
     }
     readFileOrNotExists(filePath, encoding) {
         const libFileText = this.readLibFile(filePath);
@@ -2303,7 +2383,7 @@ class TransactionalFileSystem {
             return Promise.resolve(libFileText);
         if (this.isPathQueuedForDeletion(filePath))
             return false;
-        return FileUtils.readFileOrNotExists(this.fileSystem, filePath, encoding);
+        return FileUtils.readFileOrNotExists(__classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f"), filePath, encoding);
     }
     readFileOrNotExistsSync(filePath, encoding) {
         const libFileText = this.readLibFile(filePath);
@@ -2311,7 +2391,7 @@ class TransactionalFileSystem {
             return libFileText;
         if (this.isPathQueuedForDeletion(filePath))
             return false;
-        return FileUtils.readFileOrNotExistsSync(this.fileSystem, filePath, encoding);
+        return FileUtils.readFileOrNotExistsSync(__classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f"), filePath, encoding);
     }
     async writeFile(filePath, fileText) {
         this.throwIfLibFile(filePath);
@@ -2319,7 +2399,7 @@ class TransactionalFileSystem {
         this.throwIfHasExternalOperations(parentDir, "write file");
         parentDir.dequeueFileDelete(filePath);
         await this.ensureDirectoryExists(parentDir);
-        await this.fileSystem.writeFile(filePath, fileText);
+        await __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").writeFile(filePath, fileText);
     }
     writeFileSync(filePath, fileText) {
         this.throwIfLibFile(filePath);
@@ -2327,7 +2407,7 @@ class TransactionalFileSystem {
         this.throwIfHasExternalOperations(parentDir, "write file");
         parentDir.dequeueFileDelete(filePath);
         this.ensureDirectoryExistsSync(parentDir);
-        this.fileSystem.writeFileSync(filePath, fileText);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").writeFileSync(filePath, fileText);
     }
     isPathDirectoryInQueueThatExists(path) {
         const pathDir = this.getDirectoryIfExists(path);
@@ -2346,18 +2426,19 @@ class TransactionalFileSystem {
         const originalParent = dir.getParent();
         dir.removeParent();
         for (const dirToRemove of [dir, ...dir.getDescendants()])
-            this.directories.removeByKey(dirToRemove.path);
+            __classPrivateFieldGet(this, _TransactionalFileSystem_directories, "f").removeByKey(dirToRemove.path);
         if (originalParent != null)
             originalParent.dequeueDirDelete(dir.path);
     }
     addBackDirAndSubDirs(dir) {
         for (const dirToAdd of [dir, ...dir.getDescendants()])
-            this.directories.set(dirToAdd.path, dirToAdd);
+            __classPrivateFieldGet(this, _TransactionalFileSystem_directories, "f").set(dirToAdd.path, dirToAdd);
         if (!dir.isRootDir())
             dir.setParent(this.getOrCreateParentDirectory(dir.path));
     }
     getNextOperationIndex() {
-        return this.operationIndex++;
+        var _a, _b;
+        return __classPrivateFieldSet(this, _TransactionalFileSystem_operationIndex, (_b = __classPrivateFieldGet(this, _TransactionalFileSystem_operationIndex, "f"), _a = _b++, _b), "f"), _a;
     }
     getParentDirectoryIfExists(filePath) {
         return this.getDirectoryIfExists(FileUtils.getDirPath(filePath));
@@ -2366,19 +2447,19 @@ class TransactionalFileSystem {
         return this.getOrCreateDirectory(FileUtils.getDirPath(filePath));
     }
     getDirectoryIfExists(dirPath) {
-        return this.directories.get(dirPath);
+        return __classPrivateFieldGet(this, _TransactionalFileSystem_directories, "f").get(dirPath);
     }
     getOrCreateDirectory(dirPath) {
-        let dir = this.directories.get(dirPath);
+        let dir = __classPrivateFieldGet(this, _TransactionalFileSystem_directories, "f").get(dirPath);
         if (dir != null)
             return dir;
-        const getOrCreateDir = (creatingDirPath) => this.directories.getOrCreate(creatingDirPath, () => new Directory(creatingDirPath));
+        const getOrCreateDir = (creatingDirPath) => __classPrivateFieldGet(this, _TransactionalFileSystem_directories, "f").getOrCreate(creatingDirPath, () => new Directory(creatingDirPath));
         dir = getOrCreateDir(dirPath);
         let currentDirPath = dirPath;
         let currentDir = dir;
         while (!FileUtils.isRootDirPath(currentDirPath)) {
             const nextDirPath = FileUtils.getDirPath(currentDirPath);
-            const hadNextDir = this.directories.has(nextDirPath);
+            const hadNextDir = __classPrivateFieldGet(this, _TransactionalFileSystem_directories, "f").has(nextDirPath);
             const nextDir = getOrCreateDir(nextDirPath);
             currentDir.setParent(nextDir);
             if (hadNextDir)
@@ -2418,13 +2499,13 @@ class TransactionalFileSystem {
         if (dir.isRootDir())
             return;
         this.removeMkDirOperationsForDir(dir);
-        await this.fileSystem.mkdir(dir.path);
+        await __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").mkdir(dir.path);
     }
     ensureDirectoryExistsSync(dir) {
         if (dir.isRootDir())
             return;
         this.removeMkDirOperationsForDir(dir);
-        this.fileSystem.mkdirSync(dir.path);
+        __classPrivateFieldGet(this, _TransactionalFileSystem_fileSystem, "f").mkdirSync(dir.path);
     }
     removeMkDirOperationsForDir(dir) {
         const parentDir = dir.getParent();
@@ -2434,11 +2515,11 @@ class TransactionalFileSystem {
         }
     }
     libFileExists(filePath) {
-        return this.libFileMap != null && this.libFileMap.has(filePath);
+        return __classPrivateFieldGet(this, _TransactionalFileSystem_libFileMap, "f") != null && __classPrivateFieldGet(this, _TransactionalFileSystem_libFileMap, "f").has(filePath);
     }
     readLibFile(filePath) {
-        if (this.libFileMap != null)
-            return this.libFileMap.get(filePath);
+        if (__classPrivateFieldGet(this, _TransactionalFileSystem_libFileMap, "f") != null)
+            return __classPrivateFieldGet(this, _TransactionalFileSystem_libFileMap, "f").get(filePath);
         else
             return undefined;
     }
@@ -2447,28 +2528,31 @@ class TransactionalFileSystem {
             throw new errors.InvalidOperationError(`This operation is not permitted on an in memory lib folder file.`);
     }
 }
+_TransactionalFileSystem_directories = new WeakMap(), _TransactionalFileSystem_pathCasingMaintainer = new WeakMap(), _TransactionalFileSystem_fileSystem = new WeakMap(), _TransactionalFileSystem_libFileMap = new WeakMap(), _TransactionalFileSystem_operationIndex = new WeakMap();
 class PathCasingMaintainer {
     constructor(fileSystem) {
+        _PathCasingMaintainer_caseInsensitiveMappings.set(this, void 0);
         if (fileSystem.isCaseSensitive != null && !fileSystem.isCaseSensitive())
-            this.caseInsensitiveMappings = new Map();
+            __classPrivateFieldSet(this, _PathCasingMaintainer_caseInsensitiveMappings, new Map(), "f");
     }
     getPath(fileOrDirPath) {
-        if (this.caseInsensitiveMappings == null)
+        if (__classPrivateFieldGet(this, _PathCasingMaintainer_caseInsensitiveMappings, "f") == null)
             return fileOrDirPath;
         const key = fileOrDirPath.toLowerCase();
-        let path = this.caseInsensitiveMappings.get(key);
+        let path = __classPrivateFieldGet(this, _PathCasingMaintainer_caseInsensitiveMappings, "f").get(key);
         if (path == null) {
             path = fileOrDirPath;
-            this.caseInsensitiveMappings.set(key, path);
+            __classPrivateFieldGet(this, _PathCasingMaintainer_caseInsensitiveMappings, "f").set(key, path);
         }
         return path;
     }
     removePath(dirPath) {
-        if (this.caseInsensitiveMappings == null)
+        if (__classPrivateFieldGet(this, _PathCasingMaintainer_caseInsensitiveMappings, "f") == null)
             return;
-        this.caseInsensitiveMappings.delete(dirPath.toLowerCase());
+        __classPrivateFieldGet(this, _PathCasingMaintainer_caseInsensitiveMappings, "f").delete(dirPath.toLowerCase());
     }
 }
+_PathCasingMaintainer_caseInsensitiveMappings = new WeakMap();
 
 function createModuleResolutionHost(options) {
     const { transactionalFileSystem, sourceFileContainer, getEncoding } = options;
@@ -2511,25 +2595,27 @@ function createModuleResolutionHost(options) {
     };
 }
 
+var _a, _DocumentRegistry_sourceFileCacheByFilePath, _DocumentRegistry_transactionalFileSystem, _DocumentRegistry_initialVersion;
 class DocumentRegistry {
     constructor(transactionalFileSystem) {
-        this.transactionalFileSystem = transactionalFileSystem;
-        this.sourceFileCacheByFilePath = new Map();
+        _DocumentRegistry_sourceFileCacheByFilePath.set(this, new Map());
+        _DocumentRegistry_transactionalFileSystem.set(this, void 0);
+        __classPrivateFieldSet(this, _DocumentRegistry_transactionalFileSystem, transactionalFileSystem, "f");
     }
     createOrUpdateSourceFile(fileName, compilationSettings, scriptSnapshot, scriptKind) {
-        let sourceFile = this.sourceFileCacheByFilePath.get(fileName);
+        let sourceFile = __classPrivateFieldGet(this, _DocumentRegistry_sourceFileCacheByFilePath, "f").get(fileName);
         if (sourceFile == null)
-            sourceFile = this.updateSourceFile(fileName, compilationSettings, scriptSnapshot, DocumentRegistry.initialVersion, scriptKind);
+            sourceFile = this.updateSourceFile(fileName, compilationSettings, scriptSnapshot, __classPrivateFieldGet(_a, _a, "f", _DocumentRegistry_initialVersion), scriptKind);
         else
             sourceFile = this.updateSourceFile(fileName, compilationSettings, scriptSnapshot, this.getNextSourceFileVersion(sourceFile), scriptKind);
         return sourceFile;
     }
     removeSourceFile(fileName) {
-        this.sourceFileCacheByFilePath.delete(fileName);
+        __classPrivateFieldGet(this, _DocumentRegistry_sourceFileCacheByFilePath, "f").delete(fileName);
     }
     acquireDocument(fileName, compilationSettings, scriptSnapshot, version, scriptKind) {
-        const standardizedFilePath = this.transactionalFileSystem.getStandardizedAbsolutePath(fileName);
-        let sourceFile = this.sourceFileCacheByFilePath.get(standardizedFilePath);
+        const standardizedFilePath = __classPrivateFieldGet(this, _DocumentRegistry_transactionalFileSystem, "f").getStandardizedAbsolutePath(fileName);
+        let sourceFile = __classPrivateFieldGet(this, _DocumentRegistry_sourceFileCacheByFilePath, "f").get(standardizedFilePath);
         if (sourceFile == null || this.getSourceFileVersion(sourceFile) !== version)
             sourceFile = this.updateSourceFile(standardizedFilePath, compilationSettings, scriptSnapshot, version, scriptKind);
         return sourceFile;
@@ -2562,11 +2648,12 @@ class DocumentRegistry {
     }
     updateSourceFile(fileName, compilationSettings, scriptSnapshot, version, scriptKind) {
         const newSourceFile = createCompilerSourceFile(fileName, scriptSnapshot, compilationSettings.target, version, true, scriptKind);
-        this.sourceFileCacheByFilePath.set(fileName, newSourceFile);
+        __classPrivateFieldGet(this, _DocumentRegistry_sourceFileCacheByFilePath, "f").set(fileName, newSourceFile);
         return newSourceFile;
     }
 }
-DocumentRegistry.initialVersion = "0";
+_a = DocumentRegistry, _DocumentRegistry_sourceFileCacheByFilePath = new WeakMap(), _DocumentRegistry_transactionalFileSystem = new WeakMap();
+_DocumentRegistry_initialVersion = { value: "0" };
 
 const denoResolutionHostFactory = (moduleResolutionHost, getCompilerOptions) => {
     return {
@@ -2624,13 +2711,16 @@ function getNewFunction(originalFunction) {
     return decorator;
 }
 
+var _SettingsContainer__defaultSettings, _SettingsContainer__modifiedEventContainer;
 class SettingsContainer {
     constructor(defaultSettings) {
-        this._defaultSettings = Object.assign({}, defaultSettings);
+        _SettingsContainer__defaultSettings.set(this, void 0);
+        _SettingsContainer__modifiedEventContainer.set(this, void 0);
+        __classPrivateFieldSet(this, _SettingsContainer__defaultSettings, Object.assign({}, defaultSettings), "f");
         this._settings = defaultSettings;
     }
     reset() {
-        this._settings = Object.assign({}, this._defaultSettings);
+        this._settings = Object.assign({}, __classPrivateFieldGet(this, _SettingsContainer__defaultSettings, "f"));
         this._fireModified();
     }
     get() {
@@ -2641,15 +2731,16 @@ class SettingsContainer {
         this._fireModified();
     }
     onModified(action) {
-        if (this._modifiedEventContainer == null)
-            this._modifiedEventContainer = new EventContainer();
-        this._modifiedEventContainer.subscribe(action);
+        if (__classPrivateFieldGet(this, _SettingsContainer__modifiedEventContainer, "f") == null)
+            __classPrivateFieldSet(this, _SettingsContainer__modifiedEventContainer, new EventContainer(), "f");
+        __classPrivateFieldGet(this, _SettingsContainer__modifiedEventContainer, "f").subscribe(action);
     }
     _fireModified() {
-        if (this._modifiedEventContainer != null)
-            this._modifiedEventContainer.fire(undefined);
+        if (__classPrivateFieldGet(this, _SettingsContainer__modifiedEventContainer, "f") != null)
+            __classPrivateFieldGet(this, _SettingsContainer__modifiedEventContainer, "f").fire(undefined);
     }
 }
+_SettingsContainer__defaultSettings = new WeakMap(), _SettingsContainer__modifiedEventContainer = new WeakMap();
 
 class CompilerOptionsContainer extends SettingsContainer {
     constructor() {
@@ -2662,35 +2753,6 @@ class CompilerOptionsContainer extends SettingsContainer {
         return this._settings.charset || "utf-8";
     }
 }
-
-/******************************************************************************
-Copyright (c) Microsoft Corporation.
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
-AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
-LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
-OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-PERFORMANCE OF THIS SOFTWARE.
-***************************************************************************** */
-/* global Reflect, Promise, SuppressedError, Symbol */
-
-
-function __decorate(decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-}
-
-typeof SuppressedError === "function" ? SuppressedError : function (error, suppressed, message) {
-    var e = new Error(message);
-    return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
-};
 
 function readDirectory(fileSystemWrapper, useCaseSensitiveFileNames, rootDir, extensions, excludes, includes, depth) {
     const currentDir = fileSystemWrapper.getCurrentDirectory();
@@ -2753,13 +2815,19 @@ function getTsParseConfigHost(fileSystemWrapper, options) {
     return host;
 }
 
+var _TsConfigResolver_encoding, _TsConfigResolver_fileSystem, _TsConfigResolver_host, _TsConfigResolver_tsConfigFilePath, _TsConfigResolver_tsConfigDirPath;
 class TsConfigResolver {
     constructor(fileSystem, tsConfigFilePath, encoding) {
-        this.fileSystem = fileSystem;
-        this.encoding = encoding;
-        this.host = getTsParseConfigHost(fileSystem, { encoding });
-        this.tsConfigFilePath = fileSystem.getStandardizedAbsolutePath(tsConfigFilePath);
-        this.tsConfigDirPath = FileUtils.getDirPath(this.tsConfigFilePath);
+        _TsConfigResolver_encoding.set(this, void 0);
+        _TsConfigResolver_fileSystem.set(this, void 0);
+        _TsConfigResolver_host.set(this, void 0);
+        _TsConfigResolver_tsConfigFilePath.set(this, void 0);
+        _TsConfigResolver_tsConfigDirPath.set(this, void 0);
+        __classPrivateFieldSet(this, _TsConfigResolver_host, getTsParseConfigHost(fileSystem, { encoding }), "f");
+        __classPrivateFieldSet(this, _TsConfigResolver_tsConfigFilePath, fileSystem.getStandardizedAbsolutePath(tsConfigFilePath), "f");
+        __classPrivateFieldSet(this, _TsConfigResolver_tsConfigDirPath, FileUtils.getDirPath(__classPrivateFieldGet(this, _TsConfigResolver_tsConfigFilePath, "f")), "f");
+        __classPrivateFieldSet(this, _TsConfigResolver_fileSystem, fileSystem, "f");
+        __classPrivateFieldSet(this, _TsConfigResolver_encoding, encoding, "f");
     }
     getCompilerOptions() {
         return this.parseJsonConfigFileContent().options;
@@ -2769,7 +2837,7 @@ class TsConfigResolver {
     }
     getPaths(compilerOptions) {
         const files = new Set();
-        const { fileSystem } = this;
+        const fileSystem = __classPrivateFieldGet(this, _TsConfigResolver_fileSystem, "f");
         const directories = new Set();
         compilerOptions = compilerOptions || this.getCompilerOptions();
         const configFileContent = this.parseJsonConfigFileContent();
@@ -2792,18 +2860,19 @@ class TsConfigResolver {
         };
     }
     parseJsonConfigFileContent() {
-        this.host.clearDirectories();
-        const result = ts.parseJsonConfigFileContent(this.getTsConfigFileJson(), this.host, this.tsConfigDirPath, undefined, this.tsConfigFilePath);
-        return { ...result, directories: this.host.getDirectories() };
+        __classPrivateFieldGet(this, _TsConfigResolver_host, "f").clearDirectories();
+        const result = ts.parseJsonConfigFileContent(this.getTsConfigFileJson(), __classPrivateFieldGet(this, _TsConfigResolver_host, "f"), __classPrivateFieldGet(this, _TsConfigResolver_tsConfigDirPath, "f"), undefined, __classPrivateFieldGet(this, _TsConfigResolver_tsConfigFilePath, "f"));
+        return { ...result, directories: __classPrivateFieldGet(this, _TsConfigResolver_host, "f").getDirectories() };
     }
     getTsConfigFileJson() {
-        const text = this.fileSystem.readFileSync(this.tsConfigFilePath, this.encoding);
-        const parseResult = ts.parseConfigFileTextToJson(this.tsConfigFilePath, text);
+        const text = __classPrivateFieldGet(this, _TsConfigResolver_fileSystem, "f").readFileSync(__classPrivateFieldGet(this, _TsConfigResolver_tsConfigFilePath, "f"), __classPrivateFieldGet(this, _TsConfigResolver_encoding, "f"));
+        const parseResult = ts.parseConfigFileTextToJson(__classPrivateFieldGet(this, _TsConfigResolver_tsConfigFilePath, "f"), text);
         if (parseResult.error != null)
             throw new Error(parseResult.error.messageText.toString());
         return parseResult.config;
     }
 }
+_TsConfigResolver_encoding = new WeakMap(), _TsConfigResolver_fileSystem = new WeakMap(), _TsConfigResolver_host = new WeakMap(), _TsConfigResolver_tsConfigFilePath = new WeakMap(), _TsConfigResolver_tsConfigDirPath = new WeakMap();
 __decorate([
     Memoize
 ], TsConfigResolver.prototype, "getCompilerOptions", null);

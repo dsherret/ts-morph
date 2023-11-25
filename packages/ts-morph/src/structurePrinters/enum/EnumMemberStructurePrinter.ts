@@ -7,13 +7,13 @@ import { CommaNewLineSeparatedStructuresPrinter } from "../formatting";
 import { NodePrinter } from "../NodePrinter";
 
 export class EnumMemberStructurePrinter extends NodePrinter<OptionalKind<EnumMemberStructure> | WriterFunction | string> {
-  private readonly multipleWriter = new CommaNewLineSeparatedStructuresPrinter(this);
+  readonly #multipleWriter = new CommaNewLineSeparatedStructuresPrinter(this);
 
   printTexts(
     writer: CodeBlockWriter,
     structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction | string> | WriterFunction | string | undefined,
   ) {
-    this.multipleWriter.printText(writer, structures);
+    this.#multipleWriter.printText(writer, structures);
   }
 
   protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<EnumMemberStructure> | WriterFunction | string) {

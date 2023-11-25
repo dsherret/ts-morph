@@ -4,10 +4,10 @@ import { CommaNewLineSeparatedStructuresPrinter } from "../formatting";
 import { NodePrinter } from "../NodePrinter";
 
 export class AssertEntryStructurePrinter extends NodePrinter<OptionalKind<AssertEntryStructure>> {
-  private readonly multipleWriter = new CommaNewLineSeparatedStructuresPrinter(this);
+  readonly #multipleWriter = new CommaNewLineSeparatedStructuresPrinter(this);
 
   printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<AssertEntryStructure>> | undefined) {
-    this.multipleWriter.printText(writer, structures);
+    this.#multipleWriter.printText(writer, structures);
   }
 
   printAssertClause(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<AssertEntryStructure>> | undefined) {

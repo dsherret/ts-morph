@@ -45,23 +45,23 @@ export interface ProgramCreationData {
  */
 export class Program {
   /** @internal */
-  private readonly _context: ProjectContext;
+  readonly #_context: ProjectContext;
   /** @internal */
-  private readonly _typeChecker: TypeChecker;
+  readonly #_typeChecker: TypeChecker;
   /** @internal */
-  private _createdCompilerObject: ts.Program | undefined;
+  #_createdCompilerObject: ts.Program | undefined;
   /** @internal */
-  private _oldProgram: ts.Program | undefined;
+  #_oldProgram: ts.Program | undefined;
   /** @internal */
-  private _getOrCreateCompilerObject!: () => ts.Program;
+  #_getOrCreateCompilerObject!: () => ts.Program;
   /** @internal */
-  private _configFileParsingDiagnostics: ts.Diagnostic[];
+  #_configFileParsingDiagnostics: ts.Diagnostic[];
 
   /** @private */
   constructor(opts: ProgramCreationData) {
-    this._context = opts.context;
-    this._configFileParsingDiagnostics = opts.configFileParsingDiagnostics;
-    this._typeChecker = new TypeChecker(this._context);
+    this.#_context = opts.context;
+    this.#_configFileParsingDiagnostics = opts.configFileParsingDiagnostics;
+    this.#_typeChecker = new TypeChecker(this.#_context);
     this._reset(opts.rootNames, opts.host);
   }
 
@@ -69,7 +69,7 @@ export class Program {
    * Gets the underlying compiler program.
    */
   get compilerObject() {
-    return this._getOrCreateCompilerObject();
+    return this.#_getOrCreateCompilerObject();
   }
 
   /**
@@ -77,7 +77,7 @@ export class Program {
    * @internal
    */
   _isCompilerProgramCreated() {
-    return this._createdCompilerObject != null;
+    return this.#_createdCompilerObject != null;
   }
 
   /**
@@ -85,37 +85,37 @@ export class Program {
    * @internal
    */
   _reset(rootNames: ReadonlyArray<string>, host: ts.CompilerHost) {
-    const compilerOptions = this._context.compilerOptions.get();
-    this._getOrCreateCompilerObject = () => {
+    const compilerOptions = this.#_context.compilerOptions.get();
+    this.#_getOrCreateCompilerObject = () => {
       // need to use ts.createProgram instead of languageService.getProgram() because the
       // program created by the language service is not fully featured (ex. does not write to the file system)
-      if (this._createdCompilerObject == null) {
-        this._createdCompilerObject = ts.createProgram(
+      if (this.#_createdCompilerObject == null) {
+        this.#_createdCompilerObject = ts.createProgram(
           rootNames,
           compilerOptions,
           host,
-          this._oldProgram,
-          this._configFileParsingDiagnostics,
+          this.#_oldProgram,
+          this.#_configFileParsingDiagnostics,
         );
-        delete this._oldProgram;
+        delete this.#_oldProgram;
       }
 
-      return this._createdCompilerObject;
+      return this.#_createdCompilerObject;
     };
 
-    if (this._createdCompilerObject != null) {
-      this._oldProgram = this._createdCompilerObject;
-      delete this._createdCompilerObject;
+    if (this.#_createdCompilerObject != null) {
+      this.#_oldProgram = this.#_createdCompilerObject;
+      delete this.#_createdCompilerObject;
     }
 
-    this._typeChecker._reset(() => this.compilerObject.getTypeChecker());
+    this.#_typeChecker._reset(() => this.compilerObject.getTypeChecker());
   }
 
   /**
    * Get the program's type checker.
    */
   getTypeChecker() {
-    return this._typeChecker;
+    return this.#_typeChecker;
   }
 
   /**
@@ -129,7 +129,7 @@ export class Program {
       throw new errors.InvalidOperationError(message);
     }
 
-    const { fileSystemWrapper } = this._context;
+    const { fileSystemWrapper } = this.#_context;
     const promises: Promise<void>[] = [];
     const emitResult = this._emit({
       writeFile: (filePath, text, writeByteOrderMark) => {
@@ -139,7 +139,7 @@ export class Program {
       ...options,
     });
     await Promise.all(promises);
-    return new EmitResult(this._context, emitResult);
+    return new EmitResult(this.#_context, emitResult);
   }
 
   /**
@@ -148,7 +148,7 @@ export class Program {
    * @remarks Use `emit()` as the asynchronous version will be much faster.
    */
   emitSync(options: ProgramEmitOptions = {}) {
-    return new EmitResult(this._context, this._emit(options));
+    return new EmitResult(this.#_context, this._emit(options));
   }
 
   /**
@@ -157,7 +157,7 @@ export class Program {
    */
   emitToMemory(options: EmitOptions = {}) {
     const sourceFiles: MemoryEmitResultFile[] = [];
-    const { fileSystemWrapper } = this._context;
+    const { fileSystemWrapper } = this.#_context;
     const emitResult = this._emit({
       writeFile: (filePath, text, writeByteOrderMark) => {
         sourceFiles.push({
@@ -168,7 +168,7 @@ export class Program {
       },
       ...options,
     });
-    return new MemoryEmitResult(this._context, emitResult, sourceFiles);
+    return new MemoryEmitResult(this.#_context, emitResult, sourceFiles);
   }
 
   /** @internal */
@@ -185,7 +185,7 @@ export class Program {
    */
   getSyntacticDiagnostics(sourceFile?: SourceFile): DiagnosticWithLocation[] {
     const compilerDiagnostics = this.compilerObject.getSyntacticDiagnostics(sourceFile == null ? undefined : sourceFile.compilerNode);
-    return compilerDiagnostics.map(d => this._context.compilerFactory.getDiagnosticWithLocation(d));
+    return compilerDiagnostics.map(d => this.#_context.compilerFactory.getDiagnosticWithLocation(d));
   }
 
   /**
@@ -194,7 +194,7 @@ export class Program {
    */
   getSemanticDiagnostics(sourceFile?: SourceFile): Diagnostic[] {
     const compilerDiagnostics = this.compilerObject.getSemanticDiagnostics(sourceFile?.compilerNode);
-    return compilerDiagnostics.map(d => this._context.compilerFactory.getDiagnostic(d));
+    return compilerDiagnostics.map(d => this.#_context.compilerFactory.getDiagnostic(d));
   }
 
   /**
@@ -203,7 +203,7 @@ export class Program {
    */
   getDeclarationDiagnostics(sourceFile?: SourceFile): DiagnosticWithLocation[] {
     const compilerDiagnostics = this.compilerObject.getDeclarationDiagnostics(sourceFile?.compilerNode);
-    return compilerDiagnostics.map(d => this._context.compilerFactory.getDiagnosticWithLocation(d));
+    return compilerDiagnostics.map(d => this.#_context.compilerFactory.getDiagnosticWithLocation(d));
   }
 
   /**
@@ -211,7 +211,7 @@ export class Program {
    */
   getGlobalDiagnostics(): Diagnostic[] {
     const compilerDiagnostics = this.compilerObject.getGlobalDiagnostics();
-    return compilerDiagnostics.map(d => this._context.compilerFactory.getDiagnostic(d));
+    return compilerDiagnostics.map(d => this.#_context.compilerFactory.getDiagnostic(d));
   }
 
   /**
@@ -219,7 +219,7 @@ export class Program {
    */
   getConfigFileParsingDiagnostics(): Diagnostic[] {
     const compilerDiagnostics = this.compilerObject.getConfigFileParsingDiagnostics();
-    return compilerDiagnostics.map(d => this._context.compilerFactory.getDiagnostic(d));
+    return compilerDiagnostics.map(d => this.#_context.compilerFactory.getDiagnostic(d));
   }
 
   /**

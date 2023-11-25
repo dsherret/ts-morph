@@ -3,16 +3,16 @@ import { SourceFile } from "../module";
 
 export class TextRange<TRange extends ts.TextRange = ts.TextRange> {
   /** @internal */
-  private _compilerObject: TRange | undefined;
+  #_compilerObject: TRange | undefined;
   /** @internal */
-  private _sourceFile: SourceFile | undefined;
+  #_sourceFile: SourceFile | undefined;
 
   /**
    * @private
    */
   constructor(compilerObject: TRange, sourceFile: SourceFile) {
-    this._compilerObject = compilerObject;
-    this._sourceFile = sourceFile;
+    this.#_compilerObject = compilerObject;
+    this.#_sourceFile = sourceFile;
   }
 
   /**
@@ -20,7 +20,7 @@ export class TextRange<TRange extends ts.TextRange = ts.TextRange> {
    */
   get compilerObject(): TRange {
     this._throwIfForgotten();
-    return this._compilerObject!;
+    return this.#_compilerObject!;
   }
 
   /**
@@ -28,7 +28,7 @@ export class TextRange<TRange extends ts.TextRange = ts.TextRange> {
    */
   getSourceFile() {
     this._throwIfForgotten();
-    return this._sourceFile!;
+    return this.#_sourceFile!;
   }
 
   /**
@@ -65,8 +65,8 @@ export class TextRange<TRange extends ts.TextRange = ts.TextRange> {
    * @internal
    */
   _forget() {
-    this._compilerObject = undefined;
-    this._sourceFile = undefined;
+    this.#_compilerObject = undefined;
+    this.#_sourceFile = undefined;
   }
 
   /**
@@ -75,12 +75,12 @@ export class TextRange<TRange extends ts.TextRange = ts.TextRange> {
    * This will be true after any manipulations have occured to the source file this text range was generated from.
    */
   wasForgotten() {
-    return this._compilerObject == null;
+    return this.#_compilerObject == null;
   }
 
   /** @internal */
   private _throwIfForgotten() {
-    if (this._compilerObject != null)
+    if (this.#_compilerObject != null)
       return;
     const message = "Attempted to get a text range that was forgotten. "
       + "Text ranges are forgotten after a manipulation has occurred. "

@@ -9,10 +9,10 @@ import { NodeHandlerHelper } from "./NodeHandlerHelper";
  */
 export class ForgetChangedNodeHandler implements NodeHandler {
     readonly #compilerFactory: CompilerFactory;
-  private readonly helper: NodeHandlerHelper;
+  readonly #helper: NodeHandlerHelper;
 
   constructor(compilerFactory: CompilerFactory) {
-    this.helper = new NodeHandlerHelper(compilerFactory);
+    this.#helper = new NodeHandlerHelper(compilerFactory);
       this.#compilerFactory = compilerFactory;
   }
 
@@ -29,7 +29,7 @@ export class ForgetChangedNodeHandler implements NodeHandler {
   }
 
   private handleChildren(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
-    const [currentNodeChildren, newNodeChildrenArray] = this.helper.getChildrenFast(currentNode, newNode, newSourceFile);
+    const [currentNodeChildren, newNodeChildrenArray] = this.#helper.getChildrenFast(currentNode, newNode, newSourceFile);
     const newNodeChildren = ArrayUtils.toIterator(newNodeChildrenArray);
 
     for (const currentNodeChild of currentNodeChildren) {
@@ -39,7 +39,7 @@ export class ForgetChangedNodeHandler implements NodeHandler {
         if (existingNode != null)
           existingNode.forget();
       } else {
-        this.helper.handleForValues(this, currentNodeChild, nextNodeChildResult.value, newSourceFile);
+        this.#helper.handleForValues(this, currentNodeChild, nextNodeChildResult.value, newSourceFile);
       }
     }
   }

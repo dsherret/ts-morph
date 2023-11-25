@@ -10,11 +10,11 @@ const path = runtime.path;
 /** Utilities for working with files. */
 export class FileUtils {
   /** @internal */
-  private static standardizeSlashesRegex = /\\/g;
+  static #standardizeSlashesRegex = /\\/g;
   /** @internal */
-  private static trimSlashStartRegex = /^\//;
+  static #trimSlashStartRegex = /^\//;
   /** @internal */
-  private static trimSlashEndRegex = /\/$/;
+  static #trimSlashEndRegex = /\/$/;
 
   static readonly ENOENT = "ENOENT";
 
@@ -116,7 +116,7 @@ export class FileUtils {
    * @param fileOrDirPath - Path.
    */
   static standardizeSlashes<T extends string>(fileOrDirPath: T): T {
-    let result = fileOrDirPath.replace(this.standardizeSlashesRegex, "/");
+    let result = fileOrDirPath.replace(this.#standardizeSlashesRegex, "/");
     // remove the last slash
     if (!FileUtils.isRootDirPath(result) && result.endsWith("/"))
       result = result.substring(0, result.length - 1);
@@ -173,7 +173,7 @@ export class FileUtils {
   }
 
   private static splitPathBySlashes(fileOrDirPath: string | undefined) {
-    fileOrDirPath = (fileOrDirPath || "").replace(FileUtils.trimSlashStartRegex, "").replace(FileUtils.trimSlashEndRegex, "");
+    fileOrDirPath = (fileOrDirPath || "").replace(FileUtils.#trimSlashStartRegex, "").replace(FileUtils.#trimSlashEndRegex, "");
     return FileUtils.standardizeSlashes(fileOrDirPath).replace(/^\//, "").split("/");
   }
 

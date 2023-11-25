@@ -9,27 +9,27 @@ export class ReferencedSymbol {
   /** @internal */
   protected readonly _context: ProjectContext;
   /** @internal */
-  private readonly _compilerObject: ts.ReferencedSymbol;
+  readonly #_compilerObject: ts.ReferencedSymbol;
   /** @internal */
-  private readonly _references: ReferencedSymbolEntry[];
+  readonly #_references: ReferencedSymbolEntry[];
 
   /**
    * @private
    */
   constructor(context: ProjectContext, compilerObject: ts.ReferencedSymbol) {
     this._context = context;
-    this._compilerObject = compilerObject;
+    this.#_compilerObject = compilerObject;
 
     // it's important to store the references so that the nodes referenced inside will point
     // to the right node in case the user does manipulation between getting this object and getting the references
-    this._references = this.compilerObject.references.map(r => context.compilerFactory.getReferencedSymbolEntry(r));
+    this.#_references = this.compilerObject.references.map(r => context.compilerFactory.getReferencedSymbolEntry(r));
   }
 
   /**
    * Gets the compiler referenced symbol.
    */
   get compilerObject() {
-    return this._compilerObject;
+    return this.#_compilerObject;
   }
 
   /**
@@ -44,6 +44,6 @@ export class ReferencedSymbol {
    * Gets the references.
    */
   getReferences() {
-    return this._references;
+    return this.#_references;
   }
 }

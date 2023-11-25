@@ -4,10 +4,10 @@ import { CommaSeparatedStructuresPrinter } from "../formatting";
 import { NodePrinter } from "../NodePrinter";
 
 export class VariableDeclarationStructurePrinter extends NodePrinter<OptionalKind<VariableDeclarationStructure>> {
-  private readonly multipleWriter = new CommaSeparatedStructuresPrinter(this);
+  readonly #multipleWriter = new CommaSeparatedStructuresPrinter(this);
 
   printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<VariableDeclarationStructure>>) {
-    this.multipleWriter.printText(writer, structures);
+    this.#multipleWriter.printText(writer, structures);
   }
 
   protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<VariableDeclarationStructure>) {

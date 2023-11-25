@@ -17,7 +17,7 @@ export interface RemoveChildrenTextManipulatorOptions {
 
 export class RemoveChildrenTextManipulator implements TextManipulator {
     readonly #opts: RemoveChildrenTextManipulatorOptions;
-  private removalPos: number | undefined;
+  #removalPos: number | undefined;
 
   constructor(opts: RemoveChildrenTextManipulatorOptions) {
       this.#opts = opts;
@@ -36,7 +36,7 @@ export class RemoveChildrenTextManipulator implements TextManipulator {
     const sourceFile = children[0].getSourceFile();
     const fullText = sourceFile.getFullText();
     const removalPos = getRemovalPos();
-    this.removalPos = removalPos;
+    this.#removalPos = removalPos;
 
     return getPrefix() + replaceTrivia + getSuffix();
 
@@ -82,6 +82,6 @@ export class RemoveChildrenTextManipulator implements TextManipulator {
   }
 
   getTextForError(newText: string) {
-    return getTextForError(newText, this.removalPos!);
+    return getTextForError(newText, this.#removalPos!);
   }
 }
