@@ -25,7 +25,7 @@ export function validatePublicApiClassMemberNames(inspector: TsMorphInspector, a
       return;
 
     if (node.getScope() === tsMorph.Scope.Protected || node.getScope() === tsMorph.Scope.Private || hasInternalDocTag(node)) {
-      if (!node.getName().startsWith("_")) {
+      if (!node.getName().startsWith("_") && !node.getName().startsWith("#")) {
         addProblem({
           filePath: node.getSourceFile().getFilePath(),
           lineNumber: node.getStartLineNumber(),
