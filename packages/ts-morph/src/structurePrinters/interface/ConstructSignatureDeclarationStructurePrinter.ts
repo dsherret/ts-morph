@@ -4,10 +4,10 @@ import { NewLineFormattingStructuresPrinter } from "../formatting";
 import { NodePrinter } from "../NodePrinter";
 
 export class ConstructSignatureDeclarationStructurePrinter extends NodePrinter<OptionalKind<ConstructSignatureDeclarationStructure>> {
-  private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);
+  readonly #multipleWriter = new NewLineFormattingStructuresPrinter(this);
 
   printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<ConstructSignatureDeclarationStructure>> | undefined) {
-    this.multipleWriter.printText(writer, structures);
+    this.#multipleWriter.printText(writer, structures);
   }
 
   protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<ConstructSignatureDeclarationStructure>) {

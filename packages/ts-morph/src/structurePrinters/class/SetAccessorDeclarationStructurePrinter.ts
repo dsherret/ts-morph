@@ -5,14 +5,16 @@ import { BlankLineFormattingStructuresPrinter } from "../formatting";
 import { NodePrinter } from "../NodePrinter";
 
 export class SetAccessorDeclarationStructurePrinter extends NodePrinter<OptionalKind<SetAccessorDeclarationStructure>> {
-  private readonly multipleWriter = new BlankLineFormattingStructuresPrinter(this);
+  readonly #options: { isAmbient: boolean };
+  readonly #multipleWriter = new BlankLineFormattingStructuresPrinter(this);
 
-  constructor(factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean }) {
+  constructor(factory: StructurePrinterFactory, options: { isAmbient: boolean }) {
     super(factory);
+    this.#options = options;
   }
 
   printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<SetAccessorDeclarationStructure>> | undefined) {
-    this.multipleWriter.printText(writer, structures);
+    this.#multipleWriter.printText(writer, structures);
   }
 
   protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<SetAccessorDeclarationStructure>) {
@@ -25,11 +27,11 @@ export class SetAccessorDeclarationStructurePrinter extends NodePrinter<Optional
     this.factory.forParameterDeclaration().printTextsWithParenthesis(writer, structure.parameters);
     this.factory.forReturnTypedNode().printText(writer, structure);
 
-    if (this.options.isAmbient || structure.isAbstract)
+    if (this.#options.isAmbient || structure.isAbstract)
       writer.write(";");
     else {
       writer.spaceIfLastNot().inlineBlock(() => {
-        this.factory.forStatementedNode(this.options).printText(writer, structure);
+        this.factory.forStatementedNode(this.#options).printText(writer, structure);
       });
     }
   }

@@ -1,5 +1,5 @@
-export * from "./AssertionKeyNamedNodeStructure";
 export * from "./BindingNamedNodeStructure";
+export * from "./ImportAttributeNamedNodeStructure";
 export * from "./ModuleNamedNodeStructure";
 export * from "./NameableNodeStructure";
 export * from "./NamedNodeStructure";

@@ -9,25 +9,25 @@ import { ApplyFileTextChangesOptions, FileTextChanges } from "./FileTextChanges"
  */
 export class CombinedCodeActions {
   /** @internal */
-  private readonly _context: ProjectContext;
+  readonly #context: ProjectContext;
   /** @internal */
-  private readonly _compilerObject: ts.CombinedCodeActions;
+  readonly #compilerObject: ts.CombinedCodeActions;
 
   /** @private */
   constructor(context: ProjectContext, compilerObject: ts.CombinedCodeActions) {
-    this._context = context;
-    this._compilerObject = compilerObject;
+    this.#context = context;
+    this.#compilerObject = compilerObject;
   }
 
   /** Gets the compiler object. */
   get compilerObject() {
-    return this._compilerObject;
+    return this.#compilerObject;
   }
 
   /** Text changes to apply to each file. */
   @Memoize
   getChanges() {
-    return this.compilerObject.changes.map(change => new FileTextChanges(this._context, change));
+    return this.compilerObject.changes.map(change => new FileTextChanges(this.#context, change));
   }
 
   /**

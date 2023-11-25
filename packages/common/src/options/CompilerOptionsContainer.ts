@@ -5,8 +5,8 @@ import { SettingsContainer } from "./SettingsContainer";
  * Holds the compiler options.
  */
 export class CompilerOptionsContainer extends SettingsContainer<ts.CompilerOptions> {
-  constructor() {
-    super({});
+  constructor(defaultSettings: ts.CompilerOptions = {}) {
+    super(defaultSettings);
   }
 
   /**

@@ -1,19 +1,19 @@
 import { Logger } from "./Logger";
 
 export abstract class EnableableLogger implements Logger {
-  private enabled = false;
+  #enabled = false;
 
   setEnabled(enabled: boolean) {
-    this.enabled = enabled;
+    this.#enabled = enabled;
   }
 
   log(text: string) {
-    if (this.enabled)
+    if (this.#enabled)
       this.logInternal(text);
   }
 
   warn(text: string) {
-    if (this.enabled)
+    if (this.#enabled)
       this.warnInternal(text);
   }
 

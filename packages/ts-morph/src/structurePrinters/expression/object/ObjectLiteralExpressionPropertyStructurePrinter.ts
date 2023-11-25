@@ -9,15 +9,17 @@ import { Printer } from "../../Printer";
 export type ObjectLiteralExpressionStructuresArrayItem = string | WriterFunction | ObjectLiteralExpressionPropertyStructures;
 
 export class ObjectLiteralExpressionPropertyStructurePrinter extends Printer<ObjectLiteralExpressionStructuresArrayItem> {
-  private readonly multipleWriter = new CommaNewLineSeparatedStructuresPrinter(this);
-  private readonly options = { isAmbient: false }; // always false for object literal expressions
+  readonly #factory: StructurePrinterFactory;
+  readonly #multipleWriter = new CommaNewLineSeparatedStructuresPrinter(this);
+  readonly #options = { isAmbient: false }; // always false for object literal expressions
 
-  constructor(private readonly factory: StructurePrinterFactory) {
+  constructor(factory: StructurePrinterFactory) {
     super();
+    this.#factory = factory;
   }
 
   printTexts(writer: CodeBlockWriter, members: ReadonlyArray<ObjectLiteralExpressionStructuresArrayItem> | string | WriterFunction | undefined) {
-    this.multipleWriter.printText(writer, members);
+    this.#multipleWriter.printText(writer, members);
   }
 
   printText(writer: CodeBlockWriter, member: ObjectLiteralExpressionStructuresArrayItem) {
@@ -28,22 +30,22 @@ export class ObjectLiteralExpressionPropertyStructurePrinter extends Printer<Obj
 
     switch (member.kind) {
       case StructureKind.PropertyAssignment:
-        this.factory.forPropertyAssignment().printText(writer, member);
+        this.#factory.forPropertyAssignment().printText(writer, member);
         break;
       case StructureKind.ShorthandPropertyAssignment:
-        this.factory.forShorthandPropertyAssignment().printText(writer, member);
+        this.#factory.forShorthandPropertyAssignment().printText(writer, member);
         break;
       case StructureKind.SpreadAssignment:
-        this.factory.forSpreadAssignment().printText(writer, member);
+        this.#factory.forSpreadAssignment().printText(writer, member);
         break;
       case StructureKind.Method:
-        this.factory.forMethodDeclaration(this.options).printText(writer, member);
+        this.#factory.forMethodDeclaration(this.#options).printText(writer, member);
         break;
       case StructureKind.GetAccessor:
-        this.factory.forGetAccessorDeclaration(this.options).printText(writer, member);
+        this.#factory.forGetAccessorDeclaration(this.#options).printText(writer, member);
         break;
       case StructureKind.SetAccessor:
-        this.factory.forSetAccessorDeclaration(this.options).printText(writer, member);
+        this.#factory.forSetAccessorDeclaration(this.#options).printText(writer, member);
         break;
       default:
         errors.throwNotImplementedForNeverValueError(member);

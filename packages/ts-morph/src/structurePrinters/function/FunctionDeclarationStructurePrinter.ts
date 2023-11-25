@@ -6,8 +6,11 @@ import { setValueIfUndefined } from "../../utils";
 import { NodePrinter } from "../NodePrinter";
 
 export class FunctionDeclarationStructurePrinter extends NodePrinter<OptionalKind<FunctionDeclarationStructure>> {
-  constructor(factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean }) {
+  readonly #options: { isAmbient: boolean };
+
+  constructor(factory: StructurePrinterFactory, options: { isAmbient: boolean }) {
     super(factory);
+    this.#options = options;
   }
 
   printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<FunctionDeclarationStructure>> | undefined) {
@@ -18,7 +21,7 @@ export class FunctionDeclarationStructurePrinter extends NodePrinter<OptionalKin
       const currentStructure = structures[i];
       if (i > 0) {
         const previousStructure = structures[i - 1];
-        if (this.options.isAmbient || previousStructure.hasDeclareKeyword && currentStructure.hasDeclareKeyword)
+        if (this.#options.isAmbient || previousStructure.hasDeclareKeyword && currentStructure.hasDeclareKeyword)
           writer.newLine();
         else
           writer.blankLine();
@@ -29,9 +32,9 @@ export class FunctionDeclarationStructurePrinter extends NodePrinter<OptionalKin
   }
 
   protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<FunctionDeclarationStructure>) {
-    this.printOverloads(writer, structure.name, getOverloadStructures());
-    this.printHeader(writer, structure.name, structure);
-    if (this.options.isAmbient || structure.hasDeclareKeyword)
+    this.#printOverloads(writer, structure.name, getOverloadStructures());
+    this.#printHeader(writer, structure.name, structure);
+    if (this.#options.isAmbient || structure.hasDeclareKeyword)
       writer.write(";");
     else {
       writer.space().inlineBlock(() => {
@@ -55,7 +58,7 @@ export class FunctionDeclarationStructurePrinter extends NodePrinter<OptionalKin
     }
   }
 
-  private printOverloads(
+  #printOverloads(
     writer: CodeBlockWriter,
     name: string | undefined,
     structures: ReadonlyArray<OptionalKind<FunctionDeclarationOverloadStructure>> | undefined,
@@ -71,12 +74,12 @@ export class FunctionDeclarationStructurePrinter extends NodePrinter<OptionalKin
 
   printOverload(writer: CodeBlockWriter, name: string | undefined, structure: OptionalKind<FunctionDeclarationOverloadStructure>) {
     this.printLeadingTrivia(writer, structure);
-    this.printHeader(writer, name, structure);
+    this.#printHeader(writer, name, structure);
     writer.write(";");
     this.printTrailingTrivia(writer, structure);
   }
 
-  private printHeader(
+  #printHeader(
     writer: CodeBlockWriter,
     name: string | undefined,
     structure: OptionalKind<FunctionDeclarationOverloadStructure> | OptionalKind<FunctionDeclarationStructure>,

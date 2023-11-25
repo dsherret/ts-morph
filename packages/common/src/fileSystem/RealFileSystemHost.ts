@@ -12,7 +12,7 @@ export class RealFileSystemHost implements FileSystemHost {
     try {
       await fs.delete(path);
     } catch (err) {
-      throw this.getFileNotFoundErrorIfNecessary(err, path);
+      throw this.#getFileNotFoundErrorIfNecessary(err, path);
     }
   }
 
@@ -21,7 +21,7 @@ export class RealFileSystemHost implements FileSystemHost {
     try {
       fs.deleteSync(path);
     } catch (err) {
-      throw this.getFileNotFoundErrorIfNecessary(err, path);
+      throw this.#getFileNotFoundErrorIfNecessary(err, path);
     }
   }
 
@@ -43,7 +43,7 @@ export class RealFileSystemHost implements FileSystemHost {
       }
       return entries;
     } catch (err) {
-      throw this.getDirectoryNotFoundErrorIfNecessary(err, dirPath);
+      throw this.#getDirectoryNotFoundErrorIfNecessary(err, dirPath);
     }
   }
 
@@ -52,7 +52,7 @@ export class RealFileSystemHost implements FileSystemHost {
     try {
       return await fs.readFile(filePath, encoding);
     } catch (err) {
-      throw this.getFileNotFoundErrorIfNecessary(err, filePath);
+      throw this.#getFileNotFoundErrorIfNecessary(err, filePath);
     }
   }
 
@@ -61,7 +61,7 @@ export class RealFileSystemHost implements FileSystemHost {
     try {
       return fs.readFileSync(filePath, encoding);
     } catch (err) {
-      throw this.getFileNotFoundErrorIfNecessary(err, filePath);
+      throw this.#getFileNotFoundErrorIfNecessary(err, filePath);
     }
   }
 
@@ -166,11 +166,11 @@ export class RealFileSystemHost implements FileSystemHost {
     return fs.isCaseSensitive();
   }
 
-  private getDirectoryNotFoundErrorIfNecessary(err: any, path: string) {
+  #getDirectoryNotFoundErrorIfNecessary(err: any, path: string) {
     return FileUtils.isNotExistsError(err) ? new errors.DirectoryNotFoundError(FileUtils.getStandardizedAbsolutePath(this, path)) : err;
   }
 
-  private getFileNotFoundErrorIfNecessary(err: any, path: string) {
+  #getFileNotFoundErrorIfNecessary(err: any, path: string) {
     return FileUtils.isNotExistsError(err) ? new errors.FileNotFoundError(FileUtils.getStandardizedAbsolutePath(this, path)) : err;
   }
 }

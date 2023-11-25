@@ -1,10 +1,10 @@
 import { StandardizedFilePath } from "../fileSystem";
-import { ScriptKind, ScriptTarget, ts } from "../typescript";
+import { ScriptKind, ts } from "../typescript";
 
 export function createCompilerSourceFile(
   filePath: StandardizedFilePath,
   scriptSnapshot: ts.IScriptSnapshot,
-  scriptTarget: ts.ScriptTarget | undefined,
+  optionsOrScriptTarget: ts.ScriptTarget | ts.CreateSourceFileOptions | undefined,
   version: string,
   setParentNodes: boolean,
   scriptKind: ScriptKind | undefined,
@@ -12,7 +12,7 @@ export function createCompilerSourceFile(
   return ts.createLanguageServiceSourceFile(
     filePath,
     scriptSnapshot,
-    scriptTarget ?? ScriptTarget.Latest,
+    optionsOrScriptTarget ?? ts.ScriptTarget.Latest,
     version,
     setParentNodes,
     scriptKind,

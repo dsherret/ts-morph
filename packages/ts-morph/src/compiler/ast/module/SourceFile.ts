@@ -59,20 +59,14 @@ export const SourceFileBase: Constructor<ModuledNode> & Constructor<StatementedN
   TextInsertableNode(StatementedNode(Node)),
 );
 export class SourceFile extends SourceFileBase<ts.SourceFile> {
-  /** @internal */
-  private _isSaved = false;
-  /** @internal */
-  private readonly _modifiedEventContainer = new EventContainer<SourceFile>();
-  /** @internal */
-  private readonly _preModifiedEventContainer = new EventContainer<SourceFile>();
+  #isSaved = false;
+  readonly #modifiedEventContainer = new EventContainer<SourceFile>();
+  readonly #preModifiedEventContainer = new EventContainer<SourceFile>();
   /** @internal */
   readonly _referenceContainer = new SourceFileReferenceContainer(this);
-  /** @internal */
-  private _referencedFiles: FileReference[] | undefined;
-  /** @internal */
-  private _libReferenceDirectives: FileReference[] | undefined;
-  /** @internal */
-  private _typeReferenceDirectives: FileReference[] | undefined;
+  #referencedFiles: FileReference[] | undefined;
+  #libReferenceDirectives: FileReference[] | undefined;
+  #typeReferenceDirectives: FileReference[] | undefined;
 
   /** @internal */
   _hasBom: true | undefined;
@@ -94,9 +88,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     // store this before a modification happens to the file
     const onPreModified = () => {
       this.isFromExternalLibrary(); // memoize
-      this._preModifiedEventContainer.unsubscribe(onPreModified);
+      this.#preModifiedEventContainer.unsubscribe(onPreModified);
     };
-    this._preModifiedEventContainer.subscribe(onPreModified);
+    this.#preModifiedEventContainer.subscribe(onPreModified);
   }
 
   /**
@@ -107,19 +101,19 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
   _replaceCompilerNodeFromFactory(compilerNode: ts.SourceFile) {
     super._replaceCompilerNodeFromFactory(compilerNode);
     this._context.resetProgram(); // make sure the program has the latest source file
-    this._isSaved = false;
-    this._modifiedEventContainer.fire(this);
+    this.#isSaved = false;
+    this.#modifiedEventContainer.fire(this);
   }
 
   /** @internal */
   protected _clearInternals() {
     super._clearInternals();
-    clearTextRanges(this._referencedFiles);
-    clearTextRanges(this._typeReferenceDirectives);
-    clearTextRanges(this._libReferenceDirectives);
-    delete this._referencedFiles;
-    delete this._typeReferenceDirectives;
-    delete this._libReferenceDirectives;
+    clearTextRanges(this.#referencedFiles);
+    clearTextRanges(this.#typeReferenceDirectives);
+    clearTextRanges(this.#libReferenceDirectives);
+    this.#referencedFiles = undefined;
+    this.#typeReferenceDirectives = undefined;
+    this.#libReferenceDirectives = undefined;
 
     function clearTextRanges(textRanges: ReadonlyArray<TextRange> | undefined) {
       textRanges?.forEach(r => r._forget());
@@ -406,7 +400,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     this.move(filePath, options);
     if (oldFilePath !== newFilePath) {
       await this._context.fileSystemWrapper.moveFileImmediately(oldFilePath, newFilePath, this.getFullText());
-      this._isSaved = true;
+      this.#isSaved = true;
     } else {
       await this.save();
     }
@@ -426,7 +420,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     this.move(filePath, options);
     if (oldFilePath !== newFilePath) {
       this._context.fileSystemWrapper.moveFileImmediatelySync(oldFilePath, newFilePath, this.getFullText());
-      this._isSaved = true;
+      this.#isSaved = true;
     } else {
       this.saveSync();
     }
@@ -472,8 +466,8 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     if (this._isLibFileInMemory())
       return;
 
-    await this._context.fileSystemWrapper.writeFile(this.getFilePath(), this._getTextForSave());
-    this._isSaved = true;
+    await this._context.fileSystemWrapper.writeFile(this.getFilePath(), this.#getTextForSave());
+    this.#isSaved = true;
   }
 
   /**
@@ -483,12 +477,12 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     if (this._isLibFileInMemory())
       return;
 
-    this._context.fileSystemWrapper.writeFileSync(this.getFilePath(), this._getTextForSave());
-    this._isSaved = true;
+    this._context.fileSystemWrapper.writeFileSync(this.getFilePath(), this.#getTextForSave());
+    this.#isSaved = true;
   }
 
   /** @internal */
-  private _getTextForSave() {
+  #getTextForSave() {
     const text = this.getFullText();
     return this._hasBom ? "\uFEFF" + text : text;
   }
@@ -497,33 +491,33 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    * Gets any `/// <reference path="..." />` comments.
    */
   getPathReferenceDirectives() {
-    if (this._referencedFiles == null) {
-      this._referencedFiles = (this.compilerNode.referencedFiles || [])
+    if (this.#referencedFiles == null) {
+      this.#referencedFiles = (this.compilerNode.referencedFiles || [])
         .map(f => new FileReference(f, this));
     }
-    return this._referencedFiles;
+    return this.#referencedFiles;
   }
 
   /**
    * Gets any `/// <reference types="..." />` comments.
    */
   getTypeReferenceDirectives() {
-    if (this._typeReferenceDirectives == null) {
-      this._typeReferenceDirectives = (this.compilerNode.typeReferenceDirectives || [])
+    if (this.#typeReferenceDirectives == null) {
+      this.#typeReferenceDirectives = (this.compilerNode.typeReferenceDirectives || [])
         .map(f => new FileReference(f, this));
     }
-    return this._typeReferenceDirectives;
+    return this.#typeReferenceDirectives;
   }
 
   /**
    * Gets any `/// <reference lib="..." />` comments.
    */
   getLibReferenceDirectives() {
-    if (this._libReferenceDirectives == null) {
-      this._libReferenceDirectives = (this.compilerNode.libReferenceDirectives || [])
+    if (this.#libReferenceDirectives == null) {
+      this.#libReferenceDirectives = (this.compilerNode.libReferenceDirectives || [])
         .map(f => new FileReference(f, this));
     }
-    return this._libReferenceDirectives;
+    return this.#libReferenceDirectives;
   }
 
   /**
@@ -670,7 +664,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    * Gets if this source file has been saved or if the latest changes have been saved.
    */
   isSaved() {
-    return this._isSaved && !this._isLibFileInMemory();
+    return this.#isSaved && !this._isLibFileInMemory();
   }
 
   /**
@@ -678,7 +672,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    * @internal
    */
   _setIsSaved(value: boolean) {
-    this._isSaved = value;
+    this.#isSaved = value;
   }
 
   /**
@@ -789,7 +783,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    */
   async refreshFromFileSystem(): Promise<FileSystemRefreshResult> {
     const fileReadResult = await this._context.fileSystemWrapper.readFileOrNotExists(this.getFilePath(), this._context.getEncoding());
-    return this._refreshFromFileSystemInternal(fileReadResult);
+    return this.#refreshFromFileSystemInternal(fileReadResult);
   }
 
   /**
@@ -800,7 +794,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    */
   refreshFromFileSystemSync(): FileSystemRefreshResult {
     const fileReadResult = this._context.fileSystemWrapper.readFileOrNotExistsSync(this.getFilePath(), this._context.getEncoding());
-    return this._refreshFromFileSystemInternal(fileReadResult);
+    return this.#refreshFromFileSystemInternal(fileReadResult);
   }
 
   /**
@@ -849,9 +843,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    */
   onModified(subscription: (sender: SourceFile) => void, subscribe = true) {
     if (subscribe)
-      this._modifiedEventContainer.subscribe(subscription);
+      this.#modifiedEventContainer.subscribe(subscription);
     else
-      this._modifiedEventContainer.unsubscribe(subscription);
+      this.#modifiedEventContainer.unsubscribe(subscription);
     return this;
   }
 
@@ -863,15 +857,15 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
   _doActionPreNextModification(action: () => void) {
     const wrappedSubscription = () => {
       action();
-      this._preModifiedEventContainer.unsubscribe(wrappedSubscription);
+      this.#preModifiedEventContainer.unsubscribe(wrappedSubscription);
     };
-    this._preModifiedEventContainer.subscribe(wrappedSubscription);
+    this.#preModifiedEventContainer.subscribe(wrappedSubscription);
     return this;
   }
 
   /** @internal */
   _firePreModified() {
-    this._preModifiedEventContainer.fire(this);
+    this.#preModifiedEventContainer.fire(this);
   }
 
   /**
@@ -990,7 +984,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     });
   }
 
-  private _refreshFromFileSystemInternal(fileReadResult: string | false): FileSystemRefreshResult {
+  #refreshFromFileSystemInternal(fileReadResult: string | false): FileSystemRefreshResult {
     if (fileReadResult === false) {
       this.forget();
       return FileSystemRefreshResult.Deleted;

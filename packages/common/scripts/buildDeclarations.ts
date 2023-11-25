@@ -5,6 +5,10 @@ const declarationProject = createDeclarationProject({
 });
 const emitMainFile = declarationProject.getSourceFileOrThrow("./dist/index.d.ts");
 const writeProject = new tsMorph.Project({
+  compilerOptions: {
+    target: tsMorph.ts.ScriptTarget.ES2018,
+    moduleResolution: tsMorph.ts.ModuleResolutionKind.Bundler,
+  },
   manipulationSettings: {
     indentationText: tsMorph.IndentationText.TwoSpaces,
     newLineKind: tsMorph.NewLineKind.LineFeed,
@@ -20,13 +24,17 @@ const tsNames: string[] = [];
 for (const [name, declarations] of emitMainFile.getExportedDeclarations()) {
   if (name === "ts")
     continue;
-  else if (declarations[0].getSourceFile().isInNodeModules()) {
+
+  if (declarations[0].getSourceFile().isInNodeModules()) {
     const filePath = declarations[0].getSourceFile().getFilePath();
     if (!filePath.includes("node_modules/typescript"))
       throw new Error(`Unexpected scenario where source file was from: ${filePath}`);
     tsNames.push(name);
   } else {
     for (const declaration of declarations) {
+      if (tsMorph.Node.isJSDocable(declaration) && declaration.getJsDocs().some(d => d.getTags().some(t => t.getTagName() === "internal")))
+        continue;
+
       if (writer.getLength() > 0)
         writer.newLine();
 
@@ -54,5 +62,6 @@ declarationFile.saveSync();
 const diagnostics = writeProject.getPreEmitDiagnostics();
 if (diagnostics.length > 0) {
   console.log(writeProject.formatDiagnosticsWithColorAndContext(diagnostics));
+  console.log("Had write project diagnostics.");
   Deno.exit(1);
 }

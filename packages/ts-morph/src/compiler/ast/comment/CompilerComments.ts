@@ -10,9 +10,9 @@ export enum CommentNodeKind {
 }
 
 export abstract class CompilerCommentNode implements ts.Node {
-  private _fullStart: number;
-  private _start: number;
-  private _sourceFile: ts.SourceFile;
+  #fullStart: number;
+  #start: number;
+  #sourceFile: ts.SourceFile;
 
   /** @private */
   constructor(
@@ -23,9 +23,9 @@ export abstract class CompilerCommentNode implements ts.Node {
     sourceFile: ts.SourceFile,
     parent: ts.Node,
   ) {
-    this._fullStart = fullStart;
-    this._start = pos; // pos and start are the same for comments
-    this._sourceFile = sourceFile;
+    this.#fullStart = fullStart;
+    this.#start = pos; // pos and start are the same for comments
+    this.#sourceFile = sourceFile;
     this.pos = pos;
     this.end = end;
     this.kind = kind;
@@ -44,7 +44,7 @@ export abstract class CompilerCommentNode implements ts.Node {
   parent: ts.Node;
 
   getSourceFile() {
-    return this._sourceFile;
+    return this.#sourceFile;
   }
 
   getChildCount(sourceFile?: ts.SourceFile | undefined): number {
@@ -61,11 +61,11 @@ export abstract class CompilerCommentNode implements ts.Node {
   }
 
   getStart(sourceFile?: ts.SourceFile | undefined, includeJsDocComment?: boolean | undefined) {
-    return this._start;
+    return this.#start;
   }
 
   getFullStart() {
-    return this._fullStart;
+    return this.#fullStart;
   }
 
   getEnd() {
@@ -73,23 +73,23 @@ export abstract class CompilerCommentNode implements ts.Node {
   }
 
   getWidth(sourceFile?: ts.SourceFileLike | undefined) {
-    return this.end - this._start;
+    return this.end - this.#start;
   }
 
   getFullWidth(): number {
-    return this.end - this._fullStart;
+    return this.end - this.#fullStart;
   }
 
   getLeadingTriviaWidth(sourceFile?: ts.SourceFile | undefined) {
-    return this._start - this._fullStart;
+    return this.#start - this.#fullStart;
   }
 
   getFullText(sourceFile?: ts.SourceFile | undefined) {
-    return this._sourceFile.text.substring(this._fullStart, this.end);
+    return this.#sourceFile.text.substring(this.#fullStart, this.end);
   }
 
   getText(sourceFile?: ts.SourceFile | undefined) {
-    return this._sourceFile.text.substring(this._start, this.end);
+    return this.#sourceFile.text.substring(this.#start, this.end);
   }
 
   getFirstToken(sourceFile?: ts.SourceFile | undefined): ts.Node | undefined {

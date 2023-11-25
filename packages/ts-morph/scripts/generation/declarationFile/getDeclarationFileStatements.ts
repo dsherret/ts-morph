@@ -1,6 +1,19 @@
 import { tsMorph } from "../../deps.ts";
 
 export function getDeclarationFileStatements(mainFile: tsMorph.SourceFile) {
+  function hasInternalJsDoc(structure: tsMorph.Structure) {
+    return tsMorph.Structure.isJSDocable(structure) && structure.docs && structure.docs.some(d => d.tags && d.tags.some(t => t.tagName === "internal"));
+  }
+
+  function stripInternalTags(structure: any) {
+    for (const key of Object.keys(structure)) {
+      const value = structure[key];
+      if (value instanceof Array)
+        structure[key] = value.filter((v: any) => !hasInternalJsDoc(v));
+    }
+    return structure;
+  }
+
   const tsNames: string[] = [];
   const statements: tsMorph.StatementStructures[] = [];
 
@@ -16,6 +29,8 @@ export function getDeclarationFileStatements(mainFile: tsMorph.SourceFile) {
       continue;
 
     for (const declaration of declarations) {
+      if (tsMorph.Node.isJSDocable(declaration) && declaration.getJsDocs().some(d => d.getTags().some(t => t.getTagName() === "internal")))
+        continue;
       const sourceFile = declaration.getSourceFile();
       const filePath = sourceFile.getFilePath();
       if (filePath.includes("common/lib/typescript.d.ts")) {
@@ -33,7 +48,7 @@ export function getDeclarationFileStatements(mainFile: tsMorph.SourceFile) {
           declarations: [declaration.getStructure()],
         });
       } else if (tsMorph.Node.isStatement(declaration))
-        statements.push((declaration as any).getStructure()); // todo: improve
+        statements.push(stripInternalTags((declaration as any).getStructure())); // todo: improve
       else
         throw new Error(`Not handled scenario for ${declaration.getKindName()}`);
     }

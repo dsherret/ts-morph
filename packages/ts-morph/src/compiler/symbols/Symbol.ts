@@ -5,15 +5,15 @@ import { Type } from "../types";
 
 export class Symbol {
   /** @internal */
-  private readonly _context: ProjectContext;
+  readonly #context: ProjectContext;
   /** @internal */
-  private readonly _compilerSymbol: ts.Symbol;
+  readonly #compilerSymbol: ts.Symbol;
 
   /**
    * Gets the underlying compiler symbol.
    */
   get compilerSymbol(): ts.Symbol {
-    return this._compilerSymbol;
+    return this.#compilerSymbol;
   }
 
   /**
@@ -23,8 +23,8 @@ export class Symbol {
    * @param symbol - Compiler symbol.
    */
   constructor(context: ProjectContext, symbol: ts.Symbol) {
-    this._context = context;
-    this._compilerSymbol = symbol;
+    this.#context = context;
+    this.#compilerSymbol = symbol;
 
     // wrap these immediately, but do not memoize because the underlying symbol might be mutated
     this.getValueDeclaration();
@@ -56,7 +56,7 @@ export class Symbol {
    * Follows a single alias to get the immediately aliased symbol or returns undefined if it doesn't exist.
    */
   getImmediatelyAliasedSymbol(): Symbol | undefined {
-    return this._context.typeChecker.getImmediatelyAliasedSymbol(this);
+    return this.#context.typeChecker.getImmediatelyAliasedSymbol(this);
   }
 
   /**
@@ -70,7 +70,7 @@ export class Symbol {
    * Gets the aliased symbol or returns undefined if it doesn't exist.
    */
   getAliasedSymbol(): Symbol | undefined {
-    return this._context.typeChecker.getAliasedSymbol(this);
+    return this.#context.typeChecker.getAliasedSymbol(this);
   }
 
   /**
@@ -84,7 +84,7 @@ export class Symbol {
    *     - Calling `getExportSymbol` on that local symbol will return the exported symbol.
    */
   getExportSymbol() {
-    return this._context.typeChecker.getExportSymbolOfSymbol(this);
+    return this.#context.typeChecker.getExportSymbolOfSymbol(this);
   }
 
   /**
@@ -133,7 +133,7 @@ export class Symbol {
     const declaration = this.compilerSymbol.valueDeclaration;
     if (declaration == null)
       return undefined;
-    return this._context.compilerFactory.getNodeFromCompilerNode(declaration, this._context.compilerFactory.getSourceFileForNode(declaration));
+    return this.#context.compilerFactory.getNodeFromCompilerNode(declaration, this.#context.compilerFactory.getSourceFileForNode(declaration));
   }
 
   /**
@@ -141,7 +141,7 @@ export class Symbol {
    */
   getDeclarations(): Node[] {
     return (this.compilerSymbol.declarations ?? [])
-      .map(d => this._context.compilerFactory.getNodeFromCompilerNode(d, this._context.compilerFactory.getSourceFileForNode(d)));
+      .map(d => this.#context.compilerFactory.getNodeFromCompilerNode(d, this.#context.compilerFactory.getSourceFileForNode(d)));
   }
 
   /**
@@ -161,7 +161,7 @@ export class Symbol {
       return undefined;
 
     const tsSymbol = this.compilerSymbol.exports.get(ts.escapeLeadingUnderscores(name));
-    return tsSymbol == null ? undefined : this._context.compilerFactory.getSymbol(tsSymbol);
+    return tsSymbol == null ? undefined : this.#context.compilerFactory.getSymbol(tsSymbol);
   }
 
   /**
@@ -170,7 +170,7 @@ export class Symbol {
   getExports(): Symbol[] {
     if (this.compilerSymbol.exports == null)
       return [];
-    return Array.from(this.compilerSymbol.exports.values()).map(symbol => this._context.compilerFactory.getSymbol(symbol));
+    return Array.from(this.compilerSymbol.exports.values()).map(symbol => this.#context.compilerFactory.getSymbol(symbol));
   }
 
   /**
@@ -190,7 +190,7 @@ export class Symbol {
       return undefined;
 
     const tsSymbol = this.compilerSymbol.globalExports.get(ts.escapeLeadingUnderscores(name));
-    return tsSymbol == null ? undefined : this._context.compilerFactory.getSymbol(tsSymbol);
+    return tsSymbol == null ? undefined : this.#context.compilerFactory.getSymbol(tsSymbol);
   }
 
   /**
@@ -199,7 +199,7 @@ export class Symbol {
   getGlobalExports(): Symbol[] {
     if (this.compilerSymbol.globalExports == null)
       return [];
-    return Array.from(this.compilerSymbol.globalExports.values()).map(symbol => this._context.compilerFactory.getSymbol(symbol));
+    return Array.from(this.compilerSymbol.globalExports.values()).map(symbol => this.#context.compilerFactory.getSymbol(symbol));
   }
 
   /**
@@ -219,7 +219,7 @@ export class Symbol {
       return undefined;
 
     const tsSymbol = this.compilerSymbol.members.get(ts.escapeLeadingUnderscores(name));
-    return tsSymbol == null ? undefined : this._context.compilerFactory.getSymbol(tsSymbol);
+    return tsSymbol == null ? undefined : this.#context.compilerFactory.getSymbol(tsSymbol);
   }
 
   /**
@@ -228,14 +228,14 @@ export class Symbol {
   getMembers(): Symbol[] {
     if (this.compilerSymbol.members == null)
       return [];
-    return Array.from(this.compilerSymbol.members.values()).map(symbol => this._context.compilerFactory.getSymbol(symbol));
+    return Array.from(this.compilerSymbol.members.values()).map(symbol => this.#context.compilerFactory.getSymbol(symbol));
   }
 
   /**
    * Gets the declared type of the symbol.
    */
   getDeclaredType(): Type {
-    return this._context.typeChecker.getDeclaredTypeOfSymbol(this);
+    return this.#context.typeChecker.getDeclaredTypeOfSymbol(this);
   }
 
   /**
@@ -243,19 +243,19 @@ export class Symbol {
    * @param node - Location to get the type at for this symbol.
    */
   getTypeAtLocation(node: Node) {
-    return this._context.typeChecker.getTypeOfSymbolAtLocation(this, node);
+    return this.#context.typeChecker.getTypeOfSymbolAtLocation(this, node);
   }
 
   /**
    * Gets the fully qualified name.
    */
   getFullyQualifiedName() {
-    return this._context.typeChecker.getFullyQualifiedName(this);
+    return this.#context.typeChecker.getFullyQualifiedName(this);
   }
 
   /** Gets the JS doc tag infos of the symbol. */
   getJsDocTags() {
-    return this.compilerSymbol.getJsDocTags(this._context.typeChecker.compilerObject)
+    return this.compilerSymbol.getJsDocTags(this.#context.typeChecker.compilerObject)
       .map(info => new JSDocTagInfo(info));
   }
 }

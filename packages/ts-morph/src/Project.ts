@@ -30,6 +30,8 @@ export interface ProjectOptions {
   compilerOptions?: CompilerOptions;
   /** File path to the tsconfig.json file. */
   tsConfigFilePath?: string;
+  /** Can be overriden by `tsConfigFilePath` or `compilerOptions`. */
+  defaultCompilerOptions?: CompilerOptions;
   /** Whether to skip adding the source files from the specified tsconfig.json. @default false */
   skipAddingFilesFromTsConfig?: boolean;
   /** Skip resolving file dependencies when providing a ts config file path and adding the files from tsconfig. @default false */
@@ -99,7 +101,7 @@ export class Project {
 
     // compiler options initialization
     const compilerOptions = getCompilerOptions();
-    const compilerOptionsContainer = new CompilerOptionsContainer();
+    const compilerOptionsContainer = new CompilerOptionsContainer(options.defaultCompilerOptions);
     compilerOptionsContainer.set(compilerOptions);
 
     // setup context
@@ -120,7 +122,7 @@ export class Project {
 
     // add any file paths from the tsconfig if necessary
     if (tsConfigResolver != null && options.skipAddingFilesFromTsConfig !== true) {
-      this._addSourceFilesForTsConfigResolver(tsConfigResolver, compilerOptions);
+      this.#addSourceFilesForTsConfigResolver(tsConfigResolver, compilerOptions);
 
       if (!options.skipFileDependencyResolution)
         this.resolveSourceFileDependencies();
@@ -263,7 +265,7 @@ export class Project {
    * Gets all the directories.
    */
   getDirectories() {
-    return Array.from(this._getProjectDirectoriesByDirectoryDepth());
+    return Array.from(this.#getProjectDirectoriesByDirectoryDepth());
   }
 
   /**
@@ -339,11 +341,11 @@ export class Project {
       this._context.fileSystemWrapper.getStandardizedAbsolutePath(tsConfigFilePath),
       this._context.getEncoding(),
     );
-    return this._addSourceFilesForTsConfigResolver(resolver, resolver.getCompilerOptions());
+    return this.#addSourceFilesForTsConfigResolver(resolver, resolver.getCompilerOptions());
   }
 
   /** @internal */
-  private _addSourceFilesForTsConfigResolver(tsConfigResolver: TsConfigResolver, compilerOptions: CompilerOptions) {
+  #addSourceFilesForTsConfigResolver(tsConfigResolver: TsConfigResolver, compilerOptions: CompilerOptions) {
     const paths = tsConfigResolver.getPaths(compilerOptions);
 
     const addedSourceFiles = paths.filePaths.map(p => this.addSourceFileAtPath(p));
@@ -435,7 +437,7 @@ export class Project {
       return this._context.compilerFactory.getSourceFileFromCacheFromFilePath(filePathOrSearchFunction);
     }
 
-    return IterableUtils.find(this._getProjectSourceFilesByDirectoryDepth(), filePathOrSearchFunction);
+    return IterableUtils.find(this.#getProjectSourceFilesByDirectoryDepth(), filePathOrSearchFunction);
 
     function getFilePathOrSearchFunction(fileSystemWrapper: TransactionalFileSystem): StandardizedFilePath | ((file: SourceFile) => boolean) {
       if (fileNameOrSearchFunction instanceof Function)
@@ -470,7 +472,7 @@ export class Project {
   getSourceFiles(globPatterns: ReadonlyArray<string>): SourceFile[];
   getSourceFiles(globPatterns?: string | ReadonlyArray<string>): SourceFile[] {
     const { compilerFactory, fileSystemWrapper } = this._context;
-    const sourceFiles = this._getProjectSourceFilesByDirectoryDepth();
+    const sourceFiles = this.#getProjectSourceFilesByDirectoryDepth();
 
     if (typeof globPatterns === "string" || globPatterns instanceof Array)
       return Array.from(getFilteredSourceFiles());
@@ -492,7 +494,7 @@ export class Project {
   }
 
   /** @internal */
-  private *_getProjectSourceFilesByDirectoryDepth() {
+  *#getProjectSourceFilesByDirectoryDepth() {
     const { compilerFactory, inProjectCoordinator } = this._context;
     for (const sourceFile of compilerFactory.getSourceFilesByDirectoryDepth()) {
       if (inProjectCoordinator.isSourceFileInProject(sourceFile))
@@ -501,7 +503,7 @@ export class Project {
   }
 
   /** @internal */
-  private *_getProjectDirectoriesByDirectoryDepth() {
+  *#getProjectDirectoriesByDirectoryDepth() {
     const { compilerFactory, inProjectCoordinator } = this._context;
     for (const directory of compilerFactory.getDirectoriesByDepth()) {
       if (inProjectCoordinator.isDirectoryInProject(directory))
@@ -541,7 +543,7 @@ export class Project {
    */
   async save() {
     await this._context.fileSystemWrapper.flush();
-    await Promise.all(this._getUnsavedSourceFiles().map(f => f.save()));
+    await Promise.all(this.#getUnsavedSourceFiles().map(f => f.save()));
   }
 
   /**
@@ -554,7 +556,7 @@ export class Project {
     // sidenote: I wish I could do something like in c# where I do this all asynchronously then
     // wait synchronously on the task. It would not be as bad as this is performance wise. Maybe there
     // is a way, but people just shouldn't be using this method unless they're really lazy.
-    for (const file of this._getUnsavedSourceFiles())
+    for (const file of this.#getUnsavedSourceFiles())
       file.saveSync();
   }
 
@@ -567,7 +569,7 @@ export class Project {
   }
 
   /** @internal */
-  private _getUnsavedSourceFiles() {
+  #getUnsavedSourceFiles() {
     return Array.from(getUnsavedIterator(this._context.compilerFactory.getSourceFilesByDirectoryDepth()));
 
     function* getUnsavedIterator(sourceFiles: IterableIterator<SourceFile>) {

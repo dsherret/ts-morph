@@ -25,7 +25,7 @@ export abstract class NodePrinter<TStructure> extends Printer<TStructure> {
   printLeadingTrivia(writer: CodeBlockWriter, structure: unknown) {
     const leadingTrivia = (structure as any)?.leadingTrivia as Structure["leadingTrivia"];
     if (leadingTrivia) {
-      this.printTrivia(writer, leadingTrivia);
+      this.#printTrivia(writer, leadingTrivia);
 
       if (writer.isInComment())
         writer.closeComment();
@@ -36,10 +36,10 @@ export abstract class NodePrinter<TStructure> extends Printer<TStructure> {
     const trailingTrivia = (structure as any)?.trailingTrivia as Structure["trailingTrivia"];
 
     if (trailingTrivia != null)
-      this.printTrivia(writer, trailingTrivia);
+      this.#printTrivia(writer, trailingTrivia);
   }
 
-  private printTrivia(writer: CodeBlockWriter, trivia: Structure["leadingTrivia"]) {
+  #printTrivia(writer: CodeBlockWriter, trivia: Structure["leadingTrivia"]) {
     if (trivia instanceof Array) {
       for (let i = 0; i < trivia.length; i++) {
         this.printTextOrWriterFunc(writer, trivia[i]);

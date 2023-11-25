@@ -7,19 +7,19 @@ import { FileTextChanges } from "./FileTextChanges";
  */
 export class CodeAction<TCompilerObject extends ts.CodeAction = ts.CodeAction> {
   /** @internal */
-  private readonly _context: ProjectContext;
+  readonly #context: ProjectContext;
   /** @internal */
-  private readonly _compilerObject: TCompilerObject;
+  readonly #compilerObject: TCompilerObject;
 
   /** @private */
   constructor(context: ProjectContext, compilerObject: TCompilerObject) {
-    this._context = context;
-    this._compilerObject = compilerObject;
+    this.#context = context;
+    this.#compilerObject = compilerObject;
   }
 
   /** Gets the compiler object. */
   get compilerObject() {
-    return this._compilerObject;
+    return this.#compilerObject;
   }
 
   /** Description of the code action. */
@@ -29,7 +29,7 @@ export class CodeAction<TCompilerObject extends ts.CodeAction = ts.CodeAction> {
 
   /** Text changes to apply to each file as part of the code action. */
   getChanges() {
-    return this.compilerObject.changes.map(change => new FileTextChanges(this._context, change));
+    return this.compilerObject.changes.map(change => new FileTextChanges(this.#context, change));
   }
 
   // TODO: commands property

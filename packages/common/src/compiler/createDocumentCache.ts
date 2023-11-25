@@ -58,11 +58,13 @@ export interface FileSystemSpecificDocumentCache {
 type DocumentKey = string & { _documentKeyBrand: undefined };
 
 class FileSystemDocumentCache implements FileSystemSpecificDocumentCache {
-  private readonly absoluteToOriginalPath = new Map<StandardizedFilePath, string>();
+  readonly #documentCache: InternalDocumentCache;
+  readonly #absoluteToOriginalPath = new Map<StandardizedFilePath, string>();
 
-  constructor(fileSystem: TransactionalFileSystem, private readonly documentCache: InternalDocumentCache) {
+  constructor(fileSystem: TransactionalFileSystem, documentCache: InternalDocumentCache) {
     for (const filePath of documentCache._getFilePaths())
-      this.absoluteToOriginalPath.set(fileSystem.getStandardizedAbsolutePath(filePath), filePath);
+      this.#absoluteToOriginalPath.set(fileSystem.getStandardizedAbsolutePath(filePath), filePath);
+    this.#documentCache = documentCache;
   }
 
   getDocumentIfMatch(
@@ -71,27 +73,27 @@ class FileSystemDocumentCache implements FileSystemSpecificDocumentCache {
     scriptTarget: ScriptTarget | undefined,
     scriptKind: ScriptKind | undefined,
   ) {
-    const originalFilePath = this.absoluteToOriginalPath.get(filePath);
+    const originalFilePath = this.#absoluteToOriginalPath.get(filePath);
     if (originalFilePath == null)
       return;
 
-    return this.documentCache._getDocumentIfMatch(originalFilePath, filePath, scriptSnapshot, scriptTarget, scriptKind);
+    return this.#documentCache._getDocumentIfMatch(originalFilePath, filePath, scriptSnapshot, scriptTarget, scriptKind);
   }
 }
 
 class InternalDocumentCache implements DocumentCache {
   __documentCacheBrand: undefined;
 
-  private readonly _fileTexts = new Map<string, string>();
-  private readonly _documents = new Map<DocumentKey, ts.SourceFile>();
+  readonly #fileTexts = new Map<string, string>();
+  readonly #documents = new Map<DocumentKey, ts.SourceFile>();
 
   _addFiles(files: DocumentCacheItem[]) {
     for (const file of files)
-      this._fileTexts.set(file.fileName, file.text);
+      this.#fileTexts.set(file.fileName, file.text);
   }
 
   _getFilePaths() {
-    return this._fileTexts.keys();
+    return this.#fileTexts.keys();
   }
 
   _getCacheForFileSystem(fileSystem: TransactionalFileSystem) {
@@ -105,27 +107,27 @@ class InternalDocumentCache implements DocumentCache {
     scriptTarget: ScriptTarget | undefined,
     scriptKind: ScriptKind | undefined,
   ) {
-    const fileText = this._fileTexts.get(filePath);
+    const fileText = this.#fileTexts.get(filePath);
     if (fileText == null)
       return undefined; // doesn't exist in cache
     if (fileText !== scriptSnapshot.getText(0, scriptSnapshot.getLength()))
       return undefined; // not a match
 
-    return this._getDocument(filePath, absoluteFilePath, scriptSnapshot, scriptTarget, scriptKind);
+    return this.#getDocument(filePath, absoluteFilePath, scriptSnapshot, scriptTarget, scriptKind);
   }
 
-  private _getDocument(
+  #getDocument(
     filePath: string,
     absoluteFilePath: StandardizedFilePath,
     scriptSnapshot: ts.IScriptSnapshot,
     scriptTarget: ScriptTarget | undefined,
     scriptKind: ScriptKind | undefined,
   ) {
-    const documentKey = this._getKey(filePath, scriptTarget, scriptKind);
-    let document = this._documents.get(documentKey);
+    const documentKey = this.#getKey(filePath, scriptTarget, scriptKind);
+    let document = this.#documents.get(documentKey);
     if (document == null) {
       document = createCompilerSourceFile(absoluteFilePath, scriptSnapshot, scriptTarget, "-1", false, scriptKind);
-      this._documents.set(documentKey, document);
+      this.#documents.set(documentKey, document);
     }
 
     // ensure a clean source file is stored in the cache by always cloning this before returning
@@ -135,8 +137,7 @@ class InternalDocumentCache implements DocumentCache {
     return document;
   }
 
-  /** @internal */
-  private _getKey(filePath: string, scriptTarget: ScriptTarget | undefined, scriptKind: ScriptKind | undefined): DocumentKey {
+  #getKey(filePath: string, scriptTarget: ScriptTarget | undefined, scriptKind: ScriptKind | undefined): DocumentKey {
     return (filePath + (scriptTarget?.toString() ?? "-1") + (scriptKind?.toString() ?? "-1")) as DocumentKey;
   }
 }

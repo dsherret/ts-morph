@@ -12,13 +12,15 @@ export interface RemoveChildrenWithFormattingTextManipulatorOptions<TNode extend
 }
 
 export class RemoveChildrenWithFormattingTextManipulator<TNode extends Node> implements TextManipulator {
-  private removalPos: number | undefined;
+  readonly #opts: RemoveChildrenWithFormattingTextManipulatorOptions<TNode>;
+  #removalPos: number | undefined;
 
-  constructor(private readonly opts: RemoveChildrenWithFormattingTextManipulatorOptions<TNode>) {
+  constructor(opts: RemoveChildrenWithFormattingTextManipulatorOptions<TNode>) {
+    this.#opts = opts;
   }
 
   getNewText(inputText: string) {
-    const { children, getSiblingFormatting } = this.opts;
+    const { children, getSiblingFormatting } = this.#opts;
     const firstChild = children[0];
     const lastChild = children[children.length - 1];
     const parent = firstChild.getParentOrThrow() as TNode;
@@ -28,7 +30,7 @@ export class RemoveChildrenWithFormattingTextManipulator<TNode extends Node> imp
     const previousSibling = firstChild.getPreviousSibling();
     const nextSibling = lastChild.getNextSibling();
     const removalPos = getRemovalPos();
-    this.removalPos = removalPos;
+    this.#removalPos = removalPos;
 
     // console.log(JSON.stringify(fullText.substring(0, removalPos)));
     // console.log(JSON.stringify(fullText.substring(getRemovalEnd())));
@@ -93,6 +95,6 @@ export class RemoveChildrenWithFormattingTextManipulator<TNode extends Node> imp
   }
 
   getTextForError(newText: string) {
-    return getTextForError(newText, this.removalPos!);
+    return getTextForError(newText, this.#removalPos!);
   }
 }

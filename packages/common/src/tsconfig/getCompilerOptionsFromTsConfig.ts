@@ -1,5 +1,5 @@
 import { FileSystemHost, RealFileSystemHost, TransactionalFileSystem } from "../fileSystem";
-import { CompilerOptions, ts } from "../typescript";
+import { ts } from "../typescript";
 import { TsConfigResolver } from "./TsConfigResolver";
 
 export interface CompilerOptionsFromTsConfigOptions {
@@ -8,7 +8,7 @@ export interface CompilerOptionsFromTsConfigOptions {
 }
 
 export interface CompilerOptionsFromTsConfigResult {
-  options: CompilerOptions;
+  options: ts.CompilerOptions;
   errors: ts.Diagnostic[];
 }
 

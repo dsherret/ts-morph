@@ -6,8 +6,11 @@ import { setValueIfUndefined } from "../../utils";
 import { NodePrinter } from "../NodePrinter";
 
 export class MethodDeclarationStructurePrinter extends NodePrinter<OptionalKind<MethodDeclarationStructure>> {
-  constructor(factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean }) {
+  readonly #options: { isAmbient: boolean };
+
+  constructor(factory: StructurePrinterFactory, options: { isAmbient: boolean }) {
     super(factory);
+    this.#options = options;
   }
 
   printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>> | undefined) {
@@ -16,7 +19,7 @@ export class MethodDeclarationStructurePrinter extends NodePrinter<OptionalKind<
 
     for (let i = 0; i < structures.length; i++) {
       if (i > 0) {
-        if (this.options.isAmbient)
+        if (this.#options.isAmbient)
           writer.newLine();
         else
           writer.blankLine();
@@ -26,14 +29,14 @@ export class MethodDeclarationStructurePrinter extends NodePrinter<OptionalKind<
   }
 
   protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<MethodDeclarationStructure>) {
-    this.printOverloads(writer, structure.name, getOverloadStructures());
-    this.printHeader(writer, structure.name, structure);
+    this.#printOverloads(writer, structure.name, getOverloadStructures());
+    this.#printHeader(writer, structure.name, structure);
 
-    if (this.options.isAmbient || structure.isAbstract)
+    if (this.#options.isAmbient || structure.isAbstract)
       writer.write(";");
     else {
       writer.spaceIfLastNot().inlineBlock(() => {
-        this.factory.forStatementedNode(this.options).printText(writer, structure);
+        this.factory.forStatementedNode(this.#options).printText(writer, structure);
       });
     }
 
@@ -54,7 +57,7 @@ export class MethodDeclarationStructurePrinter extends NodePrinter<OptionalKind<
     }
   }
 
-  private printOverloads(writer: CodeBlockWriter, name: string, structures: ReadonlyArray<OptionalKind<MethodDeclarationOverloadStructure>> | undefined) {
+  #printOverloads(writer: CodeBlockWriter, name: string, structures: ReadonlyArray<OptionalKind<MethodDeclarationOverloadStructure>> | undefined) {
     if (structures == null || structures.length === 0)
       return;
 
@@ -66,12 +69,12 @@ export class MethodDeclarationStructurePrinter extends NodePrinter<OptionalKind<
 
   printOverload(writer: CodeBlockWriter, name: string, structure: OptionalKind<MethodDeclarationOverloadStructure>) {
     this.printLeadingTrivia(writer, structure);
-    this.printHeader(writer, name, structure);
+    this.#printHeader(writer, name, structure);
     writer.write(";");
     this.printTrailingTrivia(writer, structure);
   }
 
-  private printHeader(
+  #printHeader(
     writer: CodeBlockWriter,
     name: string,
     structure: OptionalKind<MethodDeclarationOverloadStructure> | OptionalKind<MethodDeclarationStructure>,

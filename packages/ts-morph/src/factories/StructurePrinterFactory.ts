@@ -203,11 +203,6 @@ export class StructurePrinterFactory {
   }
 
   @Memoize
-  forAssertEntry(): structurePrinters.AssertEntryStructurePrinter {
-    return new structurePrinters.AssertEntryStructurePrinter(this);
-  }
-
-  @Memoize
   forExportAssignment(): structurePrinters.ExportAssignmentStructurePrinter {
     return new structurePrinters.ExportAssignmentStructurePrinter(this);
   }
@@ -215,6 +210,11 @@ export class StructurePrinterFactory {
   @Memoize
   forExportDeclaration(): structurePrinters.ExportDeclarationStructurePrinter {
     return new structurePrinters.ExportDeclarationStructurePrinter(this);
+  }
+
+  @Memoize
+  forImportAttribute(): structurePrinters.ImportAttributeStructurePrinter {
+    return new structurePrinters.ImportAttributeStructurePrinter(this);
   }
 
   @Memoize

@@ -24,18 +24,21 @@ export interface MemoryEmitResultFile {
  * Result of an emit to memory.
  */
 export class MemoryEmitResult extends EmitResult {
+  readonly #files: ReadonlyArray<MemoryEmitResultFile>;
+
   /**
    * @private
    */
-  constructor(context: ProjectContext, compilerObject: ts.EmitResult, private readonly _files: ReadonlyArray<MemoryEmitResultFile>) {
+  constructor(context: ProjectContext, compilerObject: ts.EmitResult, files: ReadonlyArray<MemoryEmitResultFile>) {
     super(context, compilerObject);
+    this.#files = files;
   }
 
   /**
    * Gets the files that were emitted to memory.
    */
   getFiles() {
-    return this._files as MemoryEmitResultFile[]; // assert mutable array
+    return this.#files as MemoryEmitResultFile[]; // assert mutable array
   }
 
   /**
@@ -43,7 +46,7 @@ export class MemoryEmitResult extends EmitResult {
    */
   saveFiles() {
     const fileSystem = this._context.fileSystemWrapper;
-    const promises = this._files.map(f => fileSystem.writeFile(f.filePath, f.writeByteOrderMark ? "\uFEFF" + f.text : f.text));
+    const promises = this.#files.map(f => fileSystem.writeFile(f.filePath, f.writeByteOrderMark ? "\uFEFF" + f.text : f.text));
     return Promise.all(promises);
   }
 
@@ -53,7 +56,7 @@ export class MemoryEmitResult extends EmitResult {
    */
   saveFilesSync() {
     const fileSystem = this._context.fileSystemWrapper;
-    for (const file of this._files)
+    for (const file of this.#files)
       fileSystem.writeFileSync(file.filePath, file.writeByteOrderMark ? "\uFEFF" + file.text : file.text);
   }
 }

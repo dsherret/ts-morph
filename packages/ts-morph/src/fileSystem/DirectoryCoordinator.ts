@@ -9,17 +9,22 @@ import { DirectoryAddOptions } from "./Directory";
  * I'll definitely need to refactor this in the future... just putting these methods in a common place for now.
  */
 export class DirectoryCoordinator {
-  constructor(private readonly compilerFactory: CompilerFactory, private readonly fileSystemWrapper: TransactionalFileSystem) {
+  readonly #fileSystemWrapper: TransactionalFileSystem;
+  readonly #compilerFactory: CompilerFactory;
+
+  constructor(compilerFactory: CompilerFactory, fileSystemWrapper: TransactionalFileSystem) {
+    this.#compilerFactory = compilerFactory;
+    this.#fileSystemWrapper = fileSystemWrapper;
   }
 
   addDirectoryAtPathIfExists(dirPath: StandardizedFilePath, options: DirectoryAddOptions & { markInProject: boolean }) {
-    const directory = this.compilerFactory.getDirectoryFromPath(dirPath, options);
+    const directory = this.#compilerFactory.getDirectoryFromPath(dirPath, options);
     if (directory == null)
       return undefined;
 
     if (options.recursive) {
-      for (const descendantDirPath of FileUtils.getDescendantDirectories(this.fileSystemWrapper, dirPath))
-        this.compilerFactory.createDirectoryOrAddIfExists(descendantDirPath, options);
+      for (const descendantDirPath of FileUtils.getDescendantDirectories(this.#fileSystemWrapper, dirPath))
+        this.#compilerFactory.createDirectoryOrAddIfExists(descendantDirPath, options);
     }
 
     return directory;
@@ -33,11 +38,11 @@ export class DirectoryCoordinator {
   }
 
   createDirectoryOrAddIfExists(dirPath: StandardizedFilePath, options: { markInProject: boolean }) {
-    return this.compilerFactory.createDirectoryOrAddIfExists(dirPath, options);
+    return this.#compilerFactory.createDirectoryOrAddIfExists(dirPath, options);
   }
 
   addSourceFileAtPathIfExists(filePath: StandardizedFilePath, options: { markInProject: boolean }): SourceFile | undefined {
-    return this.compilerFactory.addOrGetSourceFileFromFilePath(filePath, {
+    return this.#compilerFactory.addOrGetSourceFileFromFilePath(filePath, {
       markInProject: options.markInProject,
       scriptKind: undefined,
     });
@@ -46,7 +51,7 @@ export class DirectoryCoordinator {
   addSourceFileAtPath(filePath: StandardizedFilePath, options: { markInProject: boolean }): SourceFile {
     const sourceFile = this.addSourceFileAtPathIfExists(filePath, options);
     if (sourceFile == null)
-      throw new errors.FileNotFoundError(this.fileSystemWrapper.getStandardizedAbsolutePath(filePath));
+      throw new errors.FileNotFoundError(this.#fileSystemWrapper.getStandardizedAbsolutePath(filePath));
     return sourceFile;
   }
 
@@ -57,7 +62,7 @@ export class DirectoryCoordinator {
     const sourceFiles: SourceFile[] = [];
     const globbedDirectories = new Set<StandardizedFilePath>();
 
-    for (const filePath of this.fileSystemWrapper.globSync(fileGlobs)) {
+    for (const filePath of this.#fileSystemWrapper.globSync(fileGlobs)) {
       const sourceFile = this.addSourceFileAtPathIfExists(filePath, options);
       if (sourceFile != null)
         sourceFiles.push(sourceFile);

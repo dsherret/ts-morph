@@ -12,43 +12,43 @@ export interface ApplyFileTextChangesOptions {
 
 export class FileTextChanges {
   /** @internal */
-  private readonly _context: ProjectContext;
+  readonly #context: ProjectContext;
   /** @internal */
-  private readonly _compilerObject: ts.FileTextChanges;
+  readonly #compilerObject: ts.FileTextChanges;
   /** @internal */
-  private readonly _sourceFile: SourceFile | undefined;
+  readonly #sourceFile: SourceFile | undefined;
   /** @internal */
-  private readonly _existingFileExists: boolean;
+  readonly #existingFileExists: boolean;
   /** @internal */
-  private _isApplied: true | undefined;
+  #isApplied: true | undefined;
 
   /** @private */
   constructor(context: ProjectContext, compilerObject: ts.FileTextChanges) {
-    this._context = context;
-    this._compilerObject = compilerObject;
+    this.#context = context;
+    this.#compilerObject = compilerObject;
 
     const file = context.compilerFactory
       .addOrGetSourceFileFromFilePath(context.fileSystemWrapper.getStandardizedAbsolutePath(compilerObject.fileName), {
         markInProject: false,
         scriptKind: undefined,
       });
-    this._existingFileExists = file != null;
+    this.#existingFileExists = file != null;
     if (!compilerObject.isNewFile)
-      this._sourceFile = file;
+      this.#sourceFile = file;
   }
 
   /**
    * Gets the file path.
    */
   getFilePath() {
-    return this._compilerObject.fileName;
+    return this.#compilerObject.fileName;
   }
 
   /**
    * Gets the source file if it was in the cache at the time of this class' creation.
    */
   getSourceFile() {
-    return this._sourceFile;
+    return this.#sourceFile;
   }
 
   /**
@@ -56,7 +56,7 @@ export class FileTextChanges {
    */
   @Memoize
   getTextChanges() {
-    return this._compilerObject.textChanges.map(c => new TextChange(c));
+    return this.#compilerObject.textChanges.map(c => new TextChange(c));
   }
 
   /**
@@ -66,10 +66,10 @@ export class FileTextChanges {
    * @param options - Options for applying the text changes to the file.
    */
   applyChanges(options: ApplyFileTextChangesOptions = {}) {
-    if (this._isApplied)
+    if (this.#isApplied)
       return;
 
-    if (this.isNewFile() && this._existingFileExists && !options.overwrite) {
+    if (this.isNewFile() && this.#existingFileExists && !options.overwrite) {
       throw new errors.InvalidOperationError(
         `Cannot apply file text change for creating a new file when the `
           + `file exists at path ${this.getFilePath()}. Did you mean to provide the overwrite option?`,
@@ -78,7 +78,7 @@ export class FileTextChanges {
 
     let file: SourceFile | undefined;
     if (this.isNewFile())
-      file = this._context.project.createSourceFile(this.getFilePath(), "", { overwrite: options.overwrite });
+      file = this.#context.project.createSourceFile(this.getFilePath(), "", { overwrite: options.overwrite });
     else
       file = this.getSourceFile();
 
@@ -91,7 +91,7 @@ export class FileTextChanges {
 
     file.applyTextChanges(this.getTextChanges());
     file._markAsInProject();
-    this._isApplied = true;
+    this.#isApplied = true;
 
     return this;
   }
@@ -100,6 +100,6 @@ export class FileTextChanges {
    * Gets if this change is for creating a new file.
    */
   isNewFile() {
-    return !!this._compilerObject.isNewFile;
+    return !!this.#compilerObject.isNewFile;
   }
 }

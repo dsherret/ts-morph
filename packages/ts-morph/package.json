@@ -48,20 +48,20 @@
     "code-block-writer": "^12.0.0"
   },
   "devDependencies": {
-    "@rollup/plugin-typescript": "^11.0.0",
-    "@types/chai": "^4.3.4",
-    "@types/diff": "^5.0.3",
-    "@types/mocha": "^10.0.1",
-    "@types/node": "^18.15.9",
-    "chai": "^4.3.7",
+    "@rollup/plugin-typescript": "^11.1.5",
+    "@types/chai": "^4.3.11",
+    "@types/diff": "^5.0.8",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.10.0",
+    "chai": "^4.3.10",
     "conditional-type-checks": "^1.0.6",
     "cross-env": "^7.0.3",
     "diff": "^5.1.0",
     "mocha": "10.2.0",
-    "rimraf": "^4.4.1",
-    "rollup": "=3.20.2",
+    "rimraf": "^5.0.5",
+    "rollup": "=4.5.2",
     "ts-node": "10.9.1",
-    "typescript": "~5.2.2"
+    "typescript": "~5.3.2"
   },
   "standard-version": {
     "tagPrefix": "",

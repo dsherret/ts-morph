@@ -36,15 +36,15 @@ export interface ProjectContextCreationParams {
  * @internal
  */
 export class ProjectContext {
-  private readonly _languageService: LanguageService | undefined;
-  private readonly _compilerOptions: CompilerOptionsContainer;
-  private readonly _customTypeChecker: TypeChecker | undefined;
-  private readonly _project: Project | undefined;
+  readonly #languageService: LanguageService | undefined;
+  readonly #compilerOptions: CompilerOptionsContainer;
+  readonly #customTypeChecker: TypeChecker | undefined;
+  readonly #project: Project | undefined;
 
   get project(): Project {
-    if (this._project == null)
+    if (this.#project == null)
       throw new errors.InvalidOperationError("This operation is not permitted in this context.");
-    return this._project;
+    return this.#project;
   }
 
   readonly logger = new ConsoleLogger();
@@ -57,15 +57,15 @@ export class ProjectContext {
   readonly inProjectCoordinator: InProjectCoordinator;
 
   constructor(params: ProjectContextCreationParams) {
-    this._project = params.project;
+    this.#project = params.project;
     this.fileSystemWrapper = params.fileSystemWrapper;
-    this._compilerOptions = params.compilerOptionsContainer;
+    this.#compilerOptions = params.compilerOptionsContainer;
     this.compilerFactory = new CompilerFactory(this);
     this.inProjectCoordinator = new InProjectCoordinator(this.compilerFactory);
     this.structurePrinterFactory = new StructurePrinterFactory(() => this.manipulationSettings.getFormatCodeSettings());
     this.lazyReferenceCoordinator = new LazyReferenceCoordinator(this.compilerFactory);
     this.directoryCoordinator = new DirectoryCoordinator(this.compilerFactory, params.fileSystemWrapper);
-    this._languageService = params.createLanguageService
+    this.#languageService = params.createLanguageService
       ? new LanguageService({
         context: this,
         configFileParsingDiagnostics: params.configFileParsingDiagnostics,
@@ -77,30 +77,30 @@ export class ProjectContext {
 
     if (params.typeChecker != null) {
       errors.throwIfTrue(params.createLanguageService, "Cannot specify a type checker and create a language service.");
-      this._customTypeChecker = new TypeChecker(this);
-      this._customTypeChecker._reset(() => params.typeChecker!);
+      this.#customTypeChecker = new TypeChecker(this);
+      this.#customTypeChecker._reset(() => params.typeChecker!);
     }
   }
 
   /** Gets the compiler options. */
   get compilerOptions() {
-    return this._compilerOptions;
+    return this.#compilerOptions;
   }
 
   /** Gets the language service. Throws an exception if it doesn't exist. */
   get languageService() {
-    if (this._languageService == null)
-      throw this.getToolRequiredError("language service");
+    if (this.#languageService == null)
+      throw this.#getToolRequiredError("language service");
 
-    return this._languageService;
+    return this.#languageService;
   }
 
   /**
    * Gets the program.
    */
   get program() {
-    if (this._languageService == null)
-      throw this.getToolRequiredError("program");
+    if (this.#languageService == null)
+      throw this.#getToolRequiredError("program");
 
     return this.languageService.getProgram();
   }
@@ -109,10 +109,10 @@ export class ProjectContext {
    * Gets the type checker.
    */
   get typeChecker() {
-    if (this._customTypeChecker != null)
-      return this._customTypeChecker;
-    if (this._languageService == null)
-      throw this.getToolRequiredError("type checker");
+    if (this.#customTypeChecker != null)
+      return this.#customTypeChecker;
+    if (this.#languageService == null)
+      throw this.#getToolRequiredError("type checker");
 
     return this.program.getTypeChecker();
   }
@@ -121,7 +121,7 @@ export class ProjectContext {
    * Gets if this object has a language service.
    */
   hasLanguageService() {
-    return this._languageService != null;
+    return this.#languageService != null;
   }
 
   /**
@@ -212,7 +212,7 @@ export class ProjectContext {
     });
   }
 
-  private getToolRequiredError(name: string) {
+  #getToolRequiredError(name: string) {
     return new errors.InvalidOperationError(
       `A ${name} is required for this operation. `
         + "This might occur when manipulating or getting type information from a node that was not added "

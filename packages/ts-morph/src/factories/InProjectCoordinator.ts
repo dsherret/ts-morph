@@ -9,17 +9,19 @@ import { CompilerFactory } from "./CompilerFactory";
  * todo: Move this to a different folder.
  */
 export class InProjectCoordinator {
-  private readonly notInProjectFiles = new Set<SourceFile>();
+  readonly #compilerFactory: CompilerFactory;
+  readonly #notInProjectFiles = new Set<SourceFile>();
 
-  constructor(private readonly compilerFactory: CompilerFactory) {
+  constructor(compilerFactory: CompilerFactory) {
     compilerFactory.onSourceFileRemoved(sourceFile => {
-      this.notInProjectFiles.delete(sourceFile);
+      this.#notInProjectFiles.delete(sourceFile);
     });
+    this.#compilerFactory = compilerFactory;
   }
 
   /** Sets the source file as not being in the project. */
   setSourceFileNotInProject(sourceFile: SourceFile) {
-    this.notInProjectFiles.add(sourceFile);
+    this.#notInProjectFiles.add(sourceFile);
     (sourceFile as any)._inProject = false;
   }
 
@@ -28,8 +30,8 @@ export class InProjectCoordinator {
     if (this.isSourceFileInProject(sourceFile))
       return;
 
-    this._internalMarkSourceFileAsInProject(sourceFile);
-    this.notInProjectFiles.delete(sourceFile);
+    this.#internalMarkSourceFileAsInProject(sourceFile);
+    this.#notInProjectFiles.delete(sourceFile);
   }
 
   /**
@@ -38,14 +40,14 @@ export class InProjectCoordinator {
    */
   markSourceFilesAsInProjectForResolution() {
     const nodeModulesSearchName = "/node_modules/";
-    const compilerFactory = this.compilerFactory;
+    const compilerFactory = this.#compilerFactory;
     const changedSourceFiles: SourceFile[] = [];
     const unchangedSourceFiles: SourceFile[] = [];
 
-    for (const sourceFile of [...this.notInProjectFiles.values()]) {
+    for (const sourceFile of [...this.#notInProjectFiles.values()]) {
       if (shouldMarkInProject(sourceFile)) {
-        this._internalMarkSourceFileAsInProject(sourceFile);
-        this.notInProjectFiles.delete(sourceFile);
+        this.#internalMarkSourceFileAsInProject(sourceFile);
+        this.#notInProjectFiles.delete(sourceFile);
         changedSourceFiles.push(sourceFile);
       } else {
         unchangedSourceFiles.push(sourceFile);
@@ -81,7 +83,7 @@ export class InProjectCoordinator {
     }
   }
 
-  private _internalMarkSourceFileAsInProject(sourceFile: SourceFile) {
+  #internalMarkSourceFileAsInProject(sourceFile: SourceFile) {
     (sourceFile as any)._inProject = true;
     this.markDirectoryAsInProject(sourceFile.getDirectory());
   }
@@ -98,7 +100,7 @@ export class InProjectCoordinator {
 
     for (const file of directory.getSourceFiles()) {
       delete (file as any)._inProject;
-      this.notInProjectFiles.add(file);
+      this.#notInProjectFiles.add(file);
     }
 
     delete (directory as any)._inProject;
@@ -110,7 +112,7 @@ export class InProjectCoordinator {
       return;
 
     const inProjectCoordinator = this;
-    const compilerFactory = this.compilerFactory;
+    const compilerFactory = this.#compilerFactory;
     (directory as any)._inProject = true;
     markAncestorDirs(directory);
 
