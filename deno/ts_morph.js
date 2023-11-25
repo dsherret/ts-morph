@@ -10,8 +10,8 @@ class AdvancedIterator {
     #isDone = false;
     #nextCount = 0;
     constructor(iterator) {
-        this.#advance();
         this.#iterator = iterator;
+        this.#advance();
     }
     get done() {
         return this.#isDone;
@@ -4164,11 +4164,6 @@ class Node {
     }
     static isArrowFunction = Node.is(SyntaxKind.ArrowFunction);
     static isAsExpression = Node.is(SyntaxKind.AsExpression);
-    static isAssertClause = Node.is(SyntaxKind.AssertClause);
-    static isAssertEntry = Node.is(SyntaxKind.AssertEntry);
-    static isAssertionKeyNamed(node) {
-        return node?.getKind() === SyntaxKind.AssertEntry;
-    }
     static isAsyncable(node) {
         switch (node?.getKind()) {
             case SyntaxKind.ArrowFunction:
@@ -4552,6 +4547,10 @@ class Node {
                 return false;
         }
     }
+    static isImportAttribute(node) {
+        return node?.getKind() === SyntaxKind.ImportAttribute;
+    }
+    static isImportAttributes = Node.is(SyntaxKind.ImportAttributes);
     static isImportClause = Node.is(SyntaxKind.ImportClause);
     static isImportDeclaration = Node.is(SyntaxKind.ImportDeclaration);
     static isImportEqualsDeclaration = Node.is(SyntaxKind.ImportEqualsDeclaration);
@@ -4559,7 +4558,6 @@ class Node {
         return node?.getKind() === SyntaxKind.ImportKeyword;
     }
     static isImportSpecifier = Node.is(SyntaxKind.ImportSpecifier);
-    static isImportTypeAssertionContainer = Node.is(SyntaxKind.ImportTypeAssertionContainer);
     static isImportTypeNode(node) {
         return node?.getKind() === SyntaxKind.ImportType;
     }
@@ -5168,7 +5166,6 @@ class Node {
     }
     static isReferenceFindable(node) {
         switch (node?.getKind()) {
-            case SyntaxKind.AssertEntry:
             case SyntaxKind.BindingElement:
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
@@ -5205,7 +5202,6 @@ class Node {
     static isRegularExpressionLiteral = Node.is(SyntaxKind.RegularExpressionLiteral);
     static isRenameable(node) {
         switch (node?.getKind()) {
-            case SyntaxKind.AssertEntry:
             case SyntaxKind.BindingElement:
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
@@ -5680,7 +5676,6 @@ class Node {
     static isYieldExpression = Node.is(SyntaxKind.YieldExpression);
     static _hasStructure(node) {
         switch (node?.getKind()) {
-            case SyntaxKind.AssertEntry:
             case SyntaxKind.CallSignature:
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassStaticBlockDeclaration:
@@ -5694,6 +5689,7 @@ class Node {
             case SyntaxKind.ExportSpecifier:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.GetAccessor:
+            case SyntaxKind.ImportAttribute:
             case SyntaxKind.ImportDeclaration:
             case SyntaxKind.ImportSpecifier:
             case SyntaxKind.IndexSignature:
@@ -6558,7 +6554,7 @@ class ClassDeclarationStructurePrinter extends NodePrinter {
 
 var StructureKind;
 (function (StructureKind) {
-    StructureKind[StructureKind["AssertEntry"] = 0] = "AssertEntry";
+    StructureKind[StructureKind["ImportAttribute"] = 0] = "ImportAttribute";
     StructureKind[StructureKind["CallSignature"] = 1] = "CallSignature";
     StructureKind[StructureKind["Class"] = 2] = "Class";
     StructureKind[StructureKind["ClassStaticBlock"] = 3] = "ClassStaticBlock";
@@ -6605,12 +6601,6 @@ var StructureKind;
 const Structure = {
     hasName(structure) {
         return typeof structure.name === "string";
-    },
-    isAssertEntry(structure) {
-        return structure?.kind === StructureKind.AssertEntry;
-    },
-    isAssertionKeyNamed(structure) {
-        return structure?.kind === StructureKind.AssertEntry;
     },
     isCallSignature(structure) {
         return structure?.kind === StructureKind.CallSignature;
@@ -6949,6 +6939,12 @@ const Structure = {
                 return false;
         }
     },
+    isImportAttribute(structure) {
+        return structure?.kind === StructureKind.ImportAttribute;
+    },
+    isImportAttributeKeyNamed(structure) {
+        return structure?.kind === StructureKind.ImportAttribute;
+    },
     isImportDeclaration(structure) {
         return structure?.kind === StructureKind.ImportDeclaration;
     },
@@ -7261,7 +7257,7 @@ function forExportAssignment(structure, callback) {
 }
 function forExportDeclaration(structure, callback) {
     return forAllIfStructure(structure.namedExports, callback, StructureKind.ExportSpecifier)
-        || forAll(structure.assertElements, callback, StructureKind.AssertEntry);
+        || forAll(structure.attributes, callback, StructureKind.ImportAttribute);
 }
 function forFunctionDeclarationOverload(structure, callback) {
     return forSignaturedDeclaration(structure, callback)
@@ -7278,7 +7274,7 @@ function forGetAccessorDeclaration(structure, callback) {
 }
 function forImportDeclaration(structure, callback) {
     return forAllIfStructure(structure.namedImports, callback, StructureKind.ImportSpecifier)
-        || forAll(structure.assertElements, callback, StructureKind.AssertEntry);
+        || forAll(structure.attributes, callback, StructureKind.ImportAttribute);
 }
 function forIndexSignatureDeclaration(structure, callback) {
     return forJSDocableNode(structure, callback);
@@ -8335,26 +8331,6 @@ class JsxSpreadAttributeStructurePrinter extends NodePrinter {
     }
 }
 
-class AssertEntryStructurePrinter extends NodePrinter {
-    #multipleWriter = new CommaNewLineSeparatedStructuresPrinter(this);
-    printTexts(writer, structures) {
-        this.#multipleWriter.printText(writer, structures);
-    }
-    printAssertClause(writer, structures) {
-        if (!structures)
-            return;
-        writer.write("assert ");
-        writer.inlineBlock(() => {
-            this.printTexts(writer, structures);
-        });
-    }
-    printTextInternal(writer, structure) {
-        writer.write(structure.name);
-        writer.write(": ");
-        writer.quote(structure.value);
-    }
-}
-
 class ExportAssignmentStructurePrinter extends NodePrinter {
     #multipleWriter = new NewLineFormattingStructuresPrinter(this);
     printTexts(writer, structures) {
@@ -8405,11 +8381,31 @@ class ExportDeclarationStructurePrinter extends NodePrinter {
             writer.write(" from ");
             writer.quote(structure.moduleSpecifier);
         }
-        if (structure.assertElements) {
+        if (structure.attributes) {
             writer.space();
-            this.factory.forAssertEntry().printAssertClause(writer, structure.assertElements);
+            this.factory.forImportAttribute().printAttributes(writer, structure.attributes);
         }
         writer.write(";");
+    }
+}
+
+class ImportAttributeStructurePrinter extends NodePrinter {
+    #multipleWriter = new CommaNewLineSeparatedStructuresPrinter(this);
+    printTexts(writer, structures) {
+        this.#multipleWriter.printText(writer, structures);
+    }
+    printAttributes(writer, structures) {
+        if (!structures)
+            return;
+        writer.write("with ");
+        writer.inlineBlock(() => {
+            this.printTexts(writer, structures);
+        });
+    }
+    printTextInternal(writer, structure) {
+        writer.write(structure.name);
+        writer.write(": ");
+        writer.quote(structure.value);
     }
 }
 
@@ -8438,9 +8434,9 @@ class ImportDeclarationStructurePrinter extends NodePrinter {
         writer.conditionalWrite(structure.defaultImport != null || hasNamedImport || structure.namespaceImport != null, " from");
         writer.write(" ");
         writer.quote(structure.moduleSpecifier);
-        if (structure.assertElements) {
+        if (structure.attributes) {
             writer.space();
-            this.factory.forAssertEntry().printAssertClause(writer, structure.assertElements);
+            this.factory.forImportAttribute().printAttributes(writer, structure.attributes);
         }
         writer.write(";");
     }
@@ -9486,12 +9482,12 @@ function RenameableNode(Base) {
     };
 }
 
-function AssertionKeyNamedNode(Base) {
+function BindingNamedNode(Base) {
     const base = ReferenceFindableNode(RenameableNode(Base));
     return NamedNodeBase(base);
 }
 
-function BindingNamedNode(Base) {
+function ImportAttributeNamedNode(Base) {
     const base = ReferenceFindableNode(RenameableNode(Base));
     return NamedNodeBase(base);
 }
@@ -11772,46 +11768,6 @@ class TryStatement extends TryStatementBase {
     }
 }
 
-const AssertClauseBase = Node;
-class AssertClause extends AssertClauseBase {
-    setElements(elements) {
-        this.replaceWithText(writer => {
-            const structurePrinter = this._context.structurePrinterFactory.forAssertEntry();
-            structurePrinter.printAssertClause(writer, elements);
-        });
-        return this;
-    }
-    getElements() {
-        return this.compilerNode.elements.map(e => this._getNodeFromCompilerNode(e));
-    }
-    remove() {
-        removeChildren({
-            children: [this],
-            removePrecedingNewLines: true,
-            removePrecedingSpaces: true,
-        });
-    }
-}
-
-const AssertEntryBase = AssertionKeyNamedNode(Node);
-class AssertEntry extends AssertEntryBase {
-    getValue() {
-        return this._getNodeFromCompilerNode(this.compilerNode.value);
-    }
-    set(structure) {
-        callBaseSet(AssertEntryBase.prototype, this, structure);
-        if (structure.value)
-            this.getValue().replaceWithText(structure.value);
-        return this;
-    }
-    getStructure() {
-        return callBaseGetStructure(AssertEntryBase.prototype, this, {
-            kind: StructureKind.AssertEntry,
-            value: this.getValue().getText(),
-        });
-    }
-}
-
 const ExportAssignmentBase = ExpressionedNode(JSDocableNode(Statement));
 class ExportAssignment extends ExportAssignmentBase {
     isExportEquals() {
@@ -12052,19 +12008,19 @@ class ExportDeclaration extends ExportDeclarationBase {
         });
         return this;
     }
-    setAssertElements(elements) {
-        let assertClause = this.getAssertClause();
-        if (assertClause) {
+    setAttributes(elements) {
+        let attributes = this.getAttributes();
+        if (attributes) {
             if (elements)
-                assertClause.setElements(elements);
+                attributes.setElements(elements);
             else
-                assertClause.remove();
+                attributes.remove();
         }
         else if (elements) {
-            const printer = this._context.structurePrinterFactory.forAssertEntry();
+            const printer = this._context.structurePrinterFactory.forImportAttribute();
             const writer = this._context.createWriter();
             writer.space();
-            printer.printAssertClause(writer, elements);
+            printer.printAttributes(writer, elements);
             insertIntoParentTextRange({
                 parent: this,
                 newText: writer.toString(),
@@ -12073,8 +12029,8 @@ class ExportDeclaration extends ExportDeclarationBase {
         }
         return this;
     }
-    getAssertClause() {
-        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.assertClause);
+    getAttributes() {
+        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.attributes);
     }
     set(structure) {
         callBaseSet(ExportDeclarationBase.prototype, this, structure);
@@ -12095,20 +12051,20 @@ class ExportDeclaration extends ExportDeclarationBase {
             this.setNamespaceExport(structure.namespaceExport);
         if (structure.isTypeOnly != null)
             this.setIsTypeOnly(structure.isTypeOnly);
-        if (structure.hasOwnProperty(nameof(structure, "assertElements")))
-            this.setAssertElements(structure.assertElements);
+        if (structure.hasOwnProperty(nameof(structure, "attributes")))
+            this.setAttributes(structure.attributes);
         return this;
     }
     getStructure() {
         const moduleSpecifier = this.getModuleSpecifier();
-        const assertClause = this.getAssertClause();
+        const attributes = this.getAttributes();
         return callBaseGetStructure(ExportDeclarationBase.prototype, this, {
             kind: StructureKind.ExportDeclaration,
             isTypeOnly: this.isTypeOnly(),
             moduleSpecifier: moduleSpecifier?.getLiteralText(),
             namedExports: this.getNamedExports().map(node => node.getStructure()),
             namespaceExport: this.getNamespaceExport()?.getName(),
-            assertElements: assertClause ? assertClause.getElements().map(e => e.getStructure()) : undefined,
+            attributes: attributes ? attributes.getElements().map(e => e.getStructure()) : undefined,
         });
     }
 }
@@ -12288,6 +12244,46 @@ class ExternalModuleReference extends ExternalModuleReferenceBase {
         if (symbol == null)
             return undefined;
         return ModuleUtils.getReferencedSourceFileFromSymbol(symbol);
+    }
+}
+
+const ImportAttributeBase = ImportAttributeNamedNode(Node);
+class ImportAttribute extends ImportAttributeBase {
+    getValue() {
+        return this._getNodeFromCompilerNode(this.compilerNode.value);
+    }
+    set(structure) {
+        callBaseSet(ImportAttribute.prototype, this, structure);
+        if (structure.value)
+            this.getValue().replaceWithText(structure.value);
+        return this;
+    }
+    getStructure() {
+        return callBaseGetStructure(ImportAttribute.prototype, this, {
+            kind: StructureKind.ImportAttribute,
+            value: this.getValue().getText(),
+        });
+    }
+}
+
+const ImportAttributesBase = Node;
+class ImportAttributes extends ImportAttributesBase {
+    setElements(elements) {
+        this.replaceWithText(writer => {
+            const structurePrinter = this._context.structurePrinterFactory.forImportAttribute();
+            structurePrinter.printAttributes(writer, elements);
+        });
+        return this;
+    }
+    getElements() {
+        return this.compilerNode.elements.map(e => this._getNodeFromCompilerNode(e));
+    }
+    remove() {
+        removeChildren({
+            children: [this],
+            removePrecedingNewLines: true,
+            removePrecedingSpaces: true,
+        });
     }
 }
 
@@ -12591,19 +12587,19 @@ class ImportDeclaration extends ImportDeclarationBase {
     getImportClause() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.importClause);
     }
-    setAssertElements(elements) {
-        let assertClause = this.getAssertClause();
-        if (assertClause) {
+    setAttributes(elements) {
+        let attributes = this.getAttributes();
+        if (attributes) {
             if (elements)
-                assertClause.setElements(elements);
+                attributes.setElements(elements);
             else
-                assertClause.remove();
+                attributes.remove();
         }
         else if (elements) {
-            const printer = this._context.structurePrinterFactory.forAssertEntry();
+            const printer = this._context.structurePrinterFactory.forImportAttribute();
             const writer = this._context.createWriter();
             writer.space();
-            printer.printAssertClause(writer, elements);
+            printer.printAttributes(writer, elements);
             insertIntoParentTextRange({
                 parent: this,
                 newText: writer.toString(),
@@ -12612,8 +12608,8 @@ class ImportDeclaration extends ImportDeclarationBase {
         }
         return this;
     }
-    getAssertClause() {
-        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.assertClause);
+    getAttributes() {
+        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.attributes);
     }
     set(structure) {
         callBaseSet(ImportDeclarationBase.prototype, this, structure);
@@ -12635,14 +12631,14 @@ class ImportDeclaration extends ImportDeclarationBase {
             this.setModuleSpecifier(structure.moduleSpecifier);
         if (structure.isTypeOnly != null)
             this.setIsTypeOnly(structure.isTypeOnly);
-        if (structure.hasOwnProperty(nameof(structure, "assertElements")))
-            this.setAssertElements(structure.assertElements);
+        if (structure.hasOwnProperty(nameof(structure, "attributes")))
+            this.setAttributes(structure.attributes);
         return this;
     }
     getStructure() {
         const namespaceImport = this.getNamespaceImport();
         const defaultImport = this.getDefaultImport();
-        const assertClause = this.getAssertClause();
+        const attributes = this.getAttributes();
         return callBaseGetStructure(ImportDeclarationBase.prototype, this, {
             kind: StructureKind.ImportDeclaration,
             isTypeOnly: this.isTypeOnly(),
@@ -12650,7 +12646,7 @@ class ImportDeclaration extends ImportDeclarationBase {
             moduleSpecifier: this.getModuleSpecifier().getLiteralText(),
             namedImports: this.getNamedImports().map(node => node.getStructure()),
             namespaceImport: namespaceImport ? namespaceImport.getText() : undefined,
-            assertElements: assertClause ? assertClause.getElements().map(e => e.getStructure()) : undefined,
+            attributes: attributes ? attributes.getElements().map(e => e.getStructure()) : undefined,
         });
     }
 }
@@ -15275,15 +15271,6 @@ const FunctionTypeNodeBase = TypeParameteredNode(FunctionOrConstructorTypeNodeBa
 class FunctionTypeNode extends FunctionTypeNodeBase {
 }
 
-class ImportTypeAssertionContainer extends Node {
-    getAssertClause() {
-        return this._getNodeFromCompilerNode(this.compilerNode.assertClause);
-    }
-    isMultiline() {
-        return this.compilerNode.multiLine ?? false;
-    }
-}
-
 class ImportTypeNode extends NodeWithTypeArguments {
     setArgument(text) {
         const arg = this.getArgument();
@@ -15320,11 +15307,11 @@ class ImportTypeNode extends NodeWithTypeArguments {
     getQualifier() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.qualifier);
     }
-    getAssertions() {
-        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.assertions);
+    getAttributes() {
+        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.attributes);
     }
-    getAssertionsOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this._getNodeFromCompilerNodeIfExists(this.compilerNode.assertions), message ?? "Could not find import type assertion container.", this);
+    getAttributesOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this._getNodeFromCompilerNodeIfExists(this.compilerNode.attributes), message ?? "Could not find import type assertion container.", this);
     }
 }
 
@@ -19159,8 +19146,6 @@ const kindToWrapperMappings = {
     [SyntaxKind.ArrayType]: ArrayTypeNode,
     [SyntaxKind.ArrowFunction]: ArrowFunction,
     [SyntaxKind.AsExpression]: AsExpression,
-    [SyntaxKind.AssertClause]: AssertClause,
-    [SyntaxKind.AssertEntry]: AssertEntry,
     [SyntaxKind.AwaitExpression]: AwaitExpression,
     [SyntaxKind.BigIntLiteral]: BigIntLiteral,
     [SyntaxKind.BindingElement]: BindingElement,
@@ -19214,7 +19199,8 @@ const kindToWrapperMappings = {
     [SyntaxKind.ImportEqualsDeclaration]: ImportEqualsDeclaration,
     [SyntaxKind.ImportSpecifier]: ImportSpecifier,
     [SyntaxKind.ImportType]: ImportTypeNode,
-    [SyntaxKind.ImportTypeAssertionContainer]: ImportTypeAssertionContainer,
+    [SyntaxKind.ImportAttribute]: ImportAttribute,
+    [SyntaxKind.ImportAttributes]: ImportAttributes,
     [SyntaxKind.IndexedAccessType]: IndexedAccessTypeNode,
     [SyntaxKind.IndexSignature]: IndexSignatureDeclaration,
     [SyntaxKind.InferType]: InferTypeNode,
@@ -19821,12 +19807,12 @@ class InProjectCoordinator {
 }
 
 class StructurePrinterFactory {
-    #getFormatCodeSettings;
+    _getFormatCodeSettings;
     constructor(_getFormatCodeSettings) {
-        this.#getFormatCodeSettings = _getFormatCodeSettings;
+        this._getFormatCodeSettings = _getFormatCodeSettings;
     }
     getFormatCodeSettings() {
-        return this.#getFormatCodeSettings();
+        return this._getFormatCodeSettings();
     }
     forInitializerExpressionableNode() {
         return new InitializerExpressionableNodeStructurePrinter();
@@ -19942,14 +19928,14 @@ class StructurePrinterFactory {
     forJsxSpreadAttribute() {
         return new JsxSpreadAttributeStructurePrinter(this);
     }
-    forAssertEntry() {
-        return new AssertEntryStructurePrinter(this);
-    }
     forExportAssignment() {
         return new ExportAssignmentStructurePrinter(this);
     }
     forExportDeclaration() {
         return new ExportDeclarationStructurePrinter(this);
+    }
+    forImportAttribute() {
+        return new ImportAttributeStructurePrinter(this);
     }
     forImportDeclaration() {
         return new ImportDeclarationStructurePrinter(this);
@@ -20098,13 +20084,13 @@ __decorate([
 ], StructurePrinterFactory.prototype, "forJsxSpreadAttribute", null);
 __decorate([
     Memoize
-], StructurePrinterFactory.prototype, "forAssertEntry", null);
-__decorate([
-    Memoize
 ], StructurePrinterFactory.prototype, "forExportAssignment", null);
 __decorate([
     Memoize
 ], StructurePrinterFactory.prototype, "forExportDeclaration", null);
+__decorate([
+    Memoize
+], StructurePrinterFactory.prototype, "forImportAttribute", null);
 __decorate([
     Memoize
 ], StructurePrinterFactory.prototype, "forImportDeclaration", null);
@@ -20710,4 +20696,4 @@ function writeValue(writer, value) {
 
 const { InvalidOperationError, FileNotFoundError, ArgumentError, ArgumentNullOrWhitespaceError, ArgumentOutOfRangeError, ArgumentTypeError, BaseError, DirectoryNotFoundError, NotImplementedError, NotSupportedError, PathNotFoundError, } = errors;
 
-export { AbstractableNode, AmbientableNode, ArgumentError, ArgumentNullOrWhitespaceError, ArgumentOutOfRangeError, ArgumentTypeError, ArgumentedNode, ArrayBindingPattern, ArrayDestructuringAssignment, ArrayDestructuringAssignmentBase, ArrayLiteralExpression, ArrayTypeNode, ArrowFunction, ArrowFunctionBase, AsExpression, AsExpressionBase, AssertClause, AssertClauseBase, AssertEntry, AssertEntryBase, AssertionKeyNamedNode, AssignmentExpression, AssignmentExpressionBase, AsyncableNode, AwaitExpression, AwaitExpressionBase, AwaitableNode, BaseError, BaseExpressionedNode, BigIntLiteral, BigIntLiteralBase, BinaryExpression, BinaryExpressionBase, BindingElement, BindingElementBase, BindingNamedNode, Block, BlockBase, BodiedNode, BodyableNode, BreakStatement, CallExpression, CallExpressionBase, CallSignatureDeclaration, CallSignatureDeclarationBase, CaseBlock, CaseBlockBase, CaseClause, CaseClauseBase, CatchClause, CatchClauseBase, ChildOrderableNode, ClassDeclaration, ClassDeclarationBase, ClassElement, ClassExpression, ClassExpressionBase, ClassLikeDeclarationBase, ClassLikeDeclarationBaseSpecific, ClassStaticBlockDeclaration, ClassStaticBlockDeclarationBase, CodeAction, CodeFixAction, CombinedCodeActions, CommaListExpression, CommaListExpressionBase, CommentClassElement, CommentEnumMember, CommentNodeKind, CommentObjectLiteralElement, CommentRange, CommentStatement, CommentTypeElement, CommonIdentifierBase, CompilerCommentClassElement, CompilerCommentEnumMember, CompilerCommentNode, CompilerCommentObjectLiteralElement, CompilerCommentStatement, CompilerCommentTypeElement, ComputedPropertyName, ComputedPropertyNameBase, ConditionalExpression, ConditionalExpressionBase, ConditionalTypeNode, ConstructSignatureDeclaration, ConstructSignatureDeclarationBase, ConstructorDeclaration, ConstructorDeclarationBase, ConstructorDeclarationOverloadBase, ConstructorTypeNode, ConstructorTypeNodeBase, ContinueStatement, DebuggerStatement, DebuggerStatementBase, DecoratableNode, Decorator, DecoratorBase, DefaultClause, DefaultClauseBase, DefinitionInfo, DeleteExpression, DeleteExpressionBase, Diagnostic, DiagnosticMessageChain, DiagnosticWithLocation, Directory, DirectoryEmitResult, DirectoryNotFoundError, DoStatement, DoStatementBase, DocumentSpan, DotDotDotTokenableNode, ElementAccessExpression, ElementAccessExpressionBase, EmitOutput, EmitResult, EmptyStatement, EmptyStatementBase, EnumDeclaration, EnumDeclarationBase, EnumMember, EnumMemberBase, ExclamationTokenableNode, ExportAssignment, ExportAssignmentBase, ExportDeclaration, ExportDeclarationBase, ExportGetableNode, ExportSpecifier, ExportSpecifierBase, ExportableNode, Expression, ExpressionStatement, ExpressionStatementBase, ExpressionWithTypeArguments, ExpressionWithTypeArgumentsBase, ExpressionableNode, ExpressionedNode, ExtendsClauseableNode, ExternalModuleReference, ExternalModuleReferenceBase, FalseLiteral, FalseLiteralBase, FileNotFoundError, FileReference, FileSystemRefreshResult, FileTextChanges, ForInStatement, ForInStatementBase, ForOfStatement, ForOfStatementBase, ForStatement, ForStatementBase, FunctionDeclaration, FunctionDeclarationBase, FunctionDeclarationOverloadBase, FunctionExpression, FunctionExpressionBase, FunctionLikeDeclaration, FunctionOrConstructorTypeNodeBase, FunctionOrConstructorTypeNodeBaseBase, FunctionTypeNode, FunctionTypeNodeBase, GeneratorableNode, GetAccessorDeclaration, GetAccessorDeclarationBase, HeritageClause, HeritageClauseableNode, Identifier, IdentifierBase, IfStatement, IfStatementBase, ImplementationLocation, ImplementsClauseableNode, ImportClause, ImportClauseBase, ImportDeclaration, ImportDeclarationBase, ImportEqualsDeclaration, ImportEqualsDeclarationBase, ImportExpression, ImportExpressionBase, ImportExpressionedNode, ImportSpecifier, ImportSpecifierBase, ImportTypeAssertionContainer, ImportTypeNode, IndentationText, IndexSignatureDeclaration, IndexSignatureDeclarationBase, IndexedAccessTypeNode, InferTypeNode, InitializerExpressionGetableNode, InitializerExpressionableNode, InterfaceDeclaration, InterfaceDeclarationBase, IntersectionTypeNode, InvalidOperationError, IterationStatement, JSDoc, JSDocAllType, JSDocAugmentsTag, JSDocAuthorTag, JSDocBase, JSDocCallbackTag, JSDocClassTag, JSDocDeprecatedTag, JSDocEnumTag, JSDocFunctionType, JSDocFunctionTypeBase, JSDocImplementsTag, JSDocLink, JSDocLinkCode, JSDocLinkPlain, JSDocMemberName, JSDocNameReference, JSDocNamepathType, JSDocNonNullableType, JSDocNullableType, JSDocOptionalType, JSDocOverloadTag, JSDocOverloadTagBase, JSDocOverrideTag, JSDocParameterTag, JSDocParameterTagBase, JSDocPrivateTag, JSDocPropertyLikeTag, JSDocPropertyTag, JSDocPropertyTagBase, JSDocProtectedTag, JSDocPublicTag, JSDocReadonlyTag, JSDocReturnTag, JSDocReturnTagBase, JSDocSatisfiesTag, JSDocSatisfiesTagBase, JSDocSeeTag, JSDocSeeTagBase, JSDocSignature, JSDocTag, JSDocTagBase, JSDocTagInfo, JSDocTemplateTag, JSDocTemplateTagBase, JSDocText, JSDocThisTag, JSDocThisTagBase, JSDocThrowsTag, JSDocThrowsTagBase, JSDocType, JSDocTypeExpression, JSDocTypeExpressionableTag, JSDocTypeLiteral, JSDocTypeParameteredTag, JSDocTypeTag, JSDocTypedefTag, JSDocUnknownTag, JSDocUnknownType, JSDocVariadicType, JSDocableNode, JsxAttribute, JsxAttributeBase, JsxAttributedNode, JsxClosingElement, JsxClosingElementBase, JsxClosingFragment, JsxElement, JsxElementBase, JsxExpression, JsxExpressionBase, JsxFragment, JsxNamespacedName, JsxNamespacedNameBase, JsxOpeningElement, JsxOpeningElementBase, JsxOpeningFragment, JsxSelfClosingElement, JsxSelfClosingElementBase, JsxSpreadAttribute, JsxSpreadAttributeBase, JsxTagNamedNode, JsxText, JsxTextBase, LabeledStatement, LabeledStatementBase, LanguageService, LeftHandSideExpression, LeftHandSideExpressionedNode, LiteralExpression, LiteralExpressionBase, LiteralLikeNode, LiteralTypeNode, ManipulationError, ManipulationSettingsContainer, MappedTypeNode, MemberExpression, MemoryEmitResult, MetaProperty, MetaPropertyBase, MethodDeclaration, MethodDeclarationBase, MethodDeclarationOverloadBase, MethodSignature, MethodSignatureBase, ModifierableNode, ModuleBlock, ModuleBlockBase, ModuleChildableNode, ModuleDeclaration, ModuleDeclarationBase, ModuleDeclarationKind, ModuleNamedNode, ModuledNode, NameableNode, NamedExports, NamedExportsBase, NamedImports, NamedImportsBase, NamedNode, NamedNodeBase, NamedTupleMember, NamedTupleMemberBase, NamespaceExport, NamespaceExportBase, NamespaceImport, NamespaceImportBase, NewExpression, NewExpressionBase, NoSubstitutionTemplateLiteral, NoSubstitutionTemplateLiteralBase, Node, NodeWithTypeArguments, NodeWithTypeArgumentsBase, NonNullExpression, NonNullExpressionBase, NotEmittedStatement, NotEmittedStatementBase, NotImplementedError, NotSupportedError, NullLiteral, NullLiteralBase, NumericLiteral, NumericLiteralBase, ObjectBindingPattern, ObjectDestructuringAssignment, ObjectDestructuringAssignmentBase, ObjectLiteralElement, ObjectLiteralExpression, ObjectLiteralExpressionBase, OmittedExpression, OmittedExpressionBase, OutputFile, OverloadableNode, OverrideableNode, ParameterDeclaration, ParameterDeclarationBase, ParameteredNode, ParenthesizedExpression, ParenthesizedExpressionBase, ParenthesizedTypeNode, PartiallyEmittedExpression, PartiallyEmittedExpressionBase, PathNotFoundError, PostfixUnaryExpression, PostfixUnaryExpressionBase, PrefixUnaryExpression, PrefixUnaryExpressionBase, PrimaryExpression, PrivateIdentifier, PrivateIdentifierBase, Program, Project, PropertyAccessExpression, PropertyAccessExpressionBase, PropertyAssignment, PropertyAssignmentBase, PropertyDeclaration, PropertyDeclarationBase, PropertyNamedNode, PropertySignature, PropertySignatureBase, QualifiedName, QuestionDotTokenableNode, QuestionTokenableNode, QuoteKind, ReadonlyableNode, RefactorEditInfo, ReferenceEntry, ReferenceFindableNode, ReferencedSymbol, ReferencedSymbolDefinitionInfo, ReferencedSymbolEntry, RegularExpressionLiteral, RegularExpressionLiteralBase, RenameLocation, RenameableNode, RestTypeNode, ReturnStatement, ReturnStatementBase, ReturnTypedNode, SatisfiesExpression, SatisfiesExpressionBase, Scope, ScopeableNode, ScopedNode, SetAccessorDeclaration, SetAccessorDeclarationBase, ShorthandPropertyAssignment, ShorthandPropertyAssignmentBase, Signature, SignaturedDeclaration, SourceFile, SourceFileBase, SpreadAssignment, SpreadAssignmentBase, SpreadElement, SpreadElementBase, Statement, StatementBase, StatementedNode, StaticableNode, StringLiteral, StringLiteralBase, Structure, StructureKind, SuperElementAccessExpression, SuperElementAccessExpressionBase, SuperExpression, SuperExpressionBase, SuperExpressionedNode, SuperPropertyAccessExpression, SuperPropertyAccessExpressionBase, SwitchStatement, SwitchStatementBase, Symbol, SymbolDisplayPart, SyntaxList, TaggedTemplateExpression, TemplateExpression, TemplateExpressionBase, TemplateHead, TemplateHeadBase, TemplateLiteralTypeNode, TemplateMiddle, TemplateMiddleBase, TemplateSpan, TemplateSpanBase, TemplateTail, TemplateTailBase, TextChange, TextInsertableNode, TextRange, TextSpan, ThisExpression, ThisExpressionBase, ThisTypeNode, ThrowStatement, ThrowStatementBase, TrueLiteral, TrueLiteralBase, TryStatement, TryStatementBase, TupleTypeNode, Type, TypeAliasDeclaration, TypeAliasDeclarationBase, TypeArgumentedNode, TypeAssertion, TypeAssertionBase, TypeChecker, TypeElement, TypeElementMemberedNode, TypeLiteralNode, TypeLiteralNodeBase, TypeNode, TypeOfExpression, TypeOfExpressionBase, TypeOperatorTypeNode, TypeParameter, TypeParameterDeclaration, TypeParameterDeclarationBase, TypeParameterVariance, TypeParameteredNode, TypePredicateNode, TypeQueryNode, TypeReferenceNode, TypedNode, UnaryExpression, UnaryExpressionedNode, UnionTypeNode, UnwrappableNode, UpdateExpression, VariableDeclaration, VariableDeclarationBase, VariableDeclarationKind, VariableDeclarationList, VariableDeclarationListBase, VariableStatement, VariableStatementBase, VoidExpression, VoidExpressionBase, WhileStatement, WhileStatementBase, WithStatement, WithStatementBase, Writers, YieldExpression, YieldExpressionBase, createWrappedNode, forEachStructureChild, getCompilerOptionsFromTsConfig, getScopeForNode, insertOverloads, printNode, setScopeForNode };
+export { AbstractableNode, AmbientableNode, ArgumentError, ArgumentNullOrWhitespaceError, ArgumentOutOfRangeError, ArgumentTypeError, ArgumentedNode, ArrayBindingPattern, ArrayDestructuringAssignment, ArrayDestructuringAssignmentBase, ArrayLiteralExpression, ArrayTypeNode, ArrowFunction, ArrowFunctionBase, AsExpression, AsExpressionBase, AssignmentExpression, AssignmentExpressionBase, AsyncableNode, AwaitExpression, AwaitExpressionBase, AwaitableNode, BaseError, BaseExpressionedNode, BigIntLiteral, BigIntLiteralBase, BinaryExpression, BinaryExpressionBase, BindingElement, BindingElementBase, BindingNamedNode, Block, BlockBase, BodiedNode, BodyableNode, BreakStatement, CallExpression, CallExpressionBase, CallSignatureDeclaration, CallSignatureDeclarationBase, CaseBlock, CaseBlockBase, CaseClause, CaseClauseBase, CatchClause, CatchClauseBase, ChildOrderableNode, ClassDeclaration, ClassDeclarationBase, ClassElement, ClassExpression, ClassExpressionBase, ClassLikeDeclarationBase, ClassLikeDeclarationBaseSpecific, ClassStaticBlockDeclaration, ClassStaticBlockDeclarationBase, CodeAction, CodeFixAction, CombinedCodeActions, CommaListExpression, CommaListExpressionBase, CommentClassElement, CommentEnumMember, CommentNodeKind, CommentObjectLiteralElement, CommentRange, CommentStatement, CommentTypeElement, CommonIdentifierBase, CompilerCommentClassElement, CompilerCommentEnumMember, CompilerCommentNode, CompilerCommentObjectLiteralElement, CompilerCommentStatement, CompilerCommentTypeElement, ComputedPropertyName, ComputedPropertyNameBase, ConditionalExpression, ConditionalExpressionBase, ConditionalTypeNode, ConstructSignatureDeclaration, ConstructSignatureDeclarationBase, ConstructorDeclaration, ConstructorDeclarationBase, ConstructorDeclarationOverloadBase, ConstructorTypeNode, ConstructorTypeNodeBase, ContinueStatement, DebuggerStatement, DebuggerStatementBase, DecoratableNode, Decorator, DecoratorBase, DefaultClause, DefaultClauseBase, DefinitionInfo, DeleteExpression, DeleteExpressionBase, Diagnostic, DiagnosticMessageChain, DiagnosticWithLocation, Directory, DirectoryEmitResult, DirectoryNotFoundError, DoStatement, DoStatementBase, DocumentSpan, DotDotDotTokenableNode, ElementAccessExpression, ElementAccessExpressionBase, EmitOutput, EmitResult, EmptyStatement, EmptyStatementBase, EnumDeclaration, EnumDeclarationBase, EnumMember, EnumMemberBase, ExclamationTokenableNode, ExportAssignment, ExportAssignmentBase, ExportDeclaration, ExportDeclarationBase, ExportGetableNode, ExportSpecifier, ExportSpecifierBase, ExportableNode, Expression, ExpressionStatement, ExpressionStatementBase, ExpressionWithTypeArguments, ExpressionWithTypeArgumentsBase, ExpressionableNode, ExpressionedNode, ExtendsClauseableNode, ExternalModuleReference, ExternalModuleReferenceBase, FalseLiteral, FalseLiteralBase, FileNotFoundError, FileReference, FileSystemRefreshResult, FileTextChanges, ForInStatement, ForInStatementBase, ForOfStatement, ForOfStatementBase, ForStatement, ForStatementBase, FunctionDeclaration, FunctionDeclarationBase, FunctionDeclarationOverloadBase, FunctionExpression, FunctionExpressionBase, FunctionLikeDeclaration, FunctionOrConstructorTypeNodeBase, FunctionOrConstructorTypeNodeBaseBase, FunctionTypeNode, FunctionTypeNodeBase, GeneratorableNode, GetAccessorDeclaration, GetAccessorDeclarationBase, HeritageClause, HeritageClauseableNode, Identifier, IdentifierBase, IfStatement, IfStatementBase, ImplementationLocation, ImplementsClauseableNode, ImportAttribute, ImportAttributeBase, ImportAttributeNamedNode, ImportAttributes, ImportAttributesBase, ImportClause, ImportClauseBase, ImportDeclaration, ImportDeclarationBase, ImportEqualsDeclaration, ImportEqualsDeclarationBase, ImportExpression, ImportExpressionBase, ImportExpressionedNode, ImportSpecifier, ImportSpecifierBase, ImportTypeNode, IndentationText, IndexSignatureDeclaration, IndexSignatureDeclarationBase, IndexedAccessTypeNode, InferTypeNode, InitializerExpressionGetableNode, InitializerExpressionableNode, InterfaceDeclaration, InterfaceDeclarationBase, IntersectionTypeNode, InvalidOperationError, IterationStatement, JSDoc, JSDocAllType, JSDocAugmentsTag, JSDocAuthorTag, JSDocBase, JSDocCallbackTag, JSDocClassTag, JSDocDeprecatedTag, JSDocEnumTag, JSDocFunctionType, JSDocFunctionTypeBase, JSDocImplementsTag, JSDocLink, JSDocLinkCode, JSDocLinkPlain, JSDocMemberName, JSDocNameReference, JSDocNamepathType, JSDocNonNullableType, JSDocNullableType, JSDocOptionalType, JSDocOverloadTag, JSDocOverloadTagBase, JSDocOverrideTag, JSDocParameterTag, JSDocParameterTagBase, JSDocPrivateTag, JSDocPropertyLikeTag, JSDocPropertyTag, JSDocPropertyTagBase, JSDocProtectedTag, JSDocPublicTag, JSDocReadonlyTag, JSDocReturnTag, JSDocReturnTagBase, JSDocSatisfiesTag, JSDocSatisfiesTagBase, JSDocSeeTag, JSDocSeeTagBase, JSDocSignature, JSDocTag, JSDocTagBase, JSDocTagInfo, JSDocTemplateTag, JSDocTemplateTagBase, JSDocText, JSDocThisTag, JSDocThisTagBase, JSDocThrowsTag, JSDocThrowsTagBase, JSDocType, JSDocTypeExpression, JSDocTypeExpressionableTag, JSDocTypeLiteral, JSDocTypeParameteredTag, JSDocTypeTag, JSDocTypedefTag, JSDocUnknownTag, JSDocUnknownType, JSDocVariadicType, JSDocableNode, JsxAttribute, JsxAttributeBase, JsxAttributedNode, JsxClosingElement, JsxClosingElementBase, JsxClosingFragment, JsxElement, JsxElementBase, JsxExpression, JsxExpressionBase, JsxFragment, JsxNamespacedName, JsxNamespacedNameBase, JsxOpeningElement, JsxOpeningElementBase, JsxOpeningFragment, JsxSelfClosingElement, JsxSelfClosingElementBase, JsxSpreadAttribute, JsxSpreadAttributeBase, JsxTagNamedNode, JsxText, JsxTextBase, LabeledStatement, LabeledStatementBase, LanguageService, LeftHandSideExpression, LeftHandSideExpressionedNode, LiteralExpression, LiteralExpressionBase, LiteralLikeNode, LiteralTypeNode, ManipulationError, ManipulationSettingsContainer, MappedTypeNode, MemberExpression, MemoryEmitResult, MetaProperty, MetaPropertyBase, MethodDeclaration, MethodDeclarationBase, MethodDeclarationOverloadBase, MethodSignature, MethodSignatureBase, ModifierableNode, ModuleBlock, ModuleBlockBase, ModuleChildableNode, ModuleDeclaration, ModuleDeclarationBase, ModuleDeclarationKind, ModuleNamedNode, ModuledNode, NameableNode, NamedExports, NamedExportsBase, NamedImports, NamedImportsBase, NamedNode, NamedNodeBase, NamedTupleMember, NamedTupleMemberBase, NamespaceExport, NamespaceExportBase, NamespaceImport, NamespaceImportBase, NewExpression, NewExpressionBase, NoSubstitutionTemplateLiteral, NoSubstitutionTemplateLiteralBase, Node, NodeWithTypeArguments, NodeWithTypeArgumentsBase, NonNullExpression, NonNullExpressionBase, NotEmittedStatement, NotEmittedStatementBase, NotImplementedError, NotSupportedError, NullLiteral, NullLiteralBase, NumericLiteral, NumericLiteralBase, ObjectBindingPattern, ObjectDestructuringAssignment, ObjectDestructuringAssignmentBase, ObjectLiteralElement, ObjectLiteralExpression, ObjectLiteralExpressionBase, OmittedExpression, OmittedExpressionBase, OutputFile, OverloadableNode, OverrideableNode, ParameterDeclaration, ParameterDeclarationBase, ParameteredNode, ParenthesizedExpression, ParenthesizedExpressionBase, ParenthesizedTypeNode, PartiallyEmittedExpression, PartiallyEmittedExpressionBase, PathNotFoundError, PostfixUnaryExpression, PostfixUnaryExpressionBase, PrefixUnaryExpression, PrefixUnaryExpressionBase, PrimaryExpression, PrivateIdentifier, PrivateIdentifierBase, Program, Project, PropertyAccessExpression, PropertyAccessExpressionBase, PropertyAssignment, PropertyAssignmentBase, PropertyDeclaration, PropertyDeclarationBase, PropertyNamedNode, PropertySignature, PropertySignatureBase, QualifiedName, QuestionDotTokenableNode, QuestionTokenableNode, QuoteKind, ReadonlyableNode, RefactorEditInfo, ReferenceEntry, ReferenceFindableNode, ReferencedSymbol, ReferencedSymbolDefinitionInfo, ReferencedSymbolEntry, RegularExpressionLiteral, RegularExpressionLiteralBase, RenameLocation, RenameableNode, RestTypeNode, ReturnStatement, ReturnStatementBase, ReturnTypedNode, SatisfiesExpression, SatisfiesExpressionBase, Scope, ScopeableNode, ScopedNode, SetAccessorDeclaration, SetAccessorDeclarationBase, ShorthandPropertyAssignment, ShorthandPropertyAssignmentBase, Signature, SignaturedDeclaration, SourceFile, SourceFileBase, SpreadAssignment, SpreadAssignmentBase, SpreadElement, SpreadElementBase, Statement, StatementBase, StatementedNode, StaticableNode, StringLiteral, StringLiteralBase, Structure, StructureKind, SuperElementAccessExpression, SuperElementAccessExpressionBase, SuperExpression, SuperExpressionBase, SuperExpressionedNode, SuperPropertyAccessExpression, SuperPropertyAccessExpressionBase, SwitchStatement, SwitchStatementBase, Symbol, SymbolDisplayPart, SyntaxList, TaggedTemplateExpression, TemplateExpression, TemplateExpressionBase, TemplateHead, TemplateHeadBase, TemplateLiteralTypeNode, TemplateMiddle, TemplateMiddleBase, TemplateSpan, TemplateSpanBase, TemplateTail, TemplateTailBase, TextChange, TextInsertableNode, TextRange, TextSpan, ThisExpression, ThisExpressionBase, ThisTypeNode, ThrowStatement, ThrowStatementBase, TrueLiteral, TrueLiteralBase, TryStatement, TryStatementBase, TupleTypeNode, Type, TypeAliasDeclaration, TypeAliasDeclarationBase, TypeArgumentedNode, TypeAssertion, TypeAssertionBase, TypeChecker, TypeElement, TypeElementMemberedNode, TypeLiteralNode, TypeLiteralNodeBase, TypeNode, TypeOfExpression, TypeOfExpressionBase, TypeOperatorTypeNode, TypeParameter, TypeParameterDeclaration, TypeParameterDeclarationBase, TypeParameterVariance, TypeParameteredNode, TypePredicateNode, TypeQueryNode, TypeReferenceNode, TypedNode, UnaryExpression, UnaryExpressionedNode, UnionTypeNode, UnwrappableNode, UpdateExpression, VariableDeclaration, VariableDeclarationBase, VariableDeclarationKind, VariableDeclarationList, VariableDeclarationListBase, VariableStatement, VariableStatementBase, VoidExpression, VoidExpressionBase, WhileStatement, WhileStatementBase, WithStatement, WithStatementBase, Writers, YieldExpression, YieldExpressionBase, createWrappedNode, forEachStructureChild, getCompilerOptionsFromTsConfig, getScopeForNode, insertOverloads, printNode, setScopeForNode };
