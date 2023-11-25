@@ -1,20 +1,22 @@
 import { errors } from "../errors";
 import { StandardizedFilePath, TransactionalFileSystem } from "../fileSystem";
-import { CompilerOptions, ScriptKind, ts } from "../typescript";
+import { ts } from "../typescript";
 import { createCompilerSourceFile } from "./createCompilerSourceFile";
 
 /**
  * An implementation of a ts.DocumentRegistry that uses a transactional file system.
  */
 export class DocumentRegistry implements ts.DocumentRegistry {
-  private readonly sourceFileCacheByFilePath = new Map<StandardizedFilePath, ts.SourceFile>();
-  private static readonly initialVersion = "0";
+  readonly #sourceFileCacheByFilePath = new Map<StandardizedFilePath, ts.SourceFile>();
+  readonly #transactionalFileSystem: TransactionalFileSystem;
+  static readonly #initialVersion = "0";
 
   /**
    * Constructor.
    * @param transactionalFileSystem - The transaction file system to use.
    */
-  constructor(private readonly transactionalFileSystem: TransactionalFileSystem) {
+  constructor(transactionalFileSystem: TransactionalFileSystem) {
+    this.#transactionalFileSystem = transactionalFileSystem;
   }
 
   /**
@@ -26,13 +28,13 @@ export class DocumentRegistry implements ts.DocumentRegistry {
    */
   createOrUpdateSourceFile(
     fileName: StandardizedFilePath,
-    compilationSettings: CompilerOptions,
+    compilationSettings: ts.CompilerOptions,
     scriptSnapshot: ts.IScriptSnapshot,
-    scriptKind: ScriptKind | undefined,
+    scriptKind: ts.ScriptKind | undefined,
   ) {
-    let sourceFile = this.sourceFileCacheByFilePath.get(fileName);
+    let sourceFile = this.#sourceFileCacheByFilePath.get(fileName);
     if (sourceFile == null)
-      sourceFile = this.updateSourceFile(fileName, compilationSettings, scriptSnapshot, DocumentRegistry.initialVersion, scriptKind);
+      sourceFile = this.updateSourceFile(fileName, compilationSettings, scriptSnapshot, DocumentRegistry.#initialVersion, scriptKind);
     else
       sourceFile = this.updateSourceFile(fileName, compilationSettings, scriptSnapshot, this.getNextSourceFileVersion(sourceFile), scriptKind);
     return sourceFile;
@@ -43,19 +45,19 @@ export class DocumentRegistry implements ts.DocumentRegistry {
    * @param fileName - File name to remove.
    */
   removeSourceFile(fileName: StandardizedFilePath) {
-    this.sourceFileCacheByFilePath.delete(fileName);
+    this.#sourceFileCacheByFilePath.delete(fileName);
   }
 
   /** @inheritdoc */
   acquireDocument(
     fileName: string,
-    compilationSettings: CompilerOptions,
+    compilationSettings: ts.CompilerOptions,
     scriptSnapshot: ts.IScriptSnapshot,
     version: string,
-    scriptKind: ScriptKind | undefined,
+    scriptKind: ts.ScriptKind | undefined,
   ): ts.SourceFile {
-    const standardizedFilePath = this.transactionalFileSystem.getStandardizedAbsolutePath(fileName);
-    let sourceFile = this.sourceFileCacheByFilePath.get(standardizedFilePath);
+    const standardizedFilePath = this.#transactionalFileSystem.getStandardizedAbsolutePath(fileName);
+    let sourceFile = this.#sourceFileCacheByFilePath.get(standardizedFilePath);
     if (sourceFile == null || this.getSourceFileVersion(sourceFile) !== version)
       sourceFile = this.updateSourceFile(standardizedFilePath, compilationSettings, scriptSnapshot, version, scriptKind);
     return sourceFile;
@@ -65,11 +67,11 @@ export class DocumentRegistry implements ts.DocumentRegistry {
   acquireDocumentWithKey(
     fileName: string,
     path: ts.Path,
-    compilationSettings: CompilerOptions,
+    compilationSettings: ts.CompilerOptions,
     key: ts.DocumentRegistryBucketKey,
     scriptSnapshot: ts.IScriptSnapshot,
     version: string,
-    scriptKind: ScriptKind | undefined,
+    scriptKind: ts.ScriptKind | undefined,
   ): ts.SourceFile {
     // ignore the key because we only ever keep track of one key
     return this.acquireDocument(fileName, compilationSettings, scriptSnapshot, version, scriptKind);
@@ -78,10 +80,10 @@ export class DocumentRegistry implements ts.DocumentRegistry {
   /** @inheritdoc */
   updateDocument(
     fileName: string,
-    compilationSettings: CompilerOptions,
+    compilationSettings: ts.CompilerOptions,
     scriptSnapshot: ts.IScriptSnapshot,
     version: string,
-    scriptKind: ScriptKind | undefined,
+    scriptKind: ts.ScriptKind | undefined,
   ): ts.SourceFile {
     // the compiler will call this even when it doesn't need to update for some reason
     return this.acquireDocument(fileName, compilationSettings, scriptSnapshot, version, scriptKind);
@@ -91,23 +93,23 @@ export class DocumentRegistry implements ts.DocumentRegistry {
   updateDocumentWithKey(
     fileName: string,
     path: ts.Path,
-    compilationSettings: CompilerOptions,
+    compilationSettings: ts.CompilerOptions,
     key: ts.DocumentRegistryBucketKey,
     scriptSnapshot: ts.IScriptSnapshot,
     version: string,
-    scriptKind: ScriptKind | undefined,
+    scriptKind: ts.ScriptKind | undefined,
   ): ts.SourceFile {
     // ignore the key because we only ever keep track of one key
     return this.updateDocument(fileName, compilationSettings, scriptSnapshot, version, scriptKind);
   }
 
   /** @inheritdoc */
-  getKeyForCompilationSettings(settings: CompilerOptions): ts.DocumentRegistryBucketKey {
+  getKeyForCompilationSettings(settings: ts.CompilerOptions): ts.DocumentRegistryBucketKey {
     return "defaultKey" as ts.DocumentRegistryBucketKey;
   }
 
   /** @inheritdoc */
-  releaseDocument(fileName: string, compilationSettings: CompilerOptions) {
+  releaseDocument(fileName: string, compilationSettings: ts.CompilerOptions) {
   }
 
   /** @inheritdoc */
@@ -131,13 +133,13 @@ export class DocumentRegistry implements ts.DocumentRegistry {
 
   private updateSourceFile(
     fileName: StandardizedFilePath,
-    compilationSettings: CompilerOptions,
+    compilationSettings: ts.CompilerOptions,
     scriptSnapshot: ts.IScriptSnapshot,
     version: string,
-    scriptKind: ScriptKind | undefined,
+    scriptKind: ts.ScriptKind | undefined,
   ): ts.SourceFile {
     const newSourceFile = createCompilerSourceFile(fileName, scriptSnapshot, compilationSettings.target, version, true, scriptKind);
-    this.sourceFileCacheByFilePath.set(fileName, newSourceFile);
+    this.#sourceFileCacheByFilePath.set(fileName, newSourceFile);
     return newSourceFile;
   }
 }

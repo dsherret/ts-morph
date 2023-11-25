@@ -6,7 +6,7 @@ export interface CompilerOptionsFromTsConfigOptions {
 }
 
 export interface CompilerOptionsFromTsConfigResult {
-    options: CompilerOptions;
+    options: ts.CompilerOptions;
     errors: ts.Diagnostic[];
 }
 
@@ -24,9 +24,9 @@ export declare class TsConfigResolver {
     private readonly tsConfigFilePath;
     private readonly tsConfigDirPath;
     constructor(fileSystem: TransactionalFileSystem, tsConfigFilePath: StandardizedFilePath, encoding: string);
-    getCompilerOptions(): CompilerOptions;
+    getCompilerOptions(): ts.CompilerOptions;
     getErrors(): ts.Diagnostic[];
-    getPaths(compilerOptions?: CompilerOptions): {
+    getPaths(compilerOptions?: ts.CompilerOptions): {
         filePaths: StandardizedFilePath[];
         directoryPaths: StandardizedFilePath[];
     };
@@ -242,24 +242,24 @@ export declare class DocumentRegistry implements ts.DocumentRegistry {
      * @param scriptSnapshot - Script snapshot (text) of the file.
      * @param scriptKind - Script kind of the file.
      */
-    createOrUpdateSourceFile(fileName: StandardizedFilePath, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, scriptKind: ScriptKind | undefined): ts.SourceFile;
+    createOrUpdateSourceFile(fileName: StandardizedFilePath, compilationSettings: ts.CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, scriptKind: ts.ScriptKind | undefined): ts.SourceFile;
     /**
      * Removes the source file from the document registry.
      * @param fileName - File name to remove.
      */
     removeSourceFile(fileName: StandardizedFilePath): void;
     /** @inheritdoc */
-    acquireDocument(fileName: string, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind: ScriptKind | undefined): ts.SourceFile;
+    acquireDocument(fileName: string, compilationSettings: ts.CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind: ts.ScriptKind | undefined): ts.SourceFile;
     /** @inheritdoc */
-    acquireDocumentWithKey(fileName: string, path: ts.Path, compilationSettings: CompilerOptions, key: ts.DocumentRegistryBucketKey, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind: ScriptKind | undefined): ts.SourceFile;
+    acquireDocumentWithKey(fileName: string, path: ts.Path, compilationSettings: ts.CompilerOptions, key: ts.DocumentRegistryBucketKey, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind: ts.ScriptKind | undefined): ts.SourceFile;
     /** @inheritdoc */
-    updateDocument(fileName: string, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind: ScriptKind | undefined): ts.SourceFile;
+    updateDocument(fileName: string, compilationSettings: ts.CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind: ts.ScriptKind | undefined): ts.SourceFile;
     /** @inheritdoc */
-    updateDocumentWithKey(fileName: string, path: ts.Path, compilationSettings: CompilerOptions, key: ts.DocumentRegistryBucketKey, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind: ScriptKind | undefined): ts.SourceFile;
+    updateDocumentWithKey(fileName: string, path: ts.Path, compilationSettings: ts.CompilerOptions, key: ts.DocumentRegistryBucketKey, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind: ts.ScriptKind | undefined): ts.SourceFile;
     /** @inheritdoc */
-    getKeyForCompilationSettings(settings: CompilerOptions): ts.DocumentRegistryBucketKey;
+    getKeyForCompilationSettings(settings: ts.CompilerOptions): ts.DocumentRegistryBucketKey;
     /** @inheritdoc */
-    releaseDocument(fileName: string, compilationSettings: CompilerOptions): void;
+    releaseDocument(fileName: string, compilationSettings: ts.CompilerOptions): void;
     /** @inheritdoc */
     releaseDocumentWithKey(path: ts.Path, key: ts.DocumentRegistryBucketKey): void;
     /** @inheritdoc */
@@ -313,7 +313,7 @@ export interface TsSourceFileContainer {
      */
     addOrGetSourceFileFromFilePath(filePath: StandardizedFilePath, opts: {
         markInProject: boolean;
-        scriptKind: ScriptKind | undefined;
+        scriptKind: ts.ScriptKind | undefined;
     }): Promise<ts.SourceFile | undefined>;
     /**
      * Synchronously adds or gets a source file from a file path.
@@ -322,7 +322,7 @@ export interface TsSourceFileContainer {
      */
     addOrGetSourceFileFromFilePathSync(filePath: StandardizedFilePath, opts: {
         markInProject: boolean;
-        scriptKind: ScriptKind | undefined;
+        scriptKind: ts.ScriptKind | undefined;
     }): ts.SourceFile | undefined;
     /**
      * Gets the source file version of the specified source file.

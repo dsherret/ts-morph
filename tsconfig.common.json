@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2018",
-    "module": "commonjs",
+    "module": "CommonJS",
     "strict": true,
     "sourceMap": false,
     "removeComments": false,
@@ -10,7 +10,6 @@
     "esModuleInterop": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
-    "stripInternal": true,
     "newLine": "lf",
     "importHelpers": false
   },

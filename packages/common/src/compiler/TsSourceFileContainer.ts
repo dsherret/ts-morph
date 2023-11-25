@@ -1,5 +1,5 @@
 import { StandardizedFilePath } from "../fileSystem";
-import { ScriptKind, ts } from "../typescript";
+import { ts } from "../typescript";
 
 /**
  * A container of source files.
@@ -26,7 +26,7 @@ export interface TsSourceFileContainer {
    */
   addOrGetSourceFileFromFilePath(filePath: StandardizedFilePath, opts: {
     markInProject: boolean;
-    scriptKind: ScriptKind | undefined;
+    scriptKind: ts.ScriptKind | undefined;
   }): Promise<ts.SourceFile | undefined>;
   /**
    * Synchronously adds or gets a source file from a file path.
@@ -35,7 +35,7 @@ export interface TsSourceFileContainer {
    */
   addOrGetSourceFileFromFilePathSync(filePath: StandardizedFilePath, opts: {
     markInProject: boolean;
-    scriptKind: ScriptKind | undefined;
+    scriptKind: ts.ScriptKind | undefined;
   }): ts.SourceFile | undefined;
   /**
    * Gets the source file version of the specified source file.

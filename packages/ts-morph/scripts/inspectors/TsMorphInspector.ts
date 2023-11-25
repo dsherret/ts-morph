@@ -10,28 +10,33 @@ export interface DependencyNode {
 }
 
 export class TsMorphInspector {
-  constructor(private readonly wrapperFactory: WrapperFactory, private readonly project: tsMorph.Project) {
+  readonly #wrapperFactory: WrapperFactory;
+  readonly #project: tsMorph.Project;
+
+  constructor(wrapperFactory: WrapperFactory, project: tsMorph.Project) {
+    this.#wrapperFactory = wrapperFactory;
+    this.#project = project;
   }
 
   getProject() {
-    return this.project;
+    return this.#project;
   }
 
   @Memoize
   getSrcDirectory(): tsMorph.Directory {
-    return this.project.getDirectoryOrThrow("./src");
+    return this.#project.getDirectoryOrThrow("./src");
   }
 
   @Memoize
   getTestDirectory(): tsMorph.Directory {
-    return this.project.getDirectoryOrThrow("./src/tests");
+    return this.#project.getDirectoryOrThrow("./src/tests");
   }
 
   @Memoize
   getWrappedNodes(): WrappedNode[] {
-    const compilerSourceFiles = this.project.getSourceFiles("src/compiler/**/*.ts");
+    const compilerSourceFiles = this.#project.getSourceFiles("src/compiler/**/*.ts");
     const classes = compilerSourceFiles.map(f => f.getClasses()).flat();
-    return classes.filter(c => isNodeClass(c)).map(c => this.wrapperFactory.getWrappedNode(c))
+    return classes.filter(c => isNodeClass(c)).map(c => this.#wrapperFactory.getWrappedNode(c))
       .sort((a, b) => a.getName().localeCompare(b.getName(), "en-us-u-kf-upper"));
   }
 
@@ -78,7 +83,7 @@ export class TsMorphInspector {
 
   @Memoize
   getPublicDeclarations(): tsMorph.ExportedDeclarations[] {
-    const entries = Array.from(this.project.getSourceFileOrThrow("src/main.ts").getExportedDeclarations().entries());
+    const entries = Array.from(this.#project.getSourceFileOrThrow("src/main.ts").getExportedDeclarations().entries());
     entries.sort((a, b) => a[0].localeCompare(b[0], "en-us-u-kf-upper"));
     return entries.filter(([name]) => name !== "ts").map(([_, value]) => value).flat();
   }
@@ -95,9 +100,9 @@ export class TsMorphInspector {
 
   @Memoize
   getStructures(): Structure[] {
-    const compilerSourceFiles = this.project.getSourceFiles("src/structures/**/*.ts");
+    const compilerSourceFiles = this.#project.getSourceFiles("src/structures/**/*.ts");
     const interfaces = compilerSourceFiles.map(f => f.getInterfaces()).flat();
-    const result = interfaces.map(i => this.wrapperFactory.getStructure(i));
+    const result = interfaces.map(i => this.#wrapperFactory.getStructure(i));
     return result.sort((a, b) => a.getName().localeCompare(b.getName(), "en-us-u-kf-upper"));
   }
 
@@ -109,7 +114,7 @@ export class TsMorphInspector {
   @Memoize
   getKindToWrapperMappings(): KindToWrapperMapping[] {
     const wrappedNodes = this.getWrappedNodes();
-    const sourceFile = this.project.getSourceFileOrThrow("kindToWrapperMappings.ts");
+    const sourceFile = this.#project.getSourceFileOrThrow("kindToWrapperMappings.ts");
     const kindToWrapperMappings = sourceFile.getVariableDeclaration("kindToWrapperMappings")!;
     const initializer = kindToWrapperMappings.getInitializer()!;
     const propertyAssignments = initializer.getDescendants().filter(d => tsMorph.Node.isPropertyAssignment(d)) as tsMorph.PropertyAssignment[];
@@ -139,7 +144,7 @@ export class TsMorphInspector {
 
   @Memoize
   getImplementedKindToNodeMappingsNames(): Map<string, string> {
-    const sourceFile = this.project.getSourceFileOrThrow("kindToNodeMappings.generated.ts");
+    const sourceFile = this.#project.getSourceFileOrThrow("kindToNodeMappings.generated.ts");
     const mappings = sourceFile.getInterfaceOrThrow("ImplementedKindToNodeMappings");
     const result = new Map<string, string>();
 

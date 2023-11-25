@@ -7,7 +7,7 @@ const emitMainFile = declarationProject.getSourceFileOrThrow("./dist/index.d.ts"
 const writeProject = new tsMorph.Project({
   compilerOptions: {
     target: tsMorph.ts.ScriptTarget.ES2018,
-    moduleResolution: tsMorph.ts.ModuleResolutionKind.Node16,
+    moduleResolution: tsMorph.ts.ModuleResolutionKind.Bundler,
   },
   manipulationSettings: {
     indentationText: tsMorph.IndentationText.TwoSpaces,

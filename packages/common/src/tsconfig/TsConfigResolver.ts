@@ -1,6 +1,6 @@
 import { Memoize } from "../decorators";
 import { FileUtils, StandardizedFilePath, TransactionalFileSystem } from "../fileSystem";
-import { CompilerOptions, ts } from "../typescript";
+import { ts } from "../typescript";
 import { getTsParseConfigHost, TsParseConfigHostResult } from "./getTsParseConfigHost";
 
 export class TsConfigResolver {
@@ -25,7 +25,7 @@ export class TsConfigResolver {
   }
 
   @Memoize
-  getPaths(compilerOptions?: CompilerOptions) {
+  getPaths(compilerOptions?: ts.CompilerOptions) {
     const files = new Set<StandardizedFilePath>();
     const { fileSystem } = this;
     const directories = new Set<StandardizedFilePath>();

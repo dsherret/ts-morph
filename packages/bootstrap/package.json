@@ -8,7 +8,7 @@
     "bootstrap"
   ],
   "main": "dist/ts-morph-bootstrap.js",
-  "typings": "lib/ts-morph-bootstrap.d.ts",
+  "types": "lib/ts-morph-bootstrap.d.ts",
   "author": "David Sherret",
   "license": "MIT",
   "repository": "git+https://github.com/dsherret/ts-morph.git",
@@ -27,18 +27,18 @@
     "@ts-morph/common": "~0.21.0"
   },
   "devDependencies": {
-    "@rollup/plugin-typescript": "^11.0.0",
-    "@types/chai": "^4.3.4",
-    "@types/mocha": "^10.0.1",
-    "@types/node": "^18.15.9",
-    "chai": "^4.3.7",
+    "@rollup/plugin-typescript": "^11.1.5",
+    "@types/chai": "^4.3.11",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.10.0",
+    "chai": "^4.3.10",
     "cross-env": "^7.0.3",
     "mocha": "^10.2.0",
-    "rimraf": "^4.4.1",
-    "rollup": "=3.20.2",
+    "rimraf": "^5.0.5",
+    "rollup": "=4.5.2",
     "ts-node": "^10.9.1",
-    "tslib": "^2.5.0",
-    "typescript": "~5.2.2"
+    "tslib": "^2.6.2",
+    "typescript": "~5.3.2"
   },
   "publishConfig": {
     "access": "public"

@@ -185,7 +185,25 @@ export declare class Directory {
   private _path;
   private _pathParts;
   private _emitInternal;
+  /** @internal */
+  private _copyInternal;
+  /** @internal */
+  private _moveInternal;
+  /** @internal */
+  private _deleteDescendants;
+  /** @internal */
+  private _throwIfDeletedOrRemoved;
+  /** @internal */
+  private _getReferencesForCopy;
+  /** @internal */
+  private _getReferencesForMove;
+  /** @internal */
+  private static _isAncestorOfDir;
   private constructor();
+  /** @internal */
+  get _context(): ProjectContext;
+  /** @internal */
+  _setPathInternal(path: StandardizedFilePath): void;
   /**
    * Checks if this directory is an ancestor of the provided directory.
    * @param possibleDescendant - Directory or source file that's a possible descendant.
@@ -196,6 +214,11 @@ export declare class Directory {
    * @param possibleAncestor - Directory or source file that's a possible ancestor.
    */
   isDescendantOf(possibleAncestor: Directory): boolean;
+  /**
+   * Gets the directory depth.
+   * @internal
+   */
+  _getDepth(): number;
   /** Gets the path to the directory. */
   getPath(): StandardizedFilePath;
   /** Gets the directory path's base name. */
@@ -224,6 +247,8 @@ export declare class Directory {
    * @param condition - Condition to check the directory with.
    */
   getDirectory(condition: (directory: Directory) => boolean): Directory | undefined;
+  /** @internal */
+  getDirectory(pathOrCondition: string | ((directory: Directory) => boolean)): Directory | undefined;
   /**
    * Gets a child source file with the specified path or throws if not found.
    * @param path - Relative or absolute path to the file.
@@ -234,6 +259,8 @@ export declare class Directory {
    * @param condition - Condition to check the source file with.
    */
   getSourceFileOrThrow(condition: (sourceFile: SourceFile) => boolean): SourceFile;
+  /** @internal */
+  getSourceFileOrThrow(pathOrCondition: string | ((sourceFile: SourceFile) => boolean)): SourceFile;
   /**
    * Gets a child source file with the specified path or undefined if not found.
    * @param path - Relative or absolute path to the file.
@@ -244,8 +271,12 @@ export declare class Directory {
    * @param condition - Condition to check the source file with.
    */
   getSourceFile(condition: (sourceFile: SourceFile) => boolean): SourceFile | undefined;
+  /** @internal */
+  getSourceFile(pathOrCondition: string | ((sourceFile: SourceFile) => boolean)): SourceFile | undefined;
   /** Gets the child directories. */
   getDirectories(): Directory[];
+  /** @internal */
+  _getDirectoriesIterator(): Generator<Directory, void, unknown>;
   /** Gets the source files within this directory. */
   getSourceFiles(): SourceFile[];
   /**
@@ -258,10 +289,22 @@ export declare class Directory {
    * @param globPatterns - Glob patterns for filtering out the source files.
    */
   getSourceFiles(globPatterns: ReadonlyArray<string>): SourceFile[];
+  /** @internal */
+  _getSourceFilesIterator(): Generator<SourceFile, void, unknown>;
   /** Gets the source files in the current directory and all the descendant directories. */
   getDescendantSourceFiles(): SourceFile[];
+  /**
+   * Gets the source files in the current directory and all the descendant directories.
+   * @internal
+   */
+  _getDescendantSourceFilesIterator(): IterableIterator<SourceFile>;
   /** Gets the descendant directories. */
   getDescendantDirectories(): Directory[];
+  /**
+   * Gets the descendant directories.
+   * @internal
+   */
+  _getDescendantDirectoriesIterator(): IterableIterator<Directory>;
   /**
    * Add source files based on file globs.
    * @param fileGlobs - File glob or globs to add files based on.
@@ -417,6 +460,8 @@ export declare class Directory {
    * Note: Does not delete the directory from the file system.
    */
   forget(): void;
+  /** @internal */
+  _forgetOnlyThis(): void;
   /** Asynchronously saves the directory and all the unsaved source files to the disk. */
   save(): Promise<void>;
   /** Synchronously saves the directory and all the unsaved source files to the disk. */
@@ -436,6 +481,8 @@ export declare class Directory {
    * @param directory - Directory.
    */
   getRelativePathTo(directory: Directory): string;
+  /** @internal */
+  getRelativePathTo(sourceFileOrDir: SourceFile | Directory | string): string;
   /**
    * Gets the relative path to the specified file path as a module specifier.
    * @param filePath - File path.
@@ -452,10 +499,18 @@ export declare class Directory {
    * @param directory - Directory.
    */
   getRelativePathAsModuleSpecifierTo(directory: Directory): string;
+  /** @internal */
+  getRelativePathAsModuleSpecifierTo(sourceFileOrDir: SourceFile | Directory | string): string;
   /** Gets the project. */
   getProject(): Project;
   /** Gets if the directory was forgotten. */
   wasForgotten(): boolean;
+  /** @internal */
+  _isInProject(): boolean;
+  /** @internal */
+  _markAsInProject(): void;
+  /** @internal */
+  _hasLoadedParent(): boolean;
 }
 
 export interface DirectoryAddOptions {
@@ -497,6 +552,16 @@ export declare class ManipulationError extends errors.InvalidOperationError {
 
 /** Project that holds source files. */
 export declare class Project {
+  /** @internal */
+  readonly _context: ProjectContext;
+  /** @internal */
+  private _addSourceFilesForTsConfigResolver;
+  /** @internal */
+  private _getProjectSourceFilesByDirectoryDepth;
+  /** @internal */
+  private _getProjectDirectoriesByDirectoryDepth;
+  /** @internal */
+  private _getUnsavedSourceFiles;
   /**
    * Initializes a new instance.
    * @param options - Optional options.
@@ -616,6 +681,8 @@ export declare class Project {
    * @param searchFunction - Search function.
    */
   getSourceFile(searchFunction: (file: SourceFile) => boolean): SourceFile | undefined;
+  /** @internal */
+  getSourceFile(fileNameOrSearchFunction: string | ((file: SourceFile) => boolean)): SourceFile | undefined;
   /** Gets all the source files added to the project. */
   getSourceFiles(): SourceFile[];
   /**
@@ -973,6 +1040,8 @@ export interface ArgumentedNode {
    * @param index - Index to remove.
    */
   removeArgument(index: number): this;
+  /** @internal */
+  removeArgument(argOrIndex: Node | number): this;
 }
 
 type ArgumentedNodeExtensionType = Node<ts.Node & {
@@ -1410,6 +1479,20 @@ export interface ModifierableNode {
    * @param value - Optional toggling value.
    */
   toggleModifier(text: ModifierTexts, value?: boolean): this;
+  /**
+   * Add a modifier with the specified text.
+   * @param text - Modifier text to add.
+   * @returns The added modifier.
+   * @internal
+   */
+  addModifier(text: ModifierTexts): Node<ts.Modifier>;
+  /**
+   * Removes a modifier based on the specified text.
+   * @param text - Modifier text to remove.
+   * @returns If the modifier was removed
+   * @internal
+   */
+  removeModifier(text: ModifierTexts): boolean;
 }
 
 type ModifierableNodeExtensionType = Node;
@@ -1449,6 +1532,8 @@ export interface ModuledNode {
    * @param module - Module specifier to get the import declaration by.
    */
   getImportDeclaration(moduleSpecifier: string): ImportDeclaration | undefined;
+  /** @internal */
+  getImportDeclaration(conditionOrModuleSpecifier: string | ((importDeclaration: ImportDeclaration) => boolean)): ImportDeclaration | undefined;
   /**
    * Gets the first import declaration that matches a condition, or throws if it doesn't exist.
    * @param condition - Condition to get the import declaration by.
@@ -1459,6 +1544,8 @@ export interface ModuledNode {
    * @param module - Module specifier to get the import declaration by.
    */
   getImportDeclarationOrThrow(moduleSpecifier: string): ImportDeclaration;
+  /** @internal */
+  getImportDeclarationOrThrow(conditionOrModuleSpecifier: string | ((importDeclaration: ImportDeclaration) => boolean)): ImportDeclaration;
   /** Get the module's import declarations. */
   getImportDeclarations(): ImportDeclaration[];
   /**
@@ -1489,6 +1576,8 @@ export interface ModuledNode {
    * @param module - Module specifier to get the export declaration by.
    */
   getExportDeclaration(moduleSpecifier: string): ExportDeclaration | undefined;
+  /** @internal */
+  getExportDeclaration(conditionOrModuleSpecifier: string | ((exportDeclaration: ExportDeclaration) => boolean)): ExportDeclaration | undefined;
   /**
    * Gets the first export declaration that matches a condition, or throws if it doesn't exist.
    * @param condition - Condition to get the export declaration by.
@@ -1499,6 +1588,8 @@ export interface ModuledNode {
    * @param module - Module specifier to get the export declaration by.
    */
   getExportDeclarationOrThrow(moduleSpecifier: string, message?: string | (() => string)): ExportDeclaration;
+  /** @internal */
+  getExportDeclarationOrThrow(conditionOrModuleSpecifier: string | ((exportDeclaration: ExportDeclaration) => boolean), message?: string | (() => string)): ExportDeclaration;
   /** Get the export declarations. */
   getExportDeclarations(): ExportDeclaration[];
   /**
@@ -1809,6 +1900,19 @@ export interface ScopeableNode {
   hasScopeKeyword(): boolean;
 }
 
+/**
+ * Gets the scope for a node.
+ * @internal
+ * @param node - Node to check for.
+ */
+export declare function getScopeForNode(node: Node): Scope | undefined;
+/**
+ * Sets the scope for a node.
+ * @internal
+ * @param node - Node to set the scope for.
+ * @param scope - Scope to be set to.
+ */
+export declare function setScopeForNode(node: Node & ModifierableNode, scope: Scope | undefined): void;
 type ScopeableNodeExtensionType = Node & ModifierableNode;
 export declare function ScopedNode<T extends Constructor<ScopedNodeExtensionType>>(Base: T): Constructor<ScopedNode> & T;
 
@@ -1917,6 +2021,12 @@ export interface TypeArgumentedNode {
    * @param index - Index to remove.
    */
   removeTypeArgument(index: number): this;
+  /**
+   * Removes a type argument.
+   * @internal
+   * @param typeArgOrIndex - Type argument of index to remove.
+   */
+  removeTypeArgument(typeArgOrIndex: Node | number): this;
 }
 
 type TypeArgumentedNodeExtensionType = Node<ts.Node & {
@@ -2100,6 +2210,8 @@ export interface TypeElementMemberedNode {
    * @param findFunction - Function to find the method by.
    */
   getMethod(findFunction: (member: MethodSignature) => boolean): MethodSignature | undefined;
+  /** @internal */
+  getMethod(nameOrFindFunction: string | ((member: MethodSignature) => boolean)): MethodSignature | undefined;
   /**
    * Gets the first method by name or throws if not found.
    * @param name - Name.
@@ -2144,6 +2256,8 @@ export interface TypeElementMemberedNode {
    * @param findFunction - Function to find the property by.
    */
   getProperty(findFunction: (member: PropertySignature) => boolean): PropertySignature | undefined;
+  /** @internal */
+  getProperty(nameOrFindFunction: string | ((member: PropertySignature) => boolean)): PropertySignature | undefined;
   /**
    * Gets the first property by name or throws if not found.
    * @param name - Name.
@@ -2469,6 +2583,8 @@ interface ClassLikeDeclarationBaseSpecific {
    * @param findFunction - Function to find an instance property by.
    */
   getInstanceProperty(findFunction: (prop: ClassInstancePropertyTypes) => boolean): ClassInstancePropertyTypes | undefined;
+  /** @internal */
+  getInstanceProperty(nameOrFindFunction: string | ((prop: ClassInstancePropertyTypes) => boolean)): ClassInstancePropertyTypes | undefined;
   /**
    * Gets the first instance property by name or throws if not found.
    * @param name - Name.
@@ -2491,6 +2607,8 @@ interface ClassLikeDeclarationBaseSpecific {
    * @param findFunction - Function to find a static property by.
    */
   getStaticProperty(findFunction: (prop: ClassStaticPropertyTypes) => boolean): ClassStaticPropertyTypes | undefined;
+  /** @internal */
+  getStaticProperty(nameOrFindFunction: string | ((prop: ClassStaticPropertyTypes) => boolean)): ClassStaticPropertyTypes | undefined;
   /**
    * Gets the first static property by name or throws if not found.
    * @param name - Name.
@@ -2513,6 +2631,8 @@ interface ClassLikeDeclarationBaseSpecific {
    * @param findFunction - Function to find a property declaration by.
    */
   getProperty(findFunction: (property: PropertyDeclaration) => boolean): PropertyDeclaration | undefined;
+  /** @internal */
+  getProperty(nameOrFindFunction: string | ((property: PropertyDeclaration) => boolean)): PropertyDeclaration | undefined;
   /**
    * Gets the first property declaration by name or throws if it doesn't exist.
    * @param name - Name.
@@ -2535,6 +2655,8 @@ interface ClassLikeDeclarationBaseSpecific {
    * @param findFunction - Function to find a get accessor declaration by.
    */
   getGetAccessor(findFunction: (getAccessor: GetAccessorDeclaration) => boolean): GetAccessorDeclaration | undefined;
+  /** @internal */
+  getGetAccessor(nameOrFindFunction: string | ((getAccessor: GetAccessorDeclaration) => boolean)): GetAccessorDeclaration | undefined;
   /**
    * Gets the first get accessor declaration by name or throws if it doesn't exist.
    * @param name - Name.
@@ -2557,6 +2679,8 @@ interface ClassLikeDeclarationBaseSpecific {
    * @param findFunction - Function to find a set accessor declaration by.
    */
   getSetAccessor(findFunction: (setAccessor: SetAccessorDeclaration) => boolean): SetAccessorDeclaration | undefined;
+  /** @internal */
+  getSetAccessor(nameOrFindFunction: string | ((setAccessor: SetAccessorDeclaration) => boolean)): SetAccessorDeclaration | undefined;
   /**
    * Sets the first set accessor declaration by name or throws if it doesn't exist.
    * @param name - Name.
@@ -2579,6 +2703,8 @@ interface ClassLikeDeclarationBaseSpecific {
    * @param findFunction - Function to find a method declaration by.
    */
   getMethod(findFunction: (method: MethodDeclaration) => boolean): MethodDeclaration | undefined;
+  /** @internal */
+  getMethod(nameOrFindFunction: string | ((method: MethodDeclaration) => boolean)): MethodDeclaration | undefined;
   /**
    * Gets the first method declaration by name or throws if it doesn't exist.
    * @param name - Name.
@@ -2601,6 +2727,8 @@ interface ClassLikeDeclarationBaseSpecific {
    * @param findFunction - Function to find an instance method by.
    */
   getInstanceMethod(findFunction: (method: MethodDeclaration) => boolean): MethodDeclaration | undefined;
+  /** @internal */
+  getInstanceMethod(nameOrFindFunction: string | ((method: MethodDeclaration) => boolean)): MethodDeclaration | undefined;
   /**
    * Gets the first instance method by name or throws if not found.
    * @param name - Name.
@@ -2623,6 +2751,8 @@ interface ClassLikeDeclarationBaseSpecific {
    * @param findFunction - Function to find a static method by.
    */
   getStaticMethod(findFunction: (method: MethodDeclaration) => boolean): MethodDeclaration | undefined;
+  /** @internal */
+  getStaticMethod(nameOrFindFunction: string | ((method: MethodDeclaration) => boolean)): MethodDeclaration | undefined;
   /**
    * Gets the first static method by name or throws if not found.
    * @param name - Name.
@@ -2645,6 +2775,8 @@ interface ClassLikeDeclarationBaseSpecific {
    * @param findFunction - Function to find the instance member by.
    */
   getInstanceMember(findFunction: (member: ClassInstanceMemberTypes) => boolean): ClassInstanceMemberTypes | undefined;
+  /** @internal */
+  getInstanceMember(nameOrFindFunction: string | ((member: ClassInstanceMemberTypes) => boolean)): ClassInstanceMemberTypes | undefined;
   /**
    * Gets the first instance member by name or throws if not found.
    * @param name - Name.
@@ -2667,6 +2799,8 @@ interface ClassLikeDeclarationBaseSpecific {
    * @param findFunction - Function to find an static method by.
    */
   getStaticMember(findFunction: (member: ClassStaticMemberTypes) => boolean): ClassStaticMemberTypes | undefined;
+  /** @internal */
+  getStaticMember(nameOrFindFunction: string | ((member: ClassStaticMemberTypes) => boolean)): ClassStaticMemberTypes | undefined;
   /**
    * Gets the first static member by name or throws if not found.
    * @param name - Name.
@@ -2679,6 +2813,11 @@ interface ClassLikeDeclarationBaseSpecific {
   getStaticMemberOrThrow(findFunction: (member: ClassStaticMemberTypes) => boolean): ClassStaticMemberTypes;
   /** Gets the static members. */
   getStaticMembers(): ClassStaticMemberTypes[];
+  /**
+   * Gets the class members regardless of whether an instance of static member with parameter properties.
+   * @internal
+   */
+  getMembersWithParameterProperties(): (ClassMemberTypes | ParameterDeclaration)[];
   /** Gets the class' members regardless of whether it's an instance of static member. */
   getMembers(): ClassMemberTypes[];
   /** Gets the class' members with comment class elements. */
@@ -2693,6 +2832,8 @@ interface ClassLikeDeclarationBaseSpecific {
    * @param findFunction - Function to find an method by.
    */
   getMember(findFunction: (member: ClassMemberTypes) => boolean): ClassMemberTypes | undefined;
+  /** @internal */
+  getMember(nameOrFindFunction: string | ((member: ClassMemberTypes) => boolean)): ClassMemberTypes | undefined;
   /**
    * Gets the first member by name or throws if not found.
    * @param name - Name.
@@ -2948,10 +3089,21 @@ export declare class CommentRange extends TextRange<ts.CommentRange> {
   getKind(): ts.CommentKind;
 }
 
+/** @internal */
+export declare enum CommentNodeKind {
+  Statement = 0,
+  ClassElement = 1,
+  TypeElement = 2,
+  ObjectLiteralElement = 3,
+  EnumMember = 4
+}
+
 export declare abstract class CompilerCommentNode implements ts.Node {
   private _fullStart;
   private _start;
   private _sourceFile;
+  /** @internal */
+  abstract _commentKind: CommentNodeKind;
   pos: number;
   end: number;
   kind: SyntaxKind.SingleLineCommentTrivia | SyntaxKind.MultiLineCommentTrivia;
@@ -2979,31 +3131,65 @@ export declare abstract class CompilerCommentNode implements ts.Node {
 export declare class CompilerCommentStatement extends CompilerCommentNode implements ts.Statement {
   _jsdocContainerBrand: any;
   _statementBrand: any;
+  /** @internal */
+  _commentKind: CommentNodeKind;
 }
 
 export declare class CompilerCommentClassElement extends CompilerCommentNode implements ts.ClassElement {
   _classElementBrand: any;
   _declarationBrand: any;
+  /** @internal */
+  _commentKind: CommentNodeKind;
 }
 
 export declare class CompilerCommentTypeElement extends CompilerCommentNode implements ts.TypeElement {
   _typeElementBrand: any;
   _declarationBrand: any;
+  /** @internal */
+  _commentKind: CommentNodeKind;
 }
 
 export declare class CompilerCommentObjectLiteralElement extends CompilerCommentNode implements ts.ObjectLiteralElement {
   _declarationBrand: any;
   _objectLiteralBrand: any;
   declarationBrand: any;
+  /** @internal */
+  _commentKind: CommentNodeKind;
 }
 
 export declare class CompilerCommentEnumMember extends CompilerCommentNode implements ts.Node {
+  /** @internal */
+  _commentKind: CommentNodeKind;
 }
 
 export type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName extends keyof NodeType, NonNullableNodeType = NonNullable<NodeType[KeyName]>> = NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeTypeForNullable> | undefined ? CompilerNodeToWrappedType<ArrayNodeTypeForNullable>[] | undefined : NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeType> ? CompilerNodeToWrappedType<ArrayNodeType>[] : NodeType[KeyName] extends ts.Node ? CompilerNodeToWrappedType<NodeType[KeyName]> : NonNullableNodeType extends ts.Node ? CompilerNodeToWrappedType<NonNullableNodeType> | undefined : NodeType[KeyName];
 export type NodeParentType<NodeType extends ts.Node> = NodeType extends ts.SourceFile ? undefined : ts.Node extends NodeType ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined : CompilerNodeToWrappedType<NodeType["parent"]>;
 
 export declare class Node<NodeType extends ts.Node = ts.Node> {
+  /** @internal */
+  readonly _context: ProjectContext;
+  /** @internal */
+  private _compilerNode;
+  /** @internal */
+  private _forgottenText;
+  /** @internal */
+  private _childStringRanges;
+  /** @internal */
+  private _leadingCommentRanges;
+  /** @internal */
+  private _trailingCommentRanges;
+  /** @internal */
+  _wrappedChildCount: number;
+  /** @internal */
+  protected __sourceFile: SourceFile | undefined;
+  /** @internal */
+  private _storeTextForForgetting;
+  /** @internal */
+  private _getCompilerLocals;
+  /** @internal */
+  private _getIndentationTextForLevel;
+  /** @internal */
+  private _getCommentsAtPos;
   /** Gets if the node is an AnyKeyword. */
   static readonly isAnyKeyword: (node: Node | undefined) => node is Expression;
   /** Gets if the node is an ArrayBindingPattern. */
@@ -3347,6 +3533,8 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   /** Gets if the node is a YieldExpression. */
   static readonly isYieldExpression: (node: Node | undefined) => node is YieldExpression;
   protected constructor();
+  /** @internal */
+  get _sourceFile(): SourceFile;
   /** Gets the underlying compiler node. */
   get compilerNode(): NodeType;
   /**
@@ -3358,11 +3546,25 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   /** Forgets the descendants of this node. */
   forgetDescendants(): this;
   /**
+   * Only forgets this node.
+   * @internal
+   */
+  _forgetOnlyThis(): void;
+  /**
    * Gets if the compiler node was forgotten.
    *
    * This will be true when the compiler node was forgotten or removed.
    */
   wasForgotten(): boolean;
+  /**
+   * Gets if this node has any wrapped children.
+   * @internal
+   */
+  _hasWrappedChildren(): boolean;
+  /** @internal WARNING: This should only be called by the compiler factory! */
+  _replaceCompilerNodeFromFactory(compilerNode: NodeType): void;
+  /** @internal */
+  protected _clearInternals(): void;
   /** Gets the syntax kind. */
   getKind(): SyntaxKind;
   /** Gets the syntax kind name. */
@@ -3555,6 +3757,10 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * @param index - Index of the child.
    */
   getChildAtIndex(index: number): Node;
+  /** @internal */
+  _getChildrenIterator(): IterableIterator<Node>;
+  /** @internal */
+  _getChildrenInCacheIterator(): IterableIterator<Node>;
   /** Gets the child syntax list or throws if it doesn't exist. */
   getChildSyntaxListOrThrow(message?: string | (() => string)): SyntaxList;
   /** Gets the child syntax list if it exists. */
@@ -3583,6 +3789,11 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   forEachDescendantAsArray(): Node<ts.Node>[];
   /** Gets the node's descendants. */
   getDescendants(): Node[];
+  /**
+   * Gets the node's descendants as an iterator.
+   * @internal
+   */
+  _getDescendantsIterator(): IterableIterator<Node>;
   /** Gets the node's descendant statements and any arrow function statement-like expressions (ex. returns the expression `5` in `() => 5`). */
   getDescendantStatements(): (Statement | Expression)[];
   /** Gets the number of children the node has. */
@@ -3620,6 +3831,11 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   getFullStart(): number;
   /** Gets the first source file text position that is not whitespace taking into account comment nodes and a previous node's trailing trivia. */
   getNonWhitespaceStart(): number;
+  /**
+   * Gets the source file text position going forward the result of .getTrailingTriviaEnd() that is not whitespace.
+   * @internal
+   */
+  _getTrailingTriviaNonWhitespaceEnd(): number;
   /**
    * Gets the text length of the node without trivia.
    * @param includeJsDocComments - Whether to include the JS doc comments in the width or not.
@@ -3661,6 +3877,10 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   getNodeProperty<KeyType extends keyof LocalNodeType, LocalNodeType extends ts.Node = NodeType>(propertyName: KeyType): NodePropertyToWrappedType<LocalNodeType, KeyType>;
   /** Goes up the tree getting all the parents in ascending order. */
   getAncestors(): Node[];
+  /** @internal - This is internal for now. I'm not sure what the correct behaviour should be. */
+  getAncestors(includeSyntaxLists: boolean): Node[];
+  /** @internal */
+  _getAncestorsIterator(includeSyntaxLists: boolean): IterableIterator<Node>;
   /** Get the node's parent. */
   getParent(): Node<ts.Node> | undefined;
   /** Gets the parent or throws an error if it doesn't exist. */
@@ -3709,6 +3929,11 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   getParentSyntaxListOrThrow(message?: string | (() => string)): SyntaxList;
   /** Gets the parent if it's a syntax list. */
   getParentSyntaxList(): SyntaxList | undefined;
+  /**
+   * Gets the parent syntax list if it's been wrapped.
+   * @internal
+   */
+  _getParentSyntaxListIfWrapped(): SyntaxList | undefined;
   /** Gets the child index of this node relative to the parent. */
   getChildIndex(): number;
   /** Gets the indentation level of the current node. */
@@ -3749,6 +3974,8 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Use `Node#getText(true)` to get all the text that will be replaced.
    */
   replaceWithText(textOrWriterFunction: string | WriterFunction): Node;
+  /** @internal */
+  replaceWithText(textOrWriterFunction: string | WriterFunction, writer: CodeBlockWriter): Node;
   /**
    * Prepends the specified whitespace to current node.
    * @param textOrWriterFunction - Text or writer function.
@@ -3926,6 +4153,127 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * @param kind - Syntax kind.
    */
   getFirstDescendantByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined;
+  /**
+   * Gets the compiler children of the node.
+   * @internal
+   */
+  _getCompilerChildren(): ts.Node[];
+  /**
+   * Gets the compiler children of the node using .forEachChild
+   * @internal
+   */
+  _getCompilerForEachChildren(): ts.Node[];
+  /**
+   * Gets children using forEachChildren if it has no parsed tokens, otherwise getChildren.
+   * @internal
+   */
+  _getCompilerChildrenFast(): ts.Node[];
+  /**
+   * Gets the compiler children of the specified kind.
+   * @internal
+   */
+  _getCompilerChildrenOfKind(kind: SyntaxKind): ts.Node[];
+  /**
+   * Gets the node's descendant compiler nodes filtered by syntax kind, based on an iterator.
+   * @internal
+   */
+  _getCompilerDescendantsOfKindIterator(kind: SyntaxKind): IterableIterator<ts.Node>;
+  /**
+   * Gets the node's descendant compiler nodes as an iterator.
+   * @internal
+   */
+  _getCompilerDescendantsIterator(): IterableIterator<ts.Node>;
+  /**
+   * Gets the node's for-each descendant compiler nodes as an iterator.
+   * @internal
+   */
+  _getCompilerForEachDescendantsIterator(): IterableIterator<ts.Node>;
+  /**
+   * Gets the first compiler node child that matches the condition.
+   * @param condition - Condition.
+   * @internal
+   */
+  _getCompilerFirstChild(condition?: (node: ts.Node) => boolean): ts.Node | undefined;
+  /**
+   * Gets the last compiler node child that matches the condition.
+   * @param condition - Condition.
+   * @internal
+   */
+  _getCompilerLastChild(condition?: (node: ts.Node) => boolean): ts.Node | undefined;
+  /**
+   * Gets the previous compiler siblings.
+   *
+   * Note: Closest sibling is the zero index.
+   * @internal
+   */
+  _getCompilerPreviousSiblings(): ts.Node[];
+  /**
+   * Gets the next compiler siblings.
+   *
+   * Note: Closest sibling is the zero index.
+   * @internal
+   */
+  _getCompilerNextSiblings(): ts.Node[];
+  /**
+   * Gets the previous compiler sibling.
+   * @param condition - Optional condition for getting the previous sibling.
+   * @internal
+   */
+  _getCompilerPreviousSibling(condition?: (node: ts.Node) => boolean): ts.Node | undefined;
+  /**
+   * Gets the next compiler sibling.
+   * @param condition - Optional condition for getting the previous sibling.
+   * @internal
+   */
+  _getCompilerNextSibling(condition?: (node: ts.Node) => boolean): ts.Node | undefined;
+  /**
+   * Gets the compiler child at the specified index.
+   * @param index - Index.
+   * @internal
+   */
+  _getCompilerChildAtIndex(index: number): ts.Node;
+  /**
+   * Gets a writer with the indentation text.
+   * @internal
+   */
+  _getWriterWithIndentation(): CodeBlockWriter;
+  /**
+   * Gets a writer with the queued indentation text.
+   * @internal
+   */
+  _getWriterWithQueuedIndentation(): CodeBlockWriter;
+  /**
+   * Gets a writer with the child indentation text.
+   * @internal
+   */
+  _getWriterWithChildIndentation(): CodeBlockWriter;
+  /**
+   * Gets a writer with the queued child indentation text.
+   * @internal
+   */
+  _getWriterWithQueuedChildIndentation(): CodeBlockWriter;
+  /** @internal */
+  _getTextWithQueuedChildIndentation(textOrWriterFunc: string | WriterFunction): string;
+  /**
+   * Gets a writer with no child indentation text.
+   * @internal
+   */
+  _getWriter(): CodeBlockWriter;
+  /**
+   * Gets or creates a node from the internal cache.
+   * @internal
+   */
+  _getNodeFromCompilerNode<LocalCompilerNodeType extends ts.Node = ts.Node>(compilerNode: LocalCompilerNodeType): CompilerNodeToWrappedType<LocalCompilerNodeType>;
+  /**
+   * Gets or creates a node from the internal cache, if it exists.
+   * @internal
+   */
+  _getNodeFromCompilerNodeIfExists<LocalCompilerNodeType extends ts.Node = ts.Node>(compilerNode: LocalCompilerNodeType | undefined): CompilerNodeToWrappedType<LocalCompilerNodeType> | undefined;
+  /**
+   * Ensures that the binder has bound the node before.
+   * @internal
+   */
+  protected _ensureBound(): void;
   /**
    * Gets if the node has an expression.
    * @param node - Node to check.
@@ -4195,6 +4543,10 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   static isUnwrappable<T extends Node>(node: T | undefined): node is UnwrappableNode & UnwrappableNodeExtensionType & T;
   /** Gets if the node is a UpdateExpression. */
   static isUpdateExpression(node: Node | undefined): node is UpdateExpression;
+  /** @internal */
+  static _hasStructure(node: Node | undefined): node is Node & {
+        getStructure(): Structure;
+    };
 }
 
 export declare enum Scope {
@@ -4224,6 +4576,12 @@ export declare class SyntaxList extends Node<ts.SyntaxList> {
 }
 
 export declare class TextRange<TRange extends ts.TextRange = ts.TextRange> {
+  /** @internal */
+  private _compilerObject;
+  /** @internal */
+  private _sourceFile;
+  /** @internal */
+  private _throwIfForgotten;
   protected constructor();
   /** Gets the underlying compiler object. */
   get compilerObject(): TRange;
@@ -4237,6 +4595,11 @@ export declare class TextRange<TRange extends ts.TextRange = ts.TextRange> {
   getWidth(): number;
   /** Gets the text of the text range. */
   getText(): string;
+  /**
+   * Forgets the text range.
+   * @internal
+   */
+  _forget(): void;
   /**
    * Gets if the text range was forgotten.
    *
@@ -4773,6 +5136,8 @@ export declare class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extend
 
 /** JS doc tag info. */
 export declare class JSDocTagInfo {
+  /** @internal */
+  private readonly _compilerObject;
   private constructor();
   /** Gets the compiler JS doc tag info. */
   get compilerObject(): ts.JSDocTagInfo;
@@ -4961,6 +5326,8 @@ export declare class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclarat
    * @param findFunction - Function to use to find the member.
    */
   getMember(findFunction: (declaration: EnumMember) => boolean): EnumMember | undefined;
+  /** @internal */
+  getMember(nameOrFindFunction: string | ((declaration: EnumMember) => boolean)): EnumMember | undefined;
   /**
    * Gets an enum member or throws if not found.
    * @param name - Name of the member.
@@ -5326,6 +5693,10 @@ export declare class ObjectLiteralElement<T extends ts.ObjectLiteralElement = ts
 declare const ObjectLiteralExpressionBase: typeof PrimaryExpression;
 
 export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.ObjectLiteralExpression> {
+  /** @internal */
+  private _getAddIndex;
+  /** @internal */
+  private _insertProperty;
   /**
    * Gets the first property by the provided name or throws.
    * @param name - Name of the property.
@@ -5346,6 +5717,8 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
    * @param findFunction - Find function.
    */
   getProperty(findFunction: (property: ObjectLiteralElementLike) => boolean): ObjectLiteralElementLike | undefined;
+  /** @internal */
+  getProperty(nameOrFindFunction: string | ((property: ObjectLiteralElementLike) => boolean)): ObjectLiteralElementLike | undefined;
   /** Gets the properties. */
   getProperties(): ObjectLiteralElementLike[];
   /** Gets the properties with comment object literal elements. */
@@ -5840,7 +6213,20 @@ export interface OverloadableNode {
   isImplementation(): boolean;
 }
 
+/** @internal */
+export declare function insertOverloads<TNode extends OverloadableNode & Node, TStructure extends Record<string, any>>(opts: InsertOverloadsOptions<TNode, TStructure>): TNode[];
 type OverloadableNodeExtensionType = Node & BodyableNode;
+
+/** @internal */
+export interface InsertOverloadsOptions<TNode extends OverloadableNode & Node, TStructure extends Structure> {
+  node: TNode;
+  index: number;
+  structures: ReadonlyArray<TStructure>;
+  printStructure: (writer: CodeBlockWriter, structure: TStructure) => void;
+  getThisStructure: (node: TNode) => TStructure;
+  expectedSyntaxKind: SyntaxKind;
+}
+
 declare const ParameterDeclarationBase: Constructor<OverrideableNode> & Constructor<QuestionTokenableNode> & Constructor<DecoratableNode> & Constructor<ScopeableNode> & Constructor<ReadonlyableNode> & Constructor<ModifierableNode> & Constructor<DotDotDotTokenableNode> & Constructor<TypedNode> & Constructor<InitializerExpressionableNode> & Constructor<BindingNamedNode> & typeof Node;
 
 export declare class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterDeclaration> {
@@ -5900,6 +6286,8 @@ export declare class HeritageClause extends Node<ts.HeritageClause> {
    * @param expressionNode - Expression to remove.
    */
   removeExpression(expressionNode: ExpressionWithTypeArguments): this;
+  /** @internal */
+  removeExpression(expressionNodeOrIndex: ExpressionWithTypeArguments | number): this;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.HeritageClause>;
   /** @inheritdoc **/
@@ -6778,9 +7166,9 @@ export declare class AssertClause extends AssertClauseBase<ts.AssertClause> {
   /** Removes the assert clause. */
   remove(): void;
   /** @inheritdoc **/
-  getParent(): NodeParentType<ts.AssertClause>;
+  getParent(): NodeParentType<ts.ImportAttributes>;
   /** @inheritdoc **/
-  getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.AssertClause>>;
+  getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.ImportAttributes>>;
 }
 
 declare const AssertEntryBase: Constructor<AssertionKeyNamedNode> & typeof Node;
@@ -6793,9 +7181,9 @@ export declare class AssertEntry extends AssertEntryBase<ts.AssertEntry> {
   /** Gets the structure equivalent to this node. */
   getStructure(): AssertEntryStructure;
   /** @inheritdoc **/
-  getParent(): NodeParentType<ts.AssertEntry>;
+  getParent(): NodeParentType<ts.ImportAttribute>;
   /** @inheritdoc **/
-  getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.AssertEntry>>;
+  getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.ImportAttribute>>;
 }
 
 declare const ExportAssignmentBase: Constructor<ExpressionedNode> & Constructor<JSDocableNode> & typeof Statement;
@@ -7254,6 +7642,8 @@ export declare class ModuleDeclaration extends ModuleDeclarationBase<ts.ModuleDe
   set(structure: Partial<ModuleDeclarationStructure>): this;
   /** Gets the structure equivalent to this node. */
   getStructure(): ModuleDeclarationStructure;
+  /** @internal */
+  _getInnerBody(): Node<ts.Node> | undefined;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.ModuleDeclaration>;
   /** @inheritdoc **/
@@ -7346,11 +7736,39 @@ export interface SourceFileMoveOptions {
 export interface SourceFileEmitOptions extends EmitOptionsBase {
 }
 
+/** @internal */
+export interface SourceFileReferences {
+  literalReferences: [StringLiteral, SourceFile][];
+  referencingLiterals: StringLiteral[];
+}
+
 declare const SourceFileBase: Constructor<ModuledNode> & Constructor<StatementedNode> & Constructor<TextInsertableNode> & typeof Node;
 
 export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
+  /** @internal */
+  private _isSaved;
+  /** @internal */
+  private readonly _modifiedEventContainer;
+  /** @internal */
+  private readonly _preModifiedEventContainer;
+  /** @internal */
+  readonly _referenceContainer: SourceFileReferenceContainer;
+  /** @internal */
+  private _referencedFiles;
+  /** @internal */
+  private _libReferenceDirectives;
+  /** @internal */
+  private _typeReferenceDirectives;
+  /** @internal */
+  _hasBom: true | undefined;
+  /** @internal */
+  private _getTextForSave;
   private _refreshFromFileSystemInternal;
   private constructor();
+  /** @internal WARNING: This should only be called by the compiler factory! */
+  _replaceCompilerNodeFromFactory(compilerNode: ts.SourceFile): void;
+  /** @internal */
+  protected _clearInternals(): void;
   /** Gets the file path. */
   getFilePath(): StandardizedFilePath;
   /** Gets the file path's base name. */
@@ -7395,6 +7813,12 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
    * @param options - Options for copying.
    */
   copy(filePath: string, options?: SourceFileCopyOptions): SourceFile;
+  /** @internal */
+  _copyInternal(fileAbsoluteOrRelativePath: string, options?: SourceFileCopyOptions): false | SourceFile;
+  /** @internal */
+  _getReferencesForCopyInternal(): [StringLiteral, SourceFile][];
+  /** @internal */
+  _updateReferencesForCopyInternal(literalReferences: ReadonlyArray<[StringLiteral, SourceFile]>): void;
   /**
    * Copy this source file to a new file and immediately saves it to the file system asynchronously.
    *
@@ -7427,6 +7851,12 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
    * @param options - Options for moving.
    */
   move(filePath: string, options?: SourceFileMoveOptions): SourceFile;
+  /** @internal */
+  _moveInternal(fileRelativeOrAbsolutePath: string, options?: SourceFileMoveOptions): boolean;
+  /** @internal */
+  _getReferencesForMoveInternal(): SourceFileReferences;
+  /** @internal */
+  _updateReferencesForMoveInternal(sourceFileReferences: SourceFileReferences, oldDirPath: string): void;
   /**
    * Moves this source file to a new file and asynchronously updates the file system immediately.
    *
@@ -7496,6 +7926,11 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
   isInNodeModules(): boolean;
   /** Gets if this source file has been saved or if the latest changes have been saved. */
   isSaved(): boolean;
+  /**
+   * Sets if this source file has been saved.
+   * @internal
+   */
+  _setIsSaved(value: boolean): void;
   /** Gets the pre-emit diagnostics of the specified source file. */
   getPreEmitDiagnostics(): Diagnostic[];
   /**
@@ -7510,6 +7945,8 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
    * @param times - Times to unindent. Specify a negative value to indent.
    */
   unindent(positionRange: [number, number], times?: number): this;
+  /** @internal */
+  unindent(positionRangeOrPos: [number, number] | number, times?: number): this;
   /**
    * Indents the line at the specified position.
    * @param pos - Position.
@@ -7522,6 +7959,8 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
    * @param times - Times to indent. Specify a negative value to unindent.
    */
   indent(positionRange: [number, number], times?: number): this;
+  /** @internal */
+  indent(positionRangeOrPos: [number, number] | number, times?: number): this;
   /** Asynchronously emits the source file as a JavaScript file. */
   emit(options?: SourceFileEmitOptions): Promise<EmitResult>;
   /** Synchronously emits the source file as a JavaScript file. */
@@ -7590,6 +8029,14 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
    */
   onModified(subscription: (sender: SourceFile) => void, subscribe?: boolean): this;
   /**
+   * Do an action the next time the source file is modified.
+   * @param action - Action to run.
+   * @internal
+   */
+  _doActionPreNextModification(action: () => void): this;
+  /** @internal */
+  _firePreModified(): void;
+  /**
    * Organizes the imports in the file.
    *
    * WARNING! This will forget all the nodes in the file! It's best to do this after you're all done with the file.
@@ -7629,6 +8076,14 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
   set(structure: Partial<SourceFileStructure>): this;
   /** Gets the structure equivalent to this node. */
   getStructure(): SourceFileStructure;
+  /** @internal */
+  _isLibFileInMemory(): boolean;
+  /** @internal */
+  _throwIfIsInMemoryLibFile(): void;
+  /** @internal */
+  _isInProject(): boolean;
+  /** @internal */
+  _markAsInProject(): void;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.SourceFile>;
   /** @inheritdoc **/
@@ -8284,6 +8739,8 @@ export interface StatementedNode {
    * @param findFunction - Function to use to find the variable statement.
    */
   getVariableStatement(findFunction: (declaration: VariableStatement) => boolean): VariableStatement | undefined;
+  /** @internal */
+  getVariableStatement(nameOrFindFunction: string | ((declaration: VariableStatement) => boolean)): VariableStatement | undefined;
   /**
    * Gets a variable statement or throws if it doesn't exist.
    * @param name - Name of one of the variable statement's declarations.
@@ -8294,6 +8751,8 @@ export interface StatementedNode {
    * @param findFunction - Function to use to find the variable statement.
    */
   getVariableStatementOrThrow(findFunction: (declaration: VariableStatement) => boolean): VariableStatement;
+  /** @internal */
+  getVariableStatementOrThrow(nameOrFindFunction: string | ((declaration: VariableStatement) => boolean)): VariableStatement;
   /**
    * Gets all the variable declarations within the variable statement children.
    * @remarks This does not return the variable declarations within for statements or for of statements.
@@ -8319,6 +8778,12 @@ export interface StatementedNode {
    * @param findFunction - Function to use to find the variable declaration.
    */
   getVariableDeclarationOrThrow(findFunction: (declaration: VariableDeclaration) => boolean): VariableDeclaration;
+  /** @internal */
+  _insertChildren<TNode extends Node>(opts: InsertChildrenOptions): TNode[];
+  /** @internal */
+  _standardWrite(writer: CodeBlockWriter, info: InsertIntoBracesOrSourceFileOptionsWriteInfo, writeStructures: () => void, opts?: StandardWriteOptions): void;
+  /** @internal */
+  _getCompilerStatementsWithComments(): ts.Statement[];
 }
 
 type StatementedNodeExtensionType = Node<ts.SourceFile | ts.FunctionDeclaration | ts.ModuleDeclaration | ts.FunctionLikeDeclaration | ts.CaseClause | ts.DefaultClause | ts.ModuleBlock>;
@@ -8327,6 +8792,20 @@ export interface KindToNodeMappingsWithCommentStatements extends ImplementedKind
   [kind: number]: Node;
   [SyntaxKind.SingleLineCommentTrivia]: CommentStatement;
   [SyntaxKind.MultiLineCommentTrivia]: CommentStatement;
+}
+
+/** @internal */
+export interface InsertChildrenOptions {
+  expectedKind: SyntaxKind;
+  index: number;
+  structures: ReadonlyArray<Structure>;
+  write: (writer: CodeBlockWriter, info: InsertIntoBracesOrSourceFileOptionsWriteInfo) => void;
+}
+
+/** @internal */
+export interface StandardWriteOptions {
+  previousNewLine?: (previousMember: Node) => boolean;
+  nextNewLine?: (nextMember: Node) => boolean;
 }
 
 declare const SwitchStatementBase: Constructor<ExpressionedNode> & typeof Statement;
@@ -8941,6 +9420,10 @@ export declare class VariableDeclarationList extends VariableDeclarationListBase
 }
 
 export declare class Signature {
+  /** @internal */
+  private readonly _context;
+  /** @internal */
+  private readonly _compilerSignature;
   private constructor();
   /** Gets the underlying compiler signature. */
   get compilerSignature(): ts.Signature;
@@ -8959,6 +9442,10 @@ export declare class Signature {
 }
 
 export declare class Symbol {
+  /** @internal */
+  private readonly _context;
+  /** @internal */
+  private readonly _compilerSymbol;
   private constructor();
   /** Gets the underlying compiler symbol. */
   get compilerSymbol(): ts.Symbol;
@@ -9079,10 +9566,40 @@ export interface RenameOptions {
 export interface UserPreferences extends ts.UserPreferences {
 }
 
+/** @internal */
+export interface LanguageServiceCreationParams {
+  context: ProjectContext;
+  configFileParsingDiagnostics: ts.Diagnostic[];
+  resolutionHost?: ResolutionHost;
+  skipLoadingLibFiles: boolean | undefined;
+  libFolderPath: string | undefined;
+}
+
 export declare class LanguageService {
+  /** @internal */
+  private readonly _compilerObject;
+  /** @internal */
+  private readonly _compilerHost;
+  /** @internal */
+  private _program;
+  /** @internal */
+  private _context;
+  /** @internal */
+  private _projectVersion;
+  /** @internal */
+  private _getFilePathFromFilePathOrSourceFile;
+  /** @internal */
+  private _getFilledSettings;
+  /** @internal */
+  private _getFilledUserPreferences;
   private constructor();
   /** Gets the compiler language service. */
   get compilerObject(): ts.LanguageService;
+  /**
+   * Resets the program. This should be done whenever any modifications happen.
+   * @internal
+   */
+  _reset(): void;
   /** Gets the language service's program. */
   getProgram(): Program;
   /**
@@ -9165,6 +9682,8 @@ export declare class LanguageService {
    * @param emitOnlyDtsFiles - Whether to only emit the d.ts files.
    */
   getEmitOutput(filePath: string, emitOnlyDtsFiles?: boolean): EmitOutput;
+  /** @internal */
+  getEmitOutput(filePathOrSourceFile: SourceFile | string, emitOnlyDtsFiles?: boolean): EmitOutput;
   /**
    * Gets the indentation at the specified position.
    * @param sourceFile - Source file.
@@ -9246,11 +9765,43 @@ export interface EmitOptionsBase {
   customTransformers?: ts.CustomTransformers;
 }
 
+/** @internal */
+export interface ProgramCreationData {
+  context: ProjectContext;
+  rootNames: ReadonlyArray<string>;
+  host: ts.CompilerHost;
+  configFileParsingDiagnostics: ts.Diagnostic[];
+}
+
 /** Wrapper around Program. */
 export declare class Program {
+  /** @internal */
+  private readonly _context;
+  /** @internal */
+  private readonly _typeChecker;
+  /** @internal */
+  private _createdCompilerObject;
+  /** @internal */
+  private _oldProgram;
+  /** @internal */
+  private _getOrCreateCompilerObject;
+  /** @internal */
+  private _configFileParsingDiagnostics;
+  /** @internal */
+  private _emit;
   private constructor();
   /** Gets the underlying compiler program. */
   get compilerObject(): ts.Program;
+  /**
+   * Gets if the internal compiler program is created.
+   * @internal
+   */
+  _isCompilerProgramCreated(): boolean;
+  /**
+   * Resets the program.
+   * @internal
+   */
+  _reset(rootNames: ReadonlyArray<string>, host: ts.CompilerHost): void;
   /** Get the program's type checker. */
   getTypeChecker(): TypeChecker;
   /**
@@ -9299,6 +9850,10 @@ export declare class Program {
 
 /** Represents a code action. */
 export declare class CodeAction<TCompilerObject extends ts.CodeAction = ts.CodeAction> {
+  /** @internal */
+  private readonly _context;
+  /** @internal */
+  private readonly _compilerObject;
   protected constructor();
   /** Gets the compiler object. */
   get compilerObject(): TCompilerObject;
@@ -9327,6 +9882,10 @@ export declare class CodeFixAction extends CodeAction<ts.CodeFixAction> {
  * @remarks Commands are currently not implemented.
  */
 export declare class CombinedCodeActions {
+  /** @internal */
+  private readonly _context;
+  /** @internal */
+  private readonly _compilerObject;
   private constructor();
   /** Gets the compiler object. */
   get compilerObject(): ts.CombinedCodeActions;
@@ -9358,6 +9917,10 @@ export declare class DefinitionInfo<TCompilerObject extends ts.DefinitionInfo = 
 
 /** Diagnostic. */
 export declare class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagnostic> {
+  /** @internal */
+  readonly _context: ProjectContext | undefined;
+  /** @internal */
+  readonly _compilerObject: TCompilerObject;
   protected constructor();
   /** Gets the underlying compiler diagnostic. */
   get compilerObject(): TCompilerObject;
@@ -9381,6 +9944,8 @@ export declare class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagn
 
 /** Diagnostic message chain. */
 export declare class DiagnosticMessageChain {
+  /** @internal */
+  readonly _compilerObject: ts.DiagnosticMessageChain;
   private constructor();
   /** Gets the underlying compiler object. */
   get compilerObject(): ts.DiagnosticMessageChain;
@@ -9408,6 +9973,12 @@ export declare class DiagnosticWithLocation extends Diagnostic<ts.DiagnosticWith
 
 /** Document span. */
 export declare class DocumentSpan<TCompilerObject extends ts.DocumentSpan = ts.DocumentSpan> {
+  /** @internal */
+  protected readonly _context: ProjectContext;
+  /** @internal */
+  protected readonly _compilerObject: TCompilerObject;
+  /** @internal */
+  protected readonly _sourceFile: SourceFile;
   protected constructor();
   /** Gets the compiler object. */
   get compilerObject(): TCompilerObject;
@@ -9425,6 +9996,10 @@ export declare class DocumentSpan<TCompilerObject extends ts.DocumentSpan = ts.D
 
 /** Output of an emit on a single file. */
 export declare class EmitOutput {
+  /** @internal */
+  private readonly _context;
+  /** @internal */
+  private readonly _compilerObject;
   private constructor();
   /** TypeScript compiler emit result. */
   get compilerObject(): ts.EmitOutput;
@@ -9436,6 +10011,10 @@ export declare class EmitOutput {
 
 /** Result of an emit. */
 export declare class EmitResult {
+  /** @internal */
+  protected readonly _context: ProjectContext;
+  /** @internal */
+  protected readonly _compilerObject: ts.EmitResult;
   protected constructor();
   /** TypeScript compiler emit result. */
   get compilerObject(): ts.EmitResult;
@@ -9456,6 +10035,16 @@ export interface ApplyFileTextChangesOptions {
 }
 
 export declare class FileTextChanges {
+  /** @internal */
+  private readonly _context;
+  /** @internal */
+  private readonly _compilerObject;
+  /** @internal */
+  private readonly _sourceFile;
+  /** @internal */
+  private readonly _existingFileExists;
+  /** @internal */
+  private _isApplied;
   private constructor();
   /** Gets the file path. */
   getFilePath(): string;
@@ -9509,6 +10098,10 @@ export declare class MemoryEmitResult extends EmitResult {
 
 /** Output file of an emit. */
 export declare class OutputFile {
+  /** @internal */
+  private readonly _compilerObject;
+  /** @internal */
+  private readonly _context;
   private constructor();
   /** TypeScript compiler output file. */
   get compilerObject(): ts.OutputFile;
@@ -9522,6 +10115,10 @@ export declare class OutputFile {
 
 /** Set of edits to make in response to a refactor action, plus an optional location where renaming should be invoked from. */
 export declare class RefactorEditInfo {
+  /** @internal */
+  private readonly _context;
+  /** @internal */
+  private readonly _compilerObject;
   private constructor();
   /** Gets the compiler refactor edit info. */
   get compilerObject(): ts.RefactorEditInfo;
@@ -9542,6 +10139,12 @@ export declare class RefactorEditInfo {
 
 /** Referenced symbol. */
 export declare class ReferencedSymbol {
+  /** @internal */
+  protected readonly _context: ProjectContext;
+  /** @internal */
+  private readonly _compilerObject;
+  /** @internal */
+  private readonly _references;
   private constructor();
   /** Gets the compiler referenced symbol. */
   get compilerObject(): ts.ReferencedSymbol;
@@ -9579,6 +10182,8 @@ export declare class RenameLocation extends DocumentSpan<ts.RenameLocation> {
 
 /** Symbol display part. */
 export declare class SymbolDisplayPart {
+  /** @internal */
+  private readonly _compilerObject;
   private constructor();
   /** Gets the compiler symbol display part. */
   get compilerObject(): ts.SymbolDisplayPart;
@@ -9594,6 +10199,8 @@ export declare class SymbolDisplayPart {
 
 /** Represents a text change. */
 export declare class TextChange {
+  /** @internal */
+  private readonly _compilerObject;
   private constructor();
   /** Gets the compiler text change. */
   get compilerObject(): ts.TextChange;
@@ -9605,6 +10212,8 @@ export declare class TextChange {
 
 /** Represents a span of text. */
 export declare class TextSpan {
+  /** @internal */
+  private readonly _compilerObject;
   private constructor();
   /** Gets the compiler text span. */
   get compilerObject(): ts.TextSpan;
@@ -9618,9 +10227,20 @@ export declare class TextSpan {
 
 /** Wrapper around the TypeChecker. */
 export declare class TypeChecker {
+  /** @internal */
+  private readonly _context;
+  /** @internal */
+  private _getCompilerObject;
+  /** @internal */
+  private _getDefaultTypeFormatFlags;
   private constructor();
   /** Gets the compiler's TypeChecker. */
   get compilerObject(): ts.TypeChecker;
+  /**
+   * Resets the type checker.
+   * @internal
+   */
+  _reset(getTypeChecker: () => ts.TypeChecker): void;
   /**
    * Gets the ambient module symbols (ex. modules in the
    * @types folder or node_modules).
@@ -9754,6 +10374,14 @@ export declare class TypeChecker {
 }
 
 export declare class Type<TType extends ts.Type = ts.Type> {
+  /** @internal */
+  readonly _context: ProjectContext;
+  /** @internal */
+  private readonly _compilerType;
+  /** @internal */
+  private _hasTypeFlag;
+  /** @internal */
+  private _hasObjectFlag;
   protected constructor();
   /** Gets the underlying compiler type. */
   get compilerType(): TType;
@@ -9807,6 +10435,8 @@ export declare class Type<TType extends ts.Type = ts.Type> {
    * @param findFunction - Function for searching for a property.
    */
   getPropertyOrThrow(findFunction: (declaration: Symbol) => boolean): Symbol;
+  /** @internal */
+  getPropertyOrThrow(nameOrFindFunction: string | ((declaration: Symbol) => boolean)): Symbol;
   /**
    * Gets a property or returns undefined if it does not exist.
    * @param name - By a name.
@@ -9817,6 +10447,8 @@ export declare class Type<TType extends ts.Type = ts.Type> {
    * @param findFunction - Function for searching for a property.
    */
   getProperty(findFunction: (declaration: Symbol) => boolean): Symbol | undefined;
+  /** @internal */
+  getProperty(nameOrFindFunction: string | ((declaration: Symbol) => boolean)): Symbol | undefined;
   /** Gets the apparent properties of the type. */
   getApparentProperties(): Symbol[];
   /**
@@ -9962,6 +10594,8 @@ export declare class Type<TType extends ts.Type = ts.Type> {
 }
 
 export declare class TypeParameter extends Type<ts.TypeParameter> {
+  /** @internal */
+  private _getTypeParameterDeclaration;
   /** Gets the constraint or throws if it doesn't exist. */
   getConstraintOrThrow(message?: string | (() => string)): Type;
   /** Gets the constraint type. */
@@ -10047,6 +10681,8 @@ export declare class ManipulationSettingsContainer extends SettingsContainer<Man
    * @param settings - Settings to set.
    */
   set(settings: Partial<ManipulationSettings>): void;
+  /** @internal Gets the indent size as represented in spaces. */
+  _getIndentSizeInSpaces(): 2 | 4 | 8;
 }
 
 export type StatementStructures = ClassDeclarationStructure | EnumDeclarationStructure | FunctionDeclarationStructure | InterfaceDeclarationStructure | ModuleDeclarationStructure | TypeAliasDeclarationStructure | ImportDeclarationStructure | ExportDeclarationStructure | ExportAssignmentStructure | VariableStatementStructure;

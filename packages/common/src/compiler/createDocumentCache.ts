@@ -82,16 +82,16 @@ class FileSystemDocumentCache implements FileSystemSpecificDocumentCache {
 class InternalDocumentCache implements DocumentCache {
   __documentCacheBrand: undefined;
 
-  private readonly _fileTexts = new Map<string, string>();
-  private readonly _documents = new Map<DocumentKey, ts.SourceFile>();
+  readonly #fileTexts = new Map<string, string>();
+  readonly #documents = new Map<DocumentKey, ts.SourceFile>();
 
   _addFiles(files: DocumentCacheItem[]) {
     for (const file of files)
-      this._fileTexts.set(file.fileName, file.text);
+      this.#fileTexts.set(file.fileName, file.text);
   }
 
   _getFilePaths() {
-    return this._fileTexts.keys();
+    return this.#fileTexts.keys();
   }
 
   _getCacheForFileSystem(fileSystem: TransactionalFileSystem) {
@@ -105,7 +105,7 @@ class InternalDocumentCache implements DocumentCache {
     scriptTarget: ScriptTarget | undefined,
     scriptKind: ScriptKind | undefined,
   ) {
-    const fileText = this._fileTexts.get(filePath);
+    const fileText = this.#fileTexts.get(filePath);
     if (fileText == null)
       return undefined; // doesn't exist in cache
     if (fileText !== scriptSnapshot.getText(0, scriptSnapshot.getLength()))
@@ -122,10 +122,10 @@ class InternalDocumentCache implements DocumentCache {
     scriptKind: ScriptKind | undefined,
   ) {
     const documentKey = this._getKey(filePath, scriptTarget, scriptKind);
-    let document = this._documents.get(documentKey);
+    let document = this.#documents.get(documentKey);
     if (document == null) {
       document = createCompilerSourceFile(absoluteFilePath, scriptSnapshot, scriptTarget, "-1", false, scriptKind);
-      this._documents.set(documentKey, document);
+      this.#documents.set(documentKey, document);
     }
 
     // ensure a clean source file is stored in the cache by always cloning this before returning

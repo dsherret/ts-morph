@@ -7,7 +7,7 @@ export type EventContainerSubscription<EventArgType> = (arg: EventArgType) => vo
  * Event container for event subscriptions.
  */
 export class EventContainer<EventArgType = undefined> {
-  private readonly subscriptions: EventContainerSubscription<EventArgType>[] = [];
+  readonly #subscriptions: EventContainerSubscription<EventArgType>[] = [];
 
   /**
    * Subscribe to an event being fired.
@@ -16,7 +16,7 @@ export class EventContainer<EventArgType = undefined> {
   subscribe(subscription: EventContainerSubscription<EventArgType>) {
     const index = this.getIndex(subscription);
     if (index === -1)
-      this.subscriptions.push(subscription);
+      this.#subscriptions.push(subscription);
   }
 
   /**
@@ -26,18 +26,18 @@ export class EventContainer<EventArgType = undefined> {
   unsubscribe(subscription: EventContainerSubscription<EventArgType>) {
     const index = this.getIndex(subscription);
     if (index >= 0)
-      this.subscriptions.splice(index, 1);
+      this.#subscriptions.splice(index, 1);
   }
 
   /**
    * Fire an event.
    */
   fire(arg: EventArgType) {
-    for (const subscription of this.subscriptions)
+    for (const subscription of this.#subscriptions)
       subscription(arg);
   }
 
   private getIndex(subscription: EventContainerSubscription<EventArgType>) {
-    return this.subscriptions.indexOf(subscription);
+    return this.#subscriptions.indexOf(subscription);
   }
 }

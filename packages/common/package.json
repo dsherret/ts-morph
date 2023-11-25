@@ -6,7 +6,7 @@
   "author": "David Sherret",
   "license": "MIT",
   "repository": "git+https://github.com/dsherret/ts-morph.git",
-  "typings": "lib/ts-morph-common.d.ts",
+  "types": "lib/ts-morph-common.d.ts",
   "scripts": {
     "build": "npm run build:declarations && npm run build:node && npm run build:deno",
     "build:node": "rimraf dist && npm run createLibFile && npm run rollup && deno run -A scripts/bundleLocalTs.ts",
@@ -19,26 +19,26 @@
     "rollup": "rollup --config"
   },
   "dependencies": {
-    "fast-glob": "^3.2.12",
-    "minimatch": "^7.4.3",
-    "mkdirp": "^2.1.6",
+    "fast-glob": "^3.3.2",
+    "minimatch": "^9.0.3",
+    "mkdirp": "^3.0.1",
     "path-browserify": "^1.0.1"
   },
   "devDependencies": {
-    "@rollup/plugin-typescript": "^11.0.0",
-    "@types/chai": "^4.3.4",
+    "@rollup/plugin-typescript": "^11.1.5",
+    "@types/chai": "^4.3.11",
     "@types/minimatch": "^5.1.2",
     "@types/mkdirp": "^1.0.2",
-    "@types/mocha": "^10.0.1",
-    "@types/node": "^18.15.9",
-    "chai": "^4.3.7",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.10.0",
+    "chai": "^4.3.10",
     "cross-env": "^7.0.3",
     "mocha": "^10.2.0",
-    "rimraf": "^4.4.1",
-    "rollup": "=3.20.2",
+    "rimraf": "^5.0.5",
+    "rollup": "=4.5.2",
     "ts-node": "^10.9.1",
-    "tslib": "^2.5.0",
-    "typescript": "5.2.2"
+    "tslib": "^2.6.2",
+    "typescript": "5.3.2"
   },
   "publishConfig": {
     "access": "public"
