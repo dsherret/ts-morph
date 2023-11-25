@@ -7,9 +7,9 @@ import { Symbol } from "./Symbol";
 
 export class Signature {
   /** @internal */
-  private readonly _context: ProjectContext;
+  readonly #context: ProjectContext;
   /** @internal */
-  private readonly _compilerSignature: ts.Signature;
+  readonly #compilerSignature: ts.Signature;
 
   /**
    * Initializes a new instance of Signature.
@@ -18,15 +18,15 @@ export class Signature {
    * @param signature - Compiler signature.
    */
   constructor(context: ProjectContext, signature: ts.Signature) {
-    this._context = context;
-    this._compilerSignature = signature;
+    this.#context = context;
+    this.#compilerSignature = signature;
   }
 
   /**
    * Gets the underlying compiler signature.
    */
   get compilerSignature() {
-    return this._compilerSignature;
+    return this.#compilerSignature;
   }
 
   /**
@@ -34,29 +34,29 @@ export class Signature {
    */
   getTypeParameters() {
     const typeParameters = this.compilerSignature.typeParameters || [];
-    return typeParameters.map(t => this._context.compilerFactory.getTypeParameter(t));
+    return typeParameters.map(t => this.#context.compilerFactory.getTypeParameter(t));
   }
 
   /**
    * Gets the parameters.
    */
   getParameters(): Symbol[] {
-    return this.compilerSignature.parameters.map(p => this._context.compilerFactory.getSymbol(p));
+    return this.compilerSignature.parameters.map(p => this.#context.compilerFactory.getSymbol(p));
   }
 
   /**
    * Gets the signature return type.
    */
   getReturnType(): Type {
-    return this._context.compilerFactory.getType(this.compilerSignature.getReturnType());
+    return this.#context.compilerFactory.getType(this.compilerSignature.getReturnType());
   }
 
   /**
    * Get the documentation comments.
    */
   getDocumentationComments(): SymbolDisplayPart[] {
-    const docs = this.compilerSignature.getDocumentationComment(this._context.typeChecker.compilerObject);
-    return docs.map(d => this._context.compilerFactory.getSymbolDisplayPart(d));
+    const docs = this.compilerSignature.getDocumentationComment(this.#context.typeChecker.compilerObject);
+    return docs.map(d => this.#context.compilerFactory.getSymbolDisplayPart(d));
   }
 
   /**
@@ -64,14 +64,14 @@ export class Signature {
    */
   getJsDocTags(): JSDocTagInfo[] {
     const tags = this.compilerSignature.getJsDocTags();
-    return tags.map(t => this._context.compilerFactory.getJSDocTagInfo(t));
+    return tags.map(t => this.#context.compilerFactory.getJSDocTagInfo(t));
   }
 
   /**
    * Gets the signature's declaration.
    */
   getDeclaration() {
-    const { compilerFactory } = this._context;
+    const { compilerFactory } = this.#context;
     // the compiler says this is non-nullable, but it can return undefined for an unknown signature
     // returned by calling `TypeChecker#getResolvedType()`; however, we're returning undefined in that scenario
     // and so this should never be null (hopefully)

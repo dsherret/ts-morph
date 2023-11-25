@@ -1,5 +1,11 @@
 import { ts } from "@ts-morph/common";
+import type { Node } from "./../common/Node";
 import { Expression } from "./Expression";
+
+export interface InstanceofExpression extends BinaryExpression {
+  compilerNode: ts.InstanceofExpression;
+  getOperatorToken(): Node<ts.Token<ts.SyntaxKind.InstanceOfKeyword>>;
+}
 
 export const BinaryExpressionBase = Expression;
 export class BinaryExpression<T extends ts.BinaryExpression = ts.BinaryExpression> extends BinaryExpressionBase<T> {

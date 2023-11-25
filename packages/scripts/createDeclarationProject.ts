@@ -37,5 +37,11 @@ export function createDeclarationProject(opts: CreateDeclarationProjectOptions) 
   for (const file of emitResult.getFiles())
     declarationProject.createSourceFile(file.filePath, file.text, { overwrite: true });
 
+  const declDiagnostics = declarationProject.getPreEmitDiagnostics();
+  if (declDiagnostics.length > 0) {
+    console.log(declarationProject.formatDiagnosticsWithColorAndContext(declDiagnostics));
+    Deno.exit(1);
+  }
+
   return declarationProject;
 }

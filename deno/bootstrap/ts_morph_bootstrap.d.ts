@@ -77,6 +77,7 @@ export interface FileSystemHost {
 
 /** An implementation of a file system that exists in memory only. */
 export declare class InMemoryFileSystemHost implements FileSystemHost {
+    #private;
     /**
      * Constructor.
      */
@@ -146,6 +147,7 @@ export declare const ResolutionHosts: {
 };
 
 export declare abstract class SettingsContainer<T extends object> {
+    #private;
     protected _settings: T;
     /**
      * Constructor.
@@ -223,6 +225,7 @@ export interface ProjectOptions {
 
 /** Project that holds source files. */
 export declare class Project {
+    #private;
     private constructor();
     /** Gets the compiler options for modification. */
     readonly compilerOptions: CompilerOptionsContainer;

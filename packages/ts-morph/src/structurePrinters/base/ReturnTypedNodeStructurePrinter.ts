@@ -4,13 +4,16 @@ import { ReturnTypedNodeStructure } from "../../structures";
 import { Printer } from "../Printer";
 
 export class ReturnTypedNodeStructurePrinter extends Printer<ReturnTypedNodeStructure> {
-  constructor(private readonly alwaysWrite = false) {
+  readonly #alwaysWrite: boolean;
+
+  constructor(alwaysWrite = false) {
     super();
+    this.#alwaysWrite = alwaysWrite;
   }
 
   printText(writer: CodeBlockWriter, structure: ReturnTypedNodeStructure) {
     let { returnType } = structure;
-    if (returnType == null && this.alwaysWrite === false)
+    if (returnType == null && this.#alwaysWrite === false)
       return;
 
     returnType = returnType ?? "void";

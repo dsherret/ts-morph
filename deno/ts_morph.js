@@ -4,55 +4,56 @@ import CodeBlockWriter from 'https://deno.land/x/code_block_writer@12.0.0/mod.ts
 export { default as CodeBlockWriter } from 'https://deno.land/x/code_block_writer@12.0.0/mod.ts';
 
 class AdvancedIterator {
+    #iterator;
+    #buffer = [undefined, undefined, undefined];
+    #bufferIndex = 0;
+    #isDone = false;
+    #nextCount = 0;
     constructor(iterator) {
-        this.iterator = iterator;
-        this.buffer = [undefined, undefined, undefined];
-        this.bufferIndex = 0;
-        this.isDone = false;
-        this.nextCount = 0;
-        this.advance();
+        this.#iterator = iterator;
+        this.#advance();
     }
     get done() {
-        return this.isDone;
+        return this.#isDone;
     }
     get current() {
-        if (this.nextCount === 0)
+        if (this.#nextCount === 0)
             throw new errors.InvalidOperationError("Cannot get the current when the iterator has not been advanced.");
-        return this.buffer[this.bufferIndex];
+        return this.#buffer[this.#bufferIndex];
     }
     get previous() {
-        if (this.nextCount <= 1)
+        if (this.#nextCount <= 1)
             throw new errors.InvalidOperationError("Cannot get the previous when the iterator has not advanced enough.");
-        return this.buffer[(this.bufferIndex + this.buffer.length - 1) % this.buffer.length];
+        return this.#buffer[(this.#bufferIndex + this.#buffer.length - 1) % this.#buffer.length];
     }
     get peek() {
-        if (this.isDone)
+        if (this.#isDone)
             throw new errors.InvalidOperationError("Cannot peek at the end of the iterator.");
-        return this.buffer[(this.bufferIndex + 1) % this.buffer.length];
+        return this.#buffer[(this.#bufferIndex + 1) % this.#buffer.length];
     }
     next() {
         if (this.done)
             throw new errors.InvalidOperationError("Cannot get the next when at the end of the iterator.");
-        const next = this.buffer[this.getNextBufferIndex()];
-        this.advance();
-        this.nextCount++;
+        const next = this.#buffer[this.#getNextBufferIndex()];
+        this.#advance();
+        this.#nextCount++;
         return next;
     }
     *rest() {
         while (!this.done)
             yield this.next();
     }
-    advance() {
-        const next = this.iterator.next();
-        this.bufferIndex = this.getNextBufferIndex();
+    #advance() {
+        const next = this.#iterator.next();
+        this.#bufferIndex = this.#getNextBufferIndex();
         if (next.done) {
-            this.isDone = true;
+            this.#isDone = true;
             return;
         }
-        this.buffer[this.getNextBufferIndex()] = next.value;
+        this.#buffer[this.#getNextBufferIndex()] = next.value;
     }
-    getNextBufferIndex() {
-        return (this.bufferIndex + 1) % this.buffer.length;
+    #getNextBufferIndex() {
+        return (this.#bufferIndex + 1) % this.#buffer.length;
     }
 }
 
@@ -158,18 +159,17 @@ class ModuleUtils {
 }
 
 function printNode(node, sourceFileOrOptions, secondOverloadOptions) {
-    var _a, _b;
     const isFirstOverload = sourceFileOrOptions == null || sourceFileOrOptions.kind !== SyntaxKind.SourceFile;
     const options = getOptions();
     const sourceFile = getSourceFile();
     const printer = ts.createPrinter({
-        newLine: (_a = options.newLineKind) !== null && _a !== void 0 ? _a : NewLineKind.LineFeed,
+        newLine: options.newLineKind ?? NewLineKind.LineFeed,
         removeComments: options.removeComments || false,
     });
     if (sourceFile == null)
         return printer.printFile(node);
     else
-        return printer.printNode((_b = options.emitHint) !== null && _b !== void 0 ? _b : EmitHint.Unspecified, node, sourceFile);
+        return printer.printNode(options.emitHint ?? EmitHint.Unspecified, node, sourceFile);
     function getSourceFile() {
         if (isFirstOverload) {
             if (node.kind === SyntaxKind.SourceFile)
@@ -183,8 +183,7 @@ function printNode(node, sourceFileOrOptions, secondOverloadOptions) {
         }
         return sourceFileOrOptions;
         function getScriptKind() {
-            var _a;
-            return (_a = options.scriptKind) !== null && _a !== void 0 ? _a : ScriptKind.TSX;
+            return options.scriptKind ?? ScriptKind.TSX;
         }
         function getFileExt(scriptKind) {
             if (scriptKind === ScriptKind.JSX || scriptKind === ScriptKind.TSX)
@@ -211,6 +210,9 @@ var IndentationText;
     IndentationText["Tab"] = "\t";
 })(IndentationText || (IndentationText = {}));
 class ManipulationSettingsContainer extends SettingsContainer {
+    #editorSettings;
+    #formatCodeSettings;
+    #userPreferences;
     constructor() {
         super({
             indentationText: IndentationText.FourSpaces,
@@ -222,29 +224,29 @@ class ManipulationSettingsContainer extends SettingsContainer {
         });
     }
     getEditorSettings() {
-        if (this._editorSettings == null) {
-            this._editorSettings = {};
-            fillDefaultEditorSettings(this._editorSettings, this);
+        if (this.#editorSettings == null) {
+            this.#editorSettings = {};
+            fillDefaultEditorSettings(this.#editorSettings, this);
         }
-        return { ...this._editorSettings };
+        return { ...this.#editorSettings };
     }
     getFormatCodeSettings() {
-        if (this._formatCodeSettings == null) {
-            this._formatCodeSettings = {
+        if (this.#formatCodeSettings == null) {
+            this.#formatCodeSettings = {
                 ...this.getEditorSettings(),
                 insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: this._settings.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces,
             };
         }
-        return { ...this._formatCodeSettings };
+        return { ...this.#formatCodeSettings };
     }
     getUserPreferences() {
-        if (this._userPreferences == null) {
-            this._userPreferences = {
+        if (this.#userPreferences == null) {
+            this.#userPreferences = {
                 quotePreference: this.getQuoteKind() === QuoteKind.Double ? "double" : "single",
                 providePrefixAndSuffixTextForRename: this.getUsePrefixAndSuffixTextForRename(),
             };
         }
-        return { ...this._userPreferences };
+        return { ...this.#userPreferences };
     }
     getQuoteKind() {
         return this._settings.quoteKind;
@@ -266,9 +268,9 @@ class ManipulationSettingsContainer extends SettingsContainer {
     }
     set(settings) {
         super.set(settings);
-        this._editorSettings = undefined;
-        this._formatCodeSettings = undefined;
-        this._userPreferences = undefined;
+        this.#editorSettings = undefined;
+        this.#formatCodeSettings = undefined;
+        this.#userPreferences = undefined;
     }
     _getIndentSizeInSpaces() {
         const indentationText = this.getIndentationText();
@@ -336,18 +338,16 @@ function printTextFromStringOrWriter(writer, textOrWriterFunction) {
 }
 
 class EnableableLogger {
-    constructor() {
-        this.enabled = false;
-    }
+    #enabled = false;
     setEnabled(enabled) {
-        this.enabled = enabled;
+        this.#enabled = enabled;
     }
     log(text) {
-        if (this.enabled)
+        if (this.#enabled)
             this.logInternal(text);
     }
     warn(text) {
-        if (this.enabled)
+        if (this.#enabled)
             this.warnInternal(text);
     }
 }
@@ -400,106 +400,107 @@ function newLineKindToString(kind) {
 }
 
 class LazyReferenceCoordinator {
+    #dirtySourceFiles = new Set();
     constructor(factory) {
-        this.dirtySourceFiles = new Set();
         const onSourceFileModified = (sourceFile) => {
             if (!sourceFile.wasForgotten())
-                this.dirtySourceFiles.add(sourceFile);
+                this.#dirtySourceFiles.add(sourceFile);
         };
         factory.onSourceFileAdded(sourceFile => {
-            this.dirtySourceFiles.add(sourceFile);
+            this.#dirtySourceFiles.add(sourceFile);
             sourceFile.onModified(onSourceFileModified);
         });
         factory.onSourceFileRemoved(sourceFile => {
             sourceFile._referenceContainer.clear();
-            this.dirtySourceFiles.delete(sourceFile);
+            this.#dirtySourceFiles.delete(sourceFile);
             sourceFile.onModified(onSourceFileModified, false);
         });
     }
     refreshDirtySourceFiles() {
-        for (const sourceFile of this.dirtySourceFiles.values())
+        for (const sourceFile of this.#dirtySourceFiles.values())
             sourceFile._referenceContainer.refresh();
         this.clearDirtySourceFiles();
     }
     refreshSourceFileIfDirty(sourceFile) {
-        if (!this.dirtySourceFiles.has(sourceFile))
+        if (!this.#dirtySourceFiles.has(sourceFile))
             return;
         sourceFile._referenceContainer.refresh();
         this.clearDirtyForSourceFile(sourceFile);
     }
     addDirtySourceFile(sourceFile) {
-        this.dirtySourceFiles.add(sourceFile);
+        this.#dirtySourceFiles.add(sourceFile);
     }
     clearDirtySourceFiles() {
-        this.dirtySourceFiles.clear();
+        this.#dirtySourceFiles.clear();
     }
     clearDirtyForSourceFile(sourceFile) {
-        this.dirtySourceFiles.delete(sourceFile);
+        this.#dirtySourceFiles.delete(sourceFile);
     }
 }
 
 class SourceFileReferenceContainer {
+    #sourceFile;
+    #nodesInThis = new KeyValueCache();
+    #nodesInOther = new KeyValueCache();
+    #unresolvedLiterals = [];
     constructor(sourceFile) {
-        this.sourceFile = sourceFile;
-        this.nodesInThis = new KeyValueCache();
-        this.nodesInOther = new KeyValueCache();
-        this.unresolvedLiterals = [];
-        this.resolveUnresolved = () => {
-            for (let i = this.unresolvedLiterals.length - 1; i >= 0; i--) {
-                const literal = this.unresolvedLiterals[i];
-                const sourceFile = this.getSourceFileForLiteral(literal);
-                if (sourceFile != null) {
-                    this.unresolvedLiterals.splice(i, 1);
-                    this.addNodeInThis(literal, sourceFile);
-                }
-            }
-            if (this.unresolvedLiterals.length === 0)
-                this.sourceFile._context.compilerFactory.onSourceFileAdded(this.resolveUnresolved, false);
-        };
+        this.#sourceFile = sourceFile;
     }
     getDependentSourceFiles() {
-        this.sourceFile._context.lazyReferenceCoordinator.refreshDirtySourceFiles();
+        this.#sourceFile._context.lazyReferenceCoordinator.refreshDirtySourceFiles();
         const hashSet = new Set();
-        for (const nodeInOther of this.nodesInOther.getKeys())
+        for (const nodeInOther of this.#nodesInOther.getKeys())
             hashSet.add(nodeInOther._sourceFile);
         return hashSet.values();
     }
     getLiteralsReferencingOtherSourceFilesEntries() {
-        this.sourceFile._context.lazyReferenceCoordinator.refreshSourceFileIfDirty(this.sourceFile);
-        return this.nodesInThis.getEntries();
+        this.#sourceFile._context.lazyReferenceCoordinator.refreshSourceFileIfDirty(this.#sourceFile);
+        return this.#nodesInThis.getEntries();
     }
     getReferencingLiteralsInOtherSourceFiles() {
-        this.sourceFile._context.lazyReferenceCoordinator.refreshDirtySourceFiles();
-        return this.nodesInOther.getKeys();
+        this.#sourceFile._context.lazyReferenceCoordinator.refreshDirtySourceFiles();
+        return this.#nodesInOther.getKeys();
     }
     refresh() {
-        if (this.unresolvedLiterals.length > 0)
-            this.sourceFile._context.compilerFactory.onSourceFileAdded(this.resolveUnresolved, false);
+        if (this.#unresolvedLiterals.length > 0)
+            this.#sourceFile._context.compilerFactory.onSourceFileAdded(this.#resolveUnresolved, false);
         this.clear();
-        this.populateReferences();
-        if (this.unresolvedLiterals.length > 0)
-            this.sourceFile._context.compilerFactory.onSourceFileAdded(this.resolveUnresolved);
+        this.#populateReferences();
+        if (this.#unresolvedLiterals.length > 0)
+            this.#sourceFile._context.compilerFactory.onSourceFileAdded(this.#resolveUnresolved);
     }
     clear() {
-        this.unresolvedLiterals.length = 0;
-        for (const [node, sourceFile] of this.nodesInThis.getEntries()) {
-            this.nodesInThis.removeByKey(node);
-            sourceFile._referenceContainer.nodesInOther.removeByKey(node);
+        this.#unresolvedLiterals.length = 0;
+        for (const [node, sourceFile] of this.#nodesInThis.getEntries()) {
+            this.#nodesInThis.removeByKey(node);
+            sourceFile._referenceContainer.#nodesInOther.removeByKey(node);
         }
     }
-    populateReferences() {
-        this.sourceFile._context.compilerFactory.forgetNodesCreatedInBlock(remember => {
-            for (const literal of this.sourceFile.getImportStringLiterals()) {
-                const sourceFile = this.getSourceFileForLiteral(literal);
+    #resolveUnresolved = () => {
+        for (let i = this.#unresolvedLiterals.length - 1; i >= 0; i--) {
+            const literal = this.#unresolvedLiterals[i];
+            const sourceFile = this.#getSourceFileForLiteral(literal);
+            if (sourceFile != null) {
+                this.#unresolvedLiterals.splice(i, 1);
+                this.#addNodeInThis(literal, sourceFile);
+            }
+        }
+        if (this.#unresolvedLiterals.length === 0)
+            this.#sourceFile._context.compilerFactory.onSourceFileAdded(this.#resolveUnresolved, false);
+    };
+    #populateReferences() {
+        this.#sourceFile._context.compilerFactory.forgetNodesCreatedInBlock(remember => {
+            for (const literal of this.#sourceFile.getImportStringLiterals()) {
+                const sourceFile = this.#getSourceFileForLiteral(literal);
                 remember(literal);
                 if (sourceFile == null)
-                    this.unresolvedLiterals.push(literal);
+                    this.#unresolvedLiterals.push(literal);
                 else
-                    this.addNodeInThis(literal, sourceFile);
+                    this.#addNodeInThis(literal, sourceFile);
             }
         });
     }
-    getSourceFileForLiteral(literal) {
+    #getSourceFileForLiteral(literal) {
         const parent = literal.getParentOrThrow();
         const grandParent = parent.getParent();
         if (Node.isImportDeclaration(parent) || Node.isExportDeclaration(parent))
@@ -517,13 +518,13 @@ class SourceFileReferenceContainer {
                 return ModuleUtils.getReferencedSourceFileFromSymbol(literalSymbol);
         }
         else {
-            this.sourceFile._context.logger.warn(`Unknown import string literal parent: ${parent.getKindName()}`);
+            this.#sourceFile._context.logger.warn(`Unknown import string literal parent: ${parent.getKindName()}`);
         }
         return undefined;
     }
-    addNodeInThis(literal, sourceFile) {
-        this.nodesInThis.set(literal, sourceFile);
-        sourceFile._referenceContainer.nodesInOther.set(literal, sourceFile);
+    #addNodeInThis(literal, sourceFile) {
+        this.#nodesInThis.set(literal, sourceFile);
+        sourceFile._referenceContainer.#nodesInOther.set(literal, sourceFile);
     }
 }
 
@@ -577,7 +578,7 @@ function AmbientableNode(Base) {
             return this.getDeclareKeyword() != null;
         }
         getDeclareKeywordOrThrow(message) {
-            return errors.throwIfNullOrUndefined(this.getDeclareKeyword(), message !== null && message !== void 0 ? message : "Expected to find a declare keyword.", this);
+            return errors.throwIfNullOrUndefined(this.getDeclareKeyword(), message ?? "Expected to find a declare keyword.", this);
         }
         getDeclareKeyword() {
             return this.getFirstModifierByKind(SyntaxKind.DeclareKeyword);
@@ -702,9 +703,8 @@ function getTextFromTextChanges(sourceFile, textChanges) {
 }
 
 function getNewInsertCode(opts) {
-    var _a;
     const { structures, newCodes, parent, getSeparator, previousFormattingKind, nextFormattingKind } = opts;
-    const indentationText = (_a = opts.indentationText) !== null && _a !== void 0 ? _a : parent.getChildIndentationText();
+    const indentationText = opts.indentationText ?? parent.getChildIndentationText();
     const newLineKind = parent._context.manipulationSettings.getNewLineKindAsString();
     return getFormattingKindTextWithIndent(previousFormattingKind) + getChildCode() + getFormattingKindTextWithIndent(nextFormattingKind);
     function getChildCode() {
@@ -747,8 +747,7 @@ function getAppendCommaPos(text) {
 }
 
 function getEndIndexFromArray(array) {
-    var _a;
-    return (_a = array === null || array === void 0 ? void 0 : array.length) !== null && _a !== void 0 ? _a : 0;
+    return array?.length ?? 0;
 }
 
 function getNextMatchingPos(text, pos, condition) {
@@ -988,18 +987,27 @@ var CommentNodeKind;
     CommentNodeKind[CommentNodeKind["EnumMember"] = 4] = "EnumMember";
 })(CommentNodeKind || (CommentNodeKind = {}));
 class CompilerCommentNode {
+    #fullStart;
+    #start;
+    #sourceFile;
     constructor(fullStart, pos, end, kind, sourceFile, parent) {
-        this._fullStart = fullStart;
-        this._start = pos;
-        this._sourceFile = sourceFile;
+        this.#fullStart = fullStart;
+        this.#start = pos;
+        this.#sourceFile = sourceFile;
         this.pos = pos;
         this.end = end;
         this.kind = kind;
         this.flags = ts.NodeFlags.None;
         this.parent = parent;
     }
+    pos;
+    end;
+    kind;
+    flags;
+    modifiers;
+    parent;
     getSourceFile() {
-        return this._sourceFile;
+        return this.#sourceFile;
     }
     getChildCount(sourceFile) {
         return 0;
@@ -1011,28 +1019,28 @@ class CompilerCommentNode {
         return [];
     }
     getStart(sourceFile, includeJsDocComment) {
-        return this._start;
+        return this.#start;
     }
     getFullStart() {
-        return this._fullStart;
+        return this.#fullStart;
     }
     getEnd() {
         return this.end;
     }
     getWidth(sourceFile) {
-        return this.end - this._start;
+        return this.end - this.#start;
     }
     getFullWidth() {
-        return this.end - this._fullStart;
+        return this.end - this.#fullStart;
     }
     getLeadingTriviaWidth(sourceFile) {
-        return this._start - this._fullStart;
+        return this.#start - this.#fullStart;
     }
     getFullText(sourceFile) {
-        return this._sourceFile.text.substring(this._fullStart, this.end);
+        return this.#sourceFile.text.substring(this.#fullStart, this.end);
     }
     getText(sourceFile) {
-        return this._sourceFile.text.substring(this._start, this.end);
+        return this.#sourceFile.text.substring(this.#start, this.end);
     }
     getFirstToken(sourceFile) {
         return undefined;
@@ -1045,34 +1053,28 @@ class CompilerCommentNode {
     }
 }
 class CompilerCommentStatement extends CompilerCommentNode {
-    constructor() {
-        super(...arguments);
-        this._commentKind = CommentNodeKind.Statement;
-    }
+    _jsdocContainerBrand;
+    _statementBrand;
+    _commentKind = CommentNodeKind.Statement;
 }
 class CompilerCommentClassElement extends CompilerCommentNode {
-    constructor() {
-        super(...arguments);
-        this._commentKind = CommentNodeKind.ClassElement;
-    }
+    _classElementBrand;
+    _declarationBrand;
+    _commentKind = CommentNodeKind.ClassElement;
 }
 class CompilerCommentTypeElement extends CompilerCommentNode {
-    constructor() {
-        super(...arguments);
-        this._commentKind = CommentNodeKind.TypeElement;
-    }
+    _typeElementBrand;
+    _declarationBrand;
+    _commentKind = CommentNodeKind.TypeElement;
 }
 class CompilerCommentObjectLiteralElement extends CompilerCommentNode {
-    constructor() {
-        super(...arguments);
-        this._commentKind = CommentNodeKind.ObjectLiteralElement;
-    }
+    _declarationBrand;
+    _objectLiteralBrand;
+    declarationBrand;
+    _commentKind = CommentNodeKind.ObjectLiteralElement;
 }
 class CompilerCommentEnumMember extends CompilerCommentNode {
-    constructor() {
-        super(...arguments);
-        this._commentKind = CommentNodeKind.EnumMember;
-    }
+    _commentKind = CommentNodeKind.EnumMember;
 }
 
 var CommentKind;
@@ -1149,8 +1151,7 @@ class CommentNodeParser {
             return getTokenEnd(container, SyntaxKind.ColonToken);
         return errors.throwNotImplementedForNeverValueError(container);
         function getTokenEnd(node, kind) {
-            var _a;
-            return (_a = node.getChildren(sourceFile).find(c => c.kind === kind)) === null || _a === void 0 ? void 0 : _a.end;
+            return node.getChildren(sourceFile).find(c => c.kind === kind)?.end;
         }
     }
 }
@@ -1388,20 +1389,21 @@ function isComment(node) {
 }
 
 class NodeHandlerHelper {
+    #compilerFactory;
     constructor(compilerFactory) {
-        this.compilerFactory = compilerFactory;
+        this.#compilerFactory = compilerFactory;
     }
     handleForValues(handler, currentNode, newNode, newSourceFile) {
-        if (this.compilerFactory.hasCompilerNode(currentNode))
-            handler.handleNode(this.compilerFactory.getExistingNodeFromCompilerNode(currentNode), newNode, newSourceFile);
+        if (this.#compilerFactory.hasCompilerNode(currentNode))
+            handler.handleNode(this.#compilerFactory.getExistingNodeFromCompilerNode(currentNode), newNode, newSourceFile);
         else if (currentNode.kind === SyntaxKind.SyntaxList) {
-            const sourceFile = this.compilerFactory.getExistingNodeFromCompilerNode(currentNode.getSourceFile());
-            handler.handleNode(this.compilerFactory.getNodeFromCompilerNode(currentNode, sourceFile), newNode, newSourceFile);
+            const sourceFile = this.#compilerFactory.getExistingNodeFromCompilerNode(currentNode.getSourceFile());
+            handler.handleNode(this.#compilerFactory.getNodeFromCompilerNode(currentNode, sourceFile), newNode, newSourceFile);
         }
     }
     forgetNodeIfNecessary(currentNode) {
-        if (this.compilerFactory.hasCompilerNode(currentNode))
-            this.compilerFactory.getExistingNodeFromCompilerNode(currentNode).forget();
+        if (this.#compilerFactory.hasCompilerNode(currentNode))
+            this.#compilerFactory.getExistingNodeFromCompilerNode(currentNode).forget();
     }
     getCompilerChildrenAsIterators(currentNode, newNode, newSourceFile) {
         const children = this.getCompilerChildren(currentNode, newNode, newSourceFile);
@@ -1435,6 +1437,8 @@ class NodeHandlerHelper {
 }
 
 class StraightReplacementNodeHandler {
+    compilerFactory;
+    helper;
     constructor(compilerFactory) {
         this.compilerFactory = compilerFactory;
         this.helper = new NodeHandlerHelper(compilerFactory);
@@ -1450,10 +1454,10 @@ class StraightReplacementNodeHandler {
                 + `(Current: ${currentNode.getKindName()} -- New: ${getSyntaxKindName(newNode.kind)}).`);
         }
         if (currentNode._hasWrappedChildren())
-            this.handleChildren(currentNode, newNode, newSourceFile);
+            this.#handleChildren(currentNode, newNode, newSourceFile);
         this.compilerFactory.replaceCompilerNode(currentNode, newNode);
     }
-    handleChildren(currentNode, newNode, newSourceFile) {
+    #handleChildren(currentNode, newNode, newSourceFile) {
         const [currentChildren, newChildren] = this.helper.getChildrenFast(currentNode, newNode, newSourceFile);
         if (currentChildren.length !== newChildren.length) {
             throw new Error(`Error replacing tree: The children of the old and new trees were expected to have the `
@@ -1465,47 +1469,58 @@ class StraightReplacementNodeHandler {
 }
 
 class ChangeChildOrderParentHandler {
+    #compilerFactory;
+    #straightReplacementNodeHandler;
+    #helper;
+    #oldIndex;
+    #newIndex;
     constructor(compilerFactory, opts) {
-        this.compilerFactory = compilerFactory;
-        this.straightReplacementNodeHandler = new StraightReplacementNodeHandler(compilerFactory);
-        this.helper = new NodeHandlerHelper(compilerFactory);
-        this.oldIndex = opts.oldIndex;
-        this.newIndex = opts.newIndex;
+        this.#straightReplacementNodeHandler = new StraightReplacementNodeHandler(compilerFactory);
+        this.#helper = new NodeHandlerHelper(compilerFactory);
+        this.#oldIndex = opts.oldIndex;
+        this.#newIndex = opts.newIndex;
+        this.#compilerFactory = compilerFactory;
     }
     handleNode(currentNode, newNode, newSourceFile) {
-        const [currentChildren, newChildren] = this.helper.getCompilerChildren(currentNode, newNode, newSourceFile);
-        const currentChildrenInNewOrder = this.getChildrenInNewOrder(currentChildren);
+        const [currentChildren, newChildren] = this.#helper.getCompilerChildren(currentNode, newNode, newSourceFile);
+        const currentChildrenInNewOrder = this.#getChildrenInNewOrder(currentChildren);
         errors.throwIfNotEqual(newChildren.length, currentChildrenInNewOrder.length, "New children length should match the old children length.");
         for (let i = 0; i < newChildren.length; i++)
-            this.helper.handleForValues(this.straightReplacementNodeHandler, currentChildrenInNewOrder[i], newChildren[i], newSourceFile);
-        this.compilerFactory.replaceCompilerNode(currentNode, newNode);
+            this.#helper.handleForValues(this.#straightReplacementNodeHandler, currentChildrenInNewOrder[i], newChildren[i], newSourceFile);
+        this.#compilerFactory.replaceCompilerNode(currentNode, newNode);
     }
-    getChildrenInNewOrder(children) {
+    #getChildrenInNewOrder(children) {
         const result = [...children];
-        const movingNode = result.splice(this.oldIndex, 1)[0];
-        result.splice(this.newIndex, 0, movingNode);
+        const movingNode = result.splice(this.#oldIndex, 1)[0];
+        result.splice(this.#newIndex, 0, movingNode);
         return result;
     }
 }
 
 class DefaultParentHandler {
+    #compilerFactory;
+    #straightReplacementNodeHandler;
+    #helper;
+    #childCount;
+    #isFirstChild;
+    #replacingNodes;
+    #customMappings;
     constructor(compilerFactory, opts) {
-        var _a;
-        this.compilerFactory = compilerFactory;
-        this.straightReplacementNodeHandler = new StraightReplacementNodeHandler(compilerFactory);
-        this.helper = new NodeHandlerHelper(compilerFactory);
-        this.childCount = opts.childCount;
-        this.isFirstChild = opts.isFirstChild;
-        this.replacingNodes = (_a = opts.replacingNodes) === null || _a === void 0 ? void 0 : _a.map(n => n.compilerNode);
-        this.customMappings = opts.customMappings;
+        this.#straightReplacementNodeHandler = new StraightReplacementNodeHandler(compilerFactory);
+        this.#helper = new NodeHandlerHelper(compilerFactory);
+        this.#childCount = opts.childCount;
+        this.#isFirstChild = opts.isFirstChild;
+        this.#replacingNodes = opts.replacingNodes?.map(n => n.compilerNode);
+        this.#customMappings = opts.customMappings;
+        this.#compilerFactory = compilerFactory;
     }
     handleNode(currentNode, newNode, newSourceFile) {
-        const [currentChildren, newChildren] = this.helper.getCompilerChildrenAsIterators(currentNode, newNode, newSourceFile);
-        let count = this.childCount;
-        this.handleCustomMappings(newNode);
-        while (!currentChildren.done && !newChildren.done && !this.isFirstChild(currentChildren.peek, newChildren.peek))
-            this.helper.handleForValues(this.straightReplacementNodeHandler, currentChildren.next(), newChildren.next(), newSourceFile);
-        while (!currentChildren.done && this.tryReplaceNode(currentChildren.peek))
+        const [currentChildren, newChildren] = this.#helper.getCompilerChildrenAsIterators(currentNode, newNode, newSourceFile);
+        let count = this.#childCount;
+        this.#handleCustomMappings(newNode);
+        while (!currentChildren.done && !newChildren.done && !this.#isFirstChild(currentChildren.peek, newChildren.peek))
+            this.#helper.handleForValues(this.#straightReplacementNodeHandler, currentChildren.next(), newChildren.next(), newSourceFile);
+        while (!currentChildren.done && this.#tryReplaceNode(currentChildren.peek))
             currentChildren.next();
         if (count > 0) {
             while (count > 0) {
@@ -1515,39 +1530,41 @@ class DefaultParentHandler {
         }
         else if (count < 0) {
             while (count < 0) {
-                this.helper.forgetNodeIfNecessary(currentChildren.next());
+                this.#helper.forgetNodeIfNecessary(currentChildren.next());
                 count++;
             }
         }
         while (!currentChildren.done)
-            this.helper.handleForValues(this.straightReplacementNodeHandler, currentChildren.next(), newChildren.next(), newSourceFile);
+            this.#helper.handleForValues(this.#straightReplacementNodeHandler, currentChildren.next(), newChildren.next(), newSourceFile);
         if (!newChildren.done)
             throw new Error("Error replacing tree: Should not have children left over.");
-        this.compilerFactory.replaceCompilerNode(currentNode, newNode);
+        this.#compilerFactory.replaceCompilerNode(currentNode, newNode);
     }
-    handleCustomMappings(newParentNode) {
-        if (this.customMappings == null)
+    #handleCustomMappings(newParentNode) {
+        if (this.#customMappings == null)
             return;
-        const customMappings = this.customMappings(newParentNode);
+        const customMappings = this.#customMappings(newParentNode);
         for (const mapping of customMappings)
-            this.compilerFactory.replaceCompilerNode(mapping.currentNode, mapping.newNode);
+            this.#compilerFactory.replaceCompilerNode(mapping.currentNode, mapping.newNode);
     }
-    tryReplaceNode(currentCompilerNode) {
-        if (this.replacingNodes == null || this.replacingNodes.length === 0)
+    #tryReplaceNode(currentCompilerNode) {
+        if (this.#replacingNodes == null || this.#replacingNodes.length === 0)
             return false;
-        const index = this.replacingNodes.indexOf(currentCompilerNode);
+        const index = this.#replacingNodes.indexOf(currentCompilerNode);
         if (index === -1)
             return false;
-        this.replacingNodes.splice(index, 1);
-        this.helper.forgetNodeIfNecessary(currentCompilerNode);
+        this.#replacingNodes.splice(index, 1);
+        this.#helper.forgetNodeIfNecessary(currentCompilerNode);
         return true;
     }
 }
 
 class ForgetChangedNodeHandler {
+    #compilerFactory;
+    #helper;
     constructor(compilerFactory) {
-        this.compilerFactory = compilerFactory;
-        this.helper = new NodeHandlerHelper(compilerFactory);
+        this.#helper = new NodeHandlerHelper(compilerFactory);
+        this.#compilerFactory = compilerFactory;
     }
     handleNode(currentNode, newNode, newSourceFile) {
         if (currentNode.getKind() !== newNode.kind) {
@@ -1555,52 +1572,56 @@ class ForgetChangedNodeHandler {
             return;
         }
         if (currentNode._hasWrappedChildren())
-            this.handleChildren(currentNode, newNode, newSourceFile);
-        this.compilerFactory.replaceCompilerNode(currentNode, newNode);
+            this.#handleChildren(currentNode, newNode, newSourceFile);
+        this.#compilerFactory.replaceCompilerNode(currentNode, newNode);
     }
-    handleChildren(currentNode, newNode, newSourceFile) {
-        const [currentNodeChildren, newNodeChildrenArray] = this.helper.getChildrenFast(currentNode, newNode, newSourceFile);
+    #handleChildren(currentNode, newNode, newSourceFile) {
+        const [currentNodeChildren, newNodeChildrenArray] = this.#helper.getChildrenFast(currentNode, newNode, newSourceFile);
         const newNodeChildren = ArrayUtils.toIterator(newNodeChildrenArray);
         for (const currentNodeChild of currentNodeChildren) {
             const nextNodeChildResult = newNodeChildren.next();
             if (nextNodeChildResult.done) {
-                const existingNode = this.compilerFactory.getExistingNodeFromCompilerNode(currentNodeChild);
+                const existingNode = this.#compilerFactory.getExistingNodeFromCompilerNode(currentNodeChild);
                 if (existingNode != null)
                     existingNode.forget();
             }
             else {
-                this.helper.handleForValues(this, currentNodeChild, nextNodeChildResult.value, newSourceFile);
+                this.#helper.handleForValues(this, currentNodeChild, nextNodeChildResult.value, newSourceFile);
             }
         }
     }
 }
 
 class ParentFinderReplacementNodeHandler extends StraightReplacementNodeHandler {
+    #changingParent;
+    #parentNodeHandler;
+    #changingParentParent;
+    #foundParent = false;
+    #parentsAtSamePos;
     constructor(compilerFactory, parentNodeHandler, changingParent) {
         super(compilerFactory);
-        this.parentNodeHandler = parentNodeHandler;
-        this.changingParent = changingParent;
-        this.foundParent = false;
-        this.changingParentParent = this.changingParent.getParentSyntaxList() || this.changingParent.getParent();
-        this.parentsAtSamePos = this.changingParentParent != null && this.changingParentParent.getPos() === this.changingParent.getPos();
+        this.#changingParentParent = changingParent.getParentSyntaxList() ?? changingParent.getParent();
+        this.#parentsAtSamePos = this.#changingParentParent != null && this.#changingParentParent.getPos() === changingParent.getPos();
+        this.#parentNodeHandler = parentNodeHandler;
+        this.#changingParent = changingParent;
     }
     handleNode(currentNode, newNode, newSourceFile) {
-        if (!this.foundParent && this.isParentNode(newNode, newSourceFile)) {
-            this.foundParent = true;
-            this.parentNodeHandler.handleNode(currentNode, newNode, newSourceFile);
+        if (!this.#foundParent && this.#isParentNode(newNode, newSourceFile)) {
+            this.#foundParent = true;
+            this.#parentNodeHandler.handleNode(currentNode, newNode, newSourceFile);
         }
         else {
             super.handleNode(currentNode, newNode, newSourceFile);
         }
     }
-    isParentNode(newNode, newSourceFile) {
-        const positionsAndKindsEqual = areNodesEqual(newNode, this.changingParent)
-            && areNodesEqual(getParentSyntaxList(newNode, newSourceFile) || newNode.parent, this.changingParentParent);
+    #isParentNode(newNode, newSourceFile) {
+        const positionsAndKindsEqual = areNodesEqual(newNode, this.#changingParent)
+            && areNodesEqual(getParentSyntaxList(newNode, newSourceFile) || newNode.parent, this.#changingParentParent);
         if (!positionsAndKindsEqual)
             return false;
-        if (!this.parentsAtSamePos)
+        if (!this.#parentsAtSamePos)
             return true;
-        return getAncestorLength(this.changingParent.compilerNode) === getAncestorLength(newNode);
+        return getAncestorLength(this.#changingParent.compilerNode) === getAncestorLength(newNode);
         function getAncestorLength(nodeToCheck) {
             let node = nodeToCheck;
             let count = 0;
@@ -1623,66 +1644,78 @@ function areNodesEqual(a, b) {
 }
 
 class RangeHandler {
+    #compilerFactory;
+    #straightReplacementNodeHandler;
+    #helper;
+    #start;
+    #end;
     constructor(compilerFactory, opts) {
-        this.compilerFactory = compilerFactory;
-        this.straightReplacementNodeHandler = new StraightReplacementNodeHandler(compilerFactory);
-        this.helper = new NodeHandlerHelper(compilerFactory);
-        this.start = opts.start;
-        this.end = opts.end;
+        this.#straightReplacementNodeHandler = new StraightReplacementNodeHandler(compilerFactory);
+        this.#helper = new NodeHandlerHelper(compilerFactory);
+        this.#start = opts.start;
+        this.#end = opts.end;
+        this.#compilerFactory = compilerFactory;
     }
     handleNode(currentNode, newNode, newSourceFile) {
         const currentSourceFile = currentNode._sourceFile.compilerNode;
-        const children = this.helper.getChildrenFast(currentNode, newNode, newSourceFile);
+        const children = this.#helper.getChildrenFast(currentNode, newNode, newSourceFile);
         const currentNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(children[0]));
         const newNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(children[1]));
-        while (!currentNodeChildren.done && !newNodeChildren.done && newNodeChildren.peek.getEnd() <= this.start)
-            this.straightReplace(currentNodeChildren.next(), newNodeChildren.next(), newSourceFile);
+        while (!currentNodeChildren.done && !newNodeChildren.done && newNodeChildren.peek.getEnd() <= this.#start)
+            this.#straightReplace(currentNodeChildren.next(), newNodeChildren.next(), newSourceFile);
         while (!currentNodeChildren.done && !newNodeChildren.done
-            && (currentNodeChildren.peek.getStart(currentSourceFile) < this.start
-                || currentNodeChildren.peek.getStart(currentSourceFile) === this.start && newNodeChildren.peek.end > this.end)) {
-            this.rangeHandlerReplace(currentNodeChildren.next(), newNodeChildren.next(), newSourceFile);
+            && (currentNodeChildren.peek.getStart(currentSourceFile) < this.#start
+                || currentNodeChildren.peek.getStart(currentSourceFile) === this.#start && newNodeChildren.peek.end > this.#end)) {
+            this.#rangeHandlerReplace(currentNodeChildren.next(), newNodeChildren.next(), newSourceFile);
         }
-        while (!newNodeChildren.done && newNodeChildren.peek.getEnd() <= this.end)
+        while (!newNodeChildren.done && newNodeChildren.peek.getEnd() <= this.#end)
             newNodeChildren.next();
         while (!currentNodeChildren.done)
-            this.straightReplace(currentNodeChildren.next(), newNodeChildren.next(), newSourceFile);
+            this.#straightReplace(currentNodeChildren.next(), newNodeChildren.next(), newSourceFile);
         if (!newNodeChildren.done)
             throw new Error("Error replacing tree: Should not have children left over.");
-        this.compilerFactory.replaceCompilerNode(currentNode, newNode);
+        this.#compilerFactory.replaceCompilerNode(currentNode, newNode);
     }
-    straightReplace(currentNode, nextNode, newSourceFile) {
-        this.helper.handleForValues(this.straightReplacementNodeHandler, currentNode, nextNode, newSourceFile);
+    #straightReplace(currentNode, nextNode, newSourceFile) {
+        this.#helper.handleForValues(this.#straightReplacementNodeHandler, currentNode, nextNode, newSourceFile);
     }
-    rangeHandlerReplace(currentNode, nextNode, newSourceFile) {
-        this.helper.handleForValues(this, currentNode, nextNode, newSourceFile);
+    #rangeHandlerReplace(currentNode, nextNode, newSourceFile) {
+        this.#helper.handleForValues(this, currentNode, nextNode, newSourceFile);
     }
 }
 
 class RangeParentHandler {
+    #compilerFactory;
+    #straightReplacementNodeHandler;
+    #helper;
+    #start;
+    #end;
+    #replacingLength;
+    #replacingNodes;
+    #customMappings;
     constructor(compilerFactory, opts) {
-        var _a;
-        this.compilerFactory = compilerFactory;
-        this.straightReplacementNodeHandler = new StraightReplacementNodeHandler(compilerFactory);
-        this.helper = new NodeHandlerHelper(compilerFactory);
-        this.start = opts.start;
-        this.end = opts.end;
-        this.replacingLength = opts.replacingLength;
-        this.replacingNodes = (_a = opts.replacingNodes) === null || _a === void 0 ? void 0 : _a.map(n => n.compilerNode);
-        this.customMappings = opts.customMappings;
+        this.#straightReplacementNodeHandler = new StraightReplacementNodeHandler(compilerFactory);
+        this.#helper = new NodeHandlerHelper(compilerFactory);
+        this.#start = opts.start;
+        this.#end = opts.end;
+        this.#replacingLength = opts.replacingLength;
+        this.#replacingNodes = opts.replacingNodes?.map(n => n.compilerNode);
+        this.#customMappings = opts.customMappings;
+        this.#compilerFactory = compilerFactory;
     }
     handleNode(currentNode, newNode, newSourceFile) {
         const currentSourceFile = currentNode._sourceFile.compilerNode;
-        const [currentNodeChildren, newNodeChildren] = this.helper.getCompilerChildrenAsIterators(currentNode, newNode, newSourceFile);
-        this.handleCustomMappings(newNode, newSourceFile);
-        while (!currentNodeChildren.done && !newNodeChildren.done && newNodeChildren.peek.getStart(newSourceFile) < this.start)
-            this.straightReplace(currentNodeChildren.next(), newNodeChildren.next(), newSourceFile);
+        const [currentNodeChildren, newNodeChildren] = this.#helper.getCompilerChildrenAsIterators(currentNode, newNode, newSourceFile);
+        this.#handleCustomMappings(newNode, newSourceFile);
+        while (!currentNodeChildren.done && !newNodeChildren.done && newNodeChildren.peek.getStart(newSourceFile) < this.#start)
+            this.#straightReplace(currentNodeChildren.next(), newNodeChildren.next(), newSourceFile);
         const newNodes = [];
-        while (!newNodeChildren.done && newNodeChildren.peek.getStart(newSourceFile) >= this.start
-            && getRealEnd(newNodeChildren.peek, newSourceFile) <= this.end) {
+        while (!newNodeChildren.done && newNodeChildren.peek.getStart(newSourceFile) >= this.#start
+            && getRealEnd(newNodeChildren.peek, newSourceFile) <= this.#end) {
             newNodes.push(newNodeChildren.next());
         }
-        if (this.replacingLength != null) {
-            const replacingEnd = this.start + this.replacingLength;
+        if (this.#replacingLength != null) {
+            const replacingEnd = this.#start + this.#replacingLength;
             const oldNodes = [];
             while (!currentNodeChildren.done
                 && (getRealEnd(currentNodeChildren.peek, currentSourceFile) <= replacingEnd
@@ -1691,42 +1724,42 @@ class RangeParentHandler {
             }
             if (oldNodes.length === newNodes.length && oldNodes.every((node, i) => node.kind === newNodes[i].kind)) {
                 for (let i = 0; i < oldNodes.length; i++) {
-                    const node = this.compilerFactory.getExistingNodeFromCompilerNode(oldNodes[i]);
+                    const node = this.#compilerFactory.getExistingNodeFromCompilerNode(oldNodes[i]);
                     if (node != null) {
                         node.forgetDescendants();
-                        this.compilerFactory.replaceCompilerNode(oldNodes[i], newNodes[i]);
+                        this.#compilerFactory.replaceCompilerNode(oldNodes[i], newNodes[i]);
                     }
                 }
             }
             else {
-                oldNodes.forEach(node => this.helper.forgetNodeIfNecessary(node));
+                oldNodes.forEach(node => this.#helper.forgetNodeIfNecessary(node));
             }
         }
         while (!currentNodeChildren.done)
-            this.straightReplace(currentNodeChildren.next(), newNodeChildren.next(), newSourceFile);
+            this.#straightReplace(currentNodeChildren.next(), newNodeChildren.next(), newSourceFile);
         if (!newNodeChildren.done)
             throw new Error("Error replacing tree: Should not have children left over.");
-        this.compilerFactory.replaceCompilerNode(currentNode, newNode);
+        this.#compilerFactory.replaceCompilerNode(currentNode, newNode);
     }
-    handleCustomMappings(newParentNode, newSourceFile) {
-        if (this.customMappings == null)
+    #handleCustomMappings(newParentNode, newSourceFile) {
+        if (this.#customMappings == null)
             return;
-        const customMappings = this.customMappings(newParentNode, newSourceFile);
+        const customMappings = this.#customMappings(newParentNode, newSourceFile);
         for (const mapping of customMappings)
             mapping.currentNode._context.compilerFactory.replaceCompilerNode(mapping.currentNode, mapping.newNode);
     }
-    straightReplace(currentNode, nextNode, newSourceFile) {
-        if (!this.tryReplaceNode(currentNode))
-            this.helper.handleForValues(this.straightReplacementNodeHandler, currentNode, nextNode, newSourceFile);
+    #straightReplace(currentNode, nextNode, newSourceFile) {
+        if (!this.#tryReplaceNode(currentNode))
+            this.#helper.handleForValues(this.#straightReplacementNodeHandler, currentNode, nextNode, newSourceFile);
     }
-    tryReplaceNode(currentCompilerNode) {
-        if (this.replacingNodes == null || this.replacingNodes.length === 0)
+    #tryReplaceNode(currentCompilerNode) {
+        if (this.#replacingNodes == null || this.#replacingNodes.length === 0)
             return false;
-        const index = this.replacingNodes.indexOf(currentCompilerNode);
+        const index = this.#replacingNodes.indexOf(currentCompilerNode);
         if (index === -1)
             return false;
-        this.replacingNodes.splice(index, 1);
-        this.helper.forgetNodeIfNecessary(currentCompilerNode);
+        this.#replacingNodes.splice(index, 1);
+        this.#helper.forgetNodeIfNecessary(currentCompilerNode);
         return true;
     }
 }
@@ -1775,14 +1808,15 @@ class RenameNodeHandler extends StraightReplacementNodeHandler {
 }
 
 class TryOrForgetNodeHandler {
+    #handler;
     constructor(handler) {
-        this.handler = handler;
+        this.#handler = handler;
     }
     handleNode(currentNode, newNode, newSourceFile) {
         if (!Node.isSourceFile(currentNode))
             throw new errors.InvalidOperationError(`Can only use a TryOrForgetNodeHandler with a source file.`);
         try {
-            this.handler.handleNode(currentNode, newNode, newSourceFile);
+            this.#handler.handleNode(currentNode, newNode, newSourceFile);
         }
         catch (ex) {
             currentNode._context.logger.warn("Could not replace tree, so forgetting all nodes instead. Message: " + ex);
@@ -1793,21 +1827,25 @@ class TryOrForgetNodeHandler {
 }
 
 class UnwrapParentHandler {
+    #childIndex;
+    #compilerFactory;
+    #straightReplacementNodeHandler;
+    #helper;
     constructor(compilerFactory, childIndex) {
-        this.compilerFactory = compilerFactory;
-        this.childIndex = childIndex;
-        this.straightReplacementNodeHandler = new StraightReplacementNodeHandler(compilerFactory);
-        this.helper = new NodeHandlerHelper(compilerFactory);
+        this.#straightReplacementNodeHandler = new StraightReplacementNodeHandler(compilerFactory);
+        this.#helper = new NodeHandlerHelper(compilerFactory);
+        this.#compilerFactory = compilerFactory;
+        this.#childIndex = childIndex;
     }
     handleNode(currentNode, newNode, newSourceFile) {
-        const [currentChildren, newChildren] = this.helper.getCompilerChildrenAsIterators(currentNode, newNode, newSourceFile);
+        const [currentChildren, newChildren] = this.#helper.getCompilerChildrenAsIterators(currentNode, newNode, newSourceFile);
         let index = 0;
-        while (!currentChildren.done && !newChildren.done && index++ < this.childIndex)
-            this.helper.handleForValues(this.straightReplacementNodeHandler, currentChildren.next(), newChildren.next(), newSourceFile);
-        const currentChild = this.compilerFactory.getExistingNodeFromCompilerNode(currentChildren.next());
+        while (!currentChildren.done && !newChildren.done && index++ < this.#childIndex)
+            this.#helper.handleForValues(this.#straightReplacementNodeHandler, currentChildren.next(), newChildren.next(), newSourceFile);
+        const currentChild = this.#compilerFactory.getExistingNodeFromCompilerNode(currentChildren.next());
         const childSyntaxList = currentChild.getChildSyntaxListOrThrow();
         for (const child of ExtendedParser.getCompilerChildren(childSyntaxList.compilerNode, childSyntaxList._sourceFile.compilerNode))
-            this.helper.handleForValues(this.straightReplacementNodeHandler, child, newChildren.next(), newSourceFile);
+            this.#helper.handleForValues(this.#straightReplacementNodeHandler, child, newChildren.next(), newSourceFile);
         forgetNodes(currentChild);
         function forgetNodes(node) {
             if (node === childSyntaxList) {
@@ -1819,10 +1857,10 @@ class UnwrapParentHandler {
             node._forgetOnlyThis();
         }
         while (!currentChildren.done)
-            this.helper.handleForValues(this.straightReplacementNodeHandler, currentChildren.next(), newChildren.next(), newSourceFile);
+            this.#helper.handleForValues(this.#straightReplacementNodeHandler, currentChildren.next(), newChildren.next(), newSourceFile);
         if (!newChildren.done)
             throw new Error("Error replacing tree: Should not have children left over.");
-        this.compilerFactory.replaceCompilerNode(currentNode, newNode);
+        this.#compilerFactory.replaceCompilerNode(currentNode, newNode);
     }
 }
 
@@ -1921,11 +1959,12 @@ function getSpacingBetweenNodes(opts) {
 }
 
 class ChangingChildOrderTextManipulator {
+    #opts;
     constructor(opts) {
-        this.opts = opts;
+        this.#opts = opts;
     }
     getNewText(inputText) {
-        const { parent, oldIndex, newIndex, getSiblingFormatting } = this.opts;
+        const { parent, oldIndex, newIndex, getSiblingFormatting } = this.#opts;
         const children = parent.getChildren();
         const newLineKind = parent._context.manipulationSettings.getNewLineKindAsString();
         const movingNode = children[oldIndex];
@@ -2043,11 +2082,12 @@ class ChangingChildOrderTextManipulator {
 }
 
 class FullReplacementTextManipulator {
+    #newText;
     constructor(newText) {
-        this.newText = newText;
+        this.#newText = newText;
     }
     getNewText(inputText) {
-        return this.newText;
+        return this.#newText;
     }
     getTextForError(newText) {
         return newText;
@@ -2068,29 +2108,32 @@ function getTextForError(newText, pos, length = 0) {
 }
 
 class InsertionTextManipulator {
+    #opts;
     constructor(opts) {
-        this.opts = opts;
+        this.#opts = opts;
     }
     getNewText(inputText) {
-        const { insertPos, newText, replacingLength = 0 } = this.opts;
+        const { insertPos, newText, replacingLength = 0 } = this.#opts;
         return inputText.substring(0, insertPos) + newText + inputText.substring(insertPos + replacingLength);
     }
     getTextForError(newText) {
-        return getTextForError(newText, this.opts.insertPos, this.opts.newText.length);
+        return getTextForError(newText, this.#opts.insertPos, this.#opts.newText.length);
     }
 }
 
 class RemoveChildrenTextManipulator {
+    #opts;
+    #removalPos;
     constructor(opts) {
-        this.opts = opts;
+        this.#opts = opts;
     }
     getNewText(inputText) {
-        const opts = this.opts;
+        const opts = this.#opts;
         const { children, removePrecedingSpaces = false, removeFollowingSpaces = false, removePrecedingNewLines = false, removeFollowingNewLines = false, replaceTrivia = "", } = opts;
         const sourceFile = children[0].getSourceFile();
         const fullText = sourceFile.getFullText();
         const removalPos = getRemovalPos();
-        this.removalPos = removalPos;
+        this.#removalPos = removalPos;
         return getPrefix() + replaceTrivia + getSuffix();
         function getPrefix() {
             return fullText.substring(0, removalPos);
@@ -2128,7 +2171,7 @@ class RemoveChildrenTextManipulator {
         }
     }
     getTextForError(newText) {
-        return getTextForError(newText, this.removalPos);
+        return getTextForError(newText, this.#removalPos);
     }
 }
 
@@ -2144,11 +2187,13 @@ function hasNewLineInRange(fullText, range) {
 }
 
 class RemoveChildrenWithFormattingTextManipulator {
+    #opts;
+    #removalPos;
     constructor(opts) {
-        this.opts = opts;
+        this.#opts = opts;
     }
     getNewText(inputText) {
-        const { children, getSiblingFormatting } = this.opts;
+        const { children, getSiblingFormatting } = this.#opts;
         const firstChild = children[0];
         const lastChild = children[children.length - 1];
         const parent = firstChild.getParentOrThrow();
@@ -2158,7 +2203,7 @@ class RemoveChildrenWithFormattingTextManipulator {
         const previousSibling = firstChild.getPreviousSibling();
         const nextSibling = lastChild.getNextSibling();
         const removalPos = getRemovalPos();
-        this.removalPos = removalPos;
+        this.#removalPos = removalPos;
         return getPrefix() + getSpacing() + getSuffix();
         function getPrefix() {
             return fullText.substring(0, removalPos);
@@ -2207,24 +2252,26 @@ class RemoveChildrenWithFormattingTextManipulator {
         }
     }
     getTextForError(newText) {
-        return getTextForError(newText, this.removalPos);
+        return getTextForError(newText, this.#removalPos);
     }
 }
 
 class RenameLocationTextManipulator {
+    #newName;
+    #renameLocations;
     constructor(renameLocations, newName) {
-        this.renameLocations = renameLocations;
-        this.newName = newName;
+        this.#renameLocations = renameLocations;
+        this.#newName = newName;
     }
     getNewText(inputText) {
-        const renameLocations = [...this.renameLocations].sort((a, b) => b.getTextSpan().getStart() - a.getTextSpan().getStart());
+        const renameLocations = [...this.#renameLocations].sort((a, b) => b.getTextSpan().getStart() - a.getTextSpan().getStart());
         let currentPos = inputText.length;
         let result = "";
         for (let i = 0; i < renameLocations.length; i++) {
             const renameLocation = renameLocations[i];
             const textSpan = renameLocation.getTextSpan();
             result = (renameLocation.getPrefixText() || "")
-                + this.newName
+                + this.#newName
                 + (renameLocation.getSuffixText() || "")
                 + inputText.substring(textSpan.getEnd(), currentPos)
                 + result;
@@ -2233,9 +2280,9 @@ class RenameLocationTextManipulator {
         return inputText.substring(0, currentPos) + result;
     }
     getTextForError(newText) {
-        if (this.renameLocations.length === 0)
+        if (this.#renameLocations.length === 0)
             return newText;
-        return "..." + newText.substring(this.renameLocations[0].getTextSpan().getStart());
+        return "..." + newText.substring(this.#renameLocations[0].getTextSpan().getStart());
     }
 }
 
@@ -2288,6 +2335,9 @@ function getReplacementText(node) {
 }
 
 class ManipulationError extends errors.InvalidOperationError {
+    filePath;
+    oldText;
+    newText;
     constructor(filePath, oldText, newText, errorMessage) {
         super(errorMessage);
         this.filePath = filePath;
@@ -2335,18 +2385,17 @@ function getSyntacticDiagnostics(sourceFile, newText) {
 }
 
 function insertIntoParentTextRange(opts) {
-    var _a, _b, _c;
     const { insertPos, newText, parent } = opts;
     doManipulation(parent._sourceFile, new InsertionTextManipulator({
         insertPos,
         newText,
-        replacingLength: (_a = opts.replacing) === null || _a === void 0 ? void 0 : _a.textLength,
+        replacingLength: opts.replacing?.textLength,
     }), new NodeHandlerFactory().getForParentRange({
         parent,
         start: insertPos,
         end: insertPos + newText.length,
-        replacingLength: (_b = opts.replacing) === null || _b === void 0 ? void 0 : _b.textLength,
-        replacingNodes: (_c = opts.replacing) === null || _c === void 0 ? void 0 : _c.nodes,
+        replacingLength: opts.replacing?.textLength,
+        replacingNodes: opts.replacing?.nodes,
         customMappings: opts.customMappings,
     }));
 }
@@ -2459,7 +2508,7 @@ function insertIntoCommaSeparatedNodes(opts) {
         function getLastCommentRangeEnd(node) {
             const commentRanges = node.getTrailingCommentRanges();
             const lastCommentRange = commentRanges[commentRanges.length - 1];
-            return lastCommentRange === null || lastCommentRange === void 0 ? void 0 : lastCommentRange.getEnd();
+            return lastCommentRange?.getEnd();
         }
     }
     function getPreviousNonCommentNode() {
@@ -2754,8 +2803,7 @@ function replaceSourceFileForCacheUpdate(sourceFile) {
 function ArgumentedNode(Base) {
     return class extends Base {
         getArguments() {
-            var _a, _b;
-            return (_b = (_a = this.compilerNode.arguments) === null || _a === void 0 ? void 0 : _a.map(a => this._getNodeFromCompilerNode(a))) !== null && _b !== void 0 ? _b : [];
+            return this.compilerNode.arguments?.map(a => this._getNodeFromCompilerNode(a)) ?? [];
         }
         addArgument(argumentText) {
             return this.addArguments([argumentText])[0];
@@ -2821,7 +2869,7 @@ function AsyncableNode(Base) {
             return this.getFirstModifierByKind(SyntaxKind.AsyncKeyword);
         }
         getAsyncKeywordOrThrow(message) {
-            return errors.throwIfNullOrUndefined(this.getAsyncKeyword(), message !== null && message !== void 0 ? message : "Expected to find an async keyword.", this);
+            return errors.throwIfNullOrUndefined(this.getAsyncKeyword(), message ?? "Expected to find an async keyword.", this);
         }
         setIsAsync(value) {
             this.toggleModifier("async", value);
@@ -2851,7 +2899,7 @@ function AwaitableNode(Base) {
             return this._getNodeFromCompilerNodeIfExists(awaitModifier);
         }
         getAwaitKeywordOrThrow(message) {
-            return errors.throwIfNullOrUndefined(this.getAwaitKeyword(), message !== null && message !== void 0 ? message : "Expected to find an await token.");
+            return errors.throwIfNullOrUndefined(this.getAwaitKeyword(), message ?? "Expected to find an await token.");
         }
         setIsAwaited(value) {
             const awaitModifier = this.getAwaitKeyword();
@@ -2915,17 +2963,19 @@ function getBodyTextWithoutLeadingIndentation(body) {
 }
 
 class TextRange {
+    #compilerObject;
+    #sourceFile;
     constructor(compilerObject, sourceFile) {
-        this._compilerObject = compilerObject;
-        this._sourceFile = sourceFile;
+        this.#compilerObject = compilerObject;
+        this.#sourceFile = sourceFile;
     }
     get compilerObject() {
-        this._throwIfForgotten();
-        return this._compilerObject;
+        this.#throwIfForgotten();
+        return this.#compilerObject;
     }
     getSourceFile() {
-        this._throwIfForgotten();
-        return this._sourceFile;
+        this.#throwIfForgotten();
+        return this.#sourceFile;
     }
     getPos() {
         return this.compilerObject.pos;
@@ -2941,14 +2991,14 @@ class TextRange {
         return fullText.substring(this.compilerObject.pos, this.compilerObject.end);
     }
     _forget() {
-        this._compilerObject = undefined;
-        this._sourceFile = undefined;
+        this.#compilerObject = undefined;
+        this.#sourceFile = undefined;
     }
     wasForgotten() {
-        return this._compilerObject == null;
+        return this.#compilerObject == null;
     }
-    _throwIfForgotten() {
-        if (this._compilerObject != null)
+    #throwIfForgotten() {
+        if (this.#compilerObject != null)
             return;
         const message = "Attempted to get a text range that was forgotten. "
             + "Text ranges are forgotten after a manipulation has occurred. "
@@ -2967,28 +3017,35 @@ class CommentRange extends TextRange {
 }
 
 class Node {
+    #compilerNode;
+    #forgottenText;
+    #childStringRanges;
+    #leadingCommentRanges;
+    #trailingCommentRanges;
+    _wrappedChildCount = 0;
+    _context;
+    __sourceFile;
     get _sourceFile() {
         if (this.__sourceFile == null)
             throw new errors.InvalidOperationError("Operation cannot be performed on a node that has no source file.");
         return this.__sourceFile;
     }
     get compilerNode() {
-        if (this._compilerNode == null) {
+        if (this.#compilerNode == null) {
             let message = "Attempted to get information from a node that was removed or forgotten.";
-            if (this._forgottenText != null)
-                message += `\n\nNode text: ${this._forgottenText}`;
+            if (this.#forgottenText != null)
+                message += `\n\nNode text: ${this.#forgottenText}`;
             throw new errors.InvalidOperationError(message);
         }
-        return this._compilerNode;
+        return this.#compilerNode;
     }
     constructor(context, node, sourceFile) {
-        this._wrappedChildCount = 0;
         if (context == null || context.compilerFactory == null) {
             throw new errors.InvalidOperationError("Constructing a node is not supported. Please create a source file from the default export "
                 + "of the package and manipulate the source file from there.");
         }
         this._context = context;
-        this._compilerNode = node;
+        this.#compilerNode = node;
         this.__sourceFile = sourceFile;
     }
     forget() {
@@ -3011,28 +3068,28 @@ class Node {
         const parentSyntaxList = this._getParentSyntaxListIfWrapped();
         if (parentSyntaxList != null)
             parentSyntaxList._wrappedChildCount--;
-        this._storeTextForForgetting();
+        this.#storeTextForForgetting();
         this._context.compilerFactory.removeNodeFromCache(this);
         this._clearInternals();
     }
     wasForgotten() {
-        return this._compilerNode == null;
+        return this.#compilerNode == null;
     }
     _hasWrappedChildren() {
         return this._wrappedChildCount > 0;
     }
     _replaceCompilerNodeFromFactory(compilerNode) {
         if (compilerNode == null)
-            this._storeTextForForgetting();
+            this.#storeTextForForgetting();
         this._clearInternals();
-        this._compilerNode = compilerNode;
+        this.#compilerNode = compilerNode;
     }
-    _storeTextForForgetting() {
+    #storeTextForForgetting() {
         const sourceFileCompilerNode = this._sourceFile && this._sourceFile.compilerNode;
-        const compilerNode = this._compilerNode;
+        const compilerNode = this.#compilerNode;
         if (sourceFileCompilerNode == null || compilerNode == null)
             return;
-        this._forgottenText = getText();
+        this.#forgottenText = getText();
         function getText() {
             const start = compilerNode.getStart(sourceFileCompilerNode);
             const length = compilerNode.end - start;
@@ -3042,12 +3099,12 @@ class Node {
         }
     }
     _clearInternals() {
-        this._compilerNode = undefined;
-        this._childStringRanges = undefined;
-        clearTextRanges(this._leadingCommentRanges);
-        clearTextRanges(this._trailingCommentRanges);
-        delete this._leadingCommentRanges;
-        delete this._trailingCommentRanges;
+        this.#compilerNode = undefined;
+        this.#childStringRanges = undefined;
+        clearTextRanges(this.#leadingCommentRanges);
+        clearTextRanges(this.#trailingCommentRanges);
+        this.#leadingCommentRanges = undefined;
+        this.#trailingCommentRanges = undefined;
         function clearTextRanges(textRanges) {
             if (textRanges == null)
                 return;
@@ -3072,7 +3129,7 @@ class Node {
             return printNode(this.compilerNode, this._sourceFile.compilerNode, options);
     }
     getSymbolOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getSymbol(), message !== null && message !== void 0 ? message : "Could not find the node's symbol.", this);
+        return errors.throwIfNullOrUndefined(this.getSymbol(), message ?? "Could not find the node's symbol.", this);
     }
     getSymbol() {
         const boundSymbol = this.compilerNode.symbol;
@@ -3091,22 +3148,22 @@ class Node {
         return this._context.typeChecker.getSymbolsInScope(this, meaning);
     }
     getLocalOrThrow(name, message) {
-        return errors.throwIfNullOrUndefined(this.getLocal(name), message !== null && message !== void 0 ? message : (() => `Expected to find local symbol with name: ${name}`), this);
+        return errors.throwIfNullOrUndefined(this.getLocal(name), message ?? (() => `Expected to find local symbol with name: ${name}`), this);
     }
     getLocal(name) {
-        const locals = this._getCompilerLocals();
+        const locals = this.#getCompilerLocals();
         if (locals == null)
             return undefined;
         const tsSymbol = locals.get(ts.escapeLeadingUnderscores(name));
         return tsSymbol == null ? undefined : this._context.compilerFactory.getSymbol(tsSymbol);
     }
     getLocals() {
-        const locals = this._getCompilerLocals();
+        const locals = this.#getCompilerLocals();
         if (locals == null)
             return [];
         return Array.from(locals.values()).map(symbol => this._context.compilerFactory.getSymbol(symbol));
     }
-    _getCompilerLocals() {
+    #getCompilerLocals() {
         this._ensureBound();
         return this.compilerNode.locals;
     }
@@ -3118,11 +3175,11 @@ class Node {
     }
     isInStringAtPos(pos) {
         errors.throwIfOutOfRange(pos, [this.getPos(), this.getEnd()], "pos");
-        if (this._childStringRanges == null) {
-            this._childStringRanges = [];
+        if (this.#childStringRanges == null) {
+            this.#childStringRanges = [];
             for (const descendant of this._getCompilerDescendantsIterator()) {
                 if (isStringKind(descendant.kind))
-                    this._childStringRanges.push([descendant.getStart(this._sourceFile.compilerNode), descendant.getEnd()]);
+                    this.#childStringRanges.push([descendant.getStart(this._sourceFile.compilerNode), descendant.getEnd()]);
             }
         }
         class InStringRangeComparer {
@@ -3134,38 +3191,36 @@ class Node {
                 return 0;
             }
         }
-        return ArrayUtils.binarySearch(this._childStringRanges, new InStringRangeComparer()) !== -1;
+        return ArrayUtils.binarySearch(this.#childStringRanges, new InStringRangeComparer()) !== -1;
     }
     asKindOrThrow(kind, message) {
-        return errors.throwIfNullOrUndefined(this.asKind(kind), message !== null && message !== void 0 ? message : (() => `Expected the node to be of kind ${getSyntaxKindName(kind)}, but it was ${getSyntaxKindName(this.getKind())}.`), this);
+        return errors.throwIfNullOrUndefined(this.asKind(kind), message ?? (() => `Expected the node to be of kind ${getSyntaxKindName(kind)}, but it was ${getSyntaxKindName(this.getKind())}.`), this);
     }
     isKind(kind) {
         return this.getKind() === kind;
     }
     asKind(kind) {
-        if (this.isKind(kind)) {
+        if (this.isKind(kind))
             return this;
-        }
-        else {
+        else
             return undefined;
-        }
     }
     getFirstChildOrThrow(condition, message) {
-        return errors.throwIfNullOrUndefined(this.getFirstChild(condition), message !== null && message !== void 0 ? message : "Could not find a child that matched the specified condition.", this);
+        return errors.throwIfNullOrUndefined(this.getFirstChild(condition), message ?? "Could not find a child that matched the specified condition.", this);
     }
     getFirstChild(condition) {
         const firstChild = this._getCompilerFirstChild(getWrappedCondition(this, condition));
         return this._getNodeFromCompilerNodeIfExists(firstChild);
     }
     getLastChildOrThrow(condition, message) {
-        return errors.throwIfNullOrUndefined(this.getLastChild(condition), message !== null && message !== void 0 ? message : "Could not find a child that matched the specified condition.", this);
+        return errors.throwIfNullOrUndefined(this.getLastChild(condition), message ?? "Could not find a child that matched the specified condition.", this);
     }
     getLastChild(condition) {
         const lastChild = this._getCompilerLastChild(getWrappedCondition(this, condition));
         return this._getNodeFromCompilerNodeIfExists(lastChild);
     }
     getFirstDescendantOrThrow(condition, message) {
-        return errors.throwIfNullOrUndefined(this.getFirstDescendant(condition), message !== null && message !== void 0 ? message : "Could not find a descendant that matched the specified condition.", this);
+        return errors.throwIfNullOrUndefined(this.getFirstDescendant(condition), message ?? "Could not find a descendant that matched the specified condition.", this);
     }
     getFirstDescendant(condition) {
         for (const descendant of this._getDescendantsIterator()) {
@@ -3175,14 +3230,14 @@ class Node {
         return undefined;
     }
     getPreviousSiblingOrThrow(condition, message) {
-        return errors.throwIfNullOrUndefined(this.getPreviousSibling(condition), message !== null && message !== void 0 ? message : "Could not find the previous sibling.", this);
+        return errors.throwIfNullOrUndefined(this.getPreviousSibling(condition), message ?? "Could not find the previous sibling.", this);
     }
     getPreviousSibling(condition) {
         const previousSibling = this._getCompilerPreviousSibling(getWrappedCondition(this, condition));
         return this._getNodeFromCompilerNodeIfExists(previousSibling);
     }
     getNextSiblingOrThrow(condition, message) {
-        return errors.throwIfNullOrUndefined(this.getNextSibling(condition), message !== null && message !== void 0 ? message : "Could not find the next sibling.", this);
+        return errors.throwIfNullOrUndefined(this.getNextSibling(condition), message ?? "Could not find the next sibling.", this);
     }
     getNextSibling(condition) {
         const nextSibling = this._getCompilerNextSibling(getWrappedCondition(this, condition));
@@ -3215,7 +3270,7 @@ class Node {
         }
     }
     getChildSyntaxListOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getChildSyntaxList(), message !== null && message !== void 0 ? message : "A child syntax list was expected.", this);
+        return errors.throwIfNullOrUndefined(this.getChildSyntaxList(), message ?? "A child syntax list was expected.", this);
     }
     getChildSyntaxList() {
         let node = this;
@@ -3560,10 +3615,10 @@ class Node {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.parent);
     }
     getParentOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getParent(), message !== null && message !== void 0 ? message : "Expected to find a parent.", this);
+        return errors.throwIfNullOrUndefined(this.getParent(), message ?? "Expected to find a parent.", this);
     }
     getParentWhileOrThrow(condition, message) {
-        return errors.throwIfNullOrUndefined(this.getParentWhile(condition), message !== null && message !== void 0 ? message : "The initial parent did not match the provided condition.", this);
+        return errors.throwIfNullOrUndefined(this.getParentWhile(condition), message ?? "The initial parent did not match the provided condition.", this);
     }
     getParentWhile(condition) {
         let node = undefined;
@@ -3575,7 +3630,7 @@ class Node {
         return node;
     }
     getParentWhileKindOrThrow(kind, message) {
-        return errors.throwIfNullOrUndefined(this.getParentWhileKind(kind), message !== null && message !== void 0 ? message : (() => `The initial parent was not a syntax kind of ${getSyntaxKindName(kind)}.`), this);
+        return errors.throwIfNullOrUndefined(this.getParentWhileKind(kind), message ?? (() => `The initial parent was not a syntax kind of ${getSyntaxKindName(kind)}.`), this);
     }
     getParentWhileKind(kind) {
         return this.getParentWhile(n => n.getKind() === kind);
@@ -3590,7 +3645,7 @@ class Node {
         return this.getParentSyntaxList() != null;
     }
     getParentSyntaxListOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getParentSyntaxList(), message !== null && message !== void 0 ? message : "Expected the parent to be a syntax list.", this);
+        return errors.throwIfNullOrUndefined(this.getParentSyntaxList(), message ?? "Expected the parent to be a syntax list.", this);
     }
     getParentSyntaxList() {
         const kind = this.getKind();
@@ -3622,12 +3677,12 @@ class Node {
         return this.getIndentationLevel() + 1;
     }
     getIndentationText(offset = 0) {
-        return this._getIndentationTextForLevel(this.getIndentationLevel() + offset);
+        return this.#getIndentationTextForLevel(this.getIndentationLevel() + offset);
     }
     getChildIndentationText(offset = 0) {
-        return this._getIndentationTextForLevel(this.getChildIndentationLevel() + offset);
+        return this.#getIndentationTextForLevel(this.getChildIndentationLevel() + offset);
     }
-    _getIndentationTextForLevel(level) {
+    #getIndentationTextForLevel(level) {
         return this._context.manipulationSettings.getIndentationText().repeat(level);
     }
     getStartLinePos(includeJsDocComments) {
@@ -3758,13 +3813,12 @@ class Node {
             }
         }
         function getTransformedText(replaceRange) {
-            var _a;
             const fileText = compilerSourceFile.getFullText();
             let finalText = "";
             let lastPos = replaceRange[0];
             for (const transform of transformations) {
                 finalText += fileText.substring(lastPos, transform.start);
-                finalText += printer.printNode(ts.EmitHint.Unspecified, transform.compilerNode, (_a = transform.compilerNode.getSourceFile()) !== null && _a !== void 0 ? _a : compilerSourceFile);
+                finalText += printer.printNode(ts.EmitHint.Unspecified, transform.compilerNode, transform.compilerNode.getSourceFile() ?? compilerSourceFile);
                 lastPos = transform.end;
             }
             finalText += fileText.substring(lastPos, replaceRange[1]);
@@ -3772,7 +3826,7 @@ class Node {
         }
     }
     getLeadingCommentRanges() {
-        return this._leadingCommentRanges || (this._leadingCommentRanges = this._getCommentsAtPos(this.getFullStart(), (text, pos) => {
+        return this.#leadingCommentRanges || (this.#leadingCommentRanges = this.#getCommentsAtPos(this.getFullStart(), (text, pos) => {
             const comments = ts.getLeadingCommentRanges(text, pos) || [];
             if (this.getKind() === SyntaxKind.SingleLineCommentTrivia || this.getKind() === SyntaxKind.MultiLineCommentTrivia) {
                 const thisPos = this.getPos();
@@ -3784,32 +3838,32 @@ class Node {
         }));
     }
     getTrailingCommentRanges() {
-        return this._trailingCommentRanges || (this._trailingCommentRanges = this._getCommentsAtPos(this.getEnd(), ts.getTrailingCommentRanges));
+        return this.#trailingCommentRanges ?? (this.#trailingCommentRanges = this.#getCommentsAtPos(this.getEnd(), ts.getTrailingCommentRanges));
     }
-    _getCommentsAtPos(pos, getComments) {
+    #getCommentsAtPos(pos, getComments) {
         if (this.getKind() === SyntaxKind.SourceFile)
             return [];
-        return (getComments(this._sourceFile.getFullText(), pos) || []).map(r => new CommentRange(r, this._sourceFile));
+        return (getComments(this._sourceFile.getFullText(), pos) ?? []).map(r => new CommentRange(r, this._sourceFile));
     }
     getChildrenOfKind(kind) {
         return this._getCompilerChildrenOfKind(kind).map(c => this._getNodeFromCompilerNode(c));
     }
     getFirstChildByKindOrThrow(kind, message) {
-        return errors.throwIfNullOrUndefined(this.getFirstChildByKind(kind), message !== null && message !== void 0 ? message : (() => `A child of the kind ${getSyntaxKindName(kind)} was expected.`), this);
+        return errors.throwIfNullOrUndefined(this.getFirstChildByKind(kind), message ?? (() => `A child of the kind ${getSyntaxKindName(kind)} was expected.`), this);
     }
     getFirstChildByKind(kind) {
         const child = this._getCompilerChildrenOfKind(kind)[0];
         return child == null ? undefined : this._getNodeFromCompilerNode(child);
     }
     getFirstChildIfKindOrThrow(kind, message) {
-        return errors.throwIfNullOrUndefined(this.getFirstChildIfKind(kind), message !== null && message !== void 0 ? message : (() => `A first child of the kind ${getSyntaxKindName(kind)} was expected.`), this);
+        return errors.throwIfNullOrUndefined(this.getFirstChildIfKind(kind), message ?? (() => `A first child of the kind ${getSyntaxKindName(kind)} was expected.`), this);
     }
     getFirstChildIfKind(kind) {
         const firstChild = this._getCompilerFirstChild();
         return firstChild != null && firstChild.kind === kind ? this._getNodeFromCompilerNode(firstChild) : undefined;
     }
     getLastChildByKindOrThrow(kind, message) {
-        return errors.throwIfNullOrUndefined(this.getLastChildByKind(kind), message !== null && message !== void 0 ? message : (() => `A child of the kind ${getSyntaxKindName(kind)} was expected.`), this);
+        return errors.throwIfNullOrUndefined(this.getLastChildByKind(kind), message ?? (() => `A child of the kind ${getSyntaxKindName(kind)} was expected.`), this);
     }
     getLastChildByKind(kind) {
         const children = this._getCompilerChildrenOfKind(kind);
@@ -3817,24 +3871,24 @@ class Node {
         return this._getNodeFromCompilerNodeIfExists(lastChild);
     }
     getLastChildIfKindOrThrow(kind, message) {
-        return errors.throwIfNullOrUndefined(this.getLastChildIfKind(kind), message !== null && message !== void 0 ? message : (() => `A last child of the kind ${getSyntaxKindName(kind)} was expected.`), this);
+        return errors.throwIfNullOrUndefined(this.getLastChildIfKind(kind), message ?? (() => `A last child of the kind ${getSyntaxKindName(kind)} was expected.`), this);
     }
     getLastChildIfKind(kind) {
         const lastChild = this._getCompilerLastChild();
         return lastChild != null && lastChild.kind === kind ? this._getNodeFromCompilerNode(lastChild) : undefined;
     }
     getChildAtIndexIfKindOrThrow(index, kind, message) {
-        return errors.throwIfNullOrUndefined(this.getChildAtIndexIfKind(index, kind), message !== null && message !== void 0 ? message : (() => `Child at index ${index} was expected to be ${getSyntaxKindName(kind)}`), this);
+        return errors.throwIfNullOrUndefined(this.getChildAtIndexIfKind(index, kind), message ?? (() => `Child at index ${index} was expected to be ${getSyntaxKindName(kind)}`), this);
     }
     getChildAtIndexIfKind(index, kind) {
         const node = this._getCompilerChildAtIndex(index);
         return node.kind === kind ? this._getNodeFromCompilerNode(node) : undefined;
     }
     getPreviousSiblingIfKindOrThrow(kind, message) {
-        return errors.throwIfNullOrUndefined(this.getPreviousSiblingIfKind(kind), message !== null && message !== void 0 ? message : (() => `A previous sibling of kind ${getSyntaxKindName(kind)} was expected.`), this);
+        return errors.throwIfNullOrUndefined(this.getPreviousSiblingIfKind(kind), message ?? (() => `A previous sibling of kind ${getSyntaxKindName(kind)} was expected.`), this);
     }
     getNextSiblingIfKindOrThrow(kind, message) {
-        return errors.throwIfNullOrUndefined(this.getNextSiblingIfKind(kind), message !== null && message !== void 0 ? message : (() => `A next sibling of kind ${getSyntaxKindName(kind)} was expected.`), this);
+        return errors.throwIfNullOrUndefined(this.getNextSiblingIfKind(kind), message ?? (() => `A next sibling of kind ${getSyntaxKindName(kind)} was expected.`), this);
     }
     getPreviousSiblingIfKind(kind) {
         const previousSibling = this._getCompilerPreviousSibling();
@@ -3847,19 +3901,19 @@ class Node {
         return nextSibling != null && nextSibling.kind === kind ? this._getNodeFromCompilerNode(nextSibling) : undefined;
     }
     getParentIfOrThrow(condition, message) {
-        return errors.throwIfNullOrUndefined(this.getParentIf(condition), message !== null && message !== void 0 ? message : "The parent did not match the provided condition.", this);
+        return errors.throwIfNullOrUndefined(this.getParentIf(condition), message ?? "The parent did not match the provided condition.", this);
     }
     getParentIf(condition) {
         return condition(this.getParent(), this) ? this.getParent() : undefined;
     }
     getParentIfKindOrThrow(kind, message) {
-        return errors.throwIfNullOrUndefined(this.getParentIfKind(kind), message !== null && message !== void 0 ? message : (() => `The parent was not a syntax kind of ${getSyntaxKindName(kind)}.`), this);
+        return errors.throwIfNullOrUndefined(this.getParentIfKind(kind), message ?? (() => `The parent was not a syntax kind of ${getSyntaxKindName(kind)}.`), this);
     }
     getParentIfKind(kind) {
         return this.getParentIf(n => n !== undefined && n.getKind() === kind);
     }
     getFirstAncestorByKindOrThrow(kind, message) {
-        return errors.throwIfNullOrUndefined(this.getFirstAncestorByKind(kind), message !== null && message !== void 0 ? message : (() => `Expected an ancestor with a syntax kind of ${getSyntaxKindName(kind)}.`), this);
+        return errors.throwIfNullOrUndefined(this.getFirstAncestorByKind(kind), message ?? (() => `Expected an ancestor with a syntax kind of ${getSyntaxKindName(kind)}.`), this);
     }
     getFirstAncestorByKind(kind) {
         for (const parent of this._getAncestorsIterator(kind === SyntaxKind.SyntaxList)) {
@@ -3869,7 +3923,7 @@ class Node {
         return undefined;
     }
     getFirstAncestorOrThrow(condition, message) {
-        return errors.throwIfNullOrUndefined(this.getFirstAncestor(condition), message !== null && message !== void 0 ? message : `Expected to find an ancestor that matched the provided condition.`, this);
+        return errors.throwIfNullOrUndefined(this.getFirstAncestor(condition), message ?? `Expected to find an ancestor that matched the provided condition.`, this);
     }
     getFirstAncestor(condition) {
         for (const ancestor of this._getAncestorsIterator(false)) {
@@ -3885,7 +3939,7 @@ class Node {
         return descendants;
     }
     getFirstDescendantByKindOrThrow(kind, message) {
-        return errors.throwIfNullOrUndefined(this.getFirstDescendantByKind(kind), message !== null && message !== void 0 ? message : (() => `A descendant of kind ${getSyntaxKindName(kind)} was expected to be found.`), this);
+        return errors.throwIfNullOrUndefined(this.getFirstDescendantByKind(kind), message ?? (() => `A descendant of kind ${getSyntaxKindName(kind)} was expected to be found.`), this);
     }
     getFirstDescendantByKind(kind) {
         for (const descendant of this._getCompilerDescendantsOfKindIterator(kind))
@@ -4026,54 +4080,46 @@ class Node {
         this.getSymbol();
     }
     static hasExpression(node) {
-        var _a, _b;
-        return ((_b = (_a = node).getExpression) === null || _b === void 0 ? void 0 : _b.call(_a)) != null;
+        return node.getExpression?.() != null;
     }
     static hasName(node) {
-        var _a, _b;
-        return typeof ((_b = (_a = node).getName) === null || _b === void 0 ? void 0 : _b.call(_a)) === "string";
+        return typeof node.getName?.() === "string";
     }
     static hasBody(node) {
-        var _a, _b;
-        return ((_b = (_a = node).getBody) === null || _b === void 0 ? void 0 : _b.call(_a)) != null;
+        return node.getBody?.() != null;
     }
     static hasStructure(node) {
         return typeof node.getStructure === "function";
     }
     static is(kind) {
         return (node) => {
-            return (node === null || node === void 0 ? void 0 : node.getKind()) == kind;
+            return node?.getKind() == kind;
         };
     }
     static isNode(value) {
         return value != null && value.compilerNode != null;
     }
     static isCommentNode(node) {
-        const kind = node === null || node === void 0 ? void 0 : node.getKind();
+        const kind = node?.getKind();
         return kind === SyntaxKind.SingleLineCommentTrivia || kind === SyntaxKind.MultiLineCommentTrivia;
     }
     static isCommentStatement(node) {
-        var _a;
-        return ((_a = node === null || node === void 0 ? void 0 : node.compilerNode) === null || _a === void 0 ? void 0 : _a._commentKind) === CommentNodeKind.Statement;
+        return node?.compilerNode?._commentKind === CommentNodeKind.Statement;
     }
     static isCommentClassElement(node) {
-        var _a;
-        return ((_a = node === null || node === void 0 ? void 0 : node.compilerNode) === null || _a === void 0 ? void 0 : _a._commentKind) === CommentNodeKind.ClassElement;
+        return node?.compilerNode?._commentKind === CommentNodeKind.ClassElement;
     }
     static isCommentTypeElement(node) {
-        var _a;
-        return ((_a = node === null || node === void 0 ? void 0 : node.compilerNode) === null || _a === void 0 ? void 0 : _a._commentKind) === CommentNodeKind.TypeElement;
+        return node?.compilerNode?._commentKind === CommentNodeKind.TypeElement;
     }
     static isCommentObjectLiteralElement(node) {
-        var _a;
-        return ((_a = node === null || node === void 0 ? void 0 : node.compilerNode) === null || _a === void 0 ? void 0 : _a._commentKind) === CommentNodeKind.ObjectLiteralElement;
+        return node?.compilerNode?._commentKind === CommentNodeKind.ObjectLiteralElement;
     }
     static isCommentEnumMember(node) {
-        var _a;
-        return ((_a = node === null || node === void 0 ? void 0 : node.compilerNode) === null || _a === void 0 ? void 0 : _a._commentKind) == CommentNodeKind.EnumMember;
+        return node?.compilerNode?._commentKind == CommentNodeKind.EnumMember;
     }
     static isAbstractable(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
             case SyntaxKind.ConstructorType:
@@ -4087,7 +4133,7 @@ class Node {
         }
     }
     static isAmbientable(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.EnumDeclaration:
             case SyntaxKind.FunctionDeclaration:
@@ -4101,8 +4147,9 @@ class Node {
                 return false;
         }
     }
+    static isAnyKeyword = Node.is(SyntaxKind.AnyKeyword);
     static isArgumented(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.CallExpression:
             case SyntaxKind.NewExpression:
                 return true;
@@ -4110,14 +4157,15 @@ class Node {
                 return false;
         }
     }
+    static isArrayBindingPattern = Node.is(SyntaxKind.ArrayBindingPattern);
+    static isArrayLiteralExpression = Node.is(SyntaxKind.ArrayLiteralExpression);
     static isArrayTypeNode(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.ArrayType;
+        return node?.getKind() === SyntaxKind.ArrayType;
     }
-    static isAssertionKeyNamed(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.AssertEntry;
-    }
+    static isArrowFunction = Node.is(SyntaxKind.ArrowFunction);
+    static isAsExpression = Node.is(SyntaxKind.AsExpression);
     static isAsyncable(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
@@ -4128,10 +4176,14 @@ class Node {
         }
     }
     static isAwaitable(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.ForOfStatement;
+        return node?.getKind() === SyntaxKind.ForOfStatement;
     }
+    static isAwaitExpression = Node.is(SyntaxKind.AwaitExpression);
+    static isBigIntLiteral = Node.is(SyntaxKind.BigIntLiteral);
+    static isBinaryExpression = Node.is(SyntaxKind.BinaryExpression);
+    static isBindingElement = Node.is(SyntaxKind.BindingElement);
     static isBindingNamed(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.BindingElement:
             case SyntaxKind.Parameter:
             case SyntaxKind.VariableDeclaration:
@@ -4140,8 +4192,9 @@ class Node {
                 return false;
         }
     }
+    static isBlock = Node.is(SyntaxKind.Block);
     static isBodied(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.ClassStaticBlockDeclaration:
             case SyntaxKind.FunctionExpression:
@@ -4151,7 +4204,7 @@ class Node {
         }
     }
     static isBodyable(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.Constructor:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.GetAccessor:
@@ -4163,11 +4216,17 @@ class Node {
                 return false;
         }
     }
+    static isBooleanKeyword = Node.is(SyntaxKind.BooleanKeyword);
+    static isBreakStatement = Node.is(SyntaxKind.BreakStatement);
+    static isCallExpression = Node.is(SyntaxKind.CallExpression);
     static isCallSignatureDeclaration(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.CallSignature;
+        return node?.getKind() === SyntaxKind.CallSignature;
     }
+    static isCaseBlock = Node.is(SyntaxKind.CaseBlock);
+    static isCaseClause = Node.is(SyntaxKind.CaseClause);
+    static isCatchClause = Node.is(SyntaxKind.CatchClause);
     static isChildOrderable(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.Block:
             case SyntaxKind.BreakStatement:
             case SyntaxKind.CallSignature:
@@ -4215,8 +4274,10 @@ class Node {
                 return false;
         }
     }
+    static isClassDeclaration = Node.is(SyntaxKind.ClassDeclaration);
+    static isClassExpression = Node.is(SyntaxKind.ClassExpression);
     static isClassLikeDeclarationBase(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
                 return true;
@@ -4224,20 +4285,26 @@ class Node {
                 return false;
         }
     }
+    static isClassStaticBlockDeclaration = Node.is(SyntaxKind.ClassStaticBlockDeclaration);
+    static isCommaListExpression = Node.is(SyntaxKind.CommaListExpression);
+    static isComputedPropertyName = Node.is(SyntaxKind.ComputedPropertyName);
+    static isConditionalExpression = Node.is(SyntaxKind.ConditionalExpression);
     static isConditionalTypeNode(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.ConditionalType;
+        return node?.getKind() === SyntaxKind.ConditionalType;
     }
     static isConstructorDeclaration(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.Constructor;
+        return node?.getKind() === SyntaxKind.Constructor;
     }
     static isConstructorTypeNode(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.ConstructorType;
+        return node?.getKind() === SyntaxKind.ConstructorType;
     }
     static isConstructSignatureDeclaration(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.ConstructSignature;
+        return node?.getKind() === SyntaxKind.ConstructSignature;
     }
+    static isContinueStatement = Node.is(SyntaxKind.ContinueStatement);
+    static isDebuggerStatement = Node.is(SyntaxKind.DebuggerStatement);
     static isDecoratable(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
             case SyntaxKind.GetAccessor:
@@ -4250,8 +4317,12 @@ class Node {
                 return false;
         }
     }
+    static isDecorator = Node.is(SyntaxKind.Decorator);
+    static isDefaultClause = Node.is(SyntaxKind.DefaultClause);
+    static isDeleteExpression = Node.is(SyntaxKind.DeleteExpression);
+    static isDoStatement = Node.is(SyntaxKind.DoStatement);
     static isDotDotDotTokenable(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.BindingElement:
             case SyntaxKind.JsxExpression:
             case SyntaxKind.NamedTupleMember:
@@ -4261,8 +4332,12 @@ class Node {
                 return false;
         }
     }
+    static isElementAccessExpression = Node.is(SyntaxKind.ElementAccessExpression);
+    static isEmptyStatement = Node.is(SyntaxKind.EmptyStatement);
+    static isEnumDeclaration = Node.is(SyntaxKind.EnumDeclaration);
+    static isEnumMember = Node.is(SyntaxKind.EnumMember);
     static isExclamationTokenable(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.VariableDeclaration:
                 return true;
@@ -4271,7 +4346,7 @@ class Node {
         }
     }
     static isExportable(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.EnumDeclaration:
             case SyntaxKind.FunctionDeclaration:
@@ -4285,8 +4360,10 @@ class Node {
                 return false;
         }
     }
+    static isExportAssignment = Node.is(SyntaxKind.ExportAssignment);
+    static isExportDeclaration = Node.is(SyntaxKind.ExportDeclaration);
     static isExportGetable(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.EnumDeclaration:
             case SyntaxKind.FunctionDeclaration:
@@ -4301,8 +4378,9 @@ class Node {
                 return false;
         }
     }
+    static isExportSpecifier = Node.is(SyntaxKind.ExportSpecifier);
     static isExpression(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.AnyKeyword:
             case SyntaxKind.BooleanKeyword:
             case SyntaxKind.NumberKeyword:
@@ -4365,7 +4443,7 @@ class Node {
         }
     }
     static isExpressionable(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.ExternalModuleReference:
             case SyntaxKind.JsxExpression:
             case SyntaxKind.ReturnStatement:
@@ -4376,7 +4454,7 @@ class Node {
         }
     }
     static isExpressioned(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.AsExpression:
             case SyntaxKind.CaseClause:
             case SyntaxKind.ComputedPropertyName:
@@ -4403,14 +4481,22 @@ class Node {
                 return false;
         }
     }
+    static isExpressionStatement = Node.is(SyntaxKind.ExpressionStatement);
+    static isExpressionWithTypeArguments = Node.is(SyntaxKind.ExpressionWithTypeArguments);
     static isExtendsClauseable(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.InterfaceDeclaration;
+        return node?.getKind() === SyntaxKind.InterfaceDeclaration;
     }
+    static isExternalModuleReference = Node.is(SyntaxKind.ExternalModuleReference);
     static isFalseLiteral(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.FalseKeyword;
+        return node?.getKind() === SyntaxKind.FalseKeyword;
     }
+    static isForInStatement = Node.is(SyntaxKind.ForInStatement);
+    static isForOfStatement = Node.is(SyntaxKind.ForOfStatement);
+    static isForStatement = Node.is(SyntaxKind.ForStatement);
+    static isFunctionDeclaration = Node.is(SyntaxKind.FunctionDeclaration);
+    static isFunctionExpression = Node.is(SyntaxKind.FunctionExpression);
     static isFunctionLikeDeclaration(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.Constructor:
             case SyntaxKind.FunctionDeclaration:
@@ -4423,10 +4509,10 @@ class Node {
         }
     }
     static isFunctionTypeNode(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.FunctionType;
+        return node?.getKind() === SyntaxKind.FunctionType;
     }
     static isGeneratorable(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
             case SyntaxKind.MethodDeclaration:
@@ -4437,10 +4523,11 @@ class Node {
         }
     }
     static isGetAccessorDeclaration(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.GetAccessor;
+        return node?.getKind() === SyntaxKind.GetAccessor;
     }
+    static isHeritageClause = Node.is(SyntaxKind.HeritageClause);
     static isHeritageClauseable(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
             case SyntaxKind.InterfaceDeclaration:
@@ -4449,8 +4536,10 @@ class Node {
                 return false;
         }
     }
+    static isIdentifier = Node.is(SyntaxKind.Identifier);
+    static isIfStatement = Node.is(SyntaxKind.IfStatement);
     static isImplementsClauseable(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
                 return true;
@@ -4458,23 +4547,32 @@ class Node {
                 return false;
         }
     }
-    static isImportExpression(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.ImportKeyword;
+    static isImportAttribute(node) {
+        return node?.getKind() === SyntaxKind.ImportAttribute;
     }
+    static isImportAttributes = Node.is(SyntaxKind.ImportAttributes);
+    static isImportClause = Node.is(SyntaxKind.ImportClause);
+    static isImportDeclaration = Node.is(SyntaxKind.ImportDeclaration);
+    static isImportEqualsDeclaration = Node.is(SyntaxKind.ImportEqualsDeclaration);
+    static isImportExpression(node) {
+        return node?.getKind() === SyntaxKind.ImportKeyword;
+    }
+    static isImportSpecifier = Node.is(SyntaxKind.ImportSpecifier);
     static isImportTypeNode(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.ImportType;
+        return node?.getKind() === SyntaxKind.ImportType;
     }
     static isIndexedAccessTypeNode(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.IndexedAccessType;
+        return node?.getKind() === SyntaxKind.IndexedAccessType;
     }
     static isIndexSignatureDeclaration(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.IndexSignature;
+        return node?.getKind() === SyntaxKind.IndexSignature;
     }
+    static isInferKeyword = Node.is(SyntaxKind.InferKeyword);
     static isInferTypeNode(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.InferType;
+        return node?.getKind() === SyntaxKind.InferType;
     }
     static isInitializerExpressionable(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.BindingElement:
             case SyntaxKind.EnumMember:
             case SyntaxKind.Parameter:
@@ -4487,7 +4585,7 @@ class Node {
         }
     }
     static isInitializerExpressionGetable(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.BindingElement:
             case SyntaxKind.EnumMember:
             case SyntaxKind.Parameter:
@@ -4501,11 +4599,12 @@ class Node {
                 return false;
         }
     }
+    static isInterfaceDeclaration = Node.is(SyntaxKind.InterfaceDeclaration);
     static isIntersectionTypeNode(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.IntersectionType;
+        return node?.getKind() === SyntaxKind.IntersectionType;
     }
     static isIterationStatement(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.DoStatement:
             case SyntaxKind.ForInStatement:
             case SyntaxKind.ForOfStatement:
@@ -4516,8 +4615,9 @@ class Node {
                 return false;
         }
     }
+    static isJSDoc = Node.is(SyntaxKind.JSDoc);
     static isJSDocable(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.CallSignature:
             case SyntaxKind.CaseClause:
@@ -4551,8 +4651,30 @@ class Node {
                 return false;
         }
     }
+    static isJSDocAllType = Node.is(SyntaxKind.JSDocAllType);
+    static isJSDocAugmentsTag = Node.is(SyntaxKind.JSDocAugmentsTag);
+    static isJSDocAuthorTag = Node.is(SyntaxKind.JSDocAuthorTag);
+    static isJSDocCallbackTag = Node.is(SyntaxKind.JSDocCallbackTag);
+    static isJSDocClassTag = Node.is(SyntaxKind.JSDocClassTag);
+    static isJSDocDeprecatedTag = Node.is(SyntaxKind.JSDocDeprecatedTag);
+    static isJSDocEnumTag = Node.is(SyntaxKind.JSDocEnumTag);
+    static isJSDocFunctionType = Node.is(SyntaxKind.JSDocFunctionType);
+    static isJSDocImplementsTag = Node.is(SyntaxKind.JSDocImplementsTag);
+    static isJSDocLink = Node.is(SyntaxKind.JSDocLink);
+    static isJSDocLinkCode = Node.is(SyntaxKind.JSDocLinkCode);
+    static isJSDocLinkPlain = Node.is(SyntaxKind.JSDocLinkPlain);
+    static isJSDocMemberName = Node.is(SyntaxKind.JSDocMemberName);
+    static isJSDocNamepathType = Node.is(SyntaxKind.JSDocNamepathType);
+    static isJSDocNameReference = Node.is(SyntaxKind.JSDocNameReference);
+    static isJSDocNonNullableType = Node.is(SyntaxKind.JSDocNonNullableType);
+    static isJSDocNullableType = Node.is(SyntaxKind.JSDocNullableType);
+    static isJSDocOptionalType = Node.is(SyntaxKind.JSDocOptionalType);
+    static isJSDocOverloadTag = Node.is(SyntaxKind.JSDocOverloadTag);
+    static isJSDocOverrideTag = Node.is(SyntaxKind.JSDocOverrideTag);
+    static isJSDocParameterTag = Node.is(SyntaxKind.JSDocParameterTag);
+    static isJSDocPrivateTag = Node.is(SyntaxKind.JSDocPrivateTag);
     static isJSDocPropertyLikeTag(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.JSDocParameterTag:
             case SyntaxKind.JSDocPropertyTag:
                 return true;
@@ -4560,8 +4682,16 @@ class Node {
                 return false;
         }
     }
+    static isJSDocPropertyTag = Node.is(SyntaxKind.JSDocPropertyTag);
+    static isJSDocProtectedTag = Node.is(SyntaxKind.JSDocProtectedTag);
+    static isJSDocPublicTag = Node.is(SyntaxKind.JSDocPublicTag);
+    static isJSDocReadonlyTag = Node.is(SyntaxKind.JSDocReadonlyTag);
+    static isJSDocReturnTag = Node.is(SyntaxKind.JSDocReturnTag);
+    static isJSDocSatisfiesTag = Node.is(SyntaxKind.JSDocSatisfiesTag);
+    static isJSDocSeeTag = Node.is(SyntaxKind.JSDocSeeTag);
+    static isJSDocSignature = Node.is(SyntaxKind.JSDocSignature);
     static isJSDocTag(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.JSDocAugmentsTag:
             case SyntaxKind.JSDocAuthorTag:
             case SyntaxKind.JSDocCallbackTag:
@@ -4591,8 +4721,12 @@ class Node {
                 return false;
         }
     }
+    static isJSDocTemplateTag = Node.is(SyntaxKind.JSDocTemplateTag);
+    static isJSDocText = Node.is(SyntaxKind.JSDocText);
+    static isJSDocThisTag = Node.is(SyntaxKind.JSDocThisTag);
+    static isJSDocThrowsTag = Node.is(SyntaxKind.JSDocThrowsTag);
     static isJSDocType(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.JSDocAllType:
             case SyntaxKind.JSDocFunctionType:
             case SyntaxKind.JSDocNamepathType:
@@ -4608,8 +4742,10 @@ class Node {
                 return false;
         }
     }
+    static isJSDocTypedefTag = Node.is(SyntaxKind.JSDocTypedefTag);
+    static isJSDocTypeExpression = Node.is(SyntaxKind.JSDocTypeExpression);
     static isJSDocTypeExpressionableTag(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.JSDocOverloadTag:
             case SyntaxKind.JSDocReturnTag:
             case SyntaxKind.JSDocSatisfiesTag:
@@ -4621,14 +4757,19 @@ class Node {
                 return false;
         }
     }
+    static isJSDocTypeLiteral = Node.is(SyntaxKind.JSDocTypeLiteral);
     static isJSDocTypeParameteredTag(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.JSDocTemplateTag;
+        return node?.getKind() === SyntaxKind.JSDocTemplateTag;
     }
+    static isJSDocTypeTag = Node.is(SyntaxKind.JSDocTypeTag);
     static isJSDocUnknownTag(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.JSDocTag;
+        return node?.getKind() === SyntaxKind.JSDocTag;
     }
+    static isJSDocUnknownType = Node.is(SyntaxKind.JSDocUnknownType);
+    static isJSDocVariadicType = Node.is(SyntaxKind.JSDocVariadicType);
+    static isJsxAttribute = Node.is(SyntaxKind.JsxAttribute);
     static isJsxAttributed(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.JsxOpeningElement:
             case SyntaxKind.JsxSelfClosingElement:
                 return true;
@@ -4636,8 +4777,18 @@ class Node {
                 return false;
         }
     }
+    static isJsxClosingElement = Node.is(SyntaxKind.JsxClosingElement);
+    static isJsxClosingFragment = Node.is(SyntaxKind.JsxClosingFragment);
+    static isJsxElement = Node.is(SyntaxKind.JsxElement);
+    static isJsxExpression = Node.is(SyntaxKind.JsxExpression);
+    static isJsxFragment = Node.is(SyntaxKind.JsxFragment);
+    static isJsxNamespacedName = Node.is(SyntaxKind.JsxNamespacedName);
+    static isJsxOpeningElement = Node.is(SyntaxKind.JsxOpeningElement);
+    static isJsxOpeningFragment = Node.is(SyntaxKind.JsxOpeningFragment);
+    static isJsxSelfClosingElement = Node.is(SyntaxKind.JsxSelfClosingElement);
+    static isJsxSpreadAttribute = Node.is(SyntaxKind.JsxSpreadAttribute);
     static isJsxTagNamed(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.JsxClosingElement:
             case SyntaxKind.JsxOpeningElement:
             case SyntaxKind.JsxSelfClosingElement:
@@ -4646,8 +4797,10 @@ class Node {
                 return false;
         }
     }
+    static isJsxText = Node.is(SyntaxKind.JsxText);
+    static isLabeledStatement = Node.is(SyntaxKind.LabeledStatement);
     static isLeftHandSideExpression(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.ArrayLiteralExpression:
             case SyntaxKind.BigIntLiteral:
             case SyntaxKind.CallExpression:
@@ -4681,7 +4834,7 @@ class Node {
         }
     }
     static isLeftHandSideExpressioned(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.CallExpression:
             case SyntaxKind.Decorator:
             case SyntaxKind.ElementAccessExpression:
@@ -4694,7 +4847,7 @@ class Node {
         }
     }
     static isLiteralExpression(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.BigIntLiteral:
             case SyntaxKind.NoSubstitutionTemplateLiteral:
             case SyntaxKind.NumericLiteral:
@@ -4706,7 +4859,7 @@ class Node {
         }
     }
     static isLiteralLike(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.BigIntLiteral:
             case SyntaxKind.JsxText:
             case SyntaxKind.NoSubstitutionTemplateLiteral:
@@ -4722,13 +4875,13 @@ class Node {
         }
     }
     static isLiteralTypeNode(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.LiteralType;
+        return node?.getKind() === SyntaxKind.LiteralType;
     }
     static isMappedTypeNode(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.MappedType;
+        return node?.getKind() === SyntaxKind.MappedType;
     }
     static isMemberExpression(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.ArrayLiteralExpression:
             case SyntaxKind.BigIntLiteral:
             case SyntaxKind.ClassExpression:
@@ -4759,8 +4912,11 @@ class Node {
                 return false;
         }
     }
+    static isMetaProperty = Node.is(SyntaxKind.MetaProperty);
+    static isMethodDeclaration = Node.is(SyntaxKind.MethodDeclaration);
+    static isMethodSignature = Node.is(SyntaxKind.MethodSignature);
     static isModifierable(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
@@ -4788,8 +4944,9 @@ class Node {
                 return false;
         }
     }
+    static isModuleBlock = Node.is(SyntaxKind.ModuleBlock);
     static isModuleChildable(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.EnumDeclaration:
             case SyntaxKind.FunctionDeclaration:
@@ -4801,8 +4958,9 @@ class Node {
                 return false;
         }
     }
+    static isModuleDeclaration = Node.is(SyntaxKind.ModuleDeclaration);
     static isModuled(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.ModuleDeclaration:
             case SyntaxKind.SourceFile:
                 return true;
@@ -4811,10 +4969,10 @@ class Node {
         }
     }
     static isModuleNamed(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.ModuleDeclaration;
+        return node?.getKind() === SyntaxKind.ModuleDeclaration;
     }
     static isNameable(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
             case SyntaxKind.FunctionDeclaration:
@@ -4824,8 +4982,10 @@ class Node {
                 return false;
         }
     }
+    static isNamedExports = Node.is(SyntaxKind.NamedExports);
+    static isNamedImports = Node.is(SyntaxKind.NamedImports);
     static isNamed(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.EnumDeclaration:
             case SyntaxKind.ImportEqualsDeclaration:
             case SyntaxKind.InterfaceDeclaration:
@@ -4840,8 +5000,13 @@ class Node {
                 return false;
         }
     }
+    static isNamedTupleMember = Node.is(SyntaxKind.NamedTupleMember);
+    static isNamespaceExport = Node.is(SyntaxKind.NamespaceExport);
+    static isNamespaceImport = Node.is(SyntaxKind.NamespaceImport);
+    static isNeverKeyword = Node.is(SyntaxKind.NeverKeyword);
+    static isNewExpression = Node.is(SyntaxKind.NewExpression);
     static isNodeWithTypeArguments(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.ExpressionWithTypeArguments:
             case SyntaxKind.ImportType:
             case SyntaxKind.TypeQuery:
@@ -4851,11 +5016,20 @@ class Node {
                 return false;
         }
     }
+    static isNonNullExpression = Node.is(SyntaxKind.NonNullExpression);
+    static isNoSubstitutionTemplateLiteral = Node.is(SyntaxKind.NoSubstitutionTemplateLiteral);
+    static isNotEmittedStatement = Node.is(SyntaxKind.NotEmittedStatement);
     static isNullLiteral(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.NullKeyword;
+        return node?.getKind() === SyntaxKind.NullKeyword;
     }
+    static isNumberKeyword = Node.is(SyntaxKind.NumberKeyword);
+    static isNumericLiteral = Node.is(SyntaxKind.NumericLiteral);
+    static isObjectBindingPattern = Node.is(SyntaxKind.ObjectBindingPattern);
+    static isObjectKeyword = Node.is(SyntaxKind.ObjectKeyword);
+    static isObjectLiteralExpression = Node.is(SyntaxKind.ObjectLiteralExpression);
+    static isOmittedExpression = Node.is(SyntaxKind.OmittedExpression);
     static isOverloadable(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.Constructor:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.MethodDeclaration:
@@ -4865,7 +5039,7 @@ class Node {
         }
     }
     static isOverrideable(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.MethodDeclaration:
             case SyntaxKind.Parameter:
             case SyntaxKind.PropertyDeclaration:
@@ -4875,10 +5049,10 @@ class Node {
         }
     }
     static isParameterDeclaration(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.Parameter;
+        return node?.getKind() === SyntaxKind.Parameter;
     }
     static isParametered(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.CallSignature:
             case SyntaxKind.Constructor:
@@ -4897,11 +5071,15 @@ class Node {
                 return false;
         }
     }
+    static isParenthesizedExpression = Node.is(SyntaxKind.ParenthesizedExpression);
     static isParenthesizedTypeNode(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.ParenthesizedType;
+        return node?.getKind() === SyntaxKind.ParenthesizedType;
     }
+    static isPartiallyEmittedExpression = Node.is(SyntaxKind.PartiallyEmittedExpression);
+    static isPostfixUnaryExpression = Node.is(SyntaxKind.PostfixUnaryExpression);
+    static isPrefixUnaryExpression = Node.is(SyntaxKind.PrefixUnaryExpression);
     static isPrimaryExpression(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.ArrayLiteralExpression:
             case SyntaxKind.BigIntLiteral:
             case SyntaxKind.ClassExpression:
@@ -4929,8 +5107,12 @@ class Node {
                 return false;
         }
     }
+    static isPrivateIdentifier = Node.is(SyntaxKind.PrivateIdentifier);
+    static isPropertyAccessExpression = Node.is(SyntaxKind.PropertyAccessExpression);
+    static isPropertyAssignment = Node.is(SyntaxKind.PropertyAssignment);
+    static isPropertyDeclaration = Node.is(SyntaxKind.PropertyDeclaration);
     static isPropertyNamed(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.EnumMember:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
@@ -4944,8 +5126,10 @@ class Node {
                 return false;
         }
     }
+    static isPropertySignature = Node.is(SyntaxKind.PropertySignature);
+    static isQualifiedName = Node.is(SyntaxKind.QualifiedName);
     static isQuestionDotTokenable(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.CallExpression:
             case SyntaxKind.ElementAccessExpression:
             case SyntaxKind.PropertyAccessExpression:
@@ -4955,7 +5139,7 @@ class Node {
         }
     }
     static isQuestionTokenable(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.MethodDeclaration:
             case SyntaxKind.MethodSignature:
             case SyntaxKind.NamedTupleMember:
@@ -4970,7 +5154,7 @@ class Node {
         }
     }
     static isReadonlyable(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.IndexSignature:
             case SyntaxKind.Parameter:
             case SyntaxKind.PropertyDeclaration:
@@ -4981,8 +5165,7 @@ class Node {
         }
     }
     static isReferenceFindable(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
-            case SyntaxKind.AssertEntry:
+        switch (node?.getKind()) {
             case SyntaxKind.BindingElement:
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
@@ -5016,9 +5199,9 @@ class Node {
                 return false;
         }
     }
+    static isRegularExpressionLiteral = Node.is(SyntaxKind.RegularExpressionLiteral);
     static isRenameable(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
-            case SyntaxKind.AssertEntry:
+        switch (node?.getKind()) {
             case SyntaxKind.BindingElement:
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
@@ -5054,10 +5237,11 @@ class Node {
         }
     }
     static isRestTypeNode(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.RestType;
+        return node?.getKind() === SyntaxKind.RestType;
     }
+    static isReturnStatement = Node.is(SyntaxKind.ReturnStatement);
     static isReturnTyped(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.CallSignature:
             case SyntaxKind.Constructor:
@@ -5077,11 +5261,12 @@ class Node {
                 return false;
         }
     }
+    static isSatisfiesExpression = Node.is(SyntaxKind.SatisfiesExpression);
     static isScopeable(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.Parameter;
+        return node?.getKind() === SyntaxKind.Parameter;
     }
     static isScoped(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.Constructor:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
@@ -5092,11 +5277,13 @@ class Node {
                 return false;
         }
     }
+    static isSemicolonToken = Node.is(SyntaxKind.SemicolonToken);
     static isSetAccessorDeclaration(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.SetAccessor;
+        return node?.getKind() === SyntaxKind.SetAccessor;
     }
+    static isShorthandPropertyAssignment = Node.is(SyntaxKind.ShorthandPropertyAssignment);
     static isSignaturedDeclaration(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.CallSignature:
             case SyntaxKind.Constructor:
@@ -5115,8 +5302,11 @@ class Node {
                 return false;
         }
     }
+    static isSourceFile = Node.is(SyntaxKind.SourceFile);
+    static isSpreadAssignment = Node.is(SyntaxKind.SpreadAssignment);
+    static isSpreadElement = Node.is(SyntaxKind.SpreadElement);
     static isStatement(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.Block:
             case SyntaxKind.BreakStatement:
             case SyntaxKind.ClassDeclaration:
@@ -5154,7 +5344,7 @@ class Node {
         }
     }
     static isStatemented(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.Block:
             case SyntaxKind.CaseClause:
@@ -5175,7 +5365,7 @@ class Node {
         }
     }
     static isStaticable(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
             case SyntaxKind.PropertyDeclaration:
@@ -5185,14 +5375,25 @@ class Node {
                 return false;
         }
     }
+    static isStringKeyword = Node.is(SyntaxKind.StringKeyword);
+    static isStringLiteral = Node.is(SyntaxKind.StringLiteral);
     static isSuperExpression(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.SuperKeyword;
+        return node?.getKind() === SyntaxKind.SuperKeyword;
     }
+    static isSwitchStatement = Node.is(SyntaxKind.SwitchStatement);
+    static isSymbolKeyword = Node.is(SyntaxKind.SymbolKeyword);
+    static isSyntaxList = Node.is(SyntaxKind.SyntaxList);
+    static isTaggedTemplateExpression = Node.is(SyntaxKind.TaggedTemplateExpression);
+    static isTemplateExpression = Node.is(SyntaxKind.TemplateExpression);
+    static isTemplateHead = Node.is(SyntaxKind.TemplateHead);
     static isTemplateLiteralTypeNode(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.TemplateLiteralType;
+        return node?.getKind() === SyntaxKind.TemplateLiteralType;
     }
+    static isTemplateMiddle = Node.is(SyntaxKind.TemplateMiddle);
+    static isTemplateSpan = Node.is(SyntaxKind.TemplateSpan);
+    static isTemplateTail = Node.is(SyntaxKind.TemplateTail);
     static isTextInsertable(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.Block:
             case SyntaxKind.CaseBlock:
@@ -5217,19 +5418,22 @@ class Node {
         }
     }
     static isThisExpression(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.ThisKeyword;
+        return node?.getKind() === SyntaxKind.ThisKeyword;
     }
     static isThisTypeNode(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.ThisType;
+        return node?.getKind() === SyntaxKind.ThisType;
     }
+    static isThrowStatement = Node.is(SyntaxKind.ThrowStatement);
     static isTrueLiteral(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.TrueKeyword;
+        return node?.getKind() === SyntaxKind.TrueKeyword;
     }
+    static isTryStatement = Node.is(SyntaxKind.TryStatement);
     static isTupleTypeNode(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.TupleType;
+        return node?.getKind() === SyntaxKind.TupleType;
     }
+    static isTypeAliasDeclaration = Node.is(SyntaxKind.TypeAliasDeclaration);
     static isTypeArgumented(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.CallExpression:
             case SyntaxKind.ExpressionWithTypeArguments:
             case SyntaxKind.ImportType:
@@ -5242,10 +5446,10 @@ class Node {
         }
     }
     static isTypeAssertion(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.TypeAssertionExpression;
+        return node?.getKind() === SyntaxKind.TypeAssertionExpression;
     }
     static isTyped(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.AsExpression:
             case SyntaxKind.NamedTupleMember:
             case SyntaxKind.Parameter:
@@ -5261,7 +5465,7 @@ class Node {
         }
     }
     static isTypeElement(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.CallSignature:
             case SyntaxKind.ConstructSignature:
             case SyntaxKind.IndexSignature:
@@ -5273,7 +5477,7 @@ class Node {
         }
     }
     static isTypeElementMembered(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.TypeLiteral:
                 return true;
@@ -5282,10 +5486,10 @@ class Node {
         }
     }
     static isTypeLiteral(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.TypeLiteral;
+        return node?.getKind() === SyntaxKind.TypeLiteral;
     }
     static isTypeNode(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.ArrayType:
             case SyntaxKind.ConditionalType:
             case SyntaxKind.ConstructorType:
@@ -5325,14 +5529,15 @@ class Node {
                 return false;
         }
     }
+    static isTypeOfExpression = Node.is(SyntaxKind.TypeOfExpression);
     static isTypeOperatorTypeNode(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.TypeOperator;
+        return node?.getKind() === SyntaxKind.TypeOperator;
     }
     static isTypeParameterDeclaration(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.TypeParameter;
+        return node?.getKind() === SyntaxKind.TypeParameter;
     }
     static isTypeParametered(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.CallSignature:
             case SyntaxKind.ClassDeclaration:
@@ -5354,16 +5559,16 @@ class Node {
         }
     }
     static isTypePredicate(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.TypePredicate;
+        return node?.getKind() === SyntaxKind.TypePredicate;
     }
     static isTypeQuery(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.TypeQuery;
+        return node?.getKind() === SyntaxKind.TypeQuery;
     }
     static isTypeReference(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.TypeReference;
+        return node?.getKind() === SyntaxKind.TypeReference;
     }
     static isUnaryExpression(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.ArrayLiteralExpression:
             case SyntaxKind.AwaitExpression:
             case SyntaxKind.BigIntLiteral:
@@ -5404,7 +5609,7 @@ class Node {
         }
     }
     static isUnaryExpressioned(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.AwaitExpression:
             case SyntaxKind.DeleteExpression:
             case SyntaxKind.TypeAssertionExpression:
@@ -5415,11 +5620,12 @@ class Node {
                 return false;
         }
     }
+    static isUndefinedKeyword = Node.is(SyntaxKind.UndefinedKeyword);
     static isUnionTypeNode(node) {
-        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.UnionType;
+        return node?.getKind() === SyntaxKind.UnionType;
     }
     static isUnwrappable(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.ModuleDeclaration:
                 return true;
@@ -5428,7 +5634,7 @@ class Node {
         }
     }
     static isUpdateExpression(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+        switch (node?.getKind()) {
             case SyntaxKind.ArrayLiteralExpression:
             case SyntaxKind.BigIntLiteral:
             case SyntaxKind.CallExpression:
@@ -5461,9 +5667,15 @@ class Node {
                 return false;
         }
     }
+    static isVariableDeclaration = Node.is(SyntaxKind.VariableDeclaration);
+    static isVariableDeclarationList = Node.is(SyntaxKind.VariableDeclarationList);
+    static isVariableStatement = Node.is(SyntaxKind.VariableStatement);
+    static isVoidExpression = Node.is(SyntaxKind.VoidExpression);
+    static isWhileStatement = Node.is(SyntaxKind.WhileStatement);
+    static isWithStatement = Node.is(SyntaxKind.WithStatement);
+    static isYieldExpression = Node.is(SyntaxKind.YieldExpression);
     static _hasStructure(node) {
-        switch (node === null || node === void 0 ? void 0 : node.getKind()) {
-            case SyntaxKind.AssertEntry:
+        switch (node?.getKind()) {
             case SyntaxKind.CallSignature:
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassStaticBlockDeclaration:
@@ -5477,6 +5689,7 @@ class Node {
             case SyntaxKind.ExportSpecifier:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.GetAccessor:
+            case SyntaxKind.ImportAttribute:
             case SyntaxKind.ImportDeclaration:
             case SyntaxKind.ImportSpecifier:
             case SyntaxKind.IndexSignature:
@@ -5508,177 +5721,6 @@ class Node {
         }
     }
 }
-Node.isAnyKeyword = Node.is(SyntaxKind.AnyKeyword);
-Node.isArrayBindingPattern = Node.is(SyntaxKind.ArrayBindingPattern);
-Node.isArrayLiteralExpression = Node.is(SyntaxKind.ArrayLiteralExpression);
-Node.isArrowFunction = Node.is(SyntaxKind.ArrowFunction);
-Node.isAsExpression = Node.is(SyntaxKind.AsExpression);
-Node.isAssertClause = Node.is(SyntaxKind.AssertClause);
-Node.isAssertEntry = Node.is(SyntaxKind.AssertEntry);
-Node.isAwaitExpression = Node.is(SyntaxKind.AwaitExpression);
-Node.isBigIntLiteral = Node.is(SyntaxKind.BigIntLiteral);
-Node.isBinaryExpression = Node.is(SyntaxKind.BinaryExpression);
-Node.isBindingElement = Node.is(SyntaxKind.BindingElement);
-Node.isBlock = Node.is(SyntaxKind.Block);
-Node.isBooleanKeyword = Node.is(SyntaxKind.BooleanKeyword);
-Node.isBreakStatement = Node.is(SyntaxKind.BreakStatement);
-Node.isCallExpression = Node.is(SyntaxKind.CallExpression);
-Node.isCaseBlock = Node.is(SyntaxKind.CaseBlock);
-Node.isCaseClause = Node.is(SyntaxKind.CaseClause);
-Node.isCatchClause = Node.is(SyntaxKind.CatchClause);
-Node.isClassDeclaration = Node.is(SyntaxKind.ClassDeclaration);
-Node.isClassExpression = Node.is(SyntaxKind.ClassExpression);
-Node.isClassStaticBlockDeclaration = Node.is(SyntaxKind.ClassStaticBlockDeclaration);
-Node.isCommaListExpression = Node.is(SyntaxKind.CommaListExpression);
-Node.isComputedPropertyName = Node.is(SyntaxKind.ComputedPropertyName);
-Node.isConditionalExpression = Node.is(SyntaxKind.ConditionalExpression);
-Node.isContinueStatement = Node.is(SyntaxKind.ContinueStatement);
-Node.isDebuggerStatement = Node.is(SyntaxKind.DebuggerStatement);
-Node.isDecorator = Node.is(SyntaxKind.Decorator);
-Node.isDefaultClause = Node.is(SyntaxKind.DefaultClause);
-Node.isDeleteExpression = Node.is(SyntaxKind.DeleteExpression);
-Node.isDoStatement = Node.is(SyntaxKind.DoStatement);
-Node.isElementAccessExpression = Node.is(SyntaxKind.ElementAccessExpression);
-Node.isEmptyStatement = Node.is(SyntaxKind.EmptyStatement);
-Node.isEnumDeclaration = Node.is(SyntaxKind.EnumDeclaration);
-Node.isEnumMember = Node.is(SyntaxKind.EnumMember);
-Node.isExportAssignment = Node.is(SyntaxKind.ExportAssignment);
-Node.isExportDeclaration = Node.is(SyntaxKind.ExportDeclaration);
-Node.isExportSpecifier = Node.is(SyntaxKind.ExportSpecifier);
-Node.isExpressionStatement = Node.is(SyntaxKind.ExpressionStatement);
-Node.isExpressionWithTypeArguments = Node.is(SyntaxKind.ExpressionWithTypeArguments);
-Node.isExternalModuleReference = Node.is(SyntaxKind.ExternalModuleReference);
-Node.isForInStatement = Node.is(SyntaxKind.ForInStatement);
-Node.isForOfStatement = Node.is(SyntaxKind.ForOfStatement);
-Node.isForStatement = Node.is(SyntaxKind.ForStatement);
-Node.isFunctionDeclaration = Node.is(SyntaxKind.FunctionDeclaration);
-Node.isFunctionExpression = Node.is(SyntaxKind.FunctionExpression);
-Node.isHeritageClause = Node.is(SyntaxKind.HeritageClause);
-Node.isIdentifier = Node.is(SyntaxKind.Identifier);
-Node.isIfStatement = Node.is(SyntaxKind.IfStatement);
-Node.isImportClause = Node.is(SyntaxKind.ImportClause);
-Node.isImportDeclaration = Node.is(SyntaxKind.ImportDeclaration);
-Node.isImportEqualsDeclaration = Node.is(SyntaxKind.ImportEqualsDeclaration);
-Node.isImportSpecifier = Node.is(SyntaxKind.ImportSpecifier);
-Node.isImportTypeAssertionContainer = Node.is(SyntaxKind.ImportTypeAssertionContainer);
-Node.isInferKeyword = Node.is(SyntaxKind.InferKeyword);
-Node.isInterfaceDeclaration = Node.is(SyntaxKind.InterfaceDeclaration);
-Node.isJSDoc = Node.is(SyntaxKind.JSDoc);
-Node.isJSDocAllType = Node.is(SyntaxKind.JSDocAllType);
-Node.isJSDocAugmentsTag = Node.is(SyntaxKind.JSDocAugmentsTag);
-Node.isJSDocAuthorTag = Node.is(SyntaxKind.JSDocAuthorTag);
-Node.isJSDocCallbackTag = Node.is(SyntaxKind.JSDocCallbackTag);
-Node.isJSDocClassTag = Node.is(SyntaxKind.JSDocClassTag);
-Node.isJSDocDeprecatedTag = Node.is(SyntaxKind.JSDocDeprecatedTag);
-Node.isJSDocEnumTag = Node.is(SyntaxKind.JSDocEnumTag);
-Node.isJSDocFunctionType = Node.is(SyntaxKind.JSDocFunctionType);
-Node.isJSDocImplementsTag = Node.is(SyntaxKind.JSDocImplementsTag);
-Node.isJSDocLink = Node.is(SyntaxKind.JSDocLink);
-Node.isJSDocLinkCode = Node.is(SyntaxKind.JSDocLinkCode);
-Node.isJSDocLinkPlain = Node.is(SyntaxKind.JSDocLinkPlain);
-Node.isJSDocMemberName = Node.is(SyntaxKind.JSDocMemberName);
-Node.isJSDocNamepathType = Node.is(SyntaxKind.JSDocNamepathType);
-Node.isJSDocNameReference = Node.is(SyntaxKind.JSDocNameReference);
-Node.isJSDocNonNullableType = Node.is(SyntaxKind.JSDocNonNullableType);
-Node.isJSDocNullableType = Node.is(SyntaxKind.JSDocNullableType);
-Node.isJSDocOptionalType = Node.is(SyntaxKind.JSDocOptionalType);
-Node.isJSDocOverloadTag = Node.is(SyntaxKind.JSDocOverloadTag);
-Node.isJSDocOverrideTag = Node.is(SyntaxKind.JSDocOverrideTag);
-Node.isJSDocParameterTag = Node.is(SyntaxKind.JSDocParameterTag);
-Node.isJSDocPrivateTag = Node.is(SyntaxKind.JSDocPrivateTag);
-Node.isJSDocPropertyTag = Node.is(SyntaxKind.JSDocPropertyTag);
-Node.isJSDocProtectedTag = Node.is(SyntaxKind.JSDocProtectedTag);
-Node.isJSDocPublicTag = Node.is(SyntaxKind.JSDocPublicTag);
-Node.isJSDocReadonlyTag = Node.is(SyntaxKind.JSDocReadonlyTag);
-Node.isJSDocReturnTag = Node.is(SyntaxKind.JSDocReturnTag);
-Node.isJSDocSatisfiesTag = Node.is(SyntaxKind.JSDocSatisfiesTag);
-Node.isJSDocSeeTag = Node.is(SyntaxKind.JSDocSeeTag);
-Node.isJSDocSignature = Node.is(SyntaxKind.JSDocSignature);
-Node.isJSDocTemplateTag = Node.is(SyntaxKind.JSDocTemplateTag);
-Node.isJSDocText = Node.is(SyntaxKind.JSDocText);
-Node.isJSDocThisTag = Node.is(SyntaxKind.JSDocThisTag);
-Node.isJSDocThrowsTag = Node.is(SyntaxKind.JSDocThrowsTag);
-Node.isJSDocTypedefTag = Node.is(SyntaxKind.JSDocTypedefTag);
-Node.isJSDocTypeExpression = Node.is(SyntaxKind.JSDocTypeExpression);
-Node.isJSDocTypeLiteral = Node.is(SyntaxKind.JSDocTypeLiteral);
-Node.isJSDocTypeTag = Node.is(SyntaxKind.JSDocTypeTag);
-Node.isJSDocUnknownType = Node.is(SyntaxKind.JSDocUnknownType);
-Node.isJSDocVariadicType = Node.is(SyntaxKind.JSDocVariadicType);
-Node.isJsxAttribute = Node.is(SyntaxKind.JsxAttribute);
-Node.isJsxClosingElement = Node.is(SyntaxKind.JsxClosingElement);
-Node.isJsxClosingFragment = Node.is(SyntaxKind.JsxClosingFragment);
-Node.isJsxElement = Node.is(SyntaxKind.JsxElement);
-Node.isJsxExpression = Node.is(SyntaxKind.JsxExpression);
-Node.isJsxFragment = Node.is(SyntaxKind.JsxFragment);
-Node.isJsxNamespacedName = Node.is(SyntaxKind.JsxNamespacedName);
-Node.isJsxOpeningElement = Node.is(SyntaxKind.JsxOpeningElement);
-Node.isJsxOpeningFragment = Node.is(SyntaxKind.JsxOpeningFragment);
-Node.isJsxSelfClosingElement = Node.is(SyntaxKind.JsxSelfClosingElement);
-Node.isJsxSpreadAttribute = Node.is(SyntaxKind.JsxSpreadAttribute);
-Node.isJsxText = Node.is(SyntaxKind.JsxText);
-Node.isLabeledStatement = Node.is(SyntaxKind.LabeledStatement);
-Node.isMetaProperty = Node.is(SyntaxKind.MetaProperty);
-Node.isMethodDeclaration = Node.is(SyntaxKind.MethodDeclaration);
-Node.isMethodSignature = Node.is(SyntaxKind.MethodSignature);
-Node.isModuleBlock = Node.is(SyntaxKind.ModuleBlock);
-Node.isModuleDeclaration = Node.is(SyntaxKind.ModuleDeclaration);
-Node.isNamedExports = Node.is(SyntaxKind.NamedExports);
-Node.isNamedImports = Node.is(SyntaxKind.NamedImports);
-Node.isNamedTupleMember = Node.is(SyntaxKind.NamedTupleMember);
-Node.isNamespaceExport = Node.is(SyntaxKind.NamespaceExport);
-Node.isNamespaceImport = Node.is(SyntaxKind.NamespaceImport);
-Node.isNeverKeyword = Node.is(SyntaxKind.NeverKeyword);
-Node.isNewExpression = Node.is(SyntaxKind.NewExpression);
-Node.isNonNullExpression = Node.is(SyntaxKind.NonNullExpression);
-Node.isNoSubstitutionTemplateLiteral = Node.is(SyntaxKind.NoSubstitutionTemplateLiteral);
-Node.isNotEmittedStatement = Node.is(SyntaxKind.NotEmittedStatement);
-Node.isNumberKeyword = Node.is(SyntaxKind.NumberKeyword);
-Node.isNumericLiteral = Node.is(SyntaxKind.NumericLiteral);
-Node.isObjectBindingPattern = Node.is(SyntaxKind.ObjectBindingPattern);
-Node.isObjectKeyword = Node.is(SyntaxKind.ObjectKeyword);
-Node.isObjectLiteralExpression = Node.is(SyntaxKind.ObjectLiteralExpression);
-Node.isOmittedExpression = Node.is(SyntaxKind.OmittedExpression);
-Node.isParenthesizedExpression = Node.is(SyntaxKind.ParenthesizedExpression);
-Node.isPartiallyEmittedExpression = Node.is(SyntaxKind.PartiallyEmittedExpression);
-Node.isPostfixUnaryExpression = Node.is(SyntaxKind.PostfixUnaryExpression);
-Node.isPrefixUnaryExpression = Node.is(SyntaxKind.PrefixUnaryExpression);
-Node.isPrivateIdentifier = Node.is(SyntaxKind.PrivateIdentifier);
-Node.isPropertyAccessExpression = Node.is(SyntaxKind.PropertyAccessExpression);
-Node.isPropertyAssignment = Node.is(SyntaxKind.PropertyAssignment);
-Node.isPropertyDeclaration = Node.is(SyntaxKind.PropertyDeclaration);
-Node.isPropertySignature = Node.is(SyntaxKind.PropertySignature);
-Node.isQualifiedName = Node.is(SyntaxKind.QualifiedName);
-Node.isRegularExpressionLiteral = Node.is(SyntaxKind.RegularExpressionLiteral);
-Node.isReturnStatement = Node.is(SyntaxKind.ReturnStatement);
-Node.isSatisfiesExpression = Node.is(SyntaxKind.SatisfiesExpression);
-Node.isSemicolonToken = Node.is(SyntaxKind.SemicolonToken);
-Node.isShorthandPropertyAssignment = Node.is(SyntaxKind.ShorthandPropertyAssignment);
-Node.isSourceFile = Node.is(SyntaxKind.SourceFile);
-Node.isSpreadAssignment = Node.is(SyntaxKind.SpreadAssignment);
-Node.isSpreadElement = Node.is(SyntaxKind.SpreadElement);
-Node.isStringKeyword = Node.is(SyntaxKind.StringKeyword);
-Node.isStringLiteral = Node.is(SyntaxKind.StringLiteral);
-Node.isSwitchStatement = Node.is(SyntaxKind.SwitchStatement);
-Node.isSymbolKeyword = Node.is(SyntaxKind.SymbolKeyword);
-Node.isSyntaxList = Node.is(SyntaxKind.SyntaxList);
-Node.isTaggedTemplateExpression = Node.is(SyntaxKind.TaggedTemplateExpression);
-Node.isTemplateExpression = Node.is(SyntaxKind.TemplateExpression);
-Node.isTemplateHead = Node.is(SyntaxKind.TemplateHead);
-Node.isTemplateMiddle = Node.is(SyntaxKind.TemplateMiddle);
-Node.isTemplateSpan = Node.is(SyntaxKind.TemplateSpan);
-Node.isTemplateTail = Node.is(SyntaxKind.TemplateTail);
-Node.isThrowStatement = Node.is(SyntaxKind.ThrowStatement);
-Node.isTryStatement = Node.is(SyntaxKind.TryStatement);
-Node.isTypeAliasDeclaration = Node.is(SyntaxKind.TypeAliasDeclaration);
-Node.isTypeOfExpression = Node.is(SyntaxKind.TypeOfExpression);
-Node.isUndefinedKeyword = Node.is(SyntaxKind.UndefinedKeyword);
-Node.isVariableDeclaration = Node.is(SyntaxKind.VariableDeclaration);
-Node.isVariableDeclarationList = Node.is(SyntaxKind.VariableDeclarationList);
-Node.isVariableStatement = Node.is(SyntaxKind.VariableStatement);
-Node.isVoidExpression = Node.is(SyntaxKind.VoidExpression);
-Node.isWhileStatement = Node.is(SyntaxKind.WhileStatement);
-Node.isWithStatement = Node.is(SyntaxKind.WithStatement);
-Node.isYieldExpression = Node.is(SyntaxKind.YieldExpression);
 function getWrappedCondition(thisNode, condition) {
     return condition == null ? undefined : ((c) => condition(thisNode._getNodeFromCompilerNode(c)));
 }
@@ -5825,7 +5867,7 @@ function BodiedNode(Base) {
 function BodyableNode(Base) {
     return class extends Base {
         getBodyOrThrow(message) {
-            return errors.throwIfNullOrUndefined(this.getBody(), message !== null && message !== void 0 ? message : "Expected to find the node's body.", this);
+            return errors.throwIfNullOrUndefined(this.getBody(), message ?? "Expected to find the node's body.", this);
         }
         getBody() {
             return this._getNodeFromCompilerNodeIfExists(this.compilerNode.body);
@@ -5843,7 +5885,6 @@ function BodyableNode(Base) {
             return this.compilerNode.body != null;
         }
         addBody() {
-            var _a;
             if (this.hasBody())
                 return this;
             const semiColon = this.getLastChildByKind(SyntaxKind.SemicolonToken);
@@ -5852,7 +5893,7 @@ function BodyableNode(Base) {
                 insertPos: semiColon == null ? this.getEnd() : semiColon.getStart(),
                 newText: this._getWriterWithQueuedIndentation().space().block().toString(),
                 replacing: {
-                    textLength: (_a = semiColon === null || semiColon === void 0 ? void 0 : semiColon.getFullWidth()) !== null && _a !== void 0 ? _a : 0,
+                    textLength: semiColon?.getFullWidth() ?? 0,
                 },
             });
             return this;
@@ -5899,7 +5940,7 @@ function DecoratableNode(Base) {
             return getNodeByNameOrFindFunction(this.getDecorators(), nameOrFindFunction);
         }
         getDecoratorOrThrow(nameOrFindFunction, message) {
-            return errors.throwIfNullOrUndefined(this.getDecorator(nameOrFindFunction), message !== null && message !== void 0 ? message : (() => getNotFoundErrorMessageForNameOrFindFunction("decorator", nameOrFindFunction)), this);
+            return errors.throwIfNullOrUndefined(this.getDecorator(nameOrFindFunction), message ?? (() => getNotFoundErrorMessageForNameOrFindFunction("decorator", nameOrFindFunction)), this);
         }
         getDecorators() {
             return getCompilerNodeDecorators(this.compilerNode).map(d => this._getNodeFromCompilerNode(d));
@@ -5914,7 +5955,6 @@ function DecoratableNode(Base) {
             return this.insertDecorators(index, [structure])[0];
         }
         insertDecorators(index, structures) {
-            var _a, _b, _c, _d, _e;
             if (ArrayUtils.isNullOrEmpty(structures))
                 return [];
             const decoratorLines = getDecoratorLines(this, structures);
@@ -5932,8 +5972,8 @@ function DecoratableNode(Base) {
                 nextFormattingKind: previousDecorator == null ? formattingKind : FormattingKind.None,
             });
             insertIntoParentTextRange({
-                parent: (_d = (_b = (_a = decorators[0]) === null || _a === void 0 ? void 0 : _a.getParentSyntaxListOrThrow()) !== null && _b !== void 0 ? _b : (_c = this.getModifiers()[0]) === null || _c === void 0 ? void 0 : _c.getParentSyntaxListOrThrow()) !== null && _d !== void 0 ? _d : this,
-                insertPos: index === 0 ? ((_e = decorators[0]) !== null && _e !== void 0 ? _e : this).getStart() : decorators[index - 1].getEnd(),
+                parent: decorators[0]?.getParentSyntaxListOrThrow() ?? this.getModifiers()[0]?.getParentSyntaxListOrThrow() ?? this,
+                insertPos: index === 0 ? (decorators[0] ?? this).getStart() : decorators[index - 1].getEnd(),
                 newText: decoratorCode,
             });
             return getNodesToReturn(decorators, this.getDecorators(), index, false);
@@ -5954,8 +5994,7 @@ function DecoratableNode(Base) {
     };
 }
 function getCompilerNodeDecorators(node) {
-    var _a;
-    return ts.canHaveDecorators(node) ? (_a = ts.getDecorators(node)) !== null && _a !== void 0 ? _a : [] : [];
+    return ts.canHaveDecorators(node) ? ts.getDecorators(node) ?? [] : [];
 }
 function getDecoratorLines(node, structures) {
     const lines = [];
@@ -5990,7 +6029,7 @@ function areDecoratorsOnSameLine(parent, currentDecorators) {
 function DotDotDotTokenableNode(Base) {
     return class extends Base {
         getDotDotDotTokenOrThrow(message) {
-            return errors.throwIfNullOrUndefined(this.getDotDotDotToken(), message !== null && message !== void 0 ? message : "Expected to find a dot dot dot token (...).", this);
+            return errors.throwIfNullOrUndefined(this.getDotDotDotToken(), message ?? "Expected to find a dot dot dot token (...).", this);
         }
         getDotDotDotToken() {
             return this._getNodeFromCompilerNodeIfExists(this.compilerNode.dotDotDotToken);
@@ -6007,7 +6046,7 @@ function ExclamationTokenableNode(Base) {
             return this._getNodeFromCompilerNodeIfExists(this.compilerNode.exclamationToken);
         }
         getExclamationTokenNodeOrThrow(message) {
-            return errors.throwIfNullOrUndefined(this.getExclamationTokenNode(), message !== null && message !== void 0 ? message : "Expected to find an exclamation token.", this);
+            return errors.throwIfNullOrUndefined(this.getExclamationTokenNode(), message ?? "Expected to find an exclamation token.", this);
         }
         setHasExclamationToken(value) {
             const exclamationTokenNode = this.getExclamationTokenNode();
@@ -6053,14 +6092,14 @@ function ExportGetableNode(Base) {
         getExportKeyword() {
             if (Node.isVariableDeclaration(this)) {
                 const variableStatement = this.getVariableStatement();
-                return variableStatement === null || variableStatement === void 0 ? void 0 : variableStatement.getExportKeyword();
+                return variableStatement?.getExportKeyword();
             }
             if (!Node.isModifierable(this))
                 return throwForNotModifierableNode();
             return this.getFirstModifierByKind(SyntaxKind.ExportKeyword);
         }
         getExportKeywordOrThrow(message) {
-            return errors.throwIfNullOrUndefined(this.getExportKeyword(), message !== null && message !== void 0 ? message : "Expected to find an export keyword.", this);
+            return errors.throwIfNullOrUndefined(this.getExportKeyword(), message ?? "Expected to find an export keyword.", this);
         }
         hasDefaultKeyword() {
             return this.getDefaultKeyword() != null;
@@ -6068,14 +6107,14 @@ function ExportGetableNode(Base) {
         getDefaultKeyword() {
             if (Node.isVariableDeclaration(this)) {
                 const variableStatement = this.getVariableStatement();
-                return variableStatement === null || variableStatement === void 0 ? void 0 : variableStatement.getDefaultKeyword();
+                return variableStatement?.getDefaultKeyword();
             }
             if (!Node.isModifierable(this))
                 return throwForNotModifierableNode();
             return this.getFirstModifierByKind(SyntaxKind.DefaultKeyword);
         }
         getDefaultKeywordOrThrow(message) {
-            return errors.throwIfNullOrUndefined(this.getDefaultKeyword(), message !== null && message !== void 0 ? message : "Expected to find a default keyword.", this);
+            return errors.throwIfNullOrUndefined(this.getDefaultKeyword(), message ?? "Expected to find a default keyword.", this);
         }
         isExported() {
             if (this.hasExportKeyword())
@@ -6247,15 +6286,16 @@ class ModifierableNodeStructurePrinter extends Printer {
 }
 
 class ReturnTypedNodeStructurePrinter extends Printer {
+    #alwaysWrite;
     constructor(alwaysWrite = false) {
         super();
-        this.alwaysWrite = alwaysWrite;
+        this.#alwaysWrite = alwaysWrite;
     }
     printText(writer, structure) {
         let { returnType } = structure;
-        if (returnType == null && this.alwaysWrite === false)
+        if (returnType == null && this.#alwaysWrite === false)
             return;
-        returnType = returnType !== null && returnType !== void 0 ? returnType : "void";
+        returnType = returnType ?? "void";
         const returnTypeText = this.getText(writer, returnType);
         if (!StringUtils.isNullOrWhitespace(returnTypeText)) {
             writer.hangingIndent(() => {
@@ -6266,47 +6306,51 @@ class ReturnTypedNodeStructurePrinter extends Printer {
 }
 
 class TypedNodeStructurePrinter extends Printer {
+    #separator;
+    #alwaysWrite;
     constructor(separator, alwaysWrite = false) {
         super();
-        this.separator = separator;
-        this.alwaysWrite = alwaysWrite;
+        this.#alwaysWrite = alwaysWrite;
+        this.#separator = separator;
     }
     printText(writer, structure) {
         let { type } = structure;
-        if (type == null && this.alwaysWrite === false)
+        if (type == null && this.#alwaysWrite === false)
             return;
-        type = type !== null && type !== void 0 ? type : "any";
+        type = type ?? "any";
         const typeText = this.getText(writer, type);
         if (!StringUtils.isNullOrWhitespace(typeText)) {
             writer.hangingIndent(() => {
-                writer.write(`${this.separator} ${typeText}`);
+                writer.write(`${this.#separator} ${typeText}`);
             });
         }
     }
 }
 
 class BlankLineFormattingStructuresPrinter extends Printer {
+    #printer;
     constructor(printer) {
         super();
-        this.printer = printer;
+        this.#printer = printer;
     }
     printText(writer, structures) {
         if (structures == null)
             return;
         for (let i = 0; i < structures.length; i++) {
             writer.conditionalBlankLine(i > 0);
-            this.printer.printText(writer, structures[i]);
+            this.#printer.printText(writer, structures[i]);
         }
     }
 }
 
 class CommaSeparatedStructuresPrinter extends Printer {
+    #printer;
     constructor(printer) {
         super();
-        this.printer = printer;
+        this.#printer = printer;
     }
     printText(writer, structures) {
-        printTextWithSeparator(this.printer, writer, structures, () => writer.spaceIfLastNot());
+        printTextWithSeparator(this.#printer, writer, structures, () => writer.spaceIfLastNot());
     }
 }
 function printTextWithSeparator(printer, writer, structures, separator) {
@@ -6339,46 +6383,50 @@ function printTextWithSeparator(printer, writer, structures, separator) {
 }
 
 class CommaNewLineSeparatedStructuresPrinter extends Printer {
+    #printer;
     constructor(printer) {
         super();
-        this.printer = printer;
+        this.#printer = printer;
     }
     printText(writer, structures) {
-        printTextWithSeparator(this.printer, writer, structures, () => writer.newLineIfLastNot());
+        printTextWithSeparator(this.#printer, writer, structures, () => writer.newLineIfLastNot());
     }
 }
 
 class NewLineFormattingStructuresPrinter extends Printer {
+    #printer;
     constructor(printer) {
         super();
-        this.printer = printer;
+        this.#printer = printer;
     }
     printText(writer, structures) {
         if (structures == null)
             return;
         for (let i = 0; i < structures.length; i++) {
             writer.conditionalNewLine(i > 0);
-            this.printer.printText(writer, structures[i]);
+            this.#printer.printText(writer, structures[i]);
         }
     }
 }
 
 class SpaceFormattingStructuresPrinter extends Printer {
+    #printer;
     constructor(printer) {
         super();
-        this.printer = printer;
+        this.#printer = printer;
     }
     printText(writer, structures) {
         if (structures == null)
             return;
         for (let i = 0; i < structures.length; i++) {
             writer.conditionalWrite(i > 0, " ");
-            this.printer.printText(writer, structures[i]);
+            this.#printer.printText(writer, structures[i]);
         }
     }
 }
 
 class NodePrinter extends Printer {
+    factory;
     constructor(factory) {
         super();
         this.factory = factory;
@@ -6393,19 +6441,19 @@ class NodePrinter extends Printer {
         this.printTrailingTrivia(writer, structure);
     }
     printLeadingTrivia(writer, structure) {
-        const leadingTrivia = structure === null || structure === void 0 ? void 0 : structure.leadingTrivia;
+        const leadingTrivia = structure?.leadingTrivia;
         if (leadingTrivia) {
-            this.printTrivia(writer, leadingTrivia);
+            this.#printTrivia(writer, leadingTrivia);
             if (writer.isInComment())
                 writer.closeComment();
         }
     }
     printTrailingTrivia(writer, structure) {
-        const trailingTrivia = structure === null || structure === void 0 ? void 0 : structure.trailingTrivia;
+        const trailingTrivia = structure?.trailingTrivia;
         if (trailingTrivia != null)
-            this.printTrivia(writer, trailingTrivia);
+            this.#printTrivia(writer, trailingTrivia);
     }
-    printTrivia(writer, trivia) {
+    #printTrivia(writer, trivia) {
         if (trivia instanceof Array) {
             for (let i = 0; i < trivia.length; i++) {
                 this.printTextOrWriterFunc(writer, trivia[i]);
@@ -6420,30 +6468,31 @@ class NodePrinter extends Printer {
 }
 
 class ClassDeclarationStructurePrinter extends NodePrinter {
+    #options;
+    #multipleWriter = new BlankLineFormattingStructuresPrinter(this);
     constructor(factory, options) {
         super(factory);
-        this.options = options;
-        this.multipleWriter = new BlankLineFormattingStructuresPrinter(this);
+        this.#options = options;
     }
     printTexts(writer, structures) {
-        this.multipleWriter.printText(writer, structures);
+        this.#multipleWriter.printText(writer, structures);
     }
     printTextInternal(writer, structure) {
-        const isAmbient = structure.hasDeclareKeyword || this.options.isAmbient;
+        const isAmbient = structure.hasDeclareKeyword || this.#options.isAmbient;
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         this.factory.forDecorator().printTexts(writer, structure.decorators);
-        this.printHeader(writer, structure);
+        this.#printHeader(writer, structure);
         writer.inlineBlock(() => {
             this.factory.forPropertyDeclaration().printTexts(writer, structure.properties);
-            this.printCtors(writer, structure, isAmbient);
-            this.printGetAndSet(writer, structure, isAmbient);
+            this.#printCtors(writer, structure, isAmbient);
+            this.#printGetAndSet(writer, structure, isAmbient);
             if (!ArrayUtils.isNullOrEmpty(structure.methods)) {
-                this.conditionalSeparator(writer, isAmbient);
+                this.#conditionalSeparator(writer, isAmbient);
                 this.factory.forMethodDeclaration({ isAmbient }).printTexts(writer, structure.methods);
             }
         });
     }
-    printHeader(writer, structure) {
+    #printHeader(writer, structure) {
         this.factory.forModifierableNode().printText(writer, structure);
         writer.write(`class`);
         if (!StringUtils.isNullOrWhitespace(structure.name))
@@ -6465,36 +6514,35 @@ class ClassDeclarationStructurePrinter extends NodePrinter {
             }
         });
     }
-    printCtors(writer, structure, isAmbient) {
+    #printCtors(writer, structure, isAmbient) {
         if (ArrayUtils.isNullOrEmpty(structure.ctors))
             return;
         for (const ctor of structure.ctors) {
-            this.conditionalSeparator(writer, isAmbient);
+            this.#conditionalSeparator(writer, isAmbient);
             this.factory.forConstructorDeclaration({ isAmbient }).printText(writer, ctor);
         }
     }
-    printGetAndSet(writer, structure, isAmbient) {
-        var _a, _b;
-        const getAccessors = [...(_a = structure.getAccessors) !== null && _a !== void 0 ? _a : []];
-        const setAccessors = [...(_b = structure.setAccessors) !== null && _b !== void 0 ? _b : []];
+    #printGetAndSet(writer, structure, isAmbient) {
+        const getAccessors = [...structure.getAccessors ?? []];
+        const setAccessors = [...structure.setAccessors ?? []];
         const getAccessorWriter = this.factory.forGetAccessorDeclaration({ isAmbient });
         const setAccessorWriter = this.factory.forSetAccessorDeclaration({ isAmbient });
         for (const getAccessor of getAccessors) {
-            this.conditionalSeparator(writer, isAmbient);
+            this.#conditionalSeparator(writer, isAmbient);
             getAccessorWriter.printText(writer, getAccessor);
             const setAccessorIndex = setAccessors.findIndex(item => item.name === getAccessor.name);
             if (setAccessorIndex >= 0) {
-                this.conditionalSeparator(writer, isAmbient);
+                this.#conditionalSeparator(writer, isAmbient);
                 setAccessorWriter.printText(writer, setAccessors[setAccessorIndex]);
                 setAccessors.splice(setAccessorIndex, 1);
             }
         }
         for (const setAccessor of setAccessors) {
-            this.conditionalSeparator(writer, isAmbient);
+            this.#conditionalSeparator(writer, isAmbient);
             setAccessorWriter.printText(writer, setAccessor);
         }
     }
-    conditionalSeparator(writer, isAmbient) {
+    #conditionalSeparator(writer, isAmbient) {
         if (writer.isAtStartOfFirstLineOfBlock())
             return;
         if (isAmbient)
@@ -6506,7 +6554,7 @@ class ClassDeclarationStructurePrinter extends NodePrinter {
 
 var StructureKind;
 (function (StructureKind) {
-    StructureKind[StructureKind["AssertEntry"] = 0] = "AssertEntry";
+    StructureKind[StructureKind["ImportAttribute"] = 0] = "ImportAttribute";
     StructureKind[StructureKind["CallSignature"] = 1] = "CallSignature";
     StructureKind[StructureKind["Class"] = 2] = "Class";
     StructureKind[StructureKind["ClassStaticBlock"] = 3] = "ClassStaticBlock";
@@ -6554,17 +6602,11 @@ const Structure = {
     hasName(structure) {
         return typeof structure.name === "string";
     },
-    isAssertEntry(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.AssertEntry;
-    },
-    isAssertionKeyNamed(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.AssertEntry;
-    },
     isCallSignature(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.CallSignature;
+        return structure?.kind === StructureKind.CallSignature;
     },
     isJSDocable(structure) {
-        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
+        switch (structure?.kind) {
             case StructureKind.CallSignature:
             case StructureKind.Class:
             case StructureKind.ClassStaticBlock:
@@ -6594,7 +6636,7 @@ const Structure = {
         }
     },
     isSignatured(structure) {
-        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
+        switch (structure?.kind) {
             case StructureKind.CallSignature:
             case StructureKind.ConstructorOverload:
             case StructureKind.Constructor:
@@ -6612,7 +6654,7 @@ const Structure = {
         }
     },
     isParametered(structure) {
-        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
+        switch (structure?.kind) {
             case StructureKind.CallSignature:
             case StructureKind.ConstructorOverload:
             case StructureKind.Constructor:
@@ -6630,7 +6672,7 @@ const Structure = {
         }
     },
     isReturnTyped(structure) {
-        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
+        switch (structure?.kind) {
             case StructureKind.CallSignature:
             case StructureKind.ConstructorOverload:
             case StructureKind.Constructor:
@@ -6649,7 +6691,7 @@ const Structure = {
         }
     },
     isTypeParametered(structure) {
-        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
+        switch (structure?.kind) {
             case StructureKind.CallSignature:
             case StructureKind.Class:
             case StructureKind.ConstructorOverload:
@@ -6670,13 +6712,13 @@ const Structure = {
         }
     },
     isClass(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.Class;
+        return structure?.kind === StructureKind.Class;
     },
     isClassLikeDeclarationBase(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.Class;
+        return structure?.kind === StructureKind.Class;
     },
     isNameable(structure) {
-        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
+        switch (structure?.kind) {
             case StructureKind.Class:
             case StructureKind.Function:
                 return true;
@@ -6685,10 +6727,10 @@ const Structure = {
         }
     },
     isImplementsClauseable(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.Class;
+        return structure?.kind === StructureKind.Class;
     },
     isDecoratable(structure) {
-        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
+        switch (structure?.kind) {
             case StructureKind.Class:
             case StructureKind.GetAccessor:
             case StructureKind.Method:
@@ -6701,7 +6743,7 @@ const Structure = {
         }
     },
     isAbstractable(structure) {
-        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
+        switch (structure?.kind) {
             case StructureKind.Class:
             case StructureKind.GetAccessor:
             case StructureKind.MethodOverload:
@@ -6714,7 +6756,7 @@ const Structure = {
         }
     },
     isAmbientable(structure) {
-        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
+        switch (structure?.kind) {
             case StructureKind.Class:
             case StructureKind.Enum:
             case StructureKind.FunctionOverload:
@@ -6730,7 +6772,7 @@ const Structure = {
         }
     },
     isExportable(structure) {
-        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
+        switch (structure?.kind) {
             case StructureKind.Class:
             case StructureKind.Enum:
             case StructureKind.FunctionOverload:
@@ -6745,10 +6787,10 @@ const Structure = {
         }
     },
     isClassStaticBlock(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.ClassStaticBlock;
+        return structure?.kind === StructureKind.ClassStaticBlock;
     },
     isStatemented(structure) {
-        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
+        switch (structure?.kind) {
             case StructureKind.ClassStaticBlock:
             case StructureKind.Constructor:
             case StructureKind.Function:
@@ -6763,10 +6805,10 @@ const Structure = {
         }
     },
     isConstructorDeclarationOverload(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.ConstructorOverload;
+        return structure?.kind === StructureKind.ConstructorOverload;
     },
     isScoped(structure) {
-        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
+        switch (structure?.kind) {
             case StructureKind.ConstructorOverload:
             case StructureKind.Constructor:
             case StructureKind.GetAccessor:
@@ -6780,10 +6822,10 @@ const Structure = {
         }
     },
     isConstructor(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.Constructor;
+        return structure?.kind === StructureKind.Constructor;
     },
     isFunctionLike(structure) {
-        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
+        switch (structure?.kind) {
             case StructureKind.Constructor:
             case StructureKind.Function:
             case StructureKind.GetAccessor:
@@ -6795,16 +6837,16 @@ const Structure = {
         }
     },
     isConstructSignature(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.ConstructSignature;
+        return structure?.kind === StructureKind.ConstructSignature;
     },
     isDecorator(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.Decorator;
+        return structure?.kind === StructureKind.Decorator;
     },
     isEnum(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.Enum;
+        return structure?.kind === StructureKind.Enum;
     },
     isNamed(structure) {
-        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
+        switch (structure?.kind) {
             case StructureKind.Enum:
             case StructureKind.Interface:
             case StructureKind.ShorthandPropertyAssignment:
@@ -6816,10 +6858,10 @@ const Structure = {
         }
     },
     isEnumMember(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.EnumMember;
+        return structure?.kind === StructureKind.EnumMember;
     },
     isPropertyNamed(structure) {
-        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
+        switch (structure?.kind) {
             case StructureKind.EnumMember:
             case StructureKind.GetAccessor:
             case StructureKind.Method:
@@ -6834,7 +6876,7 @@ const Structure = {
         }
     },
     isInitializerExpressionable(structure) {
-        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
+        switch (structure?.kind) {
             case StructureKind.EnumMember:
             case StructureKind.Parameter:
             case StructureKind.Property:
@@ -6846,19 +6888,19 @@ const Structure = {
         }
     },
     isExportAssignment(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.ExportAssignment;
+        return structure?.kind === StructureKind.ExportAssignment;
     },
     isExportDeclaration(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.ExportDeclaration;
+        return structure?.kind === StructureKind.ExportDeclaration;
     },
     isExportSpecifier(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.ExportSpecifier;
+        return structure?.kind === StructureKind.ExportSpecifier;
     },
     isFunctionDeclarationOverload(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.FunctionOverload;
+        return structure?.kind === StructureKind.FunctionOverload;
     },
     isAsyncable(structure) {
-        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
+        switch (structure?.kind) {
             case StructureKind.FunctionOverload:
             case StructureKind.Function:
             case StructureKind.MethodOverload:
@@ -6869,7 +6911,7 @@ const Structure = {
         }
     },
     isGeneratorable(structure) {
-        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
+        switch (structure?.kind) {
             case StructureKind.FunctionOverload:
             case StructureKind.Function:
             case StructureKind.MethodOverload:
@@ -6880,13 +6922,13 @@ const Structure = {
         }
     },
     isFunction(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.Function;
+        return structure?.kind === StructureKind.Function;
     },
     isGetAccessor(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.GetAccessor;
+        return structure?.kind === StructureKind.GetAccessor;
     },
     isStaticable(structure) {
-        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
+        switch (structure?.kind) {
             case StructureKind.GetAccessor:
             case StructureKind.MethodOverload:
             case StructureKind.Method:
@@ -6897,17 +6939,23 @@ const Structure = {
                 return false;
         }
     },
+    isImportAttribute(structure) {
+        return structure?.kind === StructureKind.ImportAttribute;
+    },
+    isImportAttributeKeyNamed(structure) {
+        return structure?.kind === StructureKind.ImportAttribute;
+    },
     isImportDeclaration(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.ImportDeclaration;
+        return structure?.kind === StructureKind.ImportDeclaration;
     },
     isImportSpecifier(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.ImportSpecifier;
+        return structure?.kind === StructureKind.ImportSpecifier;
     },
     isIndexSignature(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.IndexSignature;
+        return structure?.kind === StructureKind.IndexSignature;
     },
     isReadonlyable(structure) {
-        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
+        switch (structure?.kind) {
             case StructureKind.IndexSignature:
             case StructureKind.Parameter:
             case StructureKind.Property:
@@ -6918,43 +6966,43 @@ const Structure = {
         }
     },
     isInterface(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.Interface;
+        return structure?.kind === StructureKind.Interface;
     },
     isExtendsClauseable(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.Interface;
+        return structure?.kind === StructureKind.Interface;
     },
     isTypeElementMembered(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.Interface;
+        return structure?.kind === StructureKind.Interface;
     },
     isJSDoc(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.JSDoc;
+        return structure?.kind === StructureKind.JSDoc;
     },
     isJSDocTag(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.JSDocTag;
+        return structure?.kind === StructureKind.JSDocTag;
     },
     isJsxAttribute(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.JsxAttribute;
+        return structure?.kind === StructureKind.JsxAttribute;
     },
     isJsxElement(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.JsxElement;
+        return structure?.kind === StructureKind.JsxElement;
     },
     isJsxSelfClosingElement(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.JsxSelfClosingElement;
+        return structure?.kind === StructureKind.JsxSelfClosingElement;
     },
     isJsxTagNamed(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.JsxSelfClosingElement;
+        return structure?.kind === StructureKind.JsxSelfClosingElement;
     },
     isJsxAttributed(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.JsxSelfClosingElement;
+        return structure?.kind === StructureKind.JsxSelfClosingElement;
     },
     isJsxSpreadAttribute(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.JsxSpreadAttribute;
+        return structure?.kind === StructureKind.JsxSpreadAttribute;
     },
     isMethodDeclarationOverload(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.MethodOverload;
+        return structure?.kind === StructureKind.MethodOverload;
     },
     isQuestionTokenable(structure) {
-        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
+        switch (structure?.kind) {
             case StructureKind.MethodOverload:
             case StructureKind.Method:
             case StructureKind.MethodSignature:
@@ -6967,7 +7015,7 @@ const Structure = {
         }
     },
     isOverrideable(structure) {
-        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
+        switch (structure?.kind) {
             case StructureKind.MethodOverload:
             case StructureKind.Method:
             case StructureKind.Parameter:
@@ -6978,22 +7026,22 @@ const Structure = {
         }
     },
     isMethod(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.Method;
+        return structure?.kind === StructureKind.Method;
     },
     isMethodSignature(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.MethodSignature;
+        return structure?.kind === StructureKind.MethodSignature;
     },
     isModule(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.Module;
+        return structure?.kind === StructureKind.Module;
     },
     isModuleNamed(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.Module;
+        return structure?.kind === StructureKind.Module;
     },
     isParameter(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.Parameter;
+        return structure?.kind === StructureKind.Parameter;
     },
     isBindingNamed(structure) {
-        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
+        switch (structure?.kind) {
             case StructureKind.Parameter:
             case StructureKind.VariableDeclaration:
                 return true;
@@ -7002,7 +7050,7 @@ const Structure = {
         }
     },
     isTyped(structure) {
-        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
+        switch (structure?.kind) {
             case StructureKind.Parameter:
             case StructureKind.Property:
             case StructureKind.PropertySignature:
@@ -7014,16 +7062,16 @@ const Structure = {
         }
     },
     isScopeable(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.Parameter;
+        return structure?.kind === StructureKind.Parameter;
     },
     isPropertyAssignment(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.PropertyAssignment;
+        return structure?.kind === StructureKind.PropertyAssignment;
     },
     isProperty(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.Property;
+        return structure?.kind === StructureKind.Property;
     },
     isExclamationTokenable(structure) {
-        switch (structure === null || structure === void 0 ? void 0 : structure.kind) {
+        switch (structure?.kind) {
             case StructureKind.Property:
             case StructureKind.VariableDeclaration:
                 return true;
@@ -7032,34 +7080,34 @@ const Structure = {
         }
     },
     isPropertySignature(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.PropertySignature;
+        return structure?.kind === StructureKind.PropertySignature;
     },
     isSetAccessor(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.SetAccessor;
+        return structure?.kind === StructureKind.SetAccessor;
     },
     isShorthandPropertyAssignment(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.ShorthandPropertyAssignment;
+        return structure?.kind === StructureKind.ShorthandPropertyAssignment;
     },
     isSourceFile(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.SourceFile;
+        return structure?.kind === StructureKind.SourceFile;
     },
     isSpreadAssignment(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.SpreadAssignment;
+        return structure?.kind === StructureKind.SpreadAssignment;
     },
     isExpressioned(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.SpreadAssignment;
+        return structure?.kind === StructureKind.SpreadAssignment;
     },
     isTypeAlias(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.TypeAlias;
+        return structure?.kind === StructureKind.TypeAlias;
     },
     isTypeParameter(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.TypeParameter;
+        return structure?.kind === StructureKind.TypeParameter;
     },
     isVariableDeclaration(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.VariableDeclaration;
+        return structure?.kind === StructureKind.VariableDeclaration;
     },
     isVariableStatement(structure) {
-        return (structure === null || structure === void 0 ? void 0 : structure.kind) === StructureKind.VariableStatement;
+        return structure?.kind === StructureKind.VariableStatement;
     }
 };
 
@@ -7209,7 +7257,7 @@ function forExportAssignment(structure, callback) {
 }
 function forExportDeclaration(structure, callback) {
     return forAllIfStructure(structure.namedExports, callback, StructureKind.ExportSpecifier)
-        || forAll(structure.assertElements, callback, StructureKind.AssertEntry);
+        || forAll(structure.attributes, callback, StructureKind.ImportAttribute);
 }
 function forFunctionDeclarationOverload(structure, callback) {
     return forSignaturedDeclaration(structure, callback)
@@ -7226,7 +7274,7 @@ function forGetAccessorDeclaration(structure, callback) {
 }
 function forImportDeclaration(structure, callback) {
     return forAllIfStructure(structure.namedImports, callback, StructureKind.ImportSpecifier)
-        || forAll(structure.assertElements, callback, StructureKind.AssertEntry);
+        || forAll(structure.attributes, callback, StructureKind.ImportAttribute);
 }
 function forIndexSignatureDeclaration(structure, callback) {
     return forJSDocableNode(structure, callback);
@@ -7355,10 +7403,12 @@ function isLastNonWhitespaceCharCloseBrace(writer) {
 }
 
 class ClassMemberStructurePrinter extends Printer {
+    #options;
+    #factory;
     constructor(factory, options) {
         super();
-        this.factory = factory;
-        this.options = options;
+        this.#factory = factory;
+        this.#options = options;
     }
     printTexts(writer, members) {
         if (members == null)
@@ -7382,31 +7432,31 @@ class ClassMemberStructurePrinter extends Printer {
         }
         switch (member.kind) {
             case StructureKind.Method:
-                if (!this.options.isAmbient)
+                if (!this.#options.isAmbient)
                     ensureBlankLine();
-                this.factory.forMethodDeclaration(this.options).printText(writer, member);
+                this.#factory.forMethodDeclaration(this.#options).printText(writer, member);
                 break;
             case StructureKind.Property:
-                this.factory.forPropertyDeclaration().printText(writer, member);
+                this.#factory.forPropertyDeclaration().printText(writer, member);
                 break;
             case StructureKind.GetAccessor:
-                if (!this.options.isAmbient)
+                if (!this.#options.isAmbient)
                     ensureBlankLine();
-                this.factory.forGetAccessorDeclaration(this.options).printText(writer, member);
+                this.#factory.forGetAccessorDeclaration(this.#options).printText(writer, member);
                 break;
             case StructureKind.SetAccessor:
-                if (!this.options.isAmbient)
+                if (!this.#options.isAmbient)
                     ensureBlankLine();
-                this.factory.forSetAccessorDeclaration(this.options).printText(writer, member);
+                this.#factory.forSetAccessorDeclaration(this.#options).printText(writer, member);
                 break;
             case StructureKind.Constructor:
-                if (!this.options.isAmbient)
+                if (!this.#options.isAmbient)
                     ensureBlankLine();
-                this.factory.forConstructorDeclaration(this.options).printText(writer, member);
+                this.#factory.forConstructorDeclaration(this.#options).printText(writer, member);
                 break;
             case StructureKind.ClassStaticBlock:
                 ensureBlankLine();
-                this.factory.forClassStaticBlockDeclaration().printText(writer, member);
+                this.#factory.forClassStaticBlockDeclaration().printText(writer, member);
                 break;
             default:
                 errors.throwNotImplementedForNeverValueError(member);
@@ -7440,16 +7490,17 @@ class ClassStaticBlockDeclarationStructurePrinter extends NodePrinter {
 }
 
 class ConstructorDeclarationStructurePrinter extends NodePrinter {
+    #options;
     constructor(factory, options) {
         super(factory);
-        this.options = options;
+        this.#options = options;
     }
     printTexts(writer, structures) {
         if (structures == null)
             return;
         for (let i = 0; i < structures.length; i++) {
             if (i > 0) {
-                if (this.options.isAmbient)
+                if (this.#options.isAmbient)
                     writer.newLine();
                 else
                     writer.blankLine();
@@ -7458,13 +7509,13 @@ class ConstructorDeclarationStructurePrinter extends NodePrinter {
         }
     }
     printTextInternal(writer, structure) {
-        this.printOverloads(writer, getOverloadStructures());
-        this.printHeader(writer, structure);
-        if (this.options.isAmbient)
+        this.#printOverloads(writer, getOverloadStructures());
+        this.#printHeader(writer, structure);
+        if (this.#options.isAmbient)
             writer.write(";");
         else {
             writer.space().inlineBlock(() => {
-                this.factory.forStatementedNode(this.options).printText(writer, structure);
+                this.factory.forStatementedNode(this.#options).printText(writer, structure);
             });
         }
         function getOverloadStructures() {
@@ -7476,7 +7527,7 @@ class ConstructorDeclarationStructurePrinter extends NodePrinter {
             return overloads;
         }
     }
-    printOverloads(writer, structures) {
+    #printOverloads(writer, structures) {
         if (structures == null || structures.length === 0)
             return;
         for (const structure of structures) {
@@ -7486,11 +7537,11 @@ class ConstructorDeclarationStructurePrinter extends NodePrinter {
     }
     printOverload(writer, structure) {
         this.printLeadingTrivia(writer, structure);
-        this.printHeader(writer, structure);
+        this.#printHeader(writer, structure);
         writer.write(";");
         this.printTrailingTrivia(writer, structure);
     }
-    printHeader(writer, structure) {
+    #printHeader(writer, structure) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         this.factory.forModifierableNode().printText(writer, structure);
         writer.write("constructor");
@@ -7500,13 +7551,14 @@ class ConstructorDeclarationStructurePrinter extends NodePrinter {
 }
 
 class GetAccessorDeclarationStructurePrinter extends NodePrinter {
+    #options;
+    #blankLineWriter = new BlankLineFormattingStructuresPrinter(this);
     constructor(factory, options) {
         super(factory);
-        this.options = options;
-        this.blankLineWriter = new BlankLineFormattingStructuresPrinter(this);
+        this.#options = options;
     }
     printTexts(writer, structures) {
-        this.blankLineWriter.printText(writer, structures);
+        this.#blankLineWriter.printText(writer, structures);
     }
     printTextInternal(writer, structure) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
@@ -7516,27 +7568,28 @@ class GetAccessorDeclarationStructurePrinter extends NodePrinter {
         this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
         this.factory.forParameterDeclaration().printTextsWithParenthesis(writer, structure.parameters);
         this.factory.forReturnTypedNode().printText(writer, structure);
-        if (this.options.isAmbient || structure.isAbstract)
+        if (this.#options.isAmbient || structure.isAbstract)
             writer.write(";");
         else {
             writer.spaceIfLastNot().inlineBlock(() => {
-                this.factory.forStatementedNode(this.options).printText(writer, structure);
+                this.factory.forStatementedNode(this.#options).printText(writer, structure);
             });
         }
     }
 }
 
 class MethodDeclarationStructurePrinter extends NodePrinter {
+    #options;
     constructor(factory, options) {
         super(factory);
-        this.options = options;
+        this.#options = options;
     }
     printTexts(writer, structures) {
         if (structures == null)
             return;
         for (let i = 0; i < structures.length; i++) {
             if (i > 0) {
-                if (this.options.isAmbient)
+                if (this.#options.isAmbient)
                     writer.newLine();
                 else
                     writer.blankLine();
@@ -7545,13 +7598,13 @@ class MethodDeclarationStructurePrinter extends NodePrinter {
         }
     }
     printTextInternal(writer, structure) {
-        this.printOverloads(writer, structure.name, getOverloadStructures());
-        this.printHeader(writer, structure.name, structure);
-        if (this.options.isAmbient || structure.isAbstract)
+        this.#printOverloads(writer, structure.name, getOverloadStructures());
+        this.#printHeader(writer, structure.name, structure);
+        if (this.#options.isAmbient || structure.isAbstract)
             writer.write(";");
         else {
             writer.spaceIfLastNot().inlineBlock(() => {
-                this.factory.forStatementedNode(this.options).printText(writer, structure);
+                this.factory.forStatementedNode(this.#options).printText(writer, structure);
             });
         }
         function getOverloadStructures() {
@@ -7567,7 +7620,7 @@ class MethodDeclarationStructurePrinter extends NodePrinter {
             return overloads;
         }
     }
-    printOverloads(writer, name, structures) {
+    #printOverloads(writer, name, structures) {
         if (structures == null || structures.length === 0)
             return;
         for (const structure of structures) {
@@ -7577,11 +7630,11 @@ class MethodDeclarationStructurePrinter extends NodePrinter {
     }
     printOverload(writer, name, structure) {
         this.printLeadingTrivia(writer, structure);
-        this.printHeader(writer, name, structure);
+        this.#printHeader(writer, name, structure);
         writer.write(";");
         this.printTrailingTrivia(writer, structure);
     }
-    printHeader(writer, name, structure) {
+    #printHeader(writer, name, structure) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         if (structure.decorators != null)
             this.factory.forDecorator().printTexts(writer, structure.decorators);
@@ -7595,12 +7648,9 @@ class MethodDeclarationStructurePrinter extends NodePrinter {
 }
 
 class PropertyDeclarationStructurePrinter extends NodePrinter {
-    constructor() {
-        super(...arguments);
-        this.multipleWriter = new NewLineFormattingStructuresPrinter(this);
-    }
+    #multipleWriter = new NewLineFormattingStructuresPrinter(this);
     printTexts(writer, structures) {
-        this.multipleWriter.printText(writer, structures);
+        this.#multipleWriter.printText(writer, structures);
     }
     printTextInternal(writer, structure) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
@@ -7616,13 +7666,14 @@ class PropertyDeclarationStructurePrinter extends NodePrinter {
 }
 
 class SetAccessorDeclarationStructurePrinter extends NodePrinter {
+    #options;
+    #multipleWriter = new BlankLineFormattingStructuresPrinter(this);
     constructor(factory, options) {
         super(factory);
-        this.options = options;
-        this.multipleWriter = new BlankLineFormattingStructuresPrinter(this);
+        this.#options = options;
     }
     printTexts(writer, structures) {
-        this.multipleWriter.printText(writer, structures);
+        this.#multipleWriter.printText(writer, structures);
     }
     printTextInternal(writer, structure) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
@@ -7632,11 +7683,11 @@ class SetAccessorDeclarationStructurePrinter extends NodePrinter {
         this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
         this.factory.forParameterDeclaration().printTextsWithParenthesis(writer, structure.parameters);
         this.factory.forReturnTypedNode().printText(writer, structure);
-        if (this.options.isAmbient || structure.isAbstract)
+        if (this.#options.isAmbient || structure.isAbstract)
             writer.write(";");
         else {
             writer.spaceIfLastNot().inlineBlock(() => {
-                this.factory.forStatementedNode(this.options).printText(writer, structure);
+                this.factory.forStatementedNode(this.#options).printText(writer, structure);
             });
         }
     }
@@ -7653,17 +7704,17 @@ class StringStructurePrinter extends Printer {
 
 class DecoratorStructurePrinter extends NodePrinter {
     printTexts(writer, structures) {
-        this.printMultiple(writer, structures, () => writer.newLine());
+        this.#printMultiple(writer, structures, () => writer.newLine());
     }
     printTextsInline(writer, structures) {
-        this.printMultiple(writer, structures, () => writer.space());
+        this.#printMultiple(writer, structures, () => writer.space());
     }
     printTextInternal(writer, structure) {
         writer.write(`@${structure.name}`);
-        this.printTypeArguments(writer, structure);
-        this.printArguments(writer, structure);
+        this.#printTypeArguments(writer, structure);
+        this.#printArguments(writer, structure);
     }
-    printTypeArguments(writer, structure) {
+    #printTypeArguments(writer, structure) {
         if (structure.typeArguments == null || structure.typeArguments.length === 0)
             return;
         writer.write("<");
@@ -7673,7 +7724,7 @@ class DecoratorStructurePrinter extends NodePrinter {
         }
         writer.write(">");
     }
-    printArguments(writer, structure) {
+    #printArguments(writer, structure) {
         if (structure.arguments == null)
             return;
         writer.write("(");
@@ -7684,7 +7735,7 @@ class DecoratorStructurePrinter extends NodePrinter {
         }
         writer.write(")");
     }
-    printMultiple(writer, structures, separator) {
+    #printMultiple(writer, structures, separator) {
         if (structures == null || structures.length === 0)
             return;
         for (const structure of structures) {
@@ -7747,9 +7798,10 @@ class JSDocStructurePrinter extends NodePrinter {
 }
 
 class JSDocTagStructurePrinter extends NodePrinter {
+    #options;
     constructor(factory, options) {
         super(factory);
-        this.options = options;
+        this.#options = options;
     }
     printTexts(writer, structures) {
         if (structures == null)
@@ -7757,7 +7809,7 @@ class JSDocTagStructurePrinter extends NodePrinter {
         for (let i = 0; i < structures.length; i++) {
             if (i > 0) {
                 writer.newLine();
-                writer.conditionalWrite(this.options.printStarsOnNewLine, " * ");
+                writer.conditionalWrite(this.#options.printStarsOnNewLine, " * ");
             }
             this.printText(writer, structures[i]);
         }
@@ -7768,11 +7820,11 @@ class JSDocTagStructurePrinter extends NodePrinter {
         for (let i = 0; i < lines.length; i++) {
             if (i > 0) {
                 writer.newLine();
-                if (this.options.printStarsOnNewLine)
+                if (this.#options.printStarsOnNewLine)
                     writer.write(` *`);
             }
             if (lines[i].length > 0) {
-                if (this.options.printStarsOnNewLine && i > 0)
+                if (this.#options.printStarsOnNewLine && i > 0)
                     writer.space();
                 writer.write(lines[i]);
             }
@@ -7795,12 +7847,9 @@ class JSDocTagStructurePrinter extends NodePrinter {
 }
 
 class EnumDeclarationStructurePrinter extends NodePrinter {
-    constructor() {
-        super(...arguments);
-        this.multipleWriter = new BlankLineFormattingStructuresPrinter(this);
-    }
+    #multipleWriter = new BlankLineFormattingStructuresPrinter(this);
     printTexts(writer, structures) {
-        this.multipleWriter.printText(writer, structures);
+        this.#multipleWriter.printText(writer, structures);
     }
     printTextInternal(writer, structure) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
@@ -7813,12 +7862,9 @@ class EnumDeclarationStructurePrinter extends NodePrinter {
 }
 
 class EnumMemberStructurePrinter extends NodePrinter {
-    constructor() {
-        super(...arguments);
-        this.multipleWriter = new CommaNewLineSeparatedStructuresPrinter(this);
-    }
+    #multipleWriter = new CommaNewLineSeparatedStructuresPrinter(this);
     printTexts(writer, structures) {
-        this.multipleWriter.printText(writer, structures);
+        this.#multipleWriter.printText(writer, structures);
     }
     printTextInternal(writer, structure) {
         if (structure instanceof Function) {
@@ -7846,14 +7892,15 @@ class EnumMemberStructurePrinter extends NodePrinter {
 }
 
 class ObjectLiteralExpressionPropertyStructurePrinter extends Printer {
+    #factory;
+    #multipleWriter = new CommaNewLineSeparatedStructuresPrinter(this);
+    #options = { isAmbient: false };
     constructor(factory) {
         super();
-        this.factory = factory;
-        this.multipleWriter = new CommaNewLineSeparatedStructuresPrinter(this);
-        this.options = { isAmbient: false };
+        this.#factory = factory;
     }
     printTexts(writer, members) {
-        this.multipleWriter.printText(writer, members);
+        this.#multipleWriter.printText(writer, members);
     }
     printText(writer, member) {
         if (typeof member === "string" || member instanceof Function || member == null) {
@@ -7862,22 +7909,22 @@ class ObjectLiteralExpressionPropertyStructurePrinter extends Printer {
         }
         switch (member.kind) {
             case StructureKind.PropertyAssignment:
-                this.factory.forPropertyAssignment().printText(writer, member);
+                this.#factory.forPropertyAssignment().printText(writer, member);
                 break;
             case StructureKind.ShorthandPropertyAssignment:
-                this.factory.forShorthandPropertyAssignment().printText(writer, member);
+                this.#factory.forShorthandPropertyAssignment().printText(writer, member);
                 break;
             case StructureKind.SpreadAssignment:
-                this.factory.forSpreadAssignment().printText(writer, member);
+                this.#factory.forSpreadAssignment().printText(writer, member);
                 break;
             case StructureKind.Method:
-                this.factory.forMethodDeclaration(this.options).printText(writer, member);
+                this.#factory.forMethodDeclaration(this.#options).printText(writer, member);
                 break;
             case StructureKind.GetAccessor:
-                this.factory.forGetAccessorDeclaration(this.options).printText(writer, member);
+                this.#factory.forGetAccessorDeclaration(this.#options).printText(writer, member);
                 break;
             case StructureKind.SetAccessor:
-                this.factory.forSetAccessorDeclaration(this.options).printText(writer, member);
+                this.#factory.forSetAccessorDeclaration(this.#options).printText(writer, member);
                 break;
             default:
                 errors.throwNotImplementedForNeverValueError(member);
@@ -7910,9 +7957,10 @@ class SpreadAssignmentStructurePrinter extends NodePrinter {
 }
 
 class FunctionDeclarationStructurePrinter extends NodePrinter {
+    #options;
     constructor(factory, options) {
         super(factory);
-        this.options = options;
+        this.#options = options;
     }
     printTexts(writer, structures) {
         if (structures == null)
@@ -7921,7 +7969,7 @@ class FunctionDeclarationStructurePrinter extends NodePrinter {
             const currentStructure = structures[i];
             if (i > 0) {
                 const previousStructure = structures[i - 1];
-                if (this.options.isAmbient || previousStructure.hasDeclareKeyword && currentStructure.hasDeclareKeyword)
+                if (this.#options.isAmbient || previousStructure.hasDeclareKeyword && currentStructure.hasDeclareKeyword)
                     writer.newLine();
                 else
                     writer.blankLine();
@@ -7930,9 +7978,9 @@ class FunctionDeclarationStructurePrinter extends NodePrinter {
         }
     }
     printTextInternal(writer, structure) {
-        this.printOverloads(writer, structure.name, getOverloadStructures());
-        this.printHeader(writer, structure.name, structure);
-        if (this.options.isAmbient || structure.hasDeclareKeyword)
+        this.#printOverloads(writer, structure.name, getOverloadStructures());
+        this.#printHeader(writer, structure.name, structure);
+        if (this.#options.isAmbient || structure.hasDeclareKeyword)
             writer.write(";");
         else {
             writer.space().inlineBlock(() => {
@@ -7951,7 +7999,7 @@ class FunctionDeclarationStructurePrinter extends NodePrinter {
             return overloads;
         }
     }
-    printOverloads(writer, name, structures) {
+    #printOverloads(writer, name, structures) {
         if (structures == null || structures.length === 0)
             return;
         for (const structure of structures) {
@@ -7961,11 +8009,11 @@ class FunctionDeclarationStructurePrinter extends NodePrinter {
     }
     printOverload(writer, name, structure) {
         this.printLeadingTrivia(writer, structure);
-        this.printHeader(writer, name, structure);
+        this.#printHeader(writer, name, structure);
         writer.write(";");
         this.printTrailingTrivia(writer, structure);
     }
-    printHeader(writer, name, structure) {
+    #printHeader(writer, name, structure) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         this.factory.forModifierableNode().printText(writer, structure);
         writer.write(`function`);
@@ -7979,10 +8027,7 @@ class FunctionDeclarationStructurePrinter extends NodePrinter {
 }
 
 class ParameterDeclarationStructurePrinter extends NodePrinter {
-    constructor() {
-        super(...arguments);
-        this.multipleWriter = new CommaSeparatedStructuresPrinter(this);
-    }
+    #multipleWriter = new CommaSeparatedStructuresPrinter(this);
     printTextsWithParenthesis(writer, structures) {
         writer.write("(");
         if (structures != null)
@@ -7993,7 +8038,7 @@ class ParameterDeclarationStructurePrinter extends NodePrinter {
         if (structures == null || structures.length === 0)
             return;
         writer.hangingIndent(() => {
-            this.multipleWriter.printText(writer, structures);
+            this.#multipleWriter.printText(writer, structures);
         });
     }
     printTextInternal(writer, structure) {
@@ -8012,12 +8057,9 @@ class ParameterDeclarationStructurePrinter extends NodePrinter {
 }
 
 class CallSignatureDeclarationStructurePrinter extends NodePrinter {
-    constructor() {
-        super(...arguments);
-        this.multipleWriter = new NewLineFormattingStructuresPrinter(this);
-    }
+    #multipleWriter = new NewLineFormattingStructuresPrinter(this);
     printTexts(writer, structures) {
-        this.multipleWriter.printText(writer, structures);
+        this.#multipleWriter.printText(writer, structures);
     }
     printTextInternal(writer, structure) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
@@ -8029,12 +8071,9 @@ class CallSignatureDeclarationStructurePrinter extends NodePrinter {
 }
 
 class ConstructSignatureDeclarationStructurePrinter extends NodePrinter {
-    constructor() {
-        super(...arguments);
-        this.multipleWriter = new NewLineFormattingStructuresPrinter(this);
-    }
+    #multipleWriter = new NewLineFormattingStructuresPrinter(this);
     printTexts(writer, structures) {
-        this.multipleWriter.printText(writer, structures);
+        this.#multipleWriter.printText(writer, structures);
     }
     printTextInternal(writer, structure) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
@@ -8047,12 +8086,9 @@ class ConstructSignatureDeclarationStructurePrinter extends NodePrinter {
 }
 
 class IndexSignatureDeclarationStructurePrinter extends NodePrinter {
-    constructor() {
-        super(...arguments);
-        this.multipleWriter = new NewLineFormattingStructuresPrinter(this);
-    }
+    #multipleWriter = new NewLineFormattingStructuresPrinter(this);
     printTexts(writer, structures) {
-        this.multipleWriter.printText(writer, structures);
+        this.#multipleWriter.printText(writer, structures);
     }
     printTextInternal(writer, structure) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
@@ -8064,12 +8100,9 @@ class IndexSignatureDeclarationStructurePrinter extends NodePrinter {
 }
 
 class InterfaceDeclarationStructurePrinter extends NodePrinter {
-    constructor() {
-        super(...arguments);
-        this.multipleWriter = new BlankLineFormattingStructuresPrinter(this);
-    }
+    #multipleWriter = new BlankLineFormattingStructuresPrinter(this);
     printTexts(writer, structures) {
-        this.multipleWriter.printText(writer, structures);
+        this.#multipleWriter.printText(writer, structures);
     }
     printTextInternal(writer, structure) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
@@ -8091,12 +8124,9 @@ class InterfaceDeclarationStructurePrinter extends NodePrinter {
 }
 
 class MethodSignatureStructurePrinter extends NodePrinter {
-    constructor() {
-        super(...arguments);
-        this.multipleWriter = new NewLineFormattingStructuresPrinter(this);
-    }
+    #multipleWriter = new NewLineFormattingStructuresPrinter(this);
     printTexts(writer, structures) {
-        this.multipleWriter.printText(writer, structures);
+        this.#multipleWriter.printText(writer, structures);
     }
     printTextInternal(writer, structure) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
@@ -8110,12 +8140,9 @@ class MethodSignatureStructurePrinter extends NodePrinter {
 }
 
 class PropertySignatureStructurePrinter extends NodePrinter {
-    constructor() {
-        super(...arguments);
-        this.multipleWriter = new NewLineFormattingStructuresPrinter(this);
-    }
+    #multipleWriter = new NewLineFormattingStructuresPrinter(this);
     printTexts(writer, structures) {
-        this.multipleWriter.printText(writer, structures);
+        this.#multipleWriter.printText(writer, structures);
     }
     printTextInternal(writer, structure) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
@@ -8129,31 +8156,33 @@ class PropertySignatureStructurePrinter extends NodePrinter {
 }
 
 class TypeElementMemberedNodeStructurePrinter extends Printer {
+    #factory;
     constructor(factory) {
         super();
-        this.factory = factory;
+        this.#factory = factory;
     }
     printText(writer, structure) {
-        this.factory.forCallSignatureDeclaration().printTexts(writer, structure.callSignatures);
-        this.conditionalSeparator(writer, structure.constructSignatures);
-        this.factory.forConstructSignatureDeclaration().printTexts(writer, structure.constructSignatures);
-        this.conditionalSeparator(writer, structure.indexSignatures);
-        this.factory.forIndexSignatureDeclaration().printTexts(writer, structure.indexSignatures);
-        this.conditionalSeparator(writer, structure.properties);
-        this.factory.forPropertySignature().printTexts(writer, structure.properties);
-        this.conditionalSeparator(writer, structure.methods);
-        this.factory.forMethodSignature().printTexts(writer, structure.methods);
+        this.#factory.forCallSignatureDeclaration().printTexts(writer, structure.callSignatures);
+        this.#conditionalSeparator(writer, structure.constructSignatures);
+        this.#factory.forConstructSignatureDeclaration().printTexts(writer, structure.constructSignatures);
+        this.#conditionalSeparator(writer, structure.indexSignatures);
+        this.#factory.forIndexSignatureDeclaration().printTexts(writer, structure.indexSignatures);
+        this.#conditionalSeparator(writer, structure.properties);
+        this.#factory.forPropertySignature().printTexts(writer, structure.properties);
+        this.#conditionalSeparator(writer, structure.methods);
+        this.#factory.forMethodSignature().printTexts(writer, structure.methods);
     }
-    conditionalSeparator(writer, structures) {
+    #conditionalSeparator(writer, structures) {
         if (!ArrayUtils.isNullOrEmpty(structures) && !writer.isAtStartOfFirstLineOfBlock())
             writer.newLine();
     }
 }
 
 class TypeElementMemberStructurePrinter extends Printer {
+    #factory;
     constructor(factory) {
         super();
-        this.factory = factory;
+        this.#factory = factory;
     }
     printTexts(writer, members) {
         if (members == null)
@@ -8177,19 +8206,19 @@ class TypeElementMemberStructurePrinter extends Printer {
         }
         switch (members.kind) {
             case StructureKind.PropertySignature:
-                this.factory.forPropertySignature().printText(writer, members);
+                this.#factory.forPropertySignature().printText(writer, members);
                 break;
             case StructureKind.MethodSignature:
-                this.factory.forMethodSignature().printText(writer, members);
+                this.#factory.forMethodSignature().printText(writer, members);
                 break;
             case StructureKind.CallSignature:
-                this.factory.forCallSignatureDeclaration().printText(writer, members);
+                this.#factory.forCallSignatureDeclaration().printText(writer, members);
                 break;
             case StructureKind.IndexSignature:
-                this.factory.forIndexSignatureDeclaration().printText(writer, members);
+                this.#factory.forIndexSignatureDeclaration().printText(writer, members);
                 break;
             case StructureKind.ConstructSignature:
-                this.factory.forConstructSignatureDeclaration().printText(writer, members);
+                this.#factory.forConstructSignatureDeclaration().printText(writer, members);
                 break;
             default:
                 errors.throwNotImplementedForNeverValueError(members);
@@ -8241,20 +8270,20 @@ class JsxElementStructurePrinter extends NodePrinter {
         writer.hangingIndent(() => {
             writer.write(`<${structure.name}`);
             if (structure.attributes)
-                this.printAttributes(writer, structure.attributes);
+                this.#printAttributes(writer, structure.attributes);
             writer.write(">");
         });
-        this.printChildren(writer, structure.children);
+        this.#printChildren(writer, structure.children);
         writer.write(`</${structure.name}>`);
     }
-    printAttributes(writer, attributes) {
+    #printAttributes(writer, attributes) {
         const attributePrinter = this.factory.forJsxAttributeDecider();
         for (const attrib of attributes) {
             writer.space();
             attributePrinter.printText(writer, attrib);
         }
     }
-    printChildren(writer, children) {
+    #printChildren(writer, children) {
         if (children == null)
             return;
         writer.newLine();
@@ -8278,11 +8307,11 @@ class JsxSelfClosingElementStructurePrinter extends NodePrinter {
         writer.hangingIndent(() => {
             writer.write(`<${structure.name}`);
             if (structure.attributes)
-                this.printAttributes(writer, structure.attributes);
+                this.#printAttributes(writer, structure.attributes);
             writer.write(" />");
         });
     }
-    printAttributes(writer, attributes) {
+    #printAttributes(writer, attributes) {
         const attributePrinter = this.factory.forJsxAttributeDecider();
         for (const attrib of attributes) {
             writer.space();
@@ -8302,36 +8331,10 @@ class JsxSpreadAttributeStructurePrinter extends NodePrinter {
     }
 }
 
-class AssertEntryStructurePrinter extends NodePrinter {
-    constructor() {
-        super(...arguments);
-        this.multipleWriter = new CommaNewLineSeparatedStructuresPrinter(this);
-    }
-    printTexts(writer, structures) {
-        this.multipleWriter.printText(writer, structures);
-    }
-    printAssertClause(writer, structures) {
-        if (!structures)
-            return;
-        writer.write("assert ");
-        writer.inlineBlock(() => {
-            this.printTexts(writer, structures);
-        });
-    }
-    printTextInternal(writer, structure) {
-        writer.write(structure.name);
-        writer.write(": ");
-        writer.quote(structure.value);
-    }
-}
-
 class ExportAssignmentStructurePrinter extends NodePrinter {
-    constructor() {
-        super(...arguments);
-        this.multipleWriter = new NewLineFormattingStructuresPrinter(this);
-    }
+    #multipleWriter = new NewLineFormattingStructuresPrinter(this);
     printTexts(writer, structures) {
-        this.multipleWriter.printText(writer, structures);
+        this.#multipleWriter.printText(writer, structures);
     }
     printTextInternal(writer, structure) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
@@ -8345,12 +8348,9 @@ class ExportAssignmentStructurePrinter extends NodePrinter {
 }
 
 class ExportDeclarationStructurePrinter extends NodePrinter {
-    constructor() {
-        super(...arguments);
-        this.multipleWriter = new NewLineFormattingStructuresPrinter(this);
-    }
+    #multipleWriter = new NewLineFormattingStructuresPrinter(this);
     printTexts(writer, structures) {
-        this.multipleWriter.printText(writer, structures);
+        this.#multipleWriter.printText(writer, structures);
     }
     printTextInternal(writer, structure) {
         const hasModuleSpecifier = structure.moduleSpecifier != null && structure.moduleSpecifier.length > 0;
@@ -8381,21 +8381,38 @@ class ExportDeclarationStructurePrinter extends NodePrinter {
             writer.write(" from ");
             writer.quote(structure.moduleSpecifier);
         }
-        if (structure.assertElements) {
+        if (structure.attributes) {
             writer.space();
-            this.factory.forAssertEntry().printAssertClause(writer, structure.assertElements);
+            this.factory.forImportAttribute().printAttributes(writer, structure.attributes);
         }
         writer.write(";");
     }
 }
 
-class ImportDeclarationStructurePrinter extends NodePrinter {
-    constructor() {
-        super(...arguments);
-        this.multipleWriter = new NewLineFormattingStructuresPrinter(this);
-    }
+class ImportAttributeStructurePrinter extends NodePrinter {
+    #multipleWriter = new CommaNewLineSeparatedStructuresPrinter(this);
     printTexts(writer, structures) {
-        this.multipleWriter.printText(writer, structures);
+        this.#multipleWriter.printText(writer, structures);
+    }
+    printAttributes(writer, structures) {
+        if (!structures)
+            return;
+        writer.write("with ");
+        writer.inlineBlock(() => {
+            this.printTexts(writer, structures);
+        });
+    }
+    printTextInternal(writer, structure) {
+        writer.write(structure.name);
+        writer.write(": ");
+        writer.quote(structure.value);
+    }
+}
+
+class ImportDeclarationStructurePrinter extends NodePrinter {
+    #multipleWriter = new NewLineFormattingStructuresPrinter(this);
+    printTexts(writer, structures) {
+        this.#multipleWriter.printText(writer, structures);
     }
     printTextInternal(writer, structure) {
         const hasNamedImport = structure.namedImports != null && structure.namedImports.length > 0;
@@ -8417,25 +8434,26 @@ class ImportDeclarationStructurePrinter extends NodePrinter {
         writer.conditionalWrite(structure.defaultImport != null || hasNamedImport || structure.namespaceImport != null, " from");
         writer.write(" ");
         writer.quote(structure.moduleSpecifier);
-        if (structure.assertElements) {
+        if (structure.attributes) {
             writer.space();
-            this.factory.forAssertEntry().printAssertClause(writer, structure.assertElements);
+            this.factory.forImportAttribute().printAttributes(writer, structure.attributes);
         }
         writer.write(";");
     }
 }
 
 class ModuleDeclarationStructurePrinter extends NodePrinter {
+    #options;
+    #blankLineFormattingWriter = new BlankLineFormattingStructuresPrinter(this);
     constructor(factory, options) {
         super(factory);
-        this.options = options;
-        this.blankLineFormattingWriter = new BlankLineFormattingStructuresPrinter(this);
+        this.#options = options;
     }
     printTexts(writer, structures) {
-        this.blankLineFormattingWriter.printText(writer, structures);
+        this.#blankLineFormattingWriter.printText(writer, structures);
     }
     printTextInternal(writer, structure) {
-        structure = this.validateAndGetStructure(structure);
+        structure = this.#validateAndGetStructure(structure);
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         this.factory.forModifierableNode().printText(writer, structure);
         if (structure.declarationKind == null || structure.declarationKind !== ModuleDeclarationKind.Global)
@@ -8450,12 +8468,12 @@ class ModuleDeclarationStructurePrinter extends NodePrinter {
             writer.write(" ");
             writer.inlineBlock(() => {
                 this.factory.forStatementedNode({
-                    isAmbient: structure.hasDeclareKeyword || this.options.isAmbient,
+                    isAmbient: structure.hasDeclareKeyword || this.#options.isAmbient,
                 }).printText(writer, structure);
             });
         }
     }
-    validateAndGetStructure(structure) {
+    #validateAndGetStructure(structure) {
         if (StringUtils.isQuoted(structure.name.trim())) {
             if (structure.declarationKind === ModuleDeclarationKind.Namespace) {
                 throw new errors.InvalidOperationError(`Cannot print a namespace with quotes for namespace with name ${structure.name}. `
@@ -8470,10 +8488,7 @@ class ModuleDeclarationStructurePrinter extends NodePrinter {
 }
 
 class NamedImportExportSpecifierStructurePrinter extends NodePrinter {
-    constructor() {
-        super(...arguments);
-        this.multipleWriter = new CommaSeparatedStructuresPrinter(this);
-    }
+    #multipleWriter = new CommaSeparatedStructuresPrinter(this);
     printTextsWithBraces(writer, structures) {
         const formatSettings = this.factory.getFormatCodeSettings();
         writer.write("{");
@@ -8491,7 +8506,7 @@ class NamedImportExportSpecifierStructurePrinter extends NodePrinter {
         if (structures instanceof Function)
             this.printText(writer, structures);
         else
-            this.multipleWriter.printText(writer, structures);
+            this.#multipleWriter.printText(writer, structures);
     }
     printTextInternal(writer, structure) {
         const specifierWriter = this.getNewWriterWithQueuedChildIndentation(writer);
@@ -8514,32 +8529,37 @@ class NamedImportExportSpecifierStructurePrinter extends NodePrinter {
 }
 
 class SourceFileStructurePrinter extends NodePrinter {
+    #options;
     constructor(factory, options) {
         super(factory);
-        this.options = options;
+        this.#options = options;
     }
     printTextInternal(writer, structure) {
-        this.factory.forStatementedNode(this.options).printText(writer, structure);
+        this.factory.forStatementedNode(this.#options).printText(writer, structure);
         writer.conditionalNewLine(!writer.isAtStartOfFirstLineOfBlock() && !writer.isLastNewLine());
     }
 }
 
 class StatementedNodeStructurePrinter extends Printer {
+    #options;
+    #factory;
     constructor(factory, options) {
         super();
-        this.factory = factory;
-        this.options = options;
+        this.#factory = factory;
+        this.#options = options;
     }
     printText(writer, structure) {
-        this.factory.forStatement(this.options).printTexts(writer, structure.statements);
+        this.#factory.forStatement(this.#options).printTexts(writer, structure.statements);
     }
 }
 
 class StatementStructurePrinter extends Printer {
+    #options;
+    #factory;
     constructor(factory, options) {
         super();
-        this.factory = factory;
-        this.options = options;
+        this.#factory = factory;
+        this.#options = options;
     }
     printTexts(writer, statements) {
         if (statements == null)
@@ -8563,40 +8583,40 @@ class StatementStructurePrinter extends Printer {
         }
         switch (statement.kind) {
             case StructureKind.Function:
-                if (!this.options.isAmbient)
+                if (!this.#options.isAmbient)
                     ensureBlankLine();
-                this.factory.forFunctionDeclaration(this.options).printText(writer, statement);
+                this.#factory.forFunctionDeclaration(this.#options).printText(writer, statement);
                 break;
             case StructureKind.Class:
                 ensureBlankLine();
-                this.factory.forClassDeclaration(this.options).printText(writer, statement);
+                this.#factory.forClassDeclaration(this.#options).printText(writer, statement);
                 break;
             case StructureKind.Interface:
                 ensureBlankLine();
-                this.factory.forInterfaceDeclaration().printText(writer, statement);
+                this.#factory.forInterfaceDeclaration().printText(writer, statement);
                 break;
             case StructureKind.TypeAlias:
-                this.factory.forTypeAliasDeclaration().printText(writer, statement);
+                this.#factory.forTypeAliasDeclaration().printText(writer, statement);
                 break;
             case StructureKind.VariableStatement:
-                this.factory.forVariableStatement().printText(writer, statement);
+                this.#factory.forVariableStatement().printText(writer, statement);
                 break;
             case StructureKind.ImportDeclaration:
-                this.factory.forImportDeclaration().printText(writer, statement);
+                this.#factory.forImportDeclaration().printText(writer, statement);
                 break;
             case StructureKind.Module:
                 ensureBlankLine();
-                this.factory.forModuleDeclaration(this.options).printText(writer, statement);
+                this.#factory.forModuleDeclaration(this.#options).printText(writer, statement);
                 break;
             case StructureKind.Enum:
                 ensureBlankLine();
-                this.factory.forEnumDeclaration().printText(writer, statement);
+                this.#factory.forEnumDeclaration().printText(writer, statement);
                 break;
             case StructureKind.ExportDeclaration:
-                this.factory.forExportDeclaration().printText(writer, statement);
+                this.#factory.forExportDeclaration().printText(writer, statement);
                 break;
             case StructureKind.ExportAssignment:
-                this.factory.forExportAssignment().printText(writer, statement);
+                this.#factory.forExportAssignment().printText(writer, statement);
                 break;
             default:
                 errors.throwNotImplementedForNeverValueError(statement);
@@ -8618,12 +8638,9 @@ var VariableDeclarationKind;
 })(VariableDeclarationKind || (VariableDeclarationKind = {}));
 
 class VariableStatementStructurePrinter extends NodePrinter {
-    constructor() {
-        super(...arguments);
-        this.multipleWriter = new NewLineFormattingStructuresPrinter(this);
-    }
+    #multipleWriter = new NewLineFormattingStructuresPrinter(this);
     printTexts(writer, structures) {
-        this.multipleWriter.printText(writer, structures);
+        this.#multipleWriter.printText(writer, structures);
     }
     printTextInternal(writer, structure) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
@@ -8637,12 +8654,9 @@ class VariableStatementStructurePrinter extends NodePrinter {
 }
 
 class TypeAliasDeclarationStructurePrinter extends NodePrinter {
-    constructor() {
-        super(...arguments);
-        this.multipleWriter = new NewLineFormattingStructuresPrinter(this);
-    }
+    #multipleWriter = new NewLineFormattingStructuresPrinter(this);
     printTexts(writer, structures) {
-        this.multipleWriter.printText(writer, structures);
+        this.#multipleWriter.printText(writer, structures);
     }
     printTextInternal(writer, structure) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
@@ -8655,10 +8669,7 @@ class TypeAliasDeclarationStructurePrinter extends NodePrinter {
 }
 
 class TypeParameterDeclarationStructurePrinter extends NodePrinter {
-    constructor() {
-        super(...arguments);
-        this.multipleWriter = new CommaSeparatedStructuresPrinter(this);
-    }
+    #multipleWriter = new CommaSeparatedStructuresPrinter(this);
     printTextsWithBrackets(writer, structures) {
         if (structures == null || structures.length === 0)
             return;
@@ -8667,7 +8678,7 @@ class TypeParameterDeclarationStructurePrinter extends NodePrinter {
         writer.write(">");
     }
     printTexts(writer, structures) {
-        this.multipleWriter.printText(writer, structures);
+        this.#multipleWriter.printText(writer, structures);
     }
     printTextInternal(writer, structure) {
         if (typeof structure === "string") {
@@ -8699,12 +8710,9 @@ class TypeParameterDeclarationStructurePrinter extends NodePrinter {
 }
 
 class VariableDeclarationStructurePrinter extends NodePrinter {
-    constructor() {
-        super(...arguments);
-        this.multipleWriter = new CommaSeparatedStructuresPrinter(this);
-    }
+    #multipleWriter = new CommaSeparatedStructuresPrinter(this);
     printTexts(writer, structures) {
-        this.multipleWriter.printText(writer, structures);
+        this.#multipleWriter.printText(writer, structures);
     }
     printTextInternal(writer, structure) {
         writer.write(structure.name);
@@ -8717,9 +8725,8 @@ class VariableDeclarationStructurePrinter extends NodePrinter {
 function ExtendsClauseableNode(Base) {
     return class extends Base {
         getExtends() {
-            var _a;
             const extendsClause = this.getHeritageClauseByKind(SyntaxKind.ExtendsKeyword);
-            return (_a = extendsClause === null || extendsClause === void 0 ? void 0 : extendsClause.getTypeNodes()) !== null && _a !== void 0 ? _a : [];
+            return extendsClause?.getTypeNodes() ?? [];
         }
         addExtends(text) {
             return this.insertExtends(this.getExtends().length, text);
@@ -8796,7 +8803,7 @@ function GeneratorableNode(Base) {
             return this._getNodeFromCompilerNodeIfExists(this.compilerNode.asteriskToken);
         }
         getAsteriskTokenOrThrow(message) {
-            return errors.throwIfNullOrUndefined(this.getAsteriskToken(), message !== null && message !== void 0 ? message : "Expected to find an asterisk token.", this);
+            return errors.throwIfNullOrUndefined(this.getAsteriskToken(), message ?? "Expected to find an asterisk token.", this);
         }
         setIsGenerator(value) {
             const asteriskToken = this.getAsteriskToken();
@@ -8843,12 +8850,11 @@ function getAsteriskInsertPos(node) {
 function HeritageClauseableNode(Base) {
     return class extends Base {
         getHeritageClauses() {
-            var _a;
             const heritageClauses = this.compilerNode.heritageClauses;
-            return (_a = heritageClauses === null || heritageClauses === void 0 ? void 0 : heritageClauses.map(c => this._getNodeFromCompilerNode(c))) !== null && _a !== void 0 ? _a : [];
+            return heritageClauses?.map(c => this._getNodeFromCompilerNode(c)) ?? [];
         }
         getHeritageClauseByKindOrThrow(kind, message) {
-            return errors.throwIfNullOrUndefined(this.getHeritageClauseByKind(kind), message !== null && message !== void 0 ? message : (() => `Expected to have heritage clause of kind ${getSyntaxKindName(kind)}.`), this);
+            return errors.throwIfNullOrUndefined(this.getHeritageClauseByKind(kind), message ?? (() => `Expected to have heritage clause of kind ${getSyntaxKindName(kind)}.`), this);
         }
         getHeritageClauseByKind(kind) {
             return this.getHeritageClauses().find(c => c.compilerNode.token === kind);
@@ -8859,9 +8865,8 @@ function HeritageClauseableNode(Base) {
 function ImplementsClauseableNode(Base) {
     return class extends Base {
         getImplements() {
-            var _a;
             const implementsClause = this.getHeritageClauseByKind(SyntaxKind.ImplementsKeyword);
-            return (_a = implementsClause === null || implementsClause === void 0 ? void 0 : implementsClause.getTypeNodes()) !== null && _a !== void 0 ? _a : [];
+            return implementsClause?.getTypeNodes() ?? [];
         }
         addImplements(text) {
             return this.insertImplements(this.getImplements().length, text);
@@ -8936,7 +8941,7 @@ function InitializerExpressionGetableNode(Base) {
             return this.compilerNode.initializer != null;
         }
         getInitializerIfKindOrThrow(kind, message) {
-            return errors.throwIfNullOrUndefined(this.getInitializerIfKind(kind), message !== null && message !== void 0 ? message : `Expected to find an initializer of kind '${getSyntaxKindName(kind)}'.`, this);
+            return errors.throwIfNullOrUndefined(this.getInitializerIfKind(kind), message ?? `Expected to find an initializer of kind '${getSyntaxKindName(kind)}'.`, this);
         }
         getInitializerIfKind(kind) {
             const initializer = this.getInitializer();
@@ -8945,7 +8950,7 @@ function InitializerExpressionGetableNode(Base) {
             return initializer;
         }
         getInitializerOrThrow(message) {
-            return errors.throwIfNullOrUndefined(this.getInitializer(), message !== null && message !== void 0 ? message : "Expected to find an initializer.", this);
+            return errors.throwIfNullOrUndefined(this.getInitializer(), message ?? "Expected to find an initializer.", this);
         }
         getInitializer() {
             return this._getNodeFromCompilerNodeIfExists(this.compilerNode.initializer);
@@ -9002,9 +9007,8 @@ function apply(Base) {
 function JSDocableNode(Base) {
     return class extends Base {
         getJsDocs() {
-            var _a;
             const nodes = this.compilerNode.jsDoc;
-            return (_a = nodes === null || nodes === void 0 ? void 0 : nodes.map(n => this._getNodeFromCompilerNode(n))) !== null && _a !== void 0 ? _a : [];
+            return nodes?.map(n => this._getNodeFromCompilerNode(n)) ?? [];
         }
         addJsDoc(structure) {
             return this.addJsDocs([structure])[0];
@@ -9069,7 +9073,7 @@ function ModifierableNode(Base) {
             return this.getCompilerModifiers().map(m => this._getNodeFromCompilerNode(m));
         }
         getFirstModifierByKindOrThrow(kind, message) {
-            return errors.throwIfNullOrUndefined(this.getFirstModifierByKind(kind), message !== null && message !== void 0 ? message : (() => `Expected a modifier of syntax kind: ${getSyntaxKindName(kind)}`), this);
+            return errors.throwIfNullOrUndefined(this.getFirstModifierByKind(kind), message ?? (() => `Expected a modifier of syntax kind: ${getSyntaxKindName(kind)}`), this);
         }
         getFirstModifierByKind(kind) {
             for (const modifier of this.getCompilerModifiers()) {
@@ -9154,8 +9158,7 @@ function ModifierableNode(Base) {
             return true;
         }
         getCompilerModifiers() {
-            var _a;
-            return (_a = this.compilerNode.modifiers) !== null && _a !== void 0 ? _a : [];
+            return this.compilerNode.modifiers ?? [];
         }
     };
 }
@@ -9246,7 +9249,7 @@ function ModuledNode(Base) {
             }
         }
         getImportDeclarationOrThrow(conditionOrModuleSpecifier, message) {
-            return errors.throwIfNullOrUndefined(this.getImportDeclaration(conditionOrModuleSpecifier), message !== null && message !== void 0 ? message : "Expected to find an import with the provided condition.", this);
+            return errors.throwIfNullOrUndefined(this.getImportDeclaration(conditionOrModuleSpecifier), message ?? "Expected to find an import with the provided condition.", this);
         }
         getImportDeclarations() {
             return this.getStatements().filter(Node.isImportDeclaration);
@@ -9285,7 +9288,7 @@ function ModuledNode(Base) {
             }
         }
         getExportDeclarationOrThrow(conditionOrModuleSpecifier, message) {
-            return errors.throwIfNullOrUndefined(this.getExportDeclaration(conditionOrModuleSpecifier), message !== null && message !== void 0 ? message : "Expected to find an export declaration with the provided condition.", this);
+            return errors.throwIfNullOrUndefined(this.getExportDeclaration(conditionOrModuleSpecifier), message ?? "Expected to find an export declaration with the provided condition.", this);
         }
         getExportDeclarations() {
             return this.getStatements().filter(Node.isExportDeclaration);
@@ -9318,7 +9321,7 @@ function ModuledNode(Base) {
             return this.getExportAssignments().find(condition);
         }
         getExportAssignmentOrThrow(condition, message) {
-            return errors.throwIfNullOrUndefined(this.getExportAssignment(condition), message !== null && message !== void 0 ? message : "Expected to find an export assignment with the provided condition.", this);
+            return errors.throwIfNullOrUndefined(this.getExportAssignment(condition), message ?? "Expected to find an export assignment with the provided condition.", this);
         }
         getExportAssignments() {
             return this.getStatements().filter(Node.isExportAssignment);
@@ -9330,7 +9333,7 @@ function ModuledNode(Base) {
             return sourceFileSymbol.getExport("default");
         }
         getDefaultExportSymbolOrThrow(message) {
-            return errors.throwIfNullOrUndefined(this.getDefaultExportSymbol(), message !== null && message !== void 0 ? message : "Expected to find a default export symbol");
+            return errors.throwIfNullOrUndefined(this.getDefaultExportSymbol(), message ?? "Expected to find a default export symbol");
         }
         getExportSymbols() {
             const symbol = this.getSymbol();
@@ -9479,12 +9482,12 @@ function RenameableNode(Base) {
     };
 }
 
-function AssertionKeyNamedNode(Base) {
+function BindingNamedNode(Base) {
     const base = ReferenceFindableNode(RenameableNode(Base));
     return NamedNodeBase(base);
 }
 
-function BindingNamedNode(Base) {
+function ImportAttributeNamedNode(Base) {
     const base = ReferenceFindableNode(RenameableNode(Base));
     return NamedNodeBase(base);
 }
@@ -9503,14 +9506,13 @@ function NameableNodeInternal(Base) {
             return this._getNodeFromCompilerNodeIfExists(this.compilerNode.name);
         }
         getNameNodeOrThrow(message) {
-            return errors.throwIfNullOrUndefined(this.getNameNode(), message !== null && message !== void 0 ? message : "Expected to have a name node.", this);
+            return errors.throwIfNullOrUndefined(this.getNameNode(), message ?? "Expected to have a name node.", this);
         }
         getName() {
-            var _a, _b;
-            return (_b = (_a = this.getNameNode()) === null || _a === void 0 ? void 0 : _a.getText()) !== null && _b !== void 0 ? _b : undefined;
+            return this.getNameNode()?.getText() ?? undefined;
         }
         getNameOrThrow(message) {
-            return errors.throwIfNullOrUndefined(this.getName(), message !== null && message !== void 0 ? message : "Expected to have a name.", this);
+            return errors.throwIfNullOrUndefined(this.getName(), message ?? "Expected to have a name.", this);
         }
         rename(newName) {
             if (newName === this.getName())
@@ -9593,7 +9595,7 @@ function OverrideableNode(Base) {
             return this.getFirstModifierByKind(SyntaxKind.OverrideKeyword);
         }
         getOverrideKeywordOrThrow(message) {
-            return errors.throwIfNullOrUndefined(this.getOverrideKeyword(), message !== null && message !== void 0 ? message : "Expected to find an override keyword.", this);
+            return errors.throwIfNullOrUndefined(this.getOverrideKeyword(), message ?? "Expected to find an override keyword.", this);
         }
         setHasOverrideKeyword(value) {
             this.toggleModifier("override", value);
@@ -9676,7 +9678,7 @@ function QuestionDotTokenableNode(Base) {
             return this._getNodeFromCompilerNodeIfExists(this.compilerNode.questionDotToken);
         }
         getQuestionDotTokenNodeOrThrow(message) {
-            return errors.throwIfNullOrUndefined(this.getQuestionDotTokenNode(), message !== null && message !== void 0 ? message : "Expected to find a question dot token.", this);
+            return errors.throwIfNullOrUndefined(this.getQuestionDotTokenNode(), message ?? "Expected to find a question dot token.", this);
         }
         setHasQuestionDotToken(value) {
             const questionDotTokenNode = this.getQuestionDotTokenNode();
@@ -9732,7 +9734,7 @@ function QuestionTokenableNode(Base) {
             return this._getNodeFromCompilerNodeIfExists(this.compilerNode.questionToken);
         }
         getQuestionTokenNodeOrThrow(message) {
-            return errors.throwIfNullOrUndefined(this.getQuestionTokenNode(), message !== null && message !== void 0 ? message : "Expected to find a question token.", this);
+            return errors.throwIfNullOrUndefined(this.getQuestionTokenNode(), message ?? "Expected to find a question token.", this);
         }
         setHasQuestionToken(value) {
             const questionTokenNode = this.getQuestionTokenNode();
@@ -9787,7 +9789,7 @@ function ReadonlyableNode(Base) {
             return this.getFirstModifierByKind(SyntaxKind.ReadonlyKeyword);
         }
         getReadonlyKeywordOrThrow(message) {
-            return errors.throwIfNullOrUndefined(this.getReadonlyKeyword(), message !== null && message !== void 0 ? message : "Expected to find a readonly keyword.", this);
+            return errors.throwIfNullOrUndefined(this.getReadonlyKeyword(), message ?? "Expected to find a readonly keyword.", this);
         }
         setIsReadonly(value) {
             this.toggleModifier("readonly", value);
@@ -9816,7 +9818,7 @@ function ReturnTypedNode(Base) {
             return this._getNodeFromCompilerNodeIfExists(this.compilerNode.type);
         }
         getReturnTypeNodeOrThrow(message) {
-            return errors.throwIfNullOrUndefined(this.getReturnTypeNode(), message !== null && message !== void 0 ? message : "Expected to find a return type node.", this);
+            return errors.throwIfNullOrUndefined(this.getReturnTypeNode(), message ?? "Expected to find a return type node.", this);
         }
         setReturnType(textOrWriterFunction) {
             const text = getTextFromStringOrWriter(this._getWriterWithQueuedChildIndentation(), textOrWriterFunction);
@@ -9963,7 +9965,7 @@ function StaticableNode(Base) {
             return this.getFirstModifierByKind(SyntaxKind.StaticKeyword);
         }
         getStaticKeywordOrThrow(message) {
-            return errors.throwIfNullOrUndefined(this.getStaticKeyword(), message !== null && message !== void 0 ? message : "Expected to find a static keyword.", this);
+            return errors.throwIfNullOrUndefined(this.getStaticKeyword(), message ?? "Expected to find a static keyword.", this);
         }
         setIsStatic(value) {
             this.toggleModifier("static", value);
@@ -10114,7 +10116,7 @@ function TypedNode(Base) {
             return this._getNodeFromCompilerNodeIfExists(this.compilerNode.type);
         }
         getTypeNodeOrThrow(message) {
-            return errors.throwIfNullOrUndefined(this.getTypeNode(), message !== null && message !== void 0 ? message : "Expected to find a type node.", this);
+            return errors.throwIfNullOrUndefined(this.getTypeNode(), message ?? "Expected to find a type node.", this);
         }
         setType(textOrWriterFunction) {
             const text = getTextFromStringOrWriter(this._getWriterWithQueuedChildIndentation(), textOrWriterFunction);
@@ -10145,8 +10147,7 @@ function TypedNode(Base) {
             });
             return this;
             function getInsertPosWhenNoType(node) {
-                var _a, _b;
-                let identifier = (_b = (_a = node.getFirstChildByKind(SyntaxKind.Identifier)) !== null && _a !== void 0 ? _a : node.getFirstChildByKind(SyntaxKind.ArrayBindingPattern)) !== null && _b !== void 0 ? _b : node.getFirstChildIfKindOrThrow(SyntaxKind.ObjectBindingPattern, "A first child of the kind Identifier, ArrayBindingPattern, or ObjectBindingPattern was expected.");
+                let identifier = node.getFirstChildByKind(SyntaxKind.Identifier) ?? node.getFirstChildByKind(SyntaxKind.ArrayBindingPattern) ?? node.getFirstChildIfKindOrThrow(SyntaxKind.ObjectBindingPattern, "A first child of the kind Identifier, ArrayBindingPattern, or ObjectBindingPattern was expected.");
                 const nextSibling = identifier.getNextSibling();
                 const insertAfterNode = isQuestionOrExclamation(nextSibling) ? nextSibling : identifier;
                 return insertAfterNode.getEnd();
@@ -10241,7 +10242,7 @@ function TypeElementMemberedNode(Base) {
             return this.getConstructSignatures().find(findFunction);
         }
         getConstructSignatureOrThrow(findFunction, message) {
-            return errors.throwIfNullOrUndefined(this.getConstructSignature(findFunction), message !== null && message !== void 0 ? message : "Expected to find a construct signature with the provided condition.", this);
+            return errors.throwIfNullOrUndefined(this.getConstructSignature(findFunction), message ?? "Expected to find a construct signature with the provided condition.", this);
         }
         getConstructSignatures() {
             return this.compilerNode.members.filter(m => m.kind === SyntaxKind.ConstructSignature)
@@ -10269,7 +10270,7 @@ function TypeElementMemberedNode(Base) {
             return this.getCallSignatures().find(findFunction);
         }
         getCallSignatureOrThrow(findFunction, message) {
-            return errors.throwIfNullOrUndefined(this.getCallSignature(findFunction), message !== null && message !== void 0 ? message : "Expected to find a call signature with the provided condition.", this);
+            return errors.throwIfNullOrUndefined(this.getCallSignature(findFunction), message ?? "Expected to find a call signature with the provided condition.", this);
         }
         getCallSignatures() {
             return this.compilerNode.members.filter(m => m.kind === SyntaxKind.CallSignature)
@@ -10297,7 +10298,7 @@ function TypeElementMemberedNode(Base) {
             return this.getIndexSignatures().find(findFunction);
         }
         getIndexSignatureOrThrow(findFunction, message) {
-            return errors.throwIfNullOrUndefined(this.getIndexSignature(findFunction), message !== null && message !== void 0 ? message : "Expected to find a index signature with the provided condition.", this);
+            return errors.throwIfNullOrUndefined(this.getIndexSignature(findFunction), message ?? "Expected to find a index signature with the provided condition.", this);
         }
         getIndexSignatures() {
             return this.compilerNode.members.filter(m => m.kind === SyntaxKind.IndexSignature)
@@ -10509,7 +10510,7 @@ const createBase$F = (ctor) => DotDotDotTokenableNode(InitializerExpressionableN
 const BindingElementBase = createBase$F(Node);
 class BindingElement extends BindingElementBase {
     getPropertyNameNodeOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getPropertyNameNode(), message !== null && message !== void 0 ? message : "Expected to find a property name node.", this);
+        return errors.throwIfNullOrUndefined(this.getPropertyNameNode(), message ?? "Expected to find a property name node.", this);
     }
     getPropertyNameNode() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.propertyName);
@@ -10531,7 +10532,7 @@ function AbstractableNode(Base) {
             return this.getFirstModifierByKind(SyntaxKind.AbstractKeyword);
         }
         getAbstractKeywordOrThrow(message) {
-            return errors.throwIfNullOrUndefined(this.getAbstractKeyword(), message !== null && message !== void 0 ? message : "Expected to find an abstract keyword.", this);
+            return errors.throwIfNullOrUndefined(this.getAbstractKeyword(), message ?? "Expected to find an abstract keyword.", this);
         }
         setIsAbstract(isAbstract) {
             this.toggleModifier("abstract", isAbstract);
@@ -10671,14 +10672,14 @@ function ExpressionableNode(Base) {
             return this._getNodeFromCompilerNodeIfExists(this.compilerNode.expression);
         }
         getExpressionOrThrow(message) {
-            return errors.throwIfNullOrUndefined(this.getExpression(), message !== null && message !== void 0 ? message : "Expected to find an expression.", this);
+            return errors.throwIfNullOrUndefined(this.getExpression(), message ?? "Expected to find an expression.", this);
         }
         getExpressionIfKind(kind) {
             const expression = this.getExpression();
-            return (expression === null || expression === void 0 ? void 0 : expression.getKind()) === kind ? expression : undefined;
+            return expression?.getKind() === kind ? expression : undefined;
         }
         getExpressionIfKindOrThrow(kind, message) {
-            return errors.throwIfNullOrUndefined(this.getExpressionIfKind(kind), message !== null && message !== void 0 ? message : `An expression with the kind kind ${getSyntaxKindName(kind)} was expected.`, this);
+            return errors.throwIfNullOrUndefined(this.getExpressionIfKind(kind), message ?? `An expression with the kind kind ${getSyntaxKindName(kind)} was expected.`, this);
         }
     };
 }
@@ -10693,7 +10694,7 @@ function BaseExpressionedNode(Base) {
             return expression.kind === kind ? this._getNodeFromCompilerNode(expression) : undefined;
         }
         getExpressionIfKindOrThrow(kind, message) {
-            return errors.throwIfNullOrUndefined(this.getExpressionIfKind(kind), message !== null && message !== void 0 ? message : `An expression of the kind ${getSyntaxKindName(kind)} was expected.`, this);
+            return errors.throwIfNullOrUndefined(this.getExpressionIfKind(kind), message ?? `An expression of the kind ${getSyntaxKindName(kind)} was expected.`, this);
         }
         setExpression(textOrWriterFunction) {
             this.getExpression().replaceWithText(textOrWriterFunction, this._getWriterWithQueuedChildIndentation());
@@ -10781,7 +10782,7 @@ class ElementAccessExpression extends ElementAccessExpressionBase {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.argumentExpression);
     }
     getArgumentExpressionOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getArgumentExpression(), message !== null && message !== void 0 ? message : "Expected to find an argument expression.", this);
+        return errors.throwIfNullOrUndefined(this.getArgumentExpression(), message ?? "Expected to find an argument expression.", this);
     }
 }
 
@@ -10851,15 +10852,15 @@ class ObjectLiteralExpression extends ObjectLiteralExpressionBase {
         const members = ExtendedParser.getContainerArray(this.compilerNode, this.getSourceFile().compilerNode);
         return members.map(p => this._getNodeFromCompilerNode(p));
     }
-    _getAddIndex() {
+    #getAddIndex() {
         const members = ExtendedParser.getContainerArray(this.compilerNode, this.getSourceFile().compilerNode);
         return members.length;
     }
     addProperty(structure) {
-        return this.insertProperties(this._getAddIndex(), [structure])[0];
+        return this.insertProperties(this.#getAddIndex(), [structure])[0];
     }
     addProperties(structures) {
-        return this.insertProperties(this._getAddIndex(), structures);
+        return this.insertProperties(this.#getAddIndex(), structures);
     }
     insertProperty(index, structure) {
         return this.insertProperties(index, [structure])[0];
@@ -10884,76 +10885,76 @@ class ObjectLiteralExpression extends ObjectLiteralExpressionBase {
         return this.addPropertyAssignments([structure])[0];
     }
     addPropertyAssignments(structures) {
-        return this.insertPropertyAssignments(this._getAddIndex(), structures);
+        return this.insertPropertyAssignments(this.#getAddIndex(), structures);
     }
     insertPropertyAssignment(index, structure) {
         return this.insertPropertyAssignments(index, [structure])[0];
     }
     insertPropertyAssignments(index, structures) {
-        return this._insertProperty(index, structures, () => this._context.structurePrinterFactory.forPropertyAssignment());
+        return this.#insertProperty(index, structures, () => this._context.structurePrinterFactory.forPropertyAssignment());
     }
     addShorthandPropertyAssignment(structure) {
         return this.addShorthandPropertyAssignments([structure])[0];
     }
     addShorthandPropertyAssignments(structures) {
-        return this.insertShorthandPropertyAssignments(this._getAddIndex(), structures);
+        return this.insertShorthandPropertyAssignments(this.#getAddIndex(), structures);
     }
     insertShorthandPropertyAssignment(index, structure) {
         return this.insertShorthandPropertyAssignments(index, [structure])[0];
     }
     insertShorthandPropertyAssignments(index, structures) {
-        return this._insertProperty(index, structures, () => this._context.structurePrinterFactory.forShorthandPropertyAssignment());
+        return this.#insertProperty(index, structures, () => this._context.structurePrinterFactory.forShorthandPropertyAssignment());
     }
     addSpreadAssignment(structure) {
         return this.addSpreadAssignments([structure])[0];
     }
     addSpreadAssignments(structures) {
-        return this.insertSpreadAssignments(this._getAddIndex(), structures);
+        return this.insertSpreadAssignments(this.#getAddIndex(), structures);
     }
     insertSpreadAssignment(index, structure) {
         return this.insertSpreadAssignments(index, [structure])[0];
     }
     insertSpreadAssignments(index, structures) {
-        return this._insertProperty(index, structures, () => this._context.structurePrinterFactory.forSpreadAssignment());
+        return this.#insertProperty(index, structures, () => this._context.structurePrinterFactory.forSpreadAssignment());
     }
     addMethod(structure) {
         return this.addMethods([structure])[0];
     }
     addMethods(structures) {
-        return this.insertMethods(this._getAddIndex(), structures);
+        return this.insertMethods(this.#getAddIndex(), structures);
     }
     insertMethod(index, structure) {
         return this.insertMethods(index, [structure])[0];
     }
     insertMethods(index, structures) {
-        return this._insertProperty(index, structures, () => this._context.structurePrinterFactory.forMethodDeclaration({ isAmbient: false }));
+        return this.#insertProperty(index, structures, () => this._context.structurePrinterFactory.forMethodDeclaration({ isAmbient: false }));
     }
     addGetAccessor(structure) {
         return this.addGetAccessors([structure])[0];
     }
     addGetAccessors(structures) {
-        return this.insertGetAccessors(this._getAddIndex(), structures);
+        return this.insertGetAccessors(this.#getAddIndex(), structures);
     }
     insertGetAccessor(index, structure) {
         return this.insertGetAccessors(index, [structure])[0];
     }
     insertGetAccessors(index, structures) {
-        return this._insertProperty(index, structures, () => this._context.structurePrinterFactory.forGetAccessorDeclaration({ isAmbient: false }));
+        return this.#insertProperty(index, structures, () => this._context.structurePrinterFactory.forGetAccessorDeclaration({ isAmbient: false }));
     }
     addSetAccessor(structure) {
         return this.addSetAccessors([structure])[0];
     }
     addSetAccessors(structures) {
-        return this.insertSetAccessors(this._getAddIndex(), structures);
+        return this.insertSetAccessors(this.#getAddIndex(), structures);
     }
     insertSetAccessor(index, structure) {
         return this.insertSetAccessors(index, [structure])[0];
     }
     insertSetAccessors(index, structures) {
-        return this._insertProperty(index, structures, () => this._context.structurePrinterFactory.forSetAccessorDeclaration({ isAmbient: false }));
+        return this.#insertProperty(index, structures, () => this._context.structurePrinterFactory.forSetAccessorDeclaration({ isAmbient: false }));
     }
-    _insertProperty(index, structures, createStructurePrinter) {
-        index = verifyAndGetIndex(index, this._getAddIndex());
+    #insertProperty(index, structures, createStructurePrinter) {
+        index = verifyAndGetIndex(index, this.#getAddIndex());
         const writer = this._getWriterWithChildIndentation();
         const structurePrinter = new CommaNewLineSeparatedStructuresPrinter(createStructurePrinter());
         const oldProperties = this.getPropertiesWithComments();
@@ -11029,13 +11030,13 @@ class ShorthandPropertyAssignment extends ShorthandPropertyAssignmentBase {
         return this.compilerNode.objectAssignmentInitializer != null;
     }
     getObjectAssignmentInitializerOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getObjectAssignmentInitializer(), message !== null && message !== void 0 ? message : "Expected to find an object assignment initializer.", this);
+        return errors.throwIfNullOrUndefined(this.getObjectAssignmentInitializer(), message ?? "Expected to find an object assignment initializer.", this);
     }
     getObjectAssignmentInitializer() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.objectAssignmentInitializer);
     }
     getEqualsTokenOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getEqualsToken(), message !== null && message !== void 0 ? message : "Expected to find an equals token.", this);
+        return errors.throwIfNullOrUndefined(this.getEqualsToken(), message ?? "Expected to find an equals token.", this);
     }
     getEqualsToken() {
         const equalsToken = this.compilerNode.equalsToken;
@@ -11181,9 +11182,8 @@ class Statement extends StatementBase {
 function StatementedNode(Base) {
     return class extends Base {
         getStatements() {
-            var _a;
             const statementsContainer = this._getCompilerStatementsContainer();
-            const statements = (_a = statementsContainer === null || statementsContainer === void 0 ? void 0 : statementsContainer.statements) !== null && _a !== void 0 ? _a : [];
+            const statements = statementsContainer?.statements ?? [];
             return statements.map(s => this._getNodeFromCompilerNode(s));
         }
         getStatementsWithComments() {
@@ -11193,14 +11193,14 @@ function StatementedNode(Base) {
             return this.getStatements().find(findFunction);
         }
         getStatementOrThrow(findFunction, message) {
-            return errors.throwIfNullOrUndefined(this.getStatement(findFunction), message !== null && message !== void 0 ? message : "Expected to find a statement matching the provided condition.", this);
+            return errors.throwIfNullOrUndefined(this.getStatement(findFunction), message ?? "Expected to find a statement matching the provided condition.", this);
         }
         getStatementByKind(kind) {
             const statement = this._getCompilerStatementsWithComments().find(s => s.kind === kind);
             return this._getNodeFromCompilerNodeIfExists(statement);
         }
         getStatementByKindOrThrow(kind, message) {
-            return errors.throwIfNullOrUndefined(this.getStatementByKind(kind), message !== null && message !== void 0 ? message : `Expected to find a statement with syntax kind ${getSyntaxKindName(kind)}.`, this);
+            return errors.throwIfNullOrUndefined(this.getStatementByKind(kind), message ?? `Expected to find a statement with syntax kind ${getSyntaxKindName(kind)}.`, this);
         }
         addStatements(textOrWriterFunction) {
             return this.insertStatements(this._getCompilerStatementsWithComments().length, textOrWriterFunction);
@@ -11438,7 +11438,7 @@ function StatementedNode(Base) {
             }
         }
         getVariableStatementOrThrow(nameOrFindFunction, message) {
-            return errors.throwIfNullOrUndefined(this.getVariableStatement(nameOrFindFunction), message !== null && message !== void 0 ? message : "Expected to find a variable statement that matched the provided condition.", this);
+            return errors.throwIfNullOrUndefined(this.getVariableStatement(nameOrFindFunction), message ?? "Expected to find a variable statement that matched the provided condition.", this);
         }
         addVariableStatement(structure) {
             return this.addVariableStatements([structure])[0];
@@ -11511,7 +11511,6 @@ function StatementedNode(Base) {
             }
         }
         _getCompilerStatementsContainer() {
-            var _a;
             if (Node.isSourceFile(this) || Node.isCaseClause(this) || Node.isDefaultClause(this))
                 return this.compilerNode;
             else if (Node.isModuleDeclaration(this)) {
@@ -11522,7 +11521,7 @@ function StatementedNode(Base) {
                     return body.compilerNode;
             }
             else if (Node.isBodyable(this) || Node.isBodied(this))
-                return (_a = this.getBody()) === null || _a === void 0 ? void 0 : _a.compilerNode;
+                return this.getBody()?.compilerNode;
             else if (Node.isBlock(this) || Node.isModuleBlock(this))
                 return this.compilerNode;
             else
@@ -11570,7 +11569,7 @@ class BreakStatement extends Statement {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.label);
     }
     getLabelOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getLabel(), message !== null && message !== void 0 ? message : "Expected to find a label.", this);
+        return errors.throwIfNullOrUndefined(this.getLabel(), message ?? "Expected to find a label.", this);
     }
 }
 
@@ -11609,7 +11608,7 @@ class CatchClause extends CatchClauseBase {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.variableDeclaration);
     }
     getVariableDeclarationOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getVariableDeclaration(), message !== null && message !== void 0 ? message : "Expected to find a variable declaration.", this);
+        return errors.throwIfNullOrUndefined(this.getVariableDeclaration(), message ?? "Expected to find a variable declaration.", this);
     }
 }
 
@@ -11623,7 +11622,7 @@ class ContinueStatement extends Statement {
             : this._getNodeFromCompilerNode(this.compilerNode.label);
     }
     getLabelOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getLabel(), message !== null && message !== void 0 ? message : "Expected to find a label.", this);
+        return errors.throwIfNullOrUndefined(this.getLabel(), message ?? "Expected to find a label.", this);
     }
 }
 
@@ -11677,19 +11676,19 @@ class ForStatement extends ForStatementBase {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.initializer);
     }
     getInitializerOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getInitializer(), message !== null && message !== void 0 ? message : "Expected to find an initializer.", this);
+        return errors.throwIfNullOrUndefined(this.getInitializer(), message ?? "Expected to find an initializer.", this);
     }
     getCondition() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.condition);
     }
     getConditionOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getCondition(), message !== null && message !== void 0 ? message : "Expected to find a condition.", this);
+        return errors.throwIfNullOrUndefined(this.getCondition(), message ?? "Expected to find a condition.", this);
     }
     getIncrementor() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.incrementor);
     }
     getIncrementorOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getIncrementor(), message !== null && message !== void 0 ? message : "Expected to find an incrementor.", this);
+        return errors.throwIfNullOrUndefined(this.getIncrementor(), message ?? "Expected to find an incrementor.", this);
     }
 }
 
@@ -11757,7 +11756,7 @@ class TryStatement extends TryStatementBase {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.catchClause);
     }
     getCatchClauseOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getCatchClause(), message !== null && message !== void 0 ? message : "Expected to find a catch clause.", this);
+        return errors.throwIfNullOrUndefined(this.getCatchClause(), message ?? "Expected to find a catch clause.", this);
     }
     getFinallyBlock() {
         if (this.compilerNode.finallyBlock == null || this.compilerNode.finallyBlock.getFullWidth() === 0)
@@ -11765,47 +11764,7 @@ class TryStatement extends TryStatementBase {
         return this._getNodeFromCompilerNode(this.compilerNode.finallyBlock);
     }
     getFinallyBlockOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getFinallyBlock(), message !== null && message !== void 0 ? message : "Expected to find a finally block.", this);
-    }
-}
-
-const AssertClauseBase = Node;
-class AssertClause extends AssertClauseBase {
-    setElements(elements) {
-        this.replaceWithText(writer => {
-            const structurePrinter = this._context.structurePrinterFactory.forAssertEntry();
-            structurePrinter.printAssertClause(writer, elements);
-        });
-        return this;
-    }
-    getElements() {
-        return this.compilerNode.elements.map(e => this._getNodeFromCompilerNode(e));
-    }
-    remove() {
-        removeChildren({
-            children: [this],
-            removePrecedingNewLines: true,
-            removePrecedingSpaces: true,
-        });
-    }
-}
-
-const AssertEntryBase = AssertionKeyNamedNode(Node);
-class AssertEntry extends AssertEntryBase {
-    getValue() {
-        return this._getNodeFromCompilerNode(this.compilerNode.value);
-    }
-    set(structure) {
-        callBaseSet(AssertEntryBase.prototype, this, structure);
-        if (structure.value)
-            this.getValue().replaceWithText(structure.value);
-        return this;
-    }
-    getStructure() {
-        return callBaseGetStructure(AssertEntryBase.prototype, this, {
-            kind: StructureKind.AssertEntry,
-            value: this.getValue().getText(),
-        });
+        return errors.throwIfNullOrUndefined(this.getFinallyBlock(), message ?? "Expected to find a finally block.", this);
     }
 }
 
@@ -11846,13 +11805,12 @@ class ExportDeclaration extends ExportDeclarationBase {
         return this.compilerNode.isTypeOnly;
     }
     setIsTypeOnly(value) {
-        var _a;
         if (this.isTypeOnly() === value)
             return this;
         if (value) {
             insertIntoParentTextRange({
                 parent: this,
-                insertPos: ((_a = this.getNodeProperty("exportClause")) !== null && _a !== void 0 ? _a : this.getFirstChildByKindOrThrow(SyntaxKind.AsteriskToken)).getStart(),
+                insertPos: (this.getNodeProperty("exportClause") ?? this.getFirstChildByKindOrThrow(SyntaxKind.AsteriskToken)).getStart(),
                 newText: "type ",
             });
         }
@@ -11870,7 +11828,7 @@ class ExportDeclaration extends ExportDeclarationBase {
         return exportClause != null && Node.isNamespaceExport(exportClause) ? exportClause : undefined;
     }
     getNamespaceExportOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getNamespaceExport(), message !== null && message !== void 0 ? message : "Expected to find a namespace export.", this);
+        return errors.throwIfNullOrUndefined(this.getNamespaceExport(), message ?? "Expected to find a namespace export.", this);
     }
     setNamespaceExport(name) {
         const exportClause = this.getNodeProperty("exportClause");
@@ -11931,10 +11889,10 @@ class ExportDeclaration extends ExportDeclarationBase {
     }
     getModuleSpecifierValue() {
         const moduleSpecifier = this.getModuleSpecifier();
-        return moduleSpecifier === null || moduleSpecifier === void 0 ? void 0 : moduleSpecifier.getLiteralValue();
+        return moduleSpecifier?.getLiteralValue();
     }
     getModuleSpecifierSourceFileOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getModuleSpecifierSourceFile(), message !== null && message !== void 0 ? message : `A module specifier source file was expected.`, this);
+        return errors.throwIfNullOrUndefined(this.getModuleSpecifierSourceFile(), message ?? `A module specifier source file was expected.`, this);
     }
     getModuleSpecifierSourceFile() {
         const stringLiteral = this.getLastChildByKind(SyntaxKind.StringLiteral);
@@ -11972,8 +11930,7 @@ class ExportDeclaration extends ExportDeclarationBase {
         return !this.hasNamedExports();
     }
     hasNamedExports() {
-        var _a;
-        return ((_a = this.compilerNode.exportClause) === null || _a === void 0 ? void 0 : _a.kind) === SyntaxKind.NamedExports;
+        return this.compilerNode.exportClause?.kind === SyntaxKind.NamedExports;
     }
     addNamedExport(namedExport) {
         return this.addNamedExports([namedExport])[0];
@@ -12051,19 +12008,19 @@ class ExportDeclaration extends ExportDeclarationBase {
         });
         return this;
     }
-    setAssertElements(elements) {
-        let assertClause = this.getAssertClause();
-        if (assertClause) {
+    setAttributes(elements) {
+        let attributes = this.getAttributes();
+        if (attributes) {
             if (elements)
-                assertClause.setElements(elements);
+                attributes.setElements(elements);
             else
-                assertClause.remove();
+                attributes.remove();
         }
         else if (elements) {
-            const printer = this._context.structurePrinterFactory.forAssertEntry();
+            const printer = this._context.structurePrinterFactory.forImportAttribute();
             const writer = this._context.createWriter();
             writer.space();
-            printer.printAssertClause(writer, elements);
+            printer.printAttributes(writer, elements);
             insertIntoParentTextRange({
                 parent: this,
                 newText: writer.toString(),
@@ -12072,8 +12029,8 @@ class ExportDeclaration extends ExportDeclarationBase {
         }
         return this;
     }
-    getAssertClause() {
-        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.assertClause);
+    getAttributes() {
+        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.attributes);
     }
     set(structure) {
         callBaseSet(ExportDeclarationBase.prototype, this, structure);
@@ -12094,21 +12051,20 @@ class ExportDeclaration extends ExportDeclarationBase {
             this.setNamespaceExport(structure.namespaceExport);
         if (structure.isTypeOnly != null)
             this.setIsTypeOnly(structure.isTypeOnly);
-        if (structure.hasOwnProperty(nameof(structure, "assertElements")))
-            this.setAssertElements(structure.assertElements);
+        if (structure.hasOwnProperty(nameof(structure, "attributes")))
+            this.setAttributes(structure.attributes);
         return this;
     }
     getStructure() {
-        var _a;
         const moduleSpecifier = this.getModuleSpecifier();
-        const assertClause = this.getAssertClause();
+        const attributes = this.getAttributes();
         return callBaseGetStructure(ExportDeclarationBase.prototype, this, {
             kind: StructureKind.ExportDeclaration,
             isTypeOnly: this.isTypeOnly(),
-            moduleSpecifier: moduleSpecifier === null || moduleSpecifier === void 0 ? void 0 : moduleSpecifier.getLiteralText(),
+            moduleSpecifier: moduleSpecifier?.getLiteralText(),
             namedExports: this.getNamedExports().map(node => node.getStructure()),
-            namespaceExport: (_a = this.getNamespaceExport()) === null || _a === void 0 ? void 0 : _a.getName(),
-            assertElements: assertClause ? assertClause.getElements().map(e => e.getStructure()) : undefined,
+            namespaceExport: this.getNamespaceExport()?.getName(),
+            attributes: attributes ? attributes.getElements().map(e => e.getStructure()) : undefined,
         });
     }
 }
@@ -12228,14 +12184,13 @@ class ExportSpecifier extends ExportSpecifierBase {
         return this.getFirstAncestorByKindOrThrow(SyntaxKind.ExportDeclaration);
     }
     getLocalTargetSymbolOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getLocalTargetSymbol(), message !== null && message !== void 0 ? message : `The export specifier's local target symbol was expected.`, this);
+        return errors.throwIfNullOrUndefined(this.getLocalTargetSymbol(), message ?? `The export specifier's local target symbol was expected.`, this);
     }
     getLocalTargetSymbol() {
         return this._context.typeChecker.getExportSpecifierLocalTargetSymbol(this);
     }
     getLocalTargetDeclarations() {
-        var _a, _b;
-        return (_b = (_a = this.getLocalTargetSymbol()) === null || _a === void 0 ? void 0 : _a.getDeclarations()) !== null && _b !== void 0 ? _b : [];
+        return this.getLocalTargetSymbol()?.getDeclarations() ?? [];
     }
     remove() {
         const exportDeclaration = this.getExportDeclaration();
@@ -12273,7 +12228,7 @@ class ExportSpecifier extends ExportSpecifierBase {
 const ExternalModuleReferenceBase = ExpressionableNode(Node);
 class ExternalModuleReference extends ExternalModuleReferenceBase {
     getReferencedSourceFileOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getReferencedSourceFile(), message !== null && message !== void 0 ? message : "Expected to find the referenced source file.", this);
+        return errors.throwIfNullOrUndefined(this.getReferencedSourceFile(), message ?? "Expected to find the referenced source file.", this);
     }
     isRelative() {
         const expression = this.getExpression();
@@ -12289,6 +12244,46 @@ class ExternalModuleReference extends ExternalModuleReferenceBase {
         if (symbol == null)
             return undefined;
         return ModuleUtils.getReferencedSourceFileFromSymbol(symbol);
+    }
+}
+
+const ImportAttributeBase = ImportAttributeNamedNode(Node);
+class ImportAttribute extends ImportAttributeBase {
+    getValue() {
+        return this._getNodeFromCompilerNode(this.compilerNode.value);
+    }
+    set(structure) {
+        callBaseSet(ImportAttributeBase.prototype, this, structure);
+        if (structure.value)
+            this.getValue().replaceWithText(structure.value);
+        return this;
+    }
+    getStructure() {
+        return callBaseGetStructure(ImportAttributeBase.prototype, this, {
+            kind: StructureKind.ImportAttribute,
+            value: this.getValue().getText(),
+        });
+    }
+}
+
+const ImportAttributesBase = Node;
+class ImportAttributes extends ImportAttributesBase {
+    setElements(elements) {
+        this.replaceWithText(writer => {
+            const structurePrinter = this._context.structurePrinterFactory.forImportAttribute();
+            structurePrinter.printAttributes(writer, elements);
+        });
+        return this;
+    }
+    getElements() {
+        return this.compilerNode.elements.map(e => this._getNodeFromCompilerNode(e));
+    }
+    remove() {
+        removeChildren({
+            children: [this],
+            removePrecedingNewLines: true,
+            removePrecedingSpaces: true,
+        });
     }
 }
 
@@ -12317,19 +12312,19 @@ class ImportClause extends ImportClauseBase {
         return this;
     }
     getDefaultImportOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getDefaultImport(), message !== null && message !== void 0 ? message : "Expected to find a default import.", this);
+        return errors.throwIfNullOrUndefined(this.getDefaultImport(), message ?? "Expected to find a default import.", this);
     }
     getDefaultImport() {
         return this.getNodeProperty("name");
     }
     getNamedBindingsOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getNamedBindings(), message !== null && message !== void 0 ? message : "Expected to find an import declaration's named bindings.", this);
+        return errors.throwIfNullOrUndefined(this.getNamedBindings(), message ?? "Expected to find an import declaration's named bindings.", this);
     }
     getNamedBindings() {
         return this.getNodeProperty("namedBindings");
     }
     getNamespaceImportOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getNamespaceImport(), message !== null && message !== void 0 ? message : "Expected to find a namespace import.", this);
+        return errors.throwIfNullOrUndefined(this.getNamespaceImport(), message ?? "Expected to find a namespace import.", this);
     }
     getNamespaceImport() {
         const namedBindings = this.getNamedBindings();
@@ -12348,8 +12343,7 @@ class ImportClause extends ImportClauseBase {
 const ImportDeclarationBase = Statement;
 class ImportDeclaration extends ImportDeclarationBase {
     isTypeOnly() {
-        var _a, _b;
-        return (_b = (_a = this.getImportClause()) === null || _a === void 0 ? void 0 : _a.isTypeOnly()) !== null && _b !== void 0 ? _b : false;
+        return this.getImportClause()?.isTypeOnly() ?? false;
     }
     setIsTypeOnly(value) {
         const importClause = this.getImportClause();
@@ -12377,7 +12371,7 @@ class ImportDeclaration extends ImportDeclarationBase {
         return this.getModuleSpecifier().getLiteralValue();
     }
     getModuleSpecifierSourceFileOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getModuleSpecifierSourceFile(), message !== null && message !== void 0 ? message : `A module specifier source file was expected.`, this);
+        return errors.throwIfNullOrUndefined(this.getModuleSpecifierSourceFile(), message ?? `A module specifier source file was expected.`, this);
     }
     getModuleSpecifierSourceFile() {
         const symbol = this.getModuleSpecifier().getSymbol();
@@ -12425,11 +12419,10 @@ class ImportDeclaration extends ImportDeclarationBase {
         return this;
     }
     getDefaultImportOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getDefaultImport(), message !== null && message !== void 0 ? message : "Expected to find a default import.", this);
+        return errors.throwIfNullOrUndefined(this.getDefaultImport(), message ?? "Expected to find a default import.", this);
     }
     getDefaultImport() {
-        var _a, _b;
-        return (_b = (_a = this.getImportClause()) === null || _a === void 0 ? void 0 : _a.getDefaultImport()) !== null && _b !== void 0 ? _b : undefined;
+        return this.getImportClause()?.getDefaultImport() ?? undefined;
     }
     setNamespaceImport(text) {
         if (StringUtils.isNullOrWhitespace(text))
@@ -12500,11 +12493,10 @@ class ImportDeclaration extends ImportDeclarationBase {
         return this;
     }
     getNamespaceImportOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getNamespaceImport(), message !== null && message !== void 0 ? message : "Expected to find a namespace import.", this);
+        return errors.throwIfNullOrUndefined(this.getNamespaceImport(), message ?? "Expected to find a namespace import.", this);
     }
     getNamespaceImport() {
-        var _a, _b;
-        return (_b = (_a = this.getImportClause()) === null || _a === void 0 ? void 0 : _a.getNamespaceImport()) !== null && _b !== void 0 ? _b : undefined;
+        return this.getImportClause()?.getNamespaceImport() ?? undefined;
     }
     addNamedImport(namedImport) {
         return this.addNamedImports([namedImport])[0];
@@ -12570,8 +12562,7 @@ class ImportDeclaration extends ImportDeclarationBase {
         return getNodesToReturn(originalNamedImports, newNamedImports, index, false);
     }
     getNamedImports() {
-        var _a, _b;
-        return (_b = (_a = this.getImportClause()) === null || _a === void 0 ? void 0 : _a.getNamedImports()) !== null && _b !== void 0 ? _b : [];
+        return this.getImportClause()?.getNamedImports() ?? [];
     }
     removeNamedImports() {
         const importClause = this.getImportClause();
@@ -12591,24 +12582,24 @@ class ImportDeclaration extends ImportDeclarationBase {
         return this;
     }
     getImportClauseOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getImportClause(), message !== null && message !== void 0 ? message : "Expected to find an import clause.", this);
+        return errors.throwIfNullOrUndefined(this.getImportClause(), message ?? "Expected to find an import clause.", this);
     }
     getImportClause() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.importClause);
     }
-    setAssertElements(elements) {
-        let assertClause = this.getAssertClause();
-        if (assertClause) {
+    setAttributes(elements) {
+        let attributes = this.getAttributes();
+        if (attributes) {
             if (elements)
-                assertClause.setElements(elements);
+                attributes.setElements(elements);
             else
-                assertClause.remove();
+                attributes.remove();
         }
         else if (elements) {
-            const printer = this._context.structurePrinterFactory.forAssertEntry();
+            const printer = this._context.structurePrinterFactory.forImportAttribute();
             const writer = this._context.createWriter();
             writer.space();
-            printer.printAssertClause(writer, elements);
+            printer.printAttributes(writer, elements);
             insertIntoParentTextRange({
                 parent: this,
                 newText: writer.toString(),
@@ -12617,8 +12608,8 @@ class ImportDeclaration extends ImportDeclarationBase {
         }
         return this;
     }
-    getAssertClause() {
-        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.assertClause);
+    getAttributes() {
+        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.attributes);
     }
     set(structure) {
         callBaseSet(ImportDeclarationBase.prototype, this, structure);
@@ -12640,14 +12631,14 @@ class ImportDeclaration extends ImportDeclarationBase {
             this.setModuleSpecifier(structure.moduleSpecifier);
         if (structure.isTypeOnly != null)
             this.setIsTypeOnly(structure.isTypeOnly);
-        if (structure.hasOwnProperty(nameof(structure, "assertElements")))
-            this.setAssertElements(structure.assertElements);
+        if (structure.hasOwnProperty(nameof(structure, "attributes")))
+            this.setAttributes(structure.attributes);
         return this;
     }
     getStructure() {
         const namespaceImport = this.getNamespaceImport();
         const defaultImport = this.getDefaultImport();
-        const assertClause = this.getAssertClause();
+        const attributes = this.getAttributes();
         return callBaseGetStructure(ImportDeclarationBase.prototype, this, {
             kind: StructureKind.ImportDeclaration,
             isTypeOnly: this.isTypeOnly(),
@@ -12655,7 +12646,7 @@ class ImportDeclaration extends ImportDeclarationBase {
             moduleSpecifier: this.getModuleSpecifier().getLiteralText(),
             namedImports: this.getNamedImports().map(node => node.getStructure()),
             namespaceImport: namespaceImport ? namespaceImport.getText() : undefined,
-            assertElements: assertClause ? assertClause.getElements().map(e => e.getStructure()) : undefined,
+            attributes: attributes ? attributes.getElements().map(e => e.getStructure()) : undefined,
         });
     }
 }
@@ -12705,8 +12696,7 @@ const createBase$s = (ctor) => ExportableNode(ModifierableNode(JSDocableNode(Nam
 const ImportEqualsDeclarationBase = createBase$s(Statement);
 class ImportEqualsDeclaration extends ImportEqualsDeclarationBase {
     isTypeOnly() {
-        var _a;
-        return (_a = this.compilerNode.isTypeOnly) !== null && _a !== void 0 ? _a : false;
+        return this.compilerNode.isTypeOnly ?? false;
     }
     setIsTypeOnly(value) {
         if (this.isTypeOnly() === value)
@@ -12746,7 +12736,7 @@ class ImportEqualsDeclaration extends ImportEqualsDeclarationBase {
         return this;
     }
     getExternalModuleReferenceSourceFileOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getExternalModuleReferenceSourceFile(), message !== null && message !== void 0 ? message : "Expected to find an external module reference's referenced source file.", this);
+        return errors.throwIfNullOrUndefined(this.getExternalModuleReferenceSourceFile(), message ?? "Expected to find an external module reference's referenced source file.", this);
     }
     getExternalModuleReferenceSourceFile() {
         const moduleReference = this.getModuleReference();
@@ -12769,8 +12759,7 @@ class ImportSpecifier extends ImportSpecifierBase {
         return this.getNameNode().getText();
     }
     getNameNode() {
-        var _a;
-        return this._getNodeFromCompilerNode((_a = this.compilerNode.propertyName) !== null && _a !== void 0 ? _a : this.compilerNode.name);
+        return this._getNodeFromCompilerNode(this.compilerNode.propertyName ?? this.compilerNode.name);
     }
     renameAlias(alias) {
         if (StringUtils.isNullOrWhitespace(alias)) {
@@ -12889,7 +12878,7 @@ class ModuleBlock extends ModuleBlockBase {
 function ModuleChildableNode(Base) {
     return class extends Base {
         getParentModuleOrThrow(message) {
-            return errors.throwIfNullOrUndefined(this.getParentModule(), message !== null && message !== void 0 ? message : "Expected to find the parent module declaration.", this);
+            return errors.throwIfNullOrUndefined(this.getParentModule(), message ?? "Expected to find the parent module declaration.", this);
         }
         getParentModule() {
             let parent = this.getParentOrThrow();
@@ -13124,6 +13113,8 @@ LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 ***************************************************************************** */
+/* global Reflect, Promise, SuppressedError, Symbol */
+
 
 function __decorate(decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -13132,37 +13123,46 @@ function __decorate(decorators, target, key, desc) {
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 }
 
+typeof SuppressedError === "function" ? SuppressedError : function (error, suppressed, message) {
+    var e = new Error(message);
+    return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
+};
+
 const SourceFileBase = ModuledNode(TextInsertableNode(StatementedNode(Node)));
 class SourceFile extends SourceFileBase {
+    #isSaved = false;
+    #modifiedEventContainer = new EventContainer();
+    #preModifiedEventContainer = new EventContainer();
+    _referenceContainer = new SourceFileReferenceContainer(this);
+    #referencedFiles;
+    #libReferenceDirectives;
+    #typeReferenceDirectives;
+    _hasBom;
     constructor(context, node) {
         super(context, node, undefined);
-        this._isSaved = false;
-        this._modifiedEventContainer = new EventContainer();
-        this._preModifiedEventContainer = new EventContainer();
-        this._referenceContainer = new SourceFileReferenceContainer(this);
         this.__sourceFile = this;
         const onPreModified = () => {
             this.isFromExternalLibrary();
-            this._preModifiedEventContainer.unsubscribe(onPreModified);
+            this.#preModifiedEventContainer.unsubscribe(onPreModified);
         };
-        this._preModifiedEventContainer.subscribe(onPreModified);
+        this.#preModifiedEventContainer.subscribe(onPreModified);
     }
     _replaceCompilerNodeFromFactory(compilerNode) {
         super._replaceCompilerNodeFromFactory(compilerNode);
         this._context.resetProgram();
-        this._isSaved = false;
-        this._modifiedEventContainer.fire(this);
+        this.#isSaved = false;
+        this.#modifiedEventContainer.fire(this);
     }
     _clearInternals() {
         super._clearInternals();
-        clearTextRanges(this._referencedFiles);
-        clearTextRanges(this._typeReferenceDirectives);
-        clearTextRanges(this._libReferenceDirectives);
-        delete this._referencedFiles;
-        delete this._typeReferenceDirectives;
-        delete this._libReferenceDirectives;
+        clearTextRanges(this.#referencedFiles);
+        clearTextRanges(this.#typeReferenceDirectives);
+        clearTextRanges(this.#libReferenceDirectives);
+        this.#referencedFiles = undefined;
+        this.#typeReferenceDirectives = undefined;
+        this.#libReferenceDirectives = undefined;
         function clearTextRanges(textRanges) {
-            textRanges === null || textRanges === void 0 ? void 0 : textRanges.forEach(r => r._forget());
+            textRanges?.forEach(r => r._forget());
         }
     }
     getFilePath() {
@@ -13316,7 +13316,7 @@ class SourceFile extends SourceFileBase {
         this.move(filePath, options);
         if (oldFilePath !== newFilePath) {
             await this._context.fileSystemWrapper.moveFileImmediately(oldFilePath, newFilePath, this.getFullText());
-            this._isSaved = true;
+            this.#isSaved = true;
         }
         else {
             await this.save();
@@ -13329,7 +13329,7 @@ class SourceFile extends SourceFileBase {
         this.move(filePath, options);
         if (oldFilePath !== newFilePath) {
             this._context.fileSystemWrapper.moveFileImmediatelySync(oldFilePath, newFilePath, this.getFullText());
-            this._isSaved = true;
+            this.#isSaved = true;
         }
         else {
             this.saveSync();
@@ -13357,39 +13357,39 @@ class SourceFile extends SourceFileBase {
     async save() {
         if (this._isLibFileInMemory())
             return;
-        await this._context.fileSystemWrapper.writeFile(this.getFilePath(), this._getTextForSave());
-        this._isSaved = true;
+        await this._context.fileSystemWrapper.writeFile(this.getFilePath(), this.#getTextForSave());
+        this.#isSaved = true;
     }
     saveSync() {
         if (this._isLibFileInMemory())
             return;
-        this._context.fileSystemWrapper.writeFileSync(this.getFilePath(), this._getTextForSave());
-        this._isSaved = true;
+        this._context.fileSystemWrapper.writeFileSync(this.getFilePath(), this.#getTextForSave());
+        this.#isSaved = true;
     }
-    _getTextForSave() {
+    #getTextForSave() {
         const text = this.getFullText();
         return this._hasBom ? "\uFEFF" + text : text;
     }
     getPathReferenceDirectives() {
-        if (this._referencedFiles == null) {
-            this._referencedFiles = (this.compilerNode.referencedFiles || [])
+        if (this.#referencedFiles == null) {
+            this.#referencedFiles = (this.compilerNode.referencedFiles || [])
                 .map(f => new FileReference(f, this));
         }
-        return this._referencedFiles;
+        return this.#referencedFiles;
     }
     getTypeReferenceDirectives() {
-        if (this._typeReferenceDirectives == null) {
-            this._typeReferenceDirectives = (this.compilerNode.typeReferenceDirectives || [])
+        if (this.#typeReferenceDirectives == null) {
+            this.#typeReferenceDirectives = (this.compilerNode.typeReferenceDirectives || [])
                 .map(f => new FileReference(f, this));
         }
-        return this._typeReferenceDirectives;
+        return this.#typeReferenceDirectives;
     }
     getLibReferenceDirectives() {
-        if (this._libReferenceDirectives == null) {
-            this._libReferenceDirectives = (this.compilerNode.libReferenceDirectives || [])
+        if (this.#libReferenceDirectives == null) {
+            this.#libReferenceDirectives = (this.compilerNode.libReferenceDirectives || [])
                 .map(f => new FileReference(f, this));
         }
-        return this._libReferenceDirectives;
+        return this.#libReferenceDirectives;
     }
     getReferencingSourceFiles() {
         return Array.from(this._referenceContainer.getDependentSourceFiles());
@@ -13456,10 +13456,10 @@ class SourceFile extends SourceFileBase {
         return this.getFilePath().indexOf("/node_modules/") >= 0;
     }
     isSaved() {
-        return this._isSaved && !this._isLibFileInMemory();
+        return this.#isSaved && !this._isLibFileInMemory();
     }
     _setIsSaved(value) {
-        this._isSaved = value;
+        this.#isSaved = value;
     }
     getPreEmitDiagnostics() {
         return this._context.getPreEmitDiagnostics(this);
@@ -13503,11 +13503,11 @@ class SourceFile extends SourceFileBase {
     }
     async refreshFromFileSystem() {
         const fileReadResult = await this._context.fileSystemWrapper.readFileOrNotExists(this.getFilePath(), this._context.getEncoding());
-        return this._refreshFromFileSystemInternal(fileReadResult);
+        return this.#refreshFromFileSystemInternal(fileReadResult);
     }
     refreshFromFileSystemSync() {
         const fileReadResult = this._context.fileSystemWrapper.readFileOrNotExistsSync(this.getFilePath(), this._context.getEncoding());
-        return this._refreshFromFileSystemInternal(fileReadResult);
+        return this.#refreshFromFileSystemInternal(fileReadResult);
     }
     getRelativePathTo(sourceFileDirOrPath) {
         return this.getDirectory().getRelativePathTo(sourceFileDirOrPath);
@@ -13517,21 +13517,21 @@ class SourceFile extends SourceFileBase {
     }
     onModified(subscription, subscribe = true) {
         if (subscribe)
-            this._modifiedEventContainer.subscribe(subscription);
+            this.#modifiedEventContainer.subscribe(subscription);
         else
-            this._modifiedEventContainer.unsubscribe(subscription);
+            this.#modifiedEventContainer.unsubscribe(subscription);
         return this;
     }
     _doActionPreNextModification(action) {
         const wrappedSubscription = () => {
             action();
-            this._preModifiedEventContainer.unsubscribe(wrappedSubscription);
+            this.#preModifiedEventContainer.unsubscribe(wrappedSubscription);
         };
-        this._preModifiedEventContainer.subscribe(wrappedSubscription);
+        this.#preModifiedEventContainer.subscribe(wrappedSubscription);
         return this;
     }
     _firePreModified() {
-        this._preModifiedEventContainer.fire(this);
+        this.#preModifiedEventContainer.fire(this);
     }
     organizeImports(formatSettings = {}, userPreferences = {}) {
         this._context.languageService.organizeImports(this, formatSettings, userPreferences).forEach(fileTextChanges => fileTextChanges.applyChanges());
@@ -13594,7 +13594,7 @@ class SourceFile extends SourceFileBase {
             kind: StructureKind.SourceFile,
         });
     }
-    _refreshFromFileSystemInternal(fileReadResult) {
+    #refreshFromFileSystemInternal(fileReadResult) {
         if (fileReadResult === false) {
             this.forget();
             return FileSystemRefreshResult.Deleted;
@@ -13722,7 +13722,7 @@ function OverloadableNode(Base) {
             return getOverloadsAndImplementation(this).find(n => n.isImplementation());
         }
         getImplementationOrThrow(message) {
-            return errors.throwIfNullOrUndefined(this.getImplementation(), message !== null && message !== void 0 ? message : "Expected to find a corresponding implementation for the overload.", this);
+            return errors.throwIfNullOrUndefined(this.getImplementation(), message ?? "Expected to find a corresponding implementation for the overload.", this);
         }
         isOverload() {
             return !this.isImplementation();
@@ -14065,7 +14065,7 @@ function ClassLikeDeclarationBaseSpecific(Base) {
             return this;
         }
         getExtendsOrThrow(message) {
-            return errors.throwIfNullOrUndefined(this.getExtends(), message !== null && message !== void 0 ? message : `Expected to find the extends expression for the class ${this.getName()}.`, this);
+            return errors.throwIfNullOrUndefined(this.getExtends(), message ?? `Expected to find the extends expression for the class ${this.getName()}.`, this);
         }
         getExtends() {
             const extendsClause = this.getHeritageClauseByKind(SyntaxKind.ExtendsKeyword);
@@ -14432,7 +14432,7 @@ function ClassLikeDeclarationBaseSpecific(Base) {
             return this.getType().getBaseTypes();
         }
         getBaseClassOrThrow(message) {
-            return errors.throwIfNullOrUndefined(this.getBaseClass(), message !== null && message !== void 0 ? message : `Expected to find the base class of ${this.getName()}.`, this);
+            return errors.throwIfNullOrUndefined(this.getBaseClass(), message ?? `Expected to find the base class of ${this.getName()}.`, this);
         }
         getBaseClass() {
             const baseTypes = this.getBaseTypes().map(t => t.isIntersection() ? t.getIntersectionTypes() : [t]).flat();
@@ -14776,7 +14776,7 @@ class GetAccessorDeclaration extends GetAccessorDeclarationBase {
         });
     }
     getSetAccessorOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getSetAccessor(), message !== null && message !== void 0 ? message : (() => `Expected to find a corresponding set accessor for ${this.getName()}.`), this);
+        return errors.throwIfNullOrUndefined(this.getSetAccessor(), message ?? (() => `Expected to find a corresponding set accessor for ${this.getName()}.`), this);
     }
     getStructure() {
         return callBaseGetStructure(GetAccessorDeclarationBase.prototype, this, {
@@ -14835,7 +14835,7 @@ class SetAccessorDeclaration extends SetAccessorDeclarationBase {
         });
     }
     getGetAccessorOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getGetAccessor(), message !== null && message !== void 0 ? message : (() => `Expected to find a corresponding get accessor for ${this.getName()}.`), this);
+        return errors.throwIfNullOrUndefined(this.getGetAccessor(), message ?? (() => `Expected to find a corresponding get accessor for ${this.getName()}.`), this);
     }
     getStructure() {
         return callBaseGetStructure(SetAccessorDeclarationBase.prototype, this, {
@@ -14915,19 +14915,17 @@ class Decorator extends DecoratorBase {
         return this;
     }
     getCallExpressionOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getCallExpression(), message !== null && message !== void 0 ? message : "Expected to find a call expression.", this);
+        return errors.throwIfNullOrUndefined(this.getCallExpression(), message ?? "Expected to find a call expression.", this);
     }
     getCallExpression() {
         const expression = this._getInnerExpression();
         return Node.isCallExpression(expression) ? expression : undefined;
     }
     getArguments() {
-        var _a, _b;
-        return (_b = (_a = this.getCallExpression()) === null || _a === void 0 ? void 0 : _a.getArguments()) !== null && _b !== void 0 ? _b : [];
+        return this.getCallExpression()?.getArguments() ?? [];
     }
     getTypeArguments() {
-        var _a, _b;
-        return (_b = (_a = this.getCallExpression()) === null || _a === void 0 ? void 0 : _a.getTypeArguments()) !== null && _b !== void 0 ? _b : [];
+        return this.getCallExpression()?.getTypeArguments() ?? [];
     }
     addTypeArgument(argumentText) {
         return this.getCallExpressionOrThrow().addTypeArgument(argumentText);
@@ -15023,7 +15021,7 @@ function JSDocPropertyLikeTag(Base) {
             return this._getNodeFromCompilerNodeIfExists(this.compilerNode.typeExpression);
         }
         getTypeExpressionOrThrow(message) {
-            return errors.throwIfNullOrUndefined(this.getTypeExpression(), message !== null && message !== void 0 ? message : `Expected to find a JS doc type expression.`, this);
+            return errors.throwIfNullOrUndefined(this.getTypeExpression(), message ?? `Expected to find a JS doc type expression.`, this);
         }
         getName() {
             return this.getNameNode().getText();
@@ -15046,7 +15044,7 @@ function JSDocTypeExpressionableTag(Base) {
             return result;
         }
         getTypeExpressionOrThrow(message) {
-            return errors.throwIfNullOrUndefined(this.getTypeExpression(), message !== null && message !== void 0 ? message : `Expected to find the JS doc tag's type expression.`, this);
+            return errors.throwIfNullOrUndefined(this.getTypeExpression(), message ?? `Expected to find the JS doc tag's type expression.`, this);
         }
     };
 }
@@ -15088,8 +15086,7 @@ class JSDoc extends JSDocBase {
         return this.getText().includes("\n");
     }
     getTags() {
-        var _a, _b;
-        return (_b = (_a = this.compilerNode.tags) === null || _a === void 0 ? void 0 : _a.map(t => this._getNodeFromCompilerNode(t))) !== null && _b !== void 0 ? _b : [];
+        return this.compilerNode.tags?.map(t => this._getNodeFromCompilerNode(t)) ?? [];
     }
     getInnerText() {
         return getTextWithoutStars(this.getText());
@@ -15109,9 +15106,8 @@ class JSDoc extends JSDocBase {
             return ts.getTextOfJSDocComment(this.compilerNode.comment);
     }
     getDescription() {
-        var _a, _b;
         const sourceFileText = this.getSourceFile().getFullText();
-        const endSearchStart = (_b = (_a = this.getTags()[0]) === null || _a === void 0 ? void 0 : _a.getStart()) !== null && _b !== void 0 ? _b : this.getEnd() - 2;
+        const endSearchStart = this.getTags()[0]?.getStart() ?? this.getEnd() - 2;
         const start = getStart(this);
         return getTextWithoutStars(sourceFileText.substring(start, Math.max(start, getEndPos())));
         function getStart(jsDoc) {
@@ -15139,12 +15135,11 @@ class JSDoc extends JSDocBase {
         });
         return this;
         function getNewText() {
-            var _a, _b;
             const indentationText = this.getIndentationText();
             const newLineKind = this._context.manipulationSettings.getNewLineKindAsString();
             const rawLines = getTextFromStringOrWriter(this._getWriter(), textOrWriterFunction).split(/\r?\n/);
             const startsWithNewLine = rawLines[0].length === 0;
-            const isSingleLine = rawLines.length === 1 && ((_b = (_a = this.compilerNode.tags) === null || _a === void 0 ? void 0 : _a.length) !== null && _b !== void 0 ? _b : 0) === 0;
+            const isSingleLine = rawLines.length === 1 && (this.compilerNode.tags?.length ?? 0) === 0;
             const linesText = isSingleLine ? rawLines[0] : rawLines.map(l => l.length === 0 ? `${indentationText} *` : `${indentationText} * ${l}`)
                 .slice(startsWithNewLine ? 1 : 0)
                 .join(newLineKind);
@@ -15155,8 +15150,7 @@ class JSDoc extends JSDocBase {
         return this.addTags([structure])[0];
     }
     addTags(structures) {
-        var _a, _b;
-        return this.insertTags((_b = (_a = this.compilerNode.tags) === null || _a === void 0 ? void 0 : _a.length) !== null && _b !== void 0 ? _b : 0, structures);
+        return this.insertTags(this.compilerNode.tags?.length ?? 0, structures);
     }
     insertTag(index, structure) {
         return this.insertTags(index, [structure])[0];
@@ -15214,9 +15208,8 @@ class JSDoc extends JSDocBase {
         callBaseSet(JSDocBase.prototype, this, structure);
         if (structure.tags != null) {
             return this.replaceWithText(writer => {
-                var _a;
                 this._context.structurePrinterFactory.forJSDoc().printText(writer, {
-                    description: (_a = structure.description) !== null && _a !== void 0 ? _a : this.getDescription(),
+                    description: structure.description ?? this.getDescription(),
                     tags: structure.tags,
                 });
             });
@@ -15278,16 +15271,6 @@ const FunctionTypeNodeBase = TypeParameteredNode(FunctionOrConstructorTypeNodeBa
 class FunctionTypeNode extends FunctionTypeNodeBase {
 }
 
-class ImportTypeAssertionContainer extends Node {
-    getAssertClause() {
-        return this._getNodeFromCompilerNode(this.compilerNode.assertClause);
-    }
-    isMultiline() {
-        var _a;
-        return (_a = this.compilerNode.multiLine) !== null && _a !== void 0 ? _a : false;
-    }
-}
-
 class ImportTypeNode extends NodeWithTypeArguments {
     setArgument(text) {
         const arg = this.getArgument();
@@ -15319,16 +15302,16 @@ class ImportTypeNode extends NodeWithTypeArguments {
         return this;
     }
     getQualifierOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getQualifier(), message !== null && message !== void 0 ? message : (() => `Expected to find a qualifier for the import type: ${this.getText()}`), this);
+        return errors.throwIfNullOrUndefined(this.getQualifier(), message ?? (() => `Expected to find a qualifier for the import type: ${this.getText()}`), this);
     }
     getQualifier() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.qualifier);
     }
-    getAssertions() {
-        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.assertions);
+    getAttributes() {
+        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.attributes);
     }
-    getAssertionsOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this._getNodeFromCompilerNodeIfExists(this.compilerNode.assertions), message !== null && message !== void 0 ? message : "Could not find import type assertion container.", this);
+    getAttributesOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this._getNodeFromCompilerNodeIfExists(this.compilerNode.attributes), message ?? "Could not find import type assertion container.", this);
     }
 }
 
@@ -15365,19 +15348,19 @@ class MappedTypeNode extends TypeNode {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.nameType);
     }
     getNameTypeNodeOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getNameTypeNode(), message !== null && message !== void 0 ? message : "Type did not exist.", this);
+        return errors.throwIfNullOrUndefined(this.getNameTypeNode(), message ?? "Type did not exist.", this);
     }
     getReadonlyToken() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.readonlyToken);
     }
     getReadonlyTokenOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getReadonlyToken(), message !== null && message !== void 0 ? message : "Readonly token did not exist.", this);
+        return errors.throwIfNullOrUndefined(this.getReadonlyToken(), message ?? "Readonly token did not exist.", this);
     }
     getQuestionToken() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.questionToken);
     }
     getQuestionTokenOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getQuestionToken(), message !== null && message !== void 0 ? message : "Question token did not exist.", this);
+        return errors.throwIfNullOrUndefined(this.getQuestionToken(), message ?? "Question token did not exist.", this);
     }
     getTypeParameter() {
         return this._getNodeFromCompilerNode(this.compilerNode.typeParameter);
@@ -15386,7 +15369,7 @@ class MappedTypeNode extends TypeNode {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.type);
     }
     getTypeNodeOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getTypeNode(), message !== null && message !== void 0 ? message : "Type did not exist, but was expected to exist.", this);
+        return errors.throwIfNullOrUndefined(this.getTypeNode(), message ?? "Type did not exist, but was expected to exist.", this);
     }
 }
 
@@ -15425,9 +15408,8 @@ class TemplateLiteralTypeNode extends TypeNode {
         return this.compilerNode.templateSpans.map(s => this._getNodeFromCompilerNode(s));
     }
     setLiteralValue(value) {
-        var _a;
         const childIndex = this.getChildIndex();
-        const parent = (_a = this.getParentSyntaxList()) !== null && _a !== void 0 ? _a : this.getParentOrThrow();
+        const parent = this.getParentSyntaxList() ?? this.getParentOrThrow();
         replaceNodeText({
             sourceFile: this._sourceFile,
             start: this.getStart() + 1,
@@ -15495,7 +15477,7 @@ class TypeParameterDeclaration extends TypeParameterDeclarationBase {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.constraint);
     }
     getConstraintOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getConstraint(), message !== null && message !== void 0 ? message : "Expected to find the type parameter's constraint.", this);
+        return errors.throwIfNullOrUndefined(this.getConstraint(), message ?? "Expected to find the type parameter's constraint.", this);
     }
     setConstraint(text) {
         text = this.getParentOrThrow()._getTextWithQueuedChildIndentation(text);
@@ -15524,7 +15506,7 @@ class TypeParameterDeclaration extends TypeParameterDeclarationBase {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.default);
     }
     getDefaultOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getDefault(), message !== null && message !== void 0 ? message : "Expected to find the type parameter's default.", this);
+        return errors.throwIfNullOrUndefined(this.getDefault(), message ?? "Expected to find the type parameter's default.", this);
     }
     setDefault(text) {
         text = this.getParentOrThrow()._getTextWithQueuedChildIndentation(text);
@@ -15626,13 +15608,13 @@ class TypePredicateNode extends TypeNode {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.assertsModifier);
     }
     getAssertsModifierOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getAssertsModifier(), message !== null && message !== void 0 ? message : "Expected to find an asserts modifier.", this);
+        return errors.throwIfNullOrUndefined(this.getAssertsModifier(), message ?? "Expected to find an asserts modifier.", this);
     }
     getTypeNode() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.type);
     }
     getTypeNodeOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getTypeNode(), message !== null && message !== void 0 ? message : "Expected to find a type node.", this);
+        return errors.throwIfNullOrUndefined(this.getTypeNode(), message ?? "Expected to find a type node.", this);
     }
 }
 
@@ -15711,9 +15693,8 @@ class JSDocTag extends JSDocTagBase {
         callBaseSet(JSDocTagBase.prototype, this, structure);
         if (structure.text != null || structure.tagName != null) {
             return this.replaceWithText(writer => {
-                var _a;
                 this._context.structurePrinterFactory.forJSDocTag({ printStarsOnNewLine: true }).printText(writer, {
-                    tagName: (_a = structure.tagName) !== null && _a !== void 0 ? _a : this.getTagName(),
+                    tagName: structure.tagName ?? this.getTagName(),
                     text: structure.text != null ? structure.text : getText(this),
                 });
             });
@@ -15755,7 +15736,7 @@ function getTagEnd(jsDocTag) {
     return getPreviousNonWhiteSpacePos(jsDocTag, getNextTagStartOrDocEnd(jsDocTag));
 }
 function getNextTagStartOrDocEnd(jsDocTag, nextJsDocTag) {
-    nextJsDocTag = nextJsDocTag !== null && nextJsDocTag !== void 0 ? nextJsDocTag : getNextJsDocTag(jsDocTag);
+    nextJsDocTag = nextJsDocTag ?? getNextJsDocTag(jsDocTag);
     return nextJsDocTag != null
         ? nextJsDocTag.getStart()
         : jsDocTag.getParentOrThrow().getEnd() - 2;
@@ -15890,18 +15871,18 @@ class JSDocSignature extends JSDocType {
 }
 
 class JSDocTagInfo {
+    #compilerObject;
     constructor(compilerObject) {
-        this._compilerObject = compilerObject;
+        this.#compilerObject = compilerObject;
     }
     get compilerObject() {
-        return this._compilerObject;
+        return this.#compilerObject;
     }
     getName() {
         return this.compilerObject.name;
     }
     getText() {
-        var _a;
-        return (_a = this.compilerObject.text) !== null && _a !== void 0 ? _a : [];
+        return this.compilerObject.text ?? [];
     }
 }
 
@@ -15911,7 +15892,7 @@ class JSDocTemplateTag extends JSDocTemplateTagBase {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.constraint);
     }
     getConstraintOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getConstraint(), message !== null && message !== void 0 ? message : "Expected to find the JS doc template tag's constraint.", this);
+        return errors.throwIfNullOrUndefined(this.getConstraint(), message ?? "Expected to find the JS doc template tag's constraint.", this);
     }
 }
 
@@ -16097,8 +16078,7 @@ class EnumMember extends EnumMemberBase {
 
 class HeritageClause extends Node {
     getTypeNodes() {
-        var _a, _b;
-        return (_b = (_a = this.compilerNode.types) === null || _a === void 0 ? void 0 : _a.map(t => this._getNodeFromCompilerNode(t))) !== null && _b !== void 0 ? _b : [];
+        return this.compilerNode.types?.map(t => this._getNodeFromCompilerNode(t)) ?? [];
     }
     getToken() {
         return this.compilerNode.token;
@@ -16217,8 +16197,7 @@ class InterfaceDeclaration extends InterfaceDeclarationBase {
     }
     getBaseDeclarations() {
         return this.getType().getBaseTypes().map(t => {
-            var _a, _b;
-            return (_b = (_a = t.getSymbol()) === null || _a === void 0 ? void 0 : _a.getDeclarations()) !== null && _b !== void 0 ? _b : [];
+            return t.getSymbol()?.getDeclarations() ?? [];
         }).flat();
     }
     getImplementations() {
@@ -16387,7 +16366,7 @@ class JsxAttribute extends JsxAttributeBase {
         return this;
     }
     getInitializerOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getInitializer(), message !== null && message !== void 0 ? message : `Expected to find an initializer for the JSX attribute '${this.getNameNode().getText()}'`, this);
+        return errors.throwIfNullOrUndefined(this.getInitializer(), message ?? `Expected to find an initializer for the JSX attribute '${this.getNameNode().getText()}'`, this);
     }
     getInitializer() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.initializer);
@@ -16444,7 +16423,7 @@ class JsxAttribute extends JsxAttributeBase {
         return callBaseGetStructure(JsxAttributeBase.prototype, this, {
             name: nameNode instanceof Identifier ? nameNode.getText() : nameNode.getStructure(),
             kind: StructureKind.JsxAttribute,
-            initializer: initializer === null || initializer === void 0 ? void 0 : initializer.getText(),
+            initializer: initializer?.getText(),
         });
     }
 }
@@ -16772,8 +16751,7 @@ class TaggedTemplateExpression extends MemberExpression {
         return this._getNodeFromCompilerNode(this.compilerNode.template);
     }
     removeTag() {
-        var _a;
-        const parent = (_a = this.getParentSyntaxList()) !== null && _a !== void 0 ? _a : this.getParentOrThrow();
+        const parent = this.getParentSyntaxList() ?? this.getParentOrThrow();
         const index = this.getChildIndex();
         const template = this.getTemplate();
         insertIntoParentTextRange({
@@ -16799,9 +16777,8 @@ class TemplateExpression extends TemplateExpressionBase {
         return this.compilerNode.templateSpans.map(s => this._getNodeFromCompilerNode(s));
     }
     setLiteralValue(value) {
-        var _a;
         const childIndex = this.getChildIndex();
-        const parent = (_a = this.getParentSyntaxList()) !== null && _a !== void 0 ? _a : this.getParentOrThrow();
+        const parent = this.getParentSyntaxList() ?? this.getParentOrThrow();
         replaceNodeText({
             sourceFile: this._sourceFile,
             start: this.getStart() + 1,
@@ -16866,7 +16843,7 @@ class VariableDeclaration extends VariableDeclarationBase {
         }
     }
     getVariableStatementOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getVariableStatement(), message !== null && message !== void 0 ? message : "Expected the grandparent to be a variable statement.", this);
+        return errors.throwIfNullOrUndefined(this.getVariableStatement(), message ?? "Expected the grandparent to be a variable statement.", this);
     }
     getVariableStatement() {
         const grandParent = this.getParentOrThrow().getParentOrThrow();
@@ -16963,45 +16940,49 @@ class VariableDeclarationList extends VariableDeclarationListBase {
 }
 
 class Signature {
+    #context;
+    #compilerSignature;
     constructor(context, signature) {
-        this._context = context;
-        this._compilerSignature = signature;
+        this.#context = context;
+        this.#compilerSignature = signature;
     }
     get compilerSignature() {
-        return this._compilerSignature;
+        return this.#compilerSignature;
     }
     getTypeParameters() {
         const typeParameters = this.compilerSignature.typeParameters || [];
-        return typeParameters.map(t => this._context.compilerFactory.getTypeParameter(t));
+        return typeParameters.map(t => this.#context.compilerFactory.getTypeParameter(t));
     }
     getParameters() {
-        return this.compilerSignature.parameters.map(p => this._context.compilerFactory.getSymbol(p));
+        return this.compilerSignature.parameters.map(p => this.#context.compilerFactory.getSymbol(p));
     }
     getReturnType() {
-        return this._context.compilerFactory.getType(this.compilerSignature.getReturnType());
+        return this.#context.compilerFactory.getType(this.compilerSignature.getReturnType());
     }
     getDocumentationComments() {
-        const docs = this.compilerSignature.getDocumentationComment(this._context.typeChecker.compilerObject);
-        return docs.map(d => this._context.compilerFactory.getSymbolDisplayPart(d));
+        const docs = this.compilerSignature.getDocumentationComment(this.#context.typeChecker.compilerObject);
+        return docs.map(d => this.#context.compilerFactory.getSymbolDisplayPart(d));
     }
     getJsDocTags() {
         const tags = this.compilerSignature.getJsDocTags();
-        return tags.map(t => this._context.compilerFactory.getJSDocTagInfo(t));
+        return tags.map(t => this.#context.compilerFactory.getJSDocTagInfo(t));
     }
     getDeclaration() {
-        const { compilerFactory } = this._context;
+        const { compilerFactory } = this.#context;
         const compilerSignatureDeclaration = this.compilerSignature.getDeclaration();
         return compilerFactory.getNodeFromCompilerNode(compilerSignatureDeclaration, compilerFactory.getSourceFileForNode(compilerSignatureDeclaration));
     }
 }
 
 class Symbol {
+    #context;
+    #compilerSymbol;
     get compilerSymbol() {
-        return this._compilerSymbol;
+        return this.#compilerSymbol;
     }
     constructor(context, symbol) {
-        this._context = context;
-        this._compilerSymbol = symbol;
+        this.#context = context;
+        this.#compilerSymbol = symbol;
         this.getValueDeclaration();
         this.getDeclarations();
     }
@@ -17012,19 +16993,19 @@ class Symbol {
         return this.compilerSymbol.getEscapedName();
     }
     getAliasedSymbolOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getAliasedSymbol(), message !== null && message !== void 0 ? message : "Expected to find an aliased symbol.");
+        return errors.throwIfNullOrUndefined(this.getAliasedSymbol(), message ?? "Expected to find an aliased symbol.");
     }
     getImmediatelyAliasedSymbol() {
-        return this._context.typeChecker.getImmediatelyAliasedSymbol(this);
+        return this.#context.typeChecker.getImmediatelyAliasedSymbol(this);
     }
     getImmediatelyAliasedSymbolOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getImmediatelyAliasedSymbol(), message !== null && message !== void 0 ? message : "Expected to find an immediately aliased symbol.");
+        return errors.throwIfNullOrUndefined(this.getImmediatelyAliasedSymbol(), message ?? "Expected to find an immediately aliased symbol.");
     }
     getAliasedSymbol() {
-        return this._context.typeChecker.getAliasedSymbol(this);
+        return this.#context.typeChecker.getAliasedSymbol(this);
     }
     getExportSymbol() {
-        return this._context.typeChecker.getExportSymbolOfSymbol(this);
+        return this.#context.typeChecker.getExportSymbolOfSymbol(this);
     }
     isAlias() {
         return (this.getFlags() & SymbolFlags.Alias) === SymbolFlags.Alias;
@@ -17039,82 +17020,82 @@ class Symbol {
         return (this.compilerSymbol.flags & flags) === flags;
     }
     getValueDeclarationOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getValueDeclaration(), message !== null && message !== void 0 ? message : (() => `Expected to find the value declaration of symbol '${this.getName()}'.`));
+        return errors.throwIfNullOrUndefined(this.getValueDeclaration(), message ?? (() => `Expected to find the value declaration of symbol '${this.getName()}'.`));
     }
     getValueDeclaration() {
         const declaration = this.compilerSymbol.valueDeclaration;
         if (declaration == null)
             return undefined;
-        return this._context.compilerFactory.getNodeFromCompilerNode(declaration, this._context.compilerFactory.getSourceFileForNode(declaration));
+        return this.#context.compilerFactory.getNodeFromCompilerNode(declaration, this.#context.compilerFactory.getSourceFileForNode(declaration));
     }
     getDeclarations() {
-        var _a;
-        return ((_a = this.compilerSymbol.declarations) !== null && _a !== void 0 ? _a : [])
-            .map(d => this._context.compilerFactory.getNodeFromCompilerNode(d, this._context.compilerFactory.getSourceFileForNode(d)));
+        return (this.compilerSymbol.declarations ?? [])
+            .map(d => this.#context.compilerFactory.getNodeFromCompilerNode(d, this.#context.compilerFactory.getSourceFileForNode(d)));
     }
     getExportOrThrow(name, message) {
-        return errors.throwIfNullOrUndefined(this.getExport(name), message !== null && message !== void 0 ? message : (() => `Expected to find export with name: ${name}`));
+        return errors.throwIfNullOrUndefined(this.getExport(name), message ?? (() => `Expected to find export with name: ${name}`));
     }
     getExport(name) {
         if (this.compilerSymbol.exports == null)
             return undefined;
         const tsSymbol = this.compilerSymbol.exports.get(ts.escapeLeadingUnderscores(name));
-        return tsSymbol == null ? undefined : this._context.compilerFactory.getSymbol(tsSymbol);
+        return tsSymbol == null ? undefined : this.#context.compilerFactory.getSymbol(tsSymbol);
     }
     getExports() {
         if (this.compilerSymbol.exports == null)
             return [];
-        return Array.from(this.compilerSymbol.exports.values()).map(symbol => this._context.compilerFactory.getSymbol(symbol));
+        return Array.from(this.compilerSymbol.exports.values()).map(symbol => this.#context.compilerFactory.getSymbol(symbol));
     }
     getGlobalExportOrThrow(name, message) {
-        return errors.throwIfNullOrUndefined(this.getGlobalExport(name), message !== null && message !== void 0 ? message : (() => `Expected to find global export with name: ${name}`));
+        return errors.throwIfNullOrUndefined(this.getGlobalExport(name), message ?? (() => `Expected to find global export with name: ${name}`));
     }
     getGlobalExport(name) {
         if (this.compilerSymbol.globalExports == null)
             return undefined;
         const tsSymbol = this.compilerSymbol.globalExports.get(ts.escapeLeadingUnderscores(name));
-        return tsSymbol == null ? undefined : this._context.compilerFactory.getSymbol(tsSymbol);
+        return tsSymbol == null ? undefined : this.#context.compilerFactory.getSymbol(tsSymbol);
     }
     getGlobalExports() {
         if (this.compilerSymbol.globalExports == null)
             return [];
-        return Array.from(this.compilerSymbol.globalExports.values()).map(symbol => this._context.compilerFactory.getSymbol(symbol));
+        return Array.from(this.compilerSymbol.globalExports.values()).map(symbol => this.#context.compilerFactory.getSymbol(symbol));
     }
     getMemberOrThrow(name, message) {
-        return errors.throwIfNullOrUndefined(this.getMember(name), message !== null && message !== void 0 ? message : `Expected to find member with name: ${name}`);
+        return errors.throwIfNullOrUndefined(this.getMember(name), message ?? `Expected to find member with name: ${name}`);
     }
     getMember(name) {
         if (this.compilerSymbol.members == null)
             return undefined;
         const tsSymbol = this.compilerSymbol.members.get(ts.escapeLeadingUnderscores(name));
-        return tsSymbol == null ? undefined : this._context.compilerFactory.getSymbol(tsSymbol);
+        return tsSymbol == null ? undefined : this.#context.compilerFactory.getSymbol(tsSymbol);
     }
     getMembers() {
         if (this.compilerSymbol.members == null)
             return [];
-        return Array.from(this.compilerSymbol.members.values()).map(symbol => this._context.compilerFactory.getSymbol(symbol));
+        return Array.from(this.compilerSymbol.members.values()).map(symbol => this.#context.compilerFactory.getSymbol(symbol));
     }
     getDeclaredType() {
-        return this._context.typeChecker.getDeclaredTypeOfSymbol(this);
+        return this.#context.typeChecker.getDeclaredTypeOfSymbol(this);
     }
     getTypeAtLocation(node) {
-        return this._context.typeChecker.getTypeOfSymbolAtLocation(this, node);
+        return this.#context.typeChecker.getTypeOfSymbolAtLocation(this, node);
     }
     getFullyQualifiedName() {
-        return this._context.typeChecker.getFullyQualifiedName(this);
+        return this.#context.typeChecker.getFullyQualifiedName(this);
     }
     getJsDocTags() {
-        return this.compilerSymbol.getJsDocTags(this._context.typeChecker.compilerObject)
+        return this.compilerSymbol.getJsDocTags(this.#context.typeChecker.compilerObject)
             .map(info => new JSDocTagInfo(info));
     }
 }
 
 class TextSpan {
+    #compilerObject;
     constructor(compilerObject) {
-        this._compilerObject = compilerObject;
+        this.#compilerObject = compilerObject;
     }
     get compilerObject() {
-        return this._compilerObject;
+        return this.#compilerObject;
     }
     getStart() {
         return this.compilerObject.start;
@@ -17128,11 +17109,12 @@ class TextSpan {
 }
 
 class TextChange {
+    #compilerObject;
     constructor(compilerObject) {
-        this._compilerObject = compilerObject;
+        this.#compilerObject = compilerObject;
     }
     get compilerObject() {
-        return this._compilerObject;
+        return this.#compilerObject;
     }
     getSpan() {
         return new TextSpan(this.compilerObject.span);
@@ -17146,37 +17128,42 @@ __decorate([
 ], TextChange.prototype, "getSpan", null);
 
 class FileTextChanges {
+    #context;
+    #compilerObject;
+    #sourceFile;
+    #existingFileExists;
+    #isApplied;
     constructor(context, compilerObject) {
-        this._context = context;
-        this._compilerObject = compilerObject;
+        this.#context = context;
+        this.#compilerObject = compilerObject;
         const file = context.compilerFactory
             .addOrGetSourceFileFromFilePath(context.fileSystemWrapper.getStandardizedAbsolutePath(compilerObject.fileName), {
             markInProject: false,
             scriptKind: undefined,
         });
-        this._existingFileExists = file != null;
+        this.#existingFileExists = file != null;
         if (!compilerObject.isNewFile)
-            this._sourceFile = file;
+            this.#sourceFile = file;
     }
     getFilePath() {
-        return this._compilerObject.fileName;
+        return this.#compilerObject.fileName;
     }
     getSourceFile() {
-        return this._sourceFile;
+        return this.#sourceFile;
     }
     getTextChanges() {
-        return this._compilerObject.textChanges.map(c => new TextChange(c));
+        return this.#compilerObject.textChanges.map(c => new TextChange(c));
     }
     applyChanges(options = {}) {
-        if (this._isApplied)
+        if (this.#isApplied)
             return;
-        if (this.isNewFile() && this._existingFileExists && !options.overwrite) {
+        if (this.isNewFile() && this.#existingFileExists && !options.overwrite) {
             throw new errors.InvalidOperationError(`Cannot apply file text change for creating a new file when the `
                 + `file exists at path ${this.getFilePath()}. Did you mean to provide the overwrite option?`);
         }
         let file;
         if (this.isNewFile())
-            file = this._context.project.createSourceFile(this.getFilePath(), "", { overwrite: options.overwrite });
+            file = this.#context.project.createSourceFile(this.getFilePath(), "", { overwrite: options.overwrite });
         else
             file = this.getSourceFile();
         if (file == null) {
@@ -17185,11 +17172,11 @@ class FileTextChanges {
         }
         file.applyTextChanges(this.getTextChanges());
         file._markAsInProject();
-        this._isApplied = true;
+        this.#isApplied = true;
         return this;
     }
     isNewFile() {
-        return !!this._compilerObject.isNewFile;
+        return !!this.#compilerObject.isNewFile;
     }
 }
 __decorate([
@@ -17197,18 +17184,20 @@ __decorate([
 ], FileTextChanges.prototype, "getTextChanges", null);
 
 class CodeAction {
+    #context;
+    #compilerObject;
     constructor(context, compilerObject) {
-        this._context = context;
-        this._compilerObject = compilerObject;
+        this.#context = context;
+        this.#compilerObject = compilerObject;
     }
     get compilerObject() {
-        return this._compilerObject;
+        return this.#compilerObject;
     }
     getDescription() {
         return this.compilerObject.description;
     }
     getChanges() {
-        return this.compilerObject.changes.map(change => new FileTextChanges(this._context, change));
+        return this.compilerObject.changes.map(change => new FileTextChanges(this.#context, change));
     }
 }
 
@@ -17225,15 +17214,17 @@ class CodeFixAction extends CodeAction {
 }
 
 class CombinedCodeActions {
+    #context;
+    #compilerObject;
     constructor(context, compilerObject) {
-        this._context = context;
-        this._compilerObject = compilerObject;
+        this.#context = context;
+        this.#compilerObject = compilerObject;
     }
     get compilerObject() {
-        return this._compilerObject;
+        return this.#compilerObject;
     }
     getChanges() {
-        return this.compilerObject.changes.map(change => new FileTextChanges(this._context, change));
+        return this.compilerObject.changes.map(change => new FileTextChanges(this.#context, change));
     }
     applyChanges(options) {
         for (const change of this.getChanges())
@@ -17246,6 +17237,9 @@ __decorate([
 ], CombinedCodeActions.prototype, "getChanges", null);
 
 class DocumentSpan {
+    _context;
+    _compilerObject;
+    _sourceFile;
     constructor(context, compilerObject) {
         this._context = context;
         this._compilerObject = compilerObject;
@@ -17348,6 +17342,7 @@ __decorate([
 ], DefinitionInfo.prototype, "getDeclarationNode", null);
 
 class DiagnosticMessageChain {
+    _compilerObject;
     constructor(compilerObject) {
         this._compilerObject = compilerObject;
     }
@@ -17374,6 +17369,8 @@ class DiagnosticMessageChain {
 }
 
 class Diagnostic {
+    _context;
+    _compilerObject;
     constructor(context, compilerObject) {
         this._context = context;
         this._compilerObject = compilerObject;
@@ -17443,15 +17440,17 @@ class DiagnosticWithLocation extends Diagnostic {
 }
 
 class OutputFile {
+    #compilerObject;
+    #context;
     constructor(context, compilerObject) {
-        this._compilerObject = compilerObject;
-        this._context = context;
+        this.#compilerObject = compilerObject;
+        this.#context = context;
     }
     get compilerObject() {
-        return this._compilerObject;
+        return this.#compilerObject;
     }
     getFilePath() {
-        return this._context.fileSystemWrapper.getStandardizedAbsolutePath(this.compilerObject.name);
+        return this.#context.fileSystemWrapper.getStandardizedAbsolutePath(this.compilerObject.name);
     }
     getWriteByteOrderMark() {
         return this.compilerObject.writeByteOrderMark || false;
@@ -17462,18 +17461,20 @@ class OutputFile {
 }
 
 class EmitOutput {
+    #context;
+    #compilerObject;
     constructor(context, compilerObject) {
-        this._context = context;
-        this._compilerObject = compilerObject;
+        this.#context = context;
+        this.#compilerObject = compilerObject;
     }
     get compilerObject() {
-        return this._compilerObject;
+        return this.#compilerObject;
     }
     getEmitSkipped() {
         return this.compilerObject.emitSkipped;
     }
     getOutputFiles() {
-        return this.compilerObject.outputFiles.map(f => new OutputFile(this._context, f));
+        return this.compilerObject.outputFiles.map(f => new OutputFile(this.#context, f));
     }
 }
 __decorate([
@@ -17481,6 +17482,8 @@ __decorate([
 ], EmitOutput.prototype, "getOutputFiles", null);
 
 class EmitResult {
+    _context;
+    _compilerObject;
     constructor(context, compilerObject) {
         this._context = context;
         this._compilerObject = compilerObject;
@@ -17516,35 +17519,38 @@ __decorate([
 ], ImplementationLocation.prototype, "getDisplayParts", null);
 
 class MemoryEmitResult extends EmitResult {
-    constructor(context, compilerObject, _files) {
+    #files;
+    constructor(context, compilerObject, files) {
         super(context, compilerObject);
-        this._files = _files;
+        this.#files = files;
     }
     getFiles() {
-        return this._files;
+        return this.#files;
     }
     saveFiles() {
         const fileSystem = this._context.fileSystemWrapper;
-        const promises = this._files.map(f => fileSystem.writeFile(f.filePath, f.writeByteOrderMark ? "\uFEFF" + f.text : f.text));
+        const promises = this.#files.map(f => fileSystem.writeFile(f.filePath, f.writeByteOrderMark ? "\uFEFF" + f.text : f.text));
         return Promise.all(promises);
     }
     saveFilesSync() {
         const fileSystem = this._context.fileSystemWrapper;
-        for (const file of this._files)
+        for (const file of this.#files)
             fileSystem.writeFileSync(file.filePath, file.writeByteOrderMark ? "\uFEFF" + file.text : file.text);
     }
 }
 
 class RefactorEditInfo {
+    #context;
+    #compilerObject;
     constructor(context, compilerObject) {
-        this._context = context;
-        this._compilerObject = compilerObject;
+        this.#context = context;
+        this.#compilerObject = compilerObject;
     }
     get compilerObject() {
-        return this._compilerObject;
+        return this.#compilerObject;
     }
     getEdits() {
-        return this.compilerObject.edits.map(edit => new FileTextChanges(this._context, edit));
+        return this.compilerObject.edits.map(edit => new FileTextChanges(this.#context, edit));
     }
     getRenameFilePath() {
         return this.compilerObject.renameFilename;
@@ -17563,19 +17569,22 @@ __decorate([
 ], RefactorEditInfo.prototype, "getEdits", null);
 
 class ReferencedSymbol {
+    _context;
+    #compilerObject;
+    #references;
     constructor(context, compilerObject) {
         this._context = context;
-        this._compilerObject = compilerObject;
-        this._references = this.compilerObject.references.map(r => context.compilerFactory.getReferencedSymbolEntry(r));
+        this.#compilerObject = compilerObject;
+        this.#references = this.compilerObject.references.map(r => context.compilerFactory.getReferencedSymbolEntry(r));
     }
     get compilerObject() {
-        return this._compilerObject;
+        return this.#compilerObject;
     }
     getDefinition() {
         return this._context.compilerFactory.getReferencedSymbolDefinitionInfo(this.compilerObject.definition);
     }
     getReferences() {
-        return this._references;
+        return this.#references;
     }
 }
 __decorate([
@@ -17624,11 +17633,12 @@ class RenameLocation extends DocumentSpan {
 }
 
 class SymbolDisplayPart {
+    #compilerObject;
     constructor(compilerObject) {
-        this._compilerObject = compilerObject;
+        this.#compilerObject = compilerObject;
     }
     get compilerObject() {
-        return this._compilerObject;
+        return this.#compilerObject;
     }
     getText() {
         return this.compilerObject.text;
@@ -17639,20 +17649,22 @@ class SymbolDisplayPart {
 }
 
 class TypeChecker {
+    #context;
+    #getCompilerObject;
     constructor(context) {
-        this._context = context;
+        this.#context = context;
     }
     get compilerObject() {
-        return this._getCompilerObject();
+        return this.#getCompilerObject();
     }
     _reset(getTypeChecker) {
-        this._getCompilerObject = getTypeChecker;
+        this.#getCompilerObject = getTypeChecker;
     }
     getAmbientModules() {
-        return this.compilerObject.getAmbientModules().map(s => this._context.compilerFactory.getSymbol(s));
+        return this.compilerObject.getAmbientModules().map(s => this.#context.compilerFactory.getSymbol(s));
     }
     getApparentType(type) {
-        return this._context.compilerFactory.getType(this.compilerObject.getApparentType(type.compilerType));
+        return this.#context.compilerFactory.getType(this.compilerObject.getApparentType(type.compilerType));
     }
     getConstantValue(node) {
         return this.compilerObject.getConstantValue(node.compilerNode);
@@ -17661,79 +17673,79 @@ class TypeChecker {
         return this.compilerObject.getFullyQualifiedName(symbol.compilerSymbol);
     }
     getTypeAtLocation(node) {
-        return this._context.compilerFactory.getType(this.compilerObject.getTypeAtLocation(node.compilerNode));
+        return this.#context.compilerFactory.getType(this.compilerObject.getTypeAtLocation(node.compilerNode));
     }
     getContextualType(expression) {
         const contextualType = this.compilerObject.getContextualType(expression.compilerNode);
-        return contextualType == null ? undefined : this._context.compilerFactory.getType(contextualType);
+        return contextualType == null ? undefined : this.#context.compilerFactory.getType(contextualType);
     }
     getTypeOfSymbolAtLocation(symbol, node) {
-        return this._context.compilerFactory.getType(this.compilerObject.getTypeOfSymbolAtLocation(symbol.compilerSymbol, node.compilerNode));
+        return this.#context.compilerFactory.getType(this.compilerObject.getTypeOfSymbolAtLocation(symbol.compilerSymbol, node.compilerNode));
     }
     getDeclaredTypeOfSymbol(symbol) {
-        return this._context.compilerFactory.getType(this.compilerObject.getDeclaredTypeOfSymbol(symbol.compilerSymbol));
+        return this.#context.compilerFactory.getType(this.compilerObject.getDeclaredTypeOfSymbol(symbol.compilerSymbol));
     }
     getSymbolAtLocation(node) {
         const compilerSymbol = this.compilerObject.getSymbolAtLocation(node.compilerNode);
-        return compilerSymbol == null ? undefined : this._context.compilerFactory.getSymbol(compilerSymbol);
+        return compilerSymbol == null ? undefined : this.#context.compilerFactory.getSymbol(compilerSymbol);
     }
     getAliasedSymbol(symbol) {
         if (!symbol.hasFlags(SymbolFlags.Alias))
             return undefined;
         const tsAliasSymbol = this.compilerObject.getAliasedSymbol(symbol.compilerSymbol);
-        return tsAliasSymbol == null ? undefined : this._context.compilerFactory.getSymbol(tsAliasSymbol);
+        return tsAliasSymbol == null ? undefined : this.#context.compilerFactory.getSymbol(tsAliasSymbol);
     }
     getImmediatelyAliasedSymbol(symbol) {
         const tsAliasSymbol = this.compilerObject.getImmediateAliasedSymbol(symbol.compilerSymbol);
-        return tsAliasSymbol == null ? undefined : this._context.compilerFactory.getSymbol(tsAliasSymbol);
+        return tsAliasSymbol == null ? undefined : this.#context.compilerFactory.getSymbol(tsAliasSymbol);
     }
     getExportSymbolOfSymbol(symbol) {
-        return this._context.compilerFactory.getSymbol(this.compilerObject.getExportSymbolOfSymbol(symbol.compilerSymbol));
+        return this.#context.compilerFactory.getSymbol(this.compilerObject.getExportSymbolOfSymbol(symbol.compilerSymbol));
     }
     getPropertiesOfType(type) {
-        return this.compilerObject.getPropertiesOfType(type.compilerType).map(p => this._context.compilerFactory.getSymbol(p));
+        return this.compilerObject.getPropertiesOfType(type.compilerType).map(p => this.#context.compilerFactory.getSymbol(p));
     }
     getTypeText(type, enclosingNode, typeFormatFlags) {
         if (typeFormatFlags == null)
-            typeFormatFlags = this._getDefaultTypeFormatFlags(enclosingNode);
-        return this.compilerObject.typeToString(type.compilerType, enclosingNode === null || enclosingNode === void 0 ? void 0 : enclosingNode.compilerNode, typeFormatFlags);
+            typeFormatFlags = this.#getDefaultTypeFormatFlags(enclosingNode);
+        return this.compilerObject.typeToString(type.compilerType, enclosingNode?.compilerNode, typeFormatFlags);
     }
     getReturnTypeOfSignature(signature) {
-        return this._context.compilerFactory.getType(this.compilerObject.getReturnTypeOfSignature(signature.compilerSignature));
+        return this.#context.compilerFactory.getType(this.compilerObject.getReturnTypeOfSignature(signature.compilerSignature));
     }
     getSignatureFromNode(node) {
         const signature = this.compilerObject.getSignatureFromDeclaration(node.compilerNode);
-        return signature == null ? undefined : this._context.compilerFactory.getSignature(signature);
+        return signature == null ? undefined : this.#context.compilerFactory.getSignature(signature);
     }
     getExportsOfModule(moduleSymbol) {
         const symbols = this.compilerObject.getExportsOfModule(moduleSymbol.compilerSymbol);
-        return (symbols || []).map(s => this._context.compilerFactory.getSymbol(s));
+        return (symbols || []).map(s => this.#context.compilerFactory.getSymbol(s));
     }
     getExportSpecifierLocalTargetSymbol(exportSpecifier) {
         const symbol = this.compilerObject.getExportSpecifierLocalTargetSymbol(exportSpecifier.compilerNode);
-        return symbol == null ? undefined : this._context.compilerFactory.getSymbol(symbol);
+        return symbol == null ? undefined : this.#context.compilerFactory.getSymbol(symbol);
     }
     getResolvedSignature(node) {
         const resolvedSignature = this.compilerObject.getResolvedSignature(node.compilerNode);
         if (!resolvedSignature || !resolvedSignature.declaration)
             return undefined;
-        return this._context.compilerFactory.getSignature(resolvedSignature);
+        return this.#context.compilerFactory.getSignature(resolvedSignature);
     }
     getResolvedSignatureOrThrow(node, message) {
-        return errors.throwIfNullOrUndefined(this.getResolvedSignature(node), message !== null && message !== void 0 ? message : "Signature could not be resolved.", node);
+        return errors.throwIfNullOrUndefined(this.getResolvedSignature(node), message ?? "Signature could not be resolved.", node);
     }
     getBaseTypeOfLiteralType(type) {
-        return this._context.compilerFactory.getType(this.compilerObject.getBaseTypeOfLiteralType(type.compilerType));
+        return this.#context.compilerFactory.getType(this.compilerObject.getBaseTypeOfLiteralType(type.compilerType));
     }
     getSymbolsInScope(node, meaning) {
         return this.compilerObject.getSymbolsInScope(node.compilerNode, meaning)
-            .map(s => this._context.compilerFactory.getSymbol(s));
+            .map(s => this.#context.compilerFactory.getSymbol(s));
     }
     getTypeArguments(typeReference) {
         return this.compilerObject.getTypeArguments(typeReference.compilerType)
-            .map(arg => this._context.compilerFactory.getType(arg));
+            .map(arg => this.#context.compilerFactory.getType(arg));
     }
-    _getDefaultTypeFormatFlags(enclosingNode) {
+    #getDefaultTypeFormatFlags(enclosingNode) {
         let formatFlags = (TypeFormatFlags.UseTypeOfFunction | TypeFormatFlags.NoTruncation | TypeFormatFlags.UseFullyQualifiedType
             | TypeFormatFlags.WriteTypeArgumentsOfSignature);
         if (enclosingNode != null && enclosingNode.getKind() === SyntaxKind.TypeAliasDeclaration)
@@ -17743,35 +17755,41 @@ class TypeChecker {
 }
 
 class Program {
+    #context;
+    #typeChecker;
+    #createdCompilerObject;
+    #oldProgram;
+    #getOrCreateCompilerObject;
+    #configFileParsingDiagnostics;
     constructor(opts) {
-        this._context = opts.context;
-        this._configFileParsingDiagnostics = opts.configFileParsingDiagnostics;
-        this._typeChecker = new TypeChecker(this._context);
+        this.#context = opts.context;
+        this.#configFileParsingDiagnostics = opts.configFileParsingDiagnostics;
+        this.#typeChecker = new TypeChecker(this.#context);
         this._reset(opts.rootNames, opts.host);
     }
     get compilerObject() {
-        return this._getOrCreateCompilerObject();
+        return this.#getOrCreateCompilerObject();
     }
     _isCompilerProgramCreated() {
-        return this._createdCompilerObject != null;
+        return this.#createdCompilerObject != null;
     }
     _reset(rootNames, host) {
-        const compilerOptions = this._context.compilerOptions.get();
-        this._getOrCreateCompilerObject = () => {
-            if (this._createdCompilerObject == null) {
-                this._createdCompilerObject = ts.createProgram(rootNames, compilerOptions, host, this._oldProgram, this._configFileParsingDiagnostics);
-                delete this._oldProgram;
+        const compilerOptions = this.#context.compilerOptions.get();
+        this.#getOrCreateCompilerObject = () => {
+            if (this.#createdCompilerObject == null) {
+                this.#createdCompilerObject = ts.createProgram(rootNames, compilerOptions, host, this.#oldProgram, this.#configFileParsingDiagnostics);
+                this.#oldProgram = undefined;
             }
-            return this._createdCompilerObject;
+            return this.#createdCompilerObject;
         };
-        if (this._createdCompilerObject != null) {
-            this._oldProgram = this._createdCompilerObject;
-            delete this._createdCompilerObject;
+        if (this.#createdCompilerObject != null) {
+            this.#oldProgram = this.#createdCompilerObject;
+            this.#createdCompilerObject = undefined;
         }
-        this._typeChecker._reset(() => this.compilerObject.getTypeChecker());
+        this.#typeChecker._reset(() => this.compilerObject.getTypeChecker());
     }
     getTypeChecker() {
-        return this._typeChecker;
+        return this.#typeChecker;
     }
     async emit(options = {}) {
         if (options.writeFile) {
@@ -17779,9 +17797,9 @@ class Program {
                 + `Use ${nameof(this, "emitSync")}() instead.`;
             throw new errors.InvalidOperationError(message);
         }
-        const { fileSystemWrapper } = this._context;
+        const { fileSystemWrapper } = this.#context;
         const promises = [];
-        const emitResult = this._emit({
+        const emitResult = this.#emit({
             writeFile: (filePath, text, writeByteOrderMark) => {
                 promises
                     .push(fileSystemWrapper.writeFile(fileSystemWrapper.getStandardizedAbsolutePath(filePath), writeByteOrderMark ? "\uFEFF" + text : text));
@@ -17789,15 +17807,15 @@ class Program {
             ...options,
         });
         await Promise.all(promises);
-        return new EmitResult(this._context, emitResult);
+        return new EmitResult(this.#context, emitResult);
     }
     emitSync(options = {}) {
-        return new EmitResult(this._context, this._emit(options));
+        return new EmitResult(this.#context, this.#emit(options));
     }
     emitToMemory(options = {}) {
         const sourceFiles = [];
-        const { fileSystemWrapper } = this._context;
-        const emitResult = this._emit({
+        const { fileSystemWrapper } = this.#context;
+        const emitResult = this.#emit({
             writeFile: (filePath, text, writeByteOrderMark) => {
                 sourceFiles.push({
                     filePath: fileSystemWrapper.getStandardizedAbsolutePath(filePath),
@@ -17807,9 +17825,9 @@ class Program {
             },
             ...options,
         });
-        return new MemoryEmitResult(this._context, emitResult, sourceFiles);
+        return new MemoryEmitResult(this.#context, emitResult, sourceFiles);
     }
-    _emit(options = {}) {
+    #emit(options = {}) {
         const targetSourceFile = options.targetSourceFile != null ? options.targetSourceFile.compilerNode : undefined;
         const { emitOnlyDtsFiles, customTransformers, writeFile } = options;
         const cancellationToken = undefined;
@@ -17817,23 +17835,23 @@ class Program {
     }
     getSyntacticDiagnostics(sourceFile) {
         const compilerDiagnostics = this.compilerObject.getSyntacticDiagnostics(sourceFile == null ? undefined : sourceFile.compilerNode);
-        return compilerDiagnostics.map(d => this._context.compilerFactory.getDiagnosticWithLocation(d));
+        return compilerDiagnostics.map(d => this.#context.compilerFactory.getDiagnosticWithLocation(d));
     }
     getSemanticDiagnostics(sourceFile) {
-        const compilerDiagnostics = this.compilerObject.getSemanticDiagnostics(sourceFile === null || sourceFile === void 0 ? void 0 : sourceFile.compilerNode);
-        return compilerDiagnostics.map(d => this._context.compilerFactory.getDiagnostic(d));
+        const compilerDiagnostics = this.compilerObject.getSemanticDiagnostics(sourceFile?.compilerNode);
+        return compilerDiagnostics.map(d => this.#context.compilerFactory.getDiagnostic(d));
     }
     getDeclarationDiagnostics(sourceFile) {
-        const compilerDiagnostics = this.compilerObject.getDeclarationDiagnostics(sourceFile === null || sourceFile === void 0 ? void 0 : sourceFile.compilerNode);
-        return compilerDiagnostics.map(d => this._context.compilerFactory.getDiagnosticWithLocation(d));
+        const compilerDiagnostics = this.compilerObject.getDeclarationDiagnostics(sourceFile?.compilerNode);
+        return compilerDiagnostics.map(d => this.#context.compilerFactory.getDiagnosticWithLocation(d));
     }
     getGlobalDiagnostics() {
         const compilerDiagnostics = this.compilerObject.getGlobalDiagnostics();
-        return compilerDiagnostics.map(d => this._context.compilerFactory.getDiagnostic(d));
+        return compilerDiagnostics.map(d => this.#context.compilerFactory.getDiagnostic(d));
     }
     getConfigFileParsingDiagnostics() {
         const compilerDiagnostics = this.compilerObject.getConfigFileParsingDiagnostics();
-        return compilerDiagnostics.map(d => this._context.compilerFactory.getDiagnostic(d));
+        return compilerDiagnostics.map(d => this.#context.compilerFactory.getDiagnostic(d));
     }
     getEmitModuleResolutionKind() {
         return getEmitModuleResolutionKind(this.compilerObject.getCompilerOptions());
@@ -17844,57 +17862,60 @@ class Program {
 }
 
 class LanguageService {
+    #compilerObject;
+    #compilerHost;
+    #program;
+    #context;
+    #projectVersion = 0;
     get compilerObject() {
-        return this._compilerObject;
+        return this.#compilerObject;
     }
     constructor(params) {
-        var _a;
-        this._projectVersion = 0;
-        this._context = params.context;
+        this.#context = params.context;
         const { languageServiceHost, compilerHost } = createHosts({
-            transactionalFileSystem: this._context.fileSystemWrapper,
-            sourceFileContainer: this._context.getSourceFileContainer(),
-            compilerOptions: this._context.compilerOptions,
-            getNewLine: () => this._context.manipulationSettings.getNewLineKindAsString(),
-            getProjectVersion: () => `${this._projectVersion}`,
-            resolutionHost: (_a = params.resolutionHost) !== null && _a !== void 0 ? _a : {},
+            transactionalFileSystem: this.#context.fileSystemWrapper,
+            sourceFileContainer: this.#context.getSourceFileContainer(),
+            compilerOptions: this.#context.compilerOptions,
+            getNewLine: () => this.#context.manipulationSettings.getNewLineKindAsString(),
+            getProjectVersion: () => `${this.#projectVersion}`,
+            resolutionHost: params.resolutionHost ?? {},
             libFolderPath: params.libFolderPath,
             skipLoadingLibFiles: params.skipLoadingLibFiles,
         });
-        this._compilerHost = compilerHost;
-        this._compilerObject = ts.createLanguageService(languageServiceHost, this._context.compilerFactory.documentRegistry);
-        this._program = new Program({
-            context: this._context,
-            rootNames: Array.from(this._context.compilerFactory.getSourceFilePaths()),
-            host: this._compilerHost,
+        this.#compilerHost = compilerHost;
+        this.#compilerObject = ts.createLanguageService(languageServiceHost, this.#context.compilerFactory.documentRegistry);
+        this.#program = new Program({
+            context: this.#context,
+            rootNames: Array.from(this.#context.compilerFactory.getSourceFilePaths()),
+            host: this.#compilerHost,
             configFileParsingDiagnostics: params.configFileParsingDiagnostics,
         });
-        this._context.compilerFactory.onSourceFileAdded(sourceFile => {
+        this.#context.compilerFactory.onSourceFileAdded(sourceFile => {
             if (sourceFile._isInProject())
                 this._reset();
         });
-        this._context.compilerFactory.onSourceFileRemoved(() => this._reset());
+        this.#context.compilerFactory.onSourceFileRemoved(() => this._reset());
     }
     _reset() {
-        this._projectVersion += 1;
-        this._program._reset(Array.from(this._context.compilerFactory.getSourceFilePaths()), this._compilerHost);
+        this.#projectVersion += 1;
+        this.#program._reset(Array.from(this.#context.compilerFactory.getSourceFilePaths()), this.#compilerHost);
     }
     getProgram() {
-        return this._program;
+        return this.#program;
     }
     getDefinitions(node) {
         return this.getDefinitionsAtPosition(node._sourceFile, node.getStart());
     }
     getDefinitionsAtPosition(sourceFile, pos) {
         const results = this.compilerObject.getDefinitionAtPosition(sourceFile.getFilePath(), pos) || [];
-        return results.map(info => this._context.compilerFactory.getDefinitionInfo(info));
+        return results.map(info => this.#context.compilerFactory.getDefinitionInfo(info));
     }
     getImplementations(node) {
         return this.getImplementationsAtPosition(node._sourceFile, node.getStart());
     }
     getImplementationsAtPosition(sourceFile, pos) {
         const results = this.compilerObject.getImplementationAtPosition(sourceFile.getFilePath(), pos) || [];
-        return results.map(location => new ImplementationLocation(this._context, location));
+        return results.map(location => new ImplementationLocation(this.#context, location));
     }
     findReferences(node) {
         return this.findReferencesAtPosition(node._sourceFile, node.getStart());
@@ -17916,34 +17937,34 @@ class LanguageService {
     }
     findReferencesAtPosition(sourceFile, pos) {
         const results = this.compilerObject.findReferences(sourceFile.getFilePath(), pos) || [];
-        return results.map(s => this._context.compilerFactory.getReferencedSymbol(s));
+        return results.map(s => this.#context.compilerFactory.getReferencedSymbol(s));
     }
     findRenameLocations(node, options = {}) {
         const usePrefixAndSuffixText = options.usePrefixAndSuffixText == null
-            ? this._context.manipulationSettings.getUsePrefixAndSuffixTextForRename()
+            ? this.#context.manipulationSettings.getUsePrefixAndSuffixTextForRename()
             : options.usePrefixAndSuffixText;
         const renameLocations = this.compilerObject.findRenameLocations(node._sourceFile.getFilePath(), node.getStart(), options.renameInStrings || false, options.renameInComments || false, usePrefixAndSuffixText) || [];
-        return renameLocations.map(l => new RenameLocation(this._context, l));
+        return renameLocations.map(l => new RenameLocation(this.#context, l));
     }
     getSuggestionDiagnostics(filePathOrSourceFile) {
-        const filePath = this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
+        const filePath = this.#getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
         const suggestionDiagnostics = this.compilerObject.getSuggestionDiagnostics(filePath);
-        return suggestionDiagnostics.map(d => this._context.compilerFactory.getDiagnosticWithLocation(d));
+        return suggestionDiagnostics.map(d => this.#context.compilerFactory.getDiagnosticWithLocation(d));
     }
     getFormattingEditsForRange(filePath, range, formatSettings) {
-        return (this.compilerObject.getFormattingEditsForRange(filePath, range[0], range[1], this._getFilledSettings(formatSettings)) || []).map(e => new TextChange(e));
+        return (this.compilerObject.getFormattingEditsForRange(filePath, range[0], range[1], this.#getFilledSettings(formatSettings)) || []).map(e => new TextChange(e));
     }
     getFormattingEditsForDocument(filePath, formatSettings) {
-        const standardizedFilePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
-        return (this.compilerObject.getFormattingEditsForDocument(standardizedFilePath, this._getFilledSettings(formatSettings)) || [])
+        const standardizedFilePath = this.#context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
+        return (this.compilerObject.getFormattingEditsForDocument(standardizedFilePath, this.#getFilledSettings(formatSettings)) || [])
             .map(e => new TextChange(e));
     }
     getFormattedDocumentText(filePath, formatSettings) {
-        const standardizedFilePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
-        const sourceFile = this._context.compilerFactory.getSourceFileFromCacheFromFilePath(standardizedFilePath);
+        const standardizedFilePath = this.#context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
+        const sourceFile = this.#context.compilerFactory.getSourceFileFromCacheFromFilePath(standardizedFilePath);
         if (sourceFile == null)
             throw new errors.FileNotFoundError(standardizedFilePath);
-        formatSettings = this._getFilledSettings(formatSettings);
+        formatSettings = this.#getFilledSettings(formatSettings);
         const formattingEdits = this.getFormattingEditsForDocument(standardizedFilePath, formatSettings);
         let newText = getTextFromTextChanges(sourceFile, formattingEdits);
         const newLineChar = formatSettings.newLineCharacter;
@@ -17952,9 +17973,9 @@ class LanguageService {
         return newText.replace(/\r?\n/g, newLineChar);
     }
     getEmitOutput(filePathOrSourceFile, emitOnlyDtsFiles) {
-        const filePath = this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
+        const filePath = this.#getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
         const compilerObject = this.compilerObject;
-        return new EmitOutput(this._context, getCompilerEmitOutput());
+        return new EmitOutput(this.#context, getCompilerEmitOutput());
         function getCompilerEmitOutput() {
             const program = compilerObject.getProgram();
             if (program == null || program.getSourceFile(filePath) == null)
@@ -17963,67 +17984,69 @@ class LanguageService {
         }
     }
     getIdentationAtPosition(filePathOrSourceFile, position, settings) {
-        const filePath = this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
+        const filePath = this.#getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
         if (settings == null)
-            settings = this._context.manipulationSettings.getEditorSettings();
+            settings = this.#context.manipulationSettings.getEditorSettings();
         else
-            fillDefaultEditorSettings(settings, this._context.manipulationSettings);
+            fillDefaultEditorSettings(settings, this.#context.manipulationSettings);
         return this.compilerObject.getIndentationAtPosition(filePath, position, settings);
     }
     organizeImports(filePathOrSourceFile, formatSettings = {}, userPreferences = {}) {
         const scope = {
             type: "file",
-            fileName: this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile),
+            fileName: this.#getFilePathFromFilePathOrSourceFile(filePathOrSourceFile),
         };
-        return this.compilerObject.organizeImports(scope, this._getFilledSettings(formatSettings), this._getFilledUserPreferences(userPreferences))
-            .map(fileTextChanges => new FileTextChanges(this._context, fileTextChanges));
+        return this.compilerObject.organizeImports(scope, this.#getFilledSettings(formatSettings), this.#getFilledUserPreferences(userPreferences))
+            .map(fileTextChanges => new FileTextChanges(this.#context, fileTextChanges));
     }
     getEditsForRefactor(filePathOrSourceFile, formatSettings, positionOrRange, refactorName, actionName, preferences = {}) {
-        const filePath = this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
+        const filePath = this.#getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
         const position = typeof positionOrRange === "number" ? positionOrRange : { pos: positionOrRange.getPos(), end: positionOrRange.getEnd() };
-        const compilerObject = this.compilerObject.getEditsForRefactor(filePath, this._getFilledSettings(formatSettings), position, refactorName, actionName, this._getFilledUserPreferences(preferences));
-        return compilerObject != null ? new RefactorEditInfo(this._context, compilerObject) : undefined;
+        const compilerObject = this.compilerObject.getEditsForRefactor(filePath, this.#getFilledSettings(formatSettings), position, refactorName, actionName, this.#getFilledUserPreferences(preferences));
+        return compilerObject != null ? new RefactorEditInfo(this.#context, compilerObject) : undefined;
     }
     getCombinedCodeFix(filePathOrSourceFile, fixId, formatSettings = {}, preferences = {}) {
         const compilerResult = this.compilerObject.getCombinedCodeFix({
             type: "file",
-            fileName: this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile),
-        }, fixId, this._getFilledSettings(formatSettings), this._getFilledUserPreferences(preferences || {}));
-        return new CombinedCodeActions(this._context, compilerResult);
+            fileName: this.#getFilePathFromFilePathOrSourceFile(filePathOrSourceFile),
+        }, fixId, this.#getFilledSettings(formatSettings), this.#getFilledUserPreferences(preferences || {}));
+        return new CombinedCodeActions(this.#context, compilerResult);
     }
     getCodeFixesAtPosition(filePathOrSourceFile, start, end, errorCodes, formatOptions = {}, preferences = {}) {
-        const filePath = this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
-        const compilerResult = this.compilerObject.getCodeFixesAtPosition(filePath, start, end, errorCodes, this._getFilledSettings(formatOptions), this._getFilledUserPreferences(preferences || {}));
-        return compilerResult.map(compilerObject => new CodeFixAction(this._context, compilerObject));
+        const filePath = this.#getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
+        const compilerResult = this.compilerObject.getCodeFixesAtPosition(filePath, start, end, errorCodes, this.#getFilledSettings(formatOptions), this.#getFilledUserPreferences(preferences || {}));
+        return compilerResult.map(compilerObject => new CodeFixAction(this.#context, compilerObject));
     }
-    _getFilePathFromFilePathOrSourceFile(filePathOrSourceFile) {
+    #getFilePathFromFilePathOrSourceFile(filePathOrSourceFile) {
         const filePath = typeof filePathOrSourceFile === "string"
-            ? this._context.fileSystemWrapper.getStandardizedAbsolutePath(filePathOrSourceFile)
+            ? this.#context.fileSystemWrapper.getStandardizedAbsolutePath(filePathOrSourceFile)
             : filePathOrSourceFile.getFilePath();
-        if (!this._context.compilerFactory.containsSourceFileAtPath(filePath))
+        if (!this.#context.compilerFactory.containsSourceFileAtPath(filePath))
             throw new errors.FileNotFoundError(filePath);
         return filePath;
     }
-    _getFilledSettings(settings) {
+    #getFilledSettings(settings) {
         if (settings["_filled"])
             return settings;
-        settings = Object.assign(this._context.getFormatCodeSettings(), settings);
-        fillDefaultFormatCodeSettings(settings, this._context.manipulationSettings);
+        settings = Object.assign(this.#context.getFormatCodeSettings(), settings);
+        fillDefaultFormatCodeSettings(settings, this.#context.manipulationSettings);
         settings["_filled"] = true;
         return settings;
     }
-    _getFilledUserPreferences(userPreferences) {
-        return Object.assign(this._context.getUserPreferences(), userPreferences);
+    #getFilledUserPreferences(userPreferences) {
+        return Object.assign(this.#context.getUserPreferences(), userPreferences);
     }
 }
 
 class Type {
+    _context;
+    #compilerType;
     get compilerType() {
-        return this._compilerType;
+        return this.#compilerType;
     }
     constructor(context, type) {
         this._context = context;
-        this._compilerType = type;
+        this.#compilerType = type;
     }
     getText(enclosingNode, typeFormatFlags) {
         return this._context.typeChecker.getTypeText(this, enclosingNode, typeFormatFlags);
@@ -18042,7 +18065,7 @@ class Type {
         return this._context.typeChecker.getApparentType(this);
     }
     getArrayElementTypeOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getArrayElementType(), message !== null && message !== void 0 ? message : "Expected to find an array element type.");
+        return errors.throwIfNullOrUndefined(this.getArrayElementType(), message ?? "Expected to find an array element type.");
     }
     getArrayElementType() {
         if (!this.isArray())
@@ -18063,14 +18086,14 @@ class Type {
         return this.compilerType.getConstructSignatures().map(s => this._context.compilerFactory.getSignature(s));
     }
     getConstraintOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getConstraint(), message !== null && message !== void 0 ? message : "Expected to find a constraint.");
+        return errors.throwIfNullOrUndefined(this.getConstraint(), message ?? "Expected to find a constraint.");
     }
     getConstraint() {
         const constraint = this.compilerType.getConstraint();
         return constraint == null ? undefined : this._context.compilerFactory.getType(constraint);
     }
     getDefaultOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getDefault(), message !== null && message !== void 0 ? message : "Expected to find a default type.");
+        return errors.throwIfNullOrUndefined(this.getDefault(), message ?? "Expected to find a default type.");
     }
     getDefault() {
         const defaultType = this.compilerType.getDefault();
@@ -18110,7 +18133,7 @@ class Type {
         return targetType == null ? undefined : this._context.compilerFactory.getType(targetType);
     }
     getTargetTypeOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getTargetType(), message !== null && message !== void 0 ? message : "Expected to find the target type.");
+        return errors.throwIfNullOrUndefined(this.getTargetType(), message ?? "Expected to find the target type.");
     }
     getTypeArguments() {
         return this._context.typeChecker.getTypeArguments(this);
@@ -18129,43 +18152,40 @@ class Type {
         return this.compilerType.types.map(t => this._context.compilerFactory.getType(t));
     }
     getLiteralValue() {
-        var _a;
-        return (_a = this.compilerType) === null || _a === void 0 ? void 0 : _a.value;
+        return this.compilerType?.value;
     }
     getLiteralValueOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getLiteralValue(), message !== null && message !== void 0 ? message : "Type was not a literal type.");
+        return errors.throwIfNullOrUndefined(this.getLiteralValue(), message ?? "Type was not a literal type.");
     }
     getLiteralFreshType() {
-        var _a;
-        const type = (_a = this.compilerType) === null || _a === void 0 ? void 0 : _a.freshType;
+        const type = this.compilerType?.freshType;
         return type == null ? undefined : this._context.compilerFactory.getType(type);
     }
     getLiteralFreshTypeOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getLiteralFreshType(), message !== null && message !== void 0 ? message : "Type was not a literal type.");
+        return errors.throwIfNullOrUndefined(this.getLiteralFreshType(), message ?? "Type was not a literal type.");
     }
     getLiteralRegularType() {
-        var _a;
-        const type = (_a = this.compilerType) === null || _a === void 0 ? void 0 : _a.regularType;
+        const type = this.compilerType?.regularType;
         return type == null ? undefined : this._context.compilerFactory.getType(type);
     }
     getLiteralRegularTypeOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getLiteralRegularType(), message !== null && message !== void 0 ? message : "Type was not a literal type.");
+        return errors.throwIfNullOrUndefined(this.getLiteralRegularType(), message ?? "Type was not a literal type.");
     }
     getSymbol() {
         const tsSymbol = this.compilerType.getSymbol();
         return tsSymbol == null ? undefined : this._context.compilerFactory.getSymbol(tsSymbol);
     }
     getSymbolOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getSymbol(), message !== null && message !== void 0 ? message : "Expected to find a symbol.");
+        return errors.throwIfNullOrUndefined(this.getSymbol(), message ?? "Expected to find a symbol.");
     }
     isAnonymous() {
-        return this._hasObjectFlag(ObjectFlags.Anonymous);
+        return this.#hasObjectFlag(ObjectFlags.Anonymous);
     }
     isAny() {
-        return this._hasTypeFlag(TypeFlags.Any);
+        return this.#hasTypeFlag(TypeFlags.Any);
     }
     isNever() {
-        return this._hasTypeFlag(TypeFlags.Never);
+        return this.#hasTypeFlag(TypeFlags.Never);
     }
     isArray() {
         const symbol = this.getSymbol();
@@ -18180,29 +18200,29 @@ class Type {
         return symbol.getName() === "ReadonlyArray" && this.getTypeArguments().length === 1;
     }
     isTemplateLiteral() {
-        return this._hasTypeFlag(TypeFlags.TemplateLiteral);
+        return this.#hasTypeFlag(TypeFlags.TemplateLiteral);
     }
     isBoolean() {
-        return this._hasTypeFlag(TypeFlags.Boolean);
+        return this.#hasTypeFlag(TypeFlags.Boolean);
     }
     isString() {
-        return this._hasTypeFlag(TypeFlags.String);
+        return this.#hasTypeFlag(TypeFlags.String);
     }
     isNumber() {
-        return this._hasTypeFlag(TypeFlags.Number);
+        return this.#hasTypeFlag(TypeFlags.Number);
     }
     isLiteral() {
         const isBooleanLiteralForTs3_0 = this.isBooleanLiteral();
         return this.compilerType.isLiteral() || isBooleanLiteralForTs3_0;
     }
     isBooleanLiteral() {
-        return this._hasTypeFlag(TypeFlags.BooleanLiteral);
+        return this.#hasTypeFlag(TypeFlags.BooleanLiteral);
     }
     isEnumLiteral() {
-        return this._hasTypeFlag(TypeFlags.EnumLiteral) && !this.isUnion();
+        return this.#hasTypeFlag(TypeFlags.EnumLiteral) && !this.isUnion();
     }
     isNumberLiteral() {
-        return this._hasTypeFlag(TypeFlags.NumberLiteral);
+        return this.#hasTypeFlag(TypeFlags.NumberLiteral);
     }
     isStringLiteral() {
         return this.compilerType.isStringLiteral();
@@ -18214,7 +18234,7 @@ class Type {
         return this.compilerType.isClassOrInterface();
     }
     isEnum() {
-        const hasEnumFlag = this._hasTypeFlag(TypeFlags.Enum);
+        const hasEnumFlag = this.#hasTypeFlag(TypeFlags.Enum);
         if (hasEnumFlag)
             return true;
         if (this.isEnumLiteral() && !this.isUnion())
@@ -18226,10 +18246,10 @@ class Type {
         return valueDeclaration != null && Node.isEnumDeclaration(valueDeclaration);
     }
     isInterface() {
-        return this._hasObjectFlag(ObjectFlags.Interface);
+        return this.#hasObjectFlag(ObjectFlags.Interface);
     }
     isObject() {
-        return this._hasTypeFlag(TypeFlags.Object);
+        return this.#hasTypeFlag(TypeFlags.Object);
     }
     isTypeParameter() {
         return this.compilerType.isTypeParameter();
@@ -18238,7 +18258,7 @@ class Type {
         const targetType = this.getTargetType();
         if (targetType == null)
             return false;
-        return targetType._hasObjectFlag(ObjectFlags.Tuple);
+        return targetType.#hasObjectFlag(ObjectFlags.Tuple);
     }
     isUnion() {
         return this.compilerType.isUnion();
@@ -18250,16 +18270,16 @@ class Type {
         return this.compilerType.isUnionOrIntersection();
     }
     isUnknown() {
-        return this._hasTypeFlag(TypeFlags.Unknown);
+        return this.#hasTypeFlag(TypeFlags.Unknown);
     }
     isNull() {
-        return this._hasTypeFlag(TypeFlags.Null);
+        return this.#hasTypeFlag(TypeFlags.Null);
     }
     isUndefined() {
-        return this._hasTypeFlag(TypeFlags.Undefined);
+        return this.#hasTypeFlag(TypeFlags.Undefined);
     }
     isVoid() {
-        return this._hasTypeFlag(TypeFlags.Void);
+        return this.#hasTypeFlag(TypeFlags.Void);
     }
     getFlags() {
         return this.compilerType.flags;
@@ -18269,20 +18289,20 @@ class Type {
             return 0;
         return this.compilerType.objectFlags || 0;
     }
-    _hasTypeFlag(flag) {
+    #hasTypeFlag(flag) {
         return (this.compilerType.flags & flag) === flag;
     }
-    _hasObjectFlag(flag) {
+    #hasObjectFlag(flag) {
         return (this.getObjectFlags() & flag) === flag;
     }
 }
 
 class TypeParameter extends Type {
     getConstraintOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getConstraint(), message !== null && message !== void 0 ? message : "Expected type parameter to have a constraint.");
+        return errors.throwIfNullOrUndefined(this.getConstraint(), message ?? "Expected type parameter to have a constraint.");
     }
     getConstraint() {
-        const declaration = this._getTypeParameterDeclaration();
+        const declaration = this.#getTypeParameterDeclaration();
         if (declaration == null)
             return undefined;
         const constraintNode = declaration.getConstraint();
@@ -18291,10 +18311,10 @@ class TypeParameter extends Type {
         return this._context.typeChecker.getTypeAtLocation(constraintNode);
     }
     getDefaultOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getDefault(), message !== null && message !== void 0 ? message : "Expected type parameter to have a default type.");
+        return errors.throwIfNullOrUndefined(this.getDefault(), message ?? "Expected type parameter to have a default type.");
     }
     getDefault() {
-        const declaration = this._getTypeParameterDeclaration();
+        const declaration = this.#getTypeParameterDeclaration();
         if (declaration == null)
             return undefined;
         const defaultNode = declaration.getDefault();
@@ -18302,7 +18322,7 @@ class TypeParameter extends Type {
             return undefined;
         return this._context.typeChecker.getTypeAtLocation(defaultNode);
     }
-    _getTypeParameterDeclaration() {
+    #getTypeParameterDeclaration() {
         const symbol = this.getSymbol();
         if (symbol == null)
             return undefined;
@@ -18316,49 +18336,54 @@ class TypeParameter extends Type {
 }
 
 class DirectoryEmitResult {
-    constructor(_skippedFilePaths, _outputFilePaths) {
-        this._skippedFilePaths = _skippedFilePaths;
-        this._outputFilePaths = _outputFilePaths;
+    #outputFilePaths;
+    #skippedFilePaths;
+    constructor(skippedFilePaths, outputFilePaths) {
+        this.#skippedFilePaths = skippedFilePaths;
+        this.#outputFilePaths = outputFilePaths;
     }
     getSkippedFilePaths() {
-        return this._skippedFilePaths;
+        return this.#skippedFilePaths;
     }
     getOutputFilePaths() {
-        return this._outputFilePaths;
+        return this.#outputFilePaths;
     }
 }
 
 class Directory {
+    #context;
+    #path;
+    #pathParts;
     constructor(context, path) {
-        this.__context = context;
+        this.#context = context;
         this._setPathInternal(path);
     }
     _setPathInternal(path) {
-        this._path = path;
-        this._pathParts = path.split("/").filter(p => p.length > 0);
+        this.#path = path;
+        this.#pathParts = path.split("/").filter(p => p.length > 0);
     }
     get _context() {
-        this._throwIfDeletedOrRemoved();
-        return this.__context;
+        this.#throwIfDeletedOrRemoved();
+        return this.#context;
     }
     isAncestorOf(possibleDescendant) {
-        return Directory._isAncestorOfDir(this, possibleDescendant);
+        return Directory.#isAncestorOfDir(this, possibleDescendant);
     }
     isDescendantOf(possibleAncestor) {
-        return Directory._isAncestorOfDir(possibleAncestor, this);
+        return Directory.#isAncestorOfDir(possibleAncestor, this);
     }
     _getDepth() {
-        return this._pathParts.length;
+        return this.#pathParts.length;
     }
     getPath() {
-        this._throwIfDeletedOrRemoved();
-        return this._path;
+        this.#throwIfDeletedOrRemoved();
+        return this.#path;
     }
     getBaseName() {
-        return this._pathParts[this._pathParts.length - 1];
+        return this.#pathParts[this.#pathParts.length - 1];
     }
     getParentOrThrow(message) {
-        return errors.throwIfNullOrUndefined(this.getParent(), message !== null && message !== void 0 ? message : (() => `Parent directory of ${this.getPath()} does not exist or was never added.`));
+        return errors.throwIfNullOrUndefined(this.getParent(), message ?? (() => `Parent directory of ${this.getPath()} does not exist or was never added.`));
     }
     getParent() {
         if (FileUtils.isRootDirPath(this.getPath()))
@@ -18485,7 +18510,7 @@ class Directory {
         const writeTasks = [];
         const outputFilePaths = [];
         const skippedFilePaths = [];
-        for (const emitResult of this._emitInternal(options)) {
+        for (const emitResult of this.#emitInternal(options)) {
             if (isStandardizedFilePath(emitResult))
                 skippedFilePaths.push(emitResult);
             else {
@@ -18500,7 +18525,7 @@ class Directory {
         const { fileSystemWrapper } = this._context;
         const outputFilePaths = [];
         const skippedFilePaths = [];
-        for (const emitResult of this._emitInternal(options)) {
+        for (const emitResult of this.#emitInternal(options)) {
             if (isStandardizedFilePath(emitResult))
                 skippedFilePaths.push(emitResult);
             else {
@@ -18510,7 +18535,7 @@ class Directory {
         }
         return new DirectoryEmitResult(skippedFilePaths, outputFilePaths);
     }
-    _emitInternal(options = {}) {
+    #emitInternal(options = {}) {
         const { emitOnlyDtsFiles = false } = options;
         const isJsFile = options.outDir == null ? undefined : /\.js$/i;
         const isMapFile = options.outDir == null ? undefined : /\.js\.map$/i;
@@ -18557,7 +18582,7 @@ class Directory {
         options = getDirectoryCopyOptions(options);
         if (options.includeUntrackedFiles)
             fileSystem.queueCopyDirectory(originalPath, newPath);
-        return this._copyInternal(newPath, options);
+        return this.#copyInternal(newPath, options);
     }
     async copyImmediately(relativeOrAbsolutePath, options) {
         const fileSystem = this._context.fileSystemWrapper;
@@ -18568,7 +18593,7 @@ class Directory {
             return this;
         }
         options = getDirectoryCopyOptions(options);
-        const newDir = this._copyInternal(newPath, options);
+        const newDir = this.#copyInternal(newPath, options);
         if (options.includeUntrackedFiles)
             await fileSystem.copyDirectoryImmediately(originalPath, newPath);
         await newDir.save();
@@ -18583,13 +18608,13 @@ class Directory {
             return this;
         }
         options = getDirectoryCopyOptions(options);
-        const newDir = this._copyInternal(newPath, options);
+        const newDir = this.#copyInternal(newPath, options);
         if (options.includeUntrackedFiles)
             fileSystem.copyDirectoryImmediatelySync(originalPath, newPath);
         newDir.saveSync();
         return newDir;
     }
-    _copyInternal(newPath, options) {
+    #copyInternal(newPath, options) {
         const originalPath = this.getPath();
         if (originalPath === newPath)
             return this;
@@ -18600,7 +18625,7 @@ class Directory {
         const copyingSourceFiles = this.getDescendantSourceFiles().map(sourceFile => ({
             sourceFile,
             newFilePath: fileSystem.getStandardizedAbsolutePath(this.getRelativePathTo(sourceFile), newPath),
-            references: this._getReferencesForCopy(sourceFile),
+            references: this.#getReferencesForCopy(sourceFile),
         }));
         for (const { newDirPath } of copyingDirectories)
             this._context.compilerFactory.createDirectoryOrAddIfExists(newDirPath, { markInProject: this._isInProject() });
@@ -18620,7 +18645,7 @@ class Directory {
         const newPath = fileSystem.getStandardizedAbsolutePath(relativeOrAbsolutePath, originalPath);
         if (originalPath === newPath)
             return this;
-        return this._moveInternal(newPath, options, () => fileSystem.queueMoveDirectory(originalPath, newPath));
+        return this.#moveInternal(newPath, options, () => fileSystem.queueMoveDirectory(originalPath, newPath));
     }
     async moveImmediately(relativeOrAbsolutePath, options) {
         const fileSystem = this._context.fileSystemWrapper;
@@ -18630,7 +18655,7 @@ class Directory {
             await this.save();
             return this;
         }
-        this._moveInternal(newPath, options);
+        this.#moveInternal(newPath, options);
         await fileSystem.moveDirectoryImmediately(originalPath, newPath);
         await this.save();
         return this;
@@ -18643,12 +18668,12 @@ class Directory {
             this.saveSync();
             return this;
         }
-        this._moveInternal(newPath, options);
+        this.#moveInternal(newPath, options);
         fileSystem.moveDirectoryImmediatelySync(originalPath, newPath);
         this.saveSync();
         return this;
     }
-    _moveInternal(newPath, options, preAction) {
+    #moveInternal(newPath, options, preAction) {
         const originalPath = this.getPath();
         if (originalPath === newPath)
             return this;
@@ -18666,7 +18691,7 @@ class Directory {
         const movingSourceFiles = this.getDescendantSourceFiles().map(sourceFile => ({
             sourceFile,
             newFilePath: fileSystem.getStandardizedAbsolutePath(this.getRelativePathTo(sourceFile), newPath),
-            references: this._getReferencesForMove(sourceFile),
+            references: this.#getReferencesForMove(sourceFile),
         }));
         for (const { directory, oldPath, newDirPath } of movingDirectories) {
             compilerFactory.removeDirectoryFromCache(oldPath);
@@ -18686,27 +18711,27 @@ class Directory {
     }
     clear() {
         const path = this.getPath();
-        this._deleteDescendants();
+        this.#deleteDescendants();
         this._context.fileSystemWrapper.queueDirectoryDelete(path);
         this._context.fileSystemWrapper.queueMkdir(path);
     }
     async clearImmediately() {
         const path = this.getPath();
-        this._deleteDescendants();
+        this.#deleteDescendants();
         await this._context.fileSystemWrapper.clearDirectoryImmediately(path);
     }
     clearImmediatelySync() {
         const path = this.getPath();
-        this._deleteDescendants();
+        this.#deleteDescendants();
         this._context.fileSystemWrapper.clearDirectoryImmediatelySync(path);
     }
     delete() {
         const path = this.getPath();
-        this._deleteDescendants();
+        this.#deleteDescendants();
         this._context.fileSystemWrapper.queueDirectoryDelete(path);
         this.forget();
     }
-    _deleteDescendants() {
+    #deleteDescendants() {
         for (const sourceFile of this.getSourceFiles())
             sourceFile.delete();
         for (const dir of this.getDirectories())
@@ -18737,7 +18762,7 @@ class Directory {
         if (this.wasForgotten())
             return;
         this._context.compilerFactory.removeDirectoryFromCache(this.getPath());
-        this.__context = undefined;
+        this.#context = undefined;
     }
     async save() {
         await this._context.fileSystemWrapper.saveForDirectory(this.getPath());
@@ -18811,7 +18836,7 @@ class Directory {
         return this._context.project;
     }
     wasForgotten() {
-        return this.__context == null;
+        return this.#context == null;
     }
     _isInProject() {
         return this._context.inProjectCoordinator.isDirectoryInProject(this);
@@ -18822,31 +18847,31 @@ class Directory {
     _hasLoadedParent() {
         return this._context.compilerFactory.containsDirectoryAtPath(FileUtils.getDirPath(this.getPath()));
     }
-    _throwIfDeletedOrRemoved() {
+    #throwIfDeletedOrRemoved() {
         if (this.wasForgotten())
             throw new errors.InvalidOperationError("Cannot use a directory that was deleted, removed, or overwritten.");
     }
-    _getReferencesForCopy(sourceFile) {
+    #getReferencesForCopy(sourceFile) {
         const literalReferences = sourceFile._getReferencesForCopyInternal();
         return literalReferences.filter(r => !this.isAncestorOf(r[1]));
     }
-    _getReferencesForMove(sourceFile) {
+    #getReferencesForMove(sourceFile) {
         const { literalReferences, referencingLiterals } = sourceFile._getReferencesForMoveInternal();
         return {
             literalReferences: literalReferences.filter(r => !this.isAncestorOf(r[1])),
             referencingLiterals: referencingLiterals.filter(l => !this.isAncestorOf(l._sourceFile)),
         };
     }
-    static _isAncestorOfDir(ancestor, descendant) {
+    static #isAncestorOfDir(ancestor, descendant) {
         if (descendant instanceof SourceFile) {
             descendant = descendant.getDirectory();
             if (ancestor === descendant)
                 return true;
         }
-        if (ancestor._pathParts.length >= descendant._pathParts.length)
+        if (ancestor.#pathParts.length >= descendant.#pathParts.length)
             return false;
-        for (let i = ancestor._pathParts.length - 1; i >= 0; i--) {
-            if (ancestor._pathParts[i] !== descendant._pathParts[i])
+        for (let i = ancestor.#pathParts.length - 1; i >= 0; i--) {
+            if (ancestor.#pathParts[i] !== descendant.#pathParts[i])
                 return false;
         }
         return true;
@@ -18862,17 +18887,19 @@ function isStandardizedFilePath(filePath) {
 }
 
 class DirectoryCoordinator {
+    #fileSystemWrapper;
+    #compilerFactory;
     constructor(compilerFactory, fileSystemWrapper) {
-        this.compilerFactory = compilerFactory;
-        this.fileSystemWrapper = fileSystemWrapper;
+        this.#compilerFactory = compilerFactory;
+        this.#fileSystemWrapper = fileSystemWrapper;
     }
     addDirectoryAtPathIfExists(dirPath, options) {
-        const directory = this.compilerFactory.getDirectoryFromPath(dirPath, options);
+        const directory = this.#compilerFactory.getDirectoryFromPath(dirPath, options);
         if (directory == null)
             return undefined;
         if (options.recursive) {
-            for (const descendantDirPath of FileUtils.getDescendantDirectories(this.fileSystemWrapper, dirPath))
-                this.compilerFactory.createDirectoryOrAddIfExists(descendantDirPath, options);
+            for (const descendantDirPath of FileUtils.getDescendantDirectories(this.#fileSystemWrapper, dirPath))
+                this.#compilerFactory.createDirectoryOrAddIfExists(descendantDirPath, options);
         }
         return directory;
     }
@@ -18883,10 +18910,10 @@ class DirectoryCoordinator {
         return directory;
     }
     createDirectoryOrAddIfExists(dirPath, options) {
-        return this.compilerFactory.createDirectoryOrAddIfExists(dirPath, options);
+        return this.#compilerFactory.createDirectoryOrAddIfExists(dirPath, options);
     }
     addSourceFileAtPathIfExists(filePath, options) {
-        return this.compilerFactory.addOrGetSourceFileFromFilePath(filePath, {
+        return this.#compilerFactory.addOrGetSourceFileFromFilePath(filePath, {
             markInProject: options.markInProject,
             scriptKind: undefined,
         });
@@ -18894,7 +18921,7 @@ class DirectoryCoordinator {
     addSourceFileAtPath(filePath, options) {
         const sourceFile = this.addSourceFileAtPathIfExists(filePath, options);
         if (sourceFile == null)
-            throw new errors.FileNotFoundError(this.fileSystemWrapper.getStandardizedAbsolutePath(filePath));
+            throw new errors.FileNotFoundError(this.#fileSystemWrapper.getStandardizedAbsolutePath(filePath));
         return sourceFile;
     }
     addSourceFilesAtPaths(fileGlobs, options) {
@@ -18902,7 +18929,7 @@ class DirectoryCoordinator {
             fileGlobs = [fileGlobs];
         const sourceFiles = [];
         const globbedDirectories = new Set();
-        for (const filePath of this.fileSystemWrapper.globSync(fileGlobs)) {
+        for (const filePath of this.#fileSystemWrapper.globSync(fileGlobs)) {
             const sourceFile = this.addSourceFileAtPathIfExists(filePath, options);
             if (sourceFile != null)
                 sourceFiles.push(sourceFile);
@@ -18915,31 +18942,32 @@ class DirectoryCoordinator {
 }
 
 class DirectoryCache {
+    #context;
+    #directoriesByPath = new KeyValueCache();
+    #sourceFilesByDirPath = new KeyValueCache();
+    #directoriesByDirPath = new KeyValueCache();
+    #orphanDirs = new KeyValueCache();
     constructor(context) {
-        this.context = context;
-        this.directoriesByPath = new KeyValueCache();
-        this.sourceFilesByDirPath = new KeyValueCache();
-        this.directoriesByDirPath = new KeyValueCache();
-        this.orphanDirs = new KeyValueCache();
+        this.#context = context;
     }
     has(dirPath) {
-        return this.directoriesByPath.has(dirPath);
+        return this.#directoriesByPath.has(dirPath);
     }
     get(dirPath) {
-        if (!this.directoriesByPath.has(dirPath)) {
-            for (const orphanDir of this.orphanDirs.getValues()) {
+        if (!this.#directoriesByPath.has(dirPath)) {
+            for (const orphanDir of this.#orphanDirs.getValues()) {
                 if (FileUtils.pathStartsWith(orphanDir.getPath(), dirPath))
                     return this.createOrAddIfExists(dirPath);
             }
             return undefined;
         }
-        return this.directoriesByPath.get(dirPath);
+        return this.#directoriesByPath.get(dirPath);
     }
     getOrphans() {
-        return this.orphanDirs.getValues();
+        return this.#orphanDirs.getValues();
     }
     getAll() {
-        return this.directoriesByPath.getValuesAsArray();
+        return this.#directoriesByPath.getValuesAsArray();
     }
     *getAllByDepth() {
         const dirLevels = new KeyValueCache();
@@ -18964,21 +18992,19 @@ class DirectoryCache {
         }
     }
     remove(dirPath) {
-        this.removeFromDirectoriesByDirPath(dirPath);
-        this.directoriesByPath.removeByKey(dirPath);
-        this.orphanDirs.removeByKey(dirPath);
+        this.#removeFromDirectoriesByDirPath(dirPath);
+        this.#directoriesByPath.removeByKey(dirPath);
+        this.#orphanDirs.removeByKey(dirPath);
     }
     *getChildDirectoriesOfDirectory(dirPath) {
-        var _a;
-        const entries = (_a = this.directoriesByDirPath.get(dirPath)) === null || _a === void 0 ? void 0 : _a.entries();
+        const entries = this.#directoriesByDirPath.get(dirPath)?.entries();
         if (entries == null)
             return;
         for (const dir of entries)
             yield dir;
     }
     *getChildSourceFilesOfDirectory(dirPath) {
-        var _a;
-        const entries = (_a = this.sourceFilesByDirPath.get(dirPath)) === null || _a === void 0 ? void 0 : _a.entries();
+        const entries = this.#sourceFilesByDirPath.get(dirPath)?.entries();
         if (entries == null)
             return;
         for (const sourceFile of entries)
@@ -18987,26 +19013,26 @@ class DirectoryCache {
     addSourceFile(sourceFile) {
         const dirPath = sourceFile.getDirectoryPath();
         this.createOrAddIfExists(dirPath);
-        const sourceFiles = this.sourceFilesByDirPath.getOrCreate(dirPath, () => new SortedKeyValueArray(item => item.getBaseName(), LocaleStringComparer.instance));
+        const sourceFiles = this.#sourceFilesByDirPath.getOrCreate(dirPath, () => new SortedKeyValueArray(item => item.getBaseName(), LocaleStringComparer.instance));
         sourceFiles.set(sourceFile);
     }
     removeSourceFile(filePath) {
         const dirPath = FileUtils.getDirPath(filePath);
-        const sourceFiles = this.sourceFilesByDirPath.get(dirPath);
+        const sourceFiles = this.#sourceFilesByDirPath.get(dirPath);
         if (sourceFiles == null)
             return;
         sourceFiles.removeByKey(FileUtils.getBaseName(filePath));
         if (!sourceFiles.hasItems())
-            this.sourceFilesByDirPath.removeByKey(dirPath);
+            this.#sourceFilesByDirPath.removeByKey(dirPath);
     }
     createOrAddIfExists(dirPath) {
         if (this.has(dirPath))
             return this.get(dirPath);
-        this.fillParentsOfDirPath(dirPath);
-        return this.createDirectory(dirPath);
+        this.#fillParentsOfDirPath(dirPath);
+        return this.#createDirectory(dirPath);
     }
-    createDirectory(path) {
-        const newDirectory = new Directory(this.context, path);
+    #createDirectory(path) {
+        const newDirectory = new Directory(this.#context, path);
         this.addDirectory(newDirectory);
         return newDirectory;
     }
@@ -19014,52 +19040,52 @@ class DirectoryCache {
         const path = directory.getPath();
         const parentDirPath = FileUtils.getDirPath(path);
         const isRootDir = parentDirPath === path;
-        for (const orphanDir of this.orphanDirs.getValues()) {
+        for (const orphanDir of this.#orphanDirs.getValues()) {
             const orphanDirPath = orphanDir.getPath();
             const orphanDirParentPath = FileUtils.getDirPath(orphanDirPath);
             const isOrphanRootDir = orphanDirParentPath === orphanDirPath;
             if (!isOrphanRootDir && orphanDirParentPath === path)
-                this.orphanDirs.removeByKey(orphanDirPath);
+                this.#orphanDirs.removeByKey(orphanDirPath);
         }
         if (!isRootDir)
-            this.addToDirectoriesByDirPath(directory);
+            this.#addToDirectoriesByDirPath(directory);
         if (!this.has(parentDirPath))
-            this.orphanDirs.set(path, directory);
-        this.directoriesByPath.set(path, directory);
-        if (!this.context.fileSystemWrapper.directoryExistsSync(path))
-            this.context.fileSystemWrapper.queueMkdir(path);
-        for (const orphanDir of this.orphanDirs.getValues()) {
+            this.#orphanDirs.set(path, directory);
+        this.#directoriesByPath.set(path, directory);
+        if (!this.#context.fileSystemWrapper.directoryExistsSync(path))
+            this.#context.fileSystemWrapper.queueMkdir(path);
+        for (const orphanDir of this.#orphanDirs.getValues()) {
             if (directory.isAncestorOf(orphanDir))
-                this.fillParentsOfDirPath(orphanDir.getPath());
+                this.#fillParentsOfDirPath(orphanDir.getPath());
         }
     }
-    addToDirectoriesByDirPath(directory) {
+    #addToDirectoriesByDirPath(directory) {
         if (FileUtils.isRootDirPath(directory.getPath()))
             return;
         const parentDirPath = FileUtils.getDirPath(directory.getPath());
-        const directories = this.directoriesByDirPath.getOrCreate(parentDirPath, () => new SortedKeyValueArray(item => item.getBaseName(), LocaleStringComparer.instance));
+        const directories = this.#directoriesByDirPath.getOrCreate(parentDirPath, () => new SortedKeyValueArray(item => item.getBaseName(), LocaleStringComparer.instance));
         directories.set(directory);
     }
-    removeFromDirectoriesByDirPath(dirPath) {
+    #removeFromDirectoriesByDirPath(dirPath) {
         if (FileUtils.isRootDirPath(dirPath))
             return;
         const parentDirPath = FileUtils.getDirPath(dirPath);
-        const directories = this.directoriesByDirPath.get(parentDirPath);
+        const directories = this.#directoriesByDirPath.get(parentDirPath);
         if (directories == null)
             return;
         directories.removeByKey(FileUtils.getBaseName(dirPath));
         if (!directories.hasItems())
-            this.directoriesByDirPath.removeByKey(parentDirPath);
+            this.#directoriesByDirPath.removeByKey(parentDirPath);
     }
-    fillParentsOfDirPath(dirPath) {
+    #fillParentsOfDirPath(dirPath) {
         const passedDirPaths = [];
         let parentDir = FileUtils.getDirPath(dirPath);
         while (dirPath !== parentDir) {
             dirPath = parentDir;
             parentDir = FileUtils.getDirPath(dirPath);
-            if (this.directoriesByPath.has(dirPath)) {
+            if (this.#directoriesByPath.has(dirPath)) {
                 for (const currentDirPath of passedDirPaths)
-                    this.createDirectory(currentDirPath);
+                    this.#createDirectory(currentDirPath);
                 break;
             }
             passedDirPaths.unshift(dirPath);
@@ -19068,46 +19094,43 @@ class DirectoryCache {
 }
 
 class ForgetfulNodeCache extends KeyValueCache {
-    constructor() {
-        super(...arguments);
-        this.forgetStack = [];
-    }
+    #forgetStack = [];
     getOrCreate(key, createFunc) {
         return super.getOrCreate(key, () => {
             const node = createFunc();
-            if (this.forgetStack.length > 0)
-                this.forgetStack[this.forgetStack.length - 1].add(node);
+            if (this.#forgetStack.length > 0)
+                this.#forgetStack[this.#forgetStack.length - 1].add(node);
             return node;
         });
     }
     setForgetPoint() {
-        this.forgetStack.push(new Set());
+        this.#forgetStack.push(new Set());
     }
     forgetLastPoint() {
-        const nodes = this.forgetStack.pop();
+        const nodes = this.#forgetStack.pop();
         if (nodes != null)
-            this.forgetNodes(nodes.values());
+            this.#forgetNodes(nodes.values());
     }
     rememberNode(node) {
         if (node.wasForgotten())
             throw new errors.InvalidOperationError("Cannot remember a node that was removed or forgotten.");
         let wasInForgetStack = false;
-        for (const stackItem of this.forgetStack) {
+        for (const stackItem of this.#forgetStack) {
             if (stackItem.delete(node)) {
                 wasInForgetStack = true;
                 break;
             }
         }
         if (wasInForgetStack)
-            this.rememberParentOfNode(node);
+            this.#rememberParentOfNode(node);
         return wasInForgetStack;
     }
-    rememberParentOfNode(node) {
+    #rememberParentOfNode(node) {
         const parent = node.getParentSyntaxList() || node.getParent();
         if (parent != null)
             this.rememberNode(parent);
     }
-    forgetNodes(nodes) {
+    #forgetNodes(nodes) {
         for (const node of nodes) {
             if (node.wasForgotten() || node.getKind() === SyntaxKind.SourceFile)
                 continue;
@@ -19123,8 +19146,6 @@ const kindToWrapperMappings = {
     [SyntaxKind.ArrayType]: ArrayTypeNode,
     [SyntaxKind.ArrowFunction]: ArrowFunction,
     [SyntaxKind.AsExpression]: AsExpression,
-    [SyntaxKind.AssertClause]: AssertClause,
-    [SyntaxKind.AssertEntry]: AssertEntry,
     [SyntaxKind.AwaitExpression]: AwaitExpression,
     [SyntaxKind.BigIntLiteral]: BigIntLiteral,
     [SyntaxKind.BindingElement]: BindingElement,
@@ -19178,7 +19199,8 @@ const kindToWrapperMappings = {
     [SyntaxKind.ImportEqualsDeclaration]: ImportEqualsDeclaration,
     [SyntaxKind.ImportSpecifier]: ImportSpecifier,
     [SyntaxKind.ImportType]: ImportTypeNode,
-    [SyntaxKind.ImportTypeAssertionContainer]: ImportTypeAssertionContainer,
+    [SyntaxKind.ImportAttribute]: ImportAttribute,
+    [SyntaxKind.ImportAttributes]: ImportAttributes,
     [SyntaxKind.IndexedAccessType]: IndexedAccessTypeNode,
     [SyntaxKind.IndexSignature]: IndexSignatureDeclaration,
     [SyntaxKind.InferType]: InferTypeNode,
@@ -19328,102 +19350,105 @@ const kindToWrapperMappings = {
 };
 
 class CompilerFactory {
+    #context;
+    #sourceFileCacheByFilePath = new Map();
+    #diagnosticCache = new WeakCache();
+    #definitionInfoCache = new WeakCache();
+    #documentSpanCache = new WeakCache();
+    #diagnosticMessageChainCache = new WeakCache();
+    #jsDocTagInfoCache = new WeakCache();
+    #signatureCache = new WeakCache();
+    #symbolCache = new WeakCache();
+    #symbolDisplayPartCache = new WeakCache();
+    #referencedSymbolEntryCache = new WeakCache();
+    #referencedSymbolCache = new WeakCache();
+    #referencedSymbolDefinitionInfoCache = new WeakCache();
+    #typeCache = new WeakCache();
+    #typeParameterCache = new WeakCache();
+    #nodeCache = new ForgetfulNodeCache();
+    #directoryCache;
+    #sourceFileAddedEventContainer = new EventContainer();
+    #sourceFileRemovedEventContainer = new EventContainer();
+    documentRegistry;
     constructor(context) {
-        this.context = context;
-        this.sourceFileCacheByFilePath = new Map();
-        this.diagnosticCache = new WeakCache();
-        this.definitionInfoCache = new WeakCache();
-        this.documentSpanCache = new WeakCache();
-        this.diagnosticMessageChainCache = new WeakCache();
-        this.jsDocTagInfoCache = new WeakCache();
-        this.signatureCache = new WeakCache();
-        this.symbolCache = new WeakCache();
-        this.symbolDisplayPartCache = new WeakCache();
-        this.referencedSymbolEntryCache = new WeakCache();
-        this.referencedSymbolCache = new WeakCache();
-        this.referencedSymbolDefinitionInfoCache = new WeakCache();
-        this.typeCache = new WeakCache();
-        this.typeParameterCache = new WeakCache();
-        this.nodeCache = new ForgetfulNodeCache();
-        this.sourceFileAddedEventContainer = new EventContainer();
-        this.sourceFileRemovedEventContainer = new EventContainer();
         this.documentRegistry = new DocumentRegistry(context.fileSystemWrapper);
-        this.directoryCache = new DirectoryCache(context);
-        this.context.compilerOptions.onModified(() => {
-            const currentSourceFiles = Array.from(this.sourceFileCacheByFilePath.values());
+        this.#directoryCache = new DirectoryCache(context);
+        context.compilerOptions.onModified(() => {
+            const currentSourceFiles = Array.from(this.#sourceFileCacheByFilePath.values());
             for (const sourceFile of currentSourceFiles) {
                 replaceSourceFileForCacheUpdate(sourceFile);
             }
         });
+        this.#context = context;
     }
     *getSourceFilesByDirectoryDepth() {
         for (const dir of this.getDirectoriesByDepth())
             yield* dir.getSourceFiles();
     }
     getSourceFilePaths() {
-        return this.sourceFileCacheByFilePath.keys();
+        return this.#sourceFileCacheByFilePath.keys();
     }
     getChildDirectoriesOfDirectory(dirPath) {
-        return this.directoryCache.getChildDirectoriesOfDirectory(dirPath);
+        return this.#directoryCache.getChildDirectoriesOfDirectory(dirPath);
     }
     getChildSourceFilesOfDirectory(dirPath) {
-        return this.directoryCache.getChildSourceFilesOfDirectory(dirPath);
+        return this.#directoryCache.getChildSourceFilesOfDirectory(dirPath);
     }
     onSourceFileAdded(subscription, subscribe = true) {
         if (subscribe)
-            this.sourceFileAddedEventContainer.subscribe(subscription);
+            this.#sourceFileAddedEventContainer.subscribe(subscription);
         else
-            this.sourceFileAddedEventContainer.unsubscribe(subscription);
+            this.#sourceFileAddedEventContainer.unsubscribe(subscription);
     }
     onSourceFileRemoved(subscription) {
-        this.sourceFileRemovedEventContainer.subscribe(subscription);
+        this.#sourceFileRemovedEventContainer.subscribe(subscription);
     }
     createSourceFile(filePath, sourceFileText, options) {
-        sourceFileText = sourceFileText instanceof Function ? getTextFromStringOrWriter(this.context.createWriter(), sourceFileText) : sourceFileText || "";
+        sourceFileText = sourceFileText instanceof Function ? getTextFromStringOrWriter(this.#context.createWriter(), sourceFileText) : sourceFileText || "";
         if (typeof sourceFileText === "string")
             return this.createSourceFileFromText(filePath, sourceFileText, options);
-        const writer = this.context.createWriter();
-        const structurePrinter = this.context.structurePrinterFactory.forSourceFile({
+        const writer = this.#context.createWriter();
+        const structurePrinter = this.#context.structurePrinterFactory.forSourceFile({
             isAmbient: FileUtils.getExtension(filePath) === ".d.ts",
         });
         structurePrinter.printText(writer, sourceFileText);
         return this.createSourceFileFromText(filePath, writer.toString(), options);
     }
     createSourceFileFromText(filePath, sourceText, options) {
-        filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
+        filePath = this.#context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
         if (options.overwrite === true)
-            return this.createOrOverwriteSourceFileFromText(filePath, sourceText, options);
+            return this.#createOrOverwriteSourceFileFromText(filePath, sourceText, options);
         this.throwIfFileExists(filePath, "Did you mean to provide the overwrite option?");
-        return this.createSourceFileFromTextInternal(filePath, sourceText, options);
+        return this.#createSourceFileFromTextInternal(filePath, sourceText, options);
     }
     throwIfFileExists(filePath, prefixMessage) {
-        if (!this.containsSourceFileAtPath(filePath) && !this.context.fileSystemWrapper.fileExistsSync(filePath))
+        if (!this.containsSourceFileAtPath(filePath) && !this.#context.fileSystemWrapper.fileExistsSync(filePath))
             return;
         prefixMessage = prefixMessage == null ? "" : prefixMessage + " ";
         throw new errors.InvalidOperationError(`${prefixMessage}A source file already exists at the provided file path: ${filePath}`);
     }
-    createOrOverwriteSourceFileFromText(filePath, sourceText, options) {
-        filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
+    #createOrOverwriteSourceFileFromText(filePath, sourceText, options) {
+        filePath = this.#context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
         const existingSourceFile = this.addOrGetSourceFileFromFilePath(filePath, options);
         if (existingSourceFile != null) {
             existingSourceFile.getChildren().forEach(c => c.forget());
             this.replaceCompilerNode(existingSourceFile, this.createCompilerSourceFileFromText(filePath, sourceText, options.scriptKind));
             return existingSourceFile;
         }
-        return this.createSourceFileFromTextInternal(filePath, sourceText, options);
+        return this.#createSourceFileFromTextInternal(filePath, sourceText, options);
     }
     getSourceFileFromCacheFromFilePath(filePath) {
-        filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
-        return this.sourceFileCacheByFilePath.get(filePath);
+        filePath = this.#context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
+        return this.#sourceFileCacheByFilePath.get(filePath);
     }
     addOrGetSourceFileFromFilePath(filePath, options) {
-        filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
-        let sourceFile = this.sourceFileCacheByFilePath.get(filePath);
+        filePath = this.#context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
+        let sourceFile = this.#sourceFileCacheByFilePath.get(filePath);
         if (sourceFile == null) {
-            const fileText = this.context.fileSystemWrapper.readFileIfExistsSync(filePath, this.context.getEncoding());
+            const fileText = this.#context.fileSystemWrapper.readFileIfExistsSync(filePath, this.#context.getEncoding());
             if (fileText != null) {
-                this.context.logger.log(`Loaded file: ${filePath}`);
-                sourceFile = this.createSourceFileFromTextInternal(filePath, fileText, options);
+                this.#context.logger.log(`Loaded file: ${filePath}`);
+                sourceFile = this.#createSourceFileFromTextInternal(filePath, fileText, options);
                 sourceFile._setIsSaved(true);
             }
         }
@@ -19432,12 +19457,12 @@ class CompilerFactory {
         return sourceFile;
     }
     containsSourceFileAtPath(filePath) {
-        filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
-        return this.sourceFileCacheByFilePath.has(filePath);
+        filePath = this.#context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
+        return this.#sourceFileCacheByFilePath.has(filePath);
     }
     containsDirectoryAtPath(dirPath) {
-        dirPath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
-        return this.directoryCache.has(dirPath);
+        dirPath = this.#context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
+        return this.#directoryCache.has(dirPath);
     }
     getSourceFileForNode(compilerNode) {
         let currentNode = compilerNode;
@@ -19449,15 +19474,15 @@ class CompilerFactory {
         return this.getSourceFile(currentNode, { markInProject: false });
     }
     hasCompilerNode(compilerNode) {
-        return this.nodeCache.has(compilerNode);
+        return this.#nodeCache.has(compilerNode);
     }
     getExistingNodeFromCompilerNode(compilerNode) {
-        return this.nodeCache.get(compilerNode);
+        return this.#nodeCache.get(compilerNode);
     }
     getNodeFromCompilerNode(compilerNode, sourceFile) {
         if (compilerNode.kind === SyntaxKind.SourceFile)
             return this.getSourceFile(compilerNode, { markInProject: false });
-        return this.nodeCache.getOrCreate(compilerNode, () => {
+        return this.#nodeCache.getOrCreate(compilerNode, () => {
             const node = createNode.call(this);
             initializeNode.call(this, node);
             return node;
@@ -19465,19 +19490,19 @@ class CompilerFactory {
         function createNode() {
             if (isCommentNode(compilerNode)) {
                 if (CommentNodeParser.isCommentStatement(compilerNode))
-                    return new CommentStatement(this.context, compilerNode, sourceFile);
+                    return new CommentStatement(this.#context, compilerNode, sourceFile);
                 if (CommentNodeParser.isCommentClassElement(compilerNode))
-                    return new CommentClassElement(this.context, compilerNode, sourceFile);
+                    return new CommentClassElement(this.#context, compilerNode, sourceFile);
                 if (CommentNodeParser.isCommentTypeElement(compilerNode))
-                    return new CommentTypeElement(this.context, compilerNode, sourceFile);
+                    return new CommentTypeElement(this.#context, compilerNode, sourceFile);
                 if (CommentNodeParser.isCommentObjectLiteralElement(compilerNode))
-                    return new CommentObjectLiteralElement(this.context, compilerNode, sourceFile);
+                    return new CommentObjectLiteralElement(this.#context, compilerNode, sourceFile);
                 if (CommentNodeParser.isCommentEnumMember(compilerNode))
-                    return new CommentEnumMember(this.context, compilerNode, sourceFile);
+                    return new CommentEnumMember(this.#context, compilerNode, sourceFile);
                 return errors.throwNotImplementedForNeverValueError(compilerNode);
             }
             const ctor = kindToWrapperMappings[compilerNode.kind] || Node;
-            return new ctor(this.context, compilerNode, sourceFile);
+            return new ctor(this.#context, compilerNode, sourceFile);
         }
         function isCommentNode(node) {
             return node._commentKind != null;
@@ -19498,7 +19523,7 @@ class CompilerFactory {
             }
         }
     }
-    createSourceFileFromTextInternal(filePath, text, options) {
+    #createSourceFileFromTextInternal(filePath, text, options) {
         const hasBom = StringUtils.hasBom(text);
         if (hasBom)
             text = StringUtils.stripBom(text);
@@ -19508,170 +19533,170 @@ class CompilerFactory {
         return sourceFile;
     }
     createCompilerSourceFileFromText(filePath, text, scriptKind) {
-        return this.documentRegistry.createOrUpdateSourceFile(filePath, this.context.compilerOptions.get(), ts.ScriptSnapshot.fromString(text), scriptKind);
+        return this.documentRegistry.createOrUpdateSourceFile(filePath, this.#context.compilerOptions.get(), ts.ScriptSnapshot.fromString(text), scriptKind);
     }
     getSourceFile(compilerSourceFile, options) {
-        var _a;
         let wasAdded = false;
-        const sourceFile = (_a = this.sourceFileCacheByFilePath.get(compilerSourceFile.fileName)) !== null && _a !== void 0 ? _a : this.nodeCache.getOrCreate(compilerSourceFile, () => {
-            const createdSourceFile = new SourceFile(this.context, compilerSourceFile);
-            if (!options.markInProject)
-                this.context.inProjectCoordinator.setSourceFileNotInProject(createdSourceFile);
-            this.addSourceFileToCache(createdSourceFile);
-            wasAdded = true;
-            return createdSourceFile;
-        });
+        const sourceFile = this.#sourceFileCacheByFilePath.get(compilerSourceFile.fileName)
+            ?? this.#nodeCache.getOrCreate(compilerSourceFile, () => {
+                const createdSourceFile = new SourceFile(this.#context, compilerSourceFile);
+                if (!options.markInProject)
+                    this.#context.inProjectCoordinator.setSourceFileNotInProject(createdSourceFile);
+                this.#addSourceFileToCache(createdSourceFile);
+                wasAdded = true;
+                return createdSourceFile;
+            });
         if (options.markInProject)
             sourceFile._markAsInProject();
         if (wasAdded)
-            this.sourceFileAddedEventContainer.fire(sourceFile);
+            this.#sourceFileAddedEventContainer.fire(sourceFile);
         return sourceFile;
     }
-    addSourceFileToCache(sourceFile) {
-        this.sourceFileCacheByFilePath.set(sourceFile.getFilePath(), sourceFile);
-        this.context.fileSystemWrapper.removeFileDelete(sourceFile.getFilePath());
-        this.directoryCache.addSourceFile(sourceFile);
+    #addSourceFileToCache(sourceFile) {
+        this.#sourceFileCacheByFilePath.set(sourceFile.getFilePath(), sourceFile);
+        this.#context.fileSystemWrapper.removeFileDelete(sourceFile.getFilePath());
+        this.#directoryCache.addSourceFile(sourceFile);
     }
     getDirectoryFromPath(dirPath, options) {
-        dirPath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
-        let directory = this.directoryCache.get(dirPath);
-        if (directory == null && this.context.fileSystemWrapper.directoryExistsSync(dirPath))
-            directory = this.directoryCache.createOrAddIfExists(dirPath);
+        dirPath = this.#context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
+        let directory = this.#directoryCache.get(dirPath);
+        if (directory == null && this.#context.fileSystemWrapper.directoryExistsSync(dirPath))
+            directory = this.#directoryCache.createOrAddIfExists(dirPath);
         if (directory != null && options.markInProject)
             directory._markAsInProject();
         return directory;
     }
     createDirectoryOrAddIfExists(dirPath, options) {
-        const directory = this.directoryCache.createOrAddIfExists(dirPath);
+        const directory = this.#directoryCache.createOrAddIfExists(dirPath);
         if (directory != null && options.markInProject)
             directory._markAsInProject();
         return directory;
     }
     getDirectoryFromCache(dirPath) {
-        return this.directoryCache.get(dirPath);
+        return this.#directoryCache.get(dirPath);
     }
     getDirectoryFromCacheOnlyIfInCache(dirPath) {
-        return this.directoryCache.has(dirPath)
-            ? this.directoryCache.get(dirPath)
+        return this.#directoryCache.has(dirPath)
+            ? this.#directoryCache.get(dirPath)
             : undefined;
     }
     getDirectoriesByDepth() {
-        return this.directoryCache.getAllByDepth();
+        return this.#directoryCache.getAllByDepth();
     }
     getOrphanDirectories() {
-        return this.directoryCache.getOrphans();
+        return this.#directoryCache.getOrphans();
     }
     getSymbolDisplayPart(compilerObject) {
-        return this.symbolDisplayPartCache.getOrCreate(compilerObject, () => new SymbolDisplayPart(compilerObject));
+        return this.#symbolDisplayPartCache.getOrCreate(compilerObject, () => new SymbolDisplayPart(compilerObject));
     }
     getType(type) {
         if ((type.flags & TypeFlags.TypeParameter) === TypeFlags.TypeParameter)
             return this.getTypeParameter(type);
-        return this.typeCache.getOrCreate(type, () => new Type(this.context, type));
+        return this.#typeCache.getOrCreate(type, () => new Type(this.#context, type));
     }
     getTypeParameter(typeParameter) {
-        return this.typeParameterCache.getOrCreate(typeParameter, () => new TypeParameter(this.context, typeParameter));
+        return this.#typeParameterCache.getOrCreate(typeParameter, () => new TypeParameter(this.#context, typeParameter));
     }
     getSignature(signature) {
-        return this.signatureCache.getOrCreate(signature, () => new Signature(this.context, signature));
+        return this.#signatureCache.getOrCreate(signature, () => new Signature(this.#context, signature));
     }
     getSymbol(symbol) {
-        return this.symbolCache.getOrCreate(symbol, () => new Symbol(this.context, symbol));
+        return this.#symbolCache.getOrCreate(symbol, () => new Symbol(this.#context, symbol));
     }
     getDefinitionInfo(compilerObject) {
-        return this.definitionInfoCache.getOrCreate(compilerObject, () => new DefinitionInfo(this.context, compilerObject));
+        return this.#definitionInfoCache.getOrCreate(compilerObject, () => new DefinitionInfo(this.#context, compilerObject));
     }
     getDocumentSpan(compilerObject) {
-        return this.documentSpanCache.getOrCreate(compilerObject, () => new DocumentSpan(this.context, compilerObject));
+        return this.#documentSpanCache.getOrCreate(compilerObject, () => new DocumentSpan(this.#context, compilerObject));
     }
     getReferencedSymbolEntry(compilerObject) {
-        return this.referencedSymbolEntryCache.getOrCreate(compilerObject, () => new ReferencedSymbolEntry(this.context, compilerObject));
+        return this.#referencedSymbolEntryCache.getOrCreate(compilerObject, () => new ReferencedSymbolEntry(this.#context, compilerObject));
     }
     getReferencedSymbol(compilerObject) {
-        return this.referencedSymbolCache.getOrCreate(compilerObject, () => new ReferencedSymbol(this.context, compilerObject));
+        return this.#referencedSymbolCache.getOrCreate(compilerObject, () => new ReferencedSymbol(this.#context, compilerObject));
     }
     getReferencedSymbolDefinitionInfo(compilerObject) {
-        return this.referencedSymbolDefinitionInfoCache.getOrCreate(compilerObject, () => new ReferencedSymbolDefinitionInfo(this.context, compilerObject));
+        return this.#referencedSymbolDefinitionInfoCache.getOrCreate(compilerObject, () => new ReferencedSymbolDefinitionInfo(this.#context, compilerObject));
     }
     getDiagnostic(diagnostic) {
-        return this.diagnosticCache.getOrCreate(diagnostic, () => {
+        return this.#diagnosticCache.getOrCreate(diagnostic, () => {
             if (diagnostic.start != null)
-                return new DiagnosticWithLocation(this.context, diagnostic);
-            return new Diagnostic(this.context, diagnostic);
+                return new DiagnosticWithLocation(this.#context, diagnostic);
+            return new Diagnostic(this.#context, diagnostic);
         });
     }
     getDiagnosticWithLocation(diagnostic) {
-        return this.diagnosticCache.getOrCreate(diagnostic, () => new DiagnosticWithLocation(this.context, diagnostic));
+        return this.#diagnosticCache.getOrCreate(diagnostic, () => new DiagnosticWithLocation(this.#context, diagnostic));
     }
     getDiagnosticMessageChain(compilerObject) {
-        return this.diagnosticMessageChainCache.getOrCreate(compilerObject, () => new DiagnosticMessageChain(compilerObject));
+        return this.#diagnosticMessageChainCache.getOrCreate(compilerObject, () => new DiagnosticMessageChain(compilerObject));
     }
     getJSDocTagInfo(jsDocTagInfo) {
-        return this.jsDocTagInfoCache.getOrCreate(jsDocTagInfo, () => new JSDocTagInfo(jsDocTagInfo));
+        return this.#jsDocTagInfoCache.getOrCreate(jsDocTagInfo, () => new JSDocTagInfo(jsDocTagInfo));
     }
     replaceCompilerNode(oldNode, newNode) {
         const nodeToReplace = oldNode instanceof Node ? oldNode.compilerNode : oldNode;
-        const node = oldNode instanceof Node ? oldNode : this.nodeCache.get(oldNode);
+        const node = oldNode instanceof Node ? oldNode : this.#nodeCache.get(oldNode);
         if (nodeToReplace.kind === SyntaxKind.SourceFile && nodeToReplace.fileName !== newNode.fileName) {
             const sourceFile = node;
-            this.removeCompilerNodeFromCache(nodeToReplace);
+            this.#removeCompilerNodeFromCache(nodeToReplace);
             sourceFile._replaceCompilerNodeFromFactory(newNode);
-            this.nodeCache.set(newNode, sourceFile);
-            this.addSourceFileToCache(sourceFile);
-            this.sourceFileAddedEventContainer.fire(sourceFile);
+            this.#nodeCache.set(newNode, sourceFile);
+            this.#addSourceFileToCache(sourceFile);
+            this.#sourceFileAddedEventContainer.fire(sourceFile);
         }
         else {
-            this.nodeCache.replaceKey(nodeToReplace, newNode);
+            this.#nodeCache.replaceKey(nodeToReplace, newNode);
             if (node != null)
                 node._replaceCompilerNodeFromFactory(newNode);
         }
     }
     removeNodeFromCache(node) {
-        this.removeCompilerNodeFromCache(node.compilerNode);
+        this.#removeCompilerNodeFromCache(node.compilerNode);
     }
-    removeCompilerNodeFromCache(compilerNode) {
-        this.nodeCache.removeByKey(compilerNode);
+    #removeCompilerNodeFromCache(compilerNode) {
+        this.#nodeCache.removeByKey(compilerNode);
         if (compilerNode.kind === SyntaxKind.SourceFile) {
             const sourceFile = compilerNode;
-            const standardizedFilePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(sourceFile.fileName);
-            this.directoryCache.removeSourceFile(standardizedFilePath);
-            const wrappedSourceFile = this.sourceFileCacheByFilePath.get(standardizedFilePath);
-            this.sourceFileCacheByFilePath.delete(standardizedFilePath);
+            const standardizedFilePath = this.#context.fileSystemWrapper.getStandardizedAbsolutePath(sourceFile.fileName);
+            this.#directoryCache.removeSourceFile(standardizedFilePath);
+            const wrappedSourceFile = this.#sourceFileCacheByFilePath.get(standardizedFilePath);
+            this.#sourceFileCacheByFilePath.delete(standardizedFilePath);
             this.documentRegistry.removeSourceFile(standardizedFilePath);
             if (wrappedSourceFile != null)
-                this.sourceFileRemovedEventContainer.fire(wrappedSourceFile);
+                this.#sourceFileRemovedEventContainer.fire(wrappedSourceFile);
         }
     }
     addDirectoryToCache(directory) {
-        this.directoryCache.addDirectory(directory);
+        this.#directoryCache.addDirectory(directory);
     }
     removeDirectoryFromCache(dirPath) {
-        this.directoryCache.remove(dirPath);
+        this.#directoryCache.remove(dirPath);
     }
     forgetNodesCreatedInBlock(block) {
-        this.nodeCache.setForgetPoint();
+        this.#nodeCache.setForgetPoint();
         let wasPromise = false;
         let result;
         try {
             result = block((...nodes) => {
                 for (const node of nodes)
-                    this.nodeCache.rememberNode(node);
+                    this.#nodeCache.rememberNode(node);
             });
             if (Node.isNode(result))
-                this.nodeCache.rememberNode(result);
+                this.#nodeCache.rememberNode(result);
             if (isPromise(result)) {
                 wasPromise = true;
                 return result.then(value => {
                     if (Node.isNode(value))
-                        this.nodeCache.rememberNode(value);
-                    this.nodeCache.forgetLastPoint();
+                        this.#nodeCache.rememberNode(value);
+                    this.#nodeCache.forgetLastPoint();
                     return value;
                 });
             }
         }
         finally {
             if (!wasPromise)
-                this.nodeCache.forgetLastPoint();
+                this.#nodeCache.forgetLastPoint();
         }
         return result;
         function isPromise(value) {
@@ -19681,32 +19706,33 @@ class CompilerFactory {
 }
 
 class InProjectCoordinator {
+    #compilerFactory;
+    #notInProjectFiles = new Set();
     constructor(compilerFactory) {
-        this.compilerFactory = compilerFactory;
-        this.notInProjectFiles = new Set();
         compilerFactory.onSourceFileRemoved(sourceFile => {
-            this.notInProjectFiles.delete(sourceFile);
+            this.#notInProjectFiles.delete(sourceFile);
         });
+        this.#compilerFactory = compilerFactory;
     }
     setSourceFileNotInProject(sourceFile) {
-        this.notInProjectFiles.add(sourceFile);
+        this.#notInProjectFiles.add(sourceFile);
         sourceFile._inProject = false;
     }
     markSourceFileAsInProject(sourceFile) {
         if (this.isSourceFileInProject(sourceFile))
             return;
-        this._internalMarkSourceFileAsInProject(sourceFile);
-        this.notInProjectFiles.delete(sourceFile);
+        this.#internalMarkSourceFileAsInProject(sourceFile);
+        this.#notInProjectFiles.delete(sourceFile);
     }
     markSourceFilesAsInProjectForResolution() {
         const nodeModulesSearchName = "/node_modules/";
-        const compilerFactory = this.compilerFactory;
+        const compilerFactory = this.#compilerFactory;
         const changedSourceFiles = [];
         const unchangedSourceFiles = [];
-        for (const sourceFile of [...this.notInProjectFiles.values()]) {
+        for (const sourceFile of [...this.#notInProjectFiles.values()]) {
             if (shouldMarkInProject(sourceFile)) {
-                this._internalMarkSourceFileAsInProject(sourceFile);
-                this.notInProjectFiles.delete(sourceFile);
+                this.#internalMarkSourceFileAsInProject(sourceFile);
+                this.#notInProjectFiles.delete(sourceFile);
                 changedSourceFiles.push(sourceFile);
             }
             else {
@@ -19732,7 +19758,7 @@ class InProjectCoordinator {
             return false;
         }
     }
-    _internalMarkSourceFileAsInProject(sourceFile) {
+    #internalMarkSourceFileAsInProject(sourceFile) {
         sourceFile._inProject = true;
         this.markDirectoryAsInProject(sourceFile.getDirectory());
     }
@@ -19744,7 +19770,7 @@ class InProjectCoordinator {
             this.setDirectoryAndFilesAsNotInProjectForTesting(subDir);
         for (const file of directory.getSourceFiles()) {
             delete file._inProject;
-            this.notInProjectFiles.add(file);
+            this.#notInProjectFiles.add(file);
         }
         delete directory._inProject;
     }
@@ -19752,7 +19778,7 @@ class InProjectCoordinator {
         if (this.isDirectoryInProject(directory))
             return;
         const inProjectCoordinator = this;
-        const compilerFactory = this.compilerFactory;
+        const compilerFactory = this.#compilerFactory;
         directory._inProject = true;
         markAncestorDirs(directory);
         function markAncestorDirs(dir) {
@@ -19781,6 +19807,7 @@ class InProjectCoordinator {
 }
 
 class StructurePrinterFactory {
+    _getFormatCodeSettings;
     constructor(_getFormatCodeSettings) {
         this._getFormatCodeSettings = _getFormatCodeSettings;
     }
@@ -19901,14 +19928,14 @@ class StructurePrinterFactory {
     forJsxSpreadAttribute() {
         return new JsxSpreadAttributeStructurePrinter(this);
     }
-    forAssertEntry() {
-        return new AssertEntryStructurePrinter(this);
-    }
     forExportAssignment() {
         return new ExportAssignmentStructurePrinter(this);
     }
     forExportDeclaration() {
         return new ExportDeclarationStructurePrinter(this);
+    }
+    forImportAttribute() {
+        return new ImportAttributeStructurePrinter(this);
     }
     forImportDeclaration() {
         return new ImportDeclarationStructurePrinter(this);
@@ -20057,13 +20084,13 @@ __decorate([
 ], StructurePrinterFactory.prototype, "forJsxSpreadAttribute", null);
 __decorate([
     Memoize
-], StructurePrinterFactory.prototype, "forAssertEntry", null);
-__decorate([
-    Memoize
 ], StructurePrinterFactory.prototype, "forExportAssignment", null);
 __decorate([
     Memoize
 ], StructurePrinterFactory.prototype, "forExportDeclaration", null);
+__decorate([
+    Memoize
+], StructurePrinterFactory.prototype, "forImportAttribute", null);
 __decorate([
     Memoize
 ], StructurePrinterFactory.prototype, "forImportDeclaration", null);
@@ -20096,23 +20123,33 @@ __decorate([
 ], StructurePrinterFactory.prototype, "forVariableDeclaration", null);
 
 class ProjectContext {
+    #languageService;
+    #compilerOptions;
+    #customTypeChecker;
+    #project;
     get project() {
-        if (this._project == null)
+        if (this.#project == null)
             throw new errors.InvalidOperationError("This operation is not permitted in this context.");
-        return this._project;
+        return this.#project;
     }
+    logger = new ConsoleLogger();
+    lazyReferenceCoordinator;
+    directoryCoordinator;
+    fileSystemWrapper;
+    manipulationSettings = new ManipulationSettingsContainer();
+    structurePrinterFactory;
+    compilerFactory;
+    inProjectCoordinator;
     constructor(params) {
-        this.logger = new ConsoleLogger();
-        this.manipulationSettings = new ManipulationSettingsContainer();
-        this._project = params.project;
+        this.#project = params.project;
         this.fileSystemWrapper = params.fileSystemWrapper;
-        this._compilerOptions = params.compilerOptionsContainer;
+        this.#compilerOptions = params.compilerOptionsContainer;
         this.compilerFactory = new CompilerFactory(this);
         this.inProjectCoordinator = new InProjectCoordinator(this.compilerFactory);
         this.structurePrinterFactory = new StructurePrinterFactory(() => this.manipulationSettings.getFormatCodeSettings());
         this.lazyReferenceCoordinator = new LazyReferenceCoordinator(this.compilerFactory);
         this.directoryCoordinator = new DirectoryCoordinator(this.compilerFactory, params.fileSystemWrapper);
-        this._languageService = params.createLanguageService
+        this.#languageService = params.createLanguageService
             ? new LanguageService({
                 context: this,
                 configFileParsingDiagnostics: params.configFileParsingDiagnostics,
@@ -20123,32 +20160,32 @@ class ProjectContext {
             : undefined;
         if (params.typeChecker != null) {
             errors.throwIfTrue(params.createLanguageService, "Cannot specify a type checker and create a language service.");
-            this._customTypeChecker = new TypeChecker(this);
-            this._customTypeChecker._reset(() => params.typeChecker);
+            this.#customTypeChecker = new TypeChecker(this);
+            this.#customTypeChecker._reset(() => params.typeChecker);
         }
     }
     get compilerOptions() {
-        return this._compilerOptions;
+        return this.#compilerOptions;
     }
     get languageService() {
-        if (this._languageService == null)
-            throw this.getToolRequiredError("language service");
-        return this._languageService;
+        if (this.#languageService == null)
+            throw this.#getToolRequiredError("language service");
+        return this.#languageService;
     }
     get program() {
-        if (this._languageService == null)
-            throw this.getToolRequiredError("program");
+        if (this.#languageService == null)
+            throw this.#getToolRequiredError("program");
         return this.languageService.getProgram();
     }
     get typeChecker() {
-        if (this._customTypeChecker != null)
-            return this._customTypeChecker;
-        if (this._languageService == null)
-            throw this.getToolRequiredError("type checker");
+        if (this.#customTypeChecker != null)
+            return this.#customTypeChecker;
+        if (this.#languageService == null)
+            throw this.#getToolRequiredError("type checker");
         return this.program.getTypeChecker();
     }
     hasLanguageService() {
-        return this._languageService != null;
+        return this.#languageService != null;
     }
     getEncoding() {
         return this.compilerOptions.getEncoding();
@@ -20172,24 +20209,22 @@ class ProjectContext {
         });
     }
     getPreEmitDiagnostics(sourceFile) {
-        const compilerDiagnostics = ts.getPreEmitDiagnostics(this.program.compilerObject, sourceFile === null || sourceFile === void 0 ? void 0 : sourceFile.compilerNode);
+        const compilerDiagnostics = ts.getPreEmitDiagnostics(this.program.compilerObject, sourceFile?.compilerNode);
         return compilerDiagnostics.map(d => this.compilerFactory.getDiagnostic(d));
     }
     getSourceFileContainer() {
         return {
             addOrGetSourceFileFromFilePath: (filePath, opts) => {
-                var _a;
-                return Promise.resolve((_a = this.compilerFactory.addOrGetSourceFileFromFilePath(filePath, opts)) === null || _a === void 0 ? void 0 : _a.compilerNode);
+                return Promise.resolve(this.compilerFactory.addOrGetSourceFileFromFilePath(filePath, opts)?.compilerNode);
             },
             addOrGetSourceFileFromFilePathSync: (filePath, opts) => {
-                var _a;
-                return (_a = this.compilerFactory.addOrGetSourceFileFromFilePath(filePath, opts)) === null || _a === void 0 ? void 0 : _a.compilerNode;
+                return this.compilerFactory.addOrGetSourceFileFromFilePath(filePath, opts)?.compilerNode;
             },
             containsDirectoryAtPath: dirPath => this.compilerFactory.containsDirectoryAtPath(dirPath),
             containsSourceFileAtPath: filePath => this.compilerFactory.containsSourceFileAtPath(filePath),
             getSourceFileFromCacheFromFilePath: filePath => {
                 const sourceFile = this.compilerFactory.getSourceFileFromCacheFromFilePath(filePath);
-                return sourceFile === null || sourceFile === void 0 ? void 0 : sourceFile.compilerNode;
+                return sourceFile?.compilerNode;
             },
             getSourceFilePaths: () => this.compilerFactory.getSourceFilePaths(),
             getSourceFileVersion: sourceFile => this.compilerFactory.documentRegistry.getSourceFileVersion(sourceFile),
@@ -20208,7 +20243,7 @@ class ProjectContext {
             sourceFileContainer: this.getSourceFileContainer(),
         });
     }
-    getToolRequiredError(name) {
+    #getToolRequiredError(name) {
         return new errors.InvalidOperationError(`A ${name} is required for this operation. `
             + "This might occur when manipulating or getting type information from a node that was not added "
             + `to a Project object and created via createWrappedNode. `
@@ -20223,8 +20258,8 @@ __decorate([
 ], ProjectContext.prototype, "getModuleResolutionHost", null);
 
 class Project {
+    _context;
     constructor(options = {}) {
-        var _a;
         verifyOptions();
         const fileSystem = getFileSystem();
         const fileSystemWrapper = new TransactionalFileSystem({
@@ -20244,14 +20279,14 @@ class Project {
             fileSystemWrapper,
             createLanguageService: true,
             resolutionHost: options.resolutionHost,
-            configFileParsingDiagnostics: (_a = tsConfigResolver === null || tsConfigResolver === void 0 ? void 0 : tsConfigResolver.getErrors()) !== null && _a !== void 0 ? _a : [],
+            configFileParsingDiagnostics: tsConfigResolver?.getErrors() ?? [],
             skipLoadingLibFiles: options.skipLoadingLibFiles,
             libFolderPath: options.libFolderPath,
         });
         if (options.manipulationSettings != null)
             this._context.manipulationSettings.set(options.manipulationSettings);
         if (tsConfigResolver != null && options.skipAddingFilesFromTsConfig !== true) {
-            this._addSourceFilesForTsConfigResolver(tsConfigResolver, compilerOptions);
+            this.#addSourceFilesForTsConfigResolver(tsConfigResolver, compilerOptions);
             if (!options.skipFileDependencyResolution)
                 this.resolveSourceFileDependencies();
         }
@@ -20260,27 +20295,23 @@ class Project {
                 throw new errors.InvalidOperationError("Cannot provide a file system when specifying to use an in-memory file system.");
         }
         function getFileSystem() {
-            var _a;
             if (options.useInMemoryFileSystem)
                 return new InMemoryFileSystemHost();
-            return (_a = options.fileSystem) !== null && _a !== void 0 ? _a : new RealFileSystemHost();
+            return options.fileSystem ?? new RealFileSystemHost();
         }
         function getCompilerOptions() {
-            var _a;
             return {
                 ...getTsConfigCompilerOptions(),
-                ...((_a = options.compilerOptions) !== null && _a !== void 0 ? _a : {}),
+                ...(options.compilerOptions ?? {}),
             };
         }
         function getTsConfigCompilerOptions() {
-            var _a;
-            return (_a = tsConfigResolver === null || tsConfigResolver === void 0 ? void 0 : tsConfigResolver.getCompilerOptions()) !== null && _a !== void 0 ? _a : {};
+            return tsConfigResolver?.getCompilerOptions() ?? {};
         }
         function getEncoding() {
-            var _a;
             const defaultEncoding = "utf-8";
             if (options.compilerOptions != null)
-                return (_a = options.compilerOptions.charset) !== null && _a !== void 0 ? _a : defaultEncoding;
+                return options.compilerOptions.charset ?? defaultEncoding;
             return defaultEncoding;
         }
     }
@@ -20318,14 +20349,14 @@ class Project {
         return this._context.directoryCoordinator.createDirectoryOrAddIfExists(this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath), { markInProject: true });
     }
     getDirectoryOrThrow(dirPath, message) {
-        return errors.throwIfNullOrUndefined(this.getDirectory(dirPath), message !== null && message !== void 0 ? message : (() => `Could not find a directory at the specified path: ${this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath)}`));
+        return errors.throwIfNullOrUndefined(this.getDirectory(dirPath), message ?? (() => `Could not find a directory at the specified path: ${this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath)}`));
     }
     getDirectory(dirPath) {
         const { compilerFactory } = this._context;
         return compilerFactory.getDirectoryFromCache(this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath));
     }
     getDirectories() {
-        return Array.from(this._getProjectDirectoriesByDirectoryDepth());
+        return Array.from(this.#getProjectDirectoriesByDirectoryDepth());
     }
     getRootDirectories() {
         const { inProjectCoordinator } = this._context;
@@ -20359,9 +20390,9 @@ class Project {
     }
     addSourceFilesFromTsConfig(tsConfigFilePath) {
         const resolver = new TsConfigResolver(this._context.fileSystemWrapper, this._context.fileSystemWrapper.getStandardizedAbsolutePath(tsConfigFilePath), this._context.getEncoding());
-        return this._addSourceFilesForTsConfigResolver(resolver, resolver.getCompilerOptions());
+        return this.#addSourceFilesForTsConfigResolver(resolver, resolver.getCompilerOptions());
     }
-    _addSourceFilesForTsConfigResolver(tsConfigResolver, compilerOptions) {
+    #addSourceFilesForTsConfigResolver(tsConfigResolver, compilerOptions) {
         const paths = tsConfigResolver.getPaths(compilerOptions);
         const addedSourceFiles = paths.filePaths.map(p => this.addSourceFileAtPath(p));
         for (const dirPath of paths.directoryPaths)
@@ -20369,7 +20400,7 @@ class Project {
         return addedSourceFiles;
     }
     createSourceFile(filePath, sourceFileText, options) {
-        return this._context.compilerFactory.createSourceFile(this._context.fileSystemWrapper.getStandardizedAbsolutePath(filePath), sourceFileText !== null && sourceFileText !== void 0 ? sourceFileText : "", { ...(options !== null && options !== void 0 ? options : {}), markInProject: true });
+        return this._context.compilerFactory.createSourceFile(this._context.fileSystemWrapper.getStandardizedAbsolutePath(filePath), sourceFileText ?? "", { ...(options ?? {}), markInProject: true });
     }
     removeSourceFile(sourceFile) {
         const previouslyForgotten = sourceFile.wasForgotten();
@@ -20399,7 +20430,7 @@ class Project {
         if (isStandardizedFilePath(filePathOrSearchFunction)) {
             return this._context.compilerFactory.getSourceFileFromCacheFromFilePath(filePathOrSearchFunction);
         }
-        return IterableUtils.find(this._getProjectSourceFilesByDirectoryDepth(), filePathOrSearchFunction);
+        return IterableUtils.find(this.#getProjectSourceFilesByDirectoryDepth(), filePathOrSearchFunction);
         function getFilePathOrSearchFunction(fileSystemWrapper) {
             if (fileNameOrSearchFunction instanceof Function)
                 return fileNameOrSearchFunction;
@@ -20415,7 +20446,7 @@ class Project {
     }
     getSourceFiles(globPatterns) {
         const { compilerFactory, fileSystemWrapper } = this._context;
-        const sourceFiles = this._getProjectSourceFilesByDirectoryDepth();
+        const sourceFiles = this.#getProjectSourceFilesByDirectoryDepth();
         if (typeof globPatterns === "string" || globPatterns instanceof Array)
             return Array.from(getFilteredSourceFiles());
         else
@@ -20431,14 +20462,14 @@ class Project {
             }
         }
     }
-    *_getProjectSourceFilesByDirectoryDepth() {
+    *#getProjectSourceFilesByDirectoryDepth() {
         const { compilerFactory, inProjectCoordinator } = this._context;
         for (const sourceFile of compilerFactory.getSourceFilesByDirectoryDepth()) {
             if (inProjectCoordinator.isSourceFileInProject(sourceFile))
                 yield sourceFile;
         }
     }
-    *_getProjectDirectoriesByDirectoryDepth() {
+    *#getProjectDirectoriesByDirectoryDepth() {
         const { compilerFactory, inProjectCoordinator } = this._context;
         for (const directory of compilerFactory.getDirectoriesByDepth()) {
             if (inProjectCoordinator.isDirectoryInProject(directory))
@@ -20450,24 +20481,24 @@ class Project {
         return this.getAmbientModules().find(s => s.getName() === moduleName);
     }
     getAmbientModuleOrThrow(moduleName, message) {
-        return errors.throwIfNullOrUndefined(this.getAmbientModule(moduleName), message !== null && message !== void 0 ? message : (() => `Could not find ambient module with name: ${normalizeAmbientModuleName(moduleName)}`));
+        return errors.throwIfNullOrUndefined(this.getAmbientModule(moduleName), message ?? (() => `Could not find ambient module with name: ${normalizeAmbientModuleName(moduleName)}`));
     }
     getAmbientModules() {
         return this.getTypeChecker().getAmbientModules();
     }
     async save() {
         await this._context.fileSystemWrapper.flush();
-        await Promise.all(this._getUnsavedSourceFiles().map(f => f.save()));
+        await Promise.all(this.#getUnsavedSourceFiles().map(f => f.save()));
     }
     saveSync() {
         this._context.fileSystemWrapper.flushSync();
-        for (const file of this._getUnsavedSourceFiles())
+        for (const file of this.#getUnsavedSourceFiles())
             file.saveSync();
     }
     enableLogging(enabled = true) {
         this._context.logger.setEnabled(enabled);
     }
-    _getUnsavedSourceFiles() {
+    #getUnsavedSourceFiles() {
         return Array.from(getUnsavedIterator(this._context.compilerFactory.getSourceFilesByDirectoryDepth()));
         function* getUnsavedIterator(sourceFiles) {
             for (const sourceFile of sourceFiles) {
@@ -20516,7 +20547,7 @@ class Project {
         return ts.formatDiagnosticsWithColorAndContext(diagnostics.map(d => d.compilerObject), {
             getCurrentDirectory: () => this._context.fileSystemWrapper.getCurrentDirectory(),
             getCanonicalFileName: fileName => fileName,
-            getNewLine: () => { var _a; return (_a = opts.newLineChar) !== null && _a !== void 0 ? _a : runtime.getEndOfLine(); },
+            getNewLine: () => opts.newLineChar ?? runtime.getEndOfLine(),
         });
     }
     getModuleResolutionHost() {
@@ -20553,7 +20584,7 @@ function createWrappedNode(node, opts = {}) {
     const wrappedSourceFile = projectContext.compilerFactory.getSourceFile(getSourceFileNode(), { markInProject: true });
     return projectContext.compilerFactory.getNodeFromCompilerNode(node, wrappedSourceFile);
     function getSourceFileNode() {
-        return sourceFile !== null && sourceFile !== void 0 ? sourceFile : getSourceFileFromNode(node);
+        return sourceFile ?? getSourceFileFromNode(node);
     }
     function getSourceFileFromNode(compilerNode) {
         if (compilerNode.kind === SyntaxKind.SourceFile)
@@ -20665,4 +20696,4 @@ function writeValue(writer, value) {
 
 const { InvalidOperationError, FileNotFoundError, ArgumentError, ArgumentNullOrWhitespaceError, ArgumentOutOfRangeError, ArgumentTypeError, BaseError, DirectoryNotFoundError, NotImplementedError, NotSupportedError, PathNotFoundError, } = errors;
 
-export { AbstractableNode, AmbientableNode, ArgumentError, ArgumentNullOrWhitespaceError, ArgumentOutOfRangeError, ArgumentTypeError, ArgumentedNode, ArrayBindingPattern, ArrayDestructuringAssignment, ArrayDestructuringAssignmentBase, ArrayLiteralExpression, ArrayTypeNode, ArrowFunction, ArrowFunctionBase, AsExpression, AsExpressionBase, AssertClause, AssertClauseBase, AssertEntry, AssertEntryBase, AssertionKeyNamedNode, AssignmentExpression, AssignmentExpressionBase, AsyncableNode, AwaitExpression, AwaitExpressionBase, AwaitableNode, BaseError, BaseExpressionedNode, BigIntLiteral, BigIntLiteralBase, BinaryExpression, BinaryExpressionBase, BindingElement, BindingElementBase, BindingNamedNode, Block, BlockBase, BodiedNode, BodyableNode, BreakStatement, CallExpression, CallExpressionBase, CallSignatureDeclaration, CallSignatureDeclarationBase, CaseBlock, CaseBlockBase, CaseClause, CaseClauseBase, CatchClause, CatchClauseBase, ChildOrderableNode, ClassDeclaration, ClassDeclarationBase, ClassElement, ClassExpression, ClassExpressionBase, ClassLikeDeclarationBase, ClassLikeDeclarationBaseSpecific, ClassStaticBlockDeclaration, ClassStaticBlockDeclarationBase, CodeAction, CodeFixAction, CombinedCodeActions, CommaListExpression, CommaListExpressionBase, CommentClassElement, CommentEnumMember, CommentNodeKind, CommentObjectLiteralElement, CommentRange, CommentStatement, CommentTypeElement, CommonIdentifierBase, CompilerCommentClassElement, CompilerCommentEnumMember, CompilerCommentNode, CompilerCommentObjectLiteralElement, CompilerCommentStatement, CompilerCommentTypeElement, ComputedPropertyName, ComputedPropertyNameBase, ConditionalExpression, ConditionalExpressionBase, ConditionalTypeNode, ConstructSignatureDeclaration, ConstructSignatureDeclarationBase, ConstructorDeclaration, ConstructorDeclarationBase, ConstructorDeclarationOverloadBase, ConstructorTypeNode, ConstructorTypeNodeBase, ContinueStatement, DebuggerStatement, DebuggerStatementBase, DecoratableNode, Decorator, DecoratorBase, DefaultClause, DefaultClauseBase, DefinitionInfo, DeleteExpression, DeleteExpressionBase, Diagnostic, DiagnosticMessageChain, DiagnosticWithLocation, Directory, DirectoryEmitResult, DirectoryNotFoundError, DoStatement, DoStatementBase, DocumentSpan, DotDotDotTokenableNode, ElementAccessExpression, ElementAccessExpressionBase, EmitOutput, EmitResult, EmptyStatement, EmptyStatementBase, EnumDeclaration, EnumDeclarationBase, EnumMember, EnumMemberBase, ExclamationTokenableNode, ExportAssignment, ExportAssignmentBase, ExportDeclaration, ExportDeclarationBase, ExportGetableNode, ExportSpecifier, ExportSpecifierBase, ExportableNode, Expression, ExpressionStatement, ExpressionStatementBase, ExpressionWithTypeArguments, ExpressionWithTypeArgumentsBase, ExpressionableNode, ExpressionedNode, ExtendsClauseableNode, ExternalModuleReference, ExternalModuleReferenceBase, FalseLiteral, FalseLiteralBase, FileNotFoundError, FileReference, FileSystemRefreshResult, FileTextChanges, ForInStatement, ForInStatementBase, ForOfStatement, ForOfStatementBase, ForStatement, ForStatementBase, FunctionDeclaration, FunctionDeclarationBase, FunctionDeclarationOverloadBase, FunctionExpression, FunctionExpressionBase, FunctionLikeDeclaration, FunctionOrConstructorTypeNodeBase, FunctionOrConstructorTypeNodeBaseBase, FunctionTypeNode, FunctionTypeNodeBase, GeneratorableNode, GetAccessorDeclaration, GetAccessorDeclarationBase, HeritageClause, HeritageClauseableNode, Identifier, IdentifierBase, IfStatement, IfStatementBase, ImplementationLocation, ImplementsClauseableNode, ImportClause, ImportClauseBase, ImportDeclaration, ImportDeclarationBase, ImportEqualsDeclaration, ImportEqualsDeclarationBase, ImportExpression, ImportExpressionBase, ImportExpressionedNode, ImportSpecifier, ImportSpecifierBase, ImportTypeAssertionContainer, ImportTypeNode, IndentationText, IndexSignatureDeclaration, IndexSignatureDeclarationBase, IndexedAccessTypeNode, InferTypeNode, InitializerExpressionGetableNode, InitializerExpressionableNode, InterfaceDeclaration, InterfaceDeclarationBase, IntersectionTypeNode, InvalidOperationError, IterationStatement, JSDoc, JSDocAllType, JSDocAugmentsTag, JSDocAuthorTag, JSDocBase, JSDocCallbackTag, JSDocClassTag, JSDocDeprecatedTag, JSDocEnumTag, JSDocFunctionType, JSDocFunctionTypeBase, JSDocImplementsTag, JSDocLink, JSDocLinkCode, JSDocLinkPlain, JSDocMemberName, JSDocNameReference, JSDocNamepathType, JSDocNonNullableType, JSDocNullableType, JSDocOptionalType, JSDocOverloadTag, JSDocOverloadTagBase, JSDocOverrideTag, JSDocParameterTag, JSDocParameterTagBase, JSDocPrivateTag, JSDocPropertyLikeTag, JSDocPropertyTag, JSDocPropertyTagBase, JSDocProtectedTag, JSDocPublicTag, JSDocReadonlyTag, JSDocReturnTag, JSDocReturnTagBase, JSDocSatisfiesTag, JSDocSatisfiesTagBase, JSDocSeeTag, JSDocSeeTagBase, JSDocSignature, JSDocTag, JSDocTagBase, JSDocTagInfo, JSDocTemplateTag, JSDocTemplateTagBase, JSDocText, JSDocThisTag, JSDocThisTagBase, JSDocThrowsTag, JSDocThrowsTagBase, JSDocType, JSDocTypeExpression, JSDocTypeExpressionableTag, JSDocTypeLiteral, JSDocTypeParameteredTag, JSDocTypeTag, JSDocTypedefTag, JSDocUnknownTag, JSDocUnknownType, JSDocVariadicType, JSDocableNode, JsxAttribute, JsxAttributeBase, JsxAttributedNode, JsxClosingElement, JsxClosingElementBase, JsxClosingFragment, JsxElement, JsxElementBase, JsxExpression, JsxExpressionBase, JsxFragment, JsxNamespacedName, JsxNamespacedNameBase, JsxOpeningElement, JsxOpeningElementBase, JsxOpeningFragment, JsxSelfClosingElement, JsxSelfClosingElementBase, JsxSpreadAttribute, JsxSpreadAttributeBase, JsxTagNamedNode, JsxText, JsxTextBase, LabeledStatement, LabeledStatementBase, LanguageService, LeftHandSideExpression, LeftHandSideExpressionedNode, LiteralExpression, LiteralExpressionBase, LiteralLikeNode, LiteralTypeNode, ManipulationError, ManipulationSettingsContainer, MappedTypeNode, MemberExpression, MemoryEmitResult, MetaProperty, MetaPropertyBase, MethodDeclaration, MethodDeclarationBase, MethodDeclarationOverloadBase, MethodSignature, MethodSignatureBase, ModifierableNode, ModuleBlock, ModuleBlockBase, ModuleChildableNode, ModuleDeclaration, ModuleDeclarationBase, ModuleDeclarationKind, ModuleNamedNode, ModuledNode, NameableNode, NamedExports, NamedExportsBase, NamedImports, NamedImportsBase, NamedNode, NamedNodeBase, NamedTupleMember, NamedTupleMemberBase, NamespaceExport, NamespaceExportBase, NamespaceImport, NamespaceImportBase, NewExpression, NewExpressionBase, NoSubstitutionTemplateLiteral, NoSubstitutionTemplateLiteralBase, Node, NodeWithTypeArguments, NodeWithTypeArgumentsBase, NonNullExpression, NonNullExpressionBase, NotEmittedStatement, NotEmittedStatementBase, NotImplementedError, NotSupportedError, NullLiteral, NullLiteralBase, NumericLiteral, NumericLiteralBase, ObjectBindingPattern, ObjectDestructuringAssignment, ObjectDestructuringAssignmentBase, ObjectLiteralElement, ObjectLiteralExpression, ObjectLiteralExpressionBase, OmittedExpression, OmittedExpressionBase, OutputFile, OverloadableNode, OverrideableNode, ParameterDeclaration, ParameterDeclarationBase, ParameteredNode, ParenthesizedExpression, ParenthesizedExpressionBase, ParenthesizedTypeNode, PartiallyEmittedExpression, PartiallyEmittedExpressionBase, PathNotFoundError, PostfixUnaryExpression, PostfixUnaryExpressionBase, PrefixUnaryExpression, PrefixUnaryExpressionBase, PrimaryExpression, PrivateIdentifier, PrivateIdentifierBase, Program, Project, PropertyAccessExpression, PropertyAccessExpressionBase, PropertyAssignment, PropertyAssignmentBase, PropertyDeclaration, PropertyDeclarationBase, PropertyNamedNode, PropertySignature, PropertySignatureBase, QualifiedName, QuestionDotTokenableNode, QuestionTokenableNode, QuoteKind, ReadonlyableNode, RefactorEditInfo, ReferenceEntry, ReferenceFindableNode, ReferencedSymbol, ReferencedSymbolDefinitionInfo, ReferencedSymbolEntry, RegularExpressionLiteral, RegularExpressionLiteralBase, RenameLocation, RenameableNode, RestTypeNode, ReturnStatement, ReturnStatementBase, ReturnTypedNode, SatisfiesExpression, SatisfiesExpressionBase, Scope, ScopeableNode, ScopedNode, SetAccessorDeclaration, SetAccessorDeclarationBase, ShorthandPropertyAssignment, ShorthandPropertyAssignmentBase, Signature, SignaturedDeclaration, SourceFile, SourceFileBase, SpreadAssignment, SpreadAssignmentBase, SpreadElement, SpreadElementBase, Statement, StatementBase, StatementedNode, StaticableNode, StringLiteral, StringLiteralBase, Structure, StructureKind, SuperElementAccessExpression, SuperElementAccessExpressionBase, SuperExpression, SuperExpressionBase, SuperExpressionedNode, SuperPropertyAccessExpression, SuperPropertyAccessExpressionBase, SwitchStatement, SwitchStatementBase, Symbol, SymbolDisplayPart, SyntaxList, TaggedTemplateExpression, TemplateExpression, TemplateExpressionBase, TemplateHead, TemplateHeadBase, TemplateLiteralTypeNode, TemplateMiddle, TemplateMiddleBase, TemplateSpan, TemplateSpanBase, TemplateTail, TemplateTailBase, TextChange, TextInsertableNode, TextRange, TextSpan, ThisExpression, ThisExpressionBase, ThisTypeNode, ThrowStatement, ThrowStatementBase, TrueLiteral, TrueLiteralBase, TryStatement, TryStatementBase, TupleTypeNode, Type, TypeAliasDeclaration, TypeAliasDeclarationBase, TypeArgumentedNode, TypeAssertion, TypeAssertionBase, TypeChecker, TypeElement, TypeElementMemberedNode, TypeLiteralNode, TypeLiteralNodeBase, TypeNode, TypeOfExpression, TypeOfExpressionBase, TypeOperatorTypeNode, TypeParameter, TypeParameterDeclaration, TypeParameterDeclarationBase, TypeParameterVariance, TypeParameteredNode, TypePredicateNode, TypeQueryNode, TypeReferenceNode, TypedNode, UnaryExpression, UnaryExpressionedNode, UnionTypeNode, UnwrappableNode, UpdateExpression, VariableDeclaration, VariableDeclarationBase, VariableDeclarationKind, VariableDeclarationList, VariableDeclarationListBase, VariableStatement, VariableStatementBase, VoidExpression, VoidExpressionBase, WhileStatement, WhileStatementBase, WithStatement, WithStatementBase, Writers, YieldExpression, YieldExpressionBase, createWrappedNode, forEachStructureChild, getCompilerOptionsFromTsConfig, getScopeForNode, insertOverloads, printNode, setScopeForNode };
+export { AbstractableNode, AmbientableNode, ArgumentError, ArgumentNullOrWhitespaceError, ArgumentOutOfRangeError, ArgumentTypeError, ArgumentedNode, ArrayBindingPattern, ArrayDestructuringAssignment, ArrayDestructuringAssignmentBase, ArrayLiteralExpression, ArrayTypeNode, ArrowFunction, ArrowFunctionBase, AsExpression, AsExpressionBase, AssignmentExpression, AssignmentExpressionBase, AsyncableNode, AwaitExpression, AwaitExpressionBase, AwaitableNode, BaseError, BaseExpressionedNode, BigIntLiteral, BigIntLiteralBase, BinaryExpression, BinaryExpressionBase, BindingElement, BindingElementBase, BindingNamedNode, Block, BlockBase, BodiedNode, BodyableNode, BreakStatement, CallExpression, CallExpressionBase, CallSignatureDeclaration, CallSignatureDeclarationBase, CaseBlock, CaseBlockBase, CaseClause, CaseClauseBase, CatchClause, CatchClauseBase, ChildOrderableNode, ClassDeclaration, ClassDeclarationBase, ClassElement, ClassExpression, ClassExpressionBase, ClassLikeDeclarationBase, ClassLikeDeclarationBaseSpecific, ClassStaticBlockDeclaration, ClassStaticBlockDeclarationBase, CodeAction, CodeFixAction, CombinedCodeActions, CommaListExpression, CommaListExpressionBase, CommentClassElement, CommentEnumMember, CommentNodeKind, CommentObjectLiteralElement, CommentRange, CommentStatement, CommentTypeElement, CommonIdentifierBase, CompilerCommentClassElement, CompilerCommentEnumMember, CompilerCommentNode, CompilerCommentObjectLiteralElement, CompilerCommentStatement, CompilerCommentTypeElement, ComputedPropertyName, ComputedPropertyNameBase, ConditionalExpression, ConditionalExpressionBase, ConditionalTypeNode, ConstructSignatureDeclaration, ConstructSignatureDeclarationBase, ConstructorDeclaration, ConstructorDeclarationBase, ConstructorDeclarationOverloadBase, ConstructorTypeNode, ConstructorTypeNodeBase, ContinueStatement, DebuggerStatement, DebuggerStatementBase, DecoratableNode, Decorator, DecoratorBase, DefaultClause, DefaultClauseBase, DefinitionInfo, DeleteExpression, DeleteExpressionBase, Diagnostic, DiagnosticMessageChain, DiagnosticWithLocation, Directory, DirectoryEmitResult, DirectoryNotFoundError, DoStatement, DoStatementBase, DocumentSpan, DotDotDotTokenableNode, ElementAccessExpression, ElementAccessExpressionBase, EmitOutput, EmitResult, EmptyStatement, EmptyStatementBase, EnumDeclaration, EnumDeclarationBase, EnumMember, EnumMemberBase, ExclamationTokenableNode, ExportAssignment, ExportAssignmentBase, ExportDeclaration, ExportDeclarationBase, ExportGetableNode, ExportSpecifier, ExportSpecifierBase, ExportableNode, Expression, ExpressionStatement, ExpressionStatementBase, ExpressionWithTypeArguments, ExpressionWithTypeArgumentsBase, ExpressionableNode, ExpressionedNode, ExtendsClauseableNode, ExternalModuleReference, ExternalModuleReferenceBase, FalseLiteral, FalseLiteralBase, FileNotFoundError, FileReference, FileSystemRefreshResult, FileTextChanges, ForInStatement, ForInStatementBase, ForOfStatement, ForOfStatementBase, ForStatement, ForStatementBase, FunctionDeclaration, FunctionDeclarationBase, FunctionDeclarationOverloadBase, FunctionExpression, FunctionExpressionBase, FunctionLikeDeclaration, FunctionOrConstructorTypeNodeBase, FunctionOrConstructorTypeNodeBaseBase, FunctionTypeNode, FunctionTypeNodeBase, GeneratorableNode, GetAccessorDeclaration, GetAccessorDeclarationBase, HeritageClause, HeritageClauseableNode, Identifier, IdentifierBase, IfStatement, IfStatementBase, ImplementationLocation, ImplementsClauseableNode, ImportAttribute, ImportAttributeBase, ImportAttributeNamedNode, ImportAttributes, ImportAttributesBase, ImportClause, ImportClauseBase, ImportDeclaration, ImportDeclarationBase, ImportEqualsDeclaration, ImportEqualsDeclarationBase, ImportExpression, ImportExpressionBase, ImportExpressionedNode, ImportSpecifier, ImportSpecifierBase, ImportTypeNode, IndentationText, IndexSignatureDeclaration, IndexSignatureDeclarationBase, IndexedAccessTypeNode, InferTypeNode, InitializerExpressionGetableNode, InitializerExpressionableNode, InterfaceDeclaration, InterfaceDeclarationBase, IntersectionTypeNode, InvalidOperationError, IterationStatement, JSDoc, JSDocAllType, JSDocAugmentsTag, JSDocAuthorTag, JSDocBase, JSDocCallbackTag, JSDocClassTag, JSDocDeprecatedTag, JSDocEnumTag, JSDocFunctionType, JSDocFunctionTypeBase, JSDocImplementsTag, JSDocLink, JSDocLinkCode, JSDocLinkPlain, JSDocMemberName, JSDocNameReference, JSDocNamepathType, JSDocNonNullableType, JSDocNullableType, JSDocOptionalType, JSDocOverloadTag, JSDocOverloadTagBase, JSDocOverrideTag, JSDocParameterTag, JSDocParameterTagBase, JSDocPrivateTag, JSDocPropertyLikeTag, JSDocPropertyTag, JSDocPropertyTagBase, JSDocProtectedTag, JSDocPublicTag, JSDocReadonlyTag, JSDocReturnTag, JSDocReturnTagBase, JSDocSatisfiesTag, JSDocSatisfiesTagBase, JSDocSeeTag, JSDocSeeTagBase, JSDocSignature, JSDocTag, JSDocTagBase, JSDocTagInfo, JSDocTemplateTag, JSDocTemplateTagBase, JSDocText, JSDocThisTag, JSDocThisTagBase, JSDocThrowsTag, JSDocThrowsTagBase, JSDocType, JSDocTypeExpression, JSDocTypeExpressionableTag, JSDocTypeLiteral, JSDocTypeParameteredTag, JSDocTypeTag, JSDocTypedefTag, JSDocUnknownTag, JSDocUnknownType, JSDocVariadicType, JSDocableNode, JsxAttribute, JsxAttributeBase, JsxAttributedNode, JsxClosingElement, JsxClosingElementBase, JsxClosingFragment, JsxElement, JsxElementBase, JsxExpression, JsxExpressionBase, JsxFragment, JsxNamespacedName, JsxNamespacedNameBase, JsxOpeningElement, JsxOpeningElementBase, JsxOpeningFragment, JsxSelfClosingElement, JsxSelfClosingElementBase, JsxSpreadAttribute, JsxSpreadAttributeBase, JsxTagNamedNode, JsxText, JsxTextBase, LabeledStatement, LabeledStatementBase, LanguageService, LeftHandSideExpression, LeftHandSideExpressionedNode, LiteralExpression, LiteralExpressionBase, LiteralLikeNode, LiteralTypeNode, ManipulationError, ManipulationSettingsContainer, MappedTypeNode, MemberExpression, MemoryEmitResult, MetaProperty, MetaPropertyBase, MethodDeclaration, MethodDeclarationBase, MethodDeclarationOverloadBase, MethodSignature, MethodSignatureBase, ModifierableNode, ModuleBlock, ModuleBlockBase, ModuleChildableNode, ModuleDeclaration, ModuleDeclarationBase, ModuleDeclarationKind, ModuleNamedNode, ModuledNode, NameableNode, NamedExports, NamedExportsBase, NamedImports, NamedImportsBase, NamedNode, NamedNodeBase, NamedTupleMember, NamedTupleMemberBase, NamespaceExport, NamespaceExportBase, NamespaceImport, NamespaceImportBase, NewExpression, NewExpressionBase, NoSubstitutionTemplateLiteral, NoSubstitutionTemplateLiteralBase, Node, NodeWithTypeArguments, NodeWithTypeArgumentsBase, NonNullExpression, NonNullExpressionBase, NotEmittedStatement, NotEmittedStatementBase, NotImplementedError, NotSupportedError, NullLiteral, NullLiteralBase, NumericLiteral, NumericLiteralBase, ObjectBindingPattern, ObjectDestructuringAssignment, ObjectDestructuringAssignmentBase, ObjectLiteralElement, ObjectLiteralExpression, ObjectLiteralExpressionBase, OmittedExpression, OmittedExpressionBase, OutputFile, OverloadableNode, OverrideableNode, ParameterDeclaration, ParameterDeclarationBase, ParameteredNode, ParenthesizedExpression, ParenthesizedExpressionBase, ParenthesizedTypeNode, PartiallyEmittedExpression, PartiallyEmittedExpressionBase, PathNotFoundError, PostfixUnaryExpression, PostfixUnaryExpressionBase, PrefixUnaryExpression, PrefixUnaryExpressionBase, PrimaryExpression, PrivateIdentifier, PrivateIdentifierBase, Program, Project, PropertyAccessExpression, PropertyAccessExpressionBase, PropertyAssignment, PropertyAssignmentBase, PropertyDeclaration, PropertyDeclarationBase, PropertyNamedNode, PropertySignature, PropertySignatureBase, QualifiedName, QuestionDotTokenableNode, QuestionTokenableNode, QuoteKind, ReadonlyableNode, RefactorEditInfo, ReferenceEntry, ReferenceFindableNode, ReferencedSymbol, ReferencedSymbolDefinitionInfo, ReferencedSymbolEntry, RegularExpressionLiteral, RegularExpressionLiteralBase, RenameLocation, RenameableNode, RestTypeNode, ReturnStatement, ReturnStatementBase, ReturnTypedNode, SatisfiesExpression, SatisfiesExpressionBase, Scope, ScopeableNode, ScopedNode, SetAccessorDeclaration, SetAccessorDeclarationBase, ShorthandPropertyAssignment, ShorthandPropertyAssignmentBase, Signature, SignaturedDeclaration, SourceFile, SourceFileBase, SpreadAssignment, SpreadAssignmentBase, SpreadElement, SpreadElementBase, Statement, StatementBase, StatementedNode, StaticableNode, StringLiteral, StringLiteralBase, Structure, StructureKind, SuperElementAccessExpression, SuperElementAccessExpressionBase, SuperExpression, SuperExpressionBase, SuperExpressionedNode, SuperPropertyAccessExpression, SuperPropertyAccessExpressionBase, SwitchStatement, SwitchStatementBase, Symbol, SymbolDisplayPart, SyntaxList, TaggedTemplateExpression, TemplateExpression, TemplateExpressionBase, TemplateHead, TemplateHeadBase, TemplateLiteralTypeNode, TemplateMiddle, TemplateMiddleBase, TemplateSpan, TemplateSpanBase, TemplateTail, TemplateTailBase, TextChange, TextInsertableNode, TextRange, TextSpan, ThisExpression, ThisExpressionBase, ThisTypeNode, ThrowStatement, ThrowStatementBase, TrueLiteral, TrueLiteralBase, TryStatement, TryStatementBase, TupleTypeNode, Type, TypeAliasDeclaration, TypeAliasDeclarationBase, TypeArgumentedNode, TypeAssertion, TypeAssertionBase, TypeChecker, TypeElement, TypeElementMemberedNode, TypeLiteralNode, TypeLiteralNodeBase, TypeNode, TypeOfExpression, TypeOfExpressionBase, TypeOperatorTypeNode, TypeParameter, TypeParameterDeclaration, TypeParameterDeclarationBase, TypeParameterVariance, TypeParameteredNode, TypePredicateNode, TypeQueryNode, TypeReferenceNode, TypedNode, UnaryExpression, UnaryExpressionedNode, UnionTypeNode, UnwrappableNode, UpdateExpression, VariableDeclaration, VariableDeclarationBase, VariableDeclarationKind, VariableDeclarationList, VariableDeclarationListBase, VariableStatement, VariableStatementBase, VoidExpression, VoidExpressionBase, WhileStatement, WhileStatementBase, WithStatement, WithStatementBase, Writers, YieldExpression, YieldExpressionBase, createWrappedNode, forEachStructureChild, getCompilerOptionsFromTsConfig, getScopeForNode, insertOverloads, printNode, setScopeForNode };

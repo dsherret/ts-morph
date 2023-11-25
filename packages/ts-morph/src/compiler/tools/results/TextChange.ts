@@ -6,16 +6,16 @@ import { TextSpan } from "./TextSpan";
  */
 export class TextChange {
   /** @internal */
-  private readonly _compilerObject: ts.TextChange;
+  readonly #compilerObject: ts.TextChange;
 
   /** @private */
   constructor(compilerObject: ts.TextChange) {
-    this._compilerObject = compilerObject;
+    this.#compilerObject = compilerObject;
   }
 
   /** Gets the compiler text change. */
   get compilerObject() {
-    return this._compilerObject;
+    return this.#compilerObject;
   }
 
   /**

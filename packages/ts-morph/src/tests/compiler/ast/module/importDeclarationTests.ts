@@ -2,7 +2,7 @@ import { errors, ModuleResolutionKind, nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ImportDeclaration } from "../../../../compiler";
 import { Project } from "../../../../Project";
-import { AssertEntryStructure, ImportDeclarationStructure, ImportSpecifierStructure, OptionalKind, StructureKind } from "../../../../structures";
+import { ImportAttributeStructure, ImportDeclarationStructure, ImportSpecifierStructure, OptionalKind, StructureKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
@@ -635,10 +635,10 @@ describe("ImportDeclaration", () => {
     });
   });
 
-  describe(nameof<ImportDeclaration>("setAssertElements"), () => {
-    function doTest(text: string, structure: OptionalKind<AssertEntryStructure>[] | undefined, expected: string) {
+  describe(nameof<ImportDeclaration>("setAttributes"), () => {
+    function doTest(text: string, structure: OptionalKind<ImportAttributeStructure>[] | undefined, expected: string) {
       const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
-      firstChild.setAssertElements(structure);
+      firstChild.setAttributes(structure);
       expect(sourceFile.getText()).to.equal(expected);
     }
 
@@ -646,7 +646,7 @@ describe("ImportDeclaration", () => {
       doTest(
         `import {} from "./test";`,
         [{ name: "type", value: "value" }],
-        `import {} from "./test" assert {\n    type: "value"\n};`,
+        `import {} from "./test" with {\n    type: "value"\n};`,
       );
     });
 
@@ -654,13 +654,13 @@ describe("ImportDeclaration", () => {
       doTest(
         `import {} from "./test"`,
         [{ name: "type", value: "value" }],
-        `import {} from "./test" assert {\n    type: "value"\n}`,
+        `import {} from "./test" with {\n    type: "value"\n}`,
       );
     });
 
     it("should remove for undefined", () => {
       doTest(
-        `import {} from "./test" assert { type: "value" };`,
+        `import {} from "./test" with { type: "value" };`,
         undefined,
         `import {} from "./test";`,
       );
@@ -668,9 +668,9 @@ describe("ImportDeclaration", () => {
 
     it("should set", () => {
       doTest(
-        `import {} from "./test" assert { something: "asdf" };`,
+        `import {} from "./test" with { something: "asdf" };`,
         [{ name: "type", value: "value" }, { name: "other", value: "test" }],
-        `import {} from "./test" assert {\n    type: "value",\n    other: "test"\n};`,
+        `import {} from "./test" with {\n    type: "value",\n    other: "test"\n};`,
       );
     });
   });
@@ -754,7 +754,7 @@ describe("ImportDeclaration", () => {
         moduleSpecifier: "new",
         namedImports: undefined,
         namespaceImport: "test",
-        assertElements: [{
+        attributes: [{
           name: "type",
           value: "asdf",
         }],
@@ -762,7 +762,7 @@ describe("ImportDeclaration", () => {
       doTest(
         "import 'test';",
         structure,
-        `import type asdf, * as test from 'new' assert {\n    type: "asdf"\n};`,
+        `import type asdf, * as test from 'new' with {\n    type: "asdf"\n};`,
       );
     });
 
@@ -787,15 +787,15 @@ describe("ImportDeclaration", () => {
     }
 
     it("should work when is type only", () => {
-      doTest(`import type { } from 'foo' assert { type: 'asdf' }`, {
+      doTest(`import type { } from 'foo' with { type: 'asdf' }`, {
         kind: StructureKind.ImportDeclaration,
         isTypeOnly: true,
         defaultImport: undefined,
         moduleSpecifier: "foo",
         namedImports: [],
         namespaceImport: undefined,
-        assertElements: [{
-          kind: StructureKind.AssertEntry,
+        attributes: [{
+          kind: StructureKind.ImportAttribute,
           name: "type",
           value: "'asdf'",
         }],
@@ -815,7 +815,7 @@ describe("ImportDeclaration", () => {
           isTypeOnly: false,
         }],
         namespaceImport: undefined,
-        assertElements: undefined,
+        attributes: undefined,
       });
     });
 
@@ -827,7 +827,7 @@ describe("ImportDeclaration", () => {
         moduleSpecifier: "typescript",
         namedImports: [],
         namespaceImport: "ts",
-        assertElements: undefined,
+        attributes: undefined,
       });
     });
 
@@ -839,7 +839,7 @@ describe("ImportDeclaration", () => {
         moduleSpecifier: "foo",
         namedImports: [],
         namespaceImport: undefined,
-        assertElements: undefined,
+        attributes: undefined,
       });
     });
 
@@ -856,7 +856,7 @@ describe("ImportDeclaration", () => {
           isTypeOnly: false,
         }],
         namespaceImport: undefined,
-        assertElements: undefined,
+        attributes: undefined,
       });
     });
   });

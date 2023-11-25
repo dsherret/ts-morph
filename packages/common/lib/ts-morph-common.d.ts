@@ -6,7 +6,7 @@ export interface CompilerOptionsFromTsConfigOptions {
 }
 
 export interface CompilerOptionsFromTsConfigResult {
-    options: CompilerOptions;
+    options: ts.CompilerOptions;
     errors: ts.Diagnostic[];
 }
 
@@ -18,20 +18,15 @@ export interface CompilerOptionsFromTsConfigResult {
 export declare function getCompilerOptionsFromTsConfig(filePath: string, options?: CompilerOptionsFromTsConfigOptions): CompilerOptionsFromTsConfigResult;
 
 export declare class TsConfigResolver {
-    private readonly fileSystem;
-    private readonly encoding;
-    private readonly host;
-    private readonly tsConfigFilePath;
-    private readonly tsConfigDirPath;
+    #private;
     constructor(fileSystem: TransactionalFileSystem, tsConfigFilePath: StandardizedFilePath, encoding: string);
-    getCompilerOptions(): CompilerOptions;
+    getCompilerOptions(): ts.CompilerOptions;
     getErrors(): ts.Diagnostic[];
-    getPaths(compilerOptions?: CompilerOptions): {
+    getPaths(compilerOptions?: ts.CompilerOptions): {
         filePaths: StandardizedFilePath[];
         directoryPaths: StandardizedFilePath[];
     };
-    private parseJsonConfigFileContent;
-    private getTsConfigFileJson;
+    private _parseJsonConfigFileContent;
 }
 
 /**
@@ -40,7 +35,7 @@ export declare class TsConfigResolver {
  * this class should be removed in favour of helper functions around a Map.
  */
 export declare class KeyValueCache<T, U> {
-    private readonly cacheItems;
+    #private;
     getSize(): number;
     getValues(): IterableIterator<U>;
     getValuesAsArray(): U[];
@@ -59,9 +54,7 @@ export declare class KeyValueCache<T, U> {
  * An array where the values are sorted by a key of one of the values.
  */
 export declare class SortedKeyValueArray<TKey, TValue> {
-    private readonly getKey;
-    private readonly comparer;
-    private readonly array;
+    #private;
     constructor(getKey: (value: TValue) => TKey, comparer: Comparer<TKey>);
     set(value: TValue): void;
     removeByValue(value: TValue): void;
@@ -77,7 +70,7 @@ export declare class SortedKeyValueArray<TKey, TValue> {
  * this class should be removed in favour of helper functions around a WeakMap.
  */
 export declare class WeakCache<T extends object, U> {
-    private readonly cacheItems;
+    #private;
     getOrCreate<TCreate extends U = U>(key: T, createFunc: () => TCreate): TCreate;
     has(key: T): boolean;
     get(key: T): U | undefined;
@@ -101,8 +94,7 @@ export interface Comparer<T> {
  * Converts a comparer to a stored comparer.
  */
 export declare class ComparerToStoredComparer<T> implements StoredComparer<T> {
-    private readonly comparer;
-    private readonly storedValue;
+    #private;
     /**
      * Constructor.
      * @param comparer - Comparer to use.
@@ -127,8 +119,7 @@ export declare class LocaleStringComparer implements Comparer<string> {
  * Compares two values based on one of their properties.
  */
 export declare class PropertyComparer<TValue, TProperty> implements Comparer<TValue> {
-    private readonly getProperty;
-    private readonly comparer;
+    #private;
     /**
      * Constructor.
      * @param getProperty - Gets the property from the value to use for comparisons.
@@ -143,8 +134,7 @@ export declare class PropertyComparer<TValue, TProperty> implements Comparer<TVa
  * A stored comparer that compares a property to a stored value.
  */
 export declare class PropertyStoredComparer<TValue, TProperty> implements StoredComparer<TValue> {
-    private readonly getProperty;
-    private readonly comparer;
+    #private;
     /**
      * Constructor.
      * @param getProperty - Gets the property from the value.
@@ -227,9 +217,7 @@ export interface CreateModuleResolutionHostOptions {
  * An implementation of a ts.DocumentRegistry that uses a transactional file system.
  */
 export declare class DocumentRegistry implements ts.DocumentRegistry {
-    private readonly transactionalFileSystem;
-    private readonly sourceFileCacheByFilePath;
-    private static readonly initialVersion;
+    #private;
     /**
      * Constructor.
      * @param transactionalFileSystem - The transaction file system to use.
@@ -242,32 +230,30 @@ export declare class DocumentRegistry implements ts.DocumentRegistry {
      * @param scriptSnapshot - Script snapshot (text) of the file.
      * @param scriptKind - Script kind of the file.
      */
-    createOrUpdateSourceFile(fileName: StandardizedFilePath, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, scriptKind: ScriptKind | undefined): ts.SourceFile;
+    createOrUpdateSourceFile(fileName: StandardizedFilePath, compilationSettings: ts.CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, scriptKind: ts.ScriptKind | undefined): ts.SourceFile;
     /**
      * Removes the source file from the document registry.
      * @param fileName - File name to remove.
      */
     removeSourceFile(fileName: StandardizedFilePath): void;
     /** @inheritdoc */
-    acquireDocument(fileName: string, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind: ScriptKind | undefined): ts.SourceFile;
+    acquireDocument(fileName: string, compilationSettings: ts.CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind: ts.ScriptKind | undefined): ts.SourceFile;
     /** @inheritdoc */
-    acquireDocumentWithKey(fileName: string, path: ts.Path, compilationSettings: CompilerOptions, key: ts.DocumentRegistryBucketKey, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind: ScriptKind | undefined): ts.SourceFile;
+    acquireDocumentWithKey(fileName: string, path: ts.Path, compilationSettings: ts.CompilerOptions, key: ts.DocumentRegistryBucketKey, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind: ts.ScriptKind | undefined): ts.SourceFile;
     /** @inheritdoc */
-    updateDocument(fileName: string, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind: ScriptKind | undefined): ts.SourceFile;
+    updateDocument(fileName: string, compilationSettings: ts.CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind: ts.ScriptKind | undefined): ts.SourceFile;
     /** @inheritdoc */
-    updateDocumentWithKey(fileName: string, path: ts.Path, compilationSettings: CompilerOptions, key: ts.DocumentRegistryBucketKey, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind: ScriptKind | undefined): ts.SourceFile;
+    updateDocumentWithKey(fileName: string, path: ts.Path, compilationSettings: ts.CompilerOptions, key: ts.DocumentRegistryBucketKey, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind: ts.ScriptKind | undefined): ts.SourceFile;
     /** @inheritdoc */
-    getKeyForCompilationSettings(settings: CompilerOptions): ts.DocumentRegistryBucketKey;
+    getKeyForCompilationSettings(settings: ts.CompilerOptions): ts.DocumentRegistryBucketKey;
     /** @inheritdoc */
-    releaseDocument(fileName: string, compilationSettings: CompilerOptions): void;
+    releaseDocument(fileName: string, compilationSettings: ts.CompilerOptions): void;
     /** @inheritdoc */
     releaseDocumentWithKey(path: ts.Path, key: ts.DocumentRegistryBucketKey): void;
     /** @inheritdoc */
     reportStats(): string;
     /** @inheritdoc */
     getSourceFileVersion(sourceFile: ts.SourceFile): string;
-    private getNextSourceFileVersion;
-    private updateSourceFile;
 }
 
 /** Host for implementing custom module and/or type reference directive resolution. */
@@ -313,7 +299,7 @@ export interface TsSourceFileContainer {
      */
     addOrGetSourceFileFromFilePath(filePath: StandardizedFilePath, opts: {
         markInProject: boolean;
-        scriptKind: ScriptKind | undefined;
+        scriptKind: ts.ScriptKind | undefined;
     }): Promise<ts.SourceFile | undefined>;
     /**
      * Synchronously adds or gets a source file from a file path.
@@ -322,7 +308,7 @@ export interface TsSourceFileContainer {
      */
     addOrGetSourceFileFromFilePathSync(filePath: StandardizedFilePath, opts: {
         markInProject: boolean;
-        scriptKind: ScriptKind | undefined;
+        scriptKind: ts.ScriptKind | undefined;
     }): ts.SourceFile | undefined;
     /**
      * Gets the source file version of the specified source file.
@@ -533,6 +519,7 @@ export interface FileSystemHost {
 
 /** Utilities for working with files. */
 export declare class FileUtils {
+    #private;
     static readonly ENOENT = "ENOENT";
     private constructor();
     /**
@@ -589,7 +576,6 @@ export declare class FileUtils {
      * @param startsWithPath - Starts with path.
      */
     static pathStartsWith(fileOrDirPath: string | undefined, startsWithPath: string | undefined): boolean;
-    private static splitPathBySlashes;
     /**
      * Gets the parent most paths out of the list of paths.
      * @param paths - File or directory paths.
@@ -645,6 +631,7 @@ export declare class FileUtils {
 
 /** An implementation of a file system that exists in memory only. */
 export declare class InMemoryFileSystemHost implements FileSystemHost {
+    #private;
     /**
      * Constructor.
      */
@@ -700,6 +687,7 @@ export declare function matchGlobs(paths: ReadonlyArray<string>, patterns: strin
 
 /** An implementation of a file host that interacts with the actual file system. */
 export declare class RealFileSystemHost implements FileSystemHost {
+    #private;
     /** @inheritdoc */
     delete(path: string): Promise<void>;
     /** @inheritdoc */
@@ -744,8 +732,6 @@ export declare class RealFileSystemHost implements FileSystemHost {
     globSync(patterns: ReadonlyArray<string>): string[];
     /** @inheritdoc */
     isCaseSensitive(): boolean;
-    private getDirectoryNotFoundErrorIfNecessary;
-    private getFileNotFoundErrorIfNecessary;
 }
 
 /** Nominal type to denote a file path that has been standardized. */
@@ -770,10 +756,7 @@ export interface TransactionalFileSystemOptions {
  * FileSystemHost wrapper that allows transactionally queuing operations to the file system.
  */
 export declare class TransactionalFileSystem {
-    private readonly directories;
-    private readonly pathCasingMaintainer;
-    private readonly fileSystem;
-    private readonly libFileMap;
+    #private;
     /**
      * Constructor.
      * @param fileSystem - File system host to commit the operations to.
@@ -789,10 +772,6 @@ export declare class TransactionalFileSystem {
     flushSync(): void;
     saveForDirectory(dirPath: StandardizedFilePath): Promise<void>;
     saveForDirectorySync(dirPath: StandardizedFilePath): void;
-    private getAndClearOperationsForDir;
-    private executeOperation;
-    private executeOperationSync;
-    private getAndClearOperations;
     moveFileImmediately(oldFilePath: StandardizedFilePath, newFilePath: StandardizedFilePath, fileText: string): Promise<void>;
     moveFileImmediatelySync(oldFilePath: StandardizedFilePath, newFilePath: StandardizedFilePath, fileText: string): void;
     deleteFileImmediately(filePath: StandardizedFilePath): Promise<void>;
@@ -807,17 +786,13 @@ export declare class TransactionalFileSystem {
     /** Recreates a directory on the underlying file system synchronously. */
     clearDirectoryImmediatelySync(dirPath: StandardizedFilePath): void;
     deleteDirectoryImmediatelySync(dirPath: StandardizedFilePath): void;
-    private deleteSuppressNotFound;
-    private deleteSuppressNotFoundSync;
     fileExists(filePath: StandardizedFilePath): boolean | Promise<boolean>;
     fileExistsSync(filePath: StandardizedFilePath): boolean;
-    private _fileDeletedInMemory;
     directoryExistsSync(dirPath: StandardizedFilePath): boolean;
     readFileIfExistsSync(filePath: StandardizedFilePath, encoding: string | undefined): string | undefined;
     readFileSync(filePath: StandardizedFilePath, encoding: string | undefined): string;
     readFileIfExists(filePath: StandardizedFilePath, encoding: string | undefined): Promise<string | undefined>;
     readFile(filePath: StandardizedFilePath, encoding: string | undefined): Promise<string>;
-    private _verifyCanReadFile;
     readDirSync(dirPath: StandardizedFilePath): DirEntry[];
     glob(patterns: ReadonlyArray<string>): Promise<StandardizedFilePath[]>;
     globSync(patterns: ReadonlyArray<string>): Generator<StandardizedFilePath, void, unknown>;
@@ -830,23 +805,6 @@ export declare class TransactionalFileSystem {
     readFileOrNotExistsSync(filePath: StandardizedFilePath, encoding: string): string | false;
     writeFile(filePath: StandardizedFilePath, fileText: string): Promise<void>;
     writeFileSync(filePath: StandardizedFilePath, fileText: string): void;
-    private isPathDirectoryInQueueThatExists;
-    private isPathQueuedForDeletion;
-    private removeDirAndSubDirs;
-    private addBackDirAndSubDirs;
-    private operationIndex;
-    private getNextOperationIndex;
-    private getParentDirectoryIfExists;
-    private getOrCreateParentDirectory;
-    private getDirectoryIfExists;
-    private getOrCreateDirectory;
-    private throwIfHasExternalOperations;
-    private ensureDirectoryExists;
-    private ensureDirectoryExistsSync;
-    private removeMkDirOperationsForDir;
-    private libFileExists;
-    private readLibFile;
-    private throwIfLibFile;
 }
 
 /** Gets the TypeScript lib files (.d.ts files). */
@@ -888,6 +846,7 @@ export declare class CompilerOptionsContainer extends SettingsContainer<ts.Compi
 }
 
 export declare abstract class SettingsContainer<T extends object> {
+    #private;
     protected _settings: T;
     /**
      * Constructor.
@@ -1039,7 +998,7 @@ export type EventContainerSubscription<EventArgType> = (arg: EventArgType) => vo
  * Event container for event subscriptions.
  */
 export declare class EventContainer<EventArgType = undefined> {
-    private readonly subscriptions;
+    #private;
     /**
      * Subscribe to an event being fired.
      * @param subscription - Subscription.
@@ -1054,7 +1013,6 @@ export declare class EventContainer<EventArgType = undefined> {
      * Fire an event.
      */
     fire(arg: EventArgType): void;
-    private getIndex;
 }
 
 export declare class IterableUtils {

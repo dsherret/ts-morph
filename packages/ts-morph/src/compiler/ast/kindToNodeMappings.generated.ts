@@ -10,8 +10,6 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.ArrayType]: compiler.ArrayTypeNode;
   [SyntaxKind.ArrowFunction]: compiler.ArrowFunction;
   [SyntaxKind.AsExpression]: compiler.AsExpression;
-  [SyntaxKind.AssertClause]: compiler.AssertClause;
-  [SyntaxKind.AssertEntry]: compiler.AssertEntry;
   [SyntaxKind.AwaitExpression]: compiler.AwaitExpression;
   [SyntaxKind.BigIntLiteral]: compiler.BigIntLiteral;
   [SyntaxKind.BindingElement]: compiler.BindingElement;
@@ -65,7 +63,8 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.ImportEqualsDeclaration]: compiler.ImportEqualsDeclaration;
   [SyntaxKind.ImportSpecifier]: compiler.ImportSpecifier;
   [SyntaxKind.ImportType]: compiler.ImportTypeNode;
-  [SyntaxKind.ImportTypeAssertionContainer]: compiler.ImportTypeAssertionContainer;
+  [SyntaxKind.ImportAttribute]: compiler.ImportAttribute;
+  [SyntaxKind.ImportAttributes]: compiler.ImportAttributes;
   [SyntaxKind.IndexedAccessType]: compiler.IndexedAccessTypeNode;
   [SyntaxKind.IndexSignature]: compiler.IndexSignatureDeclaration;
   [SyntaxKind.InferType]: compiler.InferTypeNode;

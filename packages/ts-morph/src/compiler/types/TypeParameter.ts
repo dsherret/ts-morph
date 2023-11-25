@@ -14,7 +14,7 @@ export class TypeParameter extends Type<ts.TypeParameter> {
    * Gets the constraint type.
    */
   getConstraint(): Type | undefined {
-    const declaration = this._getTypeParameterDeclaration();
+    const declaration = this.#getTypeParameterDeclaration();
     if (declaration == null)
       return undefined;
     const constraintNode = declaration.getConstraint();
@@ -34,7 +34,7 @@ export class TypeParameter extends Type<ts.TypeParameter> {
    * Gets the default type or undefined if it doesn't exist.
    */
   getDefault(): Type | undefined {
-    const declaration = this._getTypeParameterDeclaration();
+    const declaration = this.#getTypeParameterDeclaration();
     if (declaration == null)
       return undefined;
     const defaultNode = declaration.getDefault();
@@ -46,7 +46,7 @@ export class TypeParameter extends Type<ts.TypeParameter> {
   /**
    * @internal
    */
-  private _getTypeParameterDeclaration() {
+  #getTypeParameterDeclaration() {
     const symbol = this.getSymbol();
     if (symbol == null)
       return undefined;

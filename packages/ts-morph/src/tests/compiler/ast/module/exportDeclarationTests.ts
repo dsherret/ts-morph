@@ -2,7 +2,7 @@ import { errors, nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ExportDeclaration } from "../../../../compiler";
 import { Project } from "../../../../Project";
-import { AssertEntryStructure, ExportDeclarationStructure, ExportSpecifierStructure, OptionalKind, StructureKind } from "../../../../structures";
+import { ExportDeclarationStructure, ExportSpecifierStructure, ImportAttributeStructure, OptionalKind, StructureKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
@@ -587,12 +587,12 @@ describe("ExportDeclaration", () => {
         namedExports: [{ name: "test" }, { name: "test2", alias: "alias" }],
         namespaceExport: undefined,
         moduleSpecifier: "asdf",
-        assertElements: [{ name: "type", value: "test" }],
+        attributes: [{ name: "type", value: "test" }],
       };
       doTest(
         "export * from 'test';",
         structure,
-        "export type { test, test2 as alias } from 'asdf' assert {\n    type: \"test\"\n};",
+        "export type { test, test2 as alias } from 'asdf' with {\n    type: \"test\"\n};",
       );
     });
 
@@ -610,10 +610,10 @@ describe("ExportDeclaration", () => {
     });
   });
 
-  describe(nameof<ExportDeclaration>("setAssertElements"), () => {
-    function doTest(text: string, structure: OptionalKind<AssertEntryStructure>[] | undefined, expected: string) {
+  describe(nameof<ExportDeclaration>("setAttributes"), () => {
+    function doTest(text: string, structure: OptionalKind<ImportAttributeStructure>[] | undefined, expected: string) {
       const { firstChild, sourceFile } = getInfoFromText<ExportDeclaration>(text);
-      firstChild.setAssertElements(structure);
+      firstChild.setAttributes(structure);
       expect(sourceFile.getText()).to.equal(expected);
     }
 
@@ -621,7 +621,7 @@ describe("ExportDeclaration", () => {
       doTest(
         `export {} from "./test";`,
         [{ name: "type", value: "value" }],
-        `export {} from "./test" assert {\n    type: "value"\n};`,
+        `export {} from "./test" with {\n    type: "value"\n};`,
       );
     });
 
@@ -629,13 +629,13 @@ describe("ExportDeclaration", () => {
       doTest(
         `export {} from "./test"`,
         [{ name: "type", value: "value" }],
-        `export {} from "./test" assert {\n    type: "value"\n}`,
+        `export {} from "./test" with {\n    type: "value"\n}`,
       );
     });
 
     it("should remove for undefined", () => {
       doTest(
-        `export {} from "./test" assert { type: "value" };`,
+        `export {} from "./test" with { type: "value" };`,
         undefined,
         `export {} from "./test";`,
       );
@@ -643,9 +643,9 @@ describe("ExportDeclaration", () => {
 
     it("should set", () => {
       doTest(
-        `export {} from "./test" assert { something: "asdf" };`,
+        `export {} from "./test" with { something: "asdf" };`,
         [{ name: "type", value: "value" }, { name: "other", value: "test" }],
-        `export {} from "./test" assert {\n    type: "value",\n    other: "test"\n};`,
+        `export {} from "./test" with {\n    type: "value",\n    other: "test"\n};`,
       );
     });
   });
@@ -663,7 +663,7 @@ describe("ExportDeclaration", () => {
         moduleSpecifier: "./test",
         namedExports: [],
         namespaceExport: undefined,
-        assertElements: undefined,
+        attributes: undefined,
       });
     });
 
@@ -674,18 +674,18 @@ describe("ExportDeclaration", () => {
         moduleSpecifier: "./test",
         namedExports: [{ kind: StructureKind.ExportSpecifier, alias: undefined, name: "name", isTypeOnly: false }],
         namespaceExport: undefined,
-        assertElements: undefined,
+        attributes: undefined,
       });
     });
 
     it("should work with namespace export declarations", () => {
-      doTest(`export * from "./test" assert { type: 'asdf' };`, {
+      doTest(`export * from "./test" with { type: 'asdf' };`, {
         kind: StructureKind.ExportDeclaration,
         isTypeOnly: false,
         moduleSpecifier: "./test",
         namedExports: [],
         namespaceExport: undefined,
-        assertElements: [{ kind: StructureKind.AssertEntry, name: "type", value: "'asdf'" }],
+        attributes: [{ kind: StructureKind.ImportAttribute, name: "type", value: "'asdf'" }],
       });
     });
 
@@ -696,7 +696,7 @@ describe("ExportDeclaration", () => {
         moduleSpecifier: "./test",
         namedExports: [],
         namespaceExport: "ns",
-        assertElements: undefined,
+        attributes: undefined,
       });
     });
   });

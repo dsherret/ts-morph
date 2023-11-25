@@ -2,8 +2,11 @@ import { CodeBlockWriter } from "../../codeBlockWriter";
 import { Printer } from "../Printer";
 
 export class NewLineFormattingStructuresPrinter<T> extends Printer<ReadonlyArray<T>> {
-  constructor(private readonly printer: Printer<T>) {
+  readonly #printer: Printer<T>;
+
+  constructor(printer: Printer<T>) {
     super();
+    this.#printer = printer;
   }
 
   printText(writer: CodeBlockWriter, structures: ReadonlyArray<T> | undefined) {
@@ -12,7 +15,7 @@ export class NewLineFormattingStructuresPrinter<T> extends Printer<ReadonlyArray
 
     for (let i = 0; i < structures.length; i++) {
       writer.conditionalNewLine(i > 0);
-      this.printer.printText(writer, structures[i]);
+      this.#printer.printText(writer, structures[i]);
     }
   }
 }

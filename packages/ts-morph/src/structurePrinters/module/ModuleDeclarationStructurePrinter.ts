@@ -8,18 +8,20 @@ import { BlankLineFormattingStructuresPrinter } from "../formatting";
 import { NodePrinter } from "../NodePrinter";
 
 export class ModuleDeclarationStructurePrinter extends NodePrinter<OptionalKind<ModuleDeclarationStructure>> {
-  private readonly blankLineFormattingWriter = new BlankLineFormattingStructuresPrinter(this);
+  readonly #options: { isAmbient: boolean };
+  readonly #blankLineFormattingWriter = new BlankLineFormattingStructuresPrinter(this);
 
-  constructor(factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean }) {
+  constructor(factory: StructurePrinterFactory, options: { isAmbient: boolean }) {
     super(factory);
+    this.#options = options;
   }
 
   printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<ModuleDeclarationStructure>> | undefined) {
-    this.blankLineFormattingWriter.printText(writer, structures);
+    this.#blankLineFormattingWriter.printText(writer, structures);
   }
 
   protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<ModuleDeclarationStructure>) {
-    structure = this.validateAndGetStructure(structure);
+    structure = this.#validateAndGetStructure(structure);
 
     this.factory.forJSDoc().printDocs(writer, structure.docs);
     this.factory.forModifierableNode().printText(writer, structure);
@@ -37,13 +39,13 @@ export class ModuleDeclarationStructurePrinter extends NodePrinter<OptionalKind<
       writer.write(" ");
       writer.inlineBlock(() => {
         this.factory.forStatementedNode({
-          isAmbient: structure.hasDeclareKeyword || this.options.isAmbient,
+          isAmbient: structure.hasDeclareKeyword || this.#options.isAmbient,
         }).printText(writer, structure);
       });
     }
   }
 
-  private validateAndGetStructure(structure: OptionalKind<ModuleDeclarationStructure>) {
+  #validateAndGetStructure(structure: OptionalKind<ModuleDeclarationStructure>) {
     if (StringUtils.isQuoted(structure.name.trim())) {
       if (structure.declarationKind === ModuleDeclarationKind.Namespace) {
         throw new errors.InvalidOperationError(

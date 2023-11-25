@@ -14,34 +14,36 @@ export interface ChangeChildOrderParentHandlerOptions {
  * Node handler for dealing with a parent who has a child that will change order.
  */
 export class ChangeChildOrderParentHandler implements NodeHandler {
-  private readonly straightReplacementNodeHandler: NodeHandler;
-  private readonly helper: NodeHandlerHelper;
-  private readonly oldIndex: number;
-  private readonly newIndex: number;
+  readonly #compilerFactory: CompilerFactory;
+  readonly #straightReplacementNodeHandler: NodeHandler;
+  readonly #helper: NodeHandlerHelper;
+  readonly #oldIndex: number;
+  readonly #newIndex: number;
 
-  constructor(private readonly compilerFactory: CompilerFactory, opts: ChangeChildOrderParentHandlerOptions) {
-    this.straightReplacementNodeHandler = new StraightReplacementNodeHandler(compilerFactory);
-    this.helper = new NodeHandlerHelper(compilerFactory);
-    this.oldIndex = opts.oldIndex;
-    this.newIndex = opts.newIndex;
+  constructor(compilerFactory: CompilerFactory, opts: ChangeChildOrderParentHandlerOptions) {
+    this.#straightReplacementNodeHandler = new StraightReplacementNodeHandler(compilerFactory);
+    this.#helper = new NodeHandlerHelper(compilerFactory);
+    this.#oldIndex = opts.oldIndex;
+    this.#newIndex = opts.newIndex;
+    this.#compilerFactory = compilerFactory;
   }
 
   handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
-    const [currentChildren, newChildren] = this.helper.getCompilerChildren(currentNode, newNode, newSourceFile);
-    const currentChildrenInNewOrder = this.getChildrenInNewOrder(currentChildren);
+    const [currentChildren, newChildren] = this.#helper.getCompilerChildren(currentNode, newNode, newSourceFile);
+    const currentChildrenInNewOrder = this.#getChildrenInNewOrder(currentChildren);
 
     errors.throwIfNotEqual(newChildren.length, currentChildrenInNewOrder.length, "New children length should match the old children length.");
 
     for (let i = 0; i < newChildren.length; i++)
-      this.helper.handleForValues(this.straightReplacementNodeHandler, currentChildrenInNewOrder[i], newChildren[i], newSourceFile);
+      this.#helper.handleForValues(this.#straightReplacementNodeHandler, currentChildrenInNewOrder[i], newChildren[i], newSourceFile);
 
-    this.compilerFactory.replaceCompilerNode(currentNode, newNode);
+    this.#compilerFactory.replaceCompilerNode(currentNode, newNode);
   }
 
-  private getChildrenInNewOrder(children: ts.Node[]) {
+  #getChildrenInNewOrder(children: ts.Node[]) {
     const result = [...children];
-    const movingNode = result.splice(this.oldIndex, 1)[0];
-    result.splice(this.newIndex, 0, movingNode);
+    const movingNode = result.splice(this.#oldIndex, 1)[0];
+    result.splice(this.#newIndex, 0, movingNode);
     return result;
   }
 }

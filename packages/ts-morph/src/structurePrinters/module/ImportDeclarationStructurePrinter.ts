@@ -5,10 +5,10 @@ import { NewLineFormattingStructuresPrinter } from "../formatting";
 import { NodePrinter } from "../NodePrinter";
 
 export class ImportDeclarationStructurePrinter extends NodePrinter<OptionalKind<ImportDeclarationStructure>> {
-  private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);
+  readonly #multipleWriter = new NewLineFormattingStructuresPrinter(this);
 
   printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<ImportDeclarationStructure>> | undefined) {
-    this.multipleWriter.printText(writer, structures);
+    this.#multipleWriter.printText(writer, structures);
   }
 
   protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<ImportDeclarationStructure>) {
@@ -40,9 +40,9 @@ export class ImportDeclarationStructurePrinter extends NodePrinter<OptionalKind<
     writer.write(" ");
     writer.quote(structure.moduleSpecifier);
     // assert clause
-    if (structure.assertElements) {
+    if (structure.attributes) {
       writer.space();
-      this.factory.forAssertEntry().printAssertClause(writer, structure.assertElements);
+      this.factory.forImportAttribute().printAttributes(writer, structure.attributes);
     }
     writer.write(";");
   }

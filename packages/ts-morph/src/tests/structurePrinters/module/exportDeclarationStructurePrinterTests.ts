@@ -61,8 +61,8 @@ describe("ExportDeclarationStructurePrinter", () => {
   describe("asserts clause", () => {
     it("should write", () => {
       doTest(
-        { namedExports: ["test"], assertElements: [{ name: "type", value: "test" }] },
-        "export { test } assert {\n    type: \"test\"\n};",
+        { namedExports: ["test"], attributes: [{ name: "type", value: "test" }] },
+        "export { test } with {\n    type: \"test\"\n};",
       );
     });
   });

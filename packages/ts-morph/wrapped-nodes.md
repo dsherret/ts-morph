@@ -8,609 +8,609 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 **Total:** 225
 
-* [ArrayBindingPattern](src/compiler/ast/binding/ArrayBindingPattern.ts)
-    * :heavy_check_mark: elements
-* [ArrayDestructuringAssignment](src/compiler/ast/expression/array/ArrayDestructuringAssignment.ts)
-    * :heavy_check_mark: left
-* [ArrayLiteralExpression](src/compiler/ast/expression/array/ArrayLiteralExpression.ts)
-    * :heavy_check_mark: elements
-* [ArrayTypeNode](src/compiler/ast/type/ArrayTypeNode.ts)
-    * :heavy_check_mark: elementType
-* [ArrowFunction](src/compiler/ast/function/ArrowFunction.ts)
-    * :heavy_check_mark: modifiers
-    * :heavy_check_mark: equalsGreaterThanToken
-    * :heavy_check_mark: body
-    * :heavy_check_mark: name
-* [AsExpression](src/compiler/ast/expression/AsExpression.ts)
-    * :heavy_check_mark: expression
-    * :heavy_check_mark: type
-* [AssertClause](src/compiler/ast/module/AssertClause.ts)
-    * :heavy_check_mark: elements
-    * :x: multiLine
-* [AssertEntry](src/compiler/ast/module/AssertEntry.ts)
-    * :heavy_check_mark: name
-    * :heavy_check_mark: value
-* [AssignmentExpression](src/compiler/ast/expression/AssignmentExpression.ts)
-    * :heavy_check_mark: left
-    * :heavy_check_mark: operatorToken
-* [AwaitExpression](src/compiler/ast/expression/AwaitExpression.ts)
-    * :heavy_check_mark: expression
-* [BigIntLiteral](src/compiler/ast/literal/BigIntLiteral.ts)
-* [BinaryExpression](src/compiler/ast/expression/BinaryExpression.ts)
-    * :heavy_check_mark: left
-    * :heavy_check_mark: operatorToken
-    * :heavy_check_mark: right
-* [BindingElement](src/compiler/ast/binding/BindingElement.ts)
-    * :heavy_check_mark: propertyName
-    * :heavy_check_mark: dotDotDotToken
-    * :heavy_check_mark: name
-    * :heavy_check_mark: initializer
-* [Block](src/compiler/ast/statement/Block.ts)
-    * :heavy_check_mark: statements
-* [BreakStatement](src/compiler/ast/statement/BreakStatement.ts)
-    * :heavy_check_mark: label
-* [CallExpression](src/compiler/ast/expression/CallExpression.ts)
-    * :heavy_check_mark: expression
-    * :heavy_check_mark: questionDotToken
-    * :heavy_check_mark: typeArguments
-    * :heavy_check_mark: arguments
-* [CallSignatureDeclaration](src/compiler/ast/interface/CallSignatureDeclaration.ts)
-* [CaseBlock](src/compiler/ast/statement/CaseBlock.ts)
-    * :heavy_check_mark: clauses
-* [CaseClause](src/compiler/ast/statement/CaseClause.ts)
-    * :heavy_check_mark: expression
-    * :heavy_check_mark: statements
-* [CatchClause](src/compiler/ast/statement/CatchClause.ts)
-    * :heavy_check_mark: variableDeclaration
-    * :heavy_check_mark: block
-* [ClassDeclaration](src/compiler/ast/class/ClassDeclaration.ts)
-    * :heavy_check_mark: modifiers
-    * :heavy_check_mark: name
-* [ClassElement](src/compiler/ast/class/ClassElement.ts)
-    * :heavy_check_mark: name
-* [ClassExpression](src/compiler/ast/class/ClassExpression.ts)
-    * :heavy_check_mark: modifiers
-* [ClassStaticBlockDeclaration](src/compiler/ast/class/ClassStaticBlockDeclaration.ts)
-    * :heavy_check_mark: body
-* [CommaListExpression](src/compiler/ast/expression/CommaListExpression.ts)
-    * :heavy_check_mark: elements
-* [ComputedPropertyName](src/compiler/ast/name/ComputedPropertyName.ts)
-    * :heavy_check_mark: expression
-* [ConditionalExpression](src/compiler/ast/expression/ConditionalExpression.ts)
-    * :heavy_check_mark: condition
-    * :heavy_check_mark: questionToken
-    * :heavy_check_mark: whenTrue
-    * :heavy_check_mark: colonToken
-    * :heavy_check_mark: whenFalse
-* [ConditionalTypeNode](src/compiler/ast/type/ConditionalTypeNode.ts)
-    * :heavy_check_mark: checkType
-    * :heavy_check_mark: extendsType
-    * :heavy_check_mark: trueType
-    * :heavy_check_mark: falseType
-* [ConstructorDeclaration](src/compiler/ast/class/ConstructorDeclaration.ts)
-    * :heavy_check_mark: modifiers
-    * :heavy_check_mark: body
-* [ConstructorTypeNode](src/compiler/ast/type/ConstructorTypeNode.ts)
-    * :heavy_check_mark: modifiers
-* [ConstructSignatureDeclaration](src/compiler/ast/interface/ConstructSignatureDeclaration.ts)
-* [ContinueStatement](src/compiler/ast/statement/ContinueStatement.ts)
-    * :heavy_check_mark: label
-* [DebuggerStatement](src/compiler/ast/statement/DebuggerStatement.ts)
-* [Decorator](src/compiler/ast/decorator/Decorator.ts)
-    * :heavy_check_mark: expression
-* [DefaultClause](src/compiler/ast/statement/DefaultClause.ts)
-    * :heavy_check_mark: statements
-* [DeleteExpression](src/compiler/ast/expression/DeleteExpression.ts)
-    * :heavy_check_mark: expression
-* [DoStatement](src/compiler/ast/statement/DoStatement.ts)
-    * :heavy_check_mark: expression
-* [ElementAccessExpression](src/compiler/ast/expression/ElementAccessExpression.ts)
-    * :heavy_check_mark: expression
-    * :heavy_check_mark: questionDotToken
-    * :heavy_check_mark: argumentExpression
-* [EmptyStatement](src/compiler/ast/statement/EmptyStatement.ts)
-* [EnumDeclaration](src/compiler/ast/enum/EnumDeclaration.ts)
-    * :heavy_check_mark: modifiers
-    * :heavy_check_mark: name
-    * :heavy_check_mark: members
-* [EnumMember](src/compiler/ast/enum/EnumMember.ts)
-    * :heavy_check_mark: name
-    * :heavy_check_mark: initializer
-* [ExportAssignment](src/compiler/ast/module/ExportAssignment.ts)
-    * :x: modifiers
-    * :heavy_check_mark: isExportEquals
-    * :heavy_check_mark: expression
-* [ExportDeclaration](src/compiler/ast/module/ExportDeclaration.ts)
-    * :x: modifiers
-    * :heavy_check_mark: isTypeOnly
-    * :heavy_check_mark: exportClause
-    * :heavy_check_mark: moduleSpecifier
-    * :heavy_check_mark: assertClause
-* [ExportSpecifier](src/compiler/ast/module/ExportSpecifier.ts)
-    * :heavy_check_mark: isTypeOnly
-    * :heavy_check_mark: propertyName
-    * :heavy_check_mark: name
-* [Expression](src/compiler/ast/expression/Expression.ts)
-* [ExpressionStatement](src/compiler/ast/statement/ExpressionStatement.ts)
-    * :heavy_check_mark: expression
-* [ExpressionWithTypeArguments](src/compiler/ast/type/ExpressionWithTypeArguments.ts)
-    * :heavy_check_mark: expression
-* [ExternalModuleReference](src/compiler/ast/module/ExternalModuleReference.ts)
-    * :heavy_check_mark: expression
-* [FalseLiteral](src/compiler/ast/literal/BooleanLiterals.ts)
-* [ForInStatement](src/compiler/ast/statement/ForInStatement.ts)
-    * :heavy_check_mark: initializer
-    * :heavy_check_mark: expression
-* [ForOfStatement](src/compiler/ast/statement/ForOfStatement.ts)
-    * :heavy_check_mark: awaitModifier
-    * :heavy_check_mark: initializer
-    * :heavy_check_mark: expression
-* [ForStatement](src/compiler/ast/statement/ForStatement.ts)
-    * :heavy_check_mark: initializer
-    * :heavy_check_mark: condition
-    * :heavy_check_mark: incrementor
-* [FunctionDeclaration](src/compiler/ast/function/FunctionDeclaration.ts)
-    * :heavy_check_mark: modifiers
-    * :heavy_check_mark: name
-    * :heavy_check_mark: body
-* [FunctionExpression](src/compiler/ast/function/FunctionExpression.ts)
-    * :heavy_check_mark: modifiers
-    * :heavy_check_mark: name
-    * :heavy_check_mark: body
-* FunctionLikeDeclarationBase - Implemented via mixin.
-* [FunctionTypeNode](src/compiler/ast/type/FunctionTypeNode.ts)
-* [GetAccessorDeclaration](src/compiler/ast/class/GetAccessorDeclaration.ts)
-    * :heavy_check_mark: modifiers
-    * :heavy_check_mark: name
-    * :heavy_check_mark: body
-* [HeritageClause](src/compiler/ast/general/HeritageClause.ts)
-    * :heavy_check_mark: token
-    * :heavy_check_mark: types
-* [Identifier](src/compiler/ast/name/Identifier.ts)
-    * :x: escapedText
-* [Identifier](src/compiler/ast/name/Identifier.ts)
-    * :heavy_check_mark: text
-* [Identifier](src/compiler/ast/name/Identifier.ts)
-    * :x: originalKeywordKind
-    * :x: isInJSDocNamespace
-* [IfStatement](src/compiler/ast/statement/IfStatement.ts)
-    * :heavy_check_mark: expression
-    * :heavy_check_mark: thenStatement
-    * :heavy_check_mark: elseStatement
-* [ImportClause](src/compiler/ast/module/ImportClause.ts)
-    * :heavy_check_mark: isTypeOnly
-    * :heavy_check_mark: name
-    * :x: namedBindings
-* [ImportDeclaration](src/compiler/ast/module/ImportDeclaration.ts)
-    * :x: modifiers
-    * :heavy_check_mark: importClause
-    * :heavy_check_mark: moduleSpecifier
-    * :heavy_check_mark: assertClause
-* [ImportEqualsDeclaration](src/compiler/ast/module/ImportEqualsDeclaration.ts)
-    * :heavy_check_mark: modifiers
-    * :heavy_check_mark: name
-    * :heavy_check_mark: isTypeOnly
-    * :heavy_check_mark: moduleReference
-* [ImportExpression](src/compiler/ast/expression/ImportExpression.ts)
-* [ImportSpecifier](src/compiler/ast/module/ImportSpecifier.ts)
-    * :heavy_check_mark: propertyName
-    * :heavy_check_mark: name
-    * :heavy_check_mark: isTypeOnly
-* [ImportTypeAssertionContainer](src/compiler/ast/type/ImportTypeAssertionContainer.ts)
-    * :heavy_check_mark: assertClause
-    * :heavy_check_mark: multiLine
-* [ImportTypeNode](src/compiler/ast/type/ImportTypeNode.ts)
-    * :x: isTypeOf
-    * :heavy_check_mark: argument
-    * :heavy_check_mark: assertions
-    * :heavy_check_mark: qualifier
-* [IndexedAccessTypeNode](src/compiler/ast/type/IndexedAccessTypeNode.ts)
-    * :heavy_check_mark: objectType
-    * :heavy_check_mark: indexType
-* [IndexSignatureDeclaration](src/compiler/ast/interface/IndexSignatureDeclaration.ts)
-    * :heavy_check_mark: modifiers
-    * :heavy_check_mark: type
-* [InferTypeNode](src/compiler/ast/type/InferTypeNode.ts)
-    * :heavy_check_mark: typeParameter
-* [InterfaceDeclaration](src/compiler/ast/interface/InterfaceDeclaration.ts)
-    * :heavy_check_mark: modifiers
-    * :heavy_check_mark: name
-    * :heavy_check_mark: typeParameters
-    * :heavy_check_mark: heritageClauses
-    * :heavy_check_mark: members
-* [IntersectionTypeNode](src/compiler/ast/type/IntersectionTypeNode.ts)
-    * :heavy_check_mark: types
-* [IterationStatement](src/compiler/ast/statement/IterationStatement.ts)
-    * :heavy_check_mark: statement
-* [JSDoc](src/compiler/ast/doc/JSDoc.ts)
-    * :heavy_check_mark: tags
-    * :heavy_check_mark: comment
-* [JSDocAllType](src/compiler/ast/doc/JSDocAllType.ts)
-* [JSDocAugmentsTag](src/compiler/ast/doc/JSDocAugmentsTag.ts)
-    * :x: class
-* [JSDocAuthorTag](src/compiler/ast/doc/JSDocAuthorTag.ts)
-* [JSDocCallbackTag](src/compiler/ast/doc/JSDocCallbackTag.ts)
-    * :x: fullName
-    * :heavy_check_mark: name
-    * :x: typeExpression
-* [JSDocClassTag](src/compiler/ast/doc/JSDocClassTag.ts)
-* [JSDocDeprecatedTag](src/compiler/ast/doc/JSDocDeprecatedTag.ts)
-* [JSDocEnumTag](src/compiler/ast/doc/JSDocEnumTag.ts)
-    * :x: typeExpression
-* [JSDocFunctionType](src/compiler/ast/doc/JSDocFunctionType.ts)
-* [JSDocImplementsTag](src/compiler/ast/doc/JSDocImplementsTag.ts)
-    * :x: class
-* [JSDocLink](src/compiler/ast/doc/JSDocLink.ts)
-    * :x: name
-    * :x: text
-* [JSDocLinkCode](src/compiler/ast/doc/JSDocLinkCode.ts)
-    * :x: name
-    * :x: text
-* [JSDocLinkPlain](src/compiler/ast/doc/JSDocLinkPlain.ts)
-    * :x: name
-    * :x: text
-* [JSDocMemberName](src/compiler/ast/doc/JSDocMemberName.ts)
-    * :x: left
-    * :x: right
-* [JSDocNamepathType](src/compiler/ast/doc/JSDocNamepathType.ts)
-    * :heavy_check_mark: type
-* [JSDocNameReference](src/compiler/ast/doc/JSDocNameReference.ts)
-    * :heavy_check_mark: name
-* [JSDocNonNullableType](src/compiler/ast/doc/JSDocNonNullableType.ts)
-    * :heavy_check_mark: type
-    * :heavy_check_mark: postfix
-* [JSDocNullableType](src/compiler/ast/doc/JSDocNullableType.ts)
-    * :heavy_check_mark: type
-    * :heavy_check_mark: postfix
-* [JSDocOptionalType](src/compiler/ast/doc/JSDocOptionalType.ts)
-    * :heavy_check_mark: type
-* [JSDocOverloadTag](src/compiler/ast/doc/JSDocOverloadTag.ts)
-    * :heavy_check_mark: typeExpression
-* [JSDocOverrideTag](src/compiler/ast/doc/JSDocOverrideTag.ts)
-* [JSDocParameterTag](src/compiler/ast/doc/JSDocParameterTag.ts)
-* [JSDocPrivateTag](src/compiler/ast/doc/JSDocPrivateTag.ts)
-* [JSDocPropertyTag](src/compiler/ast/doc/JSDocPropertyTag.ts)
-* [JSDocProtectedTag](src/compiler/ast/doc/JSDocProtectedTag.ts)
-* [JSDocPublicTag](src/compiler/ast/doc/JSDocPublicTag.ts)
-* [JSDocReadonlyTag](src/compiler/ast/doc/JSDocReadonlyTag.ts)
-* [JSDocReturnTag](src/compiler/ast/doc/JSDocReturnTag.ts)
-    * :heavy_check_mark: typeExpression
-* [JSDocSatisfiesTag](src/compiler/ast/doc/JSDocSatisfiesTag.ts)
-    * :heavy_check_mark: typeExpression
-* [JSDocSeeTag](src/compiler/ast/doc/JSDocSeeTag.ts)
-    * :x: name
-* [JSDocSignature](src/compiler/ast/doc/JSDocSignature.ts)
-    * :x: typeParameters
-    * :x: parameters
-    * :heavy_check_mark: type
-* [JSDocTag](src/compiler/ast/doc/JSDocTag.ts)
-    * :heavy_check_mark: tagName
-    * :heavy_check_mark: comment
-* [JSDocTemplateTag](src/compiler/ast/doc/JSDocTemplateTag.ts)
-    * :heavy_check_mark: constraint
-    * :heavy_check_mark: typeParameters
-* [JSDocText](src/compiler/ast/doc/JSDocText.ts)
-    * :x: text
-* [JSDocThisTag](src/compiler/ast/doc/JSDocThisTag.ts)
-    * :heavy_check_mark: typeExpression
-* [JSDocThrowsTag](src/compiler/ast/doc/JSDocThrowsTag.ts)
-    * :heavy_check_mark: typeExpression
-* [JSDocType](src/compiler/ast/doc/JSDocType.ts)
-* [JSDocTypedefTag](src/compiler/ast/doc/JSDocTypedefTag.ts)
-    * :x: fullName
-    * :heavy_check_mark: name
-    * :x: typeExpression
-* [JSDocTypeExpression](src/compiler/ast/doc/JSDocTypeExpression.ts)
-    * :heavy_check_mark: type
-* [JSDocTypeLiteral](src/compiler/ast/doc/JSDocTypeLiteral.ts)
-    * :heavy_check_mark: jsDocPropertyTags
-    * :heavy_check_mark: isArrayType
-* [JSDocTypeTag](src/compiler/ast/doc/JSDocTypeTag.ts)
-    * :heavy_check_mark: typeExpression
-* [JSDocUnknownTag](src/compiler/ast/doc/JSDocUnknownTag.ts)
-* [JSDocUnknownType](src/compiler/ast/doc/JSDocUnknownType.ts)
-* [JSDocVariadicType](src/compiler/ast/doc/JSDocVariadicType.ts)
-    * :heavy_check_mark: type
-* [JsxAttribute](src/compiler/ast/jsx/JsxAttribute.ts)
-    * :heavy_check_mark: name
-    * :heavy_check_mark: initializer
-* [JsxClosingElement](src/compiler/ast/jsx/JsxClosingElement.ts)
-    * :heavy_check_mark: tagName
-* [JsxClosingFragment](src/compiler/ast/jsx/JsxClosingFragment.ts)
-* [JsxElement](src/compiler/ast/jsx/JsxElement.ts)
-    * :heavy_check_mark: openingElement
-    * :heavy_check_mark: children
-    * :heavy_check_mark: closingElement
-* [JsxExpression](src/compiler/ast/jsx/JsxExpression.ts)
-    * :heavy_check_mark: dotDotDotToken
-    * :heavy_check_mark: expression
-* [JsxFragment](src/compiler/ast/jsx/JsxFragment.ts)
-    * :heavy_check_mark: openingFragment
-    * :heavy_check_mark: children
-    * :heavy_check_mark: closingFragment
-* [JsxNamespacedName](src/compiler/ast/jsx/JsxNamespacedName.ts)
-    * :heavy_check_mark: name
-    * :heavy_check_mark: namespace
-* [JsxOpeningElement](src/compiler/ast/jsx/JsxOpeningElement.ts)
-    * :heavy_check_mark: tagName
-    * :x: typeArguments
-    * :heavy_check_mark: attributes
-* [JsxOpeningFragment](src/compiler/ast/jsx/JsxOpeningFragment.ts)
-* [JsxSelfClosingElement](src/compiler/ast/jsx/JsxSelfClosingElement.ts)
-    * :heavy_check_mark: tagName
-    * :x: typeArguments
-    * :heavy_check_mark: attributes
-* [JsxSpreadAttribute](src/compiler/ast/jsx/JsxSpreadAttribute.ts)
-    * :heavy_check_mark: expression
-* [JsxText](src/compiler/ast/jsx/JsxText.ts)
-    * :heavy_check_mark: containsOnlyTriviaWhiteSpaces
-* [LabeledStatement](src/compiler/ast/statement/LabeledStatement.ts)
-    * :heavy_check_mark: label
-    * :heavy_check_mark: statement
-* [LeftHandSideExpression](src/compiler/ast/expression/LeftHandSideExpression.ts)
-* [LiteralExpression](src/compiler/ast/expression/LiteralExpression.ts)
-* [LiteralTypeNode](src/compiler/ast/type/LiteralTypeNode.ts)
-    * :heavy_check_mark: literal
-* [MappedTypeNode](src/compiler/ast/type/MappedTypeNode.ts)
-    * :heavy_check_mark: readonlyToken
-    * :heavy_check_mark: typeParameter
-    * :heavy_check_mark: nameType
-    * :heavy_check_mark: questionToken
-    * :heavy_check_mark: type
-    * :x: members
-* [MemberExpression](src/compiler/ast/expression/MemberExpression.ts)
-* [MetaProperty](src/compiler/ast/expression/MetaProperty.ts)
-    * :heavy_check_mark: keywordToken
-    * :heavy_check_mark: name
-* [MethodDeclaration](src/compiler/ast/class/MethodDeclaration.ts)
-    * :heavy_check_mark: modifiers
-    * :heavy_check_mark: name
-    * :heavy_check_mark: body
-* [MethodSignature](src/compiler/ast/interface/MethodSignature.ts)
-    * :x: modifiers
-    * :heavy_check_mark: name
-* [ModuleBlock](src/compiler/ast/module/ModuleBlock.ts)
-    * :heavy_check_mark: statements
-* [ModuleDeclaration](src/compiler/ast/module/ModuleDeclaration.ts)
-    * :heavy_check_mark: modifiers
-    * :heavy_check_mark: name
-    * :heavy_check_mark: body
-* NamedDeclaration - Implemented via mixin.
-* [NamedExports](src/compiler/ast/module/NamedExports.ts)
-    * :heavy_check_mark: elements
-* [NamedImports](src/compiler/ast/module/NamedImports.ts)
-    * :heavy_check_mark: elements
-* [NamedTupleMember](src/compiler/ast/type/NamedTupleMember.ts)
-    * :heavy_check_mark: dotDotDotToken
-    * :heavy_check_mark: name
-    * :heavy_check_mark: questionToken
-    * :heavy_check_mark: type
-* [NamespaceExport](src/compiler/ast/module/NamespaceExport.ts)
-    * :heavy_check_mark: name
-* [NamespaceImport](src/compiler/ast/module/NamespaceImport.ts)
-    * :heavy_check_mark: name
-* [NewExpression](src/compiler/ast/expression/NewExpression.ts)
-    * :heavy_check_mark: expression
-    * :heavy_check_mark: typeArguments
-    * :heavy_check_mark: arguments
-* [NodeWithTypeArguments](src/compiler/ast/type/TypeNode.ts)
-    * :heavy_check_mark: typeArguments
-* [NonNullExpression](src/compiler/ast/expression/NonNullExpression.ts)
-    * :heavy_check_mark: expression
-* [NoSubstitutionTemplateLiteral](src/compiler/ast/literal/template/NoSubstitutionTemplateLiteral.ts)
-* [NotEmittedStatement](src/compiler/ast/statement/NotEmittedStatement.ts)
-* [NullLiteral](src/compiler/ast/literal/NullLiteral.ts)
-* [NumericLiteral](src/compiler/ast/literal/NumericLiteral.ts)
-* [ObjectBindingPattern](src/compiler/ast/binding/ObjectBindingPattern.ts)
-    * :heavy_check_mark: elements
-* [ObjectDestructuringAssignment](src/compiler/ast/expression/object/ObjectDestructuringAssignment.ts)
-    * :heavy_check_mark: left
-* [ObjectLiteralElement](src/compiler/ast/expression/object/ObjectLiteralElement.ts)
-    * :heavy_check_mark: name
-* [ObjectLiteralExpression](src/compiler/ast/expression/object/ObjectLiteralExpression.ts)
-* [OmittedExpression](src/compiler/ast/expression/OmittedExpression.ts)
-* [ParameterDeclaration](src/compiler/ast/function/ParameterDeclaration.ts)
-    * :heavy_check_mark: modifiers
-    * :heavy_check_mark: dotDotDotToken
-    * :heavy_check_mark: name
-    * :heavy_check_mark: questionToken
-    * :heavy_check_mark: type
-    * :heavy_check_mark: initializer
-* [ParenthesizedExpression](src/compiler/ast/expression/ParenthesizedExpression.ts)
-    * :heavy_check_mark: expression
-* [ParenthesizedTypeNode](src/compiler/ast/type/ParenthesizedTypeNode.ts)
-    * :heavy_check_mark: type
-* [PartiallyEmittedExpression](src/compiler/ast/expression/PartiallyEmittedExpression.ts)
-    * :heavy_check_mark: expression
-* [PostfixUnaryExpression](src/compiler/ast/expression/PostfixUnaryExpression.ts)
-    * :heavy_check_mark: operand
-    * :heavy_check_mark: operator
-* [PrefixUnaryExpression](src/compiler/ast/expression/PrefixUnaryExpression.ts)
-    * :heavy_check_mark: operator
-    * :heavy_check_mark: operand
-* [PrimaryExpression](src/compiler/ast/expression/PrimaryExpression.ts)
-* [PrivateIdentifier](src/compiler/ast/name/PrivateIdentifier.ts)
-    * :x: escapedText
-* [PrivateIdentifier](src/compiler/ast/name/PrivateIdentifier.ts)
-    * :heavy_check_mark: text
-* [PropertyAccessExpression](src/compiler/ast/expression/PropertyAccessExpression.ts)
-    * :heavy_check_mark: expression
-    * :heavy_check_mark: questionDotToken
-    * :heavy_check_mark: name
-* [PropertyAssignment](src/compiler/ast/expression/object/PropertyAssignment.ts)
-    * :heavy_check_mark: name
-    * :heavy_check_mark: initializer
-* [PropertyDeclaration](src/compiler/ast/class/PropertyDeclaration.ts)
-    * :heavy_check_mark: modifiers
-    * :heavy_check_mark: name
-    * :heavy_check_mark: questionToken
-    * :heavy_check_mark: exclamationToken
-    * :heavy_check_mark: type
-    * :heavy_check_mark: initializer
-* [PropertySignature](src/compiler/ast/interface/PropertySignature.ts)
-    * :heavy_check_mark: modifiers
-    * :heavy_check_mark: name
-    * :heavy_check_mark: questionToken
-    * :heavy_check_mark: type
-* [QualifiedName](src/compiler/ast/name/QualifiedName.ts)
-    * :heavy_check_mark: left
-    * :heavy_check_mark: right
-* [RegularExpressionLiteral](src/compiler/ast/literal/RegularExpressionLiteral.ts)
-* [RestTypeNode](src/compiler/ast/type/RestTypeNode.ts)
-    * :heavy_check_mark: type
-* [ReturnStatement](src/compiler/ast/statement/ReturnStatement.ts)
-    * :heavy_check_mark: expression
-* [SatisfiesExpression](src/compiler/ast/expression/SatisfiesExpression.ts)
-    * :heavy_check_mark: expression
-    * :heavy_check_mark: type
-* [SetAccessorDeclaration](src/compiler/ast/class/SetAccessorDeclaration.ts)
-    * :heavy_check_mark: modifiers
-    * :heavy_check_mark: name
-    * :heavy_check_mark: body
-* [ShorthandPropertyAssignment](src/compiler/ast/expression/object/ShorthandPropertyAssignment.ts)
-    * :heavy_check_mark: name
-    * :heavy_check_mark: equalsToken
-    * :heavy_check_mark: objectAssignmentInitializer
-* SignatureDeclarationBase - Implemented via mixin.
-* [SourceFile](src/compiler/ast/module/SourceFile.ts)
-    * :heavy_check_mark: statements
-    * :x: endOfFileToken
-    * :heavy_check_mark: fileName
-    * :heavy_check_mark: text
-    * :x: amdDependencies
-    * :x: moduleName
-    * :heavy_check_mark: referencedFiles
-    * :heavy_check_mark: typeReferenceDirectives
-    * :heavy_check_mark: libReferenceDirectives
-    * :heavy_check_mark: languageVariant
-    * :heavy_check_mark: isDeclarationFile
-    * :x: hasNoDefaultLib
-    * :heavy_check_mark: languageVersion
-    * :x: impliedNodeFormat
-* [SourceFile](src/compiler/ast/module/SourceFile.ts)
-* [SpreadAssignment](src/compiler/ast/expression/object/SpreadAssignment.ts)
-    * :heavy_check_mark: expression
-* [SpreadElement](src/compiler/ast/expression/SpreadElement.ts)
-    * :heavy_check_mark: expression
-* [Statement](src/compiler/ast/statement/Statement.ts)
-* [StringLiteral](src/compiler/ast/literal/StringLiteral.ts)
-* [SuperElementAccessExpression](src/compiler/ast/expression/SuperElementAccessExpression.ts)
-    * :heavy_check_mark: expression
-* [SuperExpression](src/compiler/ast/expression/SuperExpression.ts)
-* [SuperPropertyAccessExpression](src/compiler/ast/expression/SuperPropertyAccessExpression.ts)
-    * :heavy_check_mark: expression
-* [SwitchStatement](src/compiler/ast/statement/SwitchStatement.ts)
-    * :heavy_check_mark: expression
-    * :heavy_check_mark: caseBlock
-    * :x: possiblyExhaustive
-* [SyntaxList](src/compiler/ast/common/SyntaxList.ts)
-* [TaggedTemplateExpression](src/compiler/ast/literal/template/TaggedTemplateExpression.ts)
-    * :heavy_check_mark: tag
-    * :x: typeArguments
-    * :heavy_check_mark: template
-* [TemplateExpression](src/compiler/ast/literal/template/TemplateExpression.ts)
-    * :heavy_check_mark: head
-    * :heavy_check_mark: templateSpans
-* [TemplateHead](src/compiler/ast/literal/template/TemplateHead.ts)
-* [TemplateLiteralTypeNode](src/compiler/ast/type/TemplateLiteralTypeNode.ts)
-    * :heavy_check_mark: head
-    * :heavy_check_mark: templateSpans
-* [TemplateMiddle](src/compiler/ast/literal/template/TemplateMiddle.ts)
-* [TemplateSpan](src/compiler/ast/literal/template/TemplateSpan.ts)
-    * :heavy_check_mark: expression
-    * :heavy_check_mark: literal
-* [TemplateTail](src/compiler/ast/literal/template/TemplateTail.ts)
-* [ThisExpression](src/compiler/ast/expression/ThisExpression.ts)
-* [ThisTypeNode](src/compiler/ast/type/ThisTypeNode.ts)
-* [ThrowStatement](src/compiler/ast/statement/ThrowStatement.ts)
-    * :heavy_check_mark: expression
-* [TrueLiteral](src/compiler/ast/literal/BooleanLiterals.ts)
-* [TryStatement](src/compiler/ast/statement/TryStatement.ts)
-    * :heavy_check_mark: tryBlock
-    * :heavy_check_mark: catchClause
-    * :heavy_check_mark: finallyBlock
-* [TupleTypeNode](src/compiler/ast/type/TupleTypeNode.ts)
-    * :heavy_check_mark: elements
-* [TypeAliasDeclaration](src/compiler/ast/type/TypeAliasDeclaration.ts)
-    * :heavy_check_mark: modifiers
-    * :heavy_check_mark: name
-    * :heavy_check_mark: typeParameters
-    * :heavy_check_mark: type
-* [TypeAssertion](src/compiler/ast/expression/TypeAssertion.ts)
-    * :heavy_check_mark: type
-    * :heavy_check_mark: expression
-* [TypeElement](src/compiler/ast/interface/TypeElement.ts)
-    * :heavy_check_mark: name
-    * :x: questionToken
-* [TypeLiteralNode](src/compiler/ast/type/TypeLiteralNode.ts)
-    * :heavy_check_mark: members
-* [TypeNode](src/compiler/ast/type/TypeNode.ts)
-* [TypeOfExpression](src/compiler/ast/expression/TypeOfExpression.ts)
-    * :heavy_check_mark: expression
-* [TypeParameterDeclaration](src/compiler/ast/type/TypeParameterDeclaration.ts)
-    * :heavy_check_mark: modifiers
-    * :heavy_check_mark: name
-    * :heavy_check_mark: constraint
-    * :heavy_check_mark: default
-    * :x: expression
-* [TypePredicateNode](src/compiler/ast/type/TypePredicateNode.ts)
-    * :heavy_check_mark: assertsModifier
-    * :heavy_check_mark: parameterName
-    * :heavy_check_mark: type
-* [TypeQueryNode](src/compiler/ast/type/TypeQueryNode.ts)
-    * :heavy_check_mark: exprName
-* [TypeReferenceNode](src/compiler/ast/type/TypeReferenceNode.ts)
-    * :heavy_check_mark: typeName
-* [UnaryExpression](src/compiler/ast/expression/UnaryExpression.ts)
-* [UnionTypeNode](src/compiler/ast/type/UnionTypeNode.ts)
-    * :heavy_check_mark: types
-* [UpdateExpression](src/compiler/ast/expression/UpdateExpression.ts)
-* [VariableDeclaration](src/compiler/ast/variable/VariableDeclaration.ts)
-    * :heavy_check_mark: name
-    * :heavy_check_mark: exclamationToken
-    * :heavy_check_mark: type
-    * :heavy_check_mark: initializer
-* [VariableDeclarationList](src/compiler/ast/variable/VariableDeclarationList.ts)
-    * :heavy_check_mark: declarations
-* [VariableStatement](src/compiler/ast/statement/VariableStatement.ts)
-    * :heavy_check_mark: modifiers
-    * :heavy_check_mark: declarationList
-* [VoidExpression](src/compiler/ast/expression/VoidExpression.ts)
-    * :heavy_check_mark: expression
-* [WhileStatement](src/compiler/ast/statement/WhileStatement.ts)
-    * :heavy_check_mark: expression
-* [WithStatement](src/compiler/ast/statement/WithStatement.ts)
-    * :heavy_check_mark: expression
-    * :heavy_check_mark: statement
-* [YieldExpression](src/compiler/ast/expression/YieldExpression.ts)
-    * :heavy_check_mark: asteriskToken
-    * :heavy_check_mark: expression
+- [ArrayBindingPattern](src/compiler/ast/binding/ArrayBindingPattern.ts)
+  - :heavy_check_mark: elements
+- [ArrayDestructuringAssignment](src/compiler/ast/expression/array/ArrayDestructuringAssignment.ts)
+  - :heavy_check_mark: left
+- [ArrayLiteralExpression](src/compiler/ast/expression/array/ArrayLiteralExpression.ts)
+  - :heavy_check_mark: elements
+- [ArrayTypeNode](src/compiler/ast/type/ArrayTypeNode.ts)
+  - :heavy_check_mark: elementType
+- [ArrowFunction](src/compiler/ast/function/ArrowFunction.ts)
+  - :heavy_check_mark: modifiers
+  - :heavy_check_mark: equalsGreaterThanToken
+  - :heavy_check_mark: body
+  - :heavy_check_mark: name
+- [AsExpression](src/compiler/ast/expression/AsExpression.ts)
+  - :heavy_check_mark: expression
+  - :heavy_check_mark: type
+- [AssertClause](src/compiler/ast/module/AssertClause.ts)
+  - :heavy_check_mark: elements
+  - :x: multiLine
+- [AssertEntry](src/compiler/ast/module/AssertEntry.ts)
+  - :heavy_check_mark: name
+  - :heavy_check_mark: value
+- [AssignmentExpression](src/compiler/ast/expression/AssignmentExpression.ts)
+  - :heavy_check_mark: left
+  - :heavy_check_mark: operatorToken
+- [AwaitExpression](src/compiler/ast/expression/AwaitExpression.ts)
+  - :heavy_check_mark: expression
+- [BigIntLiteral](src/compiler/ast/literal/BigIntLiteral.ts)
+- [BinaryExpression](src/compiler/ast/expression/BinaryExpression.ts)
+  - :heavy_check_mark: left
+  - :heavy_check_mark: operatorToken
+  - :heavy_check_mark: right
+- [BindingElement](src/compiler/ast/binding/BindingElement.ts)
+  - :heavy_check_mark: propertyName
+  - :heavy_check_mark: dotDotDotToken
+  - :heavy_check_mark: name
+  - :heavy_check_mark: initializer
+- [Block](src/compiler/ast/statement/Block.ts)
+  - :heavy_check_mark: statements
+- [BreakStatement](src/compiler/ast/statement/BreakStatement.ts)
+  - :heavy_check_mark: label
+- [CallExpression](src/compiler/ast/expression/CallExpression.ts)
+  - :heavy_check_mark: expression
+  - :heavy_check_mark: questionDotToken
+  - :heavy_check_mark: typeArguments
+  - :heavy_check_mark: arguments
+- [CallSignatureDeclaration](src/compiler/ast/interface/CallSignatureDeclaration.ts)
+- [CaseBlock](src/compiler/ast/statement/CaseBlock.ts)
+  - :heavy_check_mark: clauses
+- [CaseClause](src/compiler/ast/statement/CaseClause.ts)
+  - :heavy_check_mark: expression
+  - :heavy_check_mark: statements
+- [CatchClause](src/compiler/ast/statement/CatchClause.ts)
+  - :heavy_check_mark: variableDeclaration
+  - :heavy_check_mark: block
+- [ClassDeclaration](src/compiler/ast/class/ClassDeclaration.ts)
+  - :heavy_check_mark: modifiers
+  - :heavy_check_mark: name
+- [ClassElement](src/compiler/ast/class/ClassElement.ts)
+  - :heavy_check_mark: name
+- [ClassExpression](src/compiler/ast/class/ClassExpression.ts)
+  - :heavy_check_mark: modifiers
+- [ClassStaticBlockDeclaration](src/compiler/ast/class/ClassStaticBlockDeclaration.ts)
+  - :heavy_check_mark: body
+- [CommaListExpression](src/compiler/ast/expression/CommaListExpression.ts)
+  - :heavy_check_mark: elements
+- [ComputedPropertyName](src/compiler/ast/name/ComputedPropertyName.ts)
+  - :heavy_check_mark: expression
+- [ConditionalExpression](src/compiler/ast/expression/ConditionalExpression.ts)
+  - :heavy_check_mark: condition
+  - :heavy_check_mark: questionToken
+  - :heavy_check_mark: whenTrue
+  - :heavy_check_mark: colonToken
+  - :heavy_check_mark: whenFalse
+- [ConditionalTypeNode](src/compiler/ast/type/ConditionalTypeNode.ts)
+  - :heavy_check_mark: checkType
+  - :heavy_check_mark: extendsType
+  - :heavy_check_mark: trueType
+  - :heavy_check_mark: falseType
+- [ConstructorDeclaration](src/compiler/ast/class/ConstructorDeclaration.ts)
+  - :heavy_check_mark: modifiers
+  - :heavy_check_mark: body
+- [ConstructorTypeNode](src/compiler/ast/type/ConstructorTypeNode.ts)
+  - :heavy_check_mark: modifiers
+- [ConstructSignatureDeclaration](src/compiler/ast/interface/ConstructSignatureDeclaration.ts)
+- [ContinueStatement](src/compiler/ast/statement/ContinueStatement.ts)
+  - :heavy_check_mark: label
+- [DebuggerStatement](src/compiler/ast/statement/DebuggerStatement.ts)
+- [Decorator](src/compiler/ast/decorator/Decorator.ts)
+  - :heavy_check_mark: expression
+- [DefaultClause](src/compiler/ast/statement/DefaultClause.ts)
+  - :heavy_check_mark: statements
+- [DeleteExpression](src/compiler/ast/expression/DeleteExpression.ts)
+  - :heavy_check_mark: expression
+- [DoStatement](src/compiler/ast/statement/DoStatement.ts)
+  - :heavy_check_mark: expression
+- [ElementAccessExpression](src/compiler/ast/expression/ElementAccessExpression.ts)
+  - :heavy_check_mark: expression
+  - :heavy_check_mark: questionDotToken
+  - :heavy_check_mark: argumentExpression
+- [EmptyStatement](src/compiler/ast/statement/EmptyStatement.ts)
+- [EnumDeclaration](src/compiler/ast/enum/EnumDeclaration.ts)
+  - :heavy_check_mark: modifiers
+  - :heavy_check_mark: name
+  - :heavy_check_mark: members
+- [EnumMember](src/compiler/ast/enum/EnumMember.ts)
+  - :heavy_check_mark: name
+  - :heavy_check_mark: initializer
+- [ExportAssignment](src/compiler/ast/module/ExportAssignment.ts)
+  - :x: modifiers
+  - :heavy_check_mark: isExportEquals
+  - :heavy_check_mark: expression
+- [ExportDeclaration](src/compiler/ast/module/ExportDeclaration.ts)
+  - :x: modifiers
+  - :heavy_check_mark: isTypeOnly
+  - :heavy_check_mark: exportClause
+  - :heavy_check_mark: moduleSpecifier
+  - :heavy_check_mark: assertClause
+- [ExportSpecifier](src/compiler/ast/module/ExportSpecifier.ts)
+  - :heavy_check_mark: isTypeOnly
+  - :heavy_check_mark: propertyName
+  - :heavy_check_mark: name
+- [Expression](src/compiler/ast/expression/Expression.ts)
+- [ExpressionStatement](src/compiler/ast/statement/ExpressionStatement.ts)
+  - :heavy_check_mark: expression
+- [ExpressionWithTypeArguments](src/compiler/ast/type/ExpressionWithTypeArguments.ts)
+  - :heavy_check_mark: expression
+- [ExternalModuleReference](src/compiler/ast/module/ExternalModuleReference.ts)
+  - :heavy_check_mark: expression
+- [FalseLiteral](src/compiler/ast/literal/BooleanLiterals.ts)
+- [ForInStatement](src/compiler/ast/statement/ForInStatement.ts)
+  - :heavy_check_mark: initializer
+  - :heavy_check_mark: expression
+- [ForOfStatement](src/compiler/ast/statement/ForOfStatement.ts)
+  - :heavy_check_mark: awaitModifier
+  - :heavy_check_mark: initializer
+  - :heavy_check_mark: expression
+- [ForStatement](src/compiler/ast/statement/ForStatement.ts)
+  - :heavy_check_mark: initializer
+  - :heavy_check_mark: condition
+  - :heavy_check_mark: incrementor
+- [FunctionDeclaration](src/compiler/ast/function/FunctionDeclaration.ts)
+  - :heavy_check_mark: modifiers
+  - :heavy_check_mark: name
+  - :heavy_check_mark: body
+- [FunctionExpression](src/compiler/ast/function/FunctionExpression.ts)
+  - :heavy_check_mark: modifiers
+  - :heavy_check_mark: name
+  - :heavy_check_mark: body
+- FunctionLikeDeclarationBase - Implemented via mixin.
+- [FunctionTypeNode](src/compiler/ast/type/FunctionTypeNode.ts)
+- [GetAccessorDeclaration](src/compiler/ast/class/GetAccessorDeclaration.ts)
+  - :heavy_check_mark: modifiers
+  - :heavy_check_mark: name
+  - :heavy_check_mark: body
+- [HeritageClause](src/compiler/ast/general/HeritageClause.ts)
+  - :heavy_check_mark: token
+  - :heavy_check_mark: types
+- [Identifier](src/compiler/ast/name/Identifier.ts)
+  - :x: escapedText
+- [Identifier](src/compiler/ast/name/Identifier.ts)
+  - :heavy_check_mark: text
+- [Identifier](src/compiler/ast/name/Identifier.ts)
+  - :x: originalKeywordKind
+  - :x: isInJSDocNamespace
+- [IfStatement](src/compiler/ast/statement/IfStatement.ts)
+  - :heavy_check_mark: expression
+  - :heavy_check_mark: thenStatement
+  - :heavy_check_mark: elseStatement
+- [ImportClause](src/compiler/ast/module/ImportClause.ts)
+  - :heavy_check_mark: isTypeOnly
+  - :heavy_check_mark: name
+  - :x: namedBindings
+- [ImportDeclaration](src/compiler/ast/module/ImportDeclaration.ts)
+  - :x: modifiers
+  - :heavy_check_mark: importClause
+  - :heavy_check_mark: moduleSpecifier
+  - :heavy_check_mark: assertClause
+- [ImportEqualsDeclaration](src/compiler/ast/module/ImportEqualsDeclaration.ts)
+  - :heavy_check_mark: modifiers
+  - :heavy_check_mark: name
+  - :heavy_check_mark: isTypeOnly
+  - :heavy_check_mark: moduleReference
+- [ImportExpression](src/compiler/ast/expression/ImportExpression.ts)
+- [ImportSpecifier](src/compiler/ast/module/ImportSpecifier.ts)
+  - :heavy_check_mark: propertyName
+  - :heavy_check_mark: name
+  - :heavy_check_mark: isTypeOnly
+- [ImportTypeAssertionContainer](src/compiler/ast/type/ImportTypeAssertionContainer.ts)
+  - :heavy_check_mark: assertClause
+  - :heavy_check_mark: multiLine
+- [ImportTypeNode](src/compiler/ast/type/ImportTypeNode.ts)
+  - :x: isTypeOf
+  - :heavy_check_mark: argument
+  - :heavy_check_mark: assertions
+  - :heavy_check_mark: qualifier
+- [IndexedAccessTypeNode](src/compiler/ast/type/IndexedAccessTypeNode.ts)
+  - :heavy_check_mark: objectType
+  - :heavy_check_mark: indexType
+- [IndexSignatureDeclaration](src/compiler/ast/interface/IndexSignatureDeclaration.ts)
+  - :heavy_check_mark: modifiers
+  - :heavy_check_mark: type
+- [InferTypeNode](src/compiler/ast/type/InferTypeNode.ts)
+  - :heavy_check_mark: typeParameter
+- [InterfaceDeclaration](src/compiler/ast/interface/InterfaceDeclaration.ts)
+  - :heavy_check_mark: modifiers
+  - :heavy_check_mark: name
+  - :heavy_check_mark: typeParameters
+  - :heavy_check_mark: heritageClauses
+  - :heavy_check_mark: members
+- [IntersectionTypeNode](src/compiler/ast/type/IntersectionTypeNode.ts)
+  - :heavy_check_mark: types
+- [IterationStatement](src/compiler/ast/statement/IterationStatement.ts)
+  - :heavy_check_mark: statement
+- [JSDoc](src/compiler/ast/doc/JSDoc.ts)
+  - :heavy_check_mark: tags
+  - :heavy_check_mark: comment
+- [JSDocAllType](src/compiler/ast/doc/JSDocAllType.ts)
+- [JSDocAugmentsTag](src/compiler/ast/doc/JSDocAugmentsTag.ts)
+  - :x: class
+- [JSDocAuthorTag](src/compiler/ast/doc/JSDocAuthorTag.ts)
+- [JSDocCallbackTag](src/compiler/ast/doc/JSDocCallbackTag.ts)
+  - :x: fullName
+  - :heavy_check_mark: name
+  - :x: typeExpression
+- [JSDocClassTag](src/compiler/ast/doc/JSDocClassTag.ts)
+- [JSDocDeprecatedTag](src/compiler/ast/doc/JSDocDeprecatedTag.ts)
+- [JSDocEnumTag](src/compiler/ast/doc/JSDocEnumTag.ts)
+  - :x: typeExpression
+- [JSDocFunctionType](src/compiler/ast/doc/JSDocFunctionType.ts)
+- [JSDocImplementsTag](src/compiler/ast/doc/JSDocImplementsTag.ts)
+  - :x: class
+- [JSDocLink](src/compiler/ast/doc/JSDocLink.ts)
+  - :x: name
+  - :x: text
+- [JSDocLinkCode](src/compiler/ast/doc/JSDocLinkCode.ts)
+  - :x: name
+  - :x: text
+- [JSDocLinkPlain](src/compiler/ast/doc/JSDocLinkPlain.ts)
+  - :x: name
+  - :x: text
+- [JSDocMemberName](src/compiler/ast/doc/JSDocMemberName.ts)
+  - :x: left
+  - :x: right
+- [JSDocNamepathType](src/compiler/ast/doc/JSDocNamepathType.ts)
+  - :heavy_check_mark: type
+- [JSDocNameReference](src/compiler/ast/doc/JSDocNameReference.ts)
+  - :heavy_check_mark: name
+- [JSDocNonNullableType](src/compiler/ast/doc/JSDocNonNullableType.ts)
+  - :heavy_check_mark: type
+  - :heavy_check_mark: postfix
+- [JSDocNullableType](src/compiler/ast/doc/JSDocNullableType.ts)
+  - :heavy_check_mark: type
+  - :heavy_check_mark: postfix
+- [JSDocOptionalType](src/compiler/ast/doc/JSDocOptionalType.ts)
+  - :heavy_check_mark: type
+- [JSDocOverloadTag](src/compiler/ast/doc/JSDocOverloadTag.ts)
+  - :heavy_check_mark: typeExpression
+- [JSDocOverrideTag](src/compiler/ast/doc/JSDocOverrideTag.ts)
+- [JSDocParameterTag](src/compiler/ast/doc/JSDocParameterTag.ts)
+- [JSDocPrivateTag](src/compiler/ast/doc/JSDocPrivateTag.ts)
+- [JSDocPropertyTag](src/compiler/ast/doc/JSDocPropertyTag.ts)
+- [JSDocProtectedTag](src/compiler/ast/doc/JSDocProtectedTag.ts)
+- [JSDocPublicTag](src/compiler/ast/doc/JSDocPublicTag.ts)
+- [JSDocReadonlyTag](src/compiler/ast/doc/JSDocReadonlyTag.ts)
+- [JSDocReturnTag](src/compiler/ast/doc/JSDocReturnTag.ts)
+  - :heavy_check_mark: typeExpression
+- [JSDocSatisfiesTag](src/compiler/ast/doc/JSDocSatisfiesTag.ts)
+  - :heavy_check_mark: typeExpression
+- [JSDocSeeTag](src/compiler/ast/doc/JSDocSeeTag.ts)
+  - :x: name
+- [JSDocSignature](src/compiler/ast/doc/JSDocSignature.ts)
+  - :x: typeParameters
+  - :x: parameters
+  - :heavy_check_mark: type
+- [JSDocTag](src/compiler/ast/doc/JSDocTag.ts)
+  - :heavy_check_mark: tagName
+  - :heavy_check_mark: comment
+- [JSDocTemplateTag](src/compiler/ast/doc/JSDocTemplateTag.ts)
+  - :heavy_check_mark: constraint
+  - :heavy_check_mark: typeParameters
+- [JSDocText](src/compiler/ast/doc/JSDocText.ts)
+  - :x: text
+- [JSDocThisTag](src/compiler/ast/doc/JSDocThisTag.ts)
+  - :heavy_check_mark: typeExpression
+- [JSDocThrowsTag](src/compiler/ast/doc/JSDocThrowsTag.ts)
+  - :heavy_check_mark: typeExpression
+- [JSDocType](src/compiler/ast/doc/JSDocType.ts)
+- [JSDocTypedefTag](src/compiler/ast/doc/JSDocTypedefTag.ts)
+  - :x: fullName
+  - :heavy_check_mark: name
+  - :x: typeExpression
+- [JSDocTypeExpression](src/compiler/ast/doc/JSDocTypeExpression.ts)
+  - :heavy_check_mark: type
+- [JSDocTypeLiteral](src/compiler/ast/doc/JSDocTypeLiteral.ts)
+  - :heavy_check_mark: jsDocPropertyTags
+  - :heavy_check_mark: isArrayType
+- [JSDocTypeTag](src/compiler/ast/doc/JSDocTypeTag.ts)
+  - :heavy_check_mark: typeExpression
+- [JSDocUnknownTag](src/compiler/ast/doc/JSDocUnknownTag.ts)
+- [JSDocUnknownType](src/compiler/ast/doc/JSDocUnknownType.ts)
+- [JSDocVariadicType](src/compiler/ast/doc/JSDocVariadicType.ts)
+  - :heavy_check_mark: type
+- [JsxAttribute](src/compiler/ast/jsx/JsxAttribute.ts)
+  - :heavy_check_mark: name
+  - :heavy_check_mark: initializer
+- [JsxClosingElement](src/compiler/ast/jsx/JsxClosingElement.ts)
+  - :heavy_check_mark: tagName
+- [JsxClosingFragment](src/compiler/ast/jsx/JsxClosingFragment.ts)
+- [JsxElement](src/compiler/ast/jsx/JsxElement.ts)
+  - :heavy_check_mark: openingElement
+  - :heavy_check_mark: children
+  - :heavy_check_mark: closingElement
+- [JsxExpression](src/compiler/ast/jsx/JsxExpression.ts)
+  - :heavy_check_mark: dotDotDotToken
+  - :heavy_check_mark: expression
+- [JsxFragment](src/compiler/ast/jsx/JsxFragment.ts)
+  - :heavy_check_mark: openingFragment
+  - :heavy_check_mark: children
+  - :heavy_check_mark: closingFragment
+- [JsxNamespacedName](src/compiler/ast/jsx/JsxNamespacedName.ts)
+  - :heavy_check_mark: name
+  - :heavy_check_mark: namespace
+- [JsxOpeningElement](src/compiler/ast/jsx/JsxOpeningElement.ts)
+  - :heavy_check_mark: tagName
+  - :x: typeArguments
+  - :heavy_check_mark: attributes
+- [JsxOpeningFragment](src/compiler/ast/jsx/JsxOpeningFragment.ts)
+- [JsxSelfClosingElement](src/compiler/ast/jsx/JsxSelfClosingElement.ts)
+  - :heavy_check_mark: tagName
+  - :x: typeArguments
+  - :heavy_check_mark: attributes
+- [JsxSpreadAttribute](src/compiler/ast/jsx/JsxSpreadAttribute.ts)
+  - :heavy_check_mark: expression
+- [JsxText](src/compiler/ast/jsx/JsxText.ts)
+  - :heavy_check_mark: containsOnlyTriviaWhiteSpaces
+- [LabeledStatement](src/compiler/ast/statement/LabeledStatement.ts)
+  - :heavy_check_mark: label
+  - :heavy_check_mark: statement
+- [LeftHandSideExpression](src/compiler/ast/expression/LeftHandSideExpression.ts)
+- [LiteralExpression](src/compiler/ast/expression/LiteralExpression.ts)
+- [LiteralTypeNode](src/compiler/ast/type/LiteralTypeNode.ts)
+  - :heavy_check_mark: literal
+- [MappedTypeNode](src/compiler/ast/type/MappedTypeNode.ts)
+  - :heavy_check_mark: readonlyToken
+  - :heavy_check_mark: typeParameter
+  - :heavy_check_mark: nameType
+  - :heavy_check_mark: questionToken
+  - :heavy_check_mark: type
+  - :x: members
+- [MemberExpression](src/compiler/ast/expression/MemberExpression.ts)
+- [MetaProperty](src/compiler/ast/expression/MetaProperty.ts)
+  - :heavy_check_mark: keywordToken
+  - :heavy_check_mark: name
+- [MethodDeclaration](src/compiler/ast/class/MethodDeclaration.ts)
+  - :heavy_check_mark: modifiers
+  - :heavy_check_mark: name
+  - :heavy_check_mark: body
+- [MethodSignature](src/compiler/ast/interface/MethodSignature.ts)
+  - :x: modifiers
+  - :heavy_check_mark: name
+- [ModuleBlock](src/compiler/ast/module/ModuleBlock.ts)
+  - :heavy_check_mark: statements
+- [ModuleDeclaration](src/compiler/ast/module/ModuleDeclaration.ts)
+  - :heavy_check_mark: modifiers
+  - :heavy_check_mark: name
+  - :heavy_check_mark: body
+- NamedDeclaration - Implemented via mixin.
+- [NamedExports](src/compiler/ast/module/NamedExports.ts)
+  - :heavy_check_mark: elements
+- [NamedImports](src/compiler/ast/module/NamedImports.ts)
+  - :heavy_check_mark: elements
+- [NamedTupleMember](src/compiler/ast/type/NamedTupleMember.ts)
+  - :heavy_check_mark: dotDotDotToken
+  - :heavy_check_mark: name
+  - :heavy_check_mark: questionToken
+  - :heavy_check_mark: type
+- [NamespaceExport](src/compiler/ast/module/NamespaceExport.ts)
+  - :heavy_check_mark: name
+- [NamespaceImport](src/compiler/ast/module/NamespaceImport.ts)
+  - :heavy_check_mark: name
+- [NewExpression](src/compiler/ast/expression/NewExpression.ts)
+  - :heavy_check_mark: expression
+  - :heavy_check_mark: typeArguments
+  - :heavy_check_mark: arguments
+- [NodeWithTypeArguments](src/compiler/ast/type/TypeNode.ts)
+  - :heavy_check_mark: typeArguments
+- [NonNullExpression](src/compiler/ast/expression/NonNullExpression.ts)
+  - :heavy_check_mark: expression
+- [NoSubstitutionTemplateLiteral](src/compiler/ast/literal/template/NoSubstitutionTemplateLiteral.ts)
+- [NotEmittedStatement](src/compiler/ast/statement/NotEmittedStatement.ts)
+- [NullLiteral](src/compiler/ast/literal/NullLiteral.ts)
+- [NumericLiteral](src/compiler/ast/literal/NumericLiteral.ts)
+- [ObjectBindingPattern](src/compiler/ast/binding/ObjectBindingPattern.ts)
+  - :heavy_check_mark: elements
+- [ObjectDestructuringAssignment](src/compiler/ast/expression/object/ObjectDestructuringAssignment.ts)
+  - :heavy_check_mark: left
+- [ObjectLiteralElement](src/compiler/ast/expression/object/ObjectLiteralElement.ts)
+  - :heavy_check_mark: name
+- [ObjectLiteralExpression](src/compiler/ast/expression/object/ObjectLiteralExpression.ts)
+- [OmittedExpression](src/compiler/ast/expression/OmittedExpression.ts)
+- [ParameterDeclaration](src/compiler/ast/function/ParameterDeclaration.ts)
+  - :heavy_check_mark: modifiers
+  - :heavy_check_mark: dotDotDotToken
+  - :heavy_check_mark: name
+  - :heavy_check_mark: questionToken
+  - :heavy_check_mark: type
+  - :heavy_check_mark: initializer
+- [ParenthesizedExpression](src/compiler/ast/expression/ParenthesizedExpression.ts)
+  - :heavy_check_mark: expression
+- [ParenthesizedTypeNode](src/compiler/ast/type/ParenthesizedTypeNode.ts)
+  - :heavy_check_mark: type
+- [PartiallyEmittedExpression](src/compiler/ast/expression/PartiallyEmittedExpression.ts)
+  - :heavy_check_mark: expression
+- [PostfixUnaryExpression](src/compiler/ast/expression/PostfixUnaryExpression.ts)
+  - :heavy_check_mark: operand
+  - :heavy_check_mark: operator
+- [PrefixUnaryExpression](src/compiler/ast/expression/PrefixUnaryExpression.ts)
+  - :heavy_check_mark: operator
+  - :heavy_check_mark: operand
+- [PrimaryExpression](src/compiler/ast/expression/PrimaryExpression.ts)
+- [PrivateIdentifier](src/compiler/ast/name/PrivateIdentifier.ts)
+  - :x: escapedText
+- [PrivateIdentifier](src/compiler/ast/name/PrivateIdentifier.ts)
+  - :heavy_check_mark: text
+- [PropertyAccessExpression](src/compiler/ast/expression/PropertyAccessExpression.ts)
+  - :heavy_check_mark: expression
+  - :heavy_check_mark: questionDotToken
+  - :heavy_check_mark: name
+- [PropertyAssignment](src/compiler/ast/expression/object/PropertyAssignment.ts)
+  - :heavy_check_mark: name
+  - :heavy_check_mark: initializer
+- [PropertyDeclaration](src/compiler/ast/class/PropertyDeclaration.ts)
+  - :heavy_check_mark: modifiers
+  - :heavy_check_mark: name
+  - :heavy_check_mark: questionToken
+  - :heavy_check_mark: exclamationToken
+  - :heavy_check_mark: type
+  - :heavy_check_mark: initializer
+- [PropertySignature](src/compiler/ast/interface/PropertySignature.ts)
+  - :heavy_check_mark: modifiers
+  - :heavy_check_mark: name
+  - :heavy_check_mark: questionToken
+  - :heavy_check_mark: type
+- [QualifiedName](src/compiler/ast/name/QualifiedName.ts)
+  - :heavy_check_mark: left
+  - :heavy_check_mark: right
+- [RegularExpressionLiteral](src/compiler/ast/literal/RegularExpressionLiteral.ts)
+- [RestTypeNode](src/compiler/ast/type/RestTypeNode.ts)
+  - :heavy_check_mark: type
+- [ReturnStatement](src/compiler/ast/statement/ReturnStatement.ts)
+  - :heavy_check_mark: expression
+- [SatisfiesExpression](src/compiler/ast/expression/SatisfiesExpression.ts)
+  - :heavy_check_mark: expression
+  - :heavy_check_mark: type
+- [SetAccessorDeclaration](src/compiler/ast/class/SetAccessorDeclaration.ts)
+  - :heavy_check_mark: modifiers
+  - :heavy_check_mark: name
+  - :heavy_check_mark: body
+- [ShorthandPropertyAssignment](src/compiler/ast/expression/object/ShorthandPropertyAssignment.ts)
+  - :heavy_check_mark: name
+  - :heavy_check_mark: equalsToken
+  - :heavy_check_mark: objectAssignmentInitializer
+- SignatureDeclarationBase - Implemented via mixin.
+- [SourceFile](src/compiler/ast/module/SourceFile.ts)
+  - :heavy_check_mark: statements
+  - :x: endOfFileToken
+  - :heavy_check_mark: fileName
+  - :heavy_check_mark: text
+  - :x: amdDependencies
+  - :x: moduleName
+  - :heavy_check_mark: referencedFiles
+  - :heavy_check_mark: typeReferenceDirectives
+  - :heavy_check_mark: libReferenceDirectives
+  - :heavy_check_mark: languageVariant
+  - :heavy_check_mark: isDeclarationFile
+  - :x: hasNoDefaultLib
+  - :heavy_check_mark: languageVersion
+  - :x: impliedNodeFormat
+- [SourceFile](src/compiler/ast/module/SourceFile.ts)
+- [SpreadAssignment](src/compiler/ast/expression/object/SpreadAssignment.ts)
+  - :heavy_check_mark: expression
+- [SpreadElement](src/compiler/ast/expression/SpreadElement.ts)
+  - :heavy_check_mark: expression
+- [Statement](src/compiler/ast/statement/Statement.ts)
+- [StringLiteral](src/compiler/ast/literal/StringLiteral.ts)
+- [SuperElementAccessExpression](src/compiler/ast/expression/SuperElementAccessExpression.ts)
+  - :heavy_check_mark: expression
+- [SuperExpression](src/compiler/ast/expression/SuperExpression.ts)
+- [SuperPropertyAccessExpression](src/compiler/ast/expression/SuperPropertyAccessExpression.ts)
+  - :heavy_check_mark: expression
+- [SwitchStatement](src/compiler/ast/statement/SwitchStatement.ts)
+  - :heavy_check_mark: expression
+  - :heavy_check_mark: caseBlock
+  - :x: possiblyExhaustive
+- [SyntaxList](src/compiler/ast/common/SyntaxList.ts)
+- [TaggedTemplateExpression](src/compiler/ast/literal/template/TaggedTemplateExpression.ts)
+  - :heavy_check_mark: tag
+  - :x: typeArguments
+  - :heavy_check_mark: template
+- [TemplateExpression](src/compiler/ast/literal/template/TemplateExpression.ts)
+  - :heavy_check_mark: head
+  - :heavy_check_mark: templateSpans
+- [TemplateHead](src/compiler/ast/literal/template/TemplateHead.ts)
+- [TemplateLiteralTypeNode](src/compiler/ast/type/TemplateLiteralTypeNode.ts)
+  - :heavy_check_mark: head
+  - :heavy_check_mark: templateSpans
+- [TemplateMiddle](src/compiler/ast/literal/template/TemplateMiddle.ts)
+- [TemplateSpan](src/compiler/ast/literal/template/TemplateSpan.ts)
+  - :heavy_check_mark: expression
+  - :heavy_check_mark: literal
+- [TemplateTail](src/compiler/ast/literal/template/TemplateTail.ts)
+- [ThisExpression](src/compiler/ast/expression/ThisExpression.ts)
+- [ThisTypeNode](src/compiler/ast/type/ThisTypeNode.ts)
+- [ThrowStatement](src/compiler/ast/statement/ThrowStatement.ts)
+  - :heavy_check_mark: expression
+- [TrueLiteral](src/compiler/ast/literal/BooleanLiterals.ts)
+- [TryStatement](src/compiler/ast/statement/TryStatement.ts)
+  - :heavy_check_mark: tryBlock
+  - :heavy_check_mark: catchClause
+  - :heavy_check_mark: finallyBlock
+- [TupleTypeNode](src/compiler/ast/type/TupleTypeNode.ts)
+  - :heavy_check_mark: elements
+- [TypeAliasDeclaration](src/compiler/ast/type/TypeAliasDeclaration.ts)
+  - :heavy_check_mark: modifiers
+  - :heavy_check_mark: name
+  - :heavy_check_mark: typeParameters
+  - :heavy_check_mark: type
+- [TypeAssertion](src/compiler/ast/expression/TypeAssertion.ts)
+  - :heavy_check_mark: type
+  - :heavy_check_mark: expression
+- [TypeElement](src/compiler/ast/interface/TypeElement.ts)
+  - :heavy_check_mark: name
+  - :x: questionToken
+- [TypeLiteralNode](src/compiler/ast/type/TypeLiteralNode.ts)
+  - :heavy_check_mark: members
+- [TypeNode](src/compiler/ast/type/TypeNode.ts)
+- [TypeOfExpression](src/compiler/ast/expression/TypeOfExpression.ts)
+  - :heavy_check_mark: expression
+- [TypeParameterDeclaration](src/compiler/ast/type/TypeParameterDeclaration.ts)
+  - :heavy_check_mark: modifiers
+  - :heavy_check_mark: name
+  - :heavy_check_mark: constraint
+  - :heavy_check_mark: default
+  - :x: expression
+- [TypePredicateNode](src/compiler/ast/type/TypePredicateNode.ts)
+  - :heavy_check_mark: assertsModifier
+  - :heavy_check_mark: parameterName
+  - :heavy_check_mark: type
+- [TypeQueryNode](src/compiler/ast/type/TypeQueryNode.ts)
+  - :heavy_check_mark: exprName
+- [TypeReferenceNode](src/compiler/ast/type/TypeReferenceNode.ts)
+  - :heavy_check_mark: typeName
+- [UnaryExpression](src/compiler/ast/expression/UnaryExpression.ts)
+- [UnionTypeNode](src/compiler/ast/type/UnionTypeNode.ts)
+  - :heavy_check_mark: types
+- [UpdateExpression](src/compiler/ast/expression/UpdateExpression.ts)
+- [VariableDeclaration](src/compiler/ast/variable/VariableDeclaration.ts)
+  - :heavy_check_mark: name
+  - :heavy_check_mark: exclamationToken
+  - :heavy_check_mark: type
+  - :heavy_check_mark: initializer
+- [VariableDeclarationList](src/compiler/ast/variable/VariableDeclarationList.ts)
+  - :heavy_check_mark: declarations
+- [VariableStatement](src/compiler/ast/statement/VariableStatement.ts)
+  - :heavy_check_mark: modifiers
+  - :heavy_check_mark: declarationList
+- [VoidExpression](src/compiler/ast/expression/VoidExpression.ts)
+  - :heavy_check_mark: expression
+- [WhileStatement](src/compiler/ast/statement/WhileStatement.ts)
+  - :heavy_check_mark: expression
+- [WithStatement](src/compiler/ast/statement/WithStatement.ts)
+  - :heavy_check_mark: expression
+  - :heavy_check_mark: statement
+- [YieldExpression](src/compiler/ast/expression/YieldExpression.ts)
+  - :heavy_check_mark: asteriskToken
+  - :heavy_check_mark: expression
 
 ## Not Exist
 
 **Total:** 24
 
-* AutoAccessorPropertyDeclaration
-* FlowContainer
-* JSDocContainer
-* JsxAttributes
-* JsxTagNamePropertyAccess
-* KeywordToken
-* KeywordTypeNode
-* LiteralLikeNode
-* LocalsContainer
-* MissingDeclaration
-* ModifierToken
-* NamespaceDeclaration
-* NamespaceExportDeclaration
-* ObjectLiteralExpressionBase
-* OptionalTypeNode
-* PropertyAccessEntityNameExpression
-* PunctuationToken
-* SemicolonClassElement
-* SyntheticExpression
-* TemplateLiteralLikeNode
-* TemplateLiteralTypeSpan
-* Token
-* TransientIdentifier
-* TypeOperatorNode
+- AutoAccessorPropertyDeclaration
+- FlowContainer
+- JSDocContainer
+- JsxAttributes
+- JsxTagNamePropertyAccess
+- KeywordToken
+- KeywordTypeNode
+- LiteralLikeNode
+- LocalsContainer
+- MissingDeclaration
+- ModifierToken
+- NamespaceDeclaration
+- NamespaceExportDeclaration
+- ObjectLiteralExpressionBase
+- OptionalTypeNode
+- PropertyAccessEntityNameExpression
+- PunctuationToken
+- SemicolonClassElement
+- SyntheticExpression
+- TemplateLiteralLikeNode
+- TemplateLiteralTypeSpan
+- Token
+- TransientIdentifier
+- TypeOperatorNode

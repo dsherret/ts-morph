@@ -3,12 +3,17 @@ import { Memoize, tsMorph } from "../deps.ts";
 import { WrapperFactory } from "./WrapperFactory.ts";
 
 export class TsInspector {
-  constructor(private readonly wrapperFactory: WrapperFactory, private readonly project: tsMorph.Project) {
+  readonly #wrapperFactory: WrapperFactory;
+  readonly #project: tsMorph.Project;
+
+  constructor(wrapperFactory: WrapperFactory, project: tsMorph.Project) {
+    this.#wrapperFactory = wrapperFactory;
+    this.#project = project;
   }
 
   @Memoize
   getTsSymbol() {
-    const tsMorphCommon = this.project.getSourceFileOrThrow("src/main.ts").getExportDeclarationOrThrow("@ts-morph/common").getModuleSpecifier()!
+    const tsMorphCommon = this.#project.getSourceFileOrThrow("src/main.ts").getExportDeclarationOrThrow("@ts-morph/common").getModuleSpecifier()!
       .getSymbolOrThrow();
     return tsMorphCommon.getExportOrThrow("ts").getAliasedSymbolOrThrow();
   }
@@ -29,7 +34,7 @@ export class TsInspector {
       }
     }
 
-    return interfaces.map(i => this.wrapperFactory.getTsNode(i)).sort((a, b) => a.getName().localeCompare(b.getName(), "en-us-u-kf-upper"));
+    return interfaces.map(i => this.#wrapperFactory.getTsNode(i)).sort((a, b) => a.getName().localeCompare(b.getName(), "en-us-u-kf-upper"));
   }
 
   getNamesFromKind(kind: number) {

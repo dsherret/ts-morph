@@ -58,9 +58,9 @@ export interface SupportedFormatCodeSettingsOnly {
  * Holds the manipulation settings.
  */
 export class ManipulationSettingsContainer extends SettingsContainer<ManipulationSettings> {
-  private _editorSettings: EditorSettings | undefined;
-  private _formatCodeSettings: SupportedFormatCodeSettings | undefined;
-  private _userPreferences: UserPreferences | undefined;
+  #editorSettings: EditorSettings | undefined;
+  #formatCodeSettings: SupportedFormatCodeSettings | undefined;
+  #userPreferences: UserPreferences | undefined;
 
   constructor() {
     super({
@@ -77,39 +77,39 @@ export class ManipulationSettingsContainer extends SettingsContainer<Manipulatio
    * Gets the editor settings based on the current manipulation settings.
    */
   getEditorSettings(): Readonly<EditorSettings> {
-    if (this._editorSettings == null) {
-      this._editorSettings = {};
-      fillDefaultEditorSettings(this._editorSettings, this);
+    if (this.#editorSettings == null) {
+      this.#editorSettings = {};
+      fillDefaultEditorSettings(this.#editorSettings, this);
     }
 
-    return { ...this._editorSettings };
+    return { ...this.#editorSettings };
   }
 
   /**
    * Gets the format code settings.
    */
   getFormatCodeSettings(): Readonly<SupportedFormatCodeSettings> {
-    if (this._formatCodeSettings == null) {
-      this._formatCodeSettings = {
+    if (this.#formatCodeSettings == null) {
+      this.#formatCodeSettings = {
         ...this.getEditorSettings(),
         insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: this._settings.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces,
       };
     }
 
-    return { ...this._formatCodeSettings };
+    return { ...this.#formatCodeSettings };
   }
 
   /**
    * Gets the user preferences.
    */
   getUserPreferences(): Readonly<UserPreferences> {
-    if (this._userPreferences == null) {
-      this._userPreferences = {
+    if (this.#userPreferences == null) {
+      this.#userPreferences = {
         quotePreference: this.getQuoteKind() === QuoteKind.Double ? "double" : "single",
         providePrefixAndSuffixTextForRename: this.getUsePrefixAndSuffixTextForRename(),
       };
     }
-    return { ...this._userPreferences };
+    return { ...this.#userPreferences };
   }
 
   /**
@@ -160,9 +160,9 @@ export class ManipulationSettingsContainer extends SettingsContainer<Manipulatio
    */
   set(settings: Partial<ManipulationSettings>) {
     super.set(settings);
-    this._editorSettings = undefined;
-    this._formatCodeSettings = undefined;
-    this._userPreferences = undefined;
+    this.#editorSettings = undefined;
+    this.#formatCodeSettings = undefined;
+    this.#userPreferences = undefined;
   }
 
   /**

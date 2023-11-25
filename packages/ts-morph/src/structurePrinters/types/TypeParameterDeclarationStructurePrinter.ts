@@ -6,7 +6,7 @@ import { CommaSeparatedStructuresPrinter } from "../formatting";
 import { NodePrinter } from "../NodePrinter";
 
 export class TypeParameterDeclarationStructurePrinter extends NodePrinter<OptionalKind<TypeParameterDeclarationStructure> | string> {
-  private readonly multipleWriter = new CommaSeparatedStructuresPrinter(this);
+  readonly #multipleWriter = new CommaSeparatedStructuresPrinter(this);
 
   printTextsWithBrackets(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<TypeParameterDeclarationStructure> | string> | undefined) {
     if (structures == null || structures.length === 0)
@@ -17,7 +17,7 @@ export class TypeParameterDeclarationStructurePrinter extends NodePrinter<Option
   }
 
   printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<TypeParameterDeclarationStructure> | string> | undefined) {
-    this.multipleWriter.printText(writer, structures);
+    this.#multipleWriter.printText(writer, structures);
   }
 
   protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<TypeParameterDeclarationStructure> | string) {

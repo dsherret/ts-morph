@@ -16,13 +16,15 @@ export interface RemoveChildrenTextManipulatorOptions {
 }
 
 export class RemoveChildrenTextManipulator implements TextManipulator {
-  private removalPos: number | undefined;
+  readonly #opts: RemoveChildrenTextManipulatorOptions;
+  #removalPos: number | undefined;
 
-  constructor(private readonly opts: RemoveChildrenTextManipulatorOptions) {
+  constructor(opts: RemoveChildrenTextManipulatorOptions) {
+    this.#opts = opts;
   }
 
   getNewText(inputText: string) {
-    const opts = this.opts;
+    const opts = this.#opts;
     const {
       children,
       removePrecedingSpaces = false,
@@ -34,7 +36,7 @@ export class RemoveChildrenTextManipulator implements TextManipulator {
     const sourceFile = children[0].getSourceFile();
     const fullText = sourceFile.getFullText();
     const removalPos = getRemovalPos();
-    this.removalPos = removalPos;
+    this.#removalPos = removalPos;
 
     return getPrefix() + replaceTrivia + getSuffix();
 
@@ -80,6 +82,6 @@ export class RemoveChildrenTextManipulator implements TextManipulator {
   }
 
   getTextForError(newText: string) {
-    return getTextForError(newText, this.removalPos!);
+    return getTextForError(newText, this.#removalPos!);
   }
 }
