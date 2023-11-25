@@ -6,7 +6,7 @@ import { NameableNodeStructure, AsyncableNodeStructure, ImplementsClauseableNode
     PropertyNamedNodeStructure, StaticableNodeStructure, TypeParameteredNodeStructure, GeneratorableNodeStructure, QuestionTokenableNodeStructure,
     TypedNodeStructure, ExclamationTokenableNodeStructure, ReadonlyableNodeStructure, InitializerExpressionableNodeStructure, NamedNodeStructure,
     BindingNamedNodeStructure, ScopeableNodeStructure, ExtendsClauseableNodeStructure, TypeElementMemberedNodeStructure,
-    DecoratableNodeStructure, ModuleNamedNodeStructure, OverrideableNodeStructure, ImportAttributeKeyNamedNodeStructure} from "./base";
+    DecoratableNodeStructure, ModuleNamedNodeStructure, OverrideableNodeStructure, ImportAttributeNamedNodeStructure} from "./base";
 import { ClassDeclarationStructure, ClassLikeDeclarationBaseStructure, ConstructorDeclarationStructure, ConstructorDeclarationOverloadStructure,
     GetAccessorDeclarationStructure, MethodDeclarationStructure, MethodDeclarationOverloadStructure, PropertyDeclarationStructure,
     SetAccessorDeclarationStructure, ClassStaticBlockDeclarationStructure} from "./class";
@@ -425,7 +425,7 @@ export const Structure = {
     return (structure as any)?.kind === StructureKind.ImportAttribute;
   },
   /** Gets if the provided structure is a ImportAttributeKeyNamedNodeStructure. */
-  isImportAttributeKeyNamed<T>(structure: T): structure is T & ImportAttributeKeyNamedNodeStructure {
+  isImportAttributeKeyNamed<T>(structure: T): structure is T & ImportAttributeNamedNodeStructure {
     return (structure as any)?.kind === StructureKind.ImportAttribute;
   },
   /** Gets if the provided structure is a ImportDeclarationStructure. */

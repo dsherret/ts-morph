@@ -1,8 +1,8 @@
-import { ImportAttributeKeyNamedNodeStructure } from "../base";
+import { ImportAttributeNamedNodeStructure } from "../base";
 import { KindedStructure, Structure } from "../Structure.generated";
 import { StructureKind } from "../StructureKind";
 
-export interface ImportAttributeStructure extends Structure, ImportAttributeStructureSpecificStructure, ImportAttributeKeyNamedNodeStructure {
+export interface ImportAttributeStructure extends Structure, ImportAttributeStructureSpecificStructure, ImportAttributeNamedNodeStructure {
 }
 
 export interface ImportAttributeStructureSpecificStructure extends KindedStructure<StructureKind.ImportAttribute> {
