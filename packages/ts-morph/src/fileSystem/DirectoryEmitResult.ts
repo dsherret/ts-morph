@@ -5,9 +5,9 @@ export class DirectoryEmitResult {
   readonly #skippedFilePaths: ReadonlyArray<StandardizedFilePath>;
 
   /** @private */
-  constructor(_skippedFilePaths: ReadonlyArray<StandardizedFilePath>, _outputFilePaths: ReadonlyArray<StandardizedFilePath>) {
-    this.#skippedFilePaths = _skippedFilePaths;
-    this.#outputFilePaths = _outputFilePaths;
+  constructor(skippedFilePaths: ReadonlyArray<StandardizedFilePath>, outputFilePaths: ReadonlyArray<StandardizedFilePath>) {
+    this.#skippedFilePaths = skippedFilePaths;
+    this.#outputFilePaths = outputFilePaths;
   }
 
   /** Gets a collections of skipped file paths. */

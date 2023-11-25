@@ -48,6 +48,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   #childStringRanges: [number, number][] | undefined;
   #leadingCommentRanges: CommentRange[] | undefined;
   #trailingCommentRanges: CommentRange[] | undefined;
+  /** @internal */
   _wrappedChildCount = 0;
 
   /** @internal */

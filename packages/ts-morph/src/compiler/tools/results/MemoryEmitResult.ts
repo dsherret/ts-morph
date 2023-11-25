@@ -29,9 +29,9 @@ export class MemoryEmitResult extends EmitResult {
   /**
    * @private
    */
-  constructor(context: ProjectContext, compilerObject: ts.EmitResult, _files: ReadonlyArray<MemoryEmitResultFile>) {
+  constructor(context: ProjectContext, compilerObject: ts.EmitResult, files: ReadonlyArray<MemoryEmitResultFile>) {
     super(context, compilerObject);
-    this.#files = _files;
+    this.#files = files;
   }
 
   /**
