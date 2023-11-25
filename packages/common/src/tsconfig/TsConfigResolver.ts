@@ -4,16 +4,18 @@ import { ts } from "../typescript";
 import { getTsParseConfigHost, TsParseConfigHostResult } from "./getTsParseConfigHost";
 
 export class TsConfigResolver {
+    readonly #encoding: string;
     readonly #fileSystem: TransactionalFileSystem;
   private readonly host: TsParseConfigHostResult;
   private readonly tsConfigFilePath: StandardizedFilePath;
   private readonly tsConfigDirPath: StandardizedFilePath;
 
-  constructor(fileSystem: TransactionalFileSystem, tsConfigFilePath: StandardizedFilePath, private readonly encoding: string) {
+  constructor(fileSystem: TransactionalFileSystem, tsConfigFilePath: StandardizedFilePath, encoding: string) {
     this.host = getTsParseConfigHost(fileSystem, { encoding });
     this.tsConfigFilePath = fileSystem.getStandardizedAbsolutePath(tsConfigFilePath);
     this.tsConfigDirPath = FileUtils.getDirPath(this.tsConfigFilePath);
       this.#fileSystem = fileSystem;
+      this.#encoding = encoding;
   }
 
   @Memoize
@@ -66,7 +68,7 @@ export class TsConfigResolver {
 
   @Memoize
   private getTsConfigFileJson() {
-    const text = this.#fileSystem.readFileSync(this.tsConfigFilePath, this.encoding);
+    const text = this.#fileSystem.readFileSync(this.tsConfigFilePath, this.#encoding);
     const parseResult = ts.parseConfigFileTextToJson(this.tsConfigFilePath, text);
     if (parseResult.error != null)
       throw new Error(parseResult.error.messageText.toString());
