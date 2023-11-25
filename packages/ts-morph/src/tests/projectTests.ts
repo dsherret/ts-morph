@@ -417,6 +417,9 @@ describe("Project", () => {
         tsConfigFilePath: "tsconfig.json",
         compilerOptions: {
           target: 2,
+        },
+        defaultCompilerOptions: {
+          target: 1,
           allowJs: true,
         },
         skipAddingFilesFromTsConfig, // the behaviour changes based on this value so it's good to test both of these

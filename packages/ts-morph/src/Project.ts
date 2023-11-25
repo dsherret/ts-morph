@@ -30,6 +30,8 @@ export interface ProjectOptions {
   compilerOptions?: CompilerOptions;
   /** File path to the tsconfig.json file. */
   tsConfigFilePath?: string;
+  /** Can be overriden by `tsConfigFilePath` or `compilerOptions`. */
+  defaultCompilerOptions?: CompilerOptions;
   /** Whether to skip adding the source files from the specified tsconfig.json. @default false */
   skipAddingFilesFromTsConfig?: boolean;
   /** Skip resolving file dependencies when providing a ts config file path and adding the files from tsconfig. @default false */
@@ -99,7 +101,7 @@ export class Project {
 
     // compiler options initialization
     const compilerOptions = getCompilerOptions();
-    const compilerOptionsContainer = new CompilerOptionsContainer();
+    const compilerOptionsContainer = new CompilerOptionsContainer(options.defaultCompilerOptions);
     compilerOptionsContainer.set(compilerOptions);
 
     // setup context
