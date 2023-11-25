@@ -2,9 +2,9 @@ import { EventContainer, ObjectUtils } from "../utils";
 
 export abstract class SettingsContainer<T extends object> {
   /** @internal */
-  readonly #_defaultSettings: T;
+  readonly #defaultSettings: T;
   /** @internal */
-  #_modifiedEventContainer: EventContainer | undefined;
+  #modifiedEventContainer: EventContainer | undefined;
   protected _settings: T;
 
   /**
@@ -12,7 +12,7 @@ export abstract class SettingsContainer<T extends object> {
    * @param defaultSettings - The settings to use by default.
    */
   constructor(defaultSettings: T) {
-    this.#_defaultSettings = Object.assign({}, defaultSettings);
+    this.#defaultSettings = Object.assign({}, defaultSettings);
     this._settings = defaultSettings;
   }
 
@@ -20,7 +20,7 @@ export abstract class SettingsContainer<T extends object> {
    * Resets the settings to the default.
    */
   reset() {
-    this._settings = Object.assign({}, this.#_defaultSettings);
+    this._settings = Object.assign({}, this.#defaultSettings);
     this.#fireModified();
   }
 
@@ -45,13 +45,13 @@ export abstract class SettingsContainer<T extends object> {
    * @param action - Action to execute when the settings change.
    */
   onModified(action: () => void) {
-    if (this.#_modifiedEventContainer == null)
-      this.#_modifiedEventContainer = new EventContainer();
-    this.#_modifiedEventContainer.subscribe(action);
+    if (this.#modifiedEventContainer == null)
+      this.#modifiedEventContainer = new EventContainer();
+    this.#modifiedEventContainer.subscribe(action);
   }
 
   #fireModified() {
-    if (this.#_modifiedEventContainer != null)
-      this.#_modifiedEventContainer.fire(undefined);
+    if (this.#modifiedEventContainer != null)
+      this.#modifiedEventContainer.fire(undefined);
   }
 }

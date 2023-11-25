@@ -597,7 +597,7 @@ export class TransactionalFileSystem {
   fileExists(filePath: StandardizedFilePath) {
     if (this.#libFileExists(filePath))
       return true;
-    if (this.#_fileDeletedInMemory(filePath))
+    if (this.#fileDeletedInMemory(filePath))
       return false;
     return this.#fileSystem.fileExists(filePath);
   }
@@ -605,12 +605,12 @@ export class TransactionalFileSystem {
   fileExistsSync(filePath: StandardizedFilePath) {
     if (this.#libFileExists(filePath))
       return true;
-    if (this.#_fileDeletedInMemory(filePath))
+    if (this.#fileDeletedInMemory(filePath))
       return false;
     return this.#fileSystem.fileExistsSync(filePath);
   }
 
-  #_fileDeletedInMemory(filePath: StandardizedFilePath) {
+  #fileDeletedInMemory(filePath: StandardizedFilePath) {
     if (this.#isPathQueuedForDeletion(filePath))
       return true;
     const parentDir = this.#getParentDirectoryIfExists(filePath);
@@ -631,7 +631,7 @@ export class TransactionalFileSystem {
   }
 
   readFileIfExistsSync(filePath: StandardizedFilePath, encoding: string | undefined) {
-    if (this.#_fileDeletedInMemory(filePath))
+    if (this.#fileDeletedInMemory(filePath))
       return undefined;
     try {
       return this.readFileSync(filePath, encoding);
@@ -648,12 +648,12 @@ export class TransactionalFileSystem {
     if (libFileText != null)
       return libFileText;
 
-    this.#_verifyCanReadFile(filePath);
+    this.#verifyCanReadFile(filePath);
     return this.#fileSystem.readFileSync(filePath, encoding);
   }
 
   readFileIfExists(filePath: StandardizedFilePath, encoding: string | undefined) {
-    if (this.#_fileDeletedInMemory(filePath))
+    if (this.#fileDeletedInMemory(filePath))
       return Promise.resolve(undefined);
     return this.readFile(filePath, encoding)
       .catch(err => {
@@ -669,11 +669,11 @@ export class TransactionalFileSystem {
     if (libFileText != null)
       return Promise.resolve(libFileText);
 
-    this.#_verifyCanReadFile(filePath);
+    this.#verifyCanReadFile(filePath);
     return this.#fileSystem.readFile(filePath, encoding);
   }
 
-  #_verifyCanReadFile(filePath: StandardizedFilePath) {
+  #verifyCanReadFile(filePath: StandardizedFilePath) {
     if (this.#isPathQueuedForDeletion(filePath))
       throw new errors.InvalidOperationError(`Cannot read file at ${filePath} when it is queued for deletion.`);
     if (this.#getOrCreateParentDirectory(filePath).getWasEverDeleted())

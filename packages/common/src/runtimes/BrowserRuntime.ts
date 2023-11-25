@@ -35,83 +35,83 @@ class BrowserRuntimePath implements RuntimePath {
 }
 
 class BrowserRuntimeFileSystem implements RuntimeFileSystem {
-  #_errorMessage =
+  #errorMessage =
     "Access to the file system is not supported in the browser. Please use an in-memory file system (specify `useInMemoryFileSystem: true` when creating the project).";
 
   delete(_path: string) {
-    return Promise.reject(new Error(this.#_errorMessage));
+    return Promise.reject(new Error(this.#errorMessage));
   }
 
   deleteSync(_path: string) {
-    throw new Error(this.#_errorMessage);
+    throw new Error(this.#errorMessage);
   }
 
   readDirSync(_dirPath: string): RuntimeDirEntry[] {
-    throw new Error(this.#_errorMessage);
+    throw new Error(this.#errorMessage);
   }
 
   readFile(_filePath: string, _encoding?: string): Promise<string> {
-    return Promise.reject(new Error(this.#_errorMessage));
+    return Promise.reject(new Error(this.#errorMessage));
   }
 
   readFileSync(_filePath: string, _encoding?: string): string {
-    throw new Error(this.#_errorMessage);
+    throw new Error(this.#errorMessage);
   }
 
   writeFile(_filePath: string, _fileText: string) {
-    return Promise.reject(new Error(this.#_errorMessage));
+    return Promise.reject(new Error(this.#errorMessage));
   }
 
   writeFileSync(_filePath: string, _fileText: string) {
-    throw new Error(this.#_errorMessage);
+    throw new Error(this.#errorMessage);
   }
 
   mkdir(_dirPath: string) {
-    return Promise.reject(new Error(this.#_errorMessage));
+    return Promise.reject(new Error(this.#errorMessage));
   }
 
   mkdirSync(_dirPath: string) {
-    throw new Error(this.#_errorMessage);
+    throw new Error(this.#errorMessage);
   }
 
   move(_srcPath: string, _destPath: string) {
-    return Promise.reject(new Error(this.#_errorMessage));
+    return Promise.reject(new Error(this.#errorMessage));
   }
 
   moveSync(_srcPath: string, _destPath: string) {
-    throw new Error(this.#_errorMessage);
+    throw new Error(this.#errorMessage);
   }
 
   copy(_srcPath: string, _destPath: string) {
-    return Promise.reject(new Error(this.#_errorMessage));
+    return Promise.reject(new Error(this.#errorMessage));
   }
 
   copySync(_srcPath: string, _destPath: string) {
-    throw new Error(this.#_errorMessage);
+    throw new Error(this.#errorMessage);
   }
 
   stat(_path: string): Promise<RuntimeFileInfo> {
-    return Promise.reject(new Error(this.#_errorMessage));
+    return Promise.reject(new Error(this.#errorMessage));
   }
 
   statSync(_path: string): RuntimeFileInfo {
-    throw new Error(this.#_errorMessage);
+    throw new Error(this.#errorMessage);
   }
 
   realpathSync(_path: string): string {
-    throw new Error(this.#_errorMessage);
+    throw new Error(this.#errorMessage);
   }
 
   getCurrentDirectory(): string {
-    throw new Error(this.#_errorMessage);
+    throw new Error(this.#errorMessage);
   }
 
   glob(_patterns: ReadonlyArray<string>): Promise<string[]> {
-    return Promise.reject(new Error(this.#_errorMessage));
+    return Promise.reject(new Error(this.#errorMessage));
   }
 
   globSync(_patterns: ReadonlyArray<string>): string[] {
-    throw new Error(this.#_errorMessage);
+    throw new Error(this.#errorMessage);
   }
 
   isCaseSensitive() {

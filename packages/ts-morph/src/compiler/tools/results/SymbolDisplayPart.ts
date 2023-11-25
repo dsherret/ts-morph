@@ -5,16 +5,16 @@ import { ts } from "@ts-morph/common";
  */
 export class SymbolDisplayPart {
   /** @internal */
-  readonly #_compilerObject: ts.SymbolDisplayPart;
+  readonly #compilerObject: ts.SymbolDisplayPart;
 
   /** @private */
   constructor(compilerObject: ts.SymbolDisplayPart) {
-    this.#_compilerObject = compilerObject;
+    this.#compilerObject = compilerObject;
   }
 
   /** Gets the compiler symbol display part. */
   get compilerObject() {
-    return this.#_compilerObject;
+    return this.#compilerObject;
   }
 
   /**

@@ -27,26 +27,26 @@ export interface DirectoryCopyOptions extends SourceFileCopyOptions {
 }
 
 export class Directory {
-  #__context: ProjectContext | undefined;
-  #_path!: StandardizedFilePath;
-  #_pathParts!: string[];
+  #context: ProjectContext | undefined;
+  #path!: StandardizedFilePath;
+  #pathParts!: string[];
 
   /** @private */
   constructor(context: ProjectContext, path: StandardizedFilePath) {
-    this.#__context = context;
+    this.#context = context;
     this._setPathInternal(path);
   }
 
   /** @internal */
   _setPathInternal(path: StandardizedFilePath) {
-    this.#_path = path;
-    this.#_pathParts = path.split("/").filter(p => p.length > 0);
+    this.#path = path;
+    this.#pathParts = path.split("/").filter(p => p.length > 0);
   }
 
   /** @internal */
   get _context() {
-    this.#_throwIfDeletedOrRemoved();
-    return this.#__context!;
+    this.#throwIfDeletedOrRemoved();
+    return this.#context!;
   }
 
   /**
@@ -54,7 +54,7 @@ export class Directory {
    * @param possibleDescendant - Directory or source file that's a possible descendant.
    */
   isAncestorOf(possibleDescendant: Directory | SourceFile) {
-    return Directory.#_isAncestorOfDir(this, possibleDescendant);
+    return Directory.#isAncestorOfDir(this, possibleDescendant);
   }
 
   /**
@@ -62,7 +62,7 @@ export class Directory {
    * @param possibleAncestor - Directory or source file that's a possible ancestor.
    */
   isDescendantOf(possibleAncestor: Directory) {
-    return Directory.#_isAncestorOfDir(possibleAncestor, this);
+    return Directory.#isAncestorOfDir(possibleAncestor, this);
   }
 
   /**
@@ -70,22 +70,22 @@ export class Directory {
    * @internal
    */
   _getDepth() {
-    return this.#_pathParts.length;
+    return this.#pathParts.length;
   }
 
   /**
    * Gets the path to the directory.
    */
   getPath() {
-    this.#_throwIfDeletedOrRemoved();
-    return this.#_path;
+    this.#throwIfDeletedOrRemoved();
+    return this.#path;
   }
 
   /**
    * Gets the directory path's base name.
    */
   getBaseName() {
-    return this.#_pathParts[this.#_pathParts.length - 1];
+    return this.#pathParts[this.#pathParts.length - 1];
   }
 
   /**
@@ -392,7 +392,7 @@ export class Directory {
     const outputFilePaths: StandardizedFilePath[] = [];
     const skippedFilePaths: StandardizedFilePath[] = [];
 
-    for (const emitResult of this.#_emitInternal(options)) {
+    for (const emitResult of this.#emitInternal(options)) {
       if (isStandardizedFilePath(emitResult))
         skippedFilePaths.push(emitResult);
       else {
@@ -416,7 +416,7 @@ export class Directory {
     const outputFilePaths: StandardizedFilePath[] = [];
     const skippedFilePaths: StandardizedFilePath[] = [];
 
-    for (const emitResult of this.#_emitInternal(options)) {
+    for (const emitResult of this.#emitInternal(options)) {
       if (isStandardizedFilePath(emitResult))
         skippedFilePaths.push(emitResult);
       else {
@@ -428,7 +428,7 @@ export class Directory {
     return new DirectoryEmitResult(skippedFilePaths, outputFilePaths);
   }
 
-  #_emitInternal(options: { emitOnlyDtsFiles?: boolean; outDir?: string; declarationDir?: string } = {}) {
+  #emitInternal(options: { emitOnlyDtsFiles?: boolean; outDir?: string; declarationDir?: string } = {}) {
     const { emitOnlyDtsFiles = false } = options;
     const isJsFile = options.outDir == null ? undefined : /\.js$/i;
     const isMapFile = options.outDir == null ? undefined : /\.js\.map$/i;
@@ -505,7 +505,7 @@ export class Directory {
     if (options.includeUntrackedFiles)
       fileSystem.queueCopyDirectory(originalPath, newPath);
 
-    return this.#_copyInternal(newPath, options);
+    return this.#copyInternal(newPath, options);
   }
 
   /**
@@ -525,7 +525,7 @@ export class Directory {
     }
 
     options = getDirectoryCopyOptions(options);
-    const newDir = this.#_copyInternal(newPath, options);
+    const newDir = this.#copyInternal(newPath, options);
     if (options.includeUntrackedFiles)
       await fileSystem.copyDirectoryImmediately(originalPath, newPath);
     await newDir.save();
@@ -549,7 +549,7 @@ export class Directory {
     }
 
     options = getDirectoryCopyOptions(options);
-    const newDir = this.#_copyInternal(newPath, options);
+    const newDir = this.#copyInternal(newPath, options);
     if (options.includeUntrackedFiles)
       fileSystem.copyDirectoryImmediatelySync(originalPath, newPath);
     newDir.saveSync();
@@ -557,7 +557,7 @@ export class Directory {
   }
 
   /** @internal */
-  #_copyInternal(newPath: StandardizedFilePath, options?: DirectoryCopyOptions) {
+  #copyInternal(newPath: StandardizedFilePath, options?: DirectoryCopyOptions) {
     const originalPath = this.getPath();
 
     if (originalPath === newPath)
@@ -570,7 +570,7 @@ export class Directory {
     const copyingSourceFiles = this.getDescendantSourceFiles().map(sourceFile => ({
       sourceFile,
       newFilePath: fileSystem.getStandardizedAbsolutePath(this.getRelativePathTo(sourceFile), newPath),
-      references: this.#_getReferencesForCopy(sourceFile),
+      references: this.#getReferencesForCopy(sourceFile),
     }));
 
     // copy directories
@@ -611,7 +611,7 @@ export class Directory {
     if (originalPath === newPath)
       return this;
 
-    return this.#_moveInternal(newPath, options, () => fileSystem.queueMoveDirectory(originalPath, newPath));
+    return this.#moveInternal(newPath, options, () => fileSystem.queueMoveDirectory(originalPath, newPath));
   }
 
   /**
@@ -629,7 +629,7 @@ export class Directory {
       return this;
     }
 
-    this.#_moveInternal(newPath, options);
+    this.#moveInternal(newPath, options);
     await fileSystem.moveDirectoryImmediately(originalPath, newPath);
     await this.save();
     return this;
@@ -650,14 +650,14 @@ export class Directory {
       return this;
     }
 
-    this.#_moveInternal(newPath, options);
+    this.#moveInternal(newPath, options);
     fileSystem.moveDirectoryImmediatelySync(originalPath, newPath);
     this.saveSync();
     return this;
   }
 
   /** @internal */
-  #_moveInternal(newPath: StandardizedFilePath, options: DirectoryMoveOptions | undefined, preAction?: () => void) {
+  #moveInternal(newPath: StandardizedFilePath, options: DirectoryMoveOptions | undefined, preAction?: () => void) {
     const originalPath = this.getPath();
 
     if (originalPath === newPath)
@@ -679,7 +679,7 @@ export class Directory {
     const movingSourceFiles = this.getDescendantSourceFiles().map(sourceFile => ({
       sourceFile,
       newFilePath: fileSystem.getStandardizedAbsolutePath(this.getRelativePathTo(sourceFile), newPath),
-      references: this.#_getReferencesForMove(sourceFile),
+      references: this.#getReferencesForMove(sourceFile),
     }));
 
     // update directories
@@ -714,7 +714,7 @@ export class Directory {
    */
   clear() {
     const path = this.getPath();
-    this.#_deleteDescendants();
+    this.#deleteDescendants();
     this._context.fileSystemWrapper.queueDirectoryDelete(path);
     this._context.fileSystemWrapper.queueMkdir(path);
   }
@@ -725,7 +725,7 @@ export class Directory {
    */
   async clearImmediately() {
     const path = this.getPath();
-    this.#_deleteDescendants();
+    this.#deleteDescendants();
     await this._context.fileSystemWrapper.clearDirectoryImmediately(path);
   }
 
@@ -735,7 +735,7 @@ export class Directory {
    */
   clearImmediatelySync() {
     const path = this.getPath();
-    this.#_deleteDescendants();
+    this.#deleteDescendants();
     this._context.fileSystemWrapper.clearDirectoryImmediatelySync(path);
   }
 
@@ -746,13 +746,13 @@ export class Directory {
    */
   delete() {
     const path = this.getPath();
-    this.#_deleteDescendants();
+    this.#deleteDescendants();
     this._context.fileSystemWrapper.queueDirectoryDelete(path);
     this.forget();
   }
 
   /** @internal */
-  #_deleteDescendants() {
+  #deleteDescendants() {
     for (const sourceFile of this.getSourceFiles())
       sourceFile.delete();
     for (const dir of this.getDirectories())
@@ -803,7 +803,7 @@ export class Directory {
       return;
 
     this._context.compilerFactory.removeDirectoryFromCache(this.getPath());
-    this.#__context = undefined;
+    this.#context = undefined;
   }
 
   /**
@@ -933,7 +933,7 @@ export class Directory {
    * Gets if the directory was forgotten.
    */
   wasForgotten() {
-    return this.#__context == null;
+    return this.#context == null;
   }
 
   /** @internal */
@@ -952,19 +952,19 @@ export class Directory {
   }
 
   /** @internal */
-  #_throwIfDeletedOrRemoved() {
+  #throwIfDeletedOrRemoved() {
     if (this.wasForgotten())
       throw new errors.InvalidOperationError("Cannot use a directory that was deleted, removed, or overwritten.");
   }
 
   /** @internal */
-  #_getReferencesForCopy(sourceFile: SourceFile) {
+  #getReferencesForCopy(sourceFile: SourceFile) {
     const literalReferences = sourceFile._getReferencesForCopyInternal();
     return literalReferences.filter(r => !this.isAncestorOf(r[1]));
   }
 
   /** @internal */
-  #_getReferencesForMove(sourceFile: SourceFile) {
+  #getReferencesForMove(sourceFile: SourceFile) {
     const { literalReferences, referencingLiterals } = sourceFile._getReferencesForMoveInternal();
     return {
       literalReferences: literalReferences.filter(r => !this.isAncestorOf(r[1])),
@@ -973,19 +973,19 @@ export class Directory {
   }
 
   /** @internal */
-  static #_isAncestorOfDir(ancestor: Directory, descendant: Directory | SourceFile) {
+  static #isAncestorOfDir(ancestor: Directory, descendant: Directory | SourceFile) {
     if (descendant instanceof SourceFile) {
       descendant = descendant.getDirectory();
       if (ancestor === descendant)
         return true;
     }
 
-    if (ancestor.#_pathParts.length >= descendant.#_pathParts.length)
+    if (ancestor.#pathParts.length >= descendant.#pathParts.length)
       return false;
 
     // more likely to be a mistake at the end, so search backwards
-    for (let i = ancestor.#_pathParts.length - 1; i >= 0; i--) {
-      if (ancestor.#_pathParts[i] !== descendant.#_pathParts[i])
+    for (let i = ancestor.#pathParts.length - 1; i >= 0; i--) {
+      if (ancestor.#pathParts[i] !== descendant.#pathParts[i])
         return false;
     }
 

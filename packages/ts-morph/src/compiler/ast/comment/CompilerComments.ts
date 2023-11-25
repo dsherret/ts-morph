@@ -10,9 +10,9 @@ export enum CommentNodeKind {
 }
 
 export abstract class CompilerCommentNode implements ts.Node {
-  #_fullStart: number;
+  #fullStart: number;
   #start: number;
-  #_sourceFile: ts.SourceFile;
+  #sourceFile: ts.SourceFile;
 
   /** @private */
   constructor(
@@ -23,9 +23,9 @@ export abstract class CompilerCommentNode implements ts.Node {
     sourceFile: ts.SourceFile,
     parent: ts.Node,
   ) {
-    this.#_fullStart = fullStart;
+    this.#fullStart = fullStart;
     this.#start = pos; // pos and start are the same for comments
-    this.#_sourceFile = sourceFile;
+    this.#sourceFile = sourceFile;
     this.pos = pos;
     this.end = end;
     this.kind = kind;
@@ -44,7 +44,7 @@ export abstract class CompilerCommentNode implements ts.Node {
   parent: ts.Node;
 
   getSourceFile() {
-    return this.#_sourceFile;
+    return this.#sourceFile;
   }
 
   getChildCount(sourceFile?: ts.SourceFile | undefined): number {
@@ -65,7 +65,7 @@ export abstract class CompilerCommentNode implements ts.Node {
   }
 
   getFullStart() {
-    return this.#_fullStart;
+    return this.#fullStart;
   }
 
   getEnd() {
@@ -77,19 +77,19 @@ export abstract class CompilerCommentNode implements ts.Node {
   }
 
   getFullWidth(): number {
-    return this.end - this.#_fullStart;
+    return this.end - this.#fullStart;
   }
 
   getLeadingTriviaWidth(sourceFile?: ts.SourceFile | undefined) {
-    return this.#start - this.#_fullStart;
+    return this.#start - this.#fullStart;
   }
 
   getFullText(sourceFile?: ts.SourceFile | undefined) {
-    return this.#_sourceFile.text.substring(this.#_fullStart, this.end);
+    return this.#sourceFile.text.substring(this.#fullStart, this.end);
   }
 
   getText(sourceFile?: ts.SourceFile | undefined) {
-    return this.#_sourceFile.text.substring(this.#start, this.end);
+    return this.#sourceFile.text.substring(this.#start, this.end);
   }
 
   getFirstToken(sourceFile?: ts.SourceFile | undefined): ts.Node | undefined {

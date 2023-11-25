@@ -30,7 +30,7 @@ export class InProjectCoordinator {
     if (this.isSourceFileInProject(sourceFile))
       return;
 
-    this.#_internalMarkSourceFileAsInProject(sourceFile);
+    this.#internalMarkSourceFileAsInProject(sourceFile);
     this.#notInProjectFiles.delete(sourceFile);
   }
 
@@ -46,7 +46,7 @@ export class InProjectCoordinator {
 
     for (const sourceFile of [...this.#notInProjectFiles.values()]) {
       if (shouldMarkInProject(sourceFile)) {
-        this.#_internalMarkSourceFileAsInProject(sourceFile);
+        this.#internalMarkSourceFileAsInProject(sourceFile);
         this.#notInProjectFiles.delete(sourceFile);
         changedSourceFiles.push(sourceFile);
       } else {
@@ -83,7 +83,7 @@ export class InProjectCoordinator {
     }
   }
 
-  #_internalMarkSourceFileAsInProject(sourceFile: SourceFile) {
+  #internalMarkSourceFileAsInProject(sourceFile: SourceFile) {
     (sourceFile as any)._inProject = true;
     this.markDirectoryAsInProject(sourceFile.getDirectory());
   }

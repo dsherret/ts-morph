@@ -123,7 +123,7 @@ class InternalDocumentCache implements DocumentCache {
     scriptTarget: ScriptTarget | undefined,
     scriptKind: ScriptKind | undefined,
   ) {
-    const documentKey = this.#_getKey(filePath, scriptTarget, scriptKind);
+    const documentKey = this.#getKey(filePath, scriptTarget, scriptKind);
     let document = this.#documents.get(documentKey);
     if (document == null) {
       document = createCompilerSourceFile(absoluteFilePath, scriptSnapshot, scriptTarget, "-1", false, scriptKind);
@@ -137,7 +137,7 @@ class InternalDocumentCache implements DocumentCache {
     return document;
   }
 
-  #_getKey(filePath: string, scriptTarget: ScriptTarget | undefined, scriptKind: ScriptKind | undefined): DocumentKey {
+  #getKey(filePath: string, scriptTarget: ScriptTarget | undefined, scriptKind: ScriptKind | undefined): DocumentKey {
     return (filePath + (scriptTarget?.toString() ?? "-1") + (scriptKind?.toString() ?? "-1")) as DocumentKey;
   }
 }
