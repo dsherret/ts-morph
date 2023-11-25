@@ -465,7 +465,7 @@ export class Project {
    */
   getSourceFileOrThrow(searchFunction: (file: ts.SourceFile) => boolean): ts.SourceFile;
   getSourceFileOrThrow(fileNameOrSearchFunction: string | ((file: ts.SourceFile) => boolean)): ts.SourceFile {
-    const sourceFile = this.getSourceFile(fileNameOrSearchFunction);
+    const sourceFile = this.#getSourceFileInternal(fileNameOrSearchFunction);
     if (sourceFile != null)
       return sourceFile;
 
@@ -493,11 +493,11 @@ export class Project {
    * @param searchFunction - Search function.
    */
   getSourceFile(searchFunction: (file: ts.SourceFile) => boolean): ts.SourceFile | undefined;
-  /**
-   * @internal
-   */
-  getSourceFile(fileNameOrSearchFunction: string | ((file: ts.SourceFile) => boolean)): ts.SourceFile | undefined;
   getSourceFile(fileNameOrSearchFunction: string | ((file: ts.SourceFile) => boolean)): ts.SourceFile | undefined {
+    return this.#getSourceFileInternal(fileNameOrSearchFunction);
+  }
+
+  #getSourceFileInternal(fileNameOrSearchFunction: string | ((file: ts.SourceFile) => boolean)): ts.SourceFile | undefined {
     const filePathOrSearchFunction = getFilePathOrSearchFunction(this.#fileSystemWrapper);
 
     if (isStandardizedFilePath(filePathOrSearchFunction)) {

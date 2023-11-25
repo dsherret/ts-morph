@@ -31,35 +31,38 @@ typeof SuppressedError === "function" ? SuppressedError : function (error, suppr
 };
 
 class SourceFileCache {
+    #sourceFilesByFilePath = new Map();
+    #projectVersion = 0;
+    #fileSystemWrapper;
+    #compilerOptions;
+    documentRegistry;
     constructor(fileSystemWrapper, compilerOptions) {
-        this.fileSystemWrapper = fileSystemWrapper;
-        this.compilerOptions = compilerOptions;
-        this.sourceFilesByFilePath = new Map();
-        this.projectVersion = 0;
         this.documentRegistry = new DocumentRegistry(fileSystemWrapper);
+        this.#fileSystemWrapper = fileSystemWrapper;
+        this.#compilerOptions = compilerOptions;
     }
     containsSourceFileAtPath(filePath) {
-        return this.sourceFilesByFilePath.has(filePath);
+        return this.#sourceFilesByFilePath.has(filePath);
     }
     getSourceFilePaths() {
-        return this.sourceFilesByFilePath.keys();
+        return this.#sourceFilesByFilePath.keys();
     }
     getSourceFiles() {
-        return this.sourceFilesByFilePath.values();
+        return this.#sourceFilesByFilePath.values();
     }
     getProjectVersion() {
-        return this.projectVersion;
+        return this.#projectVersion;
     }
     getSourceFileVersion(sourceFile) {
         return this.documentRegistry.getSourceFileVersion(sourceFile);
     }
     getSourceFileFromCacheFromFilePath(filePath) {
-        return this.sourceFilesByFilePath.get(filePath);
+        return this.#sourceFilesByFilePath.get(filePath);
     }
     async addOrGetSourceFileFromFilePath(filePath, options) {
-        let sourceFile = this.sourceFilesByFilePath.get(filePath);
+        let sourceFile = this.#sourceFilesByFilePath.get(filePath);
         if (sourceFile == null) {
-            const fileText = await this.fileSystemWrapper.readFileIfExists(filePath, this.compilerOptions.getEncoding());
+            const fileText = await this.#fileSystemWrapper.readFileIfExists(filePath, this.#compilerOptions.getEncoding());
             if (fileText != null) {
                 sourceFile = this.createSourceFileFromText(filePath, fileText, options);
             }
@@ -67,9 +70,9 @@ class SourceFileCache {
         return sourceFile;
     }
     addOrGetSourceFileFromFilePathSync(filePath, options) {
-        let sourceFile = this.sourceFilesByFilePath.get(filePath);
+        let sourceFile = this.#sourceFilesByFilePath.get(filePath);
         if (sourceFile == null) {
-            const fileText = this.fileSystemWrapper.readFileIfExistsSync(filePath, this.compilerOptions.getEncoding());
+            const fileText = this.#fileSystemWrapper.readFileIfExistsSync(filePath, this.#compilerOptions.getEncoding());
             if (fileText != null) {
                 sourceFile = this.createSourceFileFromText(filePath, fileText, options);
             }
@@ -77,39 +80,39 @@ class SourceFileCache {
         return sourceFile;
     }
     createSourceFileFromText(filePath, text, options) {
-        filePath = this.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
+        filePath = this.#fileSystemWrapper.getStandardizedAbsolutePath(filePath);
         const hasBom = StringUtils.hasBom(text);
         if (hasBom)
             text = StringUtils.stripBom(text);
-        const sourceFile = this.documentRegistry.createOrUpdateSourceFile(filePath, this.compilerOptions.get(), ts.ScriptSnapshot.fromString(text), options.scriptKind);
+        const sourceFile = this.documentRegistry.createOrUpdateSourceFile(filePath, this.#compilerOptions.get(), ts.ScriptSnapshot.fromString(text), options.scriptKind);
         this.setSourceFile(sourceFile);
         return sourceFile;
     }
     setSourceFile(sourceFile) {
-        const standardizedFilePath = this.fileSystemWrapper.getStandardizedAbsolutePath(sourceFile.fileName);
+        const standardizedFilePath = this.#fileSystemWrapper.getStandardizedAbsolutePath(sourceFile.fileName);
         sourceFile.fileName = standardizedFilePath;
-        this.documentRegistry.updateDocument(standardizedFilePath, this.compilerOptions.get(), ts.ScriptSnapshot.fromString(sourceFile.text), this.getSourceFileVersion(sourceFile), sourceFile["scriptKind"]);
+        this.documentRegistry.updateDocument(standardizedFilePath, this.#compilerOptions.get(), ts.ScriptSnapshot.fromString(sourceFile.text), this.getSourceFileVersion(sourceFile), sourceFile["scriptKind"]);
         const dirPath = FileUtils.getDirPath(standardizedFilePath);
-        if (!this.fileSystemWrapper.directoryExistsSync(dirPath))
-            this.fileSystemWrapper.queueMkdir(dirPath);
-        this.sourceFilesByFilePath.set(standardizedFilePath, sourceFile);
-        this.projectVersion++;
+        if (!this.#fileSystemWrapper.directoryExistsSync(dirPath))
+            this.#fileSystemWrapper.queueMkdir(dirPath);
+        this.#sourceFilesByFilePath.set(standardizedFilePath, sourceFile);
+        this.#projectVersion++;
     }
     removeSourceFile(filePath) {
-        this.sourceFilesByFilePath.delete(filePath);
+        this.#sourceFilesByFilePath.delete(filePath);
     }
     containsDirectoryAtPath(dirPath) {
-        return this.fileSystemWrapper.directoryExistsSync(dirPath);
+        return this.#fileSystemWrapper.directoryExistsSync(dirPath);
     }
     getChildDirectoriesOfDirectory(dirPath) {
-        return this.fileSystemWrapper.getDirectories(dirPath);
+        return this.#fileSystemWrapper.getDirectories(dirPath);
     }
 }
 
 async function createProject(options = {}) {
     const { project, tsConfigResolver } = createProjectCommon(options);
     if (tsConfigResolver != null && options.skipAddingFilesFromTsConfig !== true) {
-        await project._addSourceFilesForTsConfigResolver(tsConfigResolver, project.compilerOptions.get());
+        await addSourceFilesForTsConfigResolver(project, tsConfigResolver, project.compilerOptions.get());
         if (!options.skipFileDependencyResolution)
             project.resolveSourceFileDependencies();
     }
@@ -118,7 +121,7 @@ async function createProject(options = {}) {
 function createProjectSync(options = {}) {
     const { project, tsConfigResolver } = createProjectCommon(options);
     if (tsConfigResolver != null && options.skipAddingFilesFromTsConfig !== true) {
-        project._addSourceFilesForTsConfigResolverSync(tsConfigResolver, project.compilerOptions.get());
+        addSourceFilesForTsConfigResolverSync(project, tsConfigResolver, project.compilerOptions.get());
         if (!options.skipFileDependencyResolution)
             project.resolveSourceFileDependencies();
     }
@@ -146,10 +149,9 @@ function createProjectCommon(options) {
             throw new errors.InvalidOperationError("Cannot provide a file system when specifying to use an in-memory file system.");
     }
     function getFileSystem() {
-        var _a;
         if (options.useInMemoryFileSystem)
             return new InMemoryFileSystemHost();
-        return (_a = options.fileSystem) !== null && _a !== void 0 ? _a : new RealFileSystemHost();
+        return options.fileSystem ?? new RealFileSystemHost();
     }
     function getEncodingFromProvidedOptions() {
         const defaultEncoding = "utf-8";
@@ -159,33 +161,37 @@ function createProjectCommon(options) {
     }
 }
 class Project {
+    #sourceFileCache;
+    #fileSystemWrapper;
+    #languageServiceHost;
+    #compilerHost;
+    #configFileParsingDiagnostics;
     constructor(objs, options) {
-        var _a;
         const { tsConfigResolver } = objs;
         this.fileSystem = objs.fileSystem;
-        this._fileSystemWrapper = objs.fileSystemWrapper;
+        this.#fileSystemWrapper = objs.fileSystemWrapper;
         const tsCompilerOptions = getCompilerOptions();
         this.compilerOptions = new CompilerOptionsContainer();
         this.compilerOptions.set(tsCompilerOptions);
-        this._sourceFileCache = new SourceFileCache(this._fileSystemWrapper, this.compilerOptions);
+        this.#sourceFileCache = new SourceFileCache(this.#fileSystemWrapper, this.compilerOptions);
         const resolutionHost = !options.resolutionHost
             ? undefined
             : options.resolutionHost(this.getModuleResolutionHost(), () => this.compilerOptions.get());
         const newLineKind = "\n";
         const { languageServiceHost, compilerHost } = createHosts({
-            transactionalFileSystem: this._fileSystemWrapper,
-            sourceFileContainer: this._sourceFileCache,
+            transactionalFileSystem: this.#fileSystemWrapper,
+            sourceFileContainer: this.#sourceFileCache,
             compilerOptions: this.compilerOptions,
             getNewLine: () => newLineKind,
             resolutionHost: resolutionHost || {},
-            getProjectVersion: () => this._sourceFileCache.getProjectVersion().toString(),
+            getProjectVersion: () => this.#sourceFileCache.getProjectVersion().toString(),
             isKnownTypesPackageName: options.isKnownTypesPackageName,
             libFolderPath: options.libFolderPath,
             skipLoadingLibFiles: options.skipLoadingLibFiles,
         });
-        this.languageServiceHost = languageServiceHost;
-        this.compilerHost = compilerHost;
-        this.configFileParsingDiagnostics = (_a = tsConfigResolver === null || tsConfigResolver === void 0 ? void 0 : tsConfigResolver.getErrors()) !== null && _a !== void 0 ? _a : [];
+        this.#languageServiceHost = languageServiceHost;
+        this.#compilerHost = compilerHost;
+        this.#configFileParsingDiagnostics = tsConfigResolver?.getErrors() ?? [];
         function getCompilerOptions() {
             return {
                 ...getTsConfigCompilerOptions(),
@@ -198,25 +204,27 @@ class Project {
             return tsConfigResolver.getCompilerOptions();
         }
     }
+    compilerOptions;
+    fileSystem;
     async addSourceFileAtPath(filePath, options) {
         const sourceFile = await this.addSourceFileAtPathIfExists(filePath, options);
         if (sourceFile == null)
-            throw new errors.FileNotFoundError(this._fileSystemWrapper.getStandardizedAbsolutePath(filePath));
+            throw new errors.FileNotFoundError(this.#fileSystemWrapper.getStandardizedAbsolutePath(filePath));
         return sourceFile;
     }
     addSourceFileAtPathSync(filePath, options) {
         const sourceFile = this.addSourceFileAtPathIfExistsSync(filePath, options);
         if (sourceFile == null)
-            throw new errors.FileNotFoundError(this._fileSystemWrapper.getStandardizedAbsolutePath(filePath));
+            throw new errors.FileNotFoundError(this.#fileSystemWrapper.getStandardizedAbsolutePath(filePath));
         return sourceFile;
     }
     addSourceFileAtPathIfExists(filePath, options) {
-        return this._sourceFileCache.addOrGetSourceFileFromFilePath(this._fileSystemWrapper.getStandardizedAbsolutePath(filePath), {
+        return this.#sourceFileCache.addOrGetSourceFileFromFilePath(this.#fileSystemWrapper.getStandardizedAbsolutePath(filePath), {
             scriptKind: options && options.scriptKind,
         });
     }
     addSourceFileAtPathIfExistsSync(filePath, options) {
-        return this._sourceFileCache.addOrGetSourceFileFromFilePathSync(this._fileSystemWrapper.getStandardizedAbsolutePath(filePath), {
+        return this.#sourceFileCache.addOrGetSourceFileFromFilePathSync(this.#fileSystemWrapper.getStandardizedAbsolutePath(filePath), {
             scriptKind: options && options.scriptKind,
         });
     }
@@ -225,7 +233,7 @@ class Project {
             fileGlobs = [fileGlobs];
         const sourceFilePromises = [];
         const sourceFiles = [];
-        for (const filePath of await this._fileSystemWrapper.glob(fileGlobs)) {
+        for (const filePath of await this.#fileSystemWrapper.glob(fileGlobs)) {
             sourceFilePromises.push(this.addSourceFileAtPathIfExists(filePath).then(sourceFile => {
                 if (sourceFile != null)
                     sourceFiles.push(sourceFile);
@@ -238,7 +246,7 @@ class Project {
         if (typeof fileGlobs === "string")
             fileGlobs = [fileGlobs];
         const sourceFiles = [];
-        for (const filePath of this._fileSystemWrapper.globSync(fileGlobs)) {
+        for (const filePath of this.#fileSystemWrapper.globSync(fileGlobs)) {
             const sourceFile = this.addSourceFileAtPathIfExistsSync(filePath);
             if (sourceFile != null)
                 sourceFiles.push(sourceFile);
@@ -246,26 +254,26 @@ class Project {
         return sourceFiles;
     }
     addSourceFilesFromTsConfig(tsConfigFilePath) {
-        const resolver = this._getTsConfigResolver(tsConfigFilePath);
-        return this._addSourceFilesForTsConfigResolver(resolver, resolver.getCompilerOptions());
+        const resolver = this.#getTsConfigResolver(tsConfigFilePath);
+        return addSourceFilesForTsConfigResolver(this, resolver, resolver.getCompilerOptions());
     }
     addSourceFilesFromTsConfigSync(tsConfigFilePath) {
-        const resolver = this._getTsConfigResolver(tsConfigFilePath);
-        return this._addSourceFilesForTsConfigResolverSync(resolver, resolver.getCompilerOptions());
+        const resolver = this.#getTsConfigResolver(tsConfigFilePath);
+        return addSourceFilesForTsConfigResolverSync(this, resolver, resolver.getCompilerOptions());
     }
-    _getTsConfigResolver(tsConfigFilePath) {
-        const standardizedFilePath = this._fileSystemWrapper.getStandardizedAbsolutePath(tsConfigFilePath);
-        return new TsConfigResolver(this._fileSystemWrapper, standardizedFilePath, this.compilerOptions.getEncoding());
+    #getTsConfigResolver(tsConfigFilePath) {
+        const standardizedFilePath = this.#fileSystemWrapper.getStandardizedAbsolutePath(tsConfigFilePath);
+        return new TsConfigResolver(this.#fileSystemWrapper, standardizedFilePath, this.compilerOptions.getEncoding());
     }
     createSourceFile(filePath, sourceFileText, options) {
-        return this._sourceFileCache.createSourceFileFromText(this._fileSystemWrapper.getStandardizedAbsolutePath(filePath), sourceFileText || "", { scriptKind: options && options.scriptKind });
+        return this.#sourceFileCache.createSourceFileFromText(this.#fileSystemWrapper.getStandardizedAbsolutePath(filePath), sourceFileText || "", { scriptKind: options && options.scriptKind });
     }
     updateSourceFile(filePathOrSourceFile, sourceFileText, options) {
         if (typeof filePathOrSourceFile === "string")
             return this.createSourceFile(filePathOrSourceFile, sourceFileText, options);
         incrementVersion(filePathOrSourceFile);
         ensureScriptSnapshot(filePathOrSourceFile);
-        return this._sourceFileCache.setSourceFile(filePathOrSourceFile);
+        return this.#sourceFileCache.setSourceFile(filePathOrSourceFile);
         function incrementVersion(sourceFile) {
             let version = sourceFile.version || "-1";
             const parsedVersion = parseInt(version, 10);
@@ -281,44 +289,36 @@ class Project {
         }
     }
     removeSourceFile(filePathOrSourceFile) {
-        this._sourceFileCache.removeSourceFile(this._fileSystemWrapper.getStandardizedAbsolutePath(typeof filePathOrSourceFile === "string" ? filePathOrSourceFile : filePathOrSourceFile.fileName));
+        this.#sourceFileCache.removeSourceFile(this.#fileSystemWrapper.getStandardizedAbsolutePath(typeof filePathOrSourceFile === "string" ? filePathOrSourceFile : filePathOrSourceFile.fileName));
     }
     resolveSourceFileDependencies() {
         this.createProgram();
     }
-    async _addSourceFilesForTsConfigResolver(tsConfigResolver, compilerOptions) {
-        const sourceFiles = [];
-        await Promise.all(tsConfigResolver.getPaths(compilerOptions).filePaths
-            .map(p => this.addSourceFileAtPath(p).then(s => sourceFiles.push(s))));
-        return sourceFiles;
-    }
-    _addSourceFilesForTsConfigResolverSync(tsConfigResolver, compilerOptions) {
-        return tsConfigResolver.getPaths(compilerOptions).filePaths.map(p => this.addSourceFileAtPathSync(p));
-    }
+    #oldProgram;
     createProgram(options) {
-        const oldProgram = this._oldProgram;
+        const oldProgram = this.#oldProgram;
         const program = ts.createProgram({
-            rootNames: Array.from(this._sourceFileCache.getSourceFilePaths()),
+            rootNames: Array.from(this.#sourceFileCache.getSourceFilePaths()),
             options: this.compilerOptions.get(),
-            host: this.compilerHost,
+            host: this.#compilerHost,
             oldProgram,
-            configFileParsingDiagnostics: this.configFileParsingDiagnostics,
+            configFileParsingDiagnostics: this.#configFileParsingDiagnostics,
             ...options,
         });
-        this._oldProgram = program;
+        this.#oldProgram = program;
         return program;
     }
     getLanguageService() {
-        return ts.createLanguageService(this.languageServiceHost, this._sourceFileCache.documentRegistry);
+        return ts.createLanguageService(this.#languageServiceHost, this.#sourceFileCache.documentRegistry);
     }
     getSourceFileOrThrow(fileNameOrSearchFunction) {
-        const sourceFile = this.getSourceFile(fileNameOrSearchFunction);
+        const sourceFile = this.#getSourceFileInternal(fileNameOrSearchFunction);
         if (sourceFile != null)
             return sourceFile;
         if (typeof fileNameOrSearchFunction === "string") {
             const fileNameOrPath = FileUtils.standardizeSlashes(fileNameOrSearchFunction);
             if (FileUtils.pathIsAbsolute(fileNameOrPath) || fileNameOrPath.indexOf("/") >= 0) {
-                const errorFileNameOrPath = this._fileSystemWrapper.getStandardizedAbsolutePath(fileNameOrPath);
+                const errorFileNameOrPath = this.#fileSystemWrapper.getStandardizedAbsolutePath(fileNameOrPath);
                 throw new errors.InvalidOperationError(`Could not find source file in project at the provided path: ${errorFileNameOrPath}`);
             }
             else {
@@ -330,9 +330,12 @@ class Project {
         }
     }
     getSourceFile(fileNameOrSearchFunction) {
-        const filePathOrSearchFunction = getFilePathOrSearchFunction(this._fileSystemWrapper);
+        return this.#getSourceFileInternal(fileNameOrSearchFunction);
+    }
+    #getSourceFileInternal(fileNameOrSearchFunction) {
+        const filePathOrSearchFunction = getFilePathOrSearchFunction(this.#fileSystemWrapper);
         if (isStandardizedFilePath(filePathOrSearchFunction)) {
-            return this._sourceFileCache.getSourceFileFromCacheFromFilePath(filePathOrSearchFunction);
+            return this.#sourceFileCache.getSourceFileFromCacheFromFilePath(filePathOrSearchFunction);
         }
         const allSourceFilesIterable = this.getSourceFiles();
         return selectSmallestDirPathResult(function* () {
@@ -363,20 +366,20 @@ class Project {
         }
     }
     getSourceFiles() {
-        return Array.from(this._sourceFileCache.getSourceFiles());
+        return Array.from(this.#sourceFileCache.getSourceFiles());
     }
     formatDiagnosticsWithColorAndContext(diagnostics, opts = {}) {
         return ts.formatDiagnosticsWithColorAndContext(diagnostics, {
-            getCurrentDirectory: () => this._fileSystemWrapper.getCurrentDirectory(),
+            getCurrentDirectory: () => this.#fileSystemWrapper.getCurrentDirectory(),
             getCanonicalFileName: fileName => fileName,
             getNewLine: () => opts.newLineChar || runtime.getEndOfLine(),
         });
     }
     getModuleResolutionHost() {
         return createModuleResolutionHost({
-            transactionalFileSystem: this._fileSystemWrapper,
+            transactionalFileSystem: this.#fileSystemWrapper,
             getEncoding: () => this.compilerOptions.getEncoding(),
-            sourceFileContainer: this._sourceFileCache,
+            sourceFileContainer: this.#sourceFileCache,
         });
     }
 }
@@ -386,5 +389,14 @@ __decorate([
 __decorate([
     Memoize
 ], Project.prototype, "getModuleResolutionHost", null);
+async function addSourceFilesForTsConfigResolver(project, tsConfigResolver, compilerOptions) {
+    const sourceFiles = [];
+    await Promise.all(tsConfigResolver.getPaths(compilerOptions).filePaths
+        .map(p => project.addSourceFileAtPath(p).then(s => sourceFiles.push(s))));
+    return sourceFiles;
+}
+function addSourceFilesForTsConfigResolverSync(project, tsConfigResolver, compilerOptions) {
+    return tsConfigResolver.getPaths(compilerOptions).filePaths.map(p => project.addSourceFileAtPathSync(p));
+}
 
 export { Project, createProject, createProjectSync };

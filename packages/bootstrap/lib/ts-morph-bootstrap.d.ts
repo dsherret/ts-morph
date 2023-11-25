@@ -378,10 +378,6 @@ export declare class Project {
      * @param searchFunction - Search function.
      */
     getSourceFile(searchFunction: (file: ts.SourceFile) => boolean): ts.SourceFile | undefined;
-    /**
-     * @internal
-     */
-    getSourceFile(fileNameOrSearchFunction: string | ((file: ts.SourceFile) => boolean)): ts.SourceFile | undefined;
     /** Gets the source files in the project. */
     getSourceFiles(): ts.SourceFile[];
     /**
