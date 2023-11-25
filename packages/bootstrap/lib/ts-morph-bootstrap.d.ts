@@ -349,10 +349,6 @@ export declare class Project {
      * not specifying to not add the source files.
      */
     resolveSourceFileDependencies(): void;
-    /** @internal */
-    _addSourceFilesForTsConfigResolver(tsConfigResolver: TsConfigResolver, compilerOptions: ts.CompilerOptions): Promise<ts.SourceFile[]>;
-    /** @internal */
-    _addSourceFilesForTsConfigResolverSync(tsConfigResolver: TsConfigResolver, compilerOptions: ts.CompilerOptions): ts.SourceFile[];
     /**
      * Creates a new program.
      * Note: You should get a new program any time source files are added, removed, or changed.

@@ -63,7 +63,7 @@ export async function createProject(options: ProjectOptions = {}): Promise<Proje
 
   // add any file paths from the tsconfig if necessary
   if (tsConfigResolver != null && options.skipAddingFilesFromTsConfig !== true) {
-    await project._addSourceFilesForTsConfigResolver(tsConfigResolver, project.compilerOptions.get());
+    await addSourceFilesForTsConfigResolver(project, tsConfigResolver, project.compilerOptions.get());
 
     if (!options.skipFileDependencyResolution)
       project.resolveSourceFileDependencies();
@@ -81,7 +81,7 @@ export function createProjectSync(options: ProjectOptions = {}): Project {
 
   // add any file paths from the tsconfig if necessary
   if (tsConfigResolver != null && options.skipAddingFilesFromTsConfig !== true) {
-    project._addSourceFilesForTsConfigResolverSync(tsConfigResolver, project.compilerOptions.get());
+    addSourceFilesForTsConfigResolverSync(project, tsConfigResolver, project.compilerOptions.get());
 
     if (!options.skipFileDependencyResolution)
       project.resolveSourceFileDependencies();
@@ -316,7 +316,7 @@ export class Project {
    */
   addSourceFilesFromTsConfig(tsConfigFilePath: string): Promise<ts.SourceFile[]> {
     const resolver = this.#getTsConfigResolver(tsConfigFilePath);
-    return this._addSourceFilesForTsConfigResolver(resolver, resolver.getCompilerOptions());
+    return addSourceFilesForTsConfigResolver(this, resolver, resolver.getCompilerOptions());
   }
 
   /**
@@ -328,7 +328,7 @@ export class Project {
    */
   addSourceFilesFromTsConfigSync(tsConfigFilePath: string): ts.SourceFile[] {
     const resolver = this.#getTsConfigResolver(tsConfigFilePath);
-    return this._addSourceFilesForTsConfigResolverSync(resolver, resolver.getCompilerOptions());
+    return addSourceFilesForTsConfigResolverSync(this, resolver, resolver.getCompilerOptions());
   }
 
   #getTsConfigResolver(tsConfigFilePath: string) {
@@ -423,21 +423,6 @@ export class Project {
   resolveSourceFileDependencies() {
     // creating a program will resolve any dependencies
     this.createProgram();
-  }
-
-  /** @internal */
-  async _addSourceFilesForTsConfigResolver(tsConfigResolver: TsConfigResolver, compilerOptions: ts.CompilerOptions) {
-    const sourceFiles: ts.SourceFile[] = [];
-    await Promise.all(
-      tsConfigResolver.getPaths(compilerOptions).filePaths
-        .map(p => this.addSourceFileAtPath(p).then(s => sourceFiles.push(s))),
-    );
-    return sourceFiles;
-  }
-
-  /** @internal */
-  _addSourceFilesForTsConfigResolverSync(tsConfigResolver: TsConfigResolver, compilerOptions: ts.CompilerOptions) {
-    return tsConfigResolver.getPaths(compilerOptions).filePaths.map(p => this.addSourceFileAtPathSync(p));
   }
 
   /** @internal */
@@ -585,4 +570,17 @@ export class Project {
       sourceFileContainer: this.#sourceFileCache,
     });
   }
+}
+
+async function addSourceFilesForTsConfigResolver(project: Project, tsConfigResolver: TsConfigResolver, compilerOptions: ts.CompilerOptions) {
+  const sourceFiles: ts.SourceFile[] = [];
+  await Promise.all(
+    tsConfigResolver.getPaths(compilerOptions).filePaths
+      .map(p => project.addSourceFileAtPath(p).then(s => sourceFiles.push(s))),
+  );
+  return sourceFiles;
+}
+
+function addSourceFilesForTsConfigResolverSync(project: Project, tsConfigResolver: TsConfigResolver, compilerOptions: ts.CompilerOptions) {
+  return tsConfigResolver.getPaths(compilerOptions).filePaths.map(p => project.addSourceFileAtPathSync(p));
 }
