@@ -5670,6 +5670,13 @@ export declare class ShorthandPropertyAssignment extends ShorthandPropertyAssign
   set(structure: Partial<ShorthandPropertyAssignmentStructure>): this;
   /** Gets the structure equivalent to this node. */
   getStructure(): ShorthandPropertyAssignmentStructure;
+  /**
+   * Gets the shorthand assignment value symbol of this node if it exists. Convenience API
+   * for TypeChecker#getShorthandAssignmentValueSymbol(node)
+   */
+  getValueSymbol(): Symbol | undefined;
+  /** Gets the value symbol or throws if it doesn't exist. */
+  getValueSymbolOrThrow(message?: string | (() => string)): Symbol;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.ShorthandPropertyAssignment>;
   /** @inheritdoc **/
@@ -9847,6 +9854,8 @@ export declare class TypeChecker {
    * @param typeReference - Type reference.
    */
   getTypeArguments(typeReference: Type): Type<ts.Type>[];
+  /** Gets the shorthand assignment value symbol of the provided node. */
+  getShorthandAssignmentValueSymbol(node: Node): Symbol | undefined;
 }
 
 export declare class Type<TType extends ts.Type = ts.Type> {

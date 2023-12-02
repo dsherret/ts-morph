@@ -49,9 +49,9 @@ export interface RuntimeFileSystem {
   /** Synchronously copies a file or directory. */
   copySync(srcPath: string, destPath: string): void;
   /** Asynchronously gets the path's stat information. */
-  stat(path: string): Promise<RuntimeFileInfo>;
+  stat(path: string): Promise<RuntimeFileInfo | undefined>;
   /** Synchronously gets the path's stat information. */
-  statSync(path: string): RuntimeFileInfo;
+  statSync(path: string): RuntimeFileInfo | undefined;
   /** See https://nodejs.org/api/fs.html#fs_fs_realpathsync_path_options */
   realpathSync(path: string): string;
   /** Gets the current directory of the environment. */

@@ -1,4 +1,4 @@
-import { assertEquals } from "https://deno.land/std@0.181.0/testing/asserts.ts";
+import { assertEquals } from "https://deno.land/std@0.208.0/testing/asserts.ts";
 import { Project } from "./mod.ts";
 
 // todo: Eventually all tests run for the node package should also be run for Deno
