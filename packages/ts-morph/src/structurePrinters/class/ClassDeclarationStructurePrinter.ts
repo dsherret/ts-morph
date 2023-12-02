@@ -4,6 +4,7 @@ import { StructurePrinterFactory } from "../../factories";
 import { ClassDeclarationStructure, OptionalKind } from "../../structures";
 import { BlankLineFormattingStructuresPrinter } from "../formatting";
 import { NodePrinter } from "../NodePrinter";
+import { GetAndSetAccessorStructurePrinter } from "./GetAndSetAccessorStructurePrinter";
 
 export class ClassDeclarationStructurePrinter extends NodePrinter<OptionalKind<ClassDeclarationStructure>> {
   readonly #options: { isAmbient: boolean };
@@ -74,28 +75,14 @@ export class ClassDeclarationStructurePrinter extends NodePrinter<OptionalKind<C
   }
 
   #printGetAndSet(writer: CodeBlockWriter, structure: OptionalKind<ClassDeclarationStructure>, isAmbient: boolean) {
-    const getAccessors = [...structure.getAccessors ?? []];
-    const setAccessors = [...structure.setAccessors ?? []];
+    if (structure.getAccessors == null && structure.setAccessors == null)
+      return;
+
     const getAccessorWriter = this.factory.forGetAccessorDeclaration({ isAmbient });
     const setAccessorWriter = this.factory.forSetAccessorDeclaration({ isAmbient });
 
-    for (const getAccessor of getAccessors) {
-      this.#conditionalSeparator(writer, isAmbient);
-      getAccessorWriter.printText(writer, getAccessor);
-
-      // write the corresponding set accessor beside the get accessor
-      const setAccessorIndex = setAccessors.findIndex(item => item.name === getAccessor.name);
-      if (setAccessorIndex >= 0) {
-        this.#conditionalSeparator(writer, isAmbient);
-        setAccessorWriter.printText(writer, setAccessors[setAccessorIndex]);
-        setAccessors.splice(setAccessorIndex, 1);
-      }
-    }
-
-    for (const setAccessor of setAccessors) {
-      this.#conditionalSeparator(writer, isAmbient);
-      setAccessorWriter.printText(writer, setAccessor);
-    }
+    const combinedPrinter = new GetAndSetAccessorStructurePrinter(getAccessorWriter, setAccessorWriter);
+    combinedPrinter.printGetAndSet(writer, structure.getAccessors, structure.setAccessors, isAmbient);
   }
 
   #conditionalSeparator(writer: CodeBlockWriter, isAmbient: boolean) {

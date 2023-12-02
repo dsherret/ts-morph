@@ -2663,8 +2663,8 @@ class SettingsContainer {
 }
 
 class CompilerOptionsContainer extends SettingsContainer {
-    constructor() {
-        super({});
+    constructor(defaultSettings = {}) {
+        super(defaultSettings);
     }
     set(settings) {
         super.set(settings);

@@ -69,11 +69,15 @@ describe("StatementedNode", () => {
         indexSignatures: [{ returnType: "string" }],
         properties: [{ name: "p" }],
         methods: [{ name: "m" }],
+        getAccessors: [{ name: "a", returnType: "string" }],
+        setAccessors: [{ name: "a", parameters: [{ name: "param", type: "string" }] }],
       };
       const expectedText = "/** Test */\nexport default interface I<T> extends IBase, IBase2 {\n"
         + "    (): void;\n"
         + "    new();\n"
         + "    [key: string]: string;\n"
+        + "    get a(): string;\n"
+        + "    set a(param: string);\n"
         + "    p;\n"
         + "    m();\n"
         + "}\n";

@@ -1,5 +1,5 @@
 import { errors, ts } from "@ts-morph/common";
-import { removeClassMember, removeCommaSeparatedChild } from "../../../manipulation";
+import { removeClassMember, removeCommaSeparatedChild, removeInterfaceMember } from "../../../manipulation";
 import { Node } from "../common";
 
 export class ClassElement<T extends ts.ClassElement = ts.ClassElement> extends Node<T> {
@@ -12,6 +12,8 @@ export class ClassElement<T extends ts.ClassElement = ts.ClassElement> extends N
       removeClassMember(this);
     else if (Node.isObjectLiteralExpression(parent))
       removeCommaSeparatedChild(this);
+    else if (Node.isInterfaceDeclaration(parent))
+      removeInterfaceMember(this); // get or set accessors
     else
       errors.throwNotImplementedForSyntaxKindError(parent.getKind());
   }

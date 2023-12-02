@@ -840,13 +840,15 @@ describe("TypeElementMemberedNode", () => {
         callSignatures: [{ returnType: "string" }],
         constructSignatures: [{ returnType: "string" }],
         indexSignatures: [{ keyName: "key", keyType: "string", returnType: "number" }],
+        getAccessors: [{ name: "a", returnType: "string" }],
+        setAccessors: [{ name: "a", parameters: [{ name: "param", type: "string" }] }],
         properties: [{ name: "p" }],
         methods: [{ name: "m" }],
       };
       doTest(
-        "interface Identifier {\n    (p): string;\n    new(p): string;\n    [other: string]: number;\n    pOld;\n    mOld();\n}",
+        "interface Identifier {\n    (p): string;\n    new(p): string;\n    [other: string]: number;\n    pOld;\n    mOld();\n    get pOld(): string;\n    set pOld(param: string);\n}",
         structure,
-        "interface Identifier {\n    (): string;\n    new(): string;\n    [key: string]: number;\n    p;\n    m();\n}",
+        "interface Identifier {\n    (): string;\n    new(): string;\n    [key: string]: number;\n    p;\n    get a(): string;\n    set a(param: string);\n    m();\n}",
       );
     });
 
@@ -855,10 +857,13 @@ describe("TypeElementMemberedNode", () => {
         callSignatures: [],
         constructSignatures: [],
         indexSignatures: [],
+        getAccessors: [],
+        setAccessors: [],
         properties: [],
         methods: [],
       };
-      const code = "interface Identifier {\n    (): string;\n    new(): string;\n    [key: string]: number;\n    p;\n    m();\n}";
+      const code =
+        "interface Identifier {\n    (): string;\n    new(): string;\n    [key: string]: number;\n    p;\n    m();\n    get pOld(): string;\n    set pOld(param: string);\n}";
       doTest(code, structure, "interface Identifier {\n}");
     });
   });
