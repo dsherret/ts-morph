@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="21.0.0"></a>
+# [21.0.0](https://github.com/dsherret/ts-morph/compare/20.0.0...21.0.0) (2023-12-02)
+
+
+### Features
+
+* `ProjectOptions::defaultCompilerOptions` ([#1460](https://github.com/dsherret/ts-morph/issues/1460)) ([b5dee3d](https://github.com/dsherret/ts-morph/commit/b5dee3d))
+* add interface and type literal getters & setters ([#1473](https://github.com/dsherret/ts-morph/issues/1473)) ([339f685](https://github.com/dsherret/ts-morph/commit/339f685))
+* add wrapped method for `getShorthandAssignmentValueSymbol` to `TypeChecker` ([#1456](https://github.com/dsherret/ts-morph/issues/1456)) ([1d8b382](https://github.com/dsherret/ts-morph/commit/1d8b382))
+* TypeScript 5.3 ([#1476](https://github.com/dsherret/ts-morph/issues/1476)) ([010a269](https://github.com/dsherret/ts-morph/commit/010a269))
+
+
+### Performance Improvements
+
+* use path.exists functions that don't throw internally when not exists ([#1478](https://github.com/dsherret/ts-morph/issues/1478)) ([432f43f](https://github.com/dsherret/ts-morph/commit/432f43f))
+
+
+### BREAKING CHANGES
+
+- Upgraded to TS 5.3
+- Underlying `@ts-morph/common` file system methods return undefined instead of throwing when not exists (for perf).
+- Private fields are actually private (default build requires private fields).
+
 <a name="20.0.0"></a>
 
 # [20.0.0](https://github.com/dsherret/ts-morph/compare/19.0.0...20.0.0) (2023-09-11)
