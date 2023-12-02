@@ -1611,8 +1611,10 @@ class RealFileSystemHost {
                 if (entry.isSymlink) {
                     try {
                         const info = fs.statSync(entry.name);
-                        entry.isDirectory = info.isDirectory();
-                        entry.isFile = info.isFile();
+                        if (info != null) {
+                            entry.isDirectory = info.isDirectory();
+                            entry.isFile = info.isFile();
+                        }
                     }
                     catch {
                     }
@@ -1666,7 +1668,7 @@ class RealFileSystemHost {
     }
     async fileExists(filePath) {
         try {
-            return (await fs.stat(filePath)).isFile();
+            return (await fs.stat(filePath))?.isFile() ?? false;
         }
         catch {
             return false;
@@ -1674,7 +1676,7 @@ class RealFileSystemHost {
     }
     fileExistsSync(filePath) {
         try {
-            return fs.statSync(filePath).isFile();
+            return fs.statSync(filePath)?.isFile() ?? false;
         }
         catch {
             return false;
@@ -1682,7 +1684,7 @@ class RealFileSystemHost {
     }
     async directoryExists(dirPath) {
         try {
-            return (await fs.stat(dirPath)).isDirectory();
+            return (await fs.stat(dirPath))?.isDirectory() ?? false;
         }
         catch {
             return false;
@@ -1690,7 +1692,7 @@ class RealFileSystemHost {
     }
     directoryExistsSync(dirPath) {
         try {
-            return fs.statSync(dirPath).isDirectory();
+            return fs.statSync(dirPath)?.isDirectory() ?? false;
         }
         catch {
             return false;

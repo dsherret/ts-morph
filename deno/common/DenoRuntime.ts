@@ -1,6 +1,6 @@
-import { ensureDir, ensureDirSync } from "https://deno.land/std@0.181.0/fs/ensure_dir.ts";
-import { expandGlob, expandGlobSync } from "https://deno.land/std@0.181.0/fs/expand_glob.ts";
-import * as stdPath from "https://deno.land/std@0.181.0/path/mod.ts";
+import { ensureDir, ensureDirSync } from "https://deno.land/std@0.208.0/fs/ensure_dir.ts";
+import { expandGlob, expandGlobSync } from "https://deno.land/std@0.208.0/fs/expand_glob.ts";
+import * as stdPath from "https://deno.land/std@0.208.0/path/mod.ts";
 
 // deno-lint-ignore no-explicit-any
 
@@ -93,13 +93,27 @@ class DenoRuntimeFileSystem {
   }
 
   async stat(filePath: string) {
-    const stat = await Deno.stat(filePath);
-    return this.#toStat(stat);
+    try {
+      const stat = await Deno.stat(filePath);
+      return this.#toStat(stat);
+    } catch (err) {
+      if (err instanceof Deno.errors.NotFound)
+        return undefined;
+      else
+        throw err;
+    }
   }
 
   statSync(path: string) {
-    const stat = Deno.statSync(path);
-    return this.#toStat(stat);
+    try {
+      const stat = Deno.statSync(path);
+      return this.#toStat(stat);
+    } catch (err) {
+      if (err instanceof Deno.errors.NotFound)
+        return undefined;
+      else
+        throw err;
+    }
   }
 
   // deno-lint-ignore no-explicit-any

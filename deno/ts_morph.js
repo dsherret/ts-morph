@@ -11195,6 +11195,12 @@ class ShorthandPropertyAssignment extends ShorthandPropertyAssignmentBase {
         delete structure.hasQuestionToken;
         return structure;
     }
+    getValueSymbol() {
+        return this._context.typeChecker.getShorthandAssignmentValueSymbol(this);
+    }
+    getValueSymbolOrThrow(message) {
+        return errors.throwIfNullOrUndefined(this.getValueSymbol(), message ?? "Expected to find a value symbol.", this);
+    }
 }
 
 const SpreadAssignmentBase = ExpressionedNode(ObjectLiteralElement);
@@ -17871,6 +17877,10 @@ class TypeChecker {
         if (enclosingNode != null && enclosingNode.getKind() === SyntaxKind.TypeAliasDeclaration)
             formatFlags |= TypeFormatFlags.InTypeAlias;
         return formatFlags;
+    }
+    getShorthandAssignmentValueSymbol(node) {
+        const symbol = this.compilerObject.getShorthandAssignmentValueSymbol(node.compilerNode);
+        return symbol ? this.#context.compilerFactory.getSymbol(symbol) : undefined;
     }
 }
 
