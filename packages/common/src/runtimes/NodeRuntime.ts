@@ -136,14 +136,16 @@ class NodeRuntimeFileSystem implements RuntimeFileSystem {
   }
 
   stat(path: string) {
-    return new Promise<RuntimeFileInfo>((resolve, reject) => {
+    return new Promise<RuntimeFileInfo | undefined>((resolve, reject) => {
       fs.stat(path, (err, stat) => {
-        if (err?.code === "ENOENT")
+        if (err) {
+          if (err.code === "ENOENT" || err.code === "ENOTDIR")
+            resolve(undefined);
+          else
+            reject(err);
+        } else {
           resolve(stat);
-        else if (err)
-          reject(err);
-        else
-          resolve(stat);
+        }
       });
     });
   }
