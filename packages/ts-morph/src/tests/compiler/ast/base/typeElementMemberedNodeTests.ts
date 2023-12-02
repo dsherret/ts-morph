@@ -4,20 +4,24 @@ import {
   CallSignatureDeclaration,
   CommentTypeElement,
   ConstructSignatureDeclaration,
+  GetAccessorDeclaration,
   IndexSignatureDeclaration,
   InterfaceDeclaration,
   MethodSignature,
   Node,
   PropertySignature,
+  SetAccessorDeclaration,
   TypeElementMemberedNode,
   TypeLiteralNode,
 } from "../../../../compiler";
 import {
   CallSignatureDeclarationStructure,
   ConstructSignatureDeclarationStructure,
+  GetAccessorDeclarationStructure,
   IndexSignatureDeclarationStructure,
   MethodSignatureStructure,
   PropertySignatureStructure,
+  SetAccessorDeclarationStructure,
   StructureKind,
   TypeElementMemberedNodeStructure,
   TypeElementMemberStructures,
@@ -648,6 +652,262 @@ describe("TypeElementMemberedNode", () => {
     });
   });
 
+  describe(nameof<TypeElementMemberedNode>("insertGetAccessors"), () => {
+    function doTest(startCode: string, insertIndex: number, structures: OptionalKindAndTrivia<GetAccessorDeclarationStructure>[], expectedCode: string) {
+      const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
+      const result = firstChild.insertGetAccessors(insertIndex, structures);
+      expect(firstChild.getText()).to.equal(expectedCode);
+      expect(result.length).to.equal(structures.length);
+    }
+
+    it("should insert when none exists", () => {
+      doTest("interface i {\n}", 0, [{ name: "getter" }], "interface i {\n    get getter();\n}");
+    });
+
+    it("should insert multiple into other methods", () => {
+      doTest(
+        "interface i {\n    method1();\n    method4();\n}",
+        1,
+        [{ name: "g2", returnType: "string" }, { name: "g3" }],
+        "interface i {\n    method1();\n    get g2(): string;\n    get g3();\n    method4();\n}",
+      );
+    });
+  });
+
+  describe(nameof<TypeElementMemberedNode>("insertGetAccessor"), () => {
+    function doTest(startCode: string, insertIndex: number, structure: OptionalKindAndTrivia<GetAccessorDeclarationStructure>, expectedCode: string) {
+      const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
+      const result = firstChild.insertGetAccessor(insertIndex, structure);
+      expect(firstChild.getText()).to.equal(expectedCode);
+      expect(result).to.be.instanceOf(GetAccessorDeclaration);
+    }
+
+    it("should insert at index", () => {
+      doTest("interface i {\n    method1();\n    method3();\n}", 1, { name: "g2" }, "interface i {\n    method1();\n    get g2();\n    method3();\n}");
+    });
+  });
+
+  describe(nameof<TypeElementMemberedNode>("addGetAccessors"), () => {
+    function doTest(startCode: string, structures: OptionalKindAndTrivia<GetAccessorDeclarationStructure>[], expectedCode: string) {
+      const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
+      const result = firstChild.addGetAccessors(structures);
+      expect(firstChild.getText()).to.equal(expectedCode);
+      expect(result.length).to.equal(structures.length);
+    }
+
+    it("should add multiple at end", () => {
+      doTest(
+        "interface i {\n    method1();\n}",
+        [{ name: "g2" }, { name: "g3" }],
+        "interface i {\n    method1();\n    get g2();\n    get g3();\n}",
+      );
+    });
+
+    it("should add multiple beside set accessor", () => {
+      doTest(
+        "interface i {\n    set a1();\n    set a2();\n}",
+        [{ name: "a1" }, { name: "a2" }],
+        "interface i {\n    get a1();\n    set a1();\n    get a2();\n    set a2();\n}",
+      );
+    });
+  });
+
+  describe(nameof<TypeElementMemberedNode>("addGetAccessor"), () => {
+    function doTest(startCode: string, structure: OptionalKindAndTrivia<GetAccessorDeclarationStructure>, expectedCode: string) {
+      const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
+      const result = firstChild.addGetAccessor(structure);
+      expect(firstChild.getText()).to.equal(expectedCode);
+      expect(result).to.be.instanceOf(GetAccessorDeclaration);
+    }
+
+    it("should add at end", () => {
+      doTest("interface i {\n    g1();\n}", { name: "g2", returnType: "string" }, "interface i {\n    g1();\n    get g2(): string;\n}");
+    });
+  });
+
+  describe(nameof<TypeElementMemberedNode>("getGetAccessor"), () => {
+    const { firstChild } = getInfoFromText<InterfaceDeclaration>("interface Identifier { get g1(); get g2(); get g3(); }");
+
+    it("should get the first that matches by name", () => {
+      expect(firstChild.getGetAccessor("g3")!.getName()).to.equal("g3");
+    });
+
+    it("should return the first that matches by a find function", () => {
+      expect(firstChild.getGetAccessor(m => m.getName() === "g3")!.getName()).to.equal("g3");
+    });
+
+    it("should return undefined when none match", () => {
+      expect(firstChild.getGetAccessor(m => m.getParameters().length > 5)).to.be.undefined;
+    });
+  });
+
+  describe(nameof<TypeElementMemberedNode>("getGetAccessorOrThrow"), () => {
+    const { firstChild } = getInfoFromText<InterfaceDeclaration>("interface Identifier { get g1(); get g2(); get g3(); }");
+
+    it("should get the first that matches by name", () => {
+      expect(firstChild.getGetAccessorOrThrow("g2").getName()).to.equal("g2");
+    });
+
+    it("should return the first that matches by a find function", () => {
+      expect(firstChild.getGetAccessorOrThrow(m => m.getName() === "g3").getName()).to.equal("g3");
+    });
+
+    it("should throw when none match", () => {
+      expect(() => firstChild.getGetAccessorOrThrow(m => m.getParameters().length > 5)).to.throw();
+    });
+  });
+
+  describe(nameof<TypeElementMemberedNode>("getGetAccessors"), () => {
+    describe("no get accessors", () => {
+      it("should not have any methods", () => {
+        const { firstChild } = getInfoFromText<InterfaceDeclaration>("interface Identifier {\n}\n");
+        expect(firstChild.getGetAccessors().length).to.equal(0);
+      });
+    });
+
+    describe("has get accessors", () => {
+      const {
+        firstChild,
+      } = getInfoFromText<InterfaceDeclaration>("interface Identifier {\n    prop: string;\n    get value():string;\n    get value2():number;\n}\n");
+
+      it("should get the right number of methods", () => {
+        expect(firstChild.getGetAccessors().length).to.equal(2);
+      });
+
+      it("should get a method of the right instance of", () => {
+        expect(firstChild.getGetAccessors()[0]).to.be.instanceOf(GetAccessorDeclaration);
+      });
+    });
+  });
+
+  describe(nameof<TypeElementMemberedNode>("insertSetAccessors"), () => {
+    function doTest(startCode: string, insertIndex: number, structures: OptionalKindAndTrivia<SetAccessorDeclarationStructure>[], expectedCode: string) {
+      const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
+      const result = firstChild.insertSetAccessors(insertIndex, structures);
+      expect(firstChild.getText()).to.equal(expectedCode);
+      expect(result.length).to.equal(structures.length);
+    }
+
+    it("should insert when none exists", () => {
+      doTest("interface i {\n}", 0, [{ name: "setter" }], "interface i {\n    set setter();\n}");
+    });
+
+    it("should insert multiple into other methods", () => {
+      doTest(
+        "interface i {\n    method1();\n    method4();\n}",
+        1,
+        [{ name: "g2", returnType: "string" }, { name: "g3" }],
+        "interface i {\n    method1();\n    set g2(): string;\n    set g3();\n    method4();\n}",
+      );
+    });
+  });
+
+  describe(nameof<TypeElementMemberedNode>("insertSetAccessor"), () => {
+    function doTest(startCode: string, insertIndex: number, structure: OptionalKindAndTrivia<SetAccessorDeclarationStructure>, expectedCode: string) {
+      const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
+      const result = firstChild.insertSetAccessor(insertIndex, structure);
+      expect(firstChild.getText()).to.equal(expectedCode);
+      expect(result).to.be.instanceOf(SetAccessorDeclaration);
+    }
+
+    it("should insert at index", () => {
+      doTest("interface i {\n    method1();\n    method3();\n}", 1, { name: "g2" }, "interface i {\n    method1();\n    set g2();\n    method3();\n}");
+    });
+  });
+
+  describe(nameof<TypeElementMemberedNode>("addSetAccessors"), () => {
+    function doTest(startCode: string, structures: OptionalKindAndTrivia<SetAccessorDeclarationStructure>[], expectedCode: string) {
+      const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
+      const result = firstChild.addSetAccessors(structures);
+      expect(firstChild.getText()).to.equal(expectedCode);
+      expect(result.length).to.equal(structures.length);
+    }
+
+    it("should add multiple at end", () => {
+      doTest(
+        "interface i {\n    method1();\n}",
+        [{ name: "g2" }, { name: "g3" }],
+        "interface i {\n    method1();\n    set g2();\n    set g3();\n}",
+      );
+    });
+
+    it("should add multiple beside get accessor", () => {
+      doTest(
+        "interface i {\n    get a1();\n    get a2();\n}",
+        [{ name: "a1" }, { name: "a2" }],
+        "interface i {\n    get a1();\n    set a1();\n    get a2();\n    set a2();\n}",
+      );
+    });
+  });
+
+  describe(nameof<TypeElementMemberedNode>("addSetAccessor"), () => {
+    function doTest(startCode: string, structure: OptionalKindAndTrivia<SetAccessorDeclarationStructure>, expectedCode: string) {
+      const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
+      const result = firstChild.addSetAccessor(structure);
+      expect(firstChild.getText()).to.equal(expectedCode);
+      expect(result).to.be.instanceOf(SetAccessorDeclaration);
+    }
+
+    it("should add at end", () => {
+      doTest("interface i {\n    s1();\n}", { name: "s2", parameters: [{ name: "s", type: "string" }] }, "interface i {\n    s1();\n    set s2(s: string);\n}");
+    });
+  });
+
+  describe(nameof<TypeElementMemberedNode>("getSetAccessor"), () => {
+    const { firstChild } = getInfoFromText<InterfaceDeclaration>("interface Identifier { set g1(); set g2(); set g3(); }");
+
+    it("should get the first that matches by name", () => {
+      expect(firstChild.getSetAccessor("g3")!.getName()).to.equal("g3");
+    });
+
+    it("should return the first that matches by a find function", () => {
+      expect(firstChild.getSetAccessor(m => m.getName() === "g3")!.getName()).to.equal("g3");
+    });
+
+    it("should return undefined when none match", () => {
+      expect(firstChild.getSetAccessor(m => m.getParameters().length > 5)).to.be.undefined;
+    });
+  });
+
+  describe(nameof<TypeElementMemberedNode>("getSetAccessorOrThrow"), () => {
+    const { firstChild } = getInfoFromText<InterfaceDeclaration>("interface Identifier { set g1(); set g2(); set g3(); }");
+
+    it("should get the first that matches by name", () => {
+      expect(firstChild.getSetAccessorOrThrow("g2").getName()).to.equal("g2");
+    });
+
+    it("should return the first that matches by a find function", () => {
+      expect(firstChild.getSetAccessorOrThrow(m => m.getName() === "g3").getName()).to.equal("g3");
+    });
+
+    it("should throw when none match", () => {
+      expect(() => firstChild.getSetAccessorOrThrow(m => m.getParameters().length > 5)).to.throw();
+    });
+  });
+
+  describe(nameof<TypeElementMemberedNode>("getSetAccessors"), () => {
+    describe("no set accessors", () => {
+      it("should not have any methods", () => {
+        const { firstChild } = getInfoFromText<InterfaceDeclaration>("interface Identifier {\n}\n");
+        expect(firstChild.getSetAccessors().length).to.equal(0);
+      });
+    });
+
+    describe("has set accessors", () => {
+      const {
+        firstChild,
+      } = getInfoFromText<InterfaceDeclaration>("interface Identifier {\n    prop: string;\n    set value():string;\n    set value2():number;\n}\n");
+
+      it("should get the right number of methods", () => {
+        expect(firstChild.getSetAccessors().length).to.equal(2);
+      });
+
+      it("should get a method of the right instance of", () => {
+        expect(firstChild.getSetAccessors()[0]).to.be.instanceOf(SetAccessorDeclaration);
+      });
+    });
+  });
+
   describe(nameof<TypeElementMemberedNode>("insertProperties"), () => {
     function doTest(startCode: string, insertIndex: number, structures: OptionalKindAndTrivia<PropertySignatureStructure>[], expectedCode: string) {
       const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
@@ -840,13 +1100,15 @@ describe("TypeElementMemberedNode", () => {
         callSignatures: [{ returnType: "string" }],
         constructSignatures: [{ returnType: "string" }],
         indexSignatures: [{ keyName: "key", keyType: "string", returnType: "number" }],
+        getAccessors: [{ name: "a", returnType: "string" }],
+        setAccessors: [{ name: "a", parameters: [{ name: "param", type: "string" }] }],
         properties: [{ name: "p" }],
         methods: [{ name: "m" }],
       };
       doTest(
-        "interface Identifier {\n    (p): string;\n    new(p): string;\n    [other: string]: number;\n    pOld;\n    mOld();\n}",
+        "interface Identifier {\n    (p): string;\n    new(p): string;\n    [other: string]: number;\n    pOld;\n    mOld();\n    get pOld(): string;\n    set pOld(param: string);\n}",
         structure,
-        "interface Identifier {\n    (): string;\n    new(): string;\n    [key: string]: number;\n    p;\n    m();\n}",
+        "interface Identifier {\n    (): string;\n    new(): string;\n    [key: string]: number;\n    p;\n    get a(): string;\n    set a(param: string);\n    m();\n}",
       );
     });
 
@@ -855,10 +1117,13 @@ describe("TypeElementMemberedNode", () => {
         callSignatures: [],
         constructSignatures: [],
         indexSignatures: [],
+        getAccessors: [],
+        setAccessors: [],
         properties: [],
         methods: [],
       };
-      const code = "interface Identifier {\n    (): string;\n    new(): string;\n    [key: string]: number;\n    p;\n    m();\n}";
+      const code =
+        "interface Identifier {\n    (): string;\n    new(): string;\n    [key: string]: number;\n    p;\n    m();\n    get pOld(): string;\n    set pOld(param: string);\n}";
       doTest(code, structure, "interface Identifier {\n}");
     });
   });

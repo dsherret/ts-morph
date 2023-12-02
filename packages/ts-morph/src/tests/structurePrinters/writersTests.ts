@@ -112,6 +112,8 @@ describe("Writers", () => {
         indexSignatures: [{}],
         properties: [{ name: "prop" }],
         methods: [{ name: "method" }],
+        getAccessors: [{ name: "getAccessor" }],
+        setAccessors: [{ name: "setAccessor" }],
       };
 
       doTest(
@@ -120,6 +122,8 @@ describe("Writers", () => {
     (): void;
     new();
     [key: string];
+    get getAccessor();
+    set setAccessor();
     prop;
     method();
 }`,

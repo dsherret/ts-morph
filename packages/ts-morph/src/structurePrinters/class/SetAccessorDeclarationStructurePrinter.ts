@@ -1,20 +1,23 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { StructurePrinterFactory } from "../../factories";
 import { OptionalKind, SetAccessorDeclarationStructure } from "../../structures";
-import { BlankLineFormattingStructuresPrinter } from "../formatting";
+import { BlankLineFormattingStructuresPrinter, NewLineFormattingStructuresPrinter } from "../formatting";
 import { NodePrinter } from "../NodePrinter";
+import { Printer } from "../Printer";
 
 export class SetAccessorDeclarationStructurePrinter extends NodePrinter<OptionalKind<SetAccessorDeclarationStructure>> {
   readonly #options: { isAmbient: boolean };
-  readonly #multipleWriter = new BlankLineFormattingStructuresPrinter(this);
+  readonly #multipleWriter: Printer<ReadonlyArray<OptionalKind<SetAccessorDeclarationStructure>>>;
 
   constructor(factory: StructurePrinterFactory, options: { isAmbient: boolean }) {
     super(factory);
     this.#options = options;
+    this.#multipleWriter = this.#options.isAmbient ? new NewLineFormattingStructuresPrinter(this) : new BlankLineFormattingStructuresPrinter(this);
   }
 
   printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<SetAccessorDeclarationStructure>> | undefined) {
-    this.#multipleWriter.printText(writer, structures);
+    if (structures != null)
+      this.#multipleWriter.printText(writer, structures);
   }
 
   protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<SetAccessorDeclarationStructure>) {

@@ -182,9 +182,11 @@ export namespace fillStructures {
     setIfNull(structure, "callSignatures", []);
     setIfNull(structure, "constructSignatures", []);
     setIfNull(structure, "extends", []);
+    setIfNull(structure, "getAccessors", []);
     setIfNull(structure, "indexSignatures", []);
     setIfNull(structure, "properties", []);
     setIfNull(structure, "methods", []);
+    setIfNull(structure, "setAccessors", []);
     setIfNull(structure, "typeParameters", []);
 
     fill(structure.docs!, jsDoc);
@@ -194,6 +196,8 @@ export namespace fillStructures {
     fill(structure.callSignatures!, callSignature);
     fill(structure.indexSignatures!, indexSignature);
     fill(structure.constructSignatures!, constructSignature);
+    fill(structure.getAccessors!, getAccessor);
+    fill(structure.setAccessors!, setAccessor);
 
     setIfNull(structure, "kind", StructureKind.Interface);
     return structure as InterfaceDeclarationStructure;

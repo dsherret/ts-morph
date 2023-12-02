@@ -8,10 +8,12 @@ import {
 import {
   CallSignatureDeclarationStructure,
   ConstructSignatureDeclarationStructure,
+  GetAccessorDeclarationStructure,
   IndexSignatureDeclarationStructure,
   MethodSignatureStructure,
   OptionalKind,
   PropertySignatureStructure,
+  SetAccessorDeclarationStructure,
   Structure,
   TypeElementMemberedNodeStructure,
   TypeElementMemberStructures,
@@ -21,6 +23,7 @@ import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFuncti
 import { TypeElementTypes } from "../aliases";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
+import { GetAccessorDeclaration, SetAccessorDeclaration } from "../class";
 import { Node } from "../common";
 import {
   CallSignatureDeclaration,
@@ -270,6 +273,105 @@ export interface TypeElementMemberedNode {
    * Gets the interface property signatures.
    */
   getProperties(): PropertySignature[];
+
+  /**
+   * Add get accessor.
+   * @param structure - Structure representing the get accessor.
+   */
+  addGetAccessor(structure: OptionalKind<GetAccessorDeclarationStructure>): GetAccessorDeclaration;
+  /**
+   * Add get accessors.
+   * @param structures - Structures representing the get accessors.
+   */
+  addGetAccessors(structures: ReadonlyArray<OptionalKind<GetAccessorDeclarationStructure>>): GetAccessorDeclaration[];
+  /**
+   * Insert get accessor.
+   * @param index - Child index to insert at.
+   * @param structure - Structure representing the get accessor.
+   */
+  insertGetAccessor(index: number, structure: OptionalKind<GetAccessorDeclarationStructure>): GetAccessorDeclaration;
+  /**
+   * Insert get accessors.
+   * @param index - Child index to insert at.
+   * @param structures - Structures representing the get accessors.
+   */
+  insertGetAccessors(index: number, structures: ReadonlyArray<OptionalKind<GetAccessorDeclarationStructure>>): GetAccessorDeclaration[];
+  /**
+   * Gets the first get accessor by name.
+   * @param name - Name.
+   */
+  getGetAccessor(name: string): GetAccessorDeclaration | undefined;
+  /**
+   * Gets the first get accessor by a find function.
+   * @param findFunction - Function to find the get accessor by.
+   */
+  getGetAccessor(findFunction: (member: GetAccessorDeclaration) => boolean): GetAccessorDeclaration | undefined;
+  /** @internal */
+  getGetAccessor(nameOrFindFunction: string | ((member: GetAccessorDeclaration) => boolean)): GetAccessorDeclaration | undefined;
+  /**
+   * Gets the first get accessor by name or throws if not found.
+   * @param name - Name.
+   */
+  getGetAccessorOrThrow(name: string): GetAccessorDeclaration;
+  /**
+   * Gets the first get accessor by a find function or throws if not found.
+   * @param findFunction - Function to find the get accessor by.
+   */
+  getGetAccessorOrThrow(findFunction: (member: GetAccessorDeclaration) => boolean): GetAccessorDeclaration;
+  /**
+   * Gets the interface get accessor declarations.
+   */
+  getGetAccessors(): GetAccessorDeclaration[];
+
+  /**
+   * Add set accessor.
+   * @param structure - Structure representing the set accessor.
+   */
+  addSetAccessor(structure: OptionalKind<SetAccessorDeclarationStructure>): SetAccessorDeclaration;
+  /**
+   * Add set accessors.
+   * @param structures - Structures representing the set accessors.
+   */
+  addSetAccessors(structures: ReadonlyArray<OptionalKind<SetAccessorDeclarationStructure>>): SetAccessorDeclaration[];
+  /**
+   * Insert set accessor.
+   * @param index - Child index to insert at.
+   * @param structure - Structure representing the set accessor.
+   */
+  insertSetAccessor(index: number, structure: OptionalKind<SetAccessorDeclarationStructure>): SetAccessorDeclaration;
+  /**
+   * Insert set accessors.
+   * @param index - Child index to insert at.
+   * @param structures - Structures representing the set accessors.
+   */
+  insertSetAccessors(index: number, structures: ReadonlyArray<OptionalKind<SetAccessorDeclarationStructure>>): SetAccessorDeclaration[];
+  /**
+   * Gets the first set accessor by name.
+   * @param name - Name.
+   */
+  getSetAccessor(name: string): SetAccessorDeclaration | undefined;
+  /**
+   * Gets the first set accessor by a find function.
+   * @param findFunction - Function to find the set accessor by.
+   */
+  getSetAccessor(findFunction: (member: SetAccessorDeclaration) => boolean): SetAccessorDeclaration | undefined;
+  /** @internal */
+  getSetAccessor(nameOrFindFunction: string | ((member: SetAccessorDeclaration) => boolean)): SetAccessorDeclaration | undefined;
+  /**
+   * Gets the first set accessor by name or throws if not found.
+   * @param name - Name.
+   */
+  getSetAccessorOrThrow(name: string): SetAccessorDeclaration;
+  /**
+   * Gets the first set accessor by a find function or throws if not found.
+   * @param findFunction - Function to find the set accessor by.
+   */
+  getSetAccessorOrThrow(findFunction: (member: SetAccessorDeclaration) => boolean): SetAccessorDeclaration;
+  /**
+   * Gets the interface set accessor declarations.
+   */
+  getSetAccessors(): SetAccessorDeclaration[];
+
   /**
    * Gets all the members.
    */
@@ -516,6 +618,100 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
         .map(m => this._getNodeFromCompilerNode(m as ts.PropertySignature));
     }
 
+    addGetAccessor(structure: OptionalKind<GetAccessorDeclarationStructure>): GetAccessorDeclaration {
+      return this.addGetAccessors([structure])[0];
+    }
+
+    addGetAccessors(structures: ReadonlyArray<OptionalKind<GetAccessorDeclarationStructure>>): GetAccessorDeclaration[] {
+      const result = [];
+      for (const structure of structures) {
+        const setAccessor = this.getSetAccessor(structure.name);
+        const index = setAccessor == null ? getEndIndexFromArray(this.getMembersWithComments()) : setAccessor.getChildIndex();
+        result.push(this.insertGetAccessor(index, structure));
+      }
+      return result;
+    }
+
+    insertGetAccessor(index: number, structure: OptionalKind<GetAccessorDeclarationStructure>): GetAccessorDeclaration {
+      return this.insertGetAccessors(index, [structure])[0];
+    }
+
+    insertGetAccessors(index: number, structures: ReadonlyArray<OptionalKind<GetAccessorDeclarationStructure>>): GetAccessorDeclaration[] {
+      return insertChildren({
+        thisNode: this,
+        index,
+        structures,
+        expectedKind: SyntaxKind.GetAccessor,
+        createStructurePrinter: () =>
+          this._context.structurePrinterFactory.forGetAccessorDeclaration({
+            isAmbient: true,
+          }),
+      });
+    }
+
+    getGetAccessor(nameOrFindFunction: string | ((member: GetAccessorDeclaration) => boolean)): GetAccessorDeclaration | undefined {
+      return getNodeByNameOrFindFunction(this.getGetAccessors(), nameOrFindFunction);
+    }
+
+    getGetAccessorOrThrow(nameOrFindFunction: string | ((member: GetAccessorDeclaration) => boolean)): GetAccessorDeclaration {
+      return errors.throwIfNullOrUndefined(
+        this.getGetAccessor(nameOrFindFunction),
+        () => getNotFoundErrorMessageForNameOrFindFunction("interface get accessor", nameOrFindFunction),
+      );
+    }
+
+    getGetAccessors() {
+      return this.compilerNode.members.filter(m => m.kind === SyntaxKind.GetAccessor)
+        .map(m => this._getNodeFromCompilerNode(m as ts.GetAccessorDeclaration));
+    }
+
+    addSetAccessor(structure: OptionalKind<SetAccessorDeclarationStructure>): SetAccessorDeclaration {
+      return this.addSetAccessors([structure])[0];
+    }
+
+    addSetAccessors(structures: ReadonlyArray<OptionalKind<SetAccessorDeclarationStructure>>): SetAccessorDeclaration[] {
+      const result = [];
+      for (const structure of structures) {
+        const getAccessor = this.getGetAccessor(structure.name);
+        const index = getAccessor == null ? getEndIndexFromArray(this.getMembersWithComments()) : getAccessor.getChildIndex() + 1;
+        result.push(this.insertSetAccessor(index, structure));
+      }
+      return result;
+    }
+
+    insertSetAccessor(index: number, structure: OptionalKind<SetAccessorDeclarationStructure>): SetAccessorDeclaration {
+      return this.insertSetAccessors(index, [structure])[0];
+    }
+
+    insertSetAccessors(index: number, structures: ReadonlyArray<OptionalKind<SetAccessorDeclarationStructure>>): SetAccessorDeclaration[] {
+      return insertChildren({
+        thisNode: this,
+        index,
+        structures,
+        expectedKind: SyntaxKind.SetAccessor,
+        createStructurePrinter: () =>
+          this._context.structurePrinterFactory.forSetAccessorDeclaration({
+            isAmbient: true,
+          }),
+      });
+    }
+
+    getSetAccessor(nameOrFindFunction: string | ((member: SetAccessorDeclaration) => boolean)): SetAccessorDeclaration | undefined {
+      return getNodeByNameOrFindFunction(this.getSetAccessors(), nameOrFindFunction);
+    }
+
+    getSetAccessorOrThrow(nameOrFindFunction: string | ((member: SetAccessorDeclaration) => boolean)): SetAccessorDeclaration {
+      return errors.throwIfNullOrUndefined(
+        this.getSetAccessor(nameOrFindFunction),
+        () => getNotFoundErrorMessageForNameOrFindFunction("interface set accessor", nameOrFindFunction),
+      );
+    }
+
+    getSetAccessors() {
+      return this.compilerNode.members.filter(m => m.kind === SyntaxKind.SetAccessor)
+        .map(m => this._getNodeFromCompilerNode(m as ts.SetAccessorDeclaration));
+    }
+
     getMembers() {
       return this.compilerNode.members.map(m => this._getNodeFromCompilerNode(m)) as TypeElementTypes[];
     }
@@ -545,6 +741,14 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
         this.getProperties().forEach(c => c.remove());
         this.addProperties(structure.properties);
       }
+      if (structure.getAccessors != null) {
+        this.getGetAccessors().forEach(c => c.remove());
+        this.addGetAccessors(structure.getAccessors);
+      }
+      if (structure.setAccessors != null) {
+        this.getSetAccessors().forEach(c => c.remove());
+        this.addSetAccessors(structure.setAccessors);
+      }
       if (structure.methods != null) {
         this.getMethods().forEach(c => c.remove());
         this.addMethods(structure.methods);
@@ -557,9 +761,11 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
       return callBaseGetStructure<TypeElementMemberedNodeStructure>(Base.prototype, this, {
         callSignatures: this.getCallSignatures().map(node => node.getStructure()),
         constructSignatures: this.getConstructSignatures().map(node => node.getStructure()),
+        getAccessors: this.getGetAccessors().map(node => node.getStructure()),
         indexSignatures: this.getIndexSignatures().map(node => node.getStructure()),
         methods: this.getMethods().map(node => node.getStructure()),
         properties: this.getProperties().map(node => node.getStructure()),
+        setAccessors: this.getSetAccessors().map(node => node.getStructure()),
       });
     }
   };
