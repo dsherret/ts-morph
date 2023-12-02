@@ -2,6 +2,12 @@
 
 View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only a high level overview of breaking changes.
 
+## Version 21
+
+- Upgraded to TS 5.3
+- Underlying `@ts-morph/common` file system methods return undefined instead of throwing when not exists (for perf).
+- Private fields are actually private (default build requires private fields).
+
 ## Version 20
 
 - Upgraded to TS 5.2
