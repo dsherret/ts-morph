@@ -832,7 +832,7 @@ export declare function getSyntaxKindName(kind: ts.SyntaxKind): string;
  * Holds the compiler options.
  */
 export declare class CompilerOptionsContainer extends SettingsContainer<ts.CompilerOptions> {
-    constructor();
+    constructor(defaultSettings?: ts.CompilerOptions);
     /**
      * Sets one or all of the compiler options.
      *

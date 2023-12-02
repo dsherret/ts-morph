@@ -20271,7 +20271,7 @@ class Project {
             ? undefined
             : new TsConfigResolver(fileSystemWrapper, fileSystemWrapper.getStandardizedAbsolutePath(options.tsConfigFilePath), getEncoding());
         const compilerOptions = getCompilerOptions();
-        const compilerOptionsContainer = new CompilerOptionsContainer();
+        const compilerOptionsContainer = new CompilerOptionsContainer(options.defaultCompilerOptions);
         compilerOptionsContainer.set(compilerOptions);
         this._context = new ProjectContext({
             project: this,

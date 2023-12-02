@@ -2,7 +2,7 @@ import { errors, StandardizedFilePath, ts } from "@ts-morph/common";
 
 /** Holds the compiler options. */
 export declare class CompilerOptionsContainer extends SettingsContainer<ts.CompilerOptions> {
-  constructor();
+  constructor(defaultSettings?: ts.CompilerOptions);
   /**
    * Sets one or all of the compiler options.
    *
@@ -721,6 +721,8 @@ export interface ProjectOptions {
   compilerOptions?: CompilerOptions;
   /** File path to the tsconfig.json file. */
   tsConfigFilePath?: string;
+  /** Can be overriden by `tsConfigFilePath` or `compilerOptions`. */
+  defaultCompilerOptions?: CompilerOptions;
   /**
    * Whether to skip adding the source files from the specified tsconfig.json.
    * @default false
