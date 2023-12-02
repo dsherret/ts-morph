@@ -906,7 +906,7 @@ export type ObjectLiteralElementLike = PropertyAssignment | ShorthandPropertyAss
 export type CaseOrDefaultClause = CaseClause | DefaultClause;
 export type ModuleReference = EntityName | ExternalModuleReference;
 export type StringLiteralLike = StringLiteral | NoSubstitutionTemplateLiteral;
-export type TypeElementTypes = PropertySignature | MethodSignature | ConstructSignatureDeclaration | CallSignatureDeclaration | IndexSignatureDeclaration;
+export type TypeElementTypes = PropertySignature | MethodSignature | ConstructSignatureDeclaration | CallSignatureDeclaration | IndexSignatureDeclaration | GetAccessorDeclaration | SetAccessorDeclaration;
 export type TemplateLiteral = TemplateExpression | NoSubstitutionTemplateLiteral;
 /**
  * Local target declarations.
@@ -2157,6 +2157,94 @@ export interface TypeElementMemberedNode {
   getPropertyOrThrow(findFunction: (member: PropertySignature) => boolean): PropertySignature;
   /** Gets the interface property signatures. */
   getProperties(): PropertySignature[];
+  /**
+   * Add get accessor.
+   * @param structure - Structure representing the get accessor.
+   */
+  addGetAccessor(structure: OptionalKind<GetAccessorDeclarationStructure>): GetAccessorDeclaration;
+  /**
+   * Add get accessors.
+   * @param structures - Structures representing the get accessors.
+   */
+  addGetAccessors(structures: ReadonlyArray<OptionalKind<GetAccessorDeclarationStructure>>): GetAccessorDeclaration[];
+  /**
+   * Insert get accessor.
+   * @param index - Child index to insert at.
+   * @param structure - Structure representing the get accessor.
+   */
+  insertGetAccessor(index: number, structure: OptionalKind<GetAccessorDeclarationStructure>): GetAccessorDeclaration;
+  /**
+   * Insert get accessors.
+   * @param index - Child index to insert at.
+   * @param structures - Structures representing the get accessors.
+   */
+  insertGetAccessors(index: number, structures: ReadonlyArray<OptionalKind<GetAccessorDeclarationStructure>>): GetAccessorDeclaration[];
+  /**
+   * Gets the first get accessor by name.
+   * @param name - Name.
+   */
+  getGetAccessor(name: string): GetAccessorDeclaration | undefined;
+  /**
+   * Gets the first get accessor by a find function.
+   * @param findFunction - Function to find the get accessor by.
+   */
+  getGetAccessor(findFunction: (member: GetAccessorDeclaration) => boolean): GetAccessorDeclaration | undefined;
+  /**
+   * Gets the first get accessor by name or throws if not found.
+   * @param name - Name.
+   */
+  getGetAccessorOrThrow(name: string): GetAccessorDeclaration;
+  /**
+   * Gets the first get accessor by a find function or throws if not found.
+   * @param findFunction - Function to find the get accessor by.
+   */
+  getGetAccessorOrThrow(findFunction: (member: GetAccessorDeclaration) => boolean): GetAccessorDeclaration;
+  /** Gets the interface get accessor declarations. */
+  getGetAccessors(): GetAccessorDeclaration[];
+  /**
+   * Add set accessor.
+   * @param structure - Structure representing the set accessor.
+   */
+  addSetAccessor(structure: OptionalKind<SetAccessorDeclarationStructure>): SetAccessorDeclaration;
+  /**
+   * Add set accessors.
+   * @param structures - Structures representing the set accessors.
+   */
+  addSetAccessors(structures: ReadonlyArray<OptionalKind<SetAccessorDeclarationStructure>>): SetAccessorDeclaration[];
+  /**
+   * Insert set accessor.
+   * @param index - Child index to insert at.
+   * @param structure - Structure representing the set accessor.
+   */
+  insertSetAccessor(index: number, structure: OptionalKind<SetAccessorDeclarationStructure>): SetAccessorDeclaration;
+  /**
+   * Insert set accessors.
+   * @param index - Child index to insert at.
+   * @param structures - Structures representing the set accessors.
+   */
+  insertSetAccessors(index: number, structures: ReadonlyArray<OptionalKind<SetAccessorDeclarationStructure>>): SetAccessorDeclaration[];
+  /**
+   * Gets the first set accessor by name.
+   * @param name - Name.
+   */
+  getSetAccessor(name: string): SetAccessorDeclaration | undefined;
+  /**
+   * Gets the first set accessor by a find function.
+   * @param findFunction - Function to find the set accessor by.
+   */
+  getSetAccessor(findFunction: (member: SetAccessorDeclaration) => boolean): SetAccessorDeclaration | undefined;
+  /**
+   * Gets the first set accessor by name or throws if not found.
+   * @param name - Name.
+   */
+  getSetAccessorOrThrow(name: string): SetAccessorDeclaration;
+  /**
+   * Gets the first set accessor by a find function or throws if not found.
+   * @param findFunction - Function to find the set accessor by.
+   */
+  getSetAccessorOrThrow(findFunction: (member: SetAccessorDeclaration) => boolean): SetAccessorDeclaration;
+  /** Gets the interface set accessor declarations. */
+  getSetAccessors(): SetAccessorDeclaration[];
   /** Gets all the members. */
   getMembers(): TypeElementTypes[];
   /** Gets all the members with comment type elements. */

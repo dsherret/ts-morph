@@ -6467,6 +6467,41 @@ class NodePrinter extends Printer {
     }
 }
 
+class GetAndSetAccessorStructurePrinter {
+    #getAccessorPrinter;
+    #setAccessorPrinter;
+    constructor(getAccessorPrinter, setAccessorPrinter) {
+        this.#getAccessorPrinter = getAccessorPrinter;
+        this.#setAccessorPrinter = setAccessorPrinter;
+    }
+    printGetAndSet(writer, getAccessors, setAccessors, isAmbient) {
+        getAccessors = [...getAccessors ?? []];
+        setAccessors = [...setAccessors ?? []];
+        for (const getAccessor of getAccessors) {
+            this.#conditionalSeparator(writer, isAmbient);
+            this.#getAccessorPrinter.printText(writer, getAccessor);
+            const setAccessorIndex = setAccessors.findIndex(item => item.name === getAccessor.name);
+            if (setAccessorIndex >= 0) {
+                this.#conditionalSeparator(writer, isAmbient);
+                this.#setAccessorPrinter.printText(writer, setAccessors[setAccessorIndex]);
+                setAccessors.splice(setAccessorIndex, 1);
+            }
+        }
+        for (const setAccessor of setAccessors) {
+            this.#conditionalSeparator(writer, isAmbient);
+            this.#setAccessorPrinter.printText(writer, setAccessor);
+        }
+    }
+    #conditionalSeparator(writer, isAmbient) {
+        if (writer.isAtStartOfFirstLineOfBlock())
+            return;
+        if (isAmbient)
+            writer.newLine();
+        else
+            writer.blankLine();
+    }
+}
+
 class ClassDeclarationStructurePrinter extends NodePrinter {
     #options;
     #multipleWriter = new BlankLineFormattingStructuresPrinter(this);
@@ -6523,24 +6558,12 @@ class ClassDeclarationStructurePrinter extends NodePrinter {
         }
     }
     #printGetAndSet(writer, structure, isAmbient) {
-        const getAccessors = [...structure.getAccessors ?? []];
-        const setAccessors = [...structure.setAccessors ?? []];
+        if (structure.getAccessors == null && structure.setAccessors == null)
+            return;
         const getAccessorWriter = this.factory.forGetAccessorDeclaration({ isAmbient });
         const setAccessorWriter = this.factory.forSetAccessorDeclaration({ isAmbient });
-        for (const getAccessor of getAccessors) {
-            this.#conditionalSeparator(writer, isAmbient);
-            getAccessorWriter.printText(writer, getAccessor);
-            const setAccessorIndex = setAccessors.findIndex(item => item.name === getAccessor.name);
-            if (setAccessorIndex >= 0) {
-                this.#conditionalSeparator(writer, isAmbient);
-                setAccessorWriter.printText(writer, setAccessors[setAccessorIndex]);
-                setAccessors.splice(setAccessorIndex, 1);
-            }
-        }
-        for (const setAccessor of setAccessors) {
-            this.#conditionalSeparator(writer, isAmbient);
-            setAccessorWriter.printText(writer, setAccessor);
-        }
+        const combinedPrinter = new GetAndSetAccessorStructurePrinter(getAccessorWriter, setAccessorWriter);
+        combinedPrinter.printGetAndSet(writer, structure.getAccessors, structure.setAccessors, isAmbient);
     }
     #conditionalSeparator(writer, isAmbient) {
         if (writer.isAtStartOfFirstLineOfBlock())
@@ -7552,13 +7575,15 @@ class ConstructorDeclarationStructurePrinter extends NodePrinter {
 
 class GetAccessorDeclarationStructurePrinter extends NodePrinter {
     #options;
-    #blankLineWriter = new BlankLineFormattingStructuresPrinter(this);
+    #multipleWriter;
     constructor(factory, options) {
         super(factory);
         this.#options = options;
+        this.#multipleWriter = this.#options.isAmbient ? new NewLineFormattingStructuresPrinter(this) : new BlankLineFormattingStructuresPrinter(this);
     }
     printTexts(writer, structures) {
-        this.#blankLineWriter.printText(writer, structures);
+        if (structures != null)
+            this.#multipleWriter.printText(writer, structures);
     }
     printTextInternal(writer, structure) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
@@ -7667,13 +7692,15 @@ class PropertyDeclarationStructurePrinter extends NodePrinter {
 
 class SetAccessorDeclarationStructurePrinter extends NodePrinter {
     #options;
-    #multipleWriter = new BlankLineFormattingStructuresPrinter(this);
+    #multipleWriter;
     constructor(factory, options) {
         super(factory);
         this.#options = options;
+        this.#multipleWriter = this.#options.isAmbient ? new NewLineFormattingStructuresPrinter(this) : new BlankLineFormattingStructuresPrinter(this);
     }
     printTexts(writer, structures) {
-        this.#multipleWriter.printText(writer, structures);
+        if (structures != null)
+            this.#multipleWriter.printText(writer, structures);
     }
     printTextInternal(writer, structure) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
@@ -8167,10 +8194,19 @@ class TypeElementMemberedNodeStructurePrinter extends Printer {
         this.#factory.forConstructSignatureDeclaration().printTexts(writer, structure.constructSignatures);
         this.#conditionalSeparator(writer, structure.indexSignatures);
         this.#factory.forIndexSignatureDeclaration().printTexts(writer, structure.indexSignatures);
+        this.#printGetAndSet(writer, structure);
         this.#conditionalSeparator(writer, structure.properties);
         this.#factory.forPropertySignature().printTexts(writer, structure.properties);
         this.#conditionalSeparator(writer, structure.methods);
         this.#factory.forMethodSignature().printTexts(writer, structure.methods);
+    }
+    #printGetAndSet(writer, structure) {
+        if (structure.getAccessors == null && structure.setAccessors == null)
+            return;
+        const getAccessorWriter = this.#factory.forGetAccessorDeclaration({ isAmbient: true });
+        const setAccessorWriter = this.#factory.forSetAccessorDeclaration({ isAmbient: true });
+        const combinedPrinter = new GetAndSetAccessorStructurePrinter(getAccessorWriter, setAccessorWriter);
+        combinedPrinter.printGetAndSet(writer, structure.getAccessors, structure.setAccessors, true);
     }
     #conditionalSeparator(writer, structures) {
         if (!ArrayUtils.isNullOrEmpty(structures) && !writer.isAtStartOfFirstLineOfBlock())
@@ -10276,10 +10312,6 @@ function TypeElementMemberedNode(Base) {
             return this.compilerNode.members.filter(m => m.kind === SyntaxKind.CallSignature)
                 .map(m => this._getNodeFromCompilerNode(m));
         }
-        getGetAccessors() {
-            return this.compilerNode.members.filter(m => m.kind === SyntaxKind.GetAccessor)
-                .map(m => this._getNodeFromCompilerNode(m));
-        }
         addIndexSignature(structure) {
             return this.addIndexSignatures([structure])[0];
         }
@@ -10364,6 +10396,74 @@ function TypeElementMemberedNode(Base) {
             return this.compilerNode.members.filter(m => m.kind === SyntaxKind.PropertySignature)
                 .map(m => this._getNodeFromCompilerNode(m));
         }
+        addGetAccessor(structure) {
+            return this.addGetAccessors([structure])[0];
+        }
+        addGetAccessors(structures) {
+            const result = [];
+            for (const structure of structures) {
+                const setAccessor = this.getSetAccessor(structure.name);
+                const index = setAccessor == null ? getEndIndexFromArray(this.getMembersWithComments()) : setAccessor.getChildIndex();
+                result.push(this.insertGetAccessor(index, structure));
+            }
+            return result;
+        }
+        insertGetAccessor(index, structure) {
+            return this.insertGetAccessors(index, [structure])[0];
+        }
+        insertGetAccessors(index, structures) {
+            return insertChildren$1({
+                thisNode: this,
+                index,
+                structures,
+                expectedKind: SyntaxKind.GetAccessor,
+                createStructurePrinter: () => this._context.structurePrinterFactory.forGetAccessorDeclaration({
+                    isAmbient: true,
+                }),
+            });
+        }
+        getGetAccessor(nameOrFindFunction) {
+            return getNodeByNameOrFindFunction(this.getGetAccessors(), nameOrFindFunction);
+        }
+        getGetAccessorOrThrow(nameOrFindFunction) {
+            return errors.throwIfNullOrUndefined(this.getGetAccessor(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("interface get accessor", nameOrFindFunction));
+        }
+        getGetAccessors() {
+            return this.compilerNode.members.filter(m => m.kind === SyntaxKind.GetAccessor)
+                .map(m => this._getNodeFromCompilerNode(m));
+        }
+        addSetAccessor(structure) {
+            return this.addSetAccessors([structure])[0];
+        }
+        addSetAccessors(structures) {
+            const result = [];
+            for (const structure of structures) {
+                const getAccessor = this.getGetAccessor(structure.name);
+                const index = getAccessor == null ? getEndIndexFromArray(this.getMembersWithComments()) : getAccessor.getChildIndex() + 1;
+                result.push(this.insertSetAccessor(index, structure));
+            }
+            return result;
+        }
+        insertSetAccessor(index, structure) {
+            return this.insertSetAccessors(index, [structure])[0];
+        }
+        insertSetAccessors(index, structures) {
+            return insertChildren$1({
+                thisNode: this,
+                index,
+                structures,
+                expectedKind: SyntaxKind.SetAccessor,
+                createStructurePrinter: () => this._context.structurePrinterFactory.forSetAccessorDeclaration({
+                    isAmbient: true,
+                }),
+            });
+        }
+        getSetAccessor(nameOrFindFunction) {
+            return getNodeByNameOrFindFunction(this.getSetAccessors(), nameOrFindFunction);
+        }
+        getSetAccessorOrThrow(nameOrFindFunction) {
+            return errors.throwIfNullOrUndefined(this.getSetAccessor(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("interface set accessor", nameOrFindFunction));
+        }
         getSetAccessors() {
             return this.compilerNode.members.filter(m => m.kind === SyntaxKind.SetAccessor)
                 .map(m => this._getNodeFromCompilerNode(m));
@@ -10393,6 +10493,14 @@ function TypeElementMemberedNode(Base) {
             if (structure.properties != null) {
                 this.getProperties().forEach(c => c.remove());
                 this.addProperties(structure.properties);
+            }
+            if (structure.getAccessors != null) {
+                this.getGetAccessors().forEach(c => c.remove());
+                this.addGetAccessors(structure.getAccessors);
+            }
+            if (structure.setAccessors != null) {
+                this.getSetAccessors().forEach(c => c.remove());
+                this.addSetAccessors(structure.setAccessors);
             }
             if (structure.methods != null) {
                 this.getMethods().forEach(c => c.remove());
@@ -13957,6 +14065,8 @@ class ClassElement extends Node {
             removeClassMember(this);
         else if (Node.isObjectLiteralExpression(parent))
             removeCommaSeparatedChild(this);
+        else if (Node.isInterfaceDeclaration(parent))
+            removeInterfaceMember(this);
         else
             errors.throwNotImplementedForSyntaxKindError(parent.getKind());
     }
