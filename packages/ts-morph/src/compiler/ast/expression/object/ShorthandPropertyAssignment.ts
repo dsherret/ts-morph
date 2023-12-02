@@ -122,4 +122,19 @@ export class ShorthandPropertyAssignment extends ShorthandPropertyAssignmentBase
 
     return structure;
   }
+
+  /**
+   * Gets the shorthand assignment value symbol of this node if it exists. Convenience API
+   * for TypeChecker#getShorthandAssignmentValueSymbol(node)
+   */
+  getValueSymbol() {
+    return this._context.typeChecker.getShorthandAssignmentValueSymbol(this);
+  }
+
+  /**
+   * Gets the value symbol or throws if it doesn't exist.
+   */
+  getValueSymbolOrThrow(message?: string | (() => string)) {
+    return errors.throwIfNullOrUndefined(this.getValueSymbol(), message ?? "Expected to find a value symbol.", this);
+  }
 }
