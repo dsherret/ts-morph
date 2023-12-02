@@ -258,9 +258,11 @@ function forInterfaceDeclaration<TStructure>(structure: InterfaceDeclarationStru
 function forTypeElementMemberedNode<TStructure>(structure: TypeElementMemberedNodeStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
   return forAll(structure.callSignatures, callback, StructureKind.CallSignature)
     || forAll(structure.constructSignatures, callback, StructureKind.ConstructSignature)
+    || forAll(structure.getAccessors, callback, StructureKind.GetAccessor)
     || forAll(structure.indexSignatures, callback, StructureKind.IndexSignature)
     || forAll(structure.methods, callback, StructureKind.MethodSignature)
-    || forAll(structure.properties, callback, StructureKind.PropertySignature);
+    || forAll(structure.properties, callback, StructureKind.PropertySignature)
+    || forAll(structure.setAccessors, callback, StructureKind.SetAccessor);
 }
 
 /** @generated */

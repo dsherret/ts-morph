@@ -5,7 +5,7 @@
   "main": "dist/ts-morph.js",
   "typings": "lib/ts-morph.d.ts",
   "scripts": {
-    "dopublish": "npm run type-check-docs && npm run package && npm run publish-code-verification && echo \"Run: npm publish\"",
+    "dopublish": "npm run type-check-docs && npm run code-generate && npm run package && npm run publish-code-verification && echo \"Run: npm publish\"",
     "build": "npm run build:declarations && npm run build:deno && npm run build:node",
     "build:node": "rimraf dist && rollup -c ",
     "build:deno": "rimraf dist-deno && rollup -c --environment BUILD:deno && deno run -A scripts/buildDeno.ts",

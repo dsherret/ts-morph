@@ -6,7 +6,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Exist
 
-**Total:** 225
+**Total:** 224
 
 - [ArrayBindingPattern](src/compiler/ast/binding/ArrayBindingPattern.ts)
   - :heavy_check_mark: elements
@@ -24,12 +24,6 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 - [AsExpression](src/compiler/ast/expression/AsExpression.ts)
   - :heavy_check_mark: expression
   - :heavy_check_mark: type
-- [AssertClause](src/compiler/ast/module/AssertClause.ts)
-  - :heavy_check_mark: elements
-  - :x: multiLine
-- [AssertEntry](src/compiler/ast/module/AssertEntry.ts)
-  - :heavy_check_mark: name
-  - :heavy_check_mark: value
 - [AssignmentExpression](src/compiler/ast/expression/AssignmentExpression.ts)
   - :heavy_check_mark: left
   - :heavy_check_mark: operatorToken
@@ -125,7 +119,8 @@ The disadvantage to a node not being wrapped is that it won't have helper method
   - :heavy_check_mark: isTypeOnly
   - :heavy_check_mark: exportClause
   - :heavy_check_mark: moduleSpecifier
-  - :heavy_check_mark: assertClause
+  - :x: assertClause
+  - :heavy_check_mark: attributes
 - [ExportSpecifier](src/compiler/ast/module/ExportSpecifier.ts)
   - :heavy_check_mark: isTypeOnly
   - :heavy_check_mark: propertyName
@@ -177,6 +172,13 @@ The disadvantage to a node not being wrapped is that it won't have helper method
   - :heavy_check_mark: expression
   - :heavy_check_mark: thenStatement
   - :heavy_check_mark: elseStatement
+- [ImportAttribute](src/compiler/ast/module/ImportAttribute.ts)
+  - :heavy_check_mark: name
+  - :heavy_check_mark: value
+- [ImportAttributes](src/compiler/ast/module/ImportAttributes.ts)
+  - :x: token
+  - :heavy_check_mark: elements
+  - :x: multiLine
 - [ImportClause](src/compiler/ast/module/ImportClause.ts)
   - :heavy_check_mark: isTypeOnly
   - :heavy_check_mark: name
@@ -185,7 +187,8 @@ The disadvantage to a node not being wrapped is that it won't have helper method
   - :x: modifiers
   - :heavy_check_mark: importClause
   - :heavy_check_mark: moduleSpecifier
-  - :heavy_check_mark: assertClause
+  - :x: assertClause
+  - :heavy_check_mark: attributes
 - [ImportEqualsDeclaration](src/compiler/ast/module/ImportEqualsDeclaration.ts)
   - :heavy_check_mark: modifiers
   - :heavy_check_mark: name
@@ -196,13 +199,11 @@ The disadvantage to a node not being wrapped is that it won't have helper method
   - :heavy_check_mark: propertyName
   - :heavy_check_mark: name
   - :heavy_check_mark: isTypeOnly
-- [ImportTypeAssertionContainer](src/compiler/ast/type/ImportTypeAssertionContainer.ts)
-  - :heavy_check_mark: assertClause
-  - :heavy_check_mark: multiLine
 - [ImportTypeNode](src/compiler/ast/type/ImportTypeNode.ts)
   - :x: isTypeOf
   - :heavy_check_mark: argument
-  - :heavy_check_mark: assertions
+  - :x: assertions
+  - :heavy_check_mark: attributes
   - :heavy_check_mark: qualifier
 - [IndexedAccessTypeNode](src/compiler/ast/type/IndexedAccessTypeNode.ts)
   - :heavy_check_mark: objectType
@@ -588,10 +589,12 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Not Exist
 
-**Total:** 24
+**Total:** 26
 
 - AutoAccessorPropertyDeclaration
 - FlowContainer
+- ImportTypeAssertionContainer
+- InstanceofExpression
 - JSDocContainer
 - JsxAttributes
 - JsxTagNamePropertyAccess

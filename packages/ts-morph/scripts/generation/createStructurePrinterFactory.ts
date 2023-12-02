@@ -101,6 +101,7 @@ export function createStructurePrinterFactory(inspector: TsMorphInspector) {
       case "CommaSeparatedStructuresPrinter":
       case "CommaNewLineSeparatedStructuresPrinter":
       case "StringStructurePrinter":
+      case "GetAndSetAccessorStructurePrinter":
         return false;
     }
     return true;

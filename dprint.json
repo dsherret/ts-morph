@@ -10,7 +10,6 @@
     "packages/*/dist/",
     "packages/*/lib/*.ts",
     "**/CHANGELOG.md",
-    "**/wrapped-nodes.md",
     "packages/ts-morph/src/compiler/ast/common/Node.ts",
     "./deno",
     "dist-deno"

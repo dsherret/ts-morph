@@ -2831,7 +2831,10 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   }
 
   /** Gets if the node is a ImportAttribute. */
-  static isImportAttribute(node: compiler.Node | undefined): node is compiler.ImportAttribute {
+  static readonly isImportAttribute: (node: compiler.Node | undefined) => node is compiler.ImportAttribute = Node.is(SyntaxKind.ImportAttribute);
+
+  /** Gets if the node is a ImportAttributeNamedNode. */
+  static isImportAttributeNamed<T extends compiler.Node>(node: T | undefined): node is compiler.ImportAttributeNamedNode & compiler.ImportAttributeNamedNodeExtensionType & T {
     return node?.getKind() === SyntaxKind.ImportAttribute;
   }
 
@@ -3665,6 +3668,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.FunctionExpression:
       case SyntaxKind.GetAccessor:
       case SyntaxKind.Identifier:
+      case SyntaxKind.ImportAttribute:
       case SyntaxKind.ImportEqualsDeclaration:
       case SyntaxKind.InterfaceDeclaration:
       case SyntaxKind.MetaProperty:
@@ -3704,6 +3708,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.FunctionExpression:
       case SyntaxKind.GetAccessor:
       case SyntaxKind.Identifier:
+      case SyntaxKind.ImportAttribute:
       case SyntaxKind.ImportEqualsDeclaration:
       case SyntaxKind.InterfaceDeclaration:
       case SyntaxKind.MetaProperty:

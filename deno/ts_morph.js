@@ -4547,7 +4547,8 @@ class Node {
                 return false;
         }
     }
-    static isImportAttribute(node) {
+    static isImportAttribute = Node.is(SyntaxKind.ImportAttribute);
+    static isImportAttributeNamed(node) {
         return node?.getKind() === SyntaxKind.ImportAttribute;
     }
     static isImportAttributes = Node.is(SyntaxKind.ImportAttributes);
@@ -5176,6 +5177,7 @@ class Node {
             case SyntaxKind.FunctionExpression:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.Identifier:
+            case SyntaxKind.ImportAttribute:
             case SyntaxKind.ImportEqualsDeclaration:
             case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.MetaProperty:
@@ -5211,6 +5213,7 @@ class Node {
             case SyntaxKind.FunctionExpression:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.Identifier:
+            case SyntaxKind.ImportAttribute:
             case SyntaxKind.ImportEqualsDeclaration:
             case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.MetaProperty:
@@ -6965,7 +6968,7 @@ const Structure = {
     isImportAttribute(structure) {
         return structure?.kind === StructureKind.ImportAttribute;
     },
-    isImportAttributeKeyNamed(structure) {
+    isImportAttributeNamed(structure) {
         return structure?.kind === StructureKind.ImportAttribute;
     },
     isImportDeclaration(structure) {
@@ -7310,9 +7313,11 @@ function forInterfaceDeclaration(structure, callback) {
 function forTypeElementMemberedNode(structure, callback) {
     return forAll(structure.callSignatures, callback, StructureKind.CallSignature)
         || forAll(structure.constructSignatures, callback, StructureKind.ConstructSignature)
+        || forAll(structure.getAccessors, callback, StructureKind.GetAccessor)
         || forAll(structure.indexSignatures, callback, StructureKind.IndexSignature)
         || forAll(structure.methods, callback, StructureKind.MethodSignature)
-        || forAll(structure.properties, callback, StructureKind.PropertySignature);
+        || forAll(structure.properties, callback, StructureKind.PropertySignature)
+        || forAll(structure.setAccessors, callback, StructureKind.SetAccessor);
 }
 function forJSDoc(structure, callback) {
     return forAll(structure.tags, callback, StructureKind.JSDocTag);

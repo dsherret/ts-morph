@@ -424,8 +424,8 @@ export const Structure = {
   isImportAttribute(structure: unknown): structure is ImportAttributeStructure {
     return (structure as any)?.kind === StructureKind.ImportAttribute;
   },
-  /** Gets if the provided structure is a ImportAttributeKeyNamedNodeStructure. */
-  isImportAttributeKeyNamed<T>(structure: T): structure is T & ImportAttributeNamedNodeStructure {
+  /** Gets if the provided structure is a ImportAttributeNamedNodeStructure. */
+  isImportAttributeNamed<T>(structure: T): structure is T & ImportAttributeNamedNodeStructure {
     return (structure as any)?.kind === StructureKind.ImportAttribute;
   },
   /** Gets if the provided structure is a ImportDeclarationStructure. */

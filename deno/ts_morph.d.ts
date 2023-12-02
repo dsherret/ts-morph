@@ -3184,6 +3184,8 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isIdentifier: (node: Node | undefined) => node is Identifier;
   /** Gets if the node is a IfStatement. */
   static readonly isIfStatement: (node: Node | undefined) => node is IfStatement;
+  /** Gets if the node is a ImportAttribute. */
+  static readonly isImportAttribute: (node: Node | undefined) => node is ImportAttribute;
   /** Gets if the node is a ImportAttributes. */
   static readonly isImportAttributes: (node: Node | undefined) => node is ImportAttributes;
   /** Gets if the node is a ImportClause. */
@@ -4119,8 +4121,8 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   static isHeritageClauseable<T extends Node>(node: T | undefined): node is HeritageClauseableNode & HeritageClauseableNodeExtensionType & T;
   /** Gets if the node is a ImplementsClauseableNode. */
   static isImplementsClauseable<T extends Node>(node: T | undefined): node is ImplementsClauseableNode & ImplementsClauseableNodeExtensionType & T;
-  /** Gets if the node is a ImportAttribute. */
-  static isImportAttribute(node: Node | undefined): node is ImportAttribute;
+  /** Gets if the node is a ImportAttributeNamedNode. */
+  static isImportAttributeNamed<T extends Node>(node: T | undefined): node is ImportAttributeNamedNode & ImportAttributeNamedNodeExtensionType & T;
   /** Gets if the node is a ImportExpression. */
   static isImportExpression(node: Node | undefined): node is ImportExpression;
   /** Gets if the node is a ImportTypeNode. */
@@ -10733,8 +10735,8 @@ export declare const Structure: {
       readonly isStaticable: <T_21>(structure: T_21) => structure is T_21 & StaticableNodeStructure;
       /** Gets if the provided structure is a ImportAttributeStructure. */
       readonly isImportAttribute: (structure: unknown) => structure is ImportAttributeStructure;
-      /** Gets if the provided structure is a ImportAttributeKeyNamedNodeStructure. */
-      readonly isImportAttributeKeyNamed: <T_22>(structure: T_22) => structure is T_22 & ImportAttributeNamedNodeStructure;
+      /** Gets if the provided structure is a ImportAttributeNamedNodeStructure. */
+      readonly isImportAttributeNamed: <T_22>(structure: T_22) => structure is T_22 & ImportAttributeNamedNodeStructure;
       /** Gets if the provided structure is a ImportDeclarationStructure. */
       readonly isImportDeclaration: (structure: unknown) => structure is ImportDeclarationStructure;
       /** Gets if the provided structure is a ImportSpecifierStructure. */
