@@ -45,7 +45,7 @@ const project = new Project({
 });
 ```
 
-If you are adding source files to a project in other ways and want to ensure the all the source files dependended on by the added source files
+If you are adding source files to a project in other ways and want to ensure the all the source files depended on by the added source files
 are also included in the Project, then call the `.resolveSourceFileDependencies()` after adding everything:
 
 ```ts
