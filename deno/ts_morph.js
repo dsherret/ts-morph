@@ -7669,6 +7669,7 @@ class MethodDeclarationStructurePrinter extends NodePrinter {
         if (structure.decorators != null)
             this.factory.forDecorator().printTexts(writer, structure.decorators);
         this.factory.forModifierableNode().printText(writer, structure);
+        writer.conditionalWrite(structure.isGenerator, "*");
         writer.write(name);
         writer.conditionalWrite(structure.hasQuestionToken, "?");
         this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
