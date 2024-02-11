@@ -1,4 +1,4 @@
-/** Decorator for memoizing the result of a method or get accessor. */
+/** Decorator for memoizing the result of a method. */
 export function Memoize(target: (...args: any[]) => void) {
   if (target instanceof Function) {
     return getNewFunction(target);
