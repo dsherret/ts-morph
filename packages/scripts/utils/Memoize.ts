@@ -1,11 +1,10 @@
-/** Decorator for memoizing the result of a method or get accessor. */
-export function Memoize(target: any, propertyName: string, descriptor: TypedPropertyDescriptor<any>) {
-  if (descriptor.value != null)
-    descriptor.value = getNewFunction(descriptor.value);
-  else if (descriptor.get != null)
-    descriptor.get = getNewFunction(descriptor.get);
-  else
-    throw new Error("Only put a Memoize decorator on a method or get accessor.");
+/** Decorator for memoizing the result of a method. */
+export function Memoize(target: (...args: any[]) => void) {
+  if (target instanceof Function) {
+    return getNewFunction(target);
+  } else {
+    throw new Error("Not implemented.");
+  }
 }
 
 const weakMap = new WeakMap<object, Map<string, unknown>>();
