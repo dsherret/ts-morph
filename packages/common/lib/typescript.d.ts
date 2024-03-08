@@ -3332,7 +3332,7 @@ declare namespace ts {
             isNonTsProject(): boolean;
             isJsOnlyProject(): boolean;
             static resolveModule(moduleName: string, initialDir: string, host: ServerHost, log: (message: string) => void): {} | undefined;
-            readonly jsDocParsingMode: JSDocParsingMode | undefined;
+            readonly jsDocParsingMode: JSDocParsingMode;
             isKnownTypesPackageName(name: string): boolean;
             installPackage(options: InstallPackageOptions): Promise<ApplyCodeActionCommandResult>;
             private get typingsCache();
