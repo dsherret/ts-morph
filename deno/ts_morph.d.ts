@@ -3442,7 +3442,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    */
   forget(): void;
   /** Forgets the descendants of this node. */
-  forgetDescendants(): this;
+  forgetDescendants(): void;
   /**
    * Gets if the compiler node was forgotten.
    *

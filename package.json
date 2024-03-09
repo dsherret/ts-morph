@@ -25,6 +25,7 @@
     "packages/ts-morph"
   ],
   "devDependencies": {
-    "dprint": "^0.43.2"
+    "dprint": "^0.43.2",
+    "every-ts": "^2.0.0"
   }
 }
