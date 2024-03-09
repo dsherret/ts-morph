@@ -1,7 +1,7 @@
 import { errors, SyntaxKind, ts, NewLineKind, EmitHint, ScriptTarget, ScriptKind, SettingsContainer, KeyValueCache, getCompilerOptionsFromTsConfig as getCompilerOptionsFromTsConfig$1, StringUtils, getSyntaxKindName, ArrayUtils, nameof, ObjectUtils, EventContainer, FileUtils, libFolderInMemoryPath, Memoize, SymbolFlags, TypeFormatFlags, getEmitModuleResolutionKind, createHosts, ObjectFlags, TypeFlags, matchGlobs, ModuleResolutionKind, SortedKeyValueArray, LocaleStringComparer, WeakCache, DocumentRegistry, createModuleResolutionHost, TransactionalFileSystem, TsConfigResolver, CompilerOptionsContainer, InMemoryFileSystemHost, RealFileSystemHost, IterableUtils, runtime } from './common/mod.ts';
 export { CompilerOptionsContainer, DiagnosticCategory, EmitHint, InMemoryFileSystemHost, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, NodeFlags, ObjectFlags, ResolutionHosts, ScriptKind, ScriptTarget, SettingsContainer, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags, ts } from './common/mod.ts';
-import CodeBlockWriter from 'https://deno.land/x/code_block_writer@12.0.0/mod.ts';
-export { default as CodeBlockWriter } from 'https://deno.land/x/code_block_writer@12.0.0/mod.ts';
+import CodeBlockWriter from 'https://deno.land/x/code_block_writer@13.0.1/mod.ts';
+export { default as CodeBlockWriter } from 'https://deno.land/x/code_block_writer@13.0.1/mod.ts';
 
 class AdvancedIterator {
     #iterator;
