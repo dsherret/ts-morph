@@ -17887,6 +17887,10 @@ class TypeChecker {
         const symbol = this.compilerObject.getShorthandAssignmentValueSymbol(node.compilerNode);
         return symbol ? this.#context.compilerFactory.getSymbol(symbol) : undefined;
     }
+    resolveName(name, location, meaning, excludeGlobals) {
+        const symbol = this.compilerObject.resolveName(name, location?.compilerNode, meaning, excludeGlobals);
+        return symbol ? this.#context.compilerFactory.getSymbol(symbol) : undefined;
+    }
 }
 
 class Program {

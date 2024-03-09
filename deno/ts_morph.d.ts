@@ -9858,6 +9858,7 @@ export declare class TypeChecker {
   getTypeArguments(typeReference: Type): Type<ts.Type>[];
   /** Gets the shorthand assignment value symbol of the provided node. */
   getShorthandAssignmentValueSymbol(node: Node): Symbol | undefined;
+  resolveName(name: string, location: Node | undefined, meaning: SymbolFlags, excludeGlobals: boolean): Symbol | undefined;
 }
 
 export declare class Type<TType extends ts.Type = ts.Type> {
