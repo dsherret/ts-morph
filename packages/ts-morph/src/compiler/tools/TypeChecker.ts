@@ -276,4 +276,9 @@ export class TypeChecker {
     const symbol = this.compilerObject.getShorthandAssignmentValueSymbol(node.compilerNode);
     return symbol ? this.#context.compilerFactory.getSymbol(symbol) : undefined;
   }
+
+  resolveName(name: string, location: Node | undefined, meaning: SymbolFlags, excludeGlobals: boolean) {
+    const symbol = this.compilerObject.resolveName(name, location?.compilerNode, meaning, excludeGlobals);
+    return symbol ? this.#context.compilerFactory.getSymbol(symbol) : undefined;
+  }
 }
