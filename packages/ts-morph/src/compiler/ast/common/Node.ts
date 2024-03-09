@@ -119,8 +119,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   forgetDescendants() {
     for (const child of this._getChildrenInCacheIterator())
       child.forget();
-
-    return this;
   }
 
   /**

@@ -3057,7 +3057,6 @@ class Node {
     forgetDescendants() {
         for (const child of this._getChildrenInCacheIterator())
             child.forget();
-        return this;
     }
     _forgetOnlyThis() {
         if (this.wasForgotten())
