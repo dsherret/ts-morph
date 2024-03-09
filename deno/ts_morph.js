@@ -17876,6 +17876,9 @@ class TypeChecker {
         return this.compilerObject.getTypeArguments(typeReference.compilerType)
             .map(arg => this.#context.compilerFactory.getType(arg));
     }
+    isTypeAssignableTo(sourceType, targetType) {
+        return this.compilerObject.isTypeAssignableTo(sourceType.compilerType, targetType.compilerType);
+    }
     #getDefaultTypeFormatFlags(enclosingNode) {
         let formatFlags = (TypeFormatFlags.UseTypeOfFunction | TypeFormatFlags.NoTruncation | TypeFormatFlags.UseFullyQualifiedType
             | TypeFormatFlags.WriteTypeArgumentsOfSignature);
@@ -18312,6 +18315,9 @@ class Type {
     }
     getSymbolOrThrow(message) {
         return errors.throwIfNullOrUndefined(this.getSymbol(), message ?? "Expected to find a symbol.");
+    }
+    isAssignableTo(target) {
+        return this._context.typeChecker.isTypeAssignableTo(this, target);
     }
     isAnonymous() {
         return this.#hasObjectFlag(ObjectFlags.Anonymous);

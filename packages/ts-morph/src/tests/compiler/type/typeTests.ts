@@ -992,4 +992,13 @@ let unknownType: unknown;
       runTest("let myType: string;", undefined);
     });
   });
+
+  describe(nameof<Type>("isAssignableTo"), () => {
+    it("should be assignable to when so", () => {
+      const { firstType, sourceFile } = getTypeFromText("let firstType: string; let secondType: 'test';");
+      const secondType = sourceFile.getVariableDeclarationOrThrow("secondType").getType();
+      expect(firstType.isAssignableTo(secondType)).to.be.false;
+      expect(secondType.isAssignableTo(firstType)).to.be.true;
+    });
+  });
 });
