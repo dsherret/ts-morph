@@ -253,6 +253,11 @@ export class TypeChecker {
       .map(arg => this.#context.compilerFactory.getType(arg));
   }
 
+  /** Checks if a type is assignable to another type. */
+  isTypeAssignableTo(sourceType: Type, targetType: Type) {
+    return this.compilerObject.isTypeAssignableTo(sourceType.compilerType, targetType.compilerType);
+  }
+
   /** @internal */
   #getDefaultTypeFormatFlags(enclosingNode?: Node) {
     let formatFlags = (TypeFormatFlags.UseTypeOfFunction | TypeFormatFlags.NoTruncation | TypeFormatFlags.UseFullyQualifiedType
