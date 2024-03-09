@@ -45,22 +45,22 @@
   "homepage": "https://github.com/dsherret/ts-morph#readme",
   "dependencies": {
     "@ts-morph/common": "~0.22.0",
-    "code-block-writer": "^12.0.0"
+    "code-block-writer": "^13.0.1"
   },
   "devDependencies": {
-    "@rollup/plugin-typescript": "^11.1.5",
-    "@types/chai": "^4.3.11",
-    "@types/diff": "^5.0.8",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@types/chai": "^4.3.12",
+    "@types/diff": "^5.0.9",
     "@types/mocha": "^10.0.6",
-    "@types/node": "^20.10.0",
+    "@types/node": "^20.11.25",
     "chai": "^4.3.10",
     "conditional-type-checks": "^1.0.6",
     "cross-env": "^7.0.3",
-    "diff": "^5.1.0",
-    "mocha": "10.2.0",
+    "diff": "^5.2.0",
+    "mocha": "10.3.0",
     "rimraf": "^5.0.5",
-    "rollup": "=4.5.2",
-    "ts-node": "10.9.1",
+    "rollup": "=4.12.1",
+    "ts-node": "10.9.2",
     "typescript": "~5.3.2"
   },
   "standard-version": {

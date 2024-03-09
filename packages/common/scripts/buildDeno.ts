@@ -45,7 +45,10 @@ fileSystem.mkdirSync(`${copyDirPath}/data`);
 fileSystem.copySync(`${folderPath}/ts-morph-common.js`, `${copyDirPath}/ts_morph_common.js`);
 fileSystem.copySync(`${folderPath}/DenoRuntime.ts`, `${copyDirPath}/DenoRuntime.ts`);
 
-const tsNodeModulesLibDir = path.join(folders.root, "node_modules/typescript/lib/");
+const localTsLibFolder = path.join(folders.common, "node_modules/typescript/lib");
+const tsNodeModulesLibDir = fileSystem.directoryExistsSync(localTsLibFolder)
+  ? localTsLibFolder
+  : path.join(folders.root, "node_modules/typescript/lib");
 const typeScriptSourceFile = fileSystem.readFileSync(path.join(tsNodeModulesLibDir, "typescript.js"));
 fileSystem.writeFileSync(`${copyDirPath}/typescript.js`, typeScriptSourceFile + "\nexport { ts };\n");
 fileSystem.copySync(path.join(tsNodeModulesLibDir, "typescript.d.ts"), `${copyDirPath}/typescript.d.ts`);
