@@ -145,6 +145,7 @@ function forClassLikeDeclarationBase<TStructure>(structure: ClassLikeDeclaration
     || forTypeParameteredNode(structure, callback)
     || forJSDocableNode(structure, callback)
     || forAll(structure.ctors, callback, StructureKind.Constructor)
+    || forAll(structure.staticBlocks, callback, StructureKind.ClassStaticBlock)
     || forAll(structure.properties, callback, StructureKind.Property)
     || forAll(structure.getAccessors, callback, StructureKind.GetAccessor)
     || forAll(structure.setAccessors, callback, StructureKind.SetAccessor)

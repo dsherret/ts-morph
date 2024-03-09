@@ -8,6 +8,7 @@ import {
   TypeParameteredNodeStructure,
 } from "../../base";
 import { OptionalKind } from "../../types";
+import { ClassStaticBlockDeclarationStructure } from "../ClassStaticBlockDeclarationStructure";
 import { ConstructorDeclarationStructure } from "../ConstructorDeclarationStructure";
 import { GetAccessorDeclarationStructure } from "../GetAccessorDeclarationStructure";
 import { MethodDeclarationStructure } from "../MethodDeclarationStructure";
@@ -29,6 +30,7 @@ export interface ClassLikeDeclarationBaseStructure
 export interface ClassLikeDeclarationBaseSpecificStructure {
   extends?: string | WriterFunction;
   ctors?: OptionalKind<ConstructorDeclarationStructure>[];
+  staticBlocks?: OptionalKind<ClassStaticBlockDeclarationStructure>[];
   properties?: OptionalKind<PropertyDeclarationStructure>[];
   getAccessors?: OptionalKind<GetAccessorDeclarationStructure>[];
   setAccessors?: OptionalKind<SetAccessorDeclarationStructure>[];

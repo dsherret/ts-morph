@@ -6521,6 +6521,7 @@ class ClassDeclarationStructurePrinter extends NodePrinter {
         this.#printHeader(writer, structure);
         writer.inlineBlock(() => {
             this.factory.forPropertyDeclaration().printTexts(writer, structure.properties);
+            this.#printStaticBlocks(writer, structure);
             this.#printCtors(writer, structure, isAmbient);
             this.#printGetAndSet(writer, structure, isAmbient);
             if (!ArrayUtils.isNullOrEmpty(structure.methods)) {
@@ -6557,6 +6558,14 @@ class ClassDeclarationStructurePrinter extends NodePrinter {
         for (const ctor of structure.ctors) {
             this.#conditionalSeparator(writer, isAmbient);
             this.factory.forConstructorDeclaration({ isAmbient }).printText(writer, ctor);
+        }
+    }
+    #printStaticBlocks(writer, structure) {
+        if (ArrayUtils.isNullOrEmpty(structure.staticBlocks))
+            return;
+        for (const block of structure.staticBlocks) {
+            this.#conditionalSeparator(writer, false);
+            this.factory.forClassStaticBlockDeclaration().printText(writer, block);
         }
     }
     #printGetAndSet(writer, structure, isAmbient) {
@@ -7235,6 +7244,7 @@ function forClassLikeDeclarationBase(structure, callback) {
         || forTypeParameteredNode(structure, callback)
         || forJSDocableNode(structure, callback)
         || forAll(structure.ctors, callback, StructureKind.Constructor)
+        || forAll(structure.staticBlocks, callback, StructureKind.ClassStaticBlock)
         || forAll(structure.properties, callback, StructureKind.Property)
         || forAll(structure.getAccessors, callback, StructureKind.GetAccessor)
         || forAll(structure.setAccessors, callback, StructureKind.SetAccessor)
@@ -14655,6 +14665,10 @@ class ClassDeclaration extends ClassDeclarationBase {
             this.getConstructors().forEach(c => c.remove());
             this.addConstructors(structure.ctors);
         }
+        if (structure.staticBlocks != null) {
+            this.getStaticBlocks().forEach(c => c.remove());
+            this.addStaticBlocks(structure.staticBlocks);
+        }
         if (structure.properties != null) {
             this.getProperties().forEach(p => p.remove());
             this.addProperties(structure.properties);
@@ -14679,6 +14693,7 @@ class ClassDeclaration extends ClassDeclarationBase {
         return callBaseGetStructure(ClassDeclarationBase.prototype, this, {
             kind: StructureKind.Class,
             ctors: this.getConstructors().filter(ctor => isAmbient || !ctor.isOverload()).map(ctor => ctor.getStructure()),
+            staticBlocks: this.getStaticBlocks().map(ctor => ctor.getStructure()),
             methods: this.getMethods().filter(method => isAmbient || !method.isOverload()).map(method => method.getStructure()),
             properties: this.getProperties().map(property => property.getStructure()),
             extends: getExtends ? getExtends.getText() : undefined,
