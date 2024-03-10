@@ -10309,6 +10309,7 @@ export interface ClassLikeDeclarationBaseStructure extends NameableNodeStructure
 interface ClassLikeDeclarationBaseSpecificStructure {
   extends?: string | WriterFunction;
   ctors?: OptionalKind<ConstructorDeclarationStructure>[];
+  staticBlocks?: OptionalKind<ClassStaticBlockDeclarationStructure>[];
   properties?: OptionalKind<PropertyDeclarationStructure>[];
   getAccessors?: OptionalKind<GetAccessorDeclarationStructure>[];
   setAccessors?: OptionalKind<SetAccessorDeclarationStructure>[];

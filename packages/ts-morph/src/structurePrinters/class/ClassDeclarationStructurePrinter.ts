@@ -27,6 +27,7 @@ export class ClassDeclarationStructurePrinter extends NodePrinter<OptionalKind<C
 
     writer.inlineBlock(() => {
       this.factory.forPropertyDeclaration().printTexts(writer, structure.properties);
+      this.#printStaticBlocks(writer, structure);
       this.#printCtors(writer, structure, isAmbient);
       this.#printGetAndSet(writer, structure, isAmbient);
 
@@ -71,6 +72,16 @@ export class ClassDeclarationStructurePrinter extends NodePrinter<OptionalKind<C
     for (const ctor of structure.ctors) {
       this.#conditionalSeparator(writer, isAmbient);
       this.factory.forConstructorDeclaration({ isAmbient }).printText(writer, ctor);
+    }
+  }
+
+  #printStaticBlocks(writer: CodeBlockWriter, structure: OptionalKind<ClassDeclarationStructure>) {
+    if (ArrayUtils.isNullOrEmpty(structure.staticBlocks))
+      return;
+
+    for (const block of structure.staticBlocks) {
+      this.#conditionalSeparator(writer, /* is ambient */ false);
+      this.factory.forClassStaticBlockDeclaration().printText(writer, block);
     }
   }
 
