@@ -1,6 +1,30 @@
-# Change Log
+# Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+<a name="22.0.0"></a>
+# [22.0.0](https://github.com/dsherret/ts-morph/compare/21.0.1...22.0.0) (2024-03-10)
+
+
+### Features
+
+* `Type.prototype.isAssignableTo` ([#1517](https://github.com/dsherret/ts-morph/issues/1517)) ([e8b5727](https://github.com/dsherret/ts-morph/commit/e8b5727d7d65827cdc130afebc35f1003a30dc44))
+* `TypeChecker.prototype.resolveName` ([#1518](https://github.com/dsherret/ts-morph/issues/1518)) ([ca77636](https://github.com/dsherret/ts-morph/commit/ca77636e4717fa4cd9407922e881b3e3a7463161))
+* **BREAKING:** upgrade to TypeScript 5.4 ([#1516](https://github.com/dsherret/ts-morph/issues/1516)) ([e7799eb](https://github.com/dsherret/ts-morph/commit/e7799eb5e5be801acb13eb61cdabb5e65851063a))
+* ClassDeclarationStructure - support static blocks ([#1520](https://github.com/dsherret/ts-morph/issues/1520)) ([d24e2a7](https://github.com/dsherret/ts-morph/commit/d24e2a7a529da8c73974c12e338169c398bc3a04))
+
+
+### Bug Fixes
+
+* **BREAKING:** `Node.prototype.forgetDescendants()` no longer returns self ([#1515](https://github.com/dsherret/ts-morph/issues/1515)) ([92962aa](https://github.com/dsherret/ts-morph/commit/92962aacc92fb9e5b1b18747b3ac1e1c69a42047))
+* MethodDeclarationStructure should write an asterisk isGenerator = true ([#1502](https://github.com/dsherret/ts-morph/issues/1502)) ([871cb46](https://github.com/dsherret/ts-morph/commit/871cb461051859d4594451291f2948a2ab8afba0))
+
+### CodeBlockWriter 13.0.1
+
+People may have been working around these bugs in the past:
+
+- `.quote()` - should include newline in literal (https://github.com/dsherret/code-block-writer/pull/47)
+- `.quote()` - escape characters were not always being escaped (https://github.com/dsherret/code-block-writer/pull/46)
 
 <a name="21.0.0"></a>
 # [21.0.0](https://github.com/dsherret/ts-morph/compare/20.0.0...21.0.0) (2023-12-02)
