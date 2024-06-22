@@ -1,6 +1,7 @@
 /docs/Gemfile.lock
 /docs/_site
 /deno
+deno.lock
 packages/*/node_modules
 packages/*/temp
 packages/*/dist-cg
