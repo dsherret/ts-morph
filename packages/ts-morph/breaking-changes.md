@@ -2,6 +2,13 @@
 
 View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only a high level overview of breaking changes.
 
+## Version 22
+
+- Upgraded to TS 5.4
+- code-block-writer fixes that you should be aware of (as some people might have been working around the bugs);
+  - `.quote()` - should include newline in literal (https://github.com/dsherret/code-block-writer/pull/47)
+  - `.quote()` - escape characters were not always being escaped (https://github.com/dsherret/code-block-writer/pull/46)
+
 ## Version 21
 
 - Upgraded to TS 5.3

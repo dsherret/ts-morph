@@ -16,6 +16,18 @@ There are other ways for accessing a type. For example:
 const returnType = functionDeclaration.getReturnType();
 ```
 
+### Checking type is assignable to another type
+
+Note: Requires ts-morph 22+
+
+To check if a type is assignable to another type, use the `isAssignableTo` method:
+
+```ts
+if (stringLitType.isAssignableTo(stringType)) {
+  // ...
+}
+```
+
 ### Compiler Type
 
 The underlying compiler type can be accessed via:

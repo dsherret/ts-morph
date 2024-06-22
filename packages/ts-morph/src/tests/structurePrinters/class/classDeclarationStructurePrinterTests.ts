@@ -37,6 +37,9 @@ describe("ClassDeclarationStructurePrinter", () => {
             name: "pProtected",
           }],
           ctors: [{}],
+          staticBlocks: [{
+            statements: ["test;"],
+          }],
           methods: [{
             scope: Scope.Private,
             name: "m1",
@@ -58,6 +61,10 @@ describe("ClassDeclarationStructurePrinter", () => {
     public pPublic;
     private pPrivate;
     protected pProtected;
+
+    static {
+        test;
+    }
 
     constructor() {
     }

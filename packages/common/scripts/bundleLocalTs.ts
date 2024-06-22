@@ -19,7 +19,10 @@ for (const varDecl of commonFile.getVariableDeclarations()) {
 
 commonFile.saveSync();
 
-const typescriptLibFolderPath = path.join(folders.root, "node_modules/typescript/lib");
+const localTypescriptLibFolderPath = path.join(folders.common, "node_modules/typescript/lib");
+const typescriptLibFolderPath = fileSystem.directoryExistsSync(localTypescriptLibFolderPath)
+  ? localTypescriptLibFolderPath
+  : path.join(folders.root, "node_modules/typescript/lib");
 fileSystem.copySync(path.join(typescriptLibFolderPath, "typescript.js"), "./dist/typescript.js");
 fileSystem.copySync(path.join(typescriptLibFolderPath, "typescript.d.ts"), "./lib/typescript.d.ts");
 

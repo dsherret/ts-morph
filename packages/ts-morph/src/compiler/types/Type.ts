@@ -366,6 +366,13 @@ export class Type<TType extends ts.Type = ts.Type> {
   }
 
   /**
+   * Gets if the type is assignable to another type.
+   */
+  isAssignableTo(target: Type) {
+    return this._context.typeChecker.isTypeAssignableTo(this, target);
+  }
+
+  /**
    * Gets if this is an anonymous type.
    */
   isAnonymous() {

@@ -3,6 +3,7 @@ import {
   ClassDeclarationSpecificStructure,
   ClassDeclarationStructure,
   ClassLikeDeclarationBaseSpecificStructure,
+  ClassStaticBlockDeclarationStructure,
   ConstructorDeclarationStructure,
   InterfaceDeclarationStructure,
   JSDocStructure,
@@ -48,6 +49,10 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
       this.getConstructors().forEach(c => c.remove());
       this.addConstructors(structure.ctors);
     }
+    if (structure.staticBlocks != null) {
+      this.getStaticBlocks().forEach(c => c.remove());
+      this.addStaticBlocks(structure.staticBlocks);
+    }
     if (structure.properties != null) {
       this.getProperties().forEach(p => p.remove());
       this.addProperties(structure.properties);
@@ -77,6 +82,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     return callBaseGetStructure<ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure>(ClassDeclarationBase.prototype, this, {
       kind: StructureKind.Class,
       ctors: this.getConstructors().filter(ctor => isAmbient || !ctor.isOverload()).map(ctor => ctor.getStructure() as ConstructorDeclarationStructure),
+      staticBlocks: this.getStaticBlocks().map(ctor => ctor.getStructure() as ClassStaticBlockDeclarationStructure),
       methods: this.getMethods().filter(method => isAmbient || !method.isOverload()).map(method => method.getStructure() as MethodDeclarationStructure),
       properties: this.getProperties().map(property => property.getStructure()),
       extends: getExtends ? getExtends.getText() : undefined,

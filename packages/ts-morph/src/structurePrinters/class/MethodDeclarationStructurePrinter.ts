@@ -84,6 +84,7 @@ export class MethodDeclarationStructurePrinter extends NodePrinter<OptionalKind<
       this.factory.forDecorator().printTexts(writer, (structure as MethodDeclarationStructure).decorators);
 
     this.factory.forModifierableNode().printText(writer, structure);
+    writer.conditionalWrite(structure.isGenerator, "*");
     writer.write(name);
     writer.conditionalWrite(structure.hasQuestionToken, "?");
     this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);

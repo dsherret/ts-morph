@@ -63,6 +63,7 @@ describe("StatementedNode", () => {
       const structure: OptionalKindAndTrivia<MakeRequired<ClassDeclarationStructure>> = {
         name: "C",
         ctors: [{}, {}],
+        staticBlocks: [{}],
         decorators: [{ name: "D" }],
         docs: [{ description: "Test" }],
         extends: "Base",
@@ -79,6 +80,7 @@ describe("StatementedNode", () => {
       };
       const expectedText = "/** Test */\n@D\nexport default abstract class C<T> extends Base implements IBase, IBase2 {\n"
         + "    p: number;\n\n"
+        + "    static {\n    }\n\n"
         + "    constructor() {\n    }\n\n"
         + "    constructor() {\n    }\n\n"
         + "    get g() {\n    }\n\n    set g() {\n    }\n\n    get s() {\n    }\n\n    set s() {\n    }\n\n"

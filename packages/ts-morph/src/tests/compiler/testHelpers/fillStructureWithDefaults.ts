@@ -2,6 +2,7 @@ import { ModuleDeclarationKind, VariableDeclarationKind } from "../../../compile
 import {
   CallSignatureDeclarationStructure,
   ClassDeclarationStructure,
+  ClassStaticBlockDeclarationStructure,
   ConstructorDeclarationOverloadStructure,
   ConstructorDeclarationStructure,
   ConstructSignatureDeclarationStructure,
@@ -96,6 +97,7 @@ export namespace fillStructures {
     setIfNull(structure, "isDefaultExport", false);
     setIfNull(structure, "isExported", false);
     setIfNull(structure, "ctors", []);
+    setIfNull(structure, "staticBlocks", []);
     setIfNull(structure, "decorators", []);
     setIfNull(structure, "docs", []);
     setIfNull(structure, "extends", undefined);
@@ -110,6 +112,7 @@ export namespace fillStructures {
     fill(structure.decorators!, decorator);
     fill(structure.typeParameters!, typeParameter);
     fill(structure.ctors!, constructorDeclaration);
+    fill(structure.staticBlocks!, classStaticBlock);
     fill(structure.methods!, method);
     fill(structure.properties!, property);
     fill(structure.getAccessors!, getAccessor);
@@ -117,6 +120,13 @@ export namespace fillStructures {
 
     setIfNull(structure, "kind", StructureKind.Class);
     return structure as ClassDeclarationStructure;
+  }
+
+  export function classStaticBlock(structure: OptionalKind<ClassStaticBlockDeclarationStructure>): ClassStaticBlockDeclarationStructure {
+    setIfNull(structure, "statements", []);
+    setIfNull(structure, "docs", []);
+    setIfNull(structure, "kind", StructureKind.ClassStaticBlock);
+    return structure as ClassStaticBlockDeclarationStructure;
   }
 
   export function constructorDeclaration(structure: OptionalKind<ConstructorDeclarationStructure>): ConstructorDeclarationStructure {

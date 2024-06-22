@@ -70,6 +70,10 @@ class Identifier extends Other {
     constructor() {
     }
 
+    static {
+        test;
+    }
+
     p;
 
     get g() {
@@ -85,6 +89,7 @@ class Identifier extends Other {
       const structure: OptionalKindAndTrivia<MakeRequired<ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure>> = {
         extends: "Other",
         ctors: [{}],
+        staticBlocks: [{ statements: ["test;"]}],
         properties: [{ name: "p" }],
         getAccessors: [{ name: "g" }],
         setAccessors: [{ name: "s", parameters: [{ name: "value", type: "string" }] }],
@@ -110,6 +115,7 @@ class Identifier {
       const structure: OptionalKindAndTrivia<MakeRequired<ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure>> = {
         extends: undefined,
         ctors: [],
+        staticBlocks: [],
         properties: [],
         getAccessors: [],
         setAccessors: [],
@@ -130,6 +136,7 @@ class Identifier {
       doTest("class Identifier {}", {
         kind: StructureKind.Class,
         ctors: [],
+        staticBlocks: [],
         decorators: [],
         docs: [],
         extends: undefined,
@@ -152,6 +159,7 @@ class Identifier {
 /** Test */
 @dec export default abstract class Identifier<T> extends Base implements IBase {
     constructor() {}
+    static {}
     method() {}
     prop: string;
     get getAccessor() {}
@@ -161,6 +169,7 @@ class Identifier {
       doTest(code, {
         kind: StructureKind.Class,
         ctors: [{ statements: [], overloads: [] }],
+        staticBlocks: [{}],
         decorators: [{ name: "dec" }],
         docs: [{ description: "Test" }],
         extends: "Base",
@@ -193,6 +202,7 @@ declare class Identifier {
       doTest(code, {
         kind: StructureKind.Class,
         ctors: [{ returnType: "string" }, { returnType: "number" }],
+        staticBlocks: [],
         decorators: [],
         docs: [],
         extends: undefined,

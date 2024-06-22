@@ -253,6 +253,11 @@ export class TypeChecker {
       .map(arg => this.#context.compilerFactory.getType(arg));
   }
 
+  /** Checks if a type is assignable to another type. */
+  isTypeAssignableTo(sourceType: Type, targetType: Type) {
+    return this.compilerObject.isTypeAssignableTo(sourceType.compilerType, targetType.compilerType);
+  }
+
   /** @internal */
   #getDefaultTypeFormatFlags(enclosingNode?: Node) {
     let formatFlags = (TypeFormatFlags.UseTypeOfFunction | TypeFormatFlags.NoTruncation | TypeFormatFlags.UseFullyQualifiedType
@@ -269,6 +274,11 @@ export class TypeChecker {
    */
   getShorthandAssignmentValueSymbol(node: Node) {
     const symbol = this.compilerObject.getShorthandAssignmentValueSymbol(node.compilerNode);
+    return symbol ? this.#context.compilerFactory.getSymbol(symbol) : undefined;
+  }
+
+  resolveName(name: string, location: Node | undefined, meaning: SymbolFlags, excludeGlobals: boolean) {
+    const symbol = this.compilerObject.resolveName(name, location?.compilerNode, meaning, excludeGlobals);
     return symbol ? this.#context.compilerFactory.getSymbol(symbol) : undefined;
   }
 }

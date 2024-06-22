@@ -3442,7 +3442,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    */
   forget(): void;
   /** Forgets the descendants of this node. */
-  forgetDescendants(): this;
+  forgetDescendants(): void;
   /**
    * Gets if the compiler node was forgotten.
    *
@@ -9856,8 +9856,11 @@ export declare class TypeChecker {
    * @param typeReference - Type reference.
    */
   getTypeArguments(typeReference: Type): Type<ts.Type>[];
+  /** Checks if a type is assignable to another type. */
+  isTypeAssignableTo(sourceType: Type, targetType: Type): boolean;
   /** Gets the shorthand assignment value symbol of the provided node. */
   getShorthandAssignmentValueSymbol(node: Node): Symbol | undefined;
+  resolveName(name: string, location: Node | undefined, meaning: SymbolFlags, excludeGlobals: boolean): Symbol | undefined;
 }
 
 export declare class Type<TType extends ts.Type = ts.Type> {
@@ -10004,6 +10007,8 @@ export declare class Type<TType extends ts.Type = ts.Type> {
   getSymbol(): Symbol | undefined;
   /** Gets the symbol of the type or throws. */
   getSymbolOrThrow(message?: string | (() => string)): Symbol;
+  /** Gets if the type is assignable to another type. */
+  isAssignableTo(target: Type): boolean;
   /** Gets if this is an anonymous type. */
   isAnonymous(): boolean;
   /** Gets if this is an any type. */
@@ -10304,6 +10309,7 @@ export interface ClassLikeDeclarationBaseStructure extends NameableNodeStructure
 interface ClassLikeDeclarationBaseSpecificStructure {
   extends?: string | WriterFunction;
   ctors?: OptionalKind<ConstructorDeclarationStructure>[];
+  staticBlocks?: OptionalKind<ClassStaticBlockDeclarationStructure>[];
   properties?: OptionalKind<PropertyDeclarationStructure>[];
   getAccessors?: OptionalKind<GetAccessorDeclarationStructure>[];
   setAccessors?: OptionalKind<SetAccessorDeclarationStructure>[];
