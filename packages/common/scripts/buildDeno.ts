@@ -53,7 +53,7 @@ const tsNodeModulesLibDir = fileSystem.directoryExistsSync(localTsLibFolder)
 const typeScriptSourceFile = fileSystem.readFileSync(path.join(tsNodeModulesLibDir, "typescript.js"));
 fileSystem.writeFileSync(`${copyDirPath}/typescript.js`, typeScriptSourceFile + "\nexport { ts };\n");
 const typeScriptDtsText = fileSystem.readFileSync(path.join(tsNodeModulesLibDir, "typescript.d.ts"));
-fileSystem.writeFileSync(path.join(tsNodeModulesLibDir, "typescript.d.ts"), typeScriptDtsText.replace("export = ts;", "export { ts };"));
+fileSystem.writeFileSync(`${copyDirPath}/typescript.d.ts`, typeScriptDtsText.replace("export = ts;", "export { ts };"));
 fileSystem.copySync(`./lib/ts-morph-common.d.ts`, `${copyDirPath}/ts_morph_common.d.ts`);
 fileSystem.writeFileSync(`${copyDirPath}/mod.ts`, `// @deno-types="./ts_morph_common.d.ts"\nexport * from "./ts_morph_common.js";\n`);
 fileSystem.writeFileSync(
