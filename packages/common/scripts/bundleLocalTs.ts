@@ -24,7 +24,8 @@ const typescriptLibFolderPath = fileSystem.directoryExistsSync(localTypescriptLi
   ? localTypescriptLibFolderPath
   : path.join(folders.root, "node_modules/typescript/lib");
 fileSystem.copySync(path.join(typescriptLibFolderPath, "typescript.js"), "./dist/typescript.js");
-fileSystem.copySync(path.join(typescriptLibFolderPath, "typescript.d.ts"), "./lib/typescript.d.ts");
+const typescriptDtsFileText = fileSystem.readFileSync(path.join(typescriptLibFolderPath, "typescript.d.ts"));
+fileSystem.writeFileSync("./lib/typescript.d.ts", typescriptDtsFileText.replace("export = ts;", "export { ts };"));
 
 // add a _nodeWithTypeArgumentsBrand to NodeWithTypeArguments
 // in order to distinguish it from TypeNode
@@ -37,4 +38,8 @@ nodeWithTypeArgs.insertProperty(0, {
   name: "_nodeWithTypeArgumentsBrand",
   type: "any",
 });
+for (const qualifiedName of tsFile.getDescendantsOfKind(tsMorph.ts.SyntaxKind.QualifiedName)) {
+  if (qualifiedName.getLeft().getText() === "ts")
+    qualifiedName.replaceWithText(qualifiedName.getText().replace(/^ts\./, ""));
+}
 tsFile.saveSync();

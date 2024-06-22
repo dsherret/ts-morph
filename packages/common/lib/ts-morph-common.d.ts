@@ -1,4 +1,4 @@
-import * as ts from "./typescript";
+import { ts } from "./typescript";
 
 export interface CompilerOptionsFromTsConfigOptions {
     encoding?: string;
@@ -1062,5 +1062,20 @@ export declare class StringUtils {
     }): string;
 }
 
-import { CompilerOptions, DiagnosticCategory, EditorSettings, EmitHint, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, NodeFlags, ObjectFlags, ScriptKind, ScriptTarget, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags } from "./typescript";
-export { ts, CompilerOptions, DiagnosticCategory, EditorSettings, EmitHint, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, NodeFlags, ObjectFlags, ScriptKind, ScriptTarget, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags };
+export import CompilerOptions = ts.CompilerOptions;
+export import DiagnosticCategory = ts.DiagnosticCategory;
+export import EditorSettings = ts.EditorSettings;
+export import EmitHint = ts.EmitHint;
+export import LanguageVariant = ts.LanguageVariant;
+export import ModuleKind = ts.ModuleKind;
+export import ModuleResolutionKind = ts.ModuleResolutionKind;
+export import NewLineKind = ts.NewLineKind;
+export import NodeFlags = ts.NodeFlags;
+export import ObjectFlags = ts.ObjectFlags;
+export import ScriptKind = ts.ScriptKind;
+export import ScriptTarget = ts.ScriptTarget;
+export import SymbolFlags = ts.SymbolFlags;
+export import SyntaxKind = ts.SyntaxKind;
+export import TypeFlags = ts.TypeFlags;
+export import TypeFormatFlags = ts.TypeFormatFlags;
+export { ts };
