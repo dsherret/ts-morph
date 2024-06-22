@@ -26,7 +26,7 @@ import { Expression } from "../expression";
 import { KindToNodeMappings } from "../kindToNodeMappings.generated";
 import { SourceFile } from "../module";
 import { Statement, StatementedNode } from "../statement";
-import { ExtendedParser, hasParsedTokens } from "../utils";
+import { ExtendedParser } from "../utils";
 import { SyntaxList } from "./SyntaxList";
 import { TextRange } from "./TextRange";
 import { ForEachDescendantTraversalControl, TransformTraversalControl } from "./TraversalControl";
@@ -1290,7 +1290,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    */
   _getParentSyntaxListIfWrapped(): SyntaxList | undefined {
     const parent = this.getParent();
-    if (parent == null || !hasParsedTokens(parent.compilerNode))
+    if (parent == null || !ExtendedParser.hasParsedTokens(parent.compilerNode))
       return undefined;
     return this.getParentSyntaxList();
   }
@@ -1926,7 +1926,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    * Gets the compiler children of the node.
    * @internal
    */
-  _getCompilerChildren(): ts.Node[] {
+  _getCompilerChildren(): readonly ts.Node[] {
     return ExtendedParser.getCompilerChildren(this.compilerNode, this._sourceFile.compilerNode);
   }
 
@@ -1934,7 +1934,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    * Gets the compiler children of the node using .forEachChild
    * @internal
    */
-  _getCompilerForEachChildren(): ts.Node[] {
+  _getCompilerForEachChildren(): readonly ts.Node[] {
     return ExtendedParser.getCompilerForEachChildren(this.compilerNode, this._sourceFile.compilerNode);
   }
 
@@ -1943,7 +1943,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    * @internal
    */
   _getCompilerChildrenFast() {
-    return hasParsedTokens(this.compilerNode) ? this._getCompilerChildren() : this._getCompilerForEachChildren();
+    return ExtendedParser.hasParsedTokens(this.compilerNode) ? this._getCompilerChildren() : this._getCompilerForEachChildren();
   }
 
   /**
@@ -1951,7 +1951,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    * @internal
    */
   _getCompilerChildrenOfKind(kind: SyntaxKind) {
-    const children: ts.Node[] = useParseTreeSearchForKind(this, kind) ? this._getCompilerForEachChildren() : this._getCompilerChildren();
+    const children: readonly ts.Node[] = useParseTreeSearchForKind(this, kind) ? this._getCompilerForEachChildren() : this._getCompilerChildren();
     return children.filter(c => c.kind === kind);
   }
 

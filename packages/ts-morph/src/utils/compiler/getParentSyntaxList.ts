@@ -1,4 +1,5 @@
 import { SyntaxKind, ts } from "@ts-morph/common";
+import { ExtendedParser } from "../../compiler/ast/utils";
 
 export function getParentSyntaxList(node: ts.Node, sourceFile: ts.SourceFile) {
   if (node.kind === SyntaxKind.EndOfFileToken)
@@ -9,8 +10,7 @@ export function getParentSyntaxList(node: ts.Node, sourceFile: ts.SourceFile) {
     return undefined;
 
   const { pos, end } = node;
-  // @code-fence-allow(getChildren): The comment nodes are not needed here.
-  for (const child of parent.getChildren(sourceFile)) {
+  for (const child of ExtendedParser.getCompilerChildren(parent, sourceFile)) {
     if (child.pos > end || child === node)
       return undefined;
 

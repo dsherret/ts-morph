@@ -1,6 +1,6 @@
 import { ArrayUtils, SyntaxKind, ts } from "@ts-morph/common";
 import { Node, SourceFile } from "../../compiler";
-import { ExtendedParser, hasParsedTokens } from "../../compiler/ast/utils";
+import { ExtendedParser } from "../../compiler/ast/utils";
 import { CompilerFactory } from "../../factories";
 import { AdvancedIterator } from "../../utils";
 import { NodeHandler } from "./NodeHandler";
@@ -36,7 +36,7 @@ export class NodeHandlerHelper {
     ];
   }
 
-  getCompilerChildren(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile): [ts.Node[], ts.Node[]] {
+  getCompilerChildren(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile): [readonly ts.Node[], readonly ts.Node[]] {
     const currentCompilerNode = currentNode.compilerNode;
     const currentSourceFile = currentNode._sourceFile.compilerNode;
 
@@ -49,10 +49,10 @@ export class NodeHandlerHelper {
   /**
    * Gets the children of the node according to whether the tokens have previously been parsed.
    */
-  getChildrenFast(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile): [ts.Node[], ts.Node[]] {
+  getChildrenFast(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile): [readonly ts.Node[], readonly ts.Node[]] {
     const currentCompilerNode = currentNode.compilerNode;
     const currentSourceFile = currentNode._sourceFile.compilerNode;
-    if (hasParsedTokens(currentCompilerNode)) {
+    if (ExtendedParser.hasParsedTokens(currentCompilerNode)) {
       return [
         ExtendedParser.getCompilerChildren(currentCompilerNode, currentSourceFile),
         ExtendedParser.getCompilerChildren(newNode, newSourceFile),

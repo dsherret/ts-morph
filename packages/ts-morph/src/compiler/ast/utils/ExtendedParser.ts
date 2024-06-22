@@ -1,9 +1,8 @@
 import { SyntaxKind, ts } from "@ts-morph/common";
 import { CommentNodeParser, ContainerNodes } from "./CommentNodeParser";
-import { hasParsedTokens } from "./hasParsedTokens";
 
 const forEachChildSaver = new WeakMap<ts.Node, ts.Node[]>();
-const getChildrenSaver = new WeakMap<ts.Node, ts.Node[]>();
+const getChildrenSaver = new WeakMap<ts.Node, readonly ts.Node[]>();
 
 /**
  * Parser that parses around nodes for comments.
@@ -14,8 +13,13 @@ export class ExtendedParser {
     return CommentNodeParser.getOrParseChildren(container, sourceFile);
   }
 
+  static hasParsedTokens(node: ts.Node) {
+    // if this is true, it means the compiler has previously parsed the tokens
+    return getChildrenSaver.has(node);
+  }
+
   static getCompilerChildrenFast(node: ts.Node, sourceFile: ts.SourceFile) {
-    if (hasParsedTokens(node))
+    if (ExtendedParser.hasParsedTokens(node))
       return ExtendedParser.getCompilerChildren(node, sourceFile);
 
     return ExtendedParser.getCompilerForEachChildren(node, sourceFile);
@@ -43,20 +47,21 @@ export class ExtendedParser {
     }
   }
 
-  static getCompilerChildren(node: ts.Node, sourceFile: ts.SourceFile) {
-    if (isStatementMemberOrPropertyHoldingSyntaxList()) {
-      let result = getChildrenSaver.get(node);
-      if (result == null) {
+  static getCompilerChildren(node: ts.Node, sourceFile: ts.SourceFile): readonly ts.Node[] {
+    let result = getChildrenSaver.get(node);
+    if (result == null) {
+      if (isStatementMemberOrPropertyHoldingSyntaxList()) {
         // @code-fence-allow(getChildren): This merges in comment nodes.
-        result = [...node.getChildren(sourceFile)]; // make a copy; do not modify the compiler api's array
-        mergeInComments(result, CommentNodeParser.getOrParseChildren(node as ts.SyntaxList, sourceFile));
-        getChildrenSaver.set(node, result);
+        const newArray = [...node.getChildren(sourceFile)]; // make a copy; do not modify the compiler api's array
+        mergeInComments(newArray, CommentNodeParser.getOrParseChildren(node as ts.SyntaxList, sourceFile));
+        result = newArray;
+      } else {
+        // @code-fence-allow(getChildren): No need to merge in comment nodes.
+        result = node.getChildren(sourceFile);
       }
-      return result;
+      getChildrenSaver.set(node, result);
     }
-
-    // @code-fence-allow(getChildren): No need to merge in comment nodes.
-    return node.getChildren(sourceFile);
+    return result;
 
     function isStatementMemberOrPropertyHoldingSyntaxList() {
       if (node.kind !== ts.SyntaxKind.SyntaxList)

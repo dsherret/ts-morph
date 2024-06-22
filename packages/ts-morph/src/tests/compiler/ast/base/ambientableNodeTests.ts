@@ -92,7 +92,7 @@ describe("AmbientableNode", () => {
 
     it("should add to a function declaration that has an export keyword and js doc", () => {
       // this is a weird situation where the jsdoc pos is 4, but the export keyword's syntax list is 0 (maybe it's a ts compiler bug?)
-      doTest("    /** Testing*/export function identifier { }", true, "    /** Testing*/export declare function identifier { }");
+      doTest("    /** Testing*/export function identifier() { }", true, "    /** Testing*/export declare function identifier() { }");
     });
   });
 

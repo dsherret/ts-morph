@@ -25,11 +25,13 @@ import {
   TypeParameterDeclaration,
   VariableStatement,
 } from "../../../../compiler";
-import { hasParsedTokens } from "../../../../compiler/ast/utils";
+import { ExtendedParser } from "../../../../compiler/ast/utils";
 import { Project } from "../../../../Project";
 import { WriterFunction } from "../../../../types";
 import { createWrappedNode } from "../../../../utils/compiler/createWrappedNode";
 import { getInfoFromText } from "../../testHelpers";
+
+const { hasParsedTokens } = ExtendedParser;
 
 describe("Node", () => {
   describe("constructor", () => {
