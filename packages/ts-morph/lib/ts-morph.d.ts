@@ -9525,6 +9525,8 @@ export declare class EmitOutput {
   private constructor();
   /** TypeScript compiler emit result. */
   get compilerObject(): ts.EmitOutput;
+  /** Gets the diagnostics. */
+  getDiagnostics(): Diagnostic<ts.Diagnostic>[];
   /** Gets if the emit was skipped. */
   getEmitSkipped(): boolean;
   /** Gets the output files. */
