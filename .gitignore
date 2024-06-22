@@ -2,7 +2,7 @@
 /docs/_site
 deno/bootstrap/ts_morph_bootstrap.js
 deno/bootstrap/ts_morph_bootstrap.d.ts
-deno/common/
+deno/common
 deno/ts-morph/ts_morph.d.ts
 deno/ts-morph/ts_morph.js
 packages/*/node_modules
