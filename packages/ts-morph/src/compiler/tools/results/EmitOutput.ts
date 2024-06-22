@@ -26,6 +26,12 @@ export class EmitOutput {
     return this.#compilerObject;
   }
 
+  /** Gets the diagnostics. */
+  @Memoize
+  getDiagnostics() {
+    return this.compilerObject.diagnostics.map(d => this.#context.compilerFactory.getDiagnostic(d));
+  }
+
   /**
    * Gets if the emit was skipped.
    */

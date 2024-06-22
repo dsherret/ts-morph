@@ -44,7 +44,7 @@ fileSystem.writeFileSync(
 fileSystem.writeFileSync(
   `${destPath}/readme.md`,
   `
-# ts_morph
+# ts-morph
 
 To use:
 

@@ -273,7 +273,7 @@ export class LanguageService {
     function getCompilerEmitOutput(): ts.EmitOutput {
       const program = compilerObject.getProgram();
       if (program == null || program.getSourceFile(filePath) == null)
-        return { emitSkipped: true, outputFiles: [] };
+        return { emitSkipped: true, outputFiles: [], diagnostics: [] };
       return compilerObject.getEmitOutput(filePath, emitOnlyDtsFiles);
     }
   }
