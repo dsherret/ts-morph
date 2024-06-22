@@ -89,7 +89,7 @@ class Identifier extends Other {
       const structure: OptionalKindAndTrivia<MakeRequired<ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure>> = {
         extends: "Other",
         ctors: [{}],
-        staticBlocks: [{ statements: ["test;"]}],
+        staticBlocks: [{ statements: ["test;"] }],
         properties: [{ name: "p" }],
         getAccessors: [{ name: "g" }],
         setAccessors: [{ name: "s", parameters: [{ name: "value", type: "string" }] }],

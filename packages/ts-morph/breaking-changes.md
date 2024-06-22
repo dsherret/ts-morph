@@ -1,4 +1,4 @@
-﻿# Breaking Changes
+# Breaking Changes
 
 View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only a high level overview of breaking changes.
 

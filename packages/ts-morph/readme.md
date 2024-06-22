@@ -1,4 +1,4 @@
-﻿# ts-morph
+# ts-morph
 
 [![npm version](https://badge.fury.io/js/ts-morph.svg)](https://badge.fury.io/js/ts-morph)
 [![CI](https://github.com/dsherret/ts-morph/workflows/CI/badge.svg)](https://github.com/dsherret/ts-morph/actions?query=workflow%3ACI)

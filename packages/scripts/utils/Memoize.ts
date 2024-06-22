@@ -1,10 +1,9 @@
 /** Decorator for memoizing the result of a method. */
 export function Memoize(target: (...args: any[]) => void) {
-  if (target instanceof Function) {
+  if (target instanceof Function)
     return getNewFunction(target);
-  } else {
+  else
     throw new Error("Not implemented.");
-  }
 }
 
 const weakMap = new WeakMap<object, Map<string, unknown>>();
