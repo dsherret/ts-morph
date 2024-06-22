@@ -9,8 +9,7 @@ on:
       - '*'
 
 jobs:
-  build:
-    name: test ubuntu-latest
+  npm:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
