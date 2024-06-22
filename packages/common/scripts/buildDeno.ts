@@ -57,7 +57,7 @@ fileSystem.copySync(path.join(tsNodeModulesLibDir, "typescript.d.ts"), `${copyDi
 fileSystem.copySync(`./lib/ts-morph-common.d.ts`, `${copyDirPath}/ts_morph_common.d.ts`);
 fileSystem.writeFileSync(`${copyDirPath}/mod.ts`, `// @deno-types="./ts_morph_common.d.ts"\nexport * from "./ts_morph_common.js";\n`);
 fileSystem.writeFileSync(
-  `${copyDirPath}/package.json`,
+  `${copyDirPath}/deno.json`,
   JSON.stringify(
     {
       "name": "@ts-morph/common",
