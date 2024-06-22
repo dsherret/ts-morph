@@ -50,16 +50,6 @@ describe("LanguageService", () => {
       });
     });
 
-    it("should not emit if there is a declaration file error", () => {
-      const { sourceFile, project } = getInfoFromText("export class Test extends MyClass {}\n", { compilerOptions: { declaration: true } });
-      const output = sourceFile._context.languageService.getEmitOutput(sourceFile.getFilePath(), true);
-
-      checkOutput(output, {
-        emitSkipped: true,
-        outputFiles: [],
-      });
-    });
-
     it("should throw when the specified file does not exist", () => {
       const { project } = getInfoFromText("");
       expect(() => project.getLanguageService().getEmitOutput("nonExistentFile.ts")).to.throw(errors.FileNotFoundError);

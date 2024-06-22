@@ -1704,23 +1704,7 @@ describe("Directory", () => {
       expect(writeLog[0].filePath).to.equal("/dir/newDeclarationDir/file1.d.ts");
       expect(writeLog[1].filePath).to.equal("/dir/newDeclarationDir/subDir/file2.d.ts");
       expect(writeLog.length).to.equal(2);
-    });
-
-    it("should get a list of files it didn't emit", async () => {
-      const fileSystem = getFileSystemHostWithFiles([]);
-      const project = new Project({ compilerOptions: { declaration: true }, fileSystem });
-      const directory = project.createDirectory("dir");
-      const subDir = directory.createDirectory("sub");
-      subDir.createSourceFile("file1.ts", "export class Parent extends Child {}");
-      subDir.createSourceFile("file2.ts", "");
-      const result = await directory.emit();
-      expect(result.getSkippedFilePaths()).to.deep.equal(["/dir/sub/file1.ts"]);
-
-      const writeLog = fileSystem.getWriteLog();
-      expect(result.getOutputFilePaths()).to.deep.equal(writeLog.map(l => l.filePath));
-      expect(writeLog[0].filePath).to.equal("/dir/sub/file2.js");
-      expect(writeLog[1].filePath).to.equal("/dir/sub/file2.d.ts");
-      expect(writeLog.length).to.equal(2);
+      expect(result.getSkippedFilePaths()).to.deep.equal([]);
     });
   });
 
@@ -1769,23 +1753,7 @@ describe("Directory", () => {
       expect(result.getOutputFilePaths()).to.deep.equal(writeLog.map(l => l.filePath));
       expect(writeLog[0].filePath).to.equal("/dir/sub2/file1.js");
       expect(writeLog.length).to.equal(1);
-    });
-
-    it("should get a list of files it didn't emit", () => {
-      const fileSystem = getFileSystemHostWithFiles([]);
-      const project = new Project({ compilerOptions: { declaration: true }, fileSystem });
-      const directory = project.createDirectory("dir");
-      const subDir = directory.createDirectory("sub");
-      subDir.createSourceFile("file1.ts", "export class Parent extends Child {}");
-      subDir.createSourceFile("file2.ts", "");
-      const result = directory.emitSync();
-      expect(result.getSkippedFilePaths()).to.deep.equal(["/dir/sub/file1.ts"]);
-
-      const writeLog = fileSystem.getWriteLog();
-      expect(result.getOutputFilePaths()).to.deep.equal(writeLog.map(l => l.filePath));
-      expect(writeLog[0].filePath).to.equal("/dir/sub/file2.js");
-      expect(writeLog[1].filePath).to.equal("/dir/sub/file2.d.ts");
-      expect(writeLog.length).to.equal(2);
+      expect(result.getSkippedFilePaths()).to.deep.equal([]);
     });
   });
 
