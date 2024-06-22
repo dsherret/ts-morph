@@ -1,7 +1,0 @@
-{
-  "workspaces": [
-    "./bootstrap",
-    "./common",
-    "./ts-morph"
-  ]
-}
