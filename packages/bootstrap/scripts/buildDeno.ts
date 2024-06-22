@@ -26,6 +26,20 @@ fileSystem.writeFileSync(
     2,
   ) + "\n",
 );
+fileSystem.writeFileSync(
+  `${destPath}/../deno.json`,
+  JSON.stringify(
+    {
+      "workspaces": [
+        "./bootstrap",
+        "./common",
+        "./ts-morph",
+      ],
+    },
+    null,
+    2,
+  ) + "\n",
+);
 
 fileSystem.writeFileSync(
   `${destPath}/basic_test.ts`,

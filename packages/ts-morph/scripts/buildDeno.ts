@@ -28,6 +28,20 @@ fileSystem.writeFileSync(
   ) + "\n",
 );
 fileSystem.writeFileSync(
+  `${destPath}/../deno.json`,
+  JSON.stringify(
+    {
+      "workspaces": [
+        "./bootstrap",
+        "./common",
+        "./ts-morph",
+      ],
+    },
+    null,
+    2,
+  ) + "\n",
+);
+fileSystem.writeFileSync(
   `${destPath}/readme.md`,
   `
 # ts_morph
