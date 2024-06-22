@@ -15,7 +15,7 @@ export class ExtendedParser {
 
   static hasParsedTokens(node: ts.Node) {
     // if this is true, it means the compiler has previously parsed the tokens
-    return getChildrenSaver.has(node);
+    return getChildrenSaver.has(node) || node.kind == SyntaxKind.SyntaxList;
   }
 
   static getCompilerChildrenFast(node: ts.Node, sourceFile: ts.SourceFile) {

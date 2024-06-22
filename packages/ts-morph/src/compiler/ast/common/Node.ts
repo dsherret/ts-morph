@@ -133,10 +133,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     if (parent != null)
       parent._wrappedChildCount--;
 
-    const parentSyntaxList = this._getParentSyntaxListIfWrapped();
-    if (parentSyntaxList != null)
-      parentSyntaxList._wrappedChildCount--;
-
     this.#storeTextForForgetting();
     this._context.compilerFactory.removeNodeFromCache(this);
     this._clearInternals();
@@ -156,7 +152,9 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    * @internal
    */
   _hasWrappedChildren() {
-    return this._wrappedChildCount > 0;
+    // always consider syntax lists as having warpped children because tracking
+    // them is more work than it's worth
+    return this._wrappedChildCount > 0 || this.#compilerNode?.kind === SyntaxKind.SyntaxList;
   }
 
   /**

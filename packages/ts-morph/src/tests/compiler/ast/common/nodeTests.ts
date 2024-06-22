@@ -229,28 +229,6 @@ describe("Node", () => {
       sourceFile.forgetDescendants();
       expect(sourceFile._hasWrappedChildren()).to.be.false;
     });
-
-    it("should only have wrapped children after calling getChildren() for syntax lists", () => {
-      const project = new Project({ useInMemoryFileSystem: true });
-      const sourceFile = project.createSourceFile("/test.ts", "class C { prop: string; }");
-      const syntaxList = sourceFile.getChildSyntaxListOrThrow();
-      expect(syntaxList._hasWrappedChildren()).to.be.false;
-      syntaxList.getChildren();
-      expect(syntaxList._hasWrappedChildren()).to.be.true;
-      syntaxList.forgetDescendants();
-      expect(syntaxList._hasWrappedChildren()).to.be.false;
-    });
-
-    it("should have wrapped children after doing forEachChild on the parent for syntax lists", () => {
-      const project = new Project({ useInMemoryFileSystem: true });
-      const sourceFile = project.createSourceFile("/test.ts", "class C { prop: string; }");
-      const syntaxList = sourceFile.getChildSyntaxListOrThrow();
-      expect(syntaxList._hasWrappedChildren()).to.be.false;
-      sourceFile.forEachChild(() => {});
-      expect(syntaxList._hasWrappedChildren()).to.be.true;
-      syntaxList.forgetDescendants();
-      expect(syntaxList._hasWrappedChildren()).to.be.false;
-    });
   });
 
   describe(nameof<Node>("getParentSyntaxList"), () => {
