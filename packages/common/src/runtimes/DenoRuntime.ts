@@ -1,9 +1,9 @@
 // @ts-ignore
-import { ensureDir, ensureDirSync } from "https://deno.land/std@0.208.0/fs/ensure_dir.ts";
+import { ensureDir, ensureDirSync } from "@std/fs/ensure-dir";
 // @ts-ignore
-import { expandGlob, expandGlobSync } from "https://deno.land/std@0.208.0/fs/expand_glob.ts";
+import { expandGlob, expandGlobSync } from "@std/fs/expand-glob";
 // @ts-ignore
-import * as stdPath from "https://deno.land/std@0.208.0/path/mod.ts";
+import * as stdPath from "@std/path";
 
 // deno-lint-ignore no-explicit-any
 const Deno = (globalThis as any).Deno;

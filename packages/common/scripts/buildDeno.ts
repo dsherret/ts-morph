@@ -52,7 +52,8 @@ const tsNodeModulesLibDir = fileSystem.directoryExistsSync(localTsLibFolder)
   : path.join(folders.root, "node_modules/typescript/lib");
 const typeScriptSourceFile = fileSystem.readFileSync(path.join(tsNodeModulesLibDir, "typescript.js"));
 fileSystem.writeFileSync(`${copyDirPath}/typescript.js`, typeScriptSourceFile + "\nexport { ts };\n");
-fileSystem.copySync(path.join(tsNodeModulesLibDir, "typescript.d.ts"), `${copyDirPath}/typescript.d.ts`);
+const typeScriptDtsText = fileSystem.readFileSync(path.join(tsNodeModulesLibDir, "typescript.d.ts"));
+fileSystem.writeFileSync(path.join(tsNodeModulesLibDir, "typescript.d.ts"), typeScriptDtsText.replace("export = ts;", "export { ts };"));
 fileSystem.copySync(`./lib/ts-morph-common.d.ts`, `${copyDirPath}/ts_morph_common.d.ts`);
 fileSystem.writeFileSync(`${copyDirPath}/mod.ts`, `// @deno-types="./ts_morph_common.d.ts"\nexport * from "./ts_morph_common.js";\n`);
 fileSystem.writeFileSync(
@@ -62,6 +63,10 @@ fileSystem.writeFileSync(
       "name": "@ts-morph/common",
       "version": packageJson.version,
       "exports": "./mod.ts",
+      "imports": {
+        "@std/fs": "jsr:@std/fs@^0.229.3",
+        "@std/path": "jsr:@std/path@^0.225.2",
+      },
     },
     null,
     2,
