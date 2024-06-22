@@ -6,6 +6,7 @@
   "scripts": {
     "setup": "npm install && npm run build",
     "build": "npm run --workspaces build",
+    "build:deno": "npm run --workspaces build:deno",
     "test": "npm run --workspaces test",
     "format": "dprint fmt"
   },

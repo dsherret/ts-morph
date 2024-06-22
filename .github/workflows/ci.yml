@@ -30,8 +30,27 @@ jobs:
       run: |
         npm run --workspaces --if-present test:ci
         npm run --workspaces --if-present test:ts-versions
-    - name: Deno Test
-      run: deno test --allow-read deno
     - name: Code Verification
       run: |
         npm run --workspaces --if-present code-verification
+
+  jsr:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: denoland/setup-deno@v1
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        check-latest: true
+    - name: Build
+      run: npm run build:deno
+    - name: Dry publish
+      run: cd deno && deno publish --dry-run
+    - name: Test
+      run: cd deno && deno test --allow-read deno
