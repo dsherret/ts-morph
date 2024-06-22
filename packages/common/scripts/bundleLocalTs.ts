@@ -38,8 +38,4 @@ nodeWithTypeArgs.insertProperty(0, {
   name: "_nodeWithTypeArgumentsBrand",
   type: "any",
 });
-for (const qualifiedName of tsFile.getDescendantsOfKind(tsMorph.ts.SyntaxKind.QualifiedName)) {
-  if (qualifiedName.getLeft().getText() === "ts")
-    qualifiedName.replaceWithText(qualifiedName.getText().replace(/^ts\./, ""));
-}
 tsFile.saveSync();
