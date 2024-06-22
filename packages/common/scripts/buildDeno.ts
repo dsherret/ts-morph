@@ -35,6 +35,8 @@ const runtimeSourceFile = project.addSourceFileAtPath(runtimeFileDestinationPath
 runtimeSourceFile.getVariableDeclarationOrThrow("Deno").remove();
 runtimeSourceFile.saveSync();
 
+const packageJson = JSON.parse(fileSystem.readFileSync("./package.json"));
+
 // setup the deno runtime
 commonFile.getFunctionOrThrow("getRuntime").setBodyText("return new DenoRuntime();");
 commonFile.saveSync();
@@ -51,6 +53,18 @@ fileSystem.writeFileSync(`${copyDirPath}/typescript.js`, typeScriptSourceFile + 
 fileSystem.copySync(path.join(tsNodeModulesLibDir, "typescript.d.ts"), `${copyDirPath}/typescript.d.ts`);
 fileSystem.copySync(`./lib/ts-morph-common.d.ts`, `${copyDirPath}/ts_morph_common.d.ts`);
 fileSystem.writeFileSync(`${copyDirPath}/mod.ts`, `// @deno-types="./ts_morph_common.d.ts"\nexport * from "./ts_morph_common.js";\n`);
+fileSystem.writeFileSync(
+  `${copyDirPath}/package.json`,
+  JSON.stringify(
+    {
+      "name": "@ts-morph/common",
+      "version": packageJson.version,
+      "exports": "./mod.ts",
+    },
+    null,
+    2,
+  ) + "\n",
+);
 
 const finalDeclFile = project.addSourceFileAtPath(`${copyDirPath}/ts_morph_common.d.ts`);
 updateOnlyModuleSpecifiers(finalDeclFile);
