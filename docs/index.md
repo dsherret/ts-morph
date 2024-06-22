@@ -14,10 +14,10 @@ Install as usual via npm:
 npm install --save-dev ts-morph
 ```
 
-Or if you're using deno:
+Or if you're using Deno:
 
-```ts
-import { Project } from "https://deno.land/x/ts_morph/mod.ts";
+```
+deno add @ts-morph/ts-morph
 ```
 
 ## Documentation Progress

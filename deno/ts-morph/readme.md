@@ -3,13 +3,13 @@
 To use:
 
 ```ts
-import { Project } from "https://deno.land/x/ts_morph/mod.ts";
+import { Project } from "jsr:@ts-morph/ts-morph";
 ```
 
 Or import `@ts-morph/bootstrap`, which uses the same versioning as ts-morph:
 
 ```ts
-import { createProject } from "https://deno.land/x/ts_morph/bootstrap/mod.ts";
+import { createProject } from "jsr:@ts-morph/bootstrap";
 ```
 
 Please note that this is currently only mostly useful for analyzing Node projects. See [#950](https://github.com/dsherret/ts-morph/issues/950) for details on making it easier to analyze Deno code.

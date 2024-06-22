@@ -1,0 +1,5 @@
+{
+  "name": "@ts-morph/common",
+  "version": "0.22.0",
+  "exports": "./mod.ts"
+}
