@@ -1,9 +1,0 @@
-{
-  "name": "@ts-morph/ts-morph",
-  "version": "22.0.0",
-  "exports": "./mod.ts",
-  "imports": {
-    "@ts-morph/common": "jsr:@ts-morph/common@^0.22",
-    "code-block-writer": "jsr:@david/code-block-writer@^13"
-  }
-}
