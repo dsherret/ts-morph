@@ -1,10 +1,6 @@
 /docs/Gemfile.lock
 /docs/_site
-deno/bootstrap/ts_morph_bootstrap.js
-deno/bootstrap/ts_morph_bootstrap.d.ts
-deno/common
-deno/ts-morph/ts_morph.d.ts
-deno/ts-morph/ts_morph.js
+/deno
 packages/*/node_modules
 packages/*/temp
 packages/*/dist-cg
