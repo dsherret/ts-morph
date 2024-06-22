@@ -17,7 +17,7 @@ npm install --save-dev ts-morph
 Or if you're using Deno:
 
 ```
-deno add @ts-morph/ts-morph
+deno add ts-morph@jsr:@ts-morph/ts-morph
 ```
 
 ## Documentation Progress
