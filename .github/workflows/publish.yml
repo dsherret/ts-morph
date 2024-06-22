@@ -19,6 +19,7 @@ jobs:
       with:
         node-version: '20'
         check-latest: true
+    - run: npm ci
     - name: Build
       run: npm run build:deno
     - name: Publish
