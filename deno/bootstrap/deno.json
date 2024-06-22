@@ -1,8 +1,0 @@
-{
-  "name": "@ts-morph/bootstrap",
-  "version": "0.22.0",
-  "exports": "./mod.ts",
-  "imports": {
-    "@ts-morph/common": "jsr:@ts-morph/common@^0.22"
-  }
-}

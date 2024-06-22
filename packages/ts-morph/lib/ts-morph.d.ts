@@ -9857,7 +9857,7 @@ export declare class TypeChecker {
    */
   getTypeArguments(typeReference: Type): Type<ts.Type>[];
   /** Checks if a type is assignable to another type. */
-  isTypeAssignableTo(sourceType: Type, targetType: Type): boolean;
+  isTypeAssignableTo(sourceType: Type, targetType: Type): any;
   /** Gets the shorthand assignment value symbol of the provided node. */
   getShorthandAssignmentValueSymbol(node: Node): Symbol | undefined;
   resolveName(name: string, location: Node | undefined, meaning: SymbolFlags, excludeGlobals: boolean): Symbol | undefined;
@@ -10008,7 +10008,7 @@ export declare class Type<TType extends ts.Type = ts.Type> {
   /** Gets the symbol of the type or throws. */
   getSymbolOrThrow(message?: string | (() => string)): Symbol;
   /** Gets if the type is assignable to another type. */
-  isAssignableTo(target: Type): boolean;
+  isAssignableTo(target: Type): any;
   /** Gets if this is an anonymous type. */
   isAnonymous(): boolean;
   /** Gets if this is an any type. */
