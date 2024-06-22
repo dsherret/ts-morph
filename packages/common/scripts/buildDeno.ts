@@ -43,7 +43,6 @@ commonFile.saveSync();
 
 const copyDirPath = "../../deno/common/";
 fileSystem.mkdirSync(copyDirPath);
-fileSystem.mkdirSync(`${copyDirPath}/data`);
 fileSystem.copySync(`${folderPath}/ts-morph-common.js`, `${copyDirPath}/ts_morph_common.js`);
 fileSystem.copySync(`${folderPath}/DenoRuntime.ts`, `${copyDirPath}/DenoRuntime.ts`);
 

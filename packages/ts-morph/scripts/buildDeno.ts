@@ -3,13 +3,13 @@ const { Project } = tsMorph;
 
 const project = new Project();
 const fileSystem = project.getFileSystem();
-const destPath = "../../deno";
+const destPath = "../../deno/ts-morph";
 const packageJson = JSON.parse(fileSystem.readFileSync("./package.json"));
 const commonPackageJson = JSON.parse(fileSystem.readFileSync("../common/package.json"));
 
 fileSystem.mkdirSync(destPath);
-fileSystem.copySync("./dist-deno/ts-morph.js", `${destPath}/ts-morph/ts_morph.js`);
-fileSystem.copySync("./lib/ts-morph.d.ts", `${destPath}/ts-morph/ts_morph.d.ts`);
+fileSystem.copySync("./dist-deno/ts-morph.js", `${destPath}/ts_morph.js`);
+fileSystem.copySync("./lib/ts-morph.d.ts", `${destPath}/ts_morph.d.ts`);
 fileSystem.writeFileSync(`${destPath}/mod.ts`, `// @deno-types="./ts_morph.d.ts"\nexport * from "./ts_morph.js";\n`);
 fileSystem.writeFileSync(
   `${destPath}/deno.json`,
