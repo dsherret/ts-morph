@@ -363,6 +363,14 @@ describe("ImportDeclaration", () => {
     it("should remove it when named imports exists", () => {
       doTest(`import name, { test } from './file';`, `import { test } from './file';`);
     });
+
+    it("should handle import type", () => {
+      doTest(`import type test from './file';`, `import type {} from './file';`);
+    });
+
+    it("should handle import type with named imports", () => {
+      doTest(`import type test, { other } from './file';`, `import type { other } from './file';`);
+    });
   });
 
   describe(nameof<ImportDeclaration>("removeNamespaceImport"), () => {

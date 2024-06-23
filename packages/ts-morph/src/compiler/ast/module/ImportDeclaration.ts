@@ -237,13 +237,24 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
     if (defaultImport == null)
       return this;
 
-    const hasOnlyDefaultImport = importClause.getChildCount() === 1;
+    const hasOnlyDefaultImport = importClause.getNamedBindings() == null;
     if (hasOnlyDefaultImport) {
-      removeChildren({
-        children: [importClause, importClause.getNextSiblingIfKindOrThrow(SyntaxKind.FromKeyword)],
-        removePrecedingSpaces: true,
-        removePrecedingNewLines: true,
-      });
+      if (importClause.isTypeOnly()) {
+        insertIntoParentTextRange({
+          parent: importClause,
+          newText: "{}",
+          insertPos: defaultImport.getStart(),
+          replacing: {
+            textLength: defaultImport.getWidth(),
+          },
+        });
+      } else {
+        removeChildren({
+          children: [importClause, importClause.getNextSiblingIfKindOrThrow(SyntaxKind.FromKeyword)],
+          removePrecedingSpaces: true,
+          removePrecedingNewLines: true,
+        });
+      }
     } else {
       removeChildren({
         children: [defaultImport, defaultImport.getNextSiblingIfKindOrThrow(SyntaxKind.CommaToken)],
