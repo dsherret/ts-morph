@@ -10029,10 +10029,14 @@ export declare class Type<TType extends ts.Type = ts.Type> {
   isString(): boolean;
   /** Gets if this is a number type. */
   isNumber(): boolean;
+  /** Gets if this is a BigInt. */
+  isBigInt(): boolean;
   /** Gets if this is a literal type. */
   isLiteral(): boolean;
   /** Gets if this is a boolean literal type. */
   isBooleanLiteral(): boolean;
+  /** Gets if this is a BigInt literal type. */
+  isBigIntLiteral(): boolean;
   /** Gets if this is an enum literal type. */
   isEnumLiteral(): boolean;
   /** Gets if this is a number literal type. */

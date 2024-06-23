@@ -444,6 +444,13 @@ export class Type<TType extends ts.Type = ts.Type> {
   }
 
   /**
+   * Gets if this is a BigInt.
+   */
+  isBigInt() {
+    return this.#hasTypeFlag(TypeFlags.BigInt);
+  }
+
+  /**
    * Gets if this is a literal type.
    */
   isLiteral() {
@@ -457,6 +464,13 @@ export class Type<TType extends ts.Type = ts.Type> {
    */
   isBooleanLiteral() {
     return this.#hasTypeFlag(TypeFlags.BooleanLiteral);
+  }
+
+  /**
+   * Gets if this is a BigInt literal type.
+   */
+  isBigIntLiteral() {
+    return this.#hasTypeFlag(TypeFlags.BigIntLiteral);
   }
 
   /**

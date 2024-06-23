@@ -36,6 +36,8 @@ let anyType: any;
 let stringType: string;
 let booleanType: boolean;
 let numberType: number;
+let bigIntType = 5n + 10n;
+const bigIntLiteralType = 5n;
 let booleanLiteralType: true;
 let numberLiteralType: 5;
 let stringLiteralType: 'test';
@@ -152,6 +154,34 @@ let unknownType: unknown;
 
       it("should not be when not never", () => {
         doTest("anyType", false);
+        doTest("stringType", false);
+      });
+    });
+
+    describe(nameof<Type>("isBigInt"), () => {
+      function doTest(typeName: string, expected: boolean) {
+        expect(typesByName[typeName].isBigInt()).to.equal(expected);
+      }
+
+      it("should get when it is", () => {
+        doTest("bigIntType", true);
+      });
+
+      it("should get when it's not", () => {
+        doTest("stringType", false);
+      });
+    });
+
+    describe(nameof<Type>("isBigIntLiteral"), () => {
+      function doTest(typeName: string, expected: boolean) {
+        expect(typesByName[typeName].isBigIntLiteral()).to.equal(expected);
+      }
+
+      it("should get when it is", () => {
+        doTest("bigIntLiteralType", true);
+      });
+
+      it("should get when it's not", () => {
         doTest("stringType", false);
       });
     });
