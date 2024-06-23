@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [23.0.0](https://github.com/dsherret/ts-morph/compare/22.0.0...23.0.0) (2024-06-23)
+
+
+### BREAKING CHANGES
+
+* Upgraded to TypeScript 5.5
+
+### Features
+
+* Type.prototype.isBigInt and isBigIntLiteral ([#1546](https://github.com/dsherret/ts-morph/issues/1546)) ([b3d01c8](https://github.com/dsherret/ts-morph/commit/b3d01c8418dde927c8b37c1fe8819a33406a5c56))
+* TypeScript 5.5 ([#1545](https://github.com/dsherret/ts-morph/issues/1545)) ([868755d](https://github.com/dsherret/ts-morph/commit/868755d25a3d695733be010e304fa3c394fbb86f))
+
+
+### Bug Fixes
+
+* handle removeDefaultImport with type only import ([#1547](https://github.com/dsherret/ts-morph/issues/1547)) ([1cf6a6b](https://github.com/dsherret/ts-morph/commit/1cf6a6b4e0db1d9c802394ac66f55166bd03b83d))
+
 <a name="22.0.0"></a>
 # [22.0.0](https://github.com/dsherret/ts-morph/compare/21.0.1...22.0.0) (2024-03-10)
 
