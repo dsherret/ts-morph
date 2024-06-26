@@ -23,9 +23,9 @@ commonFile.getFunctionOrThrow("isNodeJs").remove();
 commonFile.getImportDeclarationOrThrow("path").remove();
 commonFile.getImportDeclarationOrThrow("minimatch").remove();
 commonFile.getImportDeclarationOrThrow("fast-glob").remove();
-commonFile.getImportDeclarationOrThrow("mkdirp").remove();
 commonFile.getImportDeclarationOrThrow("os").remove();
 commonFile.getImportDeclarationOrThrow("fs").remove();
+commonFile.getImportDeclarationOrThrow("fs/promises").remove();
 commonFile.getVariableDeclarationOrThrow("path$1").remove();
 
 const runtimeFileDestinationPath = `${folderPath}/DenoRuntime.ts`;

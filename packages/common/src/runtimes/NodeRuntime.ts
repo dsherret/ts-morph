@@ -1,7 +1,7 @@
 import fastGlob from "fast-glob";
 import * as fs from "fs";
+import * as fsp from "fs/promises";
 import * as minimatch from "minimatch";
-import * as mkdirp from "mkdirp";
 import * as os from "os";
 import * as path from "path";
 import { Runtime, RuntimeFileInfo, RuntimeFileSystem, RuntimePath } from "./Runtime";
@@ -97,11 +97,11 @@ class NodeRuntimeFileSystem implements RuntimeFileSystem {
   }
 
   async mkdir(dirPath: string) {
-    await mkdirp.mkdirp(dirPath);
+    await fsp.mkdir(dirPath, { recursive: true });
   }
 
   mkdirSync(dirPath: string) {
-    mkdirp.sync(dirPath);
+    fs.mkdirSync(dirPath, { recursive: true });
   }
 
   move(srcPath: string, destPath: string) {

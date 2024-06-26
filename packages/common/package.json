@@ -21,7 +21,6 @@
   "dependencies": {
     "fast-glob": "^3.3.2",
     "minimatch": "^9.0.4",
-    "mkdirp": "^3.0.1",
     "path-browserify": "^1.0.1"
   },
   "devDependencies": {
