@@ -74,7 +74,6 @@
     "fs": false,
     "os": false,
     "fs.realpath": false,
-    "mkdirp": false,
     "dir-glob": false,
     "graceful-fs": false,
     "fast-glob": false,
