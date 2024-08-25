@@ -77,7 +77,7 @@
     "mkdirp": false,
     "dir-glob": false,
     "graceful-fs": false,
-    "fast-glob": false,
+    "tinyglobby": false,
     "source-map-support": false,
     "glob-parent": false,
     "glob": false
