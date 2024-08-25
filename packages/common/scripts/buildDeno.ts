@@ -62,6 +62,7 @@ fileSystem.writeFileSync(
     {
       "name": "@ts-morph/common",
       "version": packageJson.version,
+      "license": "MIT",
       "exports": "./mod.ts",
       "imports": {
         "@std/fs": "jsr:@std/fs@^0.229.3",
