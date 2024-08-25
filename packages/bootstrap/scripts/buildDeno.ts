@@ -30,7 +30,7 @@ fileSystem.writeFileSync(
   `${destPath}/../deno.json`,
   JSON.stringify(
     {
-      "workspaces": [
+      "workspace": [
         "./bootstrap",
         "./common",
         "./ts-morph",
