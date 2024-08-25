@@ -1,4 +1,4 @@
-import fastGlob from "fast-glob";
+import { glob, globSync } from "tinyglobby";
 import * as fs from "fs";
 import * as fsp from "fs/promises";
 import * as minimatch from "minimatch";
@@ -163,14 +163,18 @@ class NodeRuntimeFileSystem implements RuntimeFileSystem {
   }
 
   glob(patterns: ReadonlyArray<string>) {
-    return fastGlob(patterns as string[], {
+    return glob({
+      patterns: patterns as string[],
+      expandDirectories: false,
       cwd: this.getCurrentDirectory(),
       absolute: true,
     });
   }
 
   globSync(patterns: ReadonlyArray<string>) {
-    return fastGlob.sync(patterns as string[], {
+    return globSync({
+      patterns: patterns as string[],
+      expandDirectories: false,
       cwd: this.getCurrentDirectory(),
       absolute: true,
     });

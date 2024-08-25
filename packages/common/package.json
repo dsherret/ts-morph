@@ -19,9 +19,9 @@
     "rollup": "rollup --config"
   },
   "dependencies": {
-    "fast-glob": "^3.3.2",
     "minimatch": "^9.0.4",
-    "path-browserify": "^1.0.1"
+    "path-browserify": "^1.0.1",
+    "tinyglobby": "^0.1.2"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.6",
