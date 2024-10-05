@@ -21,8 +21,7 @@ describe("NamespaceExport", () => {
   });
 
   describe(nameof<NamespaceExport>("rename"), () => {
-    // Doesn't work. Opened https://github.com/microsoft/TypeScript/issues/36836
-    it.skip("should rename what's imported", () => {
+    it("should rename what's imported", () => {
       const { descendant, sourceFile, project } = getNamespaceExport("export * as ts from './file';");
       const otherSourceFile = project.createSourceFile("file.ts", "export class name {}\nexport class newName {}");
       const importSourceFile = project.createSourceFile("file2.ts", "import { ts } from './main'; const t = ts;");
