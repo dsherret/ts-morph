@@ -1,4 +1,5 @@
 import { expect } from "chai";
+import { Identifier } from "../../compiler";
 import { getInfoFromText } from "../compiler/testHelpers";
 
 describe("tests for issue #494", () => {
@@ -15,7 +16,7 @@ describe("tests for issue #494", () => {
     expect(pizzaAliasedSymbol.getDeclarations().map(d => d.getText())).to.deep.equal([pizzaClassText]);
 
     // alternatively, use "go to definition"
-    const definitions = pizzaImport.getDefinitions();
+    const definitions = (pizzaImport as Identifier).getDefinitions();
     expect(definitions.map(d => d.getNode().getParentOrThrow().getText())).to.deep.equal([pizzaClassText]);
   });
 });

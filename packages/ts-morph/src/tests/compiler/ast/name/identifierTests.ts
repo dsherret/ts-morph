@@ -164,7 +164,8 @@ const t = MyNamespace.MyClass;
       const mainSourceFile = project.createSourceFile("main.ts", `import * as ts from "./Test"; export { ts };`);
       project.createSourceFile("Test.ts", `export class Test {}`);
 
-      expect(mainSourceFile.getExportDeclarations()[0].getNamedExports()[0].getNameNode().getDefinitionNodes().map(t => t.getText()))
+      const ident = mainSourceFile.getExportDeclarations()[0].getNamedExports()[0].getNameNode();
+      expect((ident as Identifier).getDefinitionNodes().map(t => t.getText()))
         .to.deep.equal([`export class Test {}`].sort());
     });
   });

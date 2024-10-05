@@ -39,14 +39,18 @@ export class RenameNodeHandler extends StraightReplacementNodeHandler {
     return;
 
     function handleImportOrExportSpecifier(compilerFactory: CompilerFactory) {
+      function getNameText(node: ts.ModuleExportName) {
+        return node.kind === SyntaxKind.Identifier ? node.escapedText : node.text;
+      }
+
       // move the name to the property name. Ex. { a } -> { b as a } or { a } -> { a as b }
-      const currentIdentifier = (currentNode as ImportSpecifier | ExportSpecifier).getNameNode();
+      const currentName = (currentNode as ImportSpecifier | ExportSpecifier).getNameNode();
       const newSpecifier = newNode as ts.ImportSpecifier | ts.ExportSpecifier;
       const newPropertyName = newSpecifier.propertyName!;
       const newName = newSpecifier.name;
-      const newIdentifier = newPropertyName.escapedText === currentIdentifier.compilerNode.escapedText ? newName : newPropertyName;
+      const newIdentifier = getNameText(newPropertyName) === getNameText(currentName.compilerNode) ? newName : newPropertyName;
 
-      compilerFactory.replaceCompilerNode(currentIdentifier, newIdentifier);
+      compilerFactory.replaceCompilerNode(currentName, newIdentifier);
       compilerFactory.replaceCompilerNode(currentNode, newNode);
     }
   }

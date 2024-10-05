@@ -88,7 +88,7 @@ describe("NamedNode", () => {
       const { sourceFile } = getInfoFromText<VariableStatement>("const a = 1; export { a };");
       const exportSpecifier = sourceFile.getExportDeclarations()[0].getNamedExports()[0];
       const exportIdentifier = exportSpecifier.getNameNode();
-      exportIdentifier.rename("c", { usePrefixAndSuffixText: true });
+      (exportIdentifier as Identifier).rename("c", { usePrefixAndSuffixText: true });
       expect(sourceFile.getFullText()).to.equal("const a = 1; export { a as c };");
       expect(exportSpecifier.getText()).to.equal("a as c");
       expect(exportIdentifier.getText()).to.equal("c");
@@ -98,7 +98,7 @@ describe("NamedNode", () => {
       const { sourceFile } = getInfoFromText<VariableStatement>("import { a } from './a'; const b = a;");
       const importSpecifier = sourceFile.getImportDeclarations()[0].getNamedImports()[0];
       const importIdentifier = importSpecifier.getNameNode();
-      importIdentifier.rename("c", { usePrefixAndSuffixText: true });
+      (importIdentifier as Identifier).rename("c", { usePrefixAndSuffixText: true });
       expect(sourceFile.getFullText()).to.equal("import { a as c } from './a'; const b = c;");
       expect(importSpecifier.getText()).to.equal("a as c");
       expect(importIdentifier.getText()).to.equal("c");
