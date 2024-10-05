@@ -336,8 +336,21 @@ describe("StringUtils", () => {
       doTest("  test\n  \n  test", "test\n\ntest", { indentSizeInSpaces: 2 });
     });
 
+    it("should handle lines that only have indentation with slash r slash n", () => {
+      doTest("  test\r\n  \r\n  test", "test\r\n\r\ntest", { indentSizeInSpaces: 2 });
+    });
+
     it("should ignore empty lines", () => {
       doTest("  test\n\n  test", "test\n\ntest", { indentSizeInSpaces: 2 });
+    });
+
+    it("should ignore empty lines with slash r slash n", () => {
+      doTest("  test\r\n\r\n  test", "test\r\n\r\ntest", { indentSizeInSpaces: 2 });
+    });
+
+    it("should handle newlines at the end", () => {
+      doTest("\n\n", "\n\n", { indentSizeInSpaces: 2 });
+      doTest("  \n  test\n    ", "\ntest\n  ", { indentSizeInSpaces: 2 });
     });
   });
 

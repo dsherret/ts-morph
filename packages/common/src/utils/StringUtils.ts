@@ -148,8 +148,7 @@ export class StringUtils {
 
   static removeIndentation(str: string, opts: { isInStringAtPos: (pos: number) => boolean; indentSizeInSpaces: number }) {
     const { isInStringAtPos, indentSizeInSpaces } = opts;
-    const startPositions: number[] = [];
-    const endPositions: number[] = [];
+    const positions: [number, number][] = [];
     let minIndentWidth: number | undefined;
 
     analyze();
@@ -165,50 +164,57 @@ export class StringUtils {
           continue;
         }
 
-        startPositions.push(i);
+        let startPosition = i;
 
         let spacesCount = 0;
         let tabsCount = 0;
 
         while (true) {
-          if (str.charCodeAt(i) === CharCodes.SPACE)
+          let charCode = str.charCodeAt(i);
+          if (charCode === CharCodes.SPACE)
             spacesCount++;
-          else if (str.charCodeAt(i) === CharCodes.TAB)
+          else if (charCode === CharCodes.TAB)
             tabsCount++;
-          else
+          else if (charCode === CharCodes.NEWLINE || charCode === CharCodes.CARRIAGE_RETURN && str.charCodeAt(i + 1) === CharCodes.NEWLINE) {
+            spacesCount = 0;
+            tabsCount = 0;
+            positions.push([startPosition, i]);
+            if (charCode === CharCodes.CARRIAGE_RETURN) {
+              startPosition = i + 2;
+              i++;
+            } else {
+              startPosition = i + 1;
+            }
+          } else if (charCode == null)
             break;
+          else {
+            // indentation for spaces rounds up to the nearest tab size multiple
+            const indentWidth = Math.ceil(spacesCount / indentSizeInSpaces) * indentSizeInSpaces + tabsCount * indentSizeInSpaces;
+            if (minIndentWidth == null || indentWidth < minIndentWidth)
+              minIndentWidth = indentWidth;
+
+            positions.push([startPosition, i]);
+            isAtStartOfLine = false;
+            break;
+          }
 
           i++;
         }
-
-        // indentation for spaces rounds up to the nearest tab size multiple
-        const indentWidth = Math.ceil(spacesCount / indentSizeInSpaces) * indentSizeInSpaces + tabsCount * indentSizeInSpaces;
-        if (str.charCodeAt(i) !== CharCodes.NEWLINE && (minIndentWidth == null || indentWidth < minIndentWidth))
-          minIndentWidth = indentWidth;
-
-        endPositions.push(i);
-        isAtStartOfLine = false;
-
-        // this check is needed for lines that are empty or consist purely of spaces/tabs
-        if (str.charCodeAt(i) === CharCodes.NEWLINE)
-          i--;
       }
     }
 
     function buildString() {
-      if (startPositions.length === 0)
+      if (positions.length === 0)
         return str;
       if (minIndentWidth == null || minIndentWidth === 0)
         return str;
 
       const deindentWidth = minIndentWidth;
       let result = "";
-      result += str.substring(0, startPositions[0]);
-      let lastEndPos = startPositions[0];
+      result += str.substring(0, positions[0][0]);
 
-      for (let i = 0; i < startPositions.length; i++) {
-        const startPosition = startPositions[i];
-        const endPosition = endPositions[i];
+      for (let i = 0; i < positions.length; i++) {
+        const [startPosition, endPosition] = positions[i];
         let indentCount = 0;
         let pos: number;
         for (pos = startPosition; pos < endPosition; pos++) {
@@ -220,11 +226,8 @@ export class StringUtils {
             indentCount += indentSizeInSpaces;
         }
 
-        lastEndPos = startPositions[i + 1] == null ? str.length : startPositions[i + 1];
-        result += str.substring(pos, lastEndPos);
+        result += str.substring(pos, positions[i + 1]?.[0] ?? str.length);
       }
-
-      result += str.substring(lastEndPos);
 
       return result;
     }
