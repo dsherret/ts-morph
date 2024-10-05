@@ -15,6 +15,7 @@ import {
   Scope,
   SetAccessorDeclaration,
 } from "../../../../../compiler";
+import { Project } from "../../../../../main";
 import {
   ClassMemberStructures,
   ClassStaticBlockDeclarationStructure,
@@ -27,7 +28,6 @@ import {
 } from "../../../../../structures";
 import { WriterFunction } from "../../../../../types";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia } from "../../../testHelpers";
-import { Project } from "../../../../../main";
 
 describe("ClassLikeDeclarationBase", () => {
   function getInfoFromTextForClassLike(text: string) {

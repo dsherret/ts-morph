@@ -1,6 +1,8 @@
 import { ts } from "@ts-morph/common";
+import { isValidVariableName } from "../../../utils";
 import { RenameableNode } from "../base";
 import { Node } from "../common";
+import { StringLiteral } from "../literal";
 
 export const NamespaceExportBase = RenameableNode(Node);
 export class NamespaceExport extends NamespaceExportBase<ts.NamespaceExport> {
@@ -9,10 +11,13 @@ export class NamespaceExport extends NamespaceExportBase<ts.NamespaceExport> {
    */
   setName(name: string) {
     const nameNode = this.getNameNode();
-    if (nameNode.getText() === name)
+    if (this.getName() === name)
       return this;
 
-    nameNode.replaceWithText(name);
+    if (isValidVariableName(name))
+      nameNode.replaceWithText(name);
+    else
+      nameNode.replaceWithText(`"${name.replaceAll("\"", "\\\"")}"`);
     return this;
   }
 
@@ -20,7 +25,11 @@ export class NamespaceExport extends NamespaceExportBase<ts.NamespaceExport> {
    * Gets the name of the namespace export.
    */
   getName() {
-    return this.getNameNode().getText();
+    const nameNode = this.getNameNode();
+    if (nameNode.getKind() === ts.SyntaxKind.StringLiteral)
+      return (nameNode as StringLiteral).getLiteralText();
+    else
+      return this.getNameNode().getText();
   }
 
   /**

@@ -1,9 +1,9 @@
-import { glob, globSync } from "tinyglobby";
 import * as fs from "fs";
 import * as fsp from "fs/promises";
 import * as minimatch from "minimatch";
 import * as os from "os";
 import * as path from "path";
+import { glob, globSync } from "tinyglobby";
 import { Runtime, RuntimeFileInfo, RuntimeFileSystem, RuntimePath } from "./Runtime";
 
 export class NodeRuntime implements Runtime {

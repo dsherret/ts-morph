@@ -881,7 +881,7 @@ export declare class Writers {
 
 export type WriterFunctionOrValue = string | number | WriterFunction;
 export type AssertionKey = Identifier | StringLiteral;
-export type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName | PrivateIdentifier | NoSubstitutionTemplateLiteral;
+export type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName | PrivateIdentifier | NoSubstitutionTemplateLiteral | BigIntLiteral;
 export type ModuleName = Identifier | StringLiteral;
 export type AccessorDeclaration = GetAccessorDeclaration | SetAccessorDeclaration;
 export type ArrayBindingElement = BindingElement | OmittedExpression;
@@ -6987,7 +6987,7 @@ export declare class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecif
   /** Gets the name of the export specifier. */
   getName(): string;
   /** Gets the name node of what's being exported. */
-  getNameNode(): Identifier;
+  getNameNode(): StringLiteral | Identifier;
   /**
    * Sets the alias for the name being exported and renames all the usages.
    * @param alias - Alias to set.
@@ -7006,7 +7006,7 @@ export declare class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecif
   /** Removes the alias and renames any usages to the name of the export specifier. */
   removeAliasWithRename(): this;
   /** Gets the alias identifier, if it exists. */
-  getAliasNode(): Identifier | undefined;
+  getAliasNode(): StringLiteral | Identifier | undefined;
   /** Gets if this is a type only import specifier. */
   isTypeOnly(): boolean;
   /** Sets if this is a type only import specifier. */
@@ -7254,7 +7254,7 @@ export declare class ImportSpecifier extends ImportSpecifierBase<ts.ImportSpecif
   /** Gets the name of the import specifier. */
   getName(): string;
   /** Gets the name node of what's being imported. */
-  getNameNode(): Identifier;
+  getNameNode(): StringLiteral | Identifier;
   /**
    * Sets the alias for the name being imported and renames all the usages.
    * @param alias - Alias to set.
@@ -7396,7 +7396,7 @@ export declare class NamespaceExport extends NamespaceExportBase<ts.NamespaceExp
   /** Gets the name of the namespace export. */
   getName(): string;
   /** Gets the namespace export's name node. */
-  getNameNode(): Identifier;
+  getNameNode(): StringLiteral | Identifier;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.NamespaceExport>;
   /** @inheritdoc **/

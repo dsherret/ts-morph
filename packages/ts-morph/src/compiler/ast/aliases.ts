@@ -40,6 +40,7 @@ import {
   JsxText,
 } from "./jsx";
 import {
+  BigIntLiteral,
   FalseLiteral,
   NoSubstitutionTemplateLiteral,
   NumericLiteral,
@@ -59,7 +60,14 @@ type WrappedToCompilerNodeType<T extends Node> = T["compilerNode"];
 export type AssertionKey = Identifier | StringLiteral;
 type _AssertionKeyTest = AssertTrue<IsExact<WrappedToCompilerNodeType<AssertionKey>, ts.AssertionKey>>;
 
-export type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName | PrivateIdentifier | NoSubstitutionTemplateLiteral;
+export type PropertyName =
+  | Identifier
+  | StringLiteral
+  | NumericLiteral
+  | ComputedPropertyName
+  | PrivateIdentifier
+  | NoSubstitutionTemplateLiteral
+  | BigIntLiteral;
 type _PropertyNameTest = AssertTrue<IsExact<WrappedToCompilerNodeType<PropertyName>, ts.PropertyName>>;
 
 export type ModuleName = Identifier | StringLiteral;
