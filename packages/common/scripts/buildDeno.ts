@@ -65,8 +65,8 @@ fileSystem.writeFileSync(
       "license": "MIT",
       "exports": "./mod.ts",
       "imports": {
-        "@std/fs": "jsr:@std/fs@^0.229.3",
-        "@std/path": "jsr:@std/path@^0.225.2",
+        "@std/fs": "jsr:@std/fs@1",
+        "@std/path": "jsr:@std/path@1",
       },
     },
     null,

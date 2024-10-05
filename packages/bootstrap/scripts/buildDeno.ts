@@ -45,7 +45,7 @@ fileSystem.writeFileSync(
 fileSystem.writeFileSync(
   `${destPath}/basic_test.ts`,
   `
-import { assertEquals } from "jsr:@std/assert@0.225.3";
+import { assertEquals } from "jsr:@std/assert@1";
 import { createProjectSync } from "./mod.ts";
 
 // todo: Eventually all tests run for the node package should also be run for Deno

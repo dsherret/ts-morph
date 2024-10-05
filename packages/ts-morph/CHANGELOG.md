@@ -2,8 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [23.0.0](https://github.com/dsherret/ts-morph/compare/22.0.0...23.0.0) (2024-06-23)
+## [24.0.0](https://github.com/dsherret/ts-morph/compare/23.0.0...24.0.0) (2024-10-05)
 
+### BREAKING CHANGES
+
+* Upgraded to TypeScript 5.6
+
+### Features
+
+* TypeScript 5.6 ([#1576](https://github.com/dsherret/ts-morph/issues/1576)) ([d7bad92](https://github.com/dsherret/ts-morph/commit/d7bad92f6922c4043ede5872ded3dc4a46f25587))
+
+
+### Bug Fixes
+
+* getBodyText() doesn't work as would be expected ([#1560](https://github.com/dsherret/ts-morph/issues/1560)) ([81dc87d](https://github.com/dsherret/ts-morph/commit/81dc87dc3705b2827dd188e35c47e21d46130175))
+* getDerivedClasses() isn't correct in some cases ([#1557](https://github.com/dsherret/ts-morph/issues/1557)) ([0d38985](https://github.com/dsherret/ts-morph/commit/0d38985c3a701fa38c379332e188812f5302d503))
+
+## [23.0.0](https://github.com/dsherret/ts-morph/compare/22.0.0...23.0.0) (2024-06-23)
 
 ### BREAKING CHANGES
 
