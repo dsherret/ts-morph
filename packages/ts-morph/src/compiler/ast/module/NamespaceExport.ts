@@ -29,7 +29,7 @@ export class NamespaceExport extends NamespaceExportBase<ts.NamespaceExport> {
     if (nameNode.getKind() === ts.SyntaxKind.StringLiteral)
       return (nameNode as StringLiteral).getLiteralText();
     else
-      return this.getNameNode().getText();
+      return nameNode.getText();
   }
 
   /**

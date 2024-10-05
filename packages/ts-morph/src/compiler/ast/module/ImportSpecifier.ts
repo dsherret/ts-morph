@@ -35,7 +35,7 @@ export class ImportSpecifier extends ImportSpecifierBase<ts.ImportSpecifier> {
     if (nameNode.getKind() === ts.SyntaxKind.StringLiteral)
       return (nameNode as StringLiteral).getLiteralText();
     else
-      return this.getNameNode().getText();
+      return nameNode.getText();
   }
 
   /**

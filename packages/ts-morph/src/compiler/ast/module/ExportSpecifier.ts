@@ -37,7 +37,7 @@ export class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecifier> {
     if (nameNode.getKind() === ts.SyntaxKind.StringLiteral)
       return (nameNode as StringLiteral).getLiteralText();
     else
-      return this.getNameNode().getText();
+      return nameNode.getText();
   }
 
   /**
@@ -57,14 +57,14 @@ export class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecifier> {
       return this;
     }
 
-    let aliasIdentifier = this.getAliasNode();
-    if (aliasIdentifier == null) {
+    let aliasNode = this.getAliasNode();
+    if (aliasNode == null) {
       // trick is to insert an alias with the same name, then rename the alias. TS compiler will take care of the rest.
       this.setAlias(this.getName());
-      aliasIdentifier = this.getAliasNode()!;
+      aliasNode = this.getAliasNode()!;
     }
-    if (aliasIdentifier.getKind() === SyntaxKind.Identifier)
-      (aliasIdentifier as Identifier).rename(alias);
+    if (aliasNode.getKind() === SyntaxKind.Identifier)
+      (aliasNode as Identifier).rename(alias);
     return this;
   }
 
@@ -78,16 +78,17 @@ export class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecifier> {
       return this;
     }
 
-    const aliasIdentifier = this.getAliasNode();
-    if (aliasIdentifier == null) {
+    const aliasNode = this.getAliasNode();
+    if (aliasNode == null) {
       insertIntoParentTextRange({
         insertPos: this.getNameNode().getEnd(),
         parent: this,
         newText: ` as ${alias}`,
       });
-    } else {
-      aliasIdentifier.replaceWithText(alias);
-    }
+    } else if (isValidVariableName(alias))
+      aliasNode.replaceWithText(alias);
+    else
+      aliasNode.replaceWithText(`"${alias.replaceAll("\"", "\\\"")}"`);
 
     return this;
   }
@@ -97,12 +98,12 @@ export class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecifier> {
    * @remarks Use removeAliasWithRename() if you want it to rename any usages to the name of the export specifier.
    */
   removeAlias() {
-    const aliasIdentifier = this.getAliasNode();
-    if (aliasIdentifier == null)
+    const aliasNode = this.getAliasNode();
+    if (aliasNode == null)
       return this;
 
     removeChildren({
-      children: [this.getFirstChildByKindOrThrow(SyntaxKind.AsKeyword), aliasIdentifier],
+      children: [this.getFirstChildByKindOrThrow(SyntaxKind.AsKeyword), aliasNode],
       removePrecedingSpaces: true,
       removePrecedingNewLines: true,
     });
@@ -114,12 +115,12 @@ export class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecifier> {
    * Removes the alias and renames any usages to the name of the export specifier.
    */
   removeAliasWithRename() {
-    const aliasIdentifier = this.getAliasNode();
-    if (aliasIdentifier == null)
+    const aliasNode = this.getAliasNode();
+    if (aliasNode == null)
       return this;
 
-    if (aliasIdentifier.getKind() === SyntaxKind.Identifier)
-      (aliasIdentifier as Identifier).rename(this.getName());
+    if (aliasNode.getKind() === SyntaxKind.Identifier)
+      (aliasNode as Identifier).rename(this.getName());
     this.removeAlias();
 
     return this;

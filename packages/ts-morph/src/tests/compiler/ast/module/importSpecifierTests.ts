@@ -13,6 +13,12 @@ describe("ImportSpecifier", () => {
       namedImport.setName("newName");
       expect(sourceFile.getText()).to.equal("import {newName} from './file'; const t = name;");
       expect(otherSourceFile.getText()).to.equal("export class name {}\nexport class newName {}");
+      namedImport.setAlias("newName");
+      namedImport.setName("new-Name");
+      expect(sourceFile.getText()).to.equal("import {\"new-Name\" as newName} from './file'; const t = name;");
+      expect(namedImport.getName()).to.equal("new-Name");
+      namedImport.setName("newName");
+      expect(sourceFile.getText()).to.equal("import {newName as newName} from './file'; const t = name;");
     });
 
     it("should set only the identifier when an alias already exists", () => {

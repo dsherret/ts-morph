@@ -65,6 +65,8 @@ describe("ExportSpecifier", () => {
       });
       exportsFile.getExportDeclarations()[0].getNamedExports()[0].setName("MyNewName");
       expect(exportsFile.getFullText()).to.equal(`export { MyNewName as MyAlias } from "./MyClass";\n`);
+      exportsFile.getExportDeclarations()[0].getNamedExports()[0].setAlias("test-test");
+      expect(exportsFile.getFullText()).to.equal(`export { MyNewName as "test-test" } from "./MyClass";\n`);
     });
 
     it("should rename in current file if exporting from current file", () => {
