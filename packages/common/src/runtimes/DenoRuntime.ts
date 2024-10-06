@@ -24,7 +24,6 @@ export class DenoRuntime {
     return stdPath.globToRegExp(pattern, {
       extended: true,
       globstar: true,
-      os: "linux", // use the same behaviour across all operating systems
     }).test(path);
   }
 }
