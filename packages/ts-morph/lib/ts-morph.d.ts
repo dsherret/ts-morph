@@ -888,13 +888,14 @@ export type ArrayBindingElement = BindingElement | OmittedExpression;
 export type BindingName = Identifier | BindingPattern;
 export type BindingPattern = ObjectBindingPattern | ArrayBindingPattern;
 export type BooleanLiteral = TrueLiteral | FalseLiteral;
-export type CallLikeExpression = CallExpression | NewExpression | TaggedTemplateExpression | Decorator | JsxOpeningLikeElement | InstanceofExpression;
+export type CallLikeExpression = CallExpression | NewExpression | TaggedTemplateExpression | Decorator | JsxCallLike | InstanceofExpression;
 export type EntityNameExpression = Identifier | PropertyAccessExpression;
 export type DeclarationName = PropertyName | JsxAttributeName | StringLiteralLike | ElementAccessExpression | BindingPattern | EntityNameExpression;
 export type EntityName = Identifier | QualifiedName;
 export type JsxChild = JsxText | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment;
 export type JsxAttributeName = Identifier | JsxNamespacedName;
 export type JsxAttributeLike = JsxAttribute | JsxSpreadAttribute;
+export type JsxCallLike = JsxOpeningLikeElement | JsxOpeningFragment;
 export type JsxOpeningLikeElement = JsxSelfClosingElement | JsxOpeningElement;
 export type JsxTagNameExpression = Identifier | ThisExpression | JsxTagNamePropertyAccess | JsxNamespacedName;
 

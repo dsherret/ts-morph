@@ -35,6 +35,7 @@ import {
   JsxFragment,
   JsxNamespacedName,
   JsxOpeningElement,
+  JsxOpeningFragment,
   JsxSelfClosingElement,
   JsxSpreadAttribute,
   JsxText,
@@ -88,7 +89,7 @@ type _BindingPatternTest = AssertTrue<IsExact<WrappedToCompilerNodeType<BindingP
 export type BooleanLiteral = TrueLiteral | FalseLiteral;
 type _BooleanLiteralTest = AssertTrue<IsExact<WrappedToCompilerNodeType<BooleanLiteral>, ts.BooleanLiteral>>;
 
-export type CallLikeExpression = CallExpression | NewExpression | TaggedTemplateExpression | Decorator | JsxOpeningLikeElement | InstanceofExpression;
+export type CallLikeExpression = CallExpression | NewExpression | TaggedTemplateExpression | Decorator | JsxCallLike | InstanceofExpression;
 type _CallLikeExpressionTest = AssertTrue<IsExact<WrappedToCompilerNodeType<CallLikeExpression>, ts.CallLikeExpression>>;
 
 export type EntityNameExpression = Identifier | PropertyAccessExpression;
@@ -116,6 +117,9 @@ type _JsxAttributeNameTest = AssertTrue<IsExact<WrappedToCompilerNodeType<JsxAtt
 
 export type JsxAttributeLike = JsxAttribute | JsxSpreadAttribute;
 type _JsxAttributeLikeTest = AssertTrue<IsExact<WrappedToCompilerNodeType<JsxAttributeLike>, ts.JsxAttributeLike>>;
+
+export type JsxCallLike = JsxOpeningLikeElement | JsxOpeningFragment;
+type _JsxCallLikeTest = AssertTrue<IsExact<WrappedToCompilerNodeType<JsxCallLike>, ts.JsxCallLike>>;
 
 export type JsxOpeningLikeElement = JsxSelfClosingElement | JsxOpeningElement;
 type _JsxOpeningLikeElementTest = AssertTrue<IsExact<WrappedToCompilerNodeType<JsxOpeningLikeElement>, ts.JsxOpeningLikeElement>>;
