@@ -168,7 +168,7 @@ export class ImportSpecifier extends ImportSpecifierBase<ts.ImportSpecifier> {
     const importDeclaration = this.getImportDeclaration();
     const namedImports = importDeclaration.getNamedImports();
 
-    if (namedImports.length > 1)
+    if (namedImports.length > 1 || importDeclaration.getNamespaceImport() == null && importDeclaration.getDefaultImport() == null)
       removeCommaSeparatedChild(this);
     else
       importDeclaration.removeNamedImports();

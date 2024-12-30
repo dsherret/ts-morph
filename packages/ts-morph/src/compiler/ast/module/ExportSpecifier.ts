@@ -192,14 +192,12 @@ export class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecifier> {
    */
   remove() {
     const exportDeclaration = this.getExportDeclaration();
-    const exports = exportDeclaration.getNamedExports();
+    const namedExports = exportDeclaration.getNamedExports();
 
-    if (exports.length > 1)
+    if (namedExports.length > 1 || exportDeclaration.getNamespaceExport() == null)
       removeCommaSeparatedChild(this);
-    else if (exportDeclaration.hasModuleSpecifier())
-      exportDeclaration.toNamespaceExport();
     else
-      exportDeclaration.remove();
+      exportDeclaration.toNamespaceExport();
   }
 
   /**

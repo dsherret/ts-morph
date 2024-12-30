@@ -221,7 +221,7 @@ describe("ImportSpecifier", () => {
     });
 
     it("should remove the named imports when only one exist", () => {
-      doTest(`import {Name1} from "module-name";`, "Name1", `import "module-name";`);
+      doTest(`import {Name1} from "module-name";`, "Name1", `import {} from "module-name";`);
     });
 
     it("should remove the named imports when only one exists and a default import exist", () => {

@@ -339,11 +339,11 @@ describe("ExportSpecifier", () => {
     }
 
     it("should change to a namespace import when there's only one to remove and a module specifier exists", () => {
-      doTest(`export {name} from "./test";`, "name", `export * from "./test";`);
+      doTest(`export {name} from "./test";`, "name", `export {} from "./test";`);
     });
 
-    it("should remove the export declaration when there's only one to remove and no module specifier exists", () => {
-      doTest(`export {name};`, "name", ``);
+    it("should not remove the export declaration when there's only one to remove and no module specifier exists", () => {
+      doTest(`export {name};`, "name", `export {};`);
     });
 
     it("should remove the named import when it's the first", () => {
