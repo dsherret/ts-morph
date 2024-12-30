@@ -1,6 +1,6 @@
-import { nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
-import { AsyncableNode, FunctionDeclaration } from "../../../../compiler";
+import { AsyncableNode, FunctionDeclaration, Node, VariableStatement } from "../../../../compiler";
 import { AsyncableNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
@@ -43,8 +43,10 @@ describe("AsyncableNode", () => {
 
   describe(nameof<AsyncableNode>("setIsAsync"), () => {
     function doTest(text: string, value: boolean, expected: string) {
-      const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(text);
-      firstChild.setIsAsync(value);
+      let { firstChild, sourceFile } = getInfoFromText(text);
+      if (firstChild.getKind() === SyntaxKind.VariableStatement)
+        firstChild = (firstChild as VariableStatement).getDeclarations()[0].getInitializerOrThrow();
+      (firstChild as any as AsyncableNode).setIsAsync(value);
       expect(sourceFile.getText()).to.equal(expected);
     }
 
@@ -54,6 +56,12 @@ describe("AsyncableNode", () => {
 
     it("should set as not async when async", () => {
       doTest("async function Identifier() {}", false, "function Identifier() {}");
+    });
+
+    it("should handle arrow function", () => {
+      doTest("const f = a => a * 2;", true, "const f = async a => a * 2;");
+      doTest("const f = async a => a * 2;", true, "const f = async a => a * 2;");
+      doTest("const f = async a => a * 2;", false, "const f = a => a * 2;");
     });
   });
 

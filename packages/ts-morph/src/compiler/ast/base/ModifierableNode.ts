@@ -161,6 +161,8 @@ export function ModifierableNode<T extends Constructor<ModifierableNodeExtension
         function getInitialInsertPos() {
           if (modifiers.length > 0)
             return modifiers[0].getStart();
+          if (node.getKind() === SyntaxKind.ArrowFunction)
+            return node.getStart();
           for (const child of node._getChildrenIterator()) {
             // skip over any initial syntax lists (ex. decorators) or js docs
             if (child.getKind() === SyntaxKind.SyntaxList || ts.isJSDocCommentContainingNode(child.compilerNode))
