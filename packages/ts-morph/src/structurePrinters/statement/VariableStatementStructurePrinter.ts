@@ -17,6 +17,8 @@ export class VariableStatementStructurePrinter extends NodePrinter<OptionalKind<
     writer.hangingIndent(() => {
       this.factory.forModifierableNode().printText(writer, structure);
       writer.write(`${structure.declarationKind || VariableDeclarationKind.Let} `);
+      if (structure.declarations.length === 0)
+        throw new Error("You must provide at least one declaration when inserting a variable statement.");
       this.factory.forVariableDeclaration().printTexts(writer, structure.declarations);
       writer.write(";");
     });
