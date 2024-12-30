@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [25.0.0](https://github.com/dsherret/ts-morph/compare/24.0.0...25.0.0) (2024-12-30)
+
+### BREAKING CHANGES
+
+* Upgraded to TypeScript 5.7
+* removing last named import/export should not remove or change declaration ([#1599](https://github.com/dsherret/ts-morph/issues/1599)) ([3d41ded](https://github.com/dsherret/ts-morph/commit/3d41ded41f8b3bcf7e0277bd8554eeb9c07559e5))
+
+### Features
+
+* TypeScript 5.7.2 ([#1594](https://github.com/dsherret/ts-morph/issues/1594)) ([e4fffa4](https://github.com/dsherret/ts-morph/commit/e4fffa4951e50a324316735b0c2d41780d81345a))
+
+
+### Bug Fixes
+
+* properly insert async keyword in arrow function ([#1597](https://github.com/dsherret/ts-morph/issues/1597)) ([84613e5](https://github.com/dsherret/ts-morph/commit/84613e5146ca19c495153b9921dff65f5441865f))
+* removing last named import/export should not remove or change declaration ([#1599](https://github.com/dsherret/ts-morph/issues/1599)) ([3d41ded](https://github.com/dsherret/ts-morph/commit/3d41ded41f8b3bcf7e0277bd8554eeb9c07559e5))
+* switch back to fast-glob for stability ([#1595](https://github.com/dsherret/ts-morph/issues/1595)) ([04a1679](https://github.com/dsherret/ts-morph/commit/04a1679a13350cea26d4ef161ad682c74bd63d3f))
+* throw descriptive error when inserting variable statement with no declarations ([#1598](https://github.com/dsherret/ts-morph/issues/1598)) ([f4ed887](https://github.com/dsherret/ts-morph/commit/f4ed8878a2052e4e959205ed3e56c573133ca25c))
+
 ## [24.0.0](https://github.com/dsherret/ts-morph/compare/23.0.0...24.0.0) (2024-10-05)
 
 ### BREAKING CHANGES

@@ -1,6 +1,6 @@
 {
   "name": "@ts-morph/bootstrap",
-  "version": "0.25.0",
+  "version": "0.26.0",
   "description": "API for getting quickly set up with the TypeScript Compiler API.",
   "keywords": [
     "typescript",
@@ -24,7 +24,7 @@
     "rollup": "rollup -c"
   },
   "dependencies": {
-    "@ts-morph/common": "~0.25.0"
+    "@ts-morph/common": "~0.26.0"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.6",

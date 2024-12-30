@@ -1,6 +1,6 @@
 {
   "name": "@ts-morph/common",
-  "version": "0.25.0",
+  "version": "0.26.0",
   "description": "Common functionality for ts-morph packages.",
   "main": "dist/ts-morph-common.js",
   "author": "David Sherret",
