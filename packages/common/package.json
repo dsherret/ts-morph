@@ -42,6 +42,7 @@
   },
   "browser": {
     "fs": false,
+    "fs/promises": false,
     "os": false,
     "fs.realpath": false,
     "mkdirp": false,
