@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [25.0.1](https://github.com/dsherret/ts-morph/compare/25.0.0...25.0.1) (2025-02-05)
+
+
+### Bug Fixes
+
+* bump to TypeScript from 5.7.2 to 5.7.3 ([#1608](https://github.com/dsherret/ts-morph/issues/1608)) ([a7397a0](https://github.com/dsherret/ts-morph/commit/a7397a0254da6039aa611532f6a0bba88bb34a45))
+* update browser field to include fs/promises ([#1606](https://github.com/dsherret/ts-morph/issues/1606)) ([ef81097](https://github.com/dsherret/ts-morph/commit/ef810977fd0b7397767618cea94c0d92565ffa44))
+
 ## [25.0.0](https://github.com/dsherret/ts-morph/compare/24.0.0...25.0.0) (2024-12-30)
 
 ### BREAKING CHANGES
