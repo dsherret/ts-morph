@@ -11,3 +11,4 @@ yarn-error.log
 # do not include lock files to allow releasing only ts-morph/common
 yarn.lock
 package-lock.json
+dist-deno
