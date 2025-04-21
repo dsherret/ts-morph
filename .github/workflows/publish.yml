@@ -14,7 +14,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - uses: denoland/setup-deno@v1
+    - uses: denoland/setup-deno@v2
     - uses: actions/setup-node@v4
       with:
         node-version: '20'
