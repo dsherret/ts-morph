@@ -3,6 +3,7 @@ import { expect } from "chai";
 import { ModuleDeclaration, ModuleDeclarationKind, VariableDeclarationKind } from "../../../../compiler";
 import { Project } from "../../../../main";
 import { ModuleDeclarationSpecificStructure, ModuleDeclarationStructure, OptionalKind, StructureKind } from "../../../../structures";
+import { MakeRequired } from "../../../../typings";
 import { fillStructures, getInfoFromText, OptionalTrivia } from "../../testHelpers";
 
 describe("ModuleDeclaration", () => {

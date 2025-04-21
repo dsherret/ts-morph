@@ -10677,43 +10677,43 @@ export declare const Structure: {
       /** Gets if the provided structure is a CallSignatureDeclarationStructure. */
       readonly isCallSignature: (structure: unknown) => structure is CallSignatureDeclarationStructure;
       /** Gets if the provided structure is a JSDocableNodeStructure. */
-      readonly isJSDocable: <T_1>(structure: T_1) => structure is T_1 & JSDocableNodeStructure;
+      readonly isJSDocable: <T>(structure: T) => structure is T & JSDocableNodeStructure;
       /** Gets if the provided structure is a SignaturedDeclarationStructure. */
-      readonly isSignatured: <T_2>(structure: T_2) => structure is T_2 & SignaturedDeclarationStructure;
+      readonly isSignatured: <T>(structure: T) => structure is T & SignaturedDeclarationStructure;
       /** Gets if the provided structure is a ParameteredNodeStructure. */
-      readonly isParametered: <T_3>(structure: T_3) => structure is T_3 & ParameteredNodeStructure;
+      readonly isParametered: <T>(structure: T) => structure is T & ParameteredNodeStructure;
       /** Gets if the provided structure is a ReturnTypedNodeStructure. */
-      readonly isReturnTyped: <T_4>(structure: T_4) => structure is T_4 & ReturnTypedNodeStructure;
+      readonly isReturnTyped: <T>(structure: T) => structure is T & ReturnTypedNodeStructure;
       /** Gets if the provided structure is a TypeParameteredNodeStructure. */
-      readonly isTypeParametered: <T_5>(structure: T_5) => structure is T_5 & TypeParameteredNodeStructure;
+      readonly isTypeParametered: <T>(structure: T) => structure is T & TypeParameteredNodeStructure;
       /** Gets if the provided structure is a ClassDeclarationStructure. */
       readonly isClass: (structure: unknown) => structure is ClassDeclarationStructure;
       /** Gets if the provided structure is a ClassLikeDeclarationBaseStructure. */
-      readonly isClassLikeDeclarationBase: <T_6>(structure: T_6) => structure is T_6 & ClassLikeDeclarationBaseStructure;
+      readonly isClassLikeDeclarationBase: <T>(structure: T) => structure is T & ClassLikeDeclarationBaseStructure;
       /** Gets if the provided structure is a NameableNodeStructure. */
-      readonly isNameable: <T_7>(structure: T_7) => structure is T_7 & NameableNodeStructure;
+      readonly isNameable: <T>(structure: T) => structure is T & NameableNodeStructure;
       /** Gets if the provided structure is a ImplementsClauseableNodeStructure. */
-      readonly isImplementsClauseable: <T_8>(structure: T_8) => structure is T_8 & ImplementsClauseableNodeStructure;
+      readonly isImplementsClauseable: <T>(structure: T) => structure is T & ImplementsClauseableNodeStructure;
       /** Gets if the provided structure is a DecoratableNodeStructure. */
-      readonly isDecoratable: <T_9>(structure: T_9) => structure is T_9 & DecoratableNodeStructure;
+      readonly isDecoratable: <T>(structure: T) => structure is T & DecoratableNodeStructure;
       /** Gets if the provided structure is a AbstractableNodeStructure. */
-      readonly isAbstractable: <T_10>(structure: T_10) => structure is T_10 & AbstractableNodeStructure;
+      readonly isAbstractable: <T>(structure: T) => structure is T & AbstractableNodeStructure;
       /** Gets if the provided structure is a AmbientableNodeStructure. */
-      readonly isAmbientable: <T_11>(structure: T_11) => structure is T_11 & AmbientableNodeStructure;
+      readonly isAmbientable: <T>(structure: T) => structure is T & AmbientableNodeStructure;
       /** Gets if the provided structure is a ExportableNodeStructure. */
-      readonly isExportable: <T_12>(structure: T_12) => structure is T_12 & ExportableNodeStructure;
+      readonly isExportable: <T>(structure: T) => structure is T & ExportableNodeStructure;
       /** Gets if the provided structure is a ClassStaticBlockDeclarationStructure. */
       readonly isClassStaticBlock: (structure: unknown) => structure is ClassStaticBlockDeclarationStructure;
       /** Gets if the provided structure is a StatementedNodeStructure. */
-      readonly isStatemented: <T_13>(structure: T_13) => structure is T_13 & StatementedNodeStructure;
+      readonly isStatemented: <T>(structure: T) => structure is T & StatementedNodeStructure;
       /** Gets if the provided structure is a ConstructorDeclarationOverloadStructure. */
       readonly isConstructorDeclarationOverload: (structure: unknown) => structure is ConstructorDeclarationOverloadStructure;
       /** Gets if the provided structure is a ScopedNodeStructure. */
-      readonly isScoped: <T_14>(structure: T_14) => structure is T_14 & ScopedNodeStructure;
+      readonly isScoped: <T>(structure: T) => structure is T & ScopedNodeStructure;
       /** Gets if the provided structure is a ConstructorDeclarationStructure. */
       readonly isConstructor: (structure: unknown) => structure is ConstructorDeclarationStructure;
       /** Gets if the provided structure is a FunctionLikeDeclarationStructure. */
-      readonly isFunctionLike: <T_15>(structure: T_15) => structure is T_15 & FunctionLikeDeclarationStructure;
+      readonly isFunctionLike: <T>(structure: T) => structure is T & FunctionLikeDeclarationStructure;
       /** Gets if the provided structure is a ConstructSignatureDeclarationStructure. */
       readonly isConstructSignature: (structure: unknown) => structure is ConstructSignatureDeclarationStructure;
       /** Gets if the provided structure is a DecoratorStructure. */
@@ -10721,13 +10721,13 @@ export declare const Structure: {
       /** Gets if the provided structure is a EnumDeclarationStructure. */
       readonly isEnum: (structure: unknown) => structure is EnumDeclarationStructure;
       /** Gets if the provided structure is a NamedNodeStructure. */
-      readonly isNamed: <T_16>(structure: T_16) => structure is T_16 & NamedNodeStructure;
+      readonly isNamed: <T>(structure: T) => structure is T & NamedNodeStructure;
       /** Gets if the provided structure is a EnumMemberStructure. */
       readonly isEnumMember: (structure: unknown) => structure is EnumMemberStructure;
       /** Gets if the provided structure is a PropertyNamedNodeStructure. */
-      readonly isPropertyNamed: <T_17>(structure: T_17) => structure is T_17 & PropertyNamedNodeStructure;
+      readonly isPropertyNamed: <T>(structure: T) => structure is T & PropertyNamedNodeStructure;
       /** Gets if the provided structure is a InitializerExpressionableNodeStructure. */
-      readonly isInitializerExpressionable: <T_18>(structure: T_18) => structure is T_18 & InitializerExpressionableNodeStructure;
+      readonly isInitializerExpressionable: <T>(structure: T) => structure is T & InitializerExpressionableNodeStructure;
       /** Gets if the provided structure is a ExportAssignmentStructure. */
       readonly isExportAssignment: (structure: unknown) => structure is ExportAssignmentStructure;
       /** Gets if the provided structure is a ExportDeclarationStructure. */
@@ -10737,19 +10737,19 @@ export declare const Structure: {
       /** Gets if the provided structure is a FunctionDeclarationOverloadStructure. */
       readonly isFunctionDeclarationOverload: (structure: unknown) => structure is FunctionDeclarationOverloadStructure;
       /** Gets if the provided structure is a AsyncableNodeStructure. */
-      readonly isAsyncable: <T_19>(structure: T_19) => structure is T_19 & AsyncableNodeStructure;
+      readonly isAsyncable: <T>(structure: T) => structure is T & AsyncableNodeStructure;
       /** Gets if the provided structure is a GeneratorableNodeStructure. */
-      readonly isGeneratorable: <T_20>(structure: T_20) => structure is T_20 & GeneratorableNodeStructure;
+      readonly isGeneratorable: <T>(structure: T) => structure is T & GeneratorableNodeStructure;
       /** Gets if the provided structure is a FunctionDeclarationStructure. */
       readonly isFunction: (structure: unknown) => structure is FunctionDeclarationStructure;
       /** Gets if the provided structure is a GetAccessorDeclarationStructure. */
       readonly isGetAccessor: (structure: unknown) => structure is GetAccessorDeclarationStructure;
       /** Gets if the provided structure is a StaticableNodeStructure. */
-      readonly isStaticable: <T_21>(structure: T_21) => structure is T_21 & StaticableNodeStructure;
+      readonly isStaticable: <T>(structure: T) => structure is T & StaticableNodeStructure;
       /** Gets if the provided structure is a ImportAttributeStructure. */
       readonly isImportAttribute: (structure: unknown) => structure is ImportAttributeStructure;
       /** Gets if the provided structure is a ImportAttributeNamedNodeStructure. */
-      readonly isImportAttributeNamed: <T_22>(structure: T_22) => structure is T_22 & ImportAttributeNamedNodeStructure;
+      readonly isImportAttributeNamed: <T>(structure: T) => structure is T & ImportAttributeNamedNodeStructure;
       /** Gets if the provided structure is a ImportDeclarationStructure. */
       readonly isImportDeclaration: (structure: unknown) => structure is ImportDeclarationStructure;
       /** Gets if the provided structure is a ImportSpecifierStructure. */
@@ -10757,13 +10757,13 @@ export declare const Structure: {
       /** Gets if the provided structure is a IndexSignatureDeclarationStructure. */
       readonly isIndexSignature: (structure: unknown) => structure is IndexSignatureDeclarationStructure;
       /** Gets if the provided structure is a ReadonlyableNodeStructure. */
-      readonly isReadonlyable: <T_23>(structure: T_23) => structure is T_23 & ReadonlyableNodeStructure;
+      readonly isReadonlyable: <T>(structure: T) => structure is T & ReadonlyableNodeStructure;
       /** Gets if the provided structure is a InterfaceDeclarationStructure. */
       readonly isInterface: (structure: unknown) => structure is InterfaceDeclarationStructure;
       /** Gets if the provided structure is a ExtendsClauseableNodeStructure. */
-      readonly isExtendsClauseable: <T_24>(structure: T_24) => structure is T_24 & ExtendsClauseableNodeStructure;
+      readonly isExtendsClauseable: <T>(structure: T) => structure is T & ExtendsClauseableNodeStructure;
       /** Gets if the provided structure is a TypeElementMemberedNodeStructure. */
-      readonly isTypeElementMembered: <T_25>(structure: T_25) => structure is T_25 & TypeElementMemberedNodeStructure;
+      readonly isTypeElementMembered: <T>(structure: T) => structure is T & TypeElementMemberedNodeStructure;
       /** Gets if the provided structure is a JSDocStructure. */
       readonly isJSDoc: (structure: unknown) => structure is JSDocStructure;
       /** Gets if the provided structure is a JSDocTagStructure. */
@@ -10775,17 +10775,17 @@ export declare const Structure: {
       /** Gets if the provided structure is a JsxSelfClosingElementStructure. */
       readonly isJsxSelfClosingElement: (structure: unknown) => structure is JsxSelfClosingElementStructure;
       /** Gets if the provided structure is a JsxTagNamedNodeStructure. */
-      readonly isJsxTagNamed: <T_26>(structure: T_26) => structure is T_26 & JsxTagNamedNodeStructure;
+      readonly isJsxTagNamed: <T>(structure: T) => structure is T & JsxTagNamedNodeStructure;
       /** Gets if the provided structure is a JsxAttributedNodeStructure. */
-      readonly isJsxAttributed: <T_27>(structure: T_27) => structure is T_27 & JsxAttributedNodeStructure;
+      readonly isJsxAttributed: <T>(structure: T) => structure is T & JsxAttributedNodeStructure;
       /** Gets if the provided structure is a JsxSpreadAttributeStructure. */
       readonly isJsxSpreadAttribute: (structure: unknown) => structure is JsxSpreadAttributeStructure;
       /** Gets if the provided structure is a MethodDeclarationOverloadStructure. */
       readonly isMethodDeclarationOverload: (structure: unknown) => structure is MethodDeclarationOverloadStructure;
       /** Gets if the provided structure is a QuestionTokenableNodeStructure. */
-      readonly isQuestionTokenable: <T_28>(structure: T_28) => structure is T_28 & QuestionTokenableNodeStructure;
+      readonly isQuestionTokenable: <T>(structure: T) => structure is T & QuestionTokenableNodeStructure;
       /** Gets if the provided structure is a OverrideableNodeStructure. */
-      readonly isOverrideable: <T_29>(structure: T_29) => structure is T_29 & OverrideableNodeStructure;
+      readonly isOverrideable: <T>(structure: T) => structure is T & OverrideableNodeStructure;
       /** Gets if the provided structure is a MethodDeclarationStructure. */
       readonly isMethod: (structure: unknown) => structure is MethodDeclarationStructure;
       /** Gets if the provided structure is a MethodSignatureStructure. */
@@ -10793,21 +10793,21 @@ export declare const Structure: {
       /** Gets if the provided structure is a ModuleDeclarationStructure. */
       readonly isModule: (structure: unknown) => structure is ModuleDeclarationStructure;
       /** Gets if the provided structure is a ModuleNamedNodeStructure. */
-      readonly isModuleNamed: <T_30>(structure: T_30) => structure is T_30 & ModuleNamedNodeStructure;
+      readonly isModuleNamed: <T>(structure: T) => structure is T & ModuleNamedNodeStructure;
       /** Gets if the provided structure is a ParameterDeclarationStructure. */
       readonly isParameter: (structure: unknown) => structure is ParameterDeclarationStructure;
       /** Gets if the provided structure is a BindingNamedNodeStructure. */
-      readonly isBindingNamed: <T_31>(structure: T_31) => structure is T_31 & BindingNamedNodeStructure;
+      readonly isBindingNamed: <T>(structure: T) => structure is T & BindingNamedNodeStructure;
       /** Gets if the provided structure is a TypedNodeStructure. */
-      readonly isTyped: <T_32>(structure: T_32) => structure is T_32 & TypedNodeStructure;
+      readonly isTyped: <T>(structure: T) => structure is T & TypedNodeStructure;
       /** Gets if the provided structure is a ScopeableNodeStructure. */
-      readonly isScopeable: <T_33>(structure: T_33) => structure is T_33 & ScopeableNodeStructure;
+      readonly isScopeable: <T>(structure: T) => structure is T & ScopeableNodeStructure;
       /** Gets if the provided structure is a PropertyAssignmentStructure. */
       readonly isPropertyAssignment: (structure: unknown) => structure is PropertyAssignmentStructure;
       /** Gets if the provided structure is a PropertyDeclarationStructure. */
       readonly isProperty: (structure: unknown) => structure is PropertyDeclarationStructure;
       /** Gets if the provided structure is a ExclamationTokenableNodeStructure. */
-      readonly isExclamationTokenable: <T_34>(structure: T_34) => structure is T_34 & ExclamationTokenableNodeStructure;
+      readonly isExclamationTokenable: <T>(structure: T) => structure is T & ExclamationTokenableNodeStructure;
       /** Gets if the provided structure is a PropertySignatureStructure. */
       readonly isPropertySignature: (structure: unknown) => structure is PropertySignatureStructure;
       /** Gets if the provided structure is a SetAccessorDeclarationStructure. */
@@ -10819,7 +10819,7 @@ export declare const Structure: {
       /** Gets if the provided structure is a SpreadAssignmentStructure. */
       readonly isSpreadAssignment: (structure: unknown) => structure is SpreadAssignmentStructure;
       /** Gets if the provided structure is a ExpressionedNodeStructure. */
-      readonly isExpressioned: <T_35>(structure: T_35) => structure is T_35 & ExpressionedNodeStructure;
+      readonly isExpressioned: <T>(structure: T) => structure is T & ExpressionedNodeStructure;
       /** Gets if the provided structure is a TypeAliasDeclarationStructure. */
       readonly isTypeAlias: (structure: unknown) => structure is TypeAliasDeclarationStructure;
       /** Gets if the provided structure is a TypeParameterDeclarationStructure. */

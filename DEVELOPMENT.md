@@ -4,6 +4,8 @@ This project requires [Deno](https://docs.deno.com/runtime/manual/getting_starte
 
 # Getting Started
 
+Install [deno](https://deno.com).
+
 Run in root of repo:
 
 ```bash

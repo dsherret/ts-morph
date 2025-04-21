@@ -2,6 +2,7 @@ import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { JSDocTag, Node } from "../../../../compiler";
 import { JSDocTagStructure } from "../../../../structures";
+import { MakeRequired } from "../../../../typings";
 import { fillStructures, getInfoFromText, OptionalKindAndTrivia } from "../../testHelpers";
 
 describe("JSDocTag", () => {

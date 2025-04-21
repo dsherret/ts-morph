@@ -4,6 +4,7 @@ import { assert, IsExact } from "conditional-type-checks";
 import { CommentEnumMember, EnumDeclaration, EnumMember } from "../../../../compiler";
 import { EnumDeclarationSpecificStructure, EnumDeclarationStructure, EnumMemberStructure, OptionalKind, StructureKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
+import { MakeRequired } from "../../../../typings";
 import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe("EnumDeclaration", () => {

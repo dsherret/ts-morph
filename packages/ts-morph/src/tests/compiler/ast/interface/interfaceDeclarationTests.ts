@@ -8,6 +8,7 @@ import {
   StructureKind,
   TypeParameterDeclarationStructure,
 } from "../../../../structures";
+import { MakeRequired } from "../../../../typings";
 import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe("InterfaceDeclaration", () => {

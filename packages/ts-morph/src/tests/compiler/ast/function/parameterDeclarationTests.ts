@@ -2,6 +2,7 @@ import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { FunctionDeclaration, ParameterDeclaration, Scope } from "../../../../compiler";
 import { OptionalKind, ParameterDeclarationSpecificStructure, ParameterDeclarationStructure, StructureKind } from "../../../../structures";
+import { MakeRequired } from "../../../../typings";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalTrivia } from "../../testHelpers";
 
 describe("ParameterDeclaration", () => {

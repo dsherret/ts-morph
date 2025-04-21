@@ -3,6 +3,7 @@ import { expect } from "chai";
 import { FormatCodeSettings } from "../../../compiler";
 import { TypedNodeStructurePrinter } from "../../../structurePrinters";
 import { TypedNodeStructure } from "../../../structures";
+import { MakeRequired } from "../../../typings";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
 
 describe("TypedNodeStructurePrinter", () => {

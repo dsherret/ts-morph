@@ -4,6 +4,7 @@ import { ImportDeclaration } from "../../../../compiler";
 import { Project } from "../../../../Project";
 import { ImportAttributeStructure, ImportDeclarationStructure, ImportSpecifierStructure, OptionalKind, StructureKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
+import { MakeRequired } from "../../../../typings";
 import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe("ImportDeclaration", () => {

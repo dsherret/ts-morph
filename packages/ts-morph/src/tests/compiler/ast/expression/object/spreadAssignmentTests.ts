@@ -2,6 +2,7 @@ import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ObjectLiteralExpression, SpreadAssignment } from "../../../../../compiler";
 import { SpreadAssignmentStructure, StructureKind } from "../../../../../structures";
+import { MakeRequired } from "../../../../../typings";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia } from "../../../testHelpers";
 
 describe("SpreadAssignment", () => {

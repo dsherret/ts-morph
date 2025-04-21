@@ -9,6 +9,7 @@ import {
   TypeParameterVariance,
 } from "../../../../compiler";
 import { OptionalKind, TypeParameterDeclarationStructure, TypeParameteredNodeStructure } from "../../../../structures";
+import { MakeRequired } from "../../../../typings";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia } from "../../testHelpers";
 
 describe("TypeParameteredNode", () => {

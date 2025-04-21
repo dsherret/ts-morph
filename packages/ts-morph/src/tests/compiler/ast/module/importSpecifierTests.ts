@@ -2,6 +2,7 @@ import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ImportDeclaration, ImportSpecifier } from "../../../../compiler";
 import { ImportSpecifierStructure, StructureKind } from "../../../../structures";
+import { MakeRequired } from "../../../../typings";
 import { getInfoFromText, OptionalTrivia } from "../../testHelpers";
 
 describe("ImportSpecifier", () => {

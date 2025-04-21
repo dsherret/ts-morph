@@ -1,3 +1,4 @@
+import { MakeRequired } from "../../typings";
 import { Node } from "./common/Node";
 
 /** @internal */

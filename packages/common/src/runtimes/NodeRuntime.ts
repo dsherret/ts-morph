@@ -1,9 +1,9 @@
 import fastGlob from "fast-glob";
-import * as fs from "fs";
-import * as fsp from "fs/promises";
 import * as minimatch from "minimatch";
-import * as os from "os";
-import * as path from "path";
+import * as fs from "node:fs";
+import * as fsp from "node:fs/promises";
+import * as os from "node:os";
+import * as path from "node:path";
 import { Runtime, RuntimeFileInfo, RuntimeFileSystem, RuntimePath } from "./Runtime";
 
 export class NodeRuntime implements Runtime {

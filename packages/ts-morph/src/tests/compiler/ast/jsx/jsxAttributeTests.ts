@@ -3,6 +3,7 @@ import { expect } from "chai";
 import { Identifier, JsxAttribute, JsxSelfClosingElement } from "../../../../compiler";
 import { JsxAttributeStructure, StructureKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
+import { MakeRequired } from "../../../../typings";
 import { getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 function getInfo(text: string) {

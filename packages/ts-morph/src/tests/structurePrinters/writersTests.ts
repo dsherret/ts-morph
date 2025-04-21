@@ -4,6 +4,7 @@ import { CodeBlockWriter } from "../../codeBlockWriter";
 import { Writers } from "../../structurePrinters/Writers";
 import { TypeElementMemberedNodeStructure } from "../../structures";
 import { WriterFunction } from "../../types";
+import { MakeRequired } from "../../typings";
 
 describe("Writers", () => {
   function getWriter() {

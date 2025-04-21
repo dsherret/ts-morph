@@ -2,6 +2,7 @@ import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { EnumDeclaration, EnumMember } from "../../../../compiler";
 import { EnumMemberSpecificStructure, EnumMemberStructure, OptionalKind, StructureKind } from "../../../../structures";
+import { MakeRequired } from "../../../../typings";
 import { fillStructures, getInfoFromText, OptionalTrivia } from "../../testHelpers";
 
 function getInfoFromTextWithFirstMember(text: string) {

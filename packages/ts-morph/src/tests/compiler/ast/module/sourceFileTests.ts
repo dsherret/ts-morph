@@ -4,6 +4,7 @@ import { EmitResult, FileSystemRefreshResult, FormatCodeSettings, SourceFile, Te
 import { IndentationText, ManipulationSettings } from "../../../../options";
 import { Project } from "../../../../Project";
 import { SourceFileStructure, StructureKind } from "../../../../structures";
+import { MakeRequired } from "../../../../typings";
 import { getFileSystemHostWithFiles } from "../../../testHelpers";
 import { fillStructures, getInfoFromText, OptionalKindAndTrivia } from "../../testHelpers";
 

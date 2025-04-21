@@ -1,5 +1,6 @@
 import * as compiler from "../../compiler";
 import * as structures from "../../structures";
+import { MakeRequired } from "../../typings";
 
 export function fromAbstractableNode(node: compiler.AbstractableNode): MakeRequired<structures.AbstractableNodeStructure> {
   return {

@@ -3,6 +3,7 @@ import { expect } from "chai";
 import { ExportAssignment } from "../../../../compiler";
 import { ExportAssignmentSpecificStructure, ExportAssignmentStructure, StructureKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
+import { MakeRequired } from "../../../../typings";
 import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe("ExportAssignment", () => {

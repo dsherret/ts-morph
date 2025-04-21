@@ -2,6 +2,7 @@ import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { InterfaceDeclaration, PropertySignature } from "../../../../compiler";
 import { PropertySignatureStructure, StructureKind } from "../../../../structures";
+import { MakeRequired } from "../../../../typings";
 import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe("PropertySignature", () => {

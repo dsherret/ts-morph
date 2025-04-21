@@ -27,6 +27,7 @@ import {
   TypeElementMemberStructures,
 } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
+import { MakeRequired } from "../../../../typings";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia } from "../../testHelpers";
 
 describe("TypeElementMemberedNode", () => {

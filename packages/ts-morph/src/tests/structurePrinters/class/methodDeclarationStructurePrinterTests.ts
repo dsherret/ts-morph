@@ -3,6 +3,7 @@ import { expect } from "chai";
 import { FormatCodeSettings, Scope } from "../../../compiler";
 import { MethodDeclarationStructurePrinter } from "../../../structurePrinters";
 import { MethodDeclarationStructure, OptionalKind } from "../../../structures";
+import { MakeRequired } from "../../../typings";
 import { OptionalKindAndTrivia } from "../../compiler/testHelpers";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
 

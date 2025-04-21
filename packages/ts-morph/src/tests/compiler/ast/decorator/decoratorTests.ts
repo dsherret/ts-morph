@@ -3,6 +3,7 @@ import { expect } from "chai";
 import { ClassDeclaration, Decorator } from "../../../../compiler";
 import { DecoratorStructure, StructureKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
+import { MakeRequired } from "../../../../typings";
 import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe("Decorator", () => {
