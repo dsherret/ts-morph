@@ -229,5 +229,14 @@ describe("insertIntoCommaSeparatedNodes", () => {
         "const t = {\n    p,\n    prop2: 4\n    // test\n};",
       );
     });
+
+    it("should insert a template string with /* before a preceeding node correctly", () => {
+      doTest(
+        "const t = {\n    prop1\n};",
+        0,
+        [{ name: "prop2", initializer: "`${p}/*`" }],
+        "const t = {\n    prop2: `${p}/*`,\n    prop1\n};",
+      );
+    });
   });
 });

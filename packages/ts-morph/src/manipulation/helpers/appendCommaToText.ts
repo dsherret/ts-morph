@@ -21,14 +21,44 @@ export function getAppendCommaPos(text: string) {
   scanner.setText(text);
 
   try {
-    if (scanner.scan() === ts.SyntaxKind.EndOfFileToken)
+    let token = scanner.scan();
+
+    if (token === ts.SyntaxKind.EndOfFileToken)
       return -1;
 
-    while (scanner.scan() !== ts.SyntaxKind.EndOfFileToken) {
-      // just keep scanning...
+    // A stack to track nested template literals and their inner brace expressions
+    // otherwise, the scanner will interpret text in template literals as actual tokens,
+    // e.g. the /* in `${p}/*` will be interpreted as a comment, not inside the template literal
+    const templateStack: ts.SyntaxKind[] = [];
+
+    while (token !== ts.SyntaxKind.EndOfFileToken) {
+      switch (token) {
+        case ts.SyntaxKind.TemplateHead:
+          templateStack.push(token);
+          break;
+        case ts.SyntaxKind.OpenBraceToken:
+          if (templateStack.length > 0)
+            templateStack.push(token);
+          break;
+        case ts.SyntaxKind.CloseBraceToken: {
+          if (templateStack.length > 0) {
+            const lastTemplateStackToken = templateStack.at(-1);
+            if (lastTemplateStackToken === ts.SyntaxKind.TemplateHead) {
+              // Re-scan the template token to skip the inner text
+              token = scanner.reScanTemplateToken(false);
+              // Only pop for TemplateTail, not for TemplateMiddle
+              if (token === ts.SyntaxKind.TemplateTail)
+                templateStack.pop();
+            } else
+              templateStack.pop();
+          }
+          break;
+        }
+      }
+      token = scanner.scan();
     }
 
-    const pos = scanner.getStartPos();
+    const pos = scanner.getTokenFullStart();
     return text[pos - 1] === "," ? -1 : pos;
   } finally {
     // ensure the scanner doesn't hold onto the text so the string
