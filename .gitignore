@@ -1,7 +1,6 @@
 /docs/Gemfile.lock
 /docs/_site
 /deno
-deno.lock
 packages/*/node_modules
 packages/*/temp
 packages/*/dist-cg
@@ -12,8 +11,6 @@ packages/*/dist-declarations
 node_modules
 *.js.map
 npm-debug.log
-yarn-error.log
-/lerna-debug.log
 
 #IDE
 .idea

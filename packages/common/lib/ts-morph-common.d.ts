@@ -328,7 +328,7 @@ export interface TsSourceFileContainer {
 }
 
 /** Decorator for memoizing the result of a method or get accessor. */
-export declare function Memoize(target: any, propertyName: string, descriptor: TypedPropertyDescriptor<any>): void;
+export declare function Memoize(target: any, context: any): (this: any, ...args: any[]) => any;
 
 /** Collection of helper functions that can be used to throw errors. */
 export declare namespace errors {
