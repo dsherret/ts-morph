@@ -1,6 +1,6 @@
 /** Decorator for memoizing the result of a method. */
-export function Memoize(target: (...args: any[]) => void) {
-  if (target instanceof Function)
+export function Memoize(target: any, context: DecoratorContext) {
+  if (context.kind === "method" || context.kind === "getter")
     return getNewFunction(target);
   else
     throw new Error("Not implemented.");
@@ -9,7 +9,7 @@ export function Memoize(target: (...args: any[]) => void) {
 const weakMap = new WeakMap<object, Map<string, unknown>>();
 
 let counter = 0;
-function getNewFunction(originalFunction: (...args: any[]) => void) {
+function getNewFunction(originalFunction: Function) {
   const identifier = counter++;
   function decorator(this: any, ...args: any[]) {
     let propertyValues = weakMap.get(this);

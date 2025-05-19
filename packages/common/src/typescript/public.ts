@@ -1,9 +1,9 @@
 import * as ts from "typescript";
 // flattened typescript exports
 import {
-  CompilerOptions,
+  type CompilerOptions,
   DiagnosticCategory,
-  EditorSettings,
+  type EditorSettings,
   EmitHint,
   LanguageVariant,
   ModuleKind,
@@ -19,9 +19,9 @@ import {
   TypeFormatFlags,
 } from "typescript";
 export {
-  CompilerOptions,
+  type CompilerOptions,
   DiagnosticCategory,
-  EditorSettings,
+  type EditorSettings,
   EmitHint,
   LanguageVariant,
   ModuleKind,

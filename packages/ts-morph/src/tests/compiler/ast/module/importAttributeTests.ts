@@ -2,6 +2,7 @@ import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ImportAttribute, ImportAttributes } from "../../../../compiler";
 import { ImportAttributeStructure } from "../../../../structures";
+import { MakeRequired } from "../../../../typings";
 import { getInfoFromTextWithDescendant, OptionalKindAndTrivia } from "../../testHelpers";
 
 describe("importAttributes", () => {

@@ -3,6 +3,7 @@ import { expect } from "chai";
 import { ClassDeclaration, FunctionDeclaration, TypeParameterDeclaration, TypeParameterVariance } from "../../../../compiler";
 import { StructureKind, TypeParameterDeclarationStructure } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
+import { MakeRequired } from "../../../../typings";
 import { getInfoFromText, OptionalTrivia } from "../../testHelpers";
 
 describe("TypeParameterDeclaration", () => {

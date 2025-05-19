@@ -44,6 +44,7 @@ import { SourceFileCreateOptions } from "../Project";
 import { ProjectContext } from "../ProjectContext";
 import { OptionalKind, SourceFileStructure } from "../structures";
 import { WriterFunction } from "../types";
+import { MakeOptionalUndefined } from "../typings";
 import { getTextFromStringOrWriter } from "../utils";
 import { DirectoryCache } from "./DirectoryCache";
 import { ForgetfulNodeCache } from "./ForgetfulNodeCache";

@@ -8,6 +8,7 @@ import {
   OptionalKind,
   StructureKind,
 } from "../../../../structures";
+import { MakeRequired } from "../../../../typings";
 import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe("ConstructorDeclaration", () => {

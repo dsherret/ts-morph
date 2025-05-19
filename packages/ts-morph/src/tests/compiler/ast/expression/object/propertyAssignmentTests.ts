@@ -2,6 +2,7 @@ import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ObjectLiteralExpression, PropertyAssignment, ShorthandPropertyAssignment } from "../../../../../compiler";
 import { PropertyAssignmentStructure, StructureKind } from "../../../../../structures";
+import { MakeRequired } from "../../../../../typings";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia } from "../../../testHelpers";
 
 describe("PropertyAssignment", () => {

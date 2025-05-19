@@ -2,6 +2,7 @@ import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, Scope, SetAccessorDeclaration, TypeParameterVariance } from "../../../../compiler";
 import { SetAccessorDeclarationStructure, StructureKind } from "../../../../structures";
+import { MakeRequired } from "../../../../typings";
 import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 function getSetAccessorInfo(text: string) {

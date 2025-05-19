@@ -1,6 +1,6 @@
 import { getLibFiles, InMemoryFileSystemHost, nameof, ts } from "@ts-morph/common";
 import { expect } from "chai";
-import { EOL } from "os";
+import { EOL } from "node:os";
 import { createProject, createProjectSync, Project, ProjectOptions } from "../Project";
 
 describe("Project", () => {

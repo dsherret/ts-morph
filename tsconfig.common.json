@@ -5,7 +5,6 @@
     "strict": true,
     "sourceMap": false,
     "removeComments": false,
-    "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
     "noFallthroughCasesInSwitch": true,

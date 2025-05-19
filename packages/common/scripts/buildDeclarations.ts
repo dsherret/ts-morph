@@ -6,7 +6,7 @@ const declarationProject = createDeclarationProject({
 const emitMainFile = declarationProject.getSourceFileOrThrow("./dist/index.d.ts");
 const writeProject = new tsMorph.Project({
   compilerOptions: {
-    target: tsMorph.ts.ScriptTarget.ES2018,
+    target: tsMorph.ts.ScriptTarget.ES2023,
     moduleResolution: tsMorph.ts.ModuleResolutionKind.Bundler,
   },
   manipulationSettings: {

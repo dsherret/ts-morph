@@ -38,7 +38,8 @@ describe("RealFileSystemHost", () => {
   describe(nameof<RealFileSystemHost>("mkdir"), () => {
     it("should not throw for a directory that already exists", async () => {
       try {
-        await new RealFileSystemHost().mkdir(__dirname);
+        // @ts-ignore
+        await new RealFileSystemHost().mkdir(import.meta.dirname);
       } catch (err) {
         expect.fail("Should not have thrown.");
       }
@@ -47,7 +48,8 @@ describe("RealFileSystemHost", () => {
 
   describe(nameof<RealFileSystemHost>("mkdirSync"), () => {
     it("should not throw for a directory that already exists", async () => {
-      expect(() => new RealFileSystemHost().mkdirSync(__dirname)).to.not.throw();
+      // @ts-ignore
+      expect(() => new RealFileSystemHost().mkdirSync(import.meta.dirname)).to.not.throw();
     });
   });
 

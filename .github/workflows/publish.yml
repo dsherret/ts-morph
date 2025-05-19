@@ -14,13 +14,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - uses: denoland/setup-deno@v1
-    - uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        check-latest: true
-    - run: npm ci
+    - uses: denoland/setup-deno@v2
+    - run: deno install
     - name: Build
-      run: npm run build:deno
+      run: deno task build:deno
     - name: Publish
       run: cd deno && deno publish

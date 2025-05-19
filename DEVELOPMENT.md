@@ -4,11 +4,13 @@ This project requires [Deno](https://docs.deno.com/runtime/manual/getting_starte
 
 # Getting Started
 
+Install [deno](https://deno.com).
+
 Run in root of repo:
 
 ```bash
 # installs, sets up, and builds all the packages for development
-npm run setup
+deno task setup
 ```
 
 # Packages
@@ -22,9 +24,9 @@ npm run setup
 
 ```bash
 # build (run in root dir or per package)
-npm run build
+deno task build
 # run tests (run in root dir or per package)
-npm run test
-# format (this is kind of experimental as it's using a formatter I wrote... let me know if it does anything strange)
-npm run format
+deno task test
+# format
+deno task format
 ```

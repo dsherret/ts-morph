@@ -1,12 +1,11 @@
-/// <reference path="typings/index.d.ts" />
 import { errors } from "@ts-morph/common";
 export {
-  CompilerOptions,
+  type CompilerOptions,
   CompilerOptionsContainer,
   DiagnosticCategory,
-  EditorSettings,
+  type EditorSettings,
   EmitHint,
-  FileSystemHost,
+  type FileSystemHost,
   InMemoryFileSystemHost,
   LanguageVariant,
   ModuleKind,
@@ -14,10 +13,10 @@ export {
   NewLineKind,
   NodeFlags,
   ObjectFlags,
-  ResolutionHost,
-  ResolutionHostFactory,
+  type ResolutionHost,
+  type ResolutionHostFactory,
   ResolutionHosts,
-  RuntimeDirEntry,
+  type RuntimeDirEntry,
   ScriptKind,
   ScriptTarget,
   SettingsContainer,
@@ -55,20 +54,20 @@ export {
   NotSupportedError,
   PathNotFoundError,
 };
-export { Directory, DirectoryAddOptions, DirectoryCopyOptions, DirectoryEmitResult, DirectoryMoveOptions } from "./fileSystem";
+export { Directory, type DirectoryAddOptions, type DirectoryCopyOptions, DirectoryEmitResult, type DirectoryMoveOptions } from "./fileSystem";
 export { ManipulationError } from "./manipulation";
 export * from "./options";
-export { Project, ProjectOptions, SourceFileCreateOptions } from "./Project";
+export { Project, type ProjectOptions, type SourceFileCreateOptions } from "./Project";
 export * from "./structures";
-export { Constructor, InstanceOf as Instance, WriterFunction } from "./types";
-export { createWrappedNode, CreateWrappedNodeOptions } from "./utils/compiler/createWrappedNode";
-export { printNode, PrintNodeOptions } from "./utils/compiler/printNode";
-export { SourceFileReferencingNodes } from "./utils/references/SourceFileReferenceContainer";
+export { type Constructor, type InstanceOf as Instance, type WriterFunction } from "./types";
+export { createWrappedNode, type CreateWrappedNodeOptions } from "./utils/compiler/createWrappedNode";
+export { printNode, type PrintNodeOptions } from "./utils/compiler/printNode";
+export { type SourceFileReferencingNodes } from "./utils/references/SourceFileReferenceContainer";
 export {
-  CompilerOptionsFromTsConfigOptions,
-  CompilerOptionsFromTsConfigResult,
+  type CompilerOptionsFromTsConfigOptions,
+  type CompilerOptionsFromTsConfigResult,
   getCompilerOptionsFromTsConfig,
 } from "./utils/tsconfig/getCompilerOptionsFromTsConfig";
 import { Writers } from "./structurePrinters/Writers";
 export { Writers };
-export { WriterFunctionOrValue } from "./structurePrinters/Writers";
+export type { WriterFunctionOrValue } from "./structurePrinters/Writers";

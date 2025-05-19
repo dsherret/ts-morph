@@ -2,6 +2,7 @@ import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { JsxSelfClosingElement } from "../../../../compiler";
 import { JsxAttributeStructure, JsxSelfClosingElementStructure, StructureKind } from "../../../../structures";
+import { MakeRequired } from "../../../../typings";
 import { getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 function getInfo(text: string) {

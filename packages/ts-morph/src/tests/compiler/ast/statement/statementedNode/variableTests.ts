@@ -2,6 +2,7 @@ import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { Node, StatementedNode, VariableDeclaration, VariableDeclarationKind, VariableStatement } from "../../../../../compiler";
 import { VariableDeclarationStructure, VariableStatementStructure } from "../../../../../structures";
+import { MakeRequired } from "../../../../../typings";
 import { getInfoFromText, OptionalKindAndTrivia } from "../../../testHelpers";
 
 describe("StatementedNode", () => {

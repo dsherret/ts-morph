@@ -2,6 +2,7 @@ import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { TypeAliasDeclaration, TypeParameterVariance } from "../../../../compiler";
 import { StructureKind, TypeAliasDeclarationStructure, TypeParameterDeclarationStructure } from "../../../../structures";
+import { MakeRequired } from "../../../../typings";
 import { fillStructures, getInfoFromText, OptionalTrivia } from "../../testHelpers";
 
 describe("TypeAliasDeclaration", () => {

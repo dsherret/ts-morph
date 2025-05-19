@@ -2,6 +2,7 @@ import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { FunctionDeclaration, ParameterDeclaration, ParameteredNode, Scope } from "../../../../compiler";
 import { OptionalKind, ParameterDeclarationStructure, ParameteredNodeStructure } from "../../../../structures";
+import { MakeRequired } from "../../../../typings";
 import { getInfoFromText, OptionalKindAndTrivia } from "../../testHelpers";
 
 describe("ParameteredNode", () => {

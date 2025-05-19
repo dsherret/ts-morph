@@ -3,6 +3,7 @@ import { expect } from "chai";
 import * as compiler from "../../compiler";
 import * as getMixinStructureFuncs from "../../manipulation/helpers/getMixinStructureFunctions";
 import * as structures from "../../structures";
+import { MakeRequired } from "../../typings";
 import { getInfoFromText } from "../compiler/testHelpers";
 
 describe(nameof(getMixinStructureFuncs, "fromAbstractableNode"), () => {

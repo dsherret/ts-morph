@@ -4,10 +4,9 @@
   "version": "0.0.0",
   "description": "Main github repo for ts-morph packages.",
   "scripts": {
-    "setup": "npm install && npm run build",
-    "build": "npm run --workspaces build",
-    "build:deno": "npm run --workspaces build:deno",
-    "test": "npm run --workspaces test",
+    "setup": "deno install && deno task build",
+    "build": "cd packages && deno task --cwd common build && deno task --cwd bootstrap build && deno task --cwd ts-morph build",
+    "build:deno": "cd packages && deno task --cwd common build:deno && deno task --cwd bootstrap build:deno && deno task --cwd ts-morph build:deno",
     "format": "dprint fmt"
   },
   "repository": {
@@ -26,6 +25,6 @@
     "packages/ts-morph"
   ],
   "devDependencies": {
-    "dprint": "^0.46.3"
+    "dprint": "^0.49.1"
   }
 }

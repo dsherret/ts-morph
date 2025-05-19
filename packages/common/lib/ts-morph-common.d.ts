@@ -37,10 +37,10 @@ export declare class TsConfigResolver {
 export declare class KeyValueCache<T, U> {
     #private;
     getSize(): number;
-    getValues(): IterableIterator<U>;
+    getValues(): MapIterator<U>;
     getValuesAsArray(): U[];
-    getKeys(): IterableIterator<T>;
-    getEntries(): IterableIterator<[T, U]>;
+    getKeys(): MapIterator<T>;
+    getEntries(): MapIterator<[T, U]>;
     getOrCreate<TCreate extends U = U>(key: T, createFunc: () => TCreate): TCreate;
     has(key: T): boolean;
     get(key: T): U | undefined;
@@ -61,7 +61,7 @@ export declare class SortedKeyValueArray<TKey, TValue> {
     removeByKey(key: TKey): void;
     getArrayCopy(): TValue[];
     hasItems(): boolean;
-    entries(): Generator<TValue, void, undefined>;
+    entries(): Generator<TValue, void, unknown>;
 }
 
 /**
@@ -328,7 +328,7 @@ export interface TsSourceFileContainer {
 }
 
 /** Decorator for memoizing the result of a method or get accessor. */
-export declare function Memoize(target: any, propertyName: string, descriptor: TypedPropertyDescriptor<any>): void;
+export declare function Memoize(target: any, context: any): (this: any, ...args: any[]) => any;
 
 /** Collection of helper functions that can be used to throw errors. */
 export declare namespace errors {

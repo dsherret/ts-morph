@@ -2,6 +2,7 @@ import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { JSDoc } from "../../../../compiler";
 import { JSDocStructure, JSDocTagStructure, OptionalKind, StructureKind } from "../../../../structures";
+import { MakeRequired } from "../../../../typings";
 import { fillStructures, getInfoFromText, OptionalTrivia } from "../../testHelpers";
 
 describe("JSDoc", () => {

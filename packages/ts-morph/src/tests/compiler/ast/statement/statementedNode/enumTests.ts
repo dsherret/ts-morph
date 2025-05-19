@@ -2,6 +2,7 @@ import { nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { EnumDeclaration, Node, StatementedNode } from "../../../../../compiler";
 import { EnumDeclarationStructure } from "../../../../../structures";
+import { MakeRequired } from "../../../../../typings";
 import { getInfoFromText, OptionalKindAndTrivia } from "../../../testHelpers";
 
 describe("StatementedNode", () => {

@@ -14,7 +14,7 @@ Install as usual via npm:
 npm install --save-dev ts-morph
 ```
 
-Or if you're using Deno:
+Or if you're using Deno and want to install via JSR:
 
 ```
 deno add ts-morph@jsr:@ts-morph/ts-morph

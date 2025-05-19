@@ -1,7 +1,6 @@
 import * as minimatch from "minimatch";
+import path from "path-browserify";
 import { Runtime, RuntimeDirEntry, RuntimeFileInfo, RuntimeFileSystem, RuntimePath } from "./Runtime";
-
-const path = require("path-browserify");
 
 export class BrowserRuntime implements Runtime {
   fs = new BrowserRuntimeFileSystem();

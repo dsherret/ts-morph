@@ -1,12 +1,13 @@
 import { CompilerOptions, errors, getLibFiles, InMemoryFileSystemHost, nameof, ScriptKind, ScriptTarget, SyntaxKind, ts } from "@ts-morph/common";
 import { expect } from "chai";
 import { assert, IsExact } from "conditional-type-checks";
-import { EOL } from "os";
-import * as path from "path";
+import { EOL } from "node:os";
+import * as path from "node:path";
 import { ClassDeclaration, EmitResult, Identifier, InterfaceDeclaration, MemoryEmitResult, ModuleDeclaration, Node, SourceFile } from "../compiler";
 import { IndentationText } from "../options";
 import { Project, ProjectOptions } from "../Project";
 import { SourceFileStructure, StructureKind } from "../structures";
+import { MakeRequired } from "../typings";
 import { OptionalKindAndTrivia } from "./compiler/testHelpers";
 import * as testHelpers from "./testHelpers";
 
@@ -935,7 +936,8 @@ describe("Project", () => {
 
   describe("mixing real files with in-memory files", () => {
     function createProject() {
-      const testFilesDirPath = path.join(__dirname, "../../src/tests/testFiles");
+      // @ts-ignore
+      const testFilesDirPath = path.join(import.meta.dirname, "../../src/tests/testFiles");
       const project = new Project();
       project.addSourceFilesAtPaths(`${testFilesDirPath}/**/*.ts`);
       project.createSourceFile(
