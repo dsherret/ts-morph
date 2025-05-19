@@ -1,7 +1,6 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-
 ---
 
 <!-- If you are contributing this bug fix then please read the instructions in CONTRIBUTING.md -->
