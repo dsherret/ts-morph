@@ -1,7 +1,6 @@
 ---
 name: Feature request
 about: Suggest an idea
-
 ---
 
 <!-- If you are contributing this feature change then please read the instructions in CONTRIBUTING.md -->
