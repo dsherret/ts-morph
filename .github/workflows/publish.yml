@@ -15,8 +15,21 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - uses: denoland/setup-deno@v2
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '22.x'
+        registry-url: 'https://registry.npmjs.org'
     - run: deno install
-    - name: Build
+    - name: Build JSR
       run: deno task build:deno
-    - name: Publish
+    - name: Publish JSR
       run: cd deno && deno publish
+    - name: Build npm
+      run: deno task build
+    - name: Publish npm
+      run: |
+        (cd packages/common && npm publish --provenance --access public)
+        (cd packages/bootstrap && npm publish --provenance --access public)
+        (cd packages/ts-morph && npm publish --provenance --access public)
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
