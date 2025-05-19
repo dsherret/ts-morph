@@ -13,13 +13,13 @@
   "license": "MIT",
   "repository": "git+https://github.com/dsherret/ts-morph.git",
   "scripts": {
-    "build": "npm run build:declarations && npm run build:node",
-    "build:node": "rimraf dist && npm run rollup",
-    "build:deno": "npm run build:declarations && rimraf dist-deno && npm run rollup -- --environment BUILD:deno && deno run -A scripts/buildDeno.ts",
+    "build": "deno task build:declarations && deno task build:node",
+    "build:node": "rimraf dist && deno task rollup",
+    "build:deno": "deno task build:declarations && rimraf dist-deno && deno task rollup -- --environment BUILD:deno && deno run -A scripts/buildDeno.ts",
     "build:declarations": "deno run -A scripts/buildDeclarations.ts",
     "test": "deno run -A npm:mocha",
-    "test:ci": "npm run test",
-    "test:debug": "npm run test --inspect-brk",
+    "test:ci": "deno task test",
+    "test:debug": "deno task test --inspect-brk",
     "test:ts-versions": "deno run -A scripts/test/testTypeScriptVersions.ts",
     "rollup": "rollup -c"
   },

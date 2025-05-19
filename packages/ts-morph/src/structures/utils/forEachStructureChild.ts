@@ -31,7 +31,7 @@ export function forEachStructureChild<TStructure>(structures: ReadonlyArray<Stru
  */
 export function forEachStructureChild<TStructure>(structure: Structures, callback: (child: Structures) => TStructure | void): TStructure | undefined;
 export function forEachStructureChild<TStructure>(structure: Structures | ReadonlyArray<Structures>, callback: (child: Structures) => TStructure | void): TStructure | undefined {
-  // automatically generated: run `npm run code-generate` to update the code in here
+  // automatically generated: run `deno task code-generate` to update the code in here
   if (ArrayUtils.isReadonlyArray(structure)) {
     for (const item of structure) {
       const result = callback(item);

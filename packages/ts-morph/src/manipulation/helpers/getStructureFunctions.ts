@@ -1,5 +1,5 @@
 // dprint-ignore-file
-// DO NOT MANUALLY EDIT!! File generated via: npm run code-generate
+// DO NOT MANUALLY EDIT!! File generated via: deno task code-generate
 
 import { ObjectUtils } from "@ts-morph/common";
 import * as compiler from "../../compiler";

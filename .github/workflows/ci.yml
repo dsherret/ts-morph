@@ -39,7 +39,7 @@ jobs:
     - uses: denoland/setup-deno@v2
       with:
         cache: true
-    - run: npm ci
+    - run: deno install
     - name: Build
       run: deno task build:deno
     - name: Test
