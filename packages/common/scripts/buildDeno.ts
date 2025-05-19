@@ -20,13 +20,13 @@ commonFile.getClassOrThrow("BrowserRuntime").remove();
 commonFile.getClassOrThrow("BrowserRuntimeFileSystem").remove();
 commonFile.getClassOrThrow("BrowserRuntimePath").remove();
 commonFile.getFunctionOrThrow("isNodeJs").remove();
-commonFile.getImportDeclarationOrThrow("path").remove();
+commonFile.getImportDeclarationOrThrow("node:path").remove();
 commonFile.getImportDeclarationOrThrow("minimatch").remove();
 commonFile.getImportDeclarationOrThrow("fast-glob").remove();
-commonFile.getImportDeclarationOrThrow("os").remove();
-commonFile.getImportDeclarationOrThrow("fs").remove();
-commonFile.getImportDeclarationOrThrow("fs/promises").remove();
-commonFile.getVariableDeclarationOrThrow("path$1").remove();
+commonFile.getImportDeclarationOrThrow("node:os").remove();
+commonFile.getImportDeclarationOrThrow("node:fs").remove();
+commonFile.getImportDeclarationOrThrow("node:fs/promises").remove();
+commonFile.getImportDeclarationOrThrow("path-browserify").remove();
 
 const runtimeFileDestinationPath = `${folderPath}/DenoRuntime.ts`;
 const runtimeFullText = fileSystem.readFileSync("./src/runtimes/DenoRuntime.ts");
