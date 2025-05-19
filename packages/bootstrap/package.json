@@ -15,7 +15,7 @@
   "scripts": {
     "build": "deno task build:declarations && deno task build:node",
     "build:node": "rimraf dist && deno task rollup",
-    "build:deno": "deno task build:declarations && rimraf dist-deno && deno task rollup -- --environment BUILD:deno && deno run -A scripts/buildDeno.ts",
+    "build:deno": "deno task build:declarations && rimraf dist-deno && deno task rollup --environment BUILD:deno && deno run -A scripts/buildDeno.ts",
     "build:declarations": "deno run -A scripts/buildDeclarations.ts",
     "test": "deno run -A npm:mocha",
     "test:ci": "deno task test",

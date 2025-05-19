@@ -4,7 +4,9 @@
   "version": "0.0.0",
   "description": "Main github repo for ts-morph packages.",
   "scripts": {
-    "setup": "deno install && deno task -r build",
+    "setup": "deno install && deno task build",
+    "build": "cd packages && deno task --cwd common build && deno task --cwd bootstrap build && deno task --cwd ts-morph build",
+    "build:deno": "cd packages && deno task --cwd common build:deno && deno task --cwd bootstrap build:deno && deno task --cwd ts-morph build:deno",
     "format": "dprint fmt"
   },
   "repository": {

@@ -19,7 +19,7 @@ jobs:
     - name: Build
       run: |
         deno install
-        deno task -r build
+        deno task build
     - name: Type check
       run: |
         deno task -r ensure-no-project-compile-errors
@@ -41,7 +41,7 @@ jobs:
         cache: true
     - run: deno install
     - name: Build
-      run: deno task -r build:deno
+      run: deno task build:deno
     - name: Test
       run: cd deno && deno test --allow-read
     - name: Publish
