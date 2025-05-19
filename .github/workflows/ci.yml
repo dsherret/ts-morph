@@ -41,7 +41,7 @@ jobs:
         cache: true
     - run: deno install
     - name: Build
-      run: deno task build:deno
+      run: deno task -r build:deno
     - name: Test
       run: cd deno && deno test --allow-read
     - name: Publish
