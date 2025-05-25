@@ -22,7 +22,7 @@ commonFile.getClassOrThrow("BrowserRuntimePath").remove();
 commonFile.getFunctionOrThrow("isNodeJs").remove();
 commonFile.getImportDeclarationOrThrow("node:path").remove();
 commonFile.getImportDeclarationOrThrow("minimatch").remove();
-commonFile.getImportDeclarationOrThrow("fast-glob").remove();
+commonFile.getImportDeclarationOrThrow("tinyglobby").remove();
 commonFile.getImportDeclarationOrThrow("node:os").remove();
 commonFile.getImportDeclarationOrThrow("node:fs").remove();
 commonFile.getImportDeclarationOrThrow("node:fs/promises").remove();

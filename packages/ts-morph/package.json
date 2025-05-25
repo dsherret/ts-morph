@@ -80,6 +80,7 @@
     "graceful-fs": false,
     "source-map-support": false,
     "glob-parent": false,
-    "glob": false
+    "glob": false,
+    "tinyglobby": false
   }
 }
