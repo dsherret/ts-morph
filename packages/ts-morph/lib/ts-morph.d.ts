@@ -9740,6 +9740,11 @@ export declare class TypeChecker {
    */
   getApparentType(type: Type): Type<ts.Type>;
   /**
+   * Gets the awaited type of a type.
+   * @param type - Type to get the awaited type of.
+   */
+  getAwaitedType(type: Type): Type<ts.Type> | undefined;
+  /**
    * Gets the constant value of a declaration.
    * @param node - Node to get the constant value from.
    */
@@ -9885,6 +9890,8 @@ export declare class Type<TType extends ts.Type = ts.Type> {
   getAliasTypeArguments(): Type[];
   /** Gets the apparent type. */
   getApparentType(): Type;
+  /** Gets the awaited type. */
+  getAwaitedType(): Type | undefined;
   /** Gets the array element type or throws if it doesn't exist (ex. for `T[]` it would be `T`). */
   getArrayElementTypeOrThrow(message?: string | (() => string)): Type<ts.Type>;
   /** Gets the array element type or returns undefined if it doesn't exist (ex. for `T[]` it would be `T`). */
