@@ -20,6 +20,7 @@ export {
   ScriptKind,
   ScriptTarget,
   SettingsContainer,
+  type StandardizedFilePath,
   SymbolFlags,
   SyntaxKind,
   ts,
