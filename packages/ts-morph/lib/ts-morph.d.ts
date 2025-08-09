@@ -7087,6 +7087,8 @@ export declare class ImportAttributes extends ImportAttributesBase<ts.ImportAttr
 declare const ImportClauseBase: typeof Node;
 
 export declare class ImportClause extends ImportClauseBase<ts.ImportClause> {
+  /** Gets the phase modifier of the import clause. */
+  getPhaseModifier(): ImportPhaseModifierSyntaxKind | undefined;
   /** Gets if this import clause is type only. */
   isTypeOnly(): boolean;
   /** Sets if this import declaration is type only. */
@@ -7118,6 +7120,8 @@ export declare class ImportDeclaration extends ImportDeclarationBase<ts.ImportDe
   isTypeOnly(): boolean;
   /** Sets if this import declaration is type only. */
   setIsTypeOnly(value: boolean): this;
+  /** Gets the phase modifier of the import declaration. */
+  getPhaseModifier(): ImportPhaseModifierSyntaxKind | undefined;
   /**
    * Sets the import specifier.
    * @param text - Text to set as the module specifier.
