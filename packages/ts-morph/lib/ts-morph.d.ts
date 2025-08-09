@@ -9744,7 +9744,7 @@ export declare class TypeChecker {
    */
   getApparentType(type: Type): Type<ts.Type>;
   /**
-   * Gets the awaited type of a type.
+   * Gets the awaited type of a type (ex. `Promise<string>` -> `string`).
    * @param type - Type to get the awaited type of.
    */
   getAwaitedType(type: Type): Type<ts.Type> | undefined;

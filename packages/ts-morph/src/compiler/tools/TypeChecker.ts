@@ -53,7 +53,7 @@ export class TypeChecker {
   }
 
   /**
-   * Gets the awaited type of a type.
+   * Gets the awaited type of a type (ex. `Promise<string>` -> `string`).
    * @param type - Type to get the awaited type of.
    */
   getAwaitedType(type: Type) {
