@@ -23,7 +23,9 @@ const localTypescriptLibFolderPath = path.join(folders.common, "node_modules/typ
 const typescriptLibFolderPath = fileSystem.directoryExistsSync(localTypescriptLibFolderPath)
   ? localTypescriptLibFolderPath
   : path.join(folders.root, "node_modules/typescript/lib");
-fileSystem.copySync(path.join(typescriptLibFolderPath, "typescript.js"), "./dist/typescript.js");
+const typeScriptSource = fileSystem.readFileSync(path.join(typescriptLibFolderPath, "typescript.js"))
+  .replace("\n//# sourceMappingURL=typescript.js.map\n", "\n");
+fileSystem.writeFileSync("./dist/typescript.js", typeScriptSource);
 const typescriptDtsFileText = fileSystem.readFileSync(path.join(typescriptLibFolderPath, "typescript.d.ts"));
 fileSystem.writeFileSync("./lib/typescript.d.ts", typescriptDtsFileText.replace("export = ts;", "export { ts };"));
 
