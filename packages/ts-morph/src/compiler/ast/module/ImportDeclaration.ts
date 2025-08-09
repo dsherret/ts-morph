@@ -1,4 +1,4 @@
-import { ArrayUtils, errors, nameof, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
+import { ArrayUtils, errors, ImportPhaseModifierSyntaxKind, nameof, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, removeChildren, verifyAndGetIndex } from "../../../manipulation";
 import {
   ImportAttributeStructure,
@@ -37,6 +37,11 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
 
     importClause.setIsTypeOnly(value);
     return this;
+  }
+
+  /** Gets the phase modifier of the import declaration. */
+  getPhaseModifier(): ImportPhaseModifierSyntaxKind | undefined {
+    return this.getImportClause()?.getPhaseModifier();
   }
 
   /**
