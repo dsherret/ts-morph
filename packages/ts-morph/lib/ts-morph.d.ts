@@ -1,4 +1,4 @@
-import { errors, StandardizedFilePath, ts } from "@ts-morph/common";
+import { errors, ts } from "@ts-morph/common";
 
 /** Holds the compiler options. */
 export declare class CompilerOptionsContainer extends SettingsContainer<ts.CompilerOptions> {
@@ -170,6 +170,10 @@ export declare abstract class SettingsContainer<T extends object> {
   onModified(action: () => void): void;
 }
 
+/** Nominal type to denote a file path that has been standardized. */
+export type StandardizedFilePath = string & {
+      _standardizedFilePathBrand: undefined;
+  };
 declare const ArgumentError: typeof errors.ArgumentError;
 declare const ArgumentNullOrWhitespaceError: typeof errors.ArgumentNullOrWhitespaceError;
 declare const ArgumentOutOfRangeError: typeof errors.ArgumentOutOfRangeError;

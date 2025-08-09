@@ -21,7 +21,7 @@
   "dependencies": {
     "minimatch": "^10.0.1",
     "path-browserify": "^1.0.1",
-    "fast-glob": "^3.3.3"
+    "tinyglobby": "^0.2.14"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^12.1.2",
@@ -48,7 +48,7 @@
     "mkdirp": false,
     "dir-glob": false,
     "graceful-fs": false,
-    "fast-glob": false,
+    "tinyglobby": false,
     "source-map-support": false,
     "glob-parent": false,
     "glob": false,

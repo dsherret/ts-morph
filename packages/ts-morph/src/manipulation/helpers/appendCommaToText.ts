@@ -49,8 +49,9 @@ export function getAppendCommaPos(text: string) {
               // Only pop for TemplateTail, not for TemplateMiddle
               if (token === ts.SyntaxKind.TemplateTail)
                 templateStack.pop();
-            } else
+            } else {
               templateStack.pop();
+            }
           }
           break;
         }
