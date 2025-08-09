@@ -6,43 +6,45 @@ on:
     branches:
       - latest
     tags:
-      - '*'
+      - "*"
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: denoland/setup-deno@v2
-      with:
-        cache: true
-    - name: Build
-      run: |
-        deno install
-        deno task build
-    - name: Type check
-      run: |
-        deno task -r ensure-no-project-compile-errors
-    - name: Test
-      run: |
-        deno task -r test:ci
-        deno task -r test:ts-versions
-    - name: Code Verification
-      run: |
-        deno task -r code-verification
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          cache: true
+          deno-version: canary
+      - name: Build
+        run: |
+          deno install
+          deno task build
+      - name: Type check
+        run: |
+          deno task -r ensure-no-project-compile-errors
+      - name: Test
+        run: |
+          deno task -r test:ci
+          deno task -r test:ts-versions
+      - name: Code Verification
+        run: |
+          deno task -r code-verification
 
   jsr:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - uses: denoland/setup-deno@v2
-      with:
-        cache: true
-    - run: deno install
-    - name: Build
-      run: deno task build:deno
-    - name: Test
-      run: cd deno && deno test --allow-read
-    - name: Publish
-      run: cd deno && deno publish --dry-run
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          cache: true
+          deno-version: canary
+      - run: deno install
+      - name: Build
+        run: deno task build:deno
+      - name: Test
+        run: cd deno && deno test --allow-read
+      - name: Publish
+        run: cd deno && deno publish --dry-run

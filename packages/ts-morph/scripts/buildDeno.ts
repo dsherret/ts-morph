@@ -28,6 +28,11 @@ fileSystem.writeFileSync(
     2,
   ) + "\n",
 );
+try {
+  fileSystem.deleteSync(`${destPath}/../deno.lock`);
+} catch {
+  // ignore
+}
 fileSystem.writeFileSync(
   `${destPath}/../deno.json`,
   JSON.stringify(

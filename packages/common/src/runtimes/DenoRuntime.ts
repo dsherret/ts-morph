@@ -30,7 +30,7 @@ export class DenoRuntime {
 
 class DenoRuntimePath {
   join(...paths: string[]) {
-    return stdPath.join(...paths);
+    return stdPath.join(paths[0], ...paths.slice(1));
   }
 
   normalize(path: string) {
