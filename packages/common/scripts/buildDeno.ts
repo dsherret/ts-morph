@@ -50,7 +50,8 @@ const localTsLibFolder = path.join(folders.common, "node_modules/typescript/lib"
 const tsNodeModulesLibDir = fileSystem.directoryExistsSync(localTsLibFolder)
   ? localTsLibFolder
   : path.join(folders.root, "node_modules/typescript/lib");
-const typeScriptSourceFile = fileSystem.readFileSync(path.join(tsNodeModulesLibDir, "typescript.js"));
+const typeScriptSourceFile = fileSystem.readFileSync(path.join(tsNodeModulesLibDir, "typescript.js"))
+  .replace("\n//# sourceMappingURL=typescript.js.map\n", "\n");
 fileSystem.writeFileSync(`${copyDirPath}/typescript.js`, typeScriptSourceFile + "\nexport { ts };\n");
 const typeScriptDtsText = fileSystem.readFileSync(path.join(tsNodeModulesLibDir, "typescript.d.ts"));
 fileSystem.writeFileSync(`${copyDirPath}/typescript.d.ts`, typeScriptDtsText.replace("export = ts;", "export { ts };"));
