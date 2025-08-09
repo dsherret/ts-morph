@@ -15,6 +15,7 @@ export default [{
     typescript({
       tsconfig: "tsconfig.rollup.json",
       outDir: outputFolder,
+      experimentalDecorators: false,
     }),
   ],
 }];

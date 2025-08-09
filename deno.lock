@@ -2,7 +2,9 @@
   "version": "5",
   "specifiers": {
     "jsr:@david/code-block-writer@13": "13.0.3",
+    "jsr:@std/assert@1": "1.0.13",
     "jsr:@std/fs@1": "1.0.16",
+    "jsr:@std/internal@^1.0.6": "1.0.10",
     "jsr:@std/path@1": "1.0.8",
     "jsr:@std/path@^1.0.8": "1.0.8",
     "jsr:@ts-morph/common@~0.26.1": "0.26.1",
@@ -36,11 +38,20 @@
     "@david/code-block-writer@13.0.3": {
       "integrity": "f98c77d320f5957899a61bfb7a9bead7c6d83ad1515daee92dbacc861e13bb7f"
     },
+    "@std/assert@1.0.13": {
+      "integrity": "ae0d31e41919b12c656c742b22522c32fb26ed0cba32975cb0de2a273cb68b29",
+      "dependencies": [
+        "jsr:@std/internal"
+      ]
+    },
     "@std/fs@1.0.16": {
       "integrity": "81878f62b6eeda0bf546197fc3daa5327c132fee1273f6113f940784a468b036",
       "dependencies": [
         "jsr:@std/path@^1.0.8"
       ]
+    },
+    "@std/internal@1.0.10": {
+      "integrity": "e3be62ce42cab0e177c27698e5d9800122f67b766a0bea6ca4867886cbde8cf7"
     },
     "@std/path@1.0.8": {
       "integrity": "548fa456bb6a04d3c1a1e7477986b6cffbce95102d0bb447c67c4ee70e0364be"
