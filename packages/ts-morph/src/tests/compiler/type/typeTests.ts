@@ -69,6 +69,7 @@ let stringWithUndefinedType: string | undefined;
 let stringWithNullType: string | null;
 let stringWithUndefinedAndNullType: string | undefined | null;
 let unknownType: unknown;
+let stringWithPromiseType: Promise<string>;
 `;
     const { sourceFile } = getInfoFromTextWithTypeChecking(text);
     const typesByName: { [name: string]: Type } = {};
@@ -602,6 +603,12 @@ let unknownType: unknown;
     describe(nameof<Type>("getApparentType"), () => {
       it("should get the apparent type", () => {
         expect(typesByName["numberType"].getApparentType().getText()).to.equal("Number");
+      });
+    });
+
+    describe(nameof<Type>("getAwaitedType"), () => {
+      it("should get the awaited type", () => {
+        expect(typesByName["stringWithPromiseType"].getAwaitedType()!.getText()).to.equal("string");
       });
     });
 

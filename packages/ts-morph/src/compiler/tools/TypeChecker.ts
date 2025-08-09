@@ -53,6 +53,15 @@ export class TypeChecker {
   }
 
   /**
+   * Gets the awaited type of a type (ex. `Promise<string>` -> `string`).
+   * @param type - Type to get the awaited type of.
+   */
+  getAwaitedType(type: Type) {
+    const awaitedType = this.compilerObject.getAwaitedType(type.compilerType);
+    return awaitedType ? this.#context.compilerFactory.getType(awaitedType) : undefined;
+  }
+
+  /**
    * Gets the constant value of a declaration.
    * @param node - Node to get the constant value from.
    */
