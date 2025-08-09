@@ -3481,6 +3481,11 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   /** Gets if the node is a OmittedExpression. */
   static readonly isOmittedExpression: (node: compiler.Node | undefined) => node is compiler.OmittedExpression = Node.is(SyntaxKind.OmittedExpression);
 
+  /** Gets if the node is a OptionalTypeNode. */
+  static isOptionalTypeNode(node: compiler.Node | undefined): node is compiler.OptionalTypeNode {
+    return node?.getKind() === SyntaxKind.OptionalType;
+  }
+
   /** Gets if the node is a OverloadableNode. */
   static isOverloadable<T extends compiler.Node>(node: T | undefined): node is compiler.OverloadableNode & compiler.OverloadableNodeExtensionType & T {
     switch (node?.getKind()) {
@@ -4085,6 +4090,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.LiteralType:
       case SyntaxKind.MappedType:
       case SyntaxKind.NamedTupleMember:
+      case SyntaxKind.OptionalType:
       case SyntaxKind.ParenthesizedType:
       case SyntaxKind.RestType:
       case SyntaxKind.TemplateLiteralType:

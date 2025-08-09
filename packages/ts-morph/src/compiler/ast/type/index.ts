@@ -11,6 +11,7 @@ export * from "./IntersectionTypeNode";
 export * from "./LiteralTypeNode";
 export * from "./MappedTypeNode";
 export * from "./NamedTupleMember";
+export * from "./OptionalTypeNode";
 export * from "./ParenthesizedTypeNode";
 export * from "./RestTypeNode";
 export * from "./TemplateLiteralTypeNode";
