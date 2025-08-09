@@ -9,6 +9,7 @@ export * from "./JSDocDeprecatedTag";
 export * from "./JSDocEnumTag";
 export * from "./JSDocFunctionType";
 export * from "./JSDocImplementsTag";
+export * from "./JSDocImportTag";
 export * from "./JSDocLink";
 export * from "./JSDocLinkCode";
 export * from "./JSDocLinkPlain";

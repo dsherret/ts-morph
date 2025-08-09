@@ -2986,6 +2986,12 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isJSDocFunctionType: (node: compiler.Node | undefined) => node is compiler.JSDocFunctionType = Node.is(SyntaxKind.JSDocFunctionType);
   /** Gets if the node is a JSDocImplementsTag. */
   static readonly isJSDocImplementsTag: (node: compiler.Node | undefined) => node is compiler.JSDocImplementsTag = Node.is(SyntaxKind.JSDocImplementsTag);
+
+  /** Gets if the node is a JSDocImportTag. */
+  static isJSDocImportTag(node: compiler.Node | undefined): node is compiler.JSDocImportTag {
+    return node?.getKind() === SyntaxKind.JSDocImportTag;
+  }
+
   /** Gets if the node is a JSDocLink. */
   static readonly isJSDocLink: (node: compiler.Node | undefined) => node is compiler.JSDocLink = Node.is(SyntaxKind.JSDocLink);
   /** Gets if the node is a JSDocLinkCode. */
@@ -3051,6 +3057,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.JSDocDeprecatedTag:
       case SyntaxKind.JSDocEnumTag:
       case SyntaxKind.JSDocImplementsTag:
+      case SyntaxKind.JSDocImportTag:
       case SyntaxKind.JSDocOverloadTag:
       case SyntaxKind.JSDocOverrideTag:
       case SyntaxKind.JSDocParameterTag:
