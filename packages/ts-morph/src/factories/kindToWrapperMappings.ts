@@ -145,6 +145,7 @@ export const kindToWrapperMappings: { [key: number]: unknown } = {
   [SyntaxKind.ObjectBindingPattern]: compiler.ObjectBindingPattern,
   [SyntaxKind.ObjectLiteralExpression]: compiler.ObjectLiteralExpression,
   [SyntaxKind.OmittedExpression]: compiler.OmittedExpression,
+  [SyntaxKind.OptionalType]: compiler.OptionalTypeNode,
   [SyntaxKind.Parameter]: compiler.ParameterDeclaration,
   [SyntaxKind.ParenthesizedExpression]: compiler.ParenthesizedExpression,
   [SyntaxKind.ParenthesizedType]: compiler.ParenthesizedTypeNode,
