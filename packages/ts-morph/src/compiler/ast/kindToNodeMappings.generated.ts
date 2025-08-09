@@ -79,6 +79,7 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.JSDocEnumTag]: compiler.JSDocEnumTag;
   [SyntaxKind.JSDocFunctionType]: compiler.JSDocFunctionType;
   [SyntaxKind.JSDocImplementsTag]: compiler.JSDocImplementsTag;
+  [SyntaxKind.JSDocImportTag]: compiler.JSDocImportTag;
   [SyntaxKind.JSDocLink]: compiler.JSDocLink;
   [SyntaxKind.JSDocLinkCode]: compiler.JSDocLinkCode;
   [SyntaxKind.JSDocLinkPlain]: compiler.JSDocLinkPlain;

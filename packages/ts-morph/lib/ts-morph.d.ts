@@ -4148,6 +4148,8 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   static isIterationStatement(node: Node | undefined): node is IterationStatement;
   /** Gets if the node is a JSDocableNode. */
   static isJSDocable<T extends Node>(node: T | undefined): node is JSDocableNode & JSDocableNodeExtensionType & T;
+  /** Gets if the node is a JSDocImportTag. */
+  static isJSDocImportTag(node: Node | undefined): node is JSDocImportTag;
   /** Gets if the node is a JSDocPropertyLikeTag. */
   static isJSDocPropertyLikeTag<T extends Node>(node: T | undefined): node is JSDocPropertyLikeTag & JSDocPropertyLikeTagExtensionType & T;
   /** Gets if the node is a JSDocTag. */
@@ -4636,6 +4638,14 @@ export declare class JSDocImplementsTag extends JSDocTag<ts.JSDocImplementsTag> 
   getParent(): NodeParentType<ts.JSDocImplementsTag>;
   /** @inheritdoc **/
   getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.JSDocImplementsTag>>;
+}
+
+/** JS doc import tag node. */
+export declare class JSDocImportTag extends JSDocTag<ts.JSDocImportTag> {
+  /** @inheritdoc **/
+  getParent(): NodeParentType<ts.JSDocImportTag>;
+  /** @inheritdoc **/
+  getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.JSDocImportTag>>;
 }
 
 /** JS doc link node. */
@@ -6450,6 +6460,7 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.JSDocEnumTag]: JSDocEnumTag;
   [SyntaxKind.JSDocFunctionType]: JSDocFunctionType;
   [SyntaxKind.JSDocImplementsTag]: JSDocImplementsTag;
+  [SyntaxKind.JSDocImportTag]: JSDocImportTag;
   [SyntaxKind.JSDocLink]: JSDocLink;
   [SyntaxKind.JSDocLinkCode]: JSDocLinkCode;
   [SyntaxKind.JSDocLinkPlain]: JSDocLinkPlain;
