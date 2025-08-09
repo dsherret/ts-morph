@@ -4194,6 +4194,8 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   static isNodeWithTypeArguments(node: Node | undefined): node is NodeWithTypeArguments;
   /** Gets if the node is a NullLiteral. */
   static isNullLiteral(node: Node | undefined): node is NullLiteral;
+  /** Gets if the node is a OptionalTypeNode. */
+  static isOptionalTypeNode(node: Node | undefined): node is OptionalTypeNode;
   /** Gets if the node is a OverloadableNode. */
   static isOverloadable<T extends Node>(node: T | undefined): node is OverloadableNode & OverloadableNodeExtensionType & T;
   /** Gets if the node is a OverrideableNode. */
@@ -6513,6 +6515,7 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.ObjectBindingPattern]: ObjectBindingPattern;
   [SyntaxKind.ObjectLiteralExpression]: ObjectLiteralExpression;
   [SyntaxKind.OmittedExpression]: OmittedExpression;
+  [SyntaxKind.OptionalType]: OptionalTypeNode;
   [SyntaxKind.Parameter]: ParameterDeclaration;
   [SyntaxKind.ParenthesizedExpression]: ParenthesizedExpression;
   [SyntaxKind.ParenthesizedType]: ParenthesizedTypeNode;
@@ -8750,6 +8753,15 @@ export declare class NamedTupleMember extends NamedTupleMemberBase<ts.NamedTuple
   getParent(): NodeParentType<ts.NamedTupleMember>;
   /** @inheritdoc **/
   getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.NamedTupleMember>>;
+}
+
+export declare class OptionalTypeNode extends TypeNode<ts.OptionalTypeNode> {
+  /** Gets the optional type node's inner type. */
+  getTypeNode(): TypeNode<ts.TypeNode>;
+  /** @inheritdoc **/
+  getParent(): NodeParentType<ts.OptionalTypeNode>;
+  /** @inheritdoc **/
+  getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.OptionalTypeNode>>;
 }
 
 export declare class ParenthesizedTypeNode extends TypeNode<ts.ParenthesizedTypeNode> {
