@@ -1,12 +1,17 @@
-import { errors, ts } from "@ts-morph/common";
+import { errors, ImportPhaseModifierSyntaxKind, SyntaxKind, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange, removeChildren } from "../../../manipulation";
 import { Node } from "../common";
 
 export const ImportClauseBase = Node;
 export class ImportClause extends ImportClauseBase<ts.ImportClause> {
+  /** Gets the phase modifier of the import clause. */
+  getPhaseModifier(): ImportPhaseModifierSyntaxKind | undefined {
+    return this.compilerNode.phaseModifier;
+  }
+
   /** Gets if this import clause is type only. */
   isTypeOnly() {
-    return this.compilerNode.isTypeOnly;
+    return this.compilerNode.phaseModifier === SyntaxKind.TypeKeyword;
   }
 
   /** Sets if this import declaration is type only. */

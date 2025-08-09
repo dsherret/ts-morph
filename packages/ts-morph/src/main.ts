@@ -6,6 +6,7 @@ export {
   type EditorSettings,
   EmitHint,
   type FileSystemHost,
+  type ImportPhaseModifierSyntaxKind,
   InMemoryFileSystemHost,
   LanguageVariant,
   ModuleKind,

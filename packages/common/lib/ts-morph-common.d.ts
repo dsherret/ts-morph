@@ -1066,6 +1066,7 @@ export import CompilerOptions = ts.CompilerOptions;
 export import DiagnosticCategory = ts.DiagnosticCategory;
 export import EditorSettings = ts.EditorSettings;
 export import EmitHint = ts.EmitHint;
+export import ImportPhaseModifierSyntaxKind = ts.ImportPhaseModifierSyntaxKind;
 export import LanguageVariant = ts.LanguageVariant;
 export import ModuleKind = ts.ModuleKind;
 export import ModuleResolutionKind = ts.ModuleResolutionKind;

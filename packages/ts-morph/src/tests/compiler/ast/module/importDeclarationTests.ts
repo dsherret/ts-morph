@@ -1,4 +1,4 @@
-import { errors, ModuleResolutionKind, nameof } from "@ts-morph/common";
+import { errors, ModuleResolutionKind, nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ImportDeclaration } from "../../../../compiler";
 import { Project } from "../../../../Project";
@@ -867,6 +867,14 @@ describe("ImportDeclaration", () => {
         namespaceImport: undefined,
         attributes: undefined,
       });
+    });
+  });
+
+  describe("import defer", () => {
+    it("should get the details of an import defer", () => {
+      const text = "import defer * as feature from './some-feature.js';";
+      const { firstChild } = getInfoFromText<ImportDeclaration>(text);
+      expect(firstChild.getPhaseModifier()).to.equal(SyntaxKind.DeferKeyword);
     });
   });
 });

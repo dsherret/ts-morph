@@ -10089,7 +10089,7 @@ export declare class Type<TType extends ts.Type = ts.Type> {
    * Gets the object flags.
    * @remarks Returns 0 for a non-object type.
    */
-  getObjectFlags(): 0 | ObjectFlags.Class | ObjectFlags.Interface | ObjectFlags.Reference | ObjectFlags.Tuple | ObjectFlags.Anonymous | ObjectFlags.Mapped | ObjectFlags.Instantiated | ObjectFlags.ObjectLiteral | ObjectFlags.EvolvingArray | ObjectFlags.ObjectLiteralPatternWithComputedProperties | ObjectFlags.ReverseMapped | ObjectFlags.JsxAttributes | ObjectFlags.JSLiteral | ObjectFlags.FreshLiteral | ObjectFlags.ArrayLiteral | ObjectFlags.ClassOrInterface | ObjectFlags.ContainsSpread | ObjectFlags.ObjectRestType | ObjectFlags.InstantiationExpressionType | ObjectFlags.SingleSignatureType;
+  getObjectFlags(): 0 | ObjectFlags.Class | ObjectFlags.Interface | ObjectFlags.Reference | ObjectFlags.Tuple | ObjectFlags.Anonymous | ObjectFlags.Mapped | ObjectFlags.Instantiated | ObjectFlags.ObjectLiteral | ObjectFlags.EvolvingArray | ObjectFlags.ObjectLiteralPatternWithComputedProperties | ObjectFlags.ReverseMapped | ObjectFlags.JsxAttributes | ObjectFlags.JSLiteral | ObjectFlags.FreshLiteral | ObjectFlags.ArrayLiteral | ObjectFlags.SingleSignatureType | ObjectFlags.ClassOrInterface | ObjectFlags.ContainsSpread | ObjectFlags.ObjectRestType | ObjectFlags.InstantiationExpressionType;
 }
 
 export declare class TypeParameter extends Type<ts.TypeParameter> {
@@ -10924,8 +10924,8 @@ export declare function forEachStructureChild<TStructure>(structures: ReadonlyAr
  * @param callback - Callback to do on each child of the provided structure. Returning a truthy value will return that value in the main function call.
  */
 export declare function forEachStructureChild<TStructure>(structure: Structures, callback: (child: Structures) => TStructure | void): TStructure | undefined;
-import { CompilerOptions, DiagnosticCategory, EditorSettings, EmitHint, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, NodeFlags, ObjectFlags, ScriptKind, ScriptTarget, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags } from "@ts-morph/common";
-export { ts, CompilerOptions, DiagnosticCategory, EditorSettings, EmitHint, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, NodeFlags, ObjectFlags, ScriptKind, ScriptTarget, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags };
+import { CompilerOptions, DiagnosticCategory, EditorSettings, EmitHint, ImportPhaseModifierSyntaxKind, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, NodeFlags, ObjectFlags, ScriptKind, ScriptTarget, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags } from "@ts-morph/common";
+export { ts, CompilerOptions, DiagnosticCategory, EditorSettings, EmitHint, ImportPhaseModifierSyntaxKind, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, NodeFlags, ObjectFlags, ScriptKind, ScriptTarget, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags };
 
 /** Code writer that assists with formatting and visualizing blocks of JavaScript or TypeScript code. */
 export declare class CodeBlockWriter {
