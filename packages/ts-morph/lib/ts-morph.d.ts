@@ -7107,6 +7107,13 @@ export declare class ImportClause extends ImportClauseBase<ts.ImportClause> {
   isTypeOnly(): boolean;
   /** Sets if this import declaration is type only. */
   setIsTypeOnly(value: boolean): this;
+  /** Gets if this import clause has a defer phase modifier. */
+  isDeferred(): boolean;
+  /**
+   * Sets if this import declaration should have a defer keyword.
+   * @throws When not a namespace import.
+   */
+  setIsDeferred(value: boolean): this;
   /** Gets the default import or throws if it doesn't exit. */
   getDefaultImportOrThrow(message?: string | (() => string)): Identifier;
   /** Gets the default import or returns undefined if it doesn't exist. */
@@ -7134,6 +7141,13 @@ export declare class ImportDeclaration extends ImportDeclarationBase<ts.ImportDe
   isTypeOnly(): boolean;
   /** Sets if this import declaration is type only. */
   setIsTypeOnly(value: boolean): this;
+  /** Gets if this import declaration has a `defer` phase modifier. */
+  isDeferred(): boolean;
+  /**
+   * Sets if this import declaration is a deferred import.
+   * @throws When the import is not a namespace import.
+   */
+  setIsDeferred(value: boolean): this;
   /** Gets the phase modifier of the import declaration. */
   getPhaseModifier(): ImportPhaseModifierSyntaxKind | undefined;
   /**
