@@ -1,4 +1,4 @@
-import { libFiles } from "./data/libFiles";
+import { libFiles } from "./data/libFiles.generated";
 import { errors } from "./errors";
 import { StandardizedFilePath } from "./fileSystem";
 import { nameof } from "./utils";
