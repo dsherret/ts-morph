@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [27.0.0](https://github.com/dsherret/ts-morph/compare/26.0.0...27.0.0) (2025-09-07)
+
+* perf: switch to tinyglobby in https://github.com/dsherret/ts-morph/pull/1635
+* fix: re-export StandardizedFilePath from @ts-morph/common in https://github.com/dsherret/ts-morph/pull/1637
+* feat: `TypeChecker` - add `getAwaitedType` in https://github.com/dsherret/ts-morph/pull/1643
+* feat: TypeScript 5.9 in https://github.com/dsherret/ts-morph/pull/1646
+* feat: wrap OptionalTypeNode in https://github.com/dsherret/ts-morph/pull/1647
+* feat: wrap `JSDocImportTag` in https://github.com/dsherret/ts-morph/pull/1648
+* fix: remove invalid sourceMappingURL from build output in https://github.com/dsherret/ts-morph/pull/1649
+* feat: ability to add and remove the defer keyword in imports in https://github.com/dsherret/ts-morph/pull/1651
+
+## [26.0.0](https://github.com/dsherret/ts-morph/compare/25.0.1...26.0.0) (2025-05-19)
+
+* feat: TypeScript 5.8 https://github.com/dsherret/ts-morph/pull/1628
+* fix: Improve comma appending logic to handle nested template literals correctly in https://github.com/dsherret/ts-morph/pull/1630
+* fix(bootstrap): ignore dist-deno folder for npm publish https://github.com/dsherret/ts-morph/pull/1610
+* feat: `npm publish` with provenance https://github.com/dsherret/ts-morph/pull/1634
+
 ### [25.0.1](https://github.com/dsherret/ts-morph/compare/25.0.0...25.0.1) (2025-02-05)
 
 
