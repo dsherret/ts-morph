@@ -39,6 +39,28 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
     return this;
   }
 
+  /** Gets if this import declaration has a `defer` phase modifier. */
+  isDeferred() {
+    return this.getImportClause()?.isDeferred() ?? false;
+  }
+
+  /**
+   * Sets if this import declaration is a deferred import.
+   * @throws When the import is not a namespace import.
+   */
+  setIsDeferred(value: boolean) {
+    const importClause = this.getImportClause();
+    if (importClause == null) {
+      if (!value)
+        return this;
+      else
+        throw new errors.InvalidOperationError("Cannot set an import as deferred when there is no import clause.");
+    }
+
+    importClause.setIsDeferred(value);
+    return this;
+  }
+
   /** Gets the phase modifier of the import declaration. */
   getPhaseModifier(): ImportPhaseModifierSyntaxKind | undefined {
     return this.getImportClause()?.getPhaseModifier();

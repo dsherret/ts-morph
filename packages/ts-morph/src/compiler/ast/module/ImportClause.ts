@@ -36,6 +36,39 @@ export class ImportClause extends ImportClauseBase<ts.ImportClause> {
     return this;
   }
 
+  /** Gets if this import clause has a defer phase modifier. */
+  isDeferred() {
+    return this.compilerNode.phaseModifier === SyntaxKind.DeferKeyword;
+  }
+
+  /**
+   * Sets if this import declaration should have a defer keyword.
+   * @throws When not a namespace import.
+   */
+  setIsDeferred(value: boolean) {
+    if (this.isDeferred() === value)
+      return this;
+
+    if (value) {
+      if (this.getNamespaceImport() == null)
+        throw new Error("Cannot set an import as deferred when not a namespace import.");
+
+      insertIntoParentTextRange({
+        parent: this,
+        insertPos: this.getStart(),
+        newText: "defer ",
+      });
+    } else {
+      const deferKeyword = this.getFirstChildByKindOrThrow(ts.SyntaxKind.DeferKeyword);
+      removeChildren({
+        children: [deferKeyword],
+        removeFollowingSpaces: true,
+      });
+    }
+
+    return this;
+  }
+
   /**
    * Gets the default import or throws if it doesn't exit.
    */

@@ -875,6 +875,25 @@ describe("ImportDeclaration", () => {
       const text = "import defer * as feature from './some-feature.js';";
       const { firstChild } = getInfoFromText<ImportDeclaration>(text);
       expect(firstChild.getPhaseModifier()).to.equal(SyntaxKind.DeferKeyword);
+      expect(firstChild.isDeferred()).to.equal(true);
+    });
+
+    it("should add and remove the defer keyword", () => {
+      const text = "import defer * as feature from './some-feature.js';";
+      const { firstChild } = getInfoFromText<ImportDeclaration>(text);
+      firstChild.setIsDeferred(false);
+      firstChild.setIsDeferred(false);
+      expect(firstChild.getText()).to.equal("import * as feature from './some-feature.js';");
+      firstChild.setIsDeferred(true);
+      firstChild.setIsDeferred(true);
+      expect(firstChild.getText()).to.equal("import defer * as feature from './some-feature.js';");
+    });
+
+    it("should error setting for non-namespace import", () => {
+      const text = "import feature from './some-feature.js';";
+      const { firstChild } = getInfoFromText<ImportDeclaration>(text);
+      firstChild.setIsDeferred(false);
+      expect(() => firstChild.setIsDeferred(true)).to.throw(Error, "Cannot set an import as deferred when not a namespace import.");
     });
   });
 });
