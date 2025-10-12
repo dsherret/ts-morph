@@ -2,6 +2,7 @@ name: Publish
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 jobs:
   publish:
@@ -28,9 +29,26 @@ jobs:
       - name: Build npm
         run: deno task build
       - name: Publish npm
-        run: |
-          (cd packages/common && npm publish --provenance --access public)
-          (cd packages/bootstrap && npm publish --provenance --access public)
-          (cd packages/ts-morph && npm publish --provenance --access public)
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          publish_if_needed() {
+            local pkg_dir=$1
+            cd "$pkg_dir"
+            local name version
+            name=$(node -p "require('./package.json').name")
+            version=$(node -p "require('./package.json').version")
+            if npm view "$name@$version" >/dev/null 2>&1; then
+              echo "✅ $name@$version already published — skipping."
+            else
+              echo "🚀 Publishing $name@$version..."
+              npm publish --provenance --access public
+            fi
+            cd - >/dev/null
+          }
+
+          publish_if_needed packages/common
+          publish_if_needed packages/bootstrap
+          publish_if_needed packages/ts-morph
