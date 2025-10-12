@@ -24,7 +24,7 @@
     "rollup": "rollup -c"
   },
   "dependencies": {
-    "@ts-morph/common": "~0.28.0"
+    "@ts-morph/common": "~0.28.1"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^12.1.2",
