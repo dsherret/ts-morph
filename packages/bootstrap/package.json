@@ -1,6 +1,6 @@
 {
   "name": "@ts-morph/bootstrap",
-  "version": "0.28.0",
+  "version": "0.28.1",
   "description": "API for getting quickly set up with the TypeScript Compiler API.",
   "keywords": [
     "typescript",
