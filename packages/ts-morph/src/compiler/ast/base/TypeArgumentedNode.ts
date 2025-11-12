@@ -86,7 +86,12 @@ export function TypeArgumentedNode<T extends Constructor<TypeArgumentedNodeExten
       index = verifyAndGetIndex(index, typeArguments.length);
 
       if (typeArguments.length === 0) {
-        const identifier = this.getFirstChildByKindOrThrow(SyntaxKind.Identifier);
+        // For property access expressions like `this.foo()`, the identifier is nested
+        // inside the PropertyAccessExpression, not a direct child of the CallExpression
+        const expression = Node.hasExpression(this) ? this.getExpression() : undefined;
+        const identifier = Node.isPropertyAccessExpression(expression)
+          ? expression.getLastChildByKindOrThrow(SyntaxKind.Identifier)
+          : this.getFirstChildByKindOrThrow(SyntaxKind.Identifier);
         insertIntoParentTextRange({
           insertPos: identifier.getEnd(),
           parent: this,
