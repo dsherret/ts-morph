@@ -1,4 +1,4 @@
-# ts-morph
+# <img src="docs/assets/logo.svg" alt="ts-morph" height="58" />
 
 [![CI](https://github.com/dsherret/ts-morph/workflows/CI/badge.svg)](https://github.com/dsherret/ts-morph/actions?query=workflow%3ACI)
 
