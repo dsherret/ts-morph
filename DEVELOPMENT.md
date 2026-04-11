@@ -26,7 +26,7 @@ deno task setup
 # build (run in root dir or per package)
 deno task build
 # run tests (run in root dir or per package)
-deno task test
+deno task --recursive test
 # format
 deno task format
 ```

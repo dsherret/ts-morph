@@ -244,7 +244,7 @@ describe("Project", () => {
           const project = await create({ useInMemoryFileSystem: true, skipLoadingLibFiles: true });
           const sourceFile = project.createSourceFile("test.ts", "const t: String = '';");
           const program = project.createProgram();
-          expect(ts.getPreEmitDiagnostics(program).length).to.equal(10);
+          expect(ts.getPreEmitDiagnostics(program).length).to.equal(12);
 
           const typeChecker = program.getTypeChecker();
           const varDecl = (sourceFile.statements[0] as ts.VariableStatement).declarationList.declarations[0];

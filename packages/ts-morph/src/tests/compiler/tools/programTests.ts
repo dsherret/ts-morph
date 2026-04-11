@@ -8,7 +8,7 @@ describe("Program", () => {
   describe(nameof<Program>("getGlobalDiagnostics"), () => {
     it("should get the global diagnostics when not including a the lib.d.ts files", () => {
       const { project } = getInfoFromText("const t: string;");
-      expect(project.getProgram().getGlobalDiagnostics().length).to.equal(8);
+      expect(project.getProgram().getGlobalDiagnostics().length).to.equal(10);
     });
 
     it("should have no global compile errors when including the lib.d.ts files", () => {

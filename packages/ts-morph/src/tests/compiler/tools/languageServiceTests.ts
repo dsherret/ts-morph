@@ -12,7 +12,7 @@ describe("LanguageService", () => {
           emitSkipped: false,
           outputFiles: [{
             fileName: "/" + sourceFile.getBaseName().replace(".ts", ".js"),
-            text: "var t = 5;\n",
+            text: "\"use strict\";\nvar t = 5;\n",
             writeByteOrderMark: false,
           }],
         });
@@ -31,7 +31,7 @@ describe("LanguageService", () => {
         emitSkipped: false,
         outputFiles: [{
           fileName: "/" + sourceFile.getBaseName().replace(".ts", ".js"),
-          text: "var t = 5;\n",
+          text: "\"use strict\";\nvar t = 5;\n",
           writeByteOrderMark: false,
         }],
       });

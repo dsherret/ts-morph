@@ -24,7 +24,8 @@ describe("EmitResult", () => {
     expect(result.getEmitSkipped()).to.be.true;
     const diagnostics = result.getDiagnostics();
     const filteredDiagnostics = diagnostics.map(d => d.getMessageText()).filter(d => (d as string).indexOf("Cannot find global type"));
-    expect(filteredDiagnostics.length).to.equal(1);
+    expect(filteredDiagnostics.length).to.equal(2);
     expect(filteredDiagnostics[0]).to.equal("'const' declarations must be initialized.");
+    expect(filteredDiagnostics[1]).to.equal("Variable 'num1' implicitly has an 'any' type.");
   });
 });

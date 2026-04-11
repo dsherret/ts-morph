@@ -228,7 +228,7 @@ describe("Project", () => {
       it("should skip loading lib files when true", () => {
         const project = new Project({ useInMemoryFileSystem: true, skipLoadingLibFiles: true });
         const sourceFile = project.createSourceFile("test.ts", "const t: String = '';");
-        expect(project.getPreEmitDiagnostics().length).to.equal(10);
+        expect(project.getPreEmitDiagnostics().length).to.equal(12);
 
         const varDeclType = sourceFile.getVariableDeclarationOrThrow("t").getType();
         expect(varDeclType.getSymbol()).to.be.undefined;
@@ -1035,9 +1035,9 @@ describe("Project", () => {
 
       const writeLog = fileSystem.getWriteLog();
       expect(writeLog[0].filePath).to.equal("/dist/file1.js");
-      expect(writeLog[0].fileText).to.equal("var num1 = 1;\n");
+      expect(writeLog[0].fileText).to.equal("\"use strict\";\nconst num1 = 1;\n");
       expect(writeLog[1].filePath).to.equal("/dist/file2.js");
-      expect(writeLog[1].fileText).to.equal("var num2 = 2;\n");
+      expect(writeLog[1].fileText).to.equal("\"use strict\";\nconst num2 = 2;\n");
       expect(writeLog.length).to.equal(2);
     });
 
@@ -1047,14 +1047,14 @@ describe("Project", () => {
 
       const writeLog = fileSystem.getWriteLog();
       expect(writeLog[0].filePath).to.equal("/dist/file1.js");
-      expect(writeLog[0].fileText).to.equal("var num1 = 1;\n");
+      expect(writeLog[0].fileText).to.equal("\"use strict\";\nconst num1 = 1;\n");
       expect(writeLog.length).to.equal(1);
     });
 
     it("should emit with bom if specified", async () => {
       const { project, fileSystem } = emitSetup({ noLib: true, outDir: "dist", emitBOM: true });
       await project.emit({ targetSourceFile: project.getSourceFile("file1.ts") });
-      expect(fileSystem.getWriteLog()[0].fileText).to.equal("\uFEFFvar num1 = 1;\n");
+      expect(fileSystem.getWriteLog()[0].fileText).to.equal("\uFEFF\"use strict\";\nconst num1 = 1;\n");
     });
 
     it("should only emit the declaration file when specified", async () => {
@@ -1098,9 +1098,9 @@ describe("Project", () => {
 
       const writeLog = fileSystem.getWriteLog();
       expect(writeLog[0].filePath).to.equal("/dist/file1.js");
-      expect(writeLog[0].fileText).to.equal(`var num1 = "1";\n`);
+      expect(writeLog[0].fileText).to.equal(`"use strict";\nconst num1 = "1";\n`);
       expect(writeLog[1].filePath).to.equal("/dist/file2.js");
-      expect(writeLog[1].fileText).to.equal(`var num2 = "2";\n`);
+      expect(writeLog[1].fileText).to.equal(`"use strict";\nconst num2 = "2";\n`);
       expect(writeLog.length).to.equal(2);
     });
   });
@@ -1113,16 +1113,16 @@ describe("Project", () => {
 
       const writeLog = fileSystem.getWriteLog();
       expect(writeLog[0].filePath).to.equal("/dist/file1.js");
-      expect(writeLog[0].fileText).to.equal("var num1 = 1;\n");
+      expect(writeLog[0].fileText).to.equal("\"use strict\";\nconst num1 = 1;\n");
       expect(writeLog[1].filePath).to.equal("/dist/file2.js");
-      expect(writeLog[1].fileText).to.equal("var num2 = 2;\n");
+      expect(writeLog[1].fileText).to.equal("\"use strict\";\nconst num2 = 2;\n");
       expect(writeLog.length).to.equal(2);
     });
 
     it("should emit with bom if specified", () => {
       const { project, fileSystem } = emitSetup({ noLib: true, outDir: "dist", emitBOM: true });
       project.emitSync({ targetSourceFile: project.getSourceFile("file1.ts") });
-      expect(fileSystem.getWriteLog()[0].fileText).to.equal("\uFEFFvar num1 = 1;\n");
+      expect(fileSystem.getWriteLog()[0].fileText).to.equal("\uFEFF\"use strict\";\nconst num1 = 1;\n");
     });
   });
 
@@ -1137,9 +1137,9 @@ describe("Project", () => {
 
       const files = result.getFiles();
       expect(files[0].filePath).to.equal("/dist/file1.js");
-      expect(files[0].text).to.equal("var num1 = 1;\n");
+      expect(files[0].text).to.equal("\"use strict\";\nconst num1 = 1;\n");
       expect(files[1].filePath).to.equal("/dist/file2.js");
-      expect(files[1].text).to.equal("var num2 = 2;\n");
+      expect(files[1].text).to.equal("\"use strict\";\nconst num2 = 2;\n");
       expect(files.length).to.equal(2);
     });
   });
