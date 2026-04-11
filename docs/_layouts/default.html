@@ -17,7 +17,7 @@
     <div class="main">
         <header class="container">
             <div class="row">
-                <h1 onclick="document.location.href = '{{ "/" | prepend: site.baseurl }}'" class="headerLink">{{ site.title | default: site.github.repository_name }}</h1>
+                <a href="{{ "/" | prepend: site.baseurl }}" class="headerLink"><img src="{{ 'logo.svg' | relative_url }}" alt="{{ site.title | default: site.github.repository_name }}" height="48" /></a>
                 <!--<p class="subText">{{ site.description | default: site.github.project_tagline }}</p>-->
             </div>
         </header>

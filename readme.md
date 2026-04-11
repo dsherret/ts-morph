@@ -4,6 +4,10 @@
 
 Monorepo for [ts-morph](packages/ts-morph) and related projects.
 
+<p align="center">
+  <img src="docs/logo.svg" alt="ts-morph logo" width="400" />
+</p>
+
 ## Packages
 
 - [ts-morph](packages/ts-morph) - TypeScript Compiler API wrapper. Provides an easier way to programmatically navigate and manipulate TypeScript and JavaScript code.
