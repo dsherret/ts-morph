@@ -1,4 +1,4 @@
-<img src="docs/logo.svg" alt="ts-morph" width="400" />
+# ![ts-morph](docs/logo.svg)
 
 [![CI](https://github.com/dsherret/ts-morph/workflows/CI/badge.svg)](https://github.com/dsherret/ts-morph/actions?query=workflow%3ACI)
 
