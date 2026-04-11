@@ -1,12 +1,8 @@
-# ts-morph
+<img src="docs/logo.svg" alt="ts-morph" width="400" />
 
 [![CI](https://github.com/dsherret/ts-morph/workflows/CI/badge.svg)](https://github.com/dsherret/ts-morph/actions?query=workflow%3ACI)
 
 Monorepo for [ts-morph](packages/ts-morph) and related projects.
-
-<p align="center">
-  <img src="docs/logo.svg" alt="ts-morph logo" width="400" />
-</p>
 
 ## Packages
 
