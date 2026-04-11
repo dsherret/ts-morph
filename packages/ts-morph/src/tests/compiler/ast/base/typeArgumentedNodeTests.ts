@@ -1,6 +1,6 @@
-import { nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
-import { ClassDeclaration, TypeArgumentedNode } from "../../../../compiler";
+import { CallExpression, ClassDeclaration, TypeArgumentedNode } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
 describe("TypeArgumentedNode", () => {
@@ -85,6 +85,29 @@ describe("TypeArgumentedNode", () => {
 
     it("should add a type arg", () => {
       doTest("@dec<1, 2>()\nclass T {}", "3", "@dec<1, 2, 3>()\nclass T {}");
+    });
+
+    // Issue #1228: addTypeArgument crashes on property access expressions
+    describe("property access expressions", () => {
+      function doTestPropertyAccess(code: string, text: string, expectedCode: string) {
+        const { sourceFile } = getInfoFromText(code);
+        const callExpr = sourceFile.getDescendantsOfKind(SyntaxKind.CallExpression)[0];
+        const result = callExpr.addTypeArgument(text);
+        expect(result.getText()).to.equal(text);
+        expect(sourceFile.getFullText()).to.equal(expectedCode);
+      }
+
+      it("should add type argument to property access on this", () => {
+        doTestPropertyAccess("this.foo();", "string", "this.foo<string>();");
+      });
+
+      it("should add type argument to property access on constructor", () => {
+        doTestPropertyAccess("new Test().foo();", "string", "new Test().foo<string>();");
+      });
+
+      it("should add type argument to property access on object", () => {
+        doTestPropertyAccess("obj.method();", "string", "obj.method<string>();");
+      });
     });
   });
 
