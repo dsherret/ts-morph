@@ -59,7 +59,7 @@ import { myExport } from "my-package";
       skipLoadingLibFiles: true,
     });
 
-    const diagnostics = project.getPreEmitDiagnostics().filter(d => d.getCode() !== 2318);
+    const diagnostics = project.getPreEmitDiagnostics().filter(d => d.getCode() !== 2318 && d.getCode() !== 5107);
     const diagnosticMessages = diagnostics.map(d => d.getMessageText());
 
     expect(diagnosticMessages).to.deep.equal([]);

@@ -18,8 +18,8 @@ describe("MemoryEmitResult", () => {
       const result = project.emitToMemory();
       await result.saveFiles();
 
-      expect(fileSystem.readFileSync("dist/file1.js")).to.equal("var num1 = 1;\n");
-      expect(fileSystem.readFileSync("dist/file2.js")).to.equal("var num2 = 2;\n");
+      expect(fileSystem.readFileSync("dist/file1.js")).to.equal("\"use strict\";\nconst num1 = 1;\n");
+      expect(fileSystem.readFileSync("dist/file2.js")).to.equal("\"use strict\";\nconst num2 = 2;\n");
     });
 
     it("should save multiple files asynchronously with bom when specified", async () => {
@@ -27,8 +27,8 @@ describe("MemoryEmitResult", () => {
       const result = project.emitToMemory();
       await result.saveFiles();
 
-      expect(fileSystem.readFileSync("dist/file1.js")).to.equal("\uFEFFvar num1 = 1;\n");
-      expect(fileSystem.readFileSync("dist/file2.js")).to.equal("\uFEFFvar num2 = 2;\n");
+      expect(fileSystem.readFileSync("dist/file1.js")).to.equal("\uFEFF\"use strict\";\nconst num1 = 1;\n");
+      expect(fileSystem.readFileSync("dist/file2.js")).to.equal("\uFEFF\"use strict\";\nconst num2 = 2;\n");
     });
   });
 
@@ -38,8 +38,8 @@ describe("MemoryEmitResult", () => {
       const result = project.emitToMemory();
       result.saveFilesSync();
 
-      expect(fileSystem.readFileSync("dist/file1.js")).to.equal("var num1 = 1;\n");
-      expect(fileSystem.readFileSync("dist/file2.js")).to.equal("var num2 = 2;\n");
+      expect(fileSystem.readFileSync("dist/file1.js")).to.equal("\"use strict\";\nconst num1 = 1;\n");
+      expect(fileSystem.readFileSync("dist/file2.js")).to.equal("\"use strict\";\nconst num2 = 2;\n");
     });
 
     it("should save multiple files synchronously with BOM when specified", () => {
@@ -47,8 +47,8 @@ describe("MemoryEmitResult", () => {
       const result = project.emitToMemory();
       result.saveFilesSync();
 
-      expect(fileSystem.readFileSync("dist/file1.js")).to.equal("\uFEFFvar num1 = 1;\n");
-      expect(fileSystem.readFileSync("dist/file2.js")).to.equal("\uFEFFvar num2 = 2;\n");
+      expect(fileSystem.readFileSync("dist/file1.js")).to.equal("\uFEFF\"use strict\";\nconst num1 = 1;\n");
+      expect(fileSystem.readFileSync("dist/file2.js")).to.equal("\uFEFF\"use strict\";\nconst num2 = 2;\n");
     });
   });
 });

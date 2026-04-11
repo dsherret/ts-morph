@@ -30,22 +30,22 @@ describe("tsInternal", () => {
 
     for (const target of getAllTargets()) {
       doTest(undefined, ModuleKind.None, target, ModuleResolutionKind.Classic);
-      doTest(undefined, ModuleKind.CommonJS, target, ModuleResolutionKind.NodeJs);
+      doTest(undefined, ModuleKind.CommonJS, target, ModuleResolutionKind.Bundler);
       doTest(undefined, ModuleKind.AMD, target, ModuleResolutionKind.Classic);
       doTest(undefined, ModuleKind.UMD, target, ModuleResolutionKind.Classic);
       doTest(undefined, ModuleKind.System, target, ModuleResolutionKind.Classic);
-      doTest(undefined, ModuleKind.ES2015, target, ModuleResolutionKind.Classic);
-      doTest(undefined, ModuleKind.ESNext, target, ModuleResolutionKind.Classic);
+      doTest(undefined, ModuleKind.ES2015, target, ModuleResolutionKind.Bundler);
+      doTest(undefined, ModuleKind.ESNext, target, ModuleResolutionKind.Bundler);
     }
 
-    doTest(undefined, undefined, undefined, ModuleResolutionKind.NodeJs);
-    doTest(undefined, undefined, ScriptTarget.ES3, ModuleResolutionKind.NodeJs);
-    doTest(undefined, undefined, ScriptTarget.ES5, ModuleResolutionKind.NodeJs);
-    doTest(undefined, undefined, ScriptTarget.ES2015, ModuleResolutionKind.Classic);
-    doTest(undefined, undefined, ScriptTarget.ES2016, ModuleResolutionKind.Classic);
-    doTest(undefined, undefined, ScriptTarget.ES2017, ModuleResolutionKind.Classic);
-    doTest(undefined, undefined, ScriptTarget.ES2018, ModuleResolutionKind.Classic);
-    doTest(undefined, undefined, ScriptTarget.ESNext, ModuleResolutionKind.Classic);
-    doTest(undefined, undefined, ScriptTarget.Latest, ModuleResolutionKind.Classic);
+    doTest(undefined, undefined, undefined, ModuleResolutionKind.Bundler);
+    doTest(undefined, undefined, ScriptTarget.ES3, ModuleResolutionKind.Bundler);
+    doTest(undefined, undefined, ScriptTarget.ES5, ModuleResolutionKind.Bundler);
+    doTest(undefined, undefined, ScriptTarget.ES2015, ModuleResolutionKind.Bundler);
+    doTest(undefined, undefined, ScriptTarget.ES2016, ModuleResolutionKind.Bundler);
+    doTest(undefined, undefined, ScriptTarget.ES2017, ModuleResolutionKind.Bundler);
+    doTest(undefined, undefined, ScriptTarget.ES2018, ModuleResolutionKind.Bundler);
+    doTest(undefined, undefined, ScriptTarget.ESNext, ModuleResolutionKind.Bundler);
+    doTest(undefined, undefined, ScriptTarget.Latest, ModuleResolutionKind.Bundler);
   });
 });

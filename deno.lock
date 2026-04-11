@@ -11,7 +11,7 @@
     "jsr:@std/path@^1.0.8": "1.0.8",
     "jsr:@ts-morph/common@~0.26.1": "0.26.1",
     "jsr:@ts-morph/ts-morph@*": "25.0.1",
-    "npm:@rollup/plugin-typescript@^12.1.2": "12.1.4_rollup@4.40.0_tslib@2.8.1_typescript@5.9.2",
+    "npm:@rollup/plugin-typescript@^12.1.2": "12.1.4_rollup@4.40.0_tslib@2.8.1_typescript@6.0.2",
     "npm:@types/chai@^5.2.1": "5.2.2",
     "npm:@types/diff@^7.0.2": "7.0.2",
     "npm:@types/mocha@^10.0.10": "10.0.10",
@@ -24,16 +24,16 @@
     "npm:dprint@~0.50.1": "0.50.1",
     "npm:minimatch@^10.0.1": "10.0.3",
     "npm:mocha@11.1.0": "11.1.0",
-    "npm:mocha@^11.1.0": "11.7.2",
+    "npm:mocha@^11.1.0": "11.1.0",
     "npm:path-browserify@^1.0.1": "1.0.1",
     "npm:rimraf@^6.0.1": "6.0.1",
     "npm:rollup@4.40.0": "4.40.0",
     "npm:tinyglobby@~0.2.14": "0.2.14_picomatch@4.0.3",
-    "npm:ts-node@10.9.2": "10.9.2_@types+node@22.18.0_typescript@5.9.2",
-    "npm:ts-node@^10.9.2": "10.9.2_@types+node@22.18.0_typescript@5.9.2",
+    "npm:ts-node@10.9.2": "10.9.2_@types+node@22.18.0_typescript@6.0.2",
+    "npm:ts-node@^10.9.2": "10.9.2_@types+node@22.18.0_typescript@6.0.2",
     "npm:tslib@^2.8.1": "2.8.1",
-    "npm:typescript@5.9.2": "5.9.2",
-    "npm:typescript@~5.9.2": "5.9.2"
+    "npm:typescript@6.0.2": "6.0.2",
+    "npm:typescript@~6.0.2": "6.0.2"
   },
   "jsr": {
     "@david/code-block-writer@13.0.3": {
@@ -166,7 +166,7 @@
     "@pkgjs/parseargs@0.11.0": {
       "integrity": "sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg=="
     },
-    "@rollup/plugin-typescript@12.1.4_rollup@4.40.0_tslib@2.8.1_typescript@5.9.2": {
+    "@rollup/plugin-typescript@12.1.4_rollup@4.40.0_tslib@2.8.1_typescript@6.0.2": {
       "integrity": "sha512-s5Hx+EtN60LMlDBvl5f04bEiFZmAepk27Q+mr85L/00zPDn1jtzlTV6FWn81MaIwqfWzKxmOJrBWHU6vtQyedQ==",
       "dependencies": [
         "@rollup/pluginutils",
@@ -425,16 +425,10 @@
         "is-binary-path",
         "is-glob",
         "normalize-path",
-        "readdirp@3.6.0"
+        "readdirp"
       ],
       "optionalDependencies": [
         "fsevents"
-      ]
-    },
-    "chokidar@4.0.3": {
-      "integrity": "sha512-Qgzu8kfBvo+cA4962jnP1KkS6Dop5NS6g7R5LFYJr4b8Ub94PPQXUksCw9PvXoeXPRRddRNC5C1JQUR2SMGtnA==",
-      "dependencies": [
-        "readdirp@4.1.2"
       ]
     },
     "cliui@8.0.1": {
@@ -593,6 +587,7 @@
         "package-json-from-dist",
         "path-scurry@1.11.1"
       ],
+      "deprecated": true,
       "bin": true
     },
     "glob@11.0.3": {
@@ -605,6 +600,7 @@
         "package-json-from-dist",
         "path-scurry@2.0.0"
       ],
+      "deprecated": true,
       "bin": true
     },
     "has-flag@4.0.0": {
@@ -729,7 +725,7 @@
       "dependencies": [
         "ansi-colors",
         "browser-stdout",
-        "chokidar@3.6.0",
+        "chokidar",
         "debug",
         "diff@5.2.0",
         "escape-string-regexp",
@@ -743,33 +739,7 @@
         "serialize-javascript",
         "strip-json-comments",
         "supports-color@8.1.1",
-        "workerpool@6.5.1",
-        "yargs",
-        "yargs-parser",
-        "yargs-unparser"
-      ],
-      "bin": true
-    },
-    "mocha@11.7.2": {
-      "integrity": "sha512-lkqVJPmqqG/w5jmmFtiRvtA2jkDyNVUcefFJKb2uyX4dekk8Okgqop3cgbFiaIvj8uCRJVTP5x9dfxGyXm2jvQ==",
-      "dependencies": [
-        "browser-stdout",
-        "chokidar@4.0.3",
-        "debug",
-        "diff@7.0.0",
-        "escape-string-regexp",
-        "find-up",
-        "glob@10.4.5",
-        "he",
-        "js-yaml",
-        "log-symbols",
-        "minimatch@9.0.5",
-        "ms",
-        "picocolors",
-        "serialize-javascript",
-        "strip-json-comments",
-        "supports-color@8.1.1",
-        "workerpool@9.3.3",
+        "workerpool",
         "yargs",
         "yargs-parser",
         "yargs-unparser"
@@ -826,9 +796,6 @@
     "pathval@2.0.0": {
       "integrity": "sha512-vE7JKRyES09KiunauX7nd2Q9/L7lhok4smP9RZTDeD4MVs72Dp2qNFVz39Nz5a0FVEW0BJR6C0DYrq6unoziZA=="
     },
-    "picocolors@1.1.1": {
-      "integrity": "sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA=="
-    },
     "picomatch@2.3.1": {
       "integrity": "sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA=="
     },
@@ -846,9 +813,6 @@
       "dependencies": [
         "picomatch@2.3.1"
       ]
-    },
-    "readdirp@4.1.2": {
-      "integrity": "sha512-GDhwkLfywWL2s6vEjyhri+eXmfH6j1L7JE27WhqLeYzoh/A3DBaYGEj2H/HFZCn/kMfim73FXxEJTw06WtxQwg=="
     },
     "require-directory@2.1.1": {
       "integrity": "sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q=="
@@ -980,7 +944,7 @@
         "is-number"
       ]
     },
-    "ts-node@10.9.2_@types+node@22.18.0_typescript@5.9.2": {
+    "ts-node@10.9.2_@types+node@22.18.0_typescript@6.0.2": {
       "integrity": "sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==",
       "dependencies": [
         "@cspotcode/source-map-support",
@@ -1004,8 +968,8 @@
     "tslib@2.8.1": {
       "integrity": "sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w=="
     },
-    "typescript@5.9.2": {
-      "integrity": "sha512-CWBzXQrc/qOkhidw1OzBTQuYRbfyxDXJMVJ1XNwUHGROVmuaeiEm3OslpZ1RV96d7SKKjZKrSJu3+t/xlw3R9A==",
+    "typescript@6.0.2": {
+      "integrity": "sha512-bGdAIrZ0wiGDo5l8c++HWtbaNCWTS4UTv7RaTH/ThVIgjkveJt83m74bBHMJkuCbslY8ixgLBVZJIOiQlQTjfQ==",
       "bin": true
     },
     "undici-types@6.21.0": {
@@ -1023,9 +987,6 @@
     },
     "workerpool@6.5.1": {
       "integrity": "sha512-Fs4dNYcsdpYSAfVxhnl1L5zTksjvOJxtC5hzMNl+1t9B8hTJTdKDyZ5ju7ztgPy+ft9tBFXoOlDNiOT9WUXZlA=="
-    },
-    "workerpool@9.3.3": {
-      "integrity": "sha512-slxCaKbYjEdFT/o2rH9xS1hf4uRDch1w7Uo+apxhZ+sf/1d9e0ZVkn42kPNGP2dgjIx6YFvSevj0zHvbWe2jdw=="
     },
     "wrap-ansi@7.0.0": {
       "integrity": "sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==",
@@ -1181,7 +1142,7 @@
             "npm:rollup@4.40.0",
             "npm:ts-node@^10.9.2",
             "npm:tslib@^2.8.1",
-            "npm:typescript@~5.9.2"
+            "npm:typescript@~6.0.2"
           ]
         }
       },
@@ -1202,7 +1163,7 @@
             "npm:tinyglobby@~0.2.14",
             "npm:ts-node@^10.9.2",
             "npm:tslib@^2.8.1",
-            "npm:typescript@5.9.2"
+            "npm:typescript@6.0.2"
           ]
         }
       },
@@ -1224,7 +1185,7 @@
             "npm:rimraf@^6.0.1",
             "npm:rollup@4.40.0",
             "npm:ts-node@10.9.2",
-            "npm:typescript@~5.9.2"
+            "npm:typescript@~6.0.2"
           ]
         }
       }

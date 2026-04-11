@@ -6,7 +6,7 @@ import { getInfoFromText, getInfoFromTextWithDescendant } from "../testHelpers";
 describe("TypeChecker", () => {
   describe(nameof<TypeChecker>("getAmbientModules"), () => {
     it("should get the ambient modules when they exist", () => {
-      const { project } = getInfoFromText("");
+      const { project } = getInfoFromText("", { compilerOptions: { types: ["jquery"] } });
       const fileSystem = project.getFileSystem();
 
       fileSystem.writeFileSync(

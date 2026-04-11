@@ -61,7 +61,7 @@
     "rimraf": "^6.0.1",
     "rollup": "=4.40.0",
     "ts-node": "10.9.2",
-    "typescript": "~5.9.2"
+    "typescript": "~6.0.2"
   },
   "browser": {
     "fs": false,

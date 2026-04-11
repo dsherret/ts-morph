@@ -263,8 +263,8 @@ describe("SourceFile", () => {
       const file1 = project.createSourceFile("/file.ts", `import * as test from "./sub";`);
       const file2 = project.createSourceFile("/file2.ts", `import "./sub/index";`);
       sourceFile.move("/dir/index.ts");
-      expect(file1.getFullText()).to.equal(`import * as test from "./dir";`);
-      expect(file2.getFullText()).to.equal(`import "./dir";`);
+      expect(file1.getFullText()).to.equal(`import * as test from "./dir/index";`);
+      expect(file2.getFullText()).to.equal(`import "./dir/index";`);
     });
 
     it("should change the module specifiers in the current file when moving", () => {
@@ -720,7 +720,7 @@ describe("SourceFile", () => {
       expect(result.getEmitSkipped()).to.be.false;
       expect(result.getOutputFiles().length).to.equal(1);
       const outputFile = result.getOutputFiles()[0];
-      expect(outputFile.getText()).to.equal("var num1 = 1;\n");
+      expect(outputFile.getText()).to.equal("\"use strict\";\nvar num1 = 1;\n");
       expect(outputFile.getFilePath()).to.equal("/dist/file1.js");
     });
 
@@ -1129,28 +1129,28 @@ function myFunction(param: MyClass) {
       doSourceFileTest("/dir/from.ts", "/dir2/to.D.TS", "../dir2/to");
     });
 
-    it("should use an implicit index when specifying the index file in a different directory", () => {
-      doSourceFileTest("/dir/file.ts", "/dir2/index.ts", "../dir2");
+    it("should use an explicit index when specifying the index file in a different directory", () => {
+      doSourceFileTest("/dir/file.ts", "/dir2/index.ts", "../dir2/index");
     });
 
-    it("should use an implicit index when specifying the index file in a parent directory", () => {
-      doSourceFileTest("/dir/parent/file.ts", "/dir/index.ts", "../../dir");
+    it("should use an explicit index when specifying the index file in a parent directory", () => {
+      doSourceFileTest("/dir/parent/file.ts", "/dir/index.ts", "../index");
     });
 
-    it("should use an implicit index when specifying the index file in a different directory that has different casing", () => {
-      doSourceFileTest("/dir/file.ts", "/dir2/INDEX.ts", "../dir2");
+    it("should use an explicit index when specifying the index file in a different directory that has different casing", () => {
+      doSourceFileTest("/dir/file.ts", "/dir2/INDEX.ts", "../dir2/INDEX");
     });
 
-    it("should use an implicit index when specifying the index file of a declaration file in a different directory", () => {
-      doSourceFileTest("/dir/file.ts", "/dir2/index.d.ts", "../dir2");
+    it("should use an explicit index when specifying the index file of a declaration file in a different directory", () => {
+      doSourceFileTest("/dir/file.ts", "/dir2/index.d.ts", "../dir2/index");
     });
 
     it("should use an explicit index when the module resolution strategy is classic", () => {
       doSourceFileTest("/dir/file.ts", "/dir2/index.d.ts", "../dir2/index", { moduleResolution: ModuleResolutionKind.Classic });
     });
 
-    it("should use an explicit index when something else in the compiler options means the module resolution will be classic", () => {
-      doSourceFileTest("/dir/file.ts", "/dir2/index.d.ts", "../dir2/index", { target: ScriptTarget.ES2015 });
+    it("should use an implicit index when the module resolution strategy is node10", () => {
+      doSourceFileTest("/dir/file.ts", "/dir2/index.d.ts", "../dir2", { moduleResolution: ModuleResolutionKind.NodeJs });
     });
 
     it("should use an implicit index when specifying the index file in the same directory", () => {
@@ -1169,7 +1169,7 @@ function myFunction(param: MyClass) {
     }
 
     it("should get the path to a directory as a module specifier", () => {
-      doDirectoryTest("/dir/file.ts", "/dir/dir2", "./dir2");
+      doDirectoryTest("/dir/file.ts", "/dir/dir2", "./dir2/index");
     });
 
     it("should use an explicit index when getting the module specifier to a directory and the module resolution strategy is classic", () => {

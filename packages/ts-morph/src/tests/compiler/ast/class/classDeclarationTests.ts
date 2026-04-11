@@ -304,7 +304,7 @@ abstract class Test<T extends string = number, U> extends Base implements IBase 
           }, {
             kind: StructureKind.PropertySignature,
             name: "param2",
-            type: "number",
+            type: "number | undefined",
             hasQuestionToken: true,
             isReadonly: true,
             docs: [],
@@ -325,7 +325,7 @@ abstract class Test<T extends string = number, U> extends Base implements IBase 
           }, {
             kind: StructureKind.PropertySignature,
             name: "prop2",
-            type: "number",
+            type: "number | undefined",
             hasQuestionToken: true,
             isReadonly: true,
             docs: [],
@@ -621,7 +621,7 @@ class Test<T extends string = number, U> extends Base implements IBase {
           }, {
             kind: StructureKind.PropertySignature,
             name: "prop2",
-            type: "number",
+            type: "number | undefined",
             hasQuestionToken: true,
             isReadonly: true,
             docs: [],
