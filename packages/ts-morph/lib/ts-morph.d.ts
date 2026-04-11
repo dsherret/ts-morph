@@ -883,6 +883,32 @@ export declare class Writers {
   static returnStatement(value: WriterFunctionOrValue): WriterFunction;
 }
 
+/**
+ * Prints a structure to a string.
+ * @param structure - Structure to print.
+ * @param options - Options for formatting the output.
+ */
+export declare function printStructure(structure: Structures, options?: PrintStructureOptions): string;
+
+/** Options for printing a structure to a string. */
+export interface PrintStructureOptions {
+  /** Number of spaces for indentation. Defaults to 4. Ignored when useTabs is true. */
+  indentNumberOfSpaces?: number;
+  /** Whether to use tabs for indentation. Defaults to false. */
+  useTabs?: boolean;
+  /** Newline character. Defaults to "\n". */
+  newLine?: "\n" | "\r\n";
+  /** Whether to use single quotes. Defaults to false. */
+  useSingleQuote?: boolean;
+  /**
+   * Whether to insert a space after opening and before closing non-empty braces.
+   *
+   * ex. `import { Item } from "./Item";` or `import {Item} from "./Item";`
+   * @remarks Defaults to true.
+   */
+  insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces?: boolean;
+}
+
 export type WriterFunctionOrValue = string | number | WriterFunction;
 export type AssertionKey = Identifier | StringLiteral;
 export type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName | PrivateIdentifier | NoSubstitutionTemplateLiteral | BigIntLiteral;

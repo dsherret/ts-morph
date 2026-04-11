@@ -72,4 +72,5 @@ export {
 } from "./utils/tsconfig/getCompilerOptionsFromTsConfig";
 import { Writers } from "./structurePrinters/Writers";
 export { Writers };
+export { printStructure, type PrintStructureOptions } from "./structurePrinters/printStructure";
 export type { WriterFunctionOrValue } from "./structurePrinters/Writers";
