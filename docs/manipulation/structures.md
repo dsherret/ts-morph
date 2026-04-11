@@ -61,6 +61,53 @@ Or you can use the `addX` or `insertX` methods with a structure:
 sourceFile.addClass({ name: "NewClass", ...classDeclaration.getStructure() });
 ```
 
+### Printing to string
+
+Structures can be printed to a string using the `printStructure` function. This is useful for code generation without needing a `Project` instance.
+
+```ts
+import { printStructure, StructureKind } from "ts-morph";
+
+const code = printStructure({
+  kind: StructureKind.Class,
+  name: "MyClass",
+  isExported: true,
+  properties: [{ name: "myProp", type: "string" }],
+  methods: [{
+    name: "myMethod",
+    parameters: [{ name: "param", type: "number" }],
+    returnType: "void",
+  }],
+});
+```
+
+Outputs:
+
+```ts
+export class MyClass {
+  myProp: string;
+
+  myMethod(param: number): void {
+  }
+}
+```
+
+Mostly any structure with a `kind` property can be printed, including `SourceFile`, `Interface`, `Enum`, `Function`, `TypeAlias`, and more.
+
+#### Options
+
+Formatting can be customized with an optional second argument:
+
+```ts
+const code = printStructure(structure, {
+  indentNumberOfSpaces: 2,
+  useTabs: false,
+  newLine: "\n",
+  useSingleQuote: true,
+  insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true,
+});
+```
+
 ### Traversing structures
 
 #### `Structure` type guards
