@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [28.0.0](https://github.com/dsherret/ts-morph/compare/27.0.2...28.0.0) (2026-04-12)
+
+- feat(BREAKING): TypeScript 6.0 (#1669)
+- feat: standalone printStructure function (#1670)
+- fix: `InvalidOperationError` in `addTypeArgument` (#1663)
+
+## [27.0.2](https://github.com/dsherret/ts-morph/compare/27.0.0...27.0.2) (2025-10-12)
+
+- fix: browser support no longer working since #1628 in 26.0.0 due to missing browser fields by @BossSloth in #1654
+
 ## [27.0.0](https://github.com/dsherret/ts-morph/compare/26.0.0...27.0.0) (2025-09-07)
 
 * perf: switch to tinyglobby in https://github.com/dsherret/ts-morph/pull/1635
