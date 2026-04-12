@@ -12,13 +12,13 @@ jobs:
       id-token: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: denoland/setup-deno@v2
         with:
           deno-version: canary
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: "22.x"
+          node-version: "24.x"
           registry-url: "https://registry.npmjs.org"
       - run: deno install
       - name: Build JSR
@@ -28,8 +28,6 @@ jobs:
       - name: Build npm
         run: deno task build
       - name: Publish npm
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         shell: bash
         run: |
           set -euo pipefail
