@@ -947,6 +947,36 @@ export interface RuntimePath {
     relative(from: string, to: string): string;
 }
 
+export declare class WasmNode {
+    _id: number;
+    private bridge;
+    constructor(id: number);
+    get kind(): number;
+    get parent(): WasmNode | undefined;
+}
+
+export declare class WasmSourceFile extends WasmNode {
+    constructor(id: number);
+    get fileName(): string;
+    get text(): string;
+}
+
+export declare class WasmType {
+    _id: number;
+    private bridge;
+    constructor(id: number);
+    get flags(): number;
+    get symbol(): any;
+}
+
+export declare class WasmSymbol {
+    _id: number;
+    private bridge;
+    constructor(id: number);
+    get flags(): number;
+    get escapedName(): string;
+}
+
 export declare function matchFiles(this: any, path: string, extensions: ReadonlyArray<string>, excludes: ReadonlyArray<string>, includes: ReadonlyArray<string>, useCaseSensitiveFileNames: boolean, currentDirectory: string, depth: number | undefined, getEntries: (path: string) => FileSystemEntries, realpath: (path: string) => string, directoryExists: (path: string) => boolean): string[];
 
 export declare function getFileMatcherPatterns(this: any, path: string, excludes: ReadonlyArray<string>, includes: ReadonlyArray<string>, useCaseSensitiveFileNames: boolean, currentDirectory: string): FileMatcherPatterns;

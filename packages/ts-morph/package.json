@@ -11,6 +11,7 @@
     "build:deno": "deno task build:declarations && rimraf dist-deno && rollup -c --environment BUILD:deno && deno run -A scripts/buildDeno.ts",
     "build:declarations": "deno run -A scripts/generation/main.ts create-declaration-file",
     "test": "deno run -A npm:mocha",
+    "test:wasm": "deno run -A npm:mocha --compiler=wasm",
     "test:debug": "deno task test --inspect-brk",
     "test:watch": "deno task test --watch-extensions ts --watch",
     "test:ci": "deno task test",

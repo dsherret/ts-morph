@@ -1,6 +1,11 @@
-import * as ts from "typescript";
-// flattened typescript exports
-import {
+// Wasm Types (Experimental)
+export { WasmNode } from './wasmNode';
+export { WasmSourceFile } from './wasmSourceFile';
+export { WasmType } from './wasmType';
+export { WasmSymbol } from './wasmSymbol';
+
+import * as ts from 'typescript';
+export {
   type CompilerOptions,
   DiagnosticCategory,
   type EditorSettings,
@@ -19,23 +24,5 @@ import {
   TypeFlags,
   TypeFormatFlags,
 } from "typescript";
-export {
-  type CompilerOptions,
-  DiagnosticCategory,
-  type EditorSettings,
-  EmitHint,
-  type ImportPhaseModifierSyntaxKind,
-  LanguageVariant,
-  ModuleKind,
-  ModuleResolutionKind,
-  NewLineKind,
-  NodeFlags,
-  ObjectFlags,
-  ScriptKind,
-  ScriptTarget,
-  SymbolFlags,
-  SyntaxKind,
-  ts,
-  TypeFlags,
-  TypeFormatFlags,
-};
+
+export { ts };

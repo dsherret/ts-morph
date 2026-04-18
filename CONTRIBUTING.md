@@ -21,3 +21,17 @@
 # Getting Started
 
 See [DEVELOPMENT.md](DEVELOPMENT.md)
+
+# Go Wasm Compiler Bridge
+
+If you are contributing to the Go Wasm compiler bridge, please read the [Architecture Decision Record](rfcs/RFC-0002-Go-Wasm-Compiler-Migration.md).
+
+### Testing Go Changes
+Before submitting a PR, verify your Go changes against the TS-Morph test suite by compiling the new Wasm binary:
+```bash
+deno run -A scripts/build-wasm.ts
+deno task test:wasm
+```
+
+### Submitting PRs for the Compiler
+Because the Go compiler is tracked as a submodule (`packages/compiler-go-source`), please read the [PR Strategy Documentation](docs/PR_STRATEGY.md). Do **not** commit changes inside the submodule directly to the `ts-morph` repository without an upstream PR.
