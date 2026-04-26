@@ -1,5 +1,5 @@
-import { errors, nameof, ts } from "@ts-morph/common";
-import { insertIntoParentTextRange } from "../../../manipulation";
+import { errors, nameof, SyntaxKind, ts } from "@ts-morph/common";
+import { insertIntoParentTextRange, removeChildren } from "../../../manipulation";
 import { JsxElementSpecificStructure, JsxElementStructure, StructureKind } from "../../../structures";
 import { WriterFunction } from "../../../types";
 import { printTextFromStringOrWriter } from "../../../utils";
@@ -103,6 +103,21 @@ export class JsxElement extends JsxElementBase<ts.JsxElement> {
     });
     delete structure.children;
     return structure;
+  }
+
+  /**
+   * Removes the JSX element.
+   */
+  remove() {
+    const parentKind = this.getParent()?.getKind()
+
+    if (!(parentKind === SyntaxKind.JsxElement || parentKind === SyntaxKind.JsxOpeningElement || parentKind === SyntaxKind.JsxFragment)) {
+      throw new errors.InvalidOperationError(`Error removing JsxElement: parent is ${this.getParent()?.getKindName() ?? '(no parent)'} and therefore the node cannot be removed. Only JsxElements with JsxElement/JsxOpeningElement/JsxFragment parent can be removed`)
+    }
+
+    return removeChildren({
+      children: [this],
+    })
   }
 }
 
