@@ -30,7 +30,8 @@ ts-morph via WebAssembly — no subprocess, no native addon, fully synchronous.
   reconstructing tokens and `SyntaxList` nodes that `forEachChild` omits.
 - `adapter-invariants.mts` — node identity is stable across `getChildren` calls,
   and the mutable source-file view accepts `fileName`/`version`.
-- `language-service.mts` — formatting and organize-imports through the API.
+- `language-service.mts` — formatting, organize-imports, and rename.
+- `definitions.mts` — go-to-definition and find-implementations.
 
 The adapter itself lives in **`packages/common/src/tsgo`** (`getChildren`,
 `getLastToken`, `createMutableSourceFile`, `createInProcessApi`); the scripts
@@ -48,6 +49,7 @@ node --experimental-strip-types --no-warnings --conditions @typescript/source ts
 node --experimental-strip-types --no-warnings --conditions @typescript/source tsgo-wasm/getChildren-parity.mts
 node --experimental-strip-types --no-warnings --conditions @typescript/source tsgo-wasm/adapter-invariants.mts
 node --experimental-strip-types --no-warnings --conditions @typescript/source tsgo-wasm/language-service.mts
+node --experimental-strip-types --no-warnings --conditions @typescript/source tsgo-wasm/definitions.mts
 ```
 
 ## Why this shape
@@ -108,11 +110,15 @@ table. Because this repo owns the fork, exposing them is additive work in
 `internal/api` (mapping the LSP-shaped types to the API's offset-based ones).
 
 Already exposed on `Project` (see `internal/api/session_ls.go`):
-`formatDocument`, `formatDocumentRange`, `organizeImports`.
+`formatDocument`, `formatDocumentRange`, `organizeImports`, `rename`,
+`getDefinition`, `getImplementations`. Rename and implementations pass a nil
+`CrossProjectOrchestrator`, which selects the single-project path — the API's
+model.
 
-Still to route, all following the same pattern: `ProvideRename`/`GetRenameInfo`
-(rename needs a `CrossProjectOrchestrator`), `ProvideCodeActions` (code fixes),
-`ProvideDefinition`, and `ProvideImplementations`.
+Still to route: `ProvideCodeActions` (code fixes). ts-morph uses
+`getCodeFixesAtPosition` and `getCombinedCodeFix` for `fixMissingImports` and
+`fixUnusedIdentifiers`; the former is largely covered by the existing
+`getImportAdderEdits`.
 
 ## Remaining work (the actual ts-morph integration)
 
@@ -125,5 +131,4 @@ onto it is the larger follow-up:
    instead of a local `ts.createSourceFile`.
 3. Back the type-info layer (`Type`/`Symbol`/`Signature`) with the seam's checker.
 4. Map wrapped nodes ↔ tsgo node handles by position/index.
-5. Finish routing `internal/ls` through `internal/api` — rename, code fixes, and
-   definitions remain (formatting and organize-imports are done).
+5. Finish routing `internal/ls` through `internal/api` — only code fixes remain.
