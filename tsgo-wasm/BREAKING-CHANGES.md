@@ -53,6 +53,13 @@ and the `factory` handed to the visitor. tsgo provides none of these to clients
 — it prints on the server — so there was no subset worth keeping. Producing new
 code by text (which is what the rest of ts-morph does) is unaffected.
 
+### Wrappers for node kinds tsgo does not produce
+
+`CommaListExpression`, `JSDocFunctionType`, `JSDocAuthorTag`, `JSDocClassTag`,
+`JSDocEnumTag`, `JSDocMemberName`, `JSDocNamepathType`, and `JSDocUnknownType`
+are removed. tsgo's parser emits no such kinds, so the wrappers could never be
+instantiated.
+
 ### Compiler hosts
 
 `createHosts`, `createModuleResolutionHost`, and `TsSourceFileContainer` are
