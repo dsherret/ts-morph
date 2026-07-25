@@ -1,0 +1,4 @@
+[submodule "submodules/typescript-go"]
+	path = submodules/typescript-go
+	url = https://github.com/dsherret/typescript-go
+	branch = ts-go
