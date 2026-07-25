@@ -126,7 +126,7 @@ export class CommentNodeParser {
 
     function getTokenEnd(node: ts.Node, kind: SyntaxKind.OpenBraceToken | SyntaxKind.ColonToken) {
       // @code-fence-allow(getChildren): Ok, not searching for comments.
-      return node.getChildren(sourceFile).find(c => c.kind === kind)?.end;
+      return getChildren(node, sourceFile).find(c => c.kind === kind)?.end;
     }
   }
 }

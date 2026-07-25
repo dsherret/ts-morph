@@ -9,5 +9,6 @@ export * from "./helpers";
 export * from "./options";
 export * from "./runtimes";
 export { CompilerOptionsFromTsConfigOptions, CompilerOptionsFromTsConfigResult, getCompilerOptionsFromTsConfig, TsConfigResolver } from "./tsconfig";
+export * from "./tsgo";
 export * from "./typescript";
 export * from "./utils";

@@ -29,7 +29,7 @@ import { Statement, StatementedNode } from "../statement";
 import { ExtendedParser } from "../utils";
 import { SyntaxList } from "./SyntaxList";
 import { TextRange } from "./TextRange";
-import { ForEachDescendantTraversalControl, TransformTraversalControl } from "./TraversalControl";
+import { ForEachDescendantTraversalControl } from "./TraversalControl";
 
 export type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName extends keyof NodeType, NonNullableNodeType = NonNullable<NodeType[KeyName]>> =
   NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeTypeForNullable> | undefined ? CompilerNodeToWrappedType<ArrayNodeTypeForNullable>[] | undefined
@@ -1248,7 +1248,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    * Gets the last token of this node. Usually this is a close brace.
    */
   getLastToken(): Node {
-    const lastToken = this.compilerNode.getLastToken(this._sourceFile.compilerNode);
+    const lastToken = getLastToken(this.compilerNode, this._sourceFile.compilerNode);
     if (lastToken == null)
       throw new errors.NotImplementedError("Not implemented scenario where the last token does not exist.");
 
@@ -1465,134 +1465,10 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     });
   }
 
-  /**
-   * Transforms the node using the compiler api nodes and functions and returns
-   * the node that was transformed (experimental).
-   *
-   * WARNING: This will forget descendants of transformed nodes and potentially this node.
-   * @example Increments all the numeric literals in a source file.
-   * ```ts
-   * sourceFile.transform(traversal => {
-   *   const node = traversal.visitChildren(); // recommend always visiting the children first (post order)
-   *   if (ts.isNumericLiteral(node))
-   *     return ts.createNumericLiteral((parseInt(node.text, 10) + 1).toString());
-   *   return node;
-   * });
-   * ```
-   * @example Updates the class declaration node without visiting the children.
-   * ```ts
-   * const classDec = sourceFile.getClassOrThrow("MyClass");
-   * classDec.transform(traversal => {
-   *   const node = traversal.currentNode;
-   *   return ts.updateClassDeclaration(node, undefined, undefined, ts.createIdentifier("MyUpdatedClass"), undefined, undefined, []);
-   * });
-   * ```
-   */
-  transform(visitNode: (traversal: TransformTraversalControl) => ts.Node): Node {
-    const compilerFactory = this._context.compilerFactory;
-    const printer = ts.createPrinter({
-      newLine: this._context.manipulationSettings.getNewLineKind(),
-      removeComments: false,
-    });
-    interface Transformation {
-      start: number;
-      end: number;
-      compilerNode: ts.Node;
-    }
-    const transformations: Transformation[] = [];
-    const compilerSourceFile = this._sourceFile.compilerNode;
-    const compilerNode = this.compilerNode;
-    const transformerFactory: ts.TransformerFactory<ts.Node> = context => {
-      return rootNode => innerVisit(rootNode, context);
-    };
-
-    if (this.getKind() === ts.SyntaxKind.SourceFile) {
-      ts.transform(compilerNode, [transformerFactory], this._context.compilerOptions.get());
-
-      replaceSourceFileTextStraight({
-        sourceFile: this._sourceFile,
-        newText: getTransformedText([0, this.getEnd()]),
-      });
-
-      return this;
-    } else {
-      const parent = this.getParentSyntaxList() || this.getParentOrThrow();
-      const childIndex = this.getChildIndex();
-      const start = this.getStart(true);
-      const end = this.getEnd();
-
-      ts.transform(compilerNode, [transformerFactory], this._context.compilerOptions.get());
-
-      insertIntoParentTextRange({
-        parent,
-        insertPos: start,
-        newText: getTransformedText([start, end]),
-        replacing: {
-          textLength: end - start,
-        },
-      });
-
-      return parent.getChildren()[childIndex];
-    }
-
-    function innerVisit(node: ts.Node, context: ts.TransformationContext) {
-      const traversal: TransformTraversalControl = {
-        factory: context.factory,
-        visitChildren() {
-          node = ts.visitEachChild(node, child => innerVisit(child, context), context);
-          return node;
-        },
-        currentNode: node,
-      };
-      const resultNode = visitNode(traversal);
-      handleTransformation(node, resultNode);
-      return resultNode;
-    }
-
-    function handleTransformation(oldNode: ts.Node, newNode: ts.Node) {
-      if (oldNode === newNode && (newNode as any).emitNode == null)
-        return;
-
-      const start = oldNode.getStart(compilerSourceFile, true);
-      const end = oldNode.end;
-      let lastTransformation: Transformation | undefined;
-
-      // remove any prior transformations nested within this transformation
-      while ((lastTransformation = transformations[transformations.length - 1]) && lastTransformation.start > start)
-        transformations.pop();
-
-      const wrappedNode = compilerFactory.getExistingNodeFromCompilerNode(oldNode);
-      transformations.push({
-        start,
-        end,
-        compilerNode: newNode,
-      });
-
-      // It's very difficult and expensive to tell about changes that could have happened to the descendants
-      // via updating properties. For this reason, descendant nodes will always be forgotten.
-      if (wrappedNode != null) {
-        if (oldNode.kind !== newNode.kind)
-          wrappedNode.forget();
-        else
-          wrappedNode.forgetDescendants();
-      }
-    }
-
-    function getTransformedText(replaceRange: [number, number]) {
-      const fileText = compilerSourceFile.getFullText();
-      let finalText = "";
-      let lastPos = replaceRange[0];
-
-      for (const transform of transformations) {
-        finalText += fileText.substring(lastPos, transform.start);
-        finalText += printer.printNode(ts.EmitHint.Unspecified, transform.compilerNode, transform.compilerNode.getSourceFile() ?? compilerSourceFile);
-        lastPos = transform.end;
-      }
-
-      finalText += fileText.substring(lastPos, replaceRange[1]);
-      return finalText;
-    }
-  }
+  // `transform` has been removed: it was built on the typescript package's
+  // printer, transformation pipeline, and node factory (ts.createPrinter,
+  // ts.transform, ts.visitEachChild, and the factory handed to the visitor),
+  // none of which tsgo provides to clients — it prints on the server instead.
 
   /**
    * Gets the leading comment ranges of the current node.

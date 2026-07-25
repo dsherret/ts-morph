@@ -51,13 +51,13 @@ export class ExtendedParser {
     let result = getChildrenSaver.get(node);
     if (result == null) {
       if (isStatementMemberOrPropertyHoldingSyntaxList()) {
-        // @code-fence-allow(getChildren): This merges in comment nodes.
-        const newArray = [...node.getChildren(sourceFile)]; // make a copy; do not modify the compiler api's array
+        // This merges in comment nodes.
+        const newArray = [...getChildren(node, sourceFile)]; // make a copy; do not modify the returned array
         mergeInComments(newArray, CommentNodeParser.getOrParseChildren(node as ts.SyntaxList, sourceFile));
         result = newArray;
       } else {
-        // @code-fence-allow(getChildren): No need to merge in comment nodes.
-        result = node.getChildren(sourceFile);
+        // No need to merge in comment nodes.
+        result = getChildren(node, sourceFile);
       }
       getChildrenSaver.set(node, result);
     }
