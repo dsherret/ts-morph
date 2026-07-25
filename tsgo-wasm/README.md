@@ -68,6 +68,40 @@ rewrite — and buys native performance without changing ts-morph's public API.
   `getImportAdderEdits`, plus references (`getReferencedSymbolsForNode`,
   `getReferencesToSymbolInFile`).
 
+## Compatibility findings
+
+ts-morph funnels **all** compiler access through one import
+(`packages/common/src/typescript/public.ts:1`) and **all** parsing through one
+function (`packages/common/src/compiler/createCompilerSourceFile.ts:12`, a full
+reparse — there is no incremental update). That is the swap point.
+
+What ts-morph needs that the new AST does not give directly:
+
+| Need | Status |
+|---|---|
+| `getChildren()` + `SyntaxList` | **Solved** — `getChildren.mts`, exact parity |
+| `getLastToken()` (`Node.ts:1251`) | Same technique; 1 call site |
+| Reparse after edit | **Solved** — `edit-loop.mts` |
+| Mutable `sourceFile.fileName` | **Throws** — `RemoteSourceFile.fileName` is a getter with no setter (`createDocumentCache.ts:135` assigns it). Needs a thin owning wrapper. |
+| `sourceFile.version` stamping, `node.parent` assignment | Work as-is |
+| `.symbol` / `.locals` / `.emitNode` | **Absent** — binder internals are not exposed. Route through the checker (`getSymbolAtLocation`) instead. |
+| `.imports` / `.scriptKind` / `.modifiers` | Present |
+| Recursive `deepClone` of a SourceFile (`createDocumentCache.ts:134`) | Risky — nodes are lazy `DataView` views with a circular `_sourceFile` back-reference. The server-side snapshot cache likely replaces this path rather than shimming it. |
+
+Checker coverage is good: of the 26 `ts.TypeChecker` methods ts-morph calls, the
+API already exposes most; the notable absentees are `getAmbientModules`,
+`getAwaitedType`, `getFullyQualifiedName`, and `getSymbolsInScope`.
+
+**The LanguageService gap is not missing functionality.** ts-morph uses 14
+LanguageService methods, and tsgo already implements the equivalents in Go under
+`internal/ls` — `ProvideRename`/`GetRenameInfo`, `OrganizeImports`,
+`ProvideFormatDocument`/`ProvideFormatDocumentRange`, `ProvideCodeActions` (incl.
+import fixes), `ProvideDefinition`, `ProvideImplementations`,
+`GetReferencedSymbolsForNode`. They are simply not routed through the API
+session's method table. Because this repo owns the fork, exposing them is
+additive work in `internal/api` (mapping the LSP-shaped types to API types),
+not a blocker.
+
 ## Remaining work (the actual ts-morph integration)
 
 This lands the **backend + seam**. Re-plumbing `@ts-morph/common`'s `ts` layer
@@ -80,6 +114,5 @@ onto it is the larger follow-up:
 3. Back the type-info layer (`Type`/`Symbol`/`Signature`) with the seam's checker.
 4. Map wrapped nodes ↔ tsgo node handles by position/index.
 
-Gap to track upstream: there is still **no LanguageService edit surface** for
-rename, organize-imports, formatting, code fixes, or definitions. Those ts-morph
-features stay on `typescript@6` until tsgo exposes them.
+5. Expose the `internal/ls` capabilities through `internal/api` so rename,
+   organize-imports, formatting, and code fixes have a backend (see above).
