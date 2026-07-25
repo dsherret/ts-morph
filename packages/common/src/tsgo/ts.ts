@@ -134,3 +134,99 @@ export interface ParseConfigHost {
 }
 
 export type { Diagnostic } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/sync/types.js";
+
+/*
+ * Names ts-morph asks of the compiler namespace that tsgo spells differently.
+ * The abstract expression hierarchy carries a `Base` suffix here, and a few
+ * declarations are suffixed `Declaration`; the rest simply live in other modules.
+ */
+export type {
+  Program,
+  ReferencedSymbolEntry,
+  Signature,
+  Symbol,
+} from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/sync/api.js";
+
+export type {
+  EmitOutput,
+  EmitResult,
+  InterfaceType,
+  IntersectionType,
+  JSDocTagInfo,
+  LiteralType,
+  NumberLiteralType,
+  ObjectType,
+  StringLiteralType,
+  TemplateLiteralType,
+  TupleType,
+  Type,
+  TypeParameter,
+  TypeReference,
+  UnionOrIntersectionType,
+  UnionType,
+} from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/sync/types.js";
+
+export type {
+  CodeFixAction,
+} from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/proto.js";
+
+export type {
+  IterationStatementBase as IterationStatement,
+  JSDocTypeBase as JSDocType,
+  MemberExpressionBase as MemberExpression,
+  MethodSignatureDeclaration as MethodSignature,
+  NodeWithTypeArgumentsBase as NodeWithTypeArguments,
+  PrimaryExpressionBase as PrimaryExpression,
+  PropertySignatureDeclaration as PropertySignature,
+  StringLiteralLikeNode as StringLiteralLike,
+  UnaryExpressionBase as UnaryExpression,
+  UpdateExpressionBase as UpdateExpression,
+} from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/ast.generated.js";
+
+export type {
+  CommentKind,
+  CommentRange,
+} from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/scanner.js";
+
+/*
+ * Narrowed node types the `typescript` package declares but tsgo does not.
+ *
+ * These matter more than their size suggests: `CompilerNodeToWrappedType` is a
+ * conditional chain over them, and a missing type resolves to `any`, which every
+ * node satisfies — so one absent name silently routes every wrapped node to the
+ * same branch. They are declared here exactly as the `typescript` package does.
+ */
+import type {
+  ArrayLiteralExpression,
+  AssignmentOperatorToken,
+  BinaryExpression,
+  ElementAccessExpression,
+  EqualsToken,
+  LeftHandSideExpression,
+  ObjectLiteralExpression,
+  PropertyAccessExpression,
+  SuperExpression,
+} from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/ast.generated.js";
+
+export interface SuperPropertyAccessExpression extends PropertyAccessExpression {
+  readonly expression: SuperExpression;
+}
+
+export interface SuperElementAccessExpression extends ElementAccessExpression {
+  readonly expression: SuperExpression;
+}
+
+export type SuperProperty = SuperPropertyAccessExpression | SuperElementAccessExpression;
+
+export interface AssignmentExpression<TOperator extends AssignmentOperatorToken> extends BinaryExpression {
+  readonly left: LeftHandSideExpression;
+  readonly operatorToken: TOperator;
+}
+
+export interface ObjectDestructuringAssignment extends AssignmentExpression<EqualsToken> {
+  readonly left: ObjectLiteralExpression;
+}
+
+export interface ArrayDestructuringAssignment extends AssignmentExpression<EqualsToken> {
+  readonly left: ArrayLiteralExpression;
+}
