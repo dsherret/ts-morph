@@ -15,19 +15,19 @@
 
 // Enums. Every enum ts-morph re-exports has a tsgo counterpart except EmitHint
 // and TypeFormatFlags, which belong to the printer/checker surface below.
-export { DiagnosticCategory } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/diagnosticCategory.js";
-export { LanguageVariant } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/languageVariant.js";
-export { ModifierFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/modifierFlags.js";
-export { ModuleKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/moduleKind.js";
-export { ModuleResolutionKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/moduleResolutionKind.js";
-export { NewLineKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/newLineKind.js";
-export { NodeFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/nodeFlags.js";
-export { ObjectFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/objectFlags.js";
-export { ScriptKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/scriptKind.js";
-export { ScriptTarget } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/scriptTarget.js";
-export { SymbolFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/symbolFlags.js";
-export { SyntaxKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/syntaxKind.js";
-export { TypeFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/typeFlags.js";
+export { DiagnosticCategory } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/diagnosticCategory.enum.js";
+export { LanguageVariant } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/languageVariant.enum.js";
+export { ModifierFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/modifierFlags.enum.js";
+export { ModuleKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/moduleKind.enum.js";
+export { ModuleResolutionKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/moduleResolutionKind.enum.js";
+export { NewLineKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/newLineKind.enum.js";
+export { NodeFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/nodeFlags.enum.js";
+export { ObjectFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/objectFlags.enum.js";
+export { ScriptKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/scriptKind.enum.js";
+export { ScriptTarget } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/scriptTarget.enum.js";
+export { SymbolFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/symbolFlags.enum.js";
+export { SyntaxKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/syntaxKind.enum.js";
+export { TypeFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/typeFlags.enum.js";
 
 // Node types and the `isXxx` guards, which ts-morph uses for narrowing.
 export type * from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/ast.js";
@@ -55,6 +55,45 @@ export type { CompilerOptions } from "../../../../submodules/typescript-go/_pack
 
 // Token-inclusive children (which the tsgo AST does not store) are not part of
 // this namespace; import them from ./getChildren directly.
+
+/**
+ * How a node is printed. tsgo prints via the API's `printNode`, which has no
+ * hint parameter, so this exists to keep the shape ts-morph exposes.
+ */
+export const EmitHint = {
+  SourceFile: 0,
+  Expression: 1,
+  IdentifierName: 2,
+  MappedTypeParameter: 3,
+  Unspecified: 4,
+  EmbeddedStatement: 5,
+  JsxAttributeValue: 6,
+  ImportTypeNode: 7,
+} as const;
+export type EmitHint = typeof EmitHint[keyof typeof EmitHint];
+
+/**
+ * Formatting settings, as accepted by the formatter.
+ *
+ * Breaking change: this is a reduced form of the `typescript` package's
+ * `EditorSettings` — tsgo's formatter takes tab size, spaces-versus-tabs, and
+ * trailing whitespace trimming.
+ */
+export interface EditorSettings {
+  tabSize?: number;
+  insertSpaces?: boolean;
+  trimTrailingWhitespace?: boolean;
+  newLineCharacter?: string;
+}
+
+/**
+ * Flags controlling how a type is rendered as text.
+ *
+ * Breaking change: tsgo's `typeToString` takes NodeBuilderFlags, so that is what
+ * this is. The `typescript` package's separate TypeFormatFlags enum has no
+ * counterpart.
+ */
+export { NodeBuilderFlags, NodeBuilderFlags as TypeFormatFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/nodeBuilderFlags.enum.js";
 
 import type { Node } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/ast.js";
 

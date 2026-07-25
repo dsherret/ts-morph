@@ -1,5 +1,5 @@
-import * as ts from "typescript";
-// flattened typescript exports
+import * as ts from "../tsgo/ts";
+// flattened compiler exports, now backed by tsgo
 import {
   type CompilerOptions,
   DiagnosticCategory,
@@ -18,7 +18,7 @@ import {
   SyntaxKind,
   TypeFlags,
   TypeFormatFlags,
-} from "typescript";
+} from "../tsgo/ts";
 export {
   type CompilerOptions,
   DiagnosticCategory,
