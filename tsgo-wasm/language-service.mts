@@ -50,5 +50,23 @@ assert.ok(
   "imports should be sorted",
 );
 
+// 4. Rename a symbol across files.
+{
+  const files: Record<string, string> = {
+    "/src/a.ts": `export const a = 1;\n`,
+    "/src/imports.ts": unorganized,
+  };
+  const pos = files["/src/a.ts"].indexOf("a =");
+  const renameEdits = project.rename("/src/a.ts", pos, "renamed");
+  console.log("rename touched files:", renameEdits.map(f => f.fileName).join(", "));
+  assert.ok(renameEdits.length >= 2, "rename should touch the declaration and its importer");
+  for (const file of renameEdits) {
+    const before = files[file.fileName] ?? "";
+    console.log(`  ${file.fileName}: ${file.edits.length} edit(s) -> ${JSON.stringify(applyEdits(before, file.edits).trim())}`);
+  }
+  const declFile = renameEdits.find(f => f.fileName === "/src/a.ts")!;
+  assert.ok(applyEdits(files["/src/a.ts"], declFile.edits).includes("renamed"), "declaration should be renamed");
+}
+
 api.close();
 console.log("LANGUAGE SERVICE OK");
