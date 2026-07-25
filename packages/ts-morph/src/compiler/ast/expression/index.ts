@@ -4,7 +4,6 @@ export * from "./AssignmentExpression";
 export * from "./AwaitExpression";
 export * from "./BinaryExpression";
 export * from "./CallExpression";
-export * from "./CommaListExpression";
 export * from "./ConditionalExpression";
 export * from "./DeleteExpression";
 export * from "./ElementAccessExpression";
