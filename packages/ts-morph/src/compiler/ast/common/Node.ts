@@ -1,4 +1,4 @@
-import { ArrayUtils, errors, getSyntaxKindName, nameof, StoredComparer, StringUtils, SymbolFlags, SyntaxKind, ts } from "@ts-morph/common";
+import { ArrayUtils, errors, getLastToken as getCompilerLastToken, getSyntaxKindName, nameof, StoredComparer, StringUtils, SymbolFlags, SyntaxKind, ts } from "@ts-morph/common";
 import { CodeBlockWriter } from "../../../codeBlockWriter";
 import * as compiler from "../../../compiler";
 import {
@@ -1248,7 +1248,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    * Gets the last token of this node. Usually this is a close brace.
    */
   getLastToken(): Node {
-    const lastToken = getLastToken(this.compilerNode, this._sourceFile.compilerNode);
+    const lastToken = getCompilerLastToken(this.compilerNode, this._sourceFile.compilerNode);
     if (lastToken == null)
       throw new errors.NotImplementedError("Not implemented scenario where the last token does not exist.");
 
