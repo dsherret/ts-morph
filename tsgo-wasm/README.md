@@ -46,6 +46,8 @@ node submodules/typescript-go/_scripts/build-wasm.mjs
 node --experimental-strip-types --no-warnings --conditions @typescript/source tsgo-wasm/proof.mts
 node --experimental-strip-types --no-warnings --conditions @typescript/source tsgo-wasm/edit-loop.mts
 node --experimental-strip-types --no-warnings --conditions @typescript/source tsgo-wasm/getChildren-parity.mts
+node --experimental-strip-types --no-warnings --conditions @typescript/source tsgo-wasm/adapter-invariants.mts
+node --experimental-strip-types --no-warnings --conditions @typescript/source tsgo-wasm/language-service.mts
 ```
 
 ## Why this shape
@@ -123,6 +125,5 @@ onto it is the larger follow-up:
    instead of a local `ts.createSourceFile`.
 3. Back the type-info layer (`Type`/`Symbol`/`Signature`) with the seam's checker.
 4. Map wrapped nodes ↔ tsgo node handles by position/index.
-
 5. Finish routing `internal/ls` through `internal/api` — rename, code fixes, and
    definitions remain (formatting and organize-imports are done).
