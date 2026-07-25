@@ -81,6 +81,9 @@ rewrite — and buys native performance without changing ts-morph's public API.
   `getImportAdderEdits`, plus references (`getReferencedSymbolsForNode`,
   `getReferencesToSymbolInFile`).
 
+See [BREAKING-CHANGES.md](./BREAKING-CHANGES.md) for the running list of what
+this changes for users.
+
 ## Compatibility findings
 
 ts-morph funnels **all** compiler access through one import
