@@ -23,6 +23,11 @@ ts-morph via WebAssembly — no subprocess, no native addon, fully synchronous.
   later be swapped for the subprocess/native build for native performance.
 - `proof.mts` — end-to-end check (parse from an in-memory FS, walk the AST,
   type-check) driven from this repo.
+- `edit-loop.mts` — the manipulation primitive: edit text through the in-memory
+  FS, report it via `updateSnapshot`, and observe the new text in both the AST
+  and the checker. Also covers file creation and deletion.
+- `getChildren.mts` / `getChildren-parity.mts` — `getChildren()` for the new AST,
+  reconstructing tokens and `SyntaxList` nodes that `forEachChild` omits.
 
 ## Build & run
 
@@ -32,6 +37,8 @@ node submodules/typescript-go/_scripts/build-wasm.mjs
 
 # prove it end-to-end
 node --experimental-strip-types --no-warnings --conditions @typescript/source tsgo-wasm/proof.mts
+node --experimental-strip-types --no-warnings --conditions @typescript/source tsgo-wasm/edit-loop.mts
+node --experimental-strip-types --no-warnings --conditions @typescript/source tsgo-wasm/getChildren-parity.mts
 ```
 
 ## Why this shape
@@ -47,19 +54,32 @@ The seam intentionally mirrors the `unstable/sync` API surface:
 So swapping to the official spawn/native transport later is a channel swap, not a
 rewrite — and buys native performance without changing ts-morph's public API.
 
+## What is already de-risked
+
+- **Edit → reparse** works (`edit-loop.mts`): text edits, file creation, and
+  deletion all propagate to the AST and the checker. This is the primitive the
+  manipulation engine is built on.
+- **`getChildren()` + `SyntaxList`** are reconstructible client-side with *exact*
+  parity against classic TypeScript — verified over a stress-test source (311
+  nodes, 106 distinct kinds mapping 1:1). This was the largest node-level gap,
+  since `forEachChild` alone omits tokens and syntax lists.
+- The submodule is **ahead of npm `typescript@7.0.2`** and already exposes `emit`,
+  `emitToString`, `getDeclarationEmit`, `getJavaScriptEmit`, and
+  `getImportAdderEdits`, plus references (`getReferencedSymbolsForNode`,
+  `getReferencesToSymbolInFile`).
+
 ## Remaining work (the actual ts-morph integration)
 
 This lands the **backend + seam**. Re-plumbing `@ts-morph/common`'s `ts` layer
 onto it is the larger follow-up:
 
 1. Point the common compiler-node layer at `unstable/ast` nodes (shim classic-only
-   members), keeping ts-morph's public API 1-1.
-2. Route reparse-after-edit through the in-process module (push changed text via
-   the FS callback + re-request the source file) instead of a local
-   `ts.createSourceFile`.
+   members, wiring in `getChildren.mts`), keeping ts-morph's public API 1-1.
+2. Route reparse-after-edit through the in-process module (as in `edit-loop.mts`)
+   instead of a local `ts.createSourceFile`.
 3. Back the type-info layer (`Type`/`Symbol`/`Signature`) with the seam's checker.
 4. Map wrapped nodes ↔ tsgo node handles by position/index.
 
-Gap to track upstream: the unstable API has **no LanguageService edit surface**
-yet (rename/organize-imports/format/code-fixes). Those ts-morph features stay on
-`typescript@6` until tsgo exposes them.
+Gap to track upstream: there is still **no LanguageService edit surface** for
+rename, organize-imports, formatting, code fixes, or definitions. Those ts-morph
+features stay on `typescript@6` until tsgo exposes them.
