@@ -6,9 +6,9 @@
  * `API` is the `@typescript/native-preview` `unstable/sync` API, so the backend
  * can later be swapped for the subprocess/native build without changing callers.
  */
-import { createVirtualFileSystem, type FileSystem } from "../../../../submodules/typescript-go/_packages/native-preview/src/api/fs.ts";
-import type { API } from "../../../../submodules/typescript-go/_packages/native-preview/src/api/sync/api.ts";
-import { createWasmAPI } from "../../../../submodules/typescript-go/_packages/native-preview/src/api/wasm/node.ts";
+import { createVirtualFileSystem, type FileSystem } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/fs.js";
+import type { API } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/sync/api.js";
+import { createWasmAPI } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/wasm/node.js";
 
 export type { API, FileSystem };
 

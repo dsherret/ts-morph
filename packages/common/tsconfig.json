@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.common.json",
   "compilerOptions": {
+    "lib": ["es2022", "esnext.disposable"],
     "declaration": false,
     "rootDir": "./src",
     "outDir": "./dist"

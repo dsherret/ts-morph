@@ -15,23 +15,23 @@
 
 // Enums. Every enum ts-morph re-exports has a tsgo counterpart except EmitHint
 // and TypeFormatFlags, which belong to the printer/checker surface below.
-export { DiagnosticCategory } from "../../../../submodules/typescript-go/_packages/native-preview/src/enums/diagnosticCategory.ts";
-export { LanguageVariant } from "../../../../submodules/typescript-go/_packages/native-preview/src/enums/languageVariant.ts";
-export { ModifierFlags } from "../../../../submodules/typescript-go/_packages/native-preview/src/enums/modifierFlags.ts";
-export { ModuleKind } from "../../../../submodules/typescript-go/_packages/native-preview/src/enums/moduleKind.ts";
-export { ModuleResolutionKind } from "../../../../submodules/typescript-go/_packages/native-preview/src/enums/moduleResolutionKind.ts";
-export { NewLineKind } from "../../../../submodules/typescript-go/_packages/native-preview/src/enums/newLineKind.ts";
-export { NodeFlags } from "../../../../submodules/typescript-go/_packages/native-preview/src/enums/nodeFlags.ts";
-export { ObjectFlags } from "../../../../submodules/typescript-go/_packages/native-preview/src/enums/objectFlags.ts";
-export { ScriptKind } from "../../../../submodules/typescript-go/_packages/native-preview/src/enums/scriptKind.ts";
-export { ScriptTarget } from "../../../../submodules/typescript-go/_packages/native-preview/src/enums/scriptTarget.ts";
-export { SymbolFlags } from "../../../../submodules/typescript-go/_packages/native-preview/src/enums/symbolFlags.ts";
-export { SyntaxKind } from "../../../../submodules/typescript-go/_packages/native-preview/src/enums/syntaxKind.ts";
-export { TypeFlags } from "../../../../submodules/typescript-go/_packages/native-preview/src/enums/typeFlags.ts";
+export { DiagnosticCategory } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/diagnosticCategory.js";
+export { LanguageVariant } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/languageVariant.js";
+export { ModifierFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/modifierFlags.js";
+export { ModuleKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/moduleKind.js";
+export { ModuleResolutionKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/moduleResolutionKind.js";
+export { NewLineKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/newLineKind.js";
+export { NodeFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/nodeFlags.js";
+export { ObjectFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/objectFlags.js";
+export { ScriptKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/scriptKind.js";
+export { ScriptTarget } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/scriptTarget.js";
+export { SymbolFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/symbolFlags.js";
+export { SyntaxKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/syntaxKind.js";
+export { TypeFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/typeFlags.js";
 
 // Node types and the `isXxx` guards, which ts-morph uses for narrowing.
-export type * from "../../../../submodules/typescript-go/_packages/native-preview/src/ast/ast.ts";
-export * from "../../../../submodules/typescript-go/_packages/native-preview/src/ast/is.ts";
+export type * from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/ast.js";
+export * from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/is.js";
 
 // Trivia and token scanning. ts-morph uses these to find comments and to walk
 // tokens when appending to lists.
@@ -43,20 +43,20 @@ export {
   isIdentifierText,
   skipTrivia,
   tokenToString,
-} from "../../../../submodules/typescript-go/_packages/native-preview/src/ast/scanner.ts";
+} from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/scanner.js";
 
 export {
   escapeLeadingUnderscores,
   formatSyntaxKind,
   unescapeLeadingUnderscores,
-} from "../../../../submodules/typescript-go/_packages/native-preview/src/ast/utils.ts";
+} from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/utils.js";
 
-export type { CompilerOptions } from "../../../../submodules/typescript-go/_packages/native-preview/src/api/compilerOptions.ts";
+export type { CompilerOptions } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/compilerOptions.js";
 
-// Token-inclusive children, which the tsgo AST does not store. See ./getChildren.
-export { getChildren, getLastToken } from "./getChildren.ts";
+// Token-inclusive children (which the tsgo AST does not store) are not part of
+// this namespace; import them from ./getChildren directly.
 
-import type { Node } from "../../../../submodules/typescript-go/_packages/native-preview/src/ast/ast.ts";
+import type { Node } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/ast.js";
 
 /**
  * Visits each stored child of a node, mirroring the free `ts.forEachChild`.

@@ -11,9 +11,9 @@
  * its wrapper cache on compiler-node identity, so the tokens and syntax lists
  * synthesized here must be the *same objects* on every call.
  */
-import { createToken } from "../../../../submodules/typescript-go/_packages/native-preview/src/ast/factory.generated.ts";
-import { type Node, type NodeArray, type SourceFile, SyntaxKind } from "../../../../submodules/typescript-go/_packages/native-preview/src/ast/index.ts";
-import { createScanner, type Scanner } from "../../../../submodules/typescript-go/_packages/native-preview/src/ast/scanner.ts";
+import { createToken } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/factory.generated.js";
+import { type Node, type NodeArray, type SourceFile, SyntaxKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/index.js";
+import { createScanner, type Scanner } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/scanner.js";
 
 type Mutable<T> = { -readonly [K in keyof T]: T[K] };
 

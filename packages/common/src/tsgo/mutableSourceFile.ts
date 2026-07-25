@@ -11,7 +11,7 @@
  * shared, preserving node identity), while the overridden fields become plain
  * writable properties that shadow the getters.
  */
-import type { SourceFile } from "../../../../submodules/typescript-go/_packages/native-preview/src/ast/index.ts";
+import type { SourceFile } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/index.js";
 
 export interface MutableSourceFileOverrides {
   fileName?: string;

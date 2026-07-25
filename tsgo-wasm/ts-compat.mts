@@ -3,6 +3,7 @@
 //   node --experimental-strip-types --no-warnings --conditions @typescript/source tsgo-wasm/ts-compat.mts
 import assert from "node:assert";
 import * as ts from "../packages/common/src/tsgo/ts.ts";
+import { getChildren, getLastToken } from "../packages/common/src/tsgo/getChildren.ts";
 
 console.log("SyntaxKind.ClassDeclaration =", ts.SyntaxKind.ClassDeclaration);
 console.log("reverse map =", ts.SyntaxKind[ts.SyntaxKind.ClassDeclaration]);
@@ -13,9 +14,11 @@ const names = Object.keys(ts.SyntaxKind).filter(k => isNaN(Number(k)));
 console.log("SyntaxKind names =", names.length);
 assert.ok(names.length > 100);
 
-for (const fn of ["isClassDeclaration", "skipTrivia", "getChildren", "getLastToken", "createScanner", "forEachChild"] as const) {
+for (const fn of ["isClassDeclaration", "skipTrivia", "createScanner", "forEachChild"] as const) {
   assert.equal(typeof (ts as any)[fn], "function", `${fn} should be a function`);
 }
+assert.equal(typeof getChildren, "function");
+assert.equal(typeof getLastToken, "function");
 assert.equal(ts.escapeLeadingUnderscores("__x"), "___x");
 // ESNext shares its value with the Latest alias, so check the value round-trips.
 assert.equal(ts.ScriptTarget[ts.ScriptTarget.ESNext as number] !== undefined, true);
