@@ -5,7 +5,7 @@ import assert from "node:assert";
 import ts from "typescript";
 import { formatSyntaxKind } from "../submodules/typescript-go/_packages/native-preview/src/ast/utils.ts";
 import { createInProcessApi } from "./seam.mts";
-import { getChildren, getSyntaxListChildren } from "./getChildren.mts";
+import { getChildren } from "./getChildren.mts";
 
 const text = `import { foo } from "./foo";
 
@@ -78,7 +78,7 @@ function recordKindMapping(goKind: number, tsKind: ts.SyntaxKind, path: string):
 }
 
 function walk(goNode: any, tsNode: ts.Node, path: string): void {
-  const goKids: any[] = goNode._children ? getSyntaxListChildren(goNode) : getChildren(goNode, goFile);
+  const goKids: any[] = getChildren(goNode, goFile);
   const tsKids = tsNode.getChildren(tsFile);
 
   compared++;
