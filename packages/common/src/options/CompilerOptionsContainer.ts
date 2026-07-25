@@ -23,6 +23,5 @@ export class CompilerOptionsContainer extends SettingsContainer<ts.CompilerOptio
    * Gets the encoding from the compiler options or returns utf-8.
    */
   getEncoding() {
-    return this._settings.charset || "utf-8";
   }
 }

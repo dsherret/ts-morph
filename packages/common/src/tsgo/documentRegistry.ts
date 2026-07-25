@@ -27,7 +27,7 @@ export interface DocumentRegistryOptions {
   files?: Record<string, string>;
 }
 
-export class TsgoDocumentRegistry {
+export class DocumentRegistry {
   readonly #fs: FileSystem;
   readonly #api: API;
   readonly #versions = new Map<string, number>();

@@ -9,7 +9,7 @@
  * Not yet re-exported from the package index: the compiler layer still runs on
  * `typescript`, and this is wired in per-piece as that migration proceeds.
  */
-export { type DocumentRegistryOptions, TsgoDocumentRegistry } from "./documentRegistry";
+export { DocumentRegistry, type DocumentRegistryOptions } from "./documentRegistry";
 export { getChildren, getLastToken } from "./getChildren";
 export { createInProcessApi, type InProcessApiOptions } from "./inProcessApi";
 export { createMutableSourceFile, type MutableSourceFileOverrides, setSourceFileProperty } from "./mutableSourceFile";

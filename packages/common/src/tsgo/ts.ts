@@ -124,3 +124,13 @@ export function forEachChild<T>(node: Node, cbNode: (node: Node) => T | undefine
  * - Binder internals ts-morph reads off nodes (`.symbol`, `.locals`,
  *   `.emitNode`), which must be routed through the checker.
  */
+
+/** The host tsconfig parsing reads the file system through. */
+export interface ParseConfigHost {
+  useCaseSensitiveFileNames: boolean;
+  readDirectory(rootDir: string, extensions: readonly string[], excludes: readonly string[] | undefined, includes: readonly string[], depth?: number): readonly string[];
+  fileExists(path: string): boolean;
+  readFile(path: string): string | undefined;
+}
+
+export type { Diagnostic } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/sync/types.js";

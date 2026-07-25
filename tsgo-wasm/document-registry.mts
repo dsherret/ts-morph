@@ -2,9 +2,9 @@
 // and its IScriptSnapshot model.
 //   node --experimental-strip-types --no-warnings --conditions @typescript/source tsgo-wasm/document-registry.mts
 import assert from "node:assert";
-import { TsgoDocumentRegistry } from "../packages/common/src/tsgo/documentRegistry.ts";
+import { DocumentRegistry } from "../packages/common/src/tsgo/documentRegistry.ts";
 
-const registry = new TsgoDocumentRegistry({
+const registry = new DocumentRegistry({
   compilerOptions: { strict: true },
   files: { "/src/index.ts": `export const x: number = 1;\n` },
 });
