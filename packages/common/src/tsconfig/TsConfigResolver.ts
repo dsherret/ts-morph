@@ -1,17 +1,16 @@
 import { Memoize } from "../decorators";
 import { FileUtils, StandardizedFilePath, TransactionalFileSystem } from "../fileSystem";
+import { createFileSystemAdapter } from "../tsgo/fileSystemAdapter";
+import { createInProcessApi } from "../tsgo/inProcessApi";
 import { ts } from "../typescript";
-import { getTsParseConfigHost, TsParseConfigHostResult } from "./getTsParseConfigHost";
 
 export class TsConfigResolver {
   readonly #encoding: string;
   readonly #fileSystem: TransactionalFileSystem;
-  readonly #host: TsParseConfigHostResult;
   readonly #tsConfigFilePath: StandardizedFilePath;
   readonly #tsConfigDirPath: StandardizedFilePath;
 
   constructor(fileSystem: TransactionalFileSystem, tsConfigFilePath: StandardizedFilePath, encoding: string) {
-    this.#host = getTsParseConfigHost(fileSystem, { encoding });
     this.#tsConfigFilePath = fileSystem.getStandardizedAbsolutePath(tsConfigFilePath);
     this.#tsConfigDirPath = FileUtils.getDirPath(this.#tsConfigFilePath);
     this.#fileSystem = fileSystem;
@@ -57,18 +56,31 @@ export class TsConfigResolver {
     };
   }
 
+  /**
+   * Parses the tsconfig through tsgo, which reads the project's files through
+   * the adapted file system so it sees the same state ts-morph does.
+   *
+   * Unlike the previous implementation this reports no separate directory list:
+   * tsgo returns the resolved file names, and the directories are derived from
+   * them by {@link getPaths}. Directories matched by the config but containing
+   * no files are therefore no longer reported.
+   */
   @Memoize
   private _parseJsonConfigFileContent() {
-    this.#host.clearDirectories();
-    const result = ts.parseJsonConfigFileContent(this.#getTsConfigFileJson(), this.#host, this.#tsConfigDirPath, undefined, this.#tsConfigFilePath);
-    return { ...result, directories: this.#host.getDirectories() };
-  }
-
-  #getTsConfigFileJson() {
-    const text = this.#fileSystem.readFileSync(this.#tsConfigFilePath, this.#encoding);
-    const parseResult = ts.parseConfigFileTextToJson(this.#tsConfigFilePath, text);
-    if (parseResult.error != null)
-      throw new Error(parseResult.error.messageText.toString());
-    return parseResult.config;
+    const api = createInProcessApi({
+      fs: createFileSystemAdapter(this.#fileSystem, { encoding: this.#encoding }),
+      cwd: this.#tsConfigDirPath,
+    });
+    try {
+      const result = api.parseConfigFile(this.#tsConfigFilePath);
+      return {
+        options: result.options as ts.CompilerOptions,
+        fileNames: result.fileNames,
+        errors: [] as ts.Diagnostic[],
+        directories: [] as string[],
+      };
+    } finally {
+      api.close();
+    }
   }
 }
