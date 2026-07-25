@@ -28,6 +28,13 @@ ts-morph via WebAssembly — no subprocess, no native addon, fully synchronous.
   and the checker. Also covers file creation and deletion.
 - `getChildren.mts` / `getChildren-parity.mts` — `getChildren()` for the new AST,
   reconstructing tokens and `SyntaxList` nodes that `forEachChild` omits.
+- `adapter-invariants.mts` — node identity is stable across `getChildren` calls,
+  and the mutable source-file view accepts `fileName`/`version`.
+- `language-service.mts` — formatting and organize-imports through the API.
+
+The adapter itself lives in **`packages/common/src/tsgo`** (`getChildren`,
+`getLastToken`, `createMutableSourceFile`, `createInProcessApi`); the scripts
+here drive it end-to-end.
 
 ## Build & run
 
@@ -79,10 +86,10 @@ What ts-morph needs that the new AST does not give directly:
 
 | Need | Status |
 |---|---|
-| `getChildren()` + `SyntaxList` | **Solved** — `getChildren.mts`, exact parity |
-| `getLastToken()` (`Node.ts:1251`) | Same technique; 1 call site |
+| `getChildren()` + `SyntaxList` | **Solved** — exact parity, cached for node identity |
+| `getLastToken()` (`Node.ts:1251`) | **Solved** — same machinery |
 | Reparse after edit | **Solved** — `edit-loop.mts` |
-| Mutable `sourceFile.fileName` | **Throws** — `RemoteSourceFile.fileName` is a getter with no setter (`createDocumentCache.ts:135` assigns it). Needs a thin owning wrapper. |
+| Mutable `sourceFile.fileName` | **Solved** — `createMutableSourceFile` shadows the getter-only field with a writable own property. |
 | `sourceFile.version` stamping, `node.parent` assignment | Work as-is |
 | `.symbol` / `.locals` / `.emitNode` | **Absent** — binder internals are not exposed. Route through the checker (`getSymbolAtLocation`) instead. |
 | `.imports` / `.scriptKind` / `.modifiers` | Present |
@@ -94,13 +101,16 @@ API already exposes most; the notable absentees are `getAmbientModules`,
 
 **The LanguageService gap is not missing functionality.** ts-morph uses 14
 LanguageService methods, and tsgo already implements the equivalents in Go under
-`internal/ls` — `ProvideRename`/`GetRenameInfo`, `OrganizeImports`,
-`ProvideFormatDocument`/`ProvideFormatDocumentRange`, `ProvideCodeActions` (incl.
-import fixes), `ProvideDefinition`, `ProvideImplementations`,
-`GetReferencedSymbolsForNode`. They are simply not routed through the API
-session's method table. Because this repo owns the fork, exposing them is
-additive work in `internal/api` (mapping the LSP-shaped types to API types),
-not a blocker.
+`internal/ls`; they were simply not routed through the API session's method
+table. Because this repo owns the fork, exposing them is additive work in
+`internal/api` (mapping the LSP-shaped types to the API's offset-based ones).
+
+Already exposed on `Project` (see `internal/api/session_ls.go`):
+`formatDocument`, `formatDocumentRange`, `organizeImports`.
+
+Still to route, all following the same pattern: `ProvideRename`/`GetRenameInfo`
+(rename needs a `CrossProjectOrchestrator`), `ProvideCodeActions` (code fixes),
+`ProvideDefinition`, and `ProvideImplementations`.
 
 ## Remaining work (the actual ts-morph integration)
 
@@ -114,5 +124,5 @@ onto it is the larger follow-up:
 3. Back the type-info layer (`Type`/`Symbol`/`Signature`) with the seam's checker.
 4. Map wrapped nodes ↔ tsgo node handles by position/index.
 
-5. Expose the `internal/ls` capabilities through `internal/api` so rename,
-   organize-imports, formatting, and code fixes have a backend (see above).
+5. Finish routing `internal/ls` through `internal/api` — rename, code fixes, and
+   definitions remain (formatting and organize-imports are done).
