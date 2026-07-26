@@ -71,6 +71,8 @@ export interface FileSystemHost {
   globSync(patterns: ReadonlyArray<string>): string[];
 }
 
+export type ImportPhaseModifierSyntaxKind = ts.ImportPhaseModifierSyntaxKind;
+
 /** An implementation of a file system that exists in memory only. */
 export declare class InMemoryFileSystemHost implements FileSystemHost {
   #private;
@@ -121,23 +123,6 @@ export declare class InMemoryFileSystemHost implements FileSystemHost {
   /** @inheritdoc */
   globSync(patterns: ReadonlyArray<string>): string[];
 }
-
-/** Host for implementing custom module and/or type reference directive resolution. */
-export interface ResolutionHost {
-  resolveModuleNames?: ts.LanguageServiceHost["resolveModuleNames"];
-  getResolvedModuleWithFailedLookupLocationsFromCache?: ts.LanguageServiceHost["getResolvedModuleWithFailedLookupLocationsFromCache"];
-  resolveTypeReferenceDirectives?: ts.LanguageServiceHost["resolveTypeReferenceDirectives"];
-}
-
-/**
- * Factory used to create a resolution host.
- * @remarks The compiler options are retrieved via a function in order to get the project's current compiler options.
- */
-export type ResolutionHostFactory = (moduleResolutionHost: ts.ModuleResolutionHost, getCompilerOptions: () => ts.CompilerOptions) => ResolutionHost;
-/** Collection of reusable resolution hosts. */
-export declare const ResolutionHosts: {
-      deno: ResolutionHostFactory;
-  };
 
 export interface RuntimeDirEntry {
   name: string;
@@ -631,21 +616,6 @@ export declare class Project {
    * @param globPatterns - Glob patterns for filtering out the source files.
    */
   getSourceFiles(globPatterns: ReadonlyArray<string>): SourceFile[];
-  /**
-   * Gets the specified ambient module symbol or returns undefined if not found.
-   * @param moduleName - The ambient module name with or without quotes.
-   */
-  getAmbientModule(moduleName: string): Symbol | undefined;
-  /**
-   * Gets the specified ambient module symbol or throws if not found.
-   * @param moduleName - The ambient module name with or without quotes.
-   */
-  getAmbientModuleOrThrow(moduleName: string, message?: string | (() => string)): Symbol;
-  /**
-   * Gets the ambient module symbols (ex. modules in the
-   * @types folder or node_modules).
-   */
-  getAmbientModules(): Symbol[];
   /** Saves all the unsaved source files to the file system and deletes all deleted files. */
   save(): Promise<void>;
   /**
@@ -709,6 +679,10 @@ export declare class Project {
   forgetNodesCreatedInBlock<T = void>(block: (remember: (...node: Node[]) => void) => Promise<T>): Promise<T>;
   /**
    * Formats an array of diagnostics with their color and context into a string.
+   *
+   * Breaking change: the output is plain text. tsgo has no
+   * `formatDiagnosticsWithColorAndContext`, so ts-morph formats the diagnostics
+   * itself; the source line, the caret and the ANSI colouring are gone.
    * @param diagnostics - Diagnostics to get a string of.
    * @param options - Collection of options. For example, the new line character to use (defaults to the OS' new line character).
    */
@@ -717,6 +691,21 @@ export declare class Project {
     }): string;
   /** Gets a ts.ModuleResolutionHost for the project. */
   getModuleResolutionHost(): ts.ModuleResolutionHost;
+  /**
+   * Gets the specified ambient module symbol or returns undefined if not found.
+   * @param moduleName - The ambient module name with or without quotes.
+   */
+  getAmbientModule(moduleName: string): Symbol | undefined;
+  /**
+   * Gets the specified ambient module symbol or throws if not found.
+   * @param moduleName - The ambient module name with or without quotes.
+   */
+  getAmbientModuleOrThrow(moduleName: string, message?: string | (() => string)): Symbol;
+  /**
+   * Gets the ambient module symbols (ex. modules in the
+   * @types folder or node_modules).
+   */
+  getAmbientModules(): Symbol[];
 }
 
 /** Options for creating a project. */
@@ -759,8 +748,6 @@ export interface ProjectOptions {
    * @remarks Consider using `useInMemoryFileSystem` instead.
    */
   fileSystem?: FileSystemHost;
-  /** Creates a resolution host for specifying custom module and/or type reference directive resolution. */
-  resolutionHost?: ResolutionHostFactory;
 }
 
 /** Options for creating a source file. */
@@ -794,49 +781,38 @@ export interface CreateWrappedNodeOptions {
 }
 
 /**
- * Prints the provided node using the compiler's printer.
- * @param node - Compiler node.
- * @param options - Options.
- * @remarks If the node was not constructed with the compiler API factory methods and the node
- * does not have parents set, then use the other overload that accepts a source file.
+ * Options for printing a node.
+ *
+ * Breaking change: `emitHint` is gone. tsgo's printer has no hint parameter — it
+ * dispatches on the node's kind — so there is nothing to pass one to.
  */
-export declare function printNode(node: ts.Node, options?: PrintNodeOptions): string;
-/**
- * Prints the provided node using the compiler's printer.
- * @param node - Compiler node.
- * @param sourceFile - Compiler source file.
- * @param options - Options.
- */
-export declare function printNode(node: ts.Node, sourceFile: ts.SourceFile, options?: PrintNodeOptions): string;
-
-/** Options for printing a node. */
 export interface PrintNodeOptions {
   /** Whether to remove comments or not. */
   removeComments?: boolean;
   /**
    * New line kind.
    *
-   * Defaults to line feed.
+   * Defaults to the manipulation settings' new line kind for `Node#print()`, and
+   * to line feed for the standalone `printNode`.
    */
   newLineKind?: NewLineKind;
   /**
-   * From the compiler api: "A value indicating the purpose of a node. This is primarily used to
-   * distinguish between an `Identifier` used in an expression position, versus an
-   * `Identifier` used as an `IdentifierName` as part of a declaration. For most nodes you
-   * should just pass `Unspecified`."
-   *
-   * Defaults to `Unspecified`.
-   */
-  emitHint?: EmitHint;
-  /**
    * The script kind.
    *
-   * @remarks This is only useful when passing in a compiler node that was constructed
-   * with the compiler API factory methods.
+   * @remarks This names the file the printed text is read back under, so it only
+   * matters when a source file is supplied for the node's comments and original
+   * token text. tsgo prints by node kind, so it no longer decides whether, say,
+   * `<T>x` prints as a type assertion or as JSX.
    *
    * Defaults to TSX.
    */
   scriptKind?: ScriptKind;
+  /** Whether to keep the line breaks the node's source text has. */
+  preserveSourceNewlines?: boolean;
+  /** Whether to leave non-ASCII characters unescaped. */
+  neverAsciiEscape?: boolean;
+  /** Whether to close a literal that the source leaves unterminated. */
+  terminateUnterminatedLiterals?: boolean;
 }
 
 export type SourceFileReferencingNodes = ImportDeclaration | ExportDeclaration | ImportEqualsDeclaration | CallExpression;
@@ -1176,6 +1152,7 @@ export interface ExclamationTokenableNode {
 
 type ExclamationTokenableNodeExtensionType = Node<ts.Node & {
       exclamationToken?: ts.ExclamationToken;
+      postfixToken?: ts.QuestionToken | ts.ExclamationToken;
   }>;
 export declare function ExportableNode<T extends Constructor<ExportableNodeExtensionType>>(Base: T): Constructor<ExportableNode> & T;
 
@@ -1396,9 +1373,7 @@ export interface JSDocableNode {
   insertJsDocs(index: number, structures: ReadonlyArray<OptionalKind<JSDocStructure> | string | WriterFunction>): JSDoc[];
 }
 
-type JSDocableNodeExtensionType = Node<ts.Node & {
-      jsDoc?: ts.NodeArray<ts.JSDoc>;
-  }>;
+type JSDocableNodeExtensionType = Node<ts.Node>;
 export declare function LiteralLikeNode<T extends Constructor<LiteralLikeNodeExtensionType>>(Base: T): Constructor<LiteralLikeNode> & T;
 
 export interface LiteralLikeNode {
@@ -1786,6 +1761,7 @@ export interface QuestionTokenableNode {
 
 type QuestionTokenableNodeExtensionType = Node<ts.Node & {
       questionToken?: ts.QuestionToken;
+      postfixToken?: ts.QuestionToken | ts.ExclamationToken;
   }>;
 export declare function ReadonlyableNode<T extends Constructor<ReadonlyableNodeExtensionType>>(Base: T): Constructor<ReadonlyableNode> & T;
 
@@ -2348,7 +2324,7 @@ type UnwrappableNodeExtensionType = Node;
 
 export declare class ArrayBindingPattern extends Node<ts.ArrayBindingPattern> {
   /** Gets the array binding pattern's elements. */
-  getElements(): (BindingElement | OmittedExpression)[];
+  getElements(): BindingElement[];
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.ArrayBindingPattern>;
   /** @inheritdoc **/
@@ -3161,8 +3137,6 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isClassExpression: (node: Node | undefined) => node is ClassExpression;
   /** Gets if the node is a ClassStaticBlockDeclaration. */
   static readonly isClassStaticBlockDeclaration: (node: Node | undefined) => node is ClassStaticBlockDeclaration;
-  /** Gets if the node is a CommaListExpression. */
-  static readonly isCommaListExpression: (node: Node | undefined) => node is CommaListExpression;
   /** Gets if the node is a ComputedPropertyName. */
   static readonly isComputedPropertyName: (node: Node | undefined) => node is ComputedPropertyName;
   /** Gets if the node is a ConditionalExpression. */
@@ -3237,18 +3211,10 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isJSDocAllType: (node: Node | undefined) => node is JSDocAllType;
   /** Gets if the node is a JSDocAugmentsTag. */
   static readonly isJSDocAugmentsTag: (node: Node | undefined) => node is JSDocAugmentsTag;
-  /** Gets if the node is a JSDocAuthorTag. */
-  static readonly isJSDocAuthorTag: (node: Node | undefined) => node is JSDocAuthorTag;
   /** Gets if the node is a JSDocCallbackTag. */
   static readonly isJSDocCallbackTag: (node: Node | undefined) => node is JSDocCallbackTag;
-  /** Gets if the node is a JSDocClassTag. */
-  static readonly isJSDocClassTag: (node: Node | undefined) => node is JSDocClassTag;
   /** Gets if the node is a JSDocDeprecatedTag. */
   static readonly isJSDocDeprecatedTag: (node: Node | undefined) => node is JSDocDeprecatedTag;
-  /** Gets if the node is a JSDocEnumTag. */
-  static readonly isJSDocEnumTag: (node: Node | undefined) => node is JSDocEnumTag;
-  /** Gets if the node is a JSDocFunctionType. */
-  static readonly isJSDocFunctionType: (node: Node | undefined) => node is JSDocFunctionType;
   /** Gets if the node is a JSDocImplementsTag. */
   static readonly isJSDocImplementsTag: (node: Node | undefined) => node is JSDocImplementsTag;
   /** Gets if the node is a JSDocLink. */
@@ -3257,10 +3223,6 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isJSDocLinkCode: (node: Node | undefined) => node is JSDocLinkCode;
   /** Gets if the node is a JSDocLinkPlain. */
   static readonly isJSDocLinkPlain: (node: Node | undefined) => node is JSDocLinkPlain;
-  /** Gets if the node is a JSDocMemberName. */
-  static readonly isJSDocMemberName: (node: Node | undefined) => node is JSDocMemberName;
-  /** Gets if the node is a JSDocNamepathType. */
-  static readonly isJSDocNamepathType: (node: Node | undefined) => node is JSDocNamepathType;
   /** Gets if the node is a JSDocNameReference. */
   static readonly isJSDocNameReference: (node: Node | undefined) => node is JSDocNameReference;
   /** Gets if the node is a JSDocNonNullableType. */
@@ -3309,8 +3271,6 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isJSDocTypeLiteral: (node: Node | undefined) => node is JSDocTypeLiteral;
   /** Gets if the node is a JSDocTypeTag. */
   static readonly isJSDocTypeTag: (node: Node | undefined) => node is JSDocTypeTag;
-  /** Gets if the node is a JSDocUnknownType. */
-  static readonly isJSDocUnknownType: (node: Node | undefined) => node is JSDocUnknownType;
   /** Gets if the node is a JSDocVariadicType. */
   static readonly isJSDocVariadicType: (node: Node | undefined) => node is JSDocVariadicType;
   /** Gets if the node is a JsxAttribute. */
@@ -3496,31 +3456,23 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   /** Gets the compiler symbol or undefined if it doesn't exist. */
   getSymbol(): Symbol | undefined;
   /**
-   * Gets the symbols in the scope of the node.
-   *
-   * Note: This will always return the local symbols. If you want the export symbol from a local symbol, then
-   * use the `#getExportSymbol()` method on the symbol.
+   * Gets the symbols within the current scope that match the provided meaning.
    * @param meaning - Meaning of symbol to filter by.
    */
   getSymbolsInScope(meaning: SymbolFlags): Symbol[];
   /**
    * Gets the specified local symbol by name or throws if it doesn't exist.
-   *
-   * WARNING: The symbol table of locals is not exposed publicly by the compiler. Use this at your own risk knowing it may break.
    * @param name - Name of the local symbol.
    */
   getLocalOrThrow(name: string, message?: string | (() => string)): Symbol;
   /**
    * Gets the specified local symbol by name or returns undefined if it doesn't exist.
-   *
-   * WARNING: The symbol table of locals is not exposed publicly by the compiler. Use this at your own risk knowing it may break.
    * @param name - Name of the local symbol.
    */
   getLocal(name: string): Symbol | undefined;
   /**
-   * Gets the symbols within the current scope.
-   *
-   * WARNING: The symbol table of locals is not exposed publicly by the compiler. Use this at your own risk knowing it may break.
+   * Gets the symbols the binder placed in this node's own local scope, in declaration order.
+   * Nodes that do not hold locals return an empty array.
    */
   getLocals(): Symbol[];
   /** Gets the type of the node. */
@@ -3828,7 +3780,21 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   getParentSyntaxList(): SyntaxList | undefined;
   /** Gets the child index of this node relative to the parent. */
   getChildIndex(): number;
-  /** Gets the indentation level of the current node. */
+  /**
+   * Gets the indentation level of the current node.
+   *
+   * Breaking change: tsgo has no smart-indentation service, so this is worked
+   * out from the text: the deeper of the indentation the node's line actually
+   * has and one level past the ancestor that opened it. Taking the deeper of the
+   * two is what keeps a node whose own line is under-indented — a class member
+   * written flush against a two-space margin — reading as a member of its class,
+   * while code that is deliberately indented further keeps its own depth.
+   *
+   * The level is rounded down to the nearest half, which is the granularity
+   * ts-morph's writers indent at — that is what keeps half-indented code
+   * half-indented when statements are written into it, without a stray space of
+   * leading whitespace reading as a level of its own.
+   */
   getIndentationLevel(): number;
   /** Gets the child indentation level of the current node. */
   getChildIndentationLevel(): number;
@@ -3891,7 +3857,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * sourceFile.transform(traversal => {
    *   const node = traversal.visitChildren(); // recommend always visiting the children first (post order)
    *   if (ts.isNumericLiteral(node))
-   *     return ts.createNumericLiteral((parseInt(node.text, 10) + 1).toString());
+   *     return traversal.factory.createNumericLiteral((parseInt(node.text, 10) + 1).toString());
    *   return node;
    * });
    * ```
@@ -3899,8 +3865,8 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * ```ts
    * const classDec = sourceFile.getClassOrThrow("MyClass");
    * classDec.transform(traversal => {
-   *   const node = traversal.currentNode;
-   *   return ts.updateClassDeclaration(node, undefined, undefined, ts.createIdentifier("MyUpdatedClass"), undefined, undefined, []);
+   *   const node = traversal.currentNode as ts.ClassDeclaration;
+   *   return traversal.factory.updateClassDeclaration(node, undefined, traversal.factory.createIdentifier("MyUpdatedClass"), undefined, undefined, []);
    * });
    * ```
    */
@@ -4418,24 +4384,24 @@ export declare class Decorator extends DecoratorBase<ts.Decorator> {
    * Adds a type argument.
    * @param argumentTexts - Argument text.
    */
-  addTypeArgument(argumentText: string): TypeNode<ts.TypeNode>;
+  addTypeArgument(argumentText: string): TypeNode<ts.TypeNodeBase>;
   /**
    * Adds type arguments.
    * @param argumentTexts - Argument texts.
    */
-  addTypeArguments(argumentTexts: ReadonlyArray<string>): TypeNode<ts.TypeNode>[];
+  addTypeArguments(argumentTexts: ReadonlyArray<string>): TypeNode<ts.TypeNodeBase>[];
   /**
    * Inserts a type argument.
    * @param index - Child index to insert at.
    * @param argumentTexts - Argument text.
    */
-  insertTypeArgument(index: number, argumentText: string): TypeNode<ts.TypeNode>;
+  insertTypeArgument(index: number, argumentText: string): TypeNode<ts.TypeNodeBase>;
   /**
    * Inserts type arguments.
    * @param index - Child index to insert at.
    * @param argumentTexts - Argument texts.
    */
-  insertTypeArguments(index: number, argumentTexts: ReadonlyArray<string>): TypeNode<ts.TypeNode>[];
+  insertTypeArguments(index: number, argumentTexts: ReadonlyArray<string>): TypeNode<ts.TypeNodeBase>[];
   /**
    * Removes a type argument.
    * @param typeArg - Type argument to remove.
@@ -4542,7 +4508,7 @@ export declare class JSDoc extends JSDocBase<ts.JSDoc> {
   /** Gets the JSDoc's text without the surrounding slashes and stars. */
   getInnerText(): string;
   /** Gets the comment property. Use `#getCommentText()` to get the text of the JS doc comment if necessary. */
-  getComment(): string | (JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain | undefined)[] | undefined;
+  getComment(): string | (Node<ts.Node> | undefined)[] | undefined;
   /** Gets the text of the JS doc comment. */
   getCommentText(): string | undefined;
   /**
@@ -4559,24 +4525,24 @@ export declare class JSDoc extends JSDocBase<ts.JSDoc> {
    * Adds a JS doc tag.
    * @param structure - Tag structure to add.
    */
-  addTag(structure: OptionalKind<JSDocTagStructure>): JSDocTag<ts.JSDocTag>;
+  addTag(structure: OptionalKind<JSDocTagStructure>): JSDocTag<ts.JSDocTagBase>;
   /**
    * Adds JS doc tags.
    * @param structures - Tag structures to add.
    */
-  addTags(structures: ReadonlyArray<OptionalKind<JSDocTagStructure>>): JSDocTag<ts.JSDocTag>[];
+  addTags(structures: ReadonlyArray<OptionalKind<JSDocTagStructure>>): JSDocTag<ts.JSDocTagBase>[];
   /**
    * Inserts a JS doc tag at the specified index.
    * @param index - Index to insert at.
    * @param structure - Tag structure to insert.
    */
-  insertTag(index: number, structure: OptionalKind<JSDocTagStructure>): JSDocTag<ts.JSDocTag>;
+  insertTag(index: number, structure: OptionalKind<JSDocTagStructure>): JSDocTag<ts.JSDocTagBase>;
   /**
    * Inserts JS doc tags at the specified index.
    * @param index - Index to insert at.
    * @param structures - Tag structures to insert.
    */
-  insertTags(index: number, structures: ReadonlyArray<OptionalKind<JSDocTagStructure>>): JSDocTag<ts.JSDocTag>[];
+  insertTags(index: number, structures: ReadonlyArray<OptionalKind<JSDocTagStructure>>): JSDocTag<ts.JSDocTagBase>[];
   /** Removes this JSDoc. */
   remove(): void;
   /**
@@ -4608,14 +4574,6 @@ export declare class JSDocAugmentsTag extends JSDocTag<ts.JSDocAugmentsTag> {
   getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.JSDocAugmentsTag>>;
 }
 
-/** JS doc author tag node. */
-export declare class JSDocAuthorTag extends JSDocTag<ts.JSDocAuthorTag> {
-  /** @inheritdoc **/
-  getParent(): NodeParentType<ts.JSDocAuthorTag>;
-  /** @inheritdoc **/
-  getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.JSDocAuthorTag>>;
-}
-
 /** JS doc callback tag node. */
 export declare class JSDocCallbackTag extends JSDocTag<ts.JSDocCallbackTag> {
   /** @inheritdoc **/
@@ -4624,38 +4582,12 @@ export declare class JSDocCallbackTag extends JSDocTag<ts.JSDocCallbackTag> {
   getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.JSDocCallbackTag>>;
 }
 
-/** JS doc class tag node. */
-export declare class JSDocClassTag extends JSDocTag<ts.JSDocClassTag> {
-  /** @inheritdoc **/
-  getParent(): NodeParentType<ts.JSDocClassTag>;
-  /** @inheritdoc **/
-  getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.JSDocClassTag>>;
-}
-
 /** JS doc deprecated tag node. */
 export declare class JSDocDeprecatedTag extends JSDocTag<ts.JSDocDeprecatedTag> {
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.JSDocDeprecatedTag>;
   /** @inheritdoc **/
   getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.JSDocDeprecatedTag>>;
-}
-
-/** JS doc enum tag node. */
-export declare class JSDocEnumTag extends JSDocTag<ts.JSDocEnumTag> {
-  /** @inheritdoc **/
-  getParent(): NodeParentType<ts.JSDocEnumTag>;
-  /** @inheritdoc **/
-  getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.JSDocEnumTag>>;
-}
-
-declare const JSDocFunctionTypeBase: Constructor<SignaturedDeclaration> & typeof JSDocType;
-
-/** JS doc function type. */
-export declare class JSDocFunctionType extends JSDocFunctionTypeBase<ts.JSDocFunctionType> {
-  /** @inheritdoc **/
-  getParent(): NodeParentType<ts.JSDocFunctionType>;
-  /** @inheritdoc **/
-  getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.JSDocFunctionType>>;
 }
 
 /** JS doc implements tag node. */
@@ -4698,28 +4630,10 @@ export declare class JSDocLinkPlain extends Node<ts.JSDocLinkPlain> {
   getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.JSDocLinkPlain>>;
 }
 
-/** JS doc member name node. */
-export declare class JSDocMemberName extends Node<ts.JSDocMemberName> {
-  /** @inheritdoc **/
-  getParent(): NodeParentType<ts.JSDocMemberName>;
-  /** @inheritdoc **/
-  getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.JSDocMemberName>>;
-}
-
-/** JS doc namepath type. */
-export declare class JSDocNamepathType extends JSDocType<ts.JSDocNamepathType> {
-  /** Gets the type node of the JS doc namepath node. */
-  getTypeNode(): TypeNode<ts.TypeNode>;
-  /** @inheritdoc **/
-  getParent(): NodeParentType<ts.JSDocNamepathType>;
-  /** @inheritdoc **/
-  getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.JSDocNamepathType>>;
-}
-
 /** JS doc name reference. */
 export declare class JSDocNameReference extends Node<ts.JSDocNameReference> {
   /** Gets the name of the JS doc name reference. */
-  getName(): Identifier | QualifiedName | JSDocMemberName;
+  getName(): Identifier | QualifiedName;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.JSDocNameReference>;
   /** @inheritdoc **/
@@ -4729,8 +4643,7 @@ export declare class JSDocNameReference extends Node<ts.JSDocNameReference> {
 /** JS doc non-nullable type. */
 export declare class JSDocNonNullableType extends JSDocType<ts.JSDocNonNullableType> {
   /** Gets the type node of the JS doc non-nullable type node. */
-  getTypeNode(): TypeNode<ts.TypeNode>;
-  isPostfix(): boolean;
+  getTypeNode(): NodeWithTypeArguments<ts.NodeWithTypeArgumentsBase>;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.JSDocNonNullableType>;
   /** @inheritdoc **/
@@ -4740,8 +4653,7 @@ export declare class JSDocNonNullableType extends JSDocType<ts.JSDocNonNullableT
 /** JS doc nullable type. */
 export declare class JSDocNullableType extends JSDocType<ts.JSDocNullableType> {
   /** Gets the type node of the JS doc nullable type node. */
-  getTypeNode(): TypeNode<ts.TypeNode>;
-  isPostfix(): boolean;
+  getTypeNode(): NodeWithTypeArguments<ts.NodeWithTypeArgumentsBase>;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.JSDocNullableType>;
   /** @inheritdoc **/
@@ -4751,7 +4663,7 @@ export declare class JSDocNullableType extends JSDocType<ts.JSDocNullableType> {
 /** JS doc optional type. */
 export declare class JSDocOptionalType extends JSDocType<ts.JSDocOptionalType> {
   /** Gets the type node of the JS doc optional type node. */
-  getTypeNode(): TypeNode<ts.TypeNode>;
+  getTypeNode(): NodeWithTypeArguments<ts.NodeWithTypeArgumentsBase>;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.JSDocOptionalType>;
   /** @inheritdoc **/
@@ -4861,7 +4773,7 @@ export declare class JSDocSeeTag extends JSDocSeeTagBase<ts.JSDocSeeTag> {
 /** JS doc signature node. */
 export declare class JSDocSignature extends JSDocType<ts.JSDocSignature> {
   /** Gets the type node of the JS doc signature. */
-  getTypeNode(): JSDocReturnTag | undefined;
+  getTypeNode(): NodeWithTypeArguments<ts.NodeWithTypeArgumentsBase> | undefined;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.JSDocSignature>;
   /** @inheritdoc **/
@@ -4884,7 +4796,7 @@ export declare class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extend
    */
   setTagName(tagName: string): Node<ts.Node>;
   /** Gets the tag's comment property. Use `#getCommentText()` to get the text of the JS doc tag comment if necessary. */
-  getComment(): string | (JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain | undefined)[] | undefined;
+  getComment(): string | (Node<ts.Node> | undefined)[] | undefined;
   /** Gets the text of the JS doc tag comment (ex. `"Some description."` for `&#64;param value Some description.`). */
   getCommentText(): string | undefined;
   /** Removes the JS doc comment. */
@@ -4918,9 +4830,9 @@ declare const JSDocTemplateTagBase: Constructor<JSDocTypeParameteredTag> & typeo
 /** JS doc template tag node. */
 export declare class JSDocTemplateTag extends JSDocTemplateTagBase<ts.JSDocTemplateTag> {
   /** Gets the template tag's constraint if it exists or returns undefined. */
-  getConstraint(): JSDocTypeExpression | undefined;
+  getConstraint(): Node<ts.Node> | undefined;
   /** Gets the template tag's constraint if it exists or throws otherwise. */
-  getConstraintOrThrow(message?: string | (() => string)): JSDocTypeExpression;
+  getConstraintOrThrow(message?: string | (() => string)): Node<ts.Node>;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.JSDocTemplateTag>;
   /** @inheritdoc **/
@@ -4970,7 +4882,7 @@ export declare class JSDocTypedefTag extends JSDocTag<ts.JSDocTypedefTag> {
 /** JS doc type expression node. */
 export declare class JSDocTypeExpression extends TypeNode<ts.JSDocTypeExpression> {
   /** Gets the type node of the JS doc type expression. */
-  getTypeNode(): TypeNode<ts.TypeNode>;
+  getTypeNode(): NodeWithTypeArguments<ts.NodeWithTypeArgumentsBase>;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.JSDocTypeExpression>;
   /** @inheritdoc **/
@@ -4982,7 +4894,7 @@ export declare class JSDocTypeLiteral extends JSDocType<ts.JSDocTypeLiteral> {
   /** Gets if it's an array type. */
   isArrayType(): boolean;
   /** Gets the JS doc property tags if they exist. */
-  getPropertyTags(): JSDocTag<ts.JSDocTag>[] | undefined;
+  getPropertyTags(): JSDocTag<ts.JSDocTagBase>[] | undefined;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.JSDocTypeLiteral>;
   /** @inheritdoc **/
@@ -5007,18 +4919,10 @@ export declare class JSDocUnknownTag extends JSDocTag<ts.JSDocUnknownTag> {
   getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.JSDocUnknownTag>>;
 }
 
-/** JS doc unknown type. */
-export declare class JSDocUnknownType extends JSDocType<ts.JSDocUnknownType> {
-  /** @inheritdoc **/
-  getParent(): NodeParentType<ts.JSDocUnknownType>;
-  /** @inheritdoc **/
-  getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.JSDocUnknownType>>;
-}
-
 /** JS doc variadic type. */
 export declare class JSDocVariadicType extends JSDocType<ts.JSDocVariadicType> {
   /** Gets the type node of the JS doc variadic type node. */
-  getTypeNode(): TypeNode<ts.TypeNode>;
+  getTypeNode(): NodeWithTypeArguments<ts.NodeWithTypeArgumentsBase>;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.JSDocVariadicType>;
   /** @inheritdoc **/
@@ -5169,7 +5073,7 @@ export declare class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLi
    */
   addElement(textOrWriterFunction: string | WriterFunction, options?: {
         useNewLines?: boolean;
-    }): Expression<ts.Expression>;
+    }): Expression<ts.ExpressionBase>;
   /**
    * Adds elements to the array.
    * @param textsOrWriterFunction - Texts to add as elements.
@@ -5177,7 +5081,7 @@ export declare class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLi
    */
   addElements(textsOrWriterFunction: ReadonlyArray<string | WriterFunction> | WriterFunction, options?: {
         useNewLines?: boolean;
-    }): Expression<ts.Expression>[];
+    }): Expression<ts.ExpressionBase>[];
   /**
    * Insert an element into the array.
    * @param index - Child index to insert at.
@@ -5186,7 +5090,7 @@ export declare class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLi
    */
   insertElement(index: number, textOrWriterFunction: string | WriterFunction, options?: {
         useNewLines?: boolean;
-    }): Expression<ts.Expression>;
+    }): Expression<ts.ExpressionBase>;
   /**
    * Insert elements into the array.
    * @param index - Child index to insert at.
@@ -5195,7 +5099,7 @@ export declare class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLi
    */
   insertElements(index: number, textsOrWriterFunction: ReadonlyArray<string | WriterFunction> | WriterFunction, options?: {
         useNewLines?: boolean;
-    }): Expression<ts.Expression>[];
+    }): Expression<ts.ExpressionBase>[];
   /**
    * Removes an element from the array.
    * @param index - Index to remove from.
@@ -5260,17 +5164,6 @@ export declare class CallExpression<T extends ts.CallExpression = ts.CallExpress
   getReturnType(): Type;
 }
 
-declare const CommaListExpressionBase: typeof Expression;
-
-export declare class CommaListExpression extends CommaListExpressionBase<ts.CommaListExpression> {
-  /** Gets the elements. */
-  getElements(): Expression[];
-  /** @inheritdoc **/
-  getParent(): NodeParentType<ts.CommaListExpression>;
-  /** @inheritdoc **/
-  getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.CommaListExpression>>;
-}
-
 declare const ConditionalExpressionBase: typeof Expression;
 
 export declare class ConditionalExpression extends ConditionalExpressionBase<ts.ConditionalExpression> {
@@ -5305,7 +5198,7 @@ export declare class ElementAccessExpression<T extends ts.ElementAccessExpressio
   /** Gets this element access expression's argument expression or undefined if none exists. */
   getArgumentExpression(): Expression | undefined;
   /** Gets this element access expression's argument expression or throws if none exists. */
-  getArgumentExpressionOrThrow(message?: string | (() => string)): Expression<ts.Expression>;
+  getArgumentExpressionOrThrow(message?: string | (() => string)): Expression<ts.ExpressionBase>;
 }
 
 export declare class Expression<T extends ts.Expression = ts.Expression> extends Node<T> {
@@ -5688,7 +5581,7 @@ export declare class ShorthandPropertyAssignment extends ShorthandPropertyAssign
   /** Gets if the shorthand property assignment has an object assignment initializer. */
   hasObjectAssignmentInitializer(): boolean;
   /** Gets the object assignment initializer or throws if it doesn't exist. */
-  getObjectAssignmentInitializerOrThrow(message?: string | (() => string)): Expression<ts.Expression>;
+  getObjectAssignmentInitializerOrThrow(message?: string | (() => string)): Expression<ts.ExpressionBase>;
   /** Gets the object assignment initializer if it exists. */
   getObjectAssignmentInitializer(): Expression | undefined;
   /** Gets the equals token or throws if it doesn't exist. */
@@ -5775,7 +5668,7 @@ declare const PostfixUnaryExpressionBase: typeof UnaryExpression;
 
 export declare class PostfixUnaryExpression extends PostfixUnaryExpressionBase<ts.PostfixUnaryExpression> {
   /** Gets the operator token of the postfix unary expression. */
-  getOperatorToken(): ts.PostfixUnaryOperator;
+  getOperatorToken(): SyntaxKind.PlusPlusToken | SyntaxKind.MinusMinusToken;
   /** Gets the operand of the postfix unary expression. */
   getOperand(): LeftHandSideExpression;
   /** @inheritdoc **/
@@ -5788,7 +5681,7 @@ declare const PrefixUnaryExpressionBase: typeof UnaryExpression;
 
 export declare class PrefixUnaryExpression extends PrefixUnaryExpressionBase<ts.PrefixUnaryExpression> {
   /** Gets the operator token of the prefix unary expression. */
-  getOperatorToken(): ts.PrefixUnaryOperator;
+  getOperatorToken(): SyntaxKind.PlusToken | SyntaxKind.MinusToken | SyntaxKind.PlusPlusToken | SyntaxKind.MinusMinusToken | SyntaxKind.ExclamationToken | SyntaxKind.TildeToken;
   /** Gets the operand of the prefix unary expression. */
   getOperand(): UnaryExpression;
   /** @inheritdoc **/
@@ -6156,9 +6049,9 @@ export declare class MethodSignature extends MethodSignatureBase<ts.MethodSignat
   /** Gets the structure equivalent to this node. */
   getStructure(): MethodSignatureStructure;
   /** @inheritdoc **/
-  getParent(): NodeParentType<ts.MethodSignature>;
+  getParent(): NodeParentType<ts.MethodSignatureDeclaration>;
   /** @inheritdoc **/
-  getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.MethodSignature>>;
+  getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.MethodSignatureDeclaration>>;
 }
 
 declare const PropertySignatureBase: Constructor<ChildOrderableNode> & Constructor<JSDocableNode> & Constructor<ReadonlyableNode> & Constructor<QuestionTokenableNode> & Constructor<InitializerExpressionableNode> & Constructor<TypedNode> & Constructor<PropertyNamedNode> & Constructor<ModifierableNode> & typeof TypeElement;
@@ -6172,9 +6065,9 @@ export declare class PropertySignature extends PropertySignatureBase<ts.Property
   /** Gets the structure equivalent to this node. */
   getStructure(): PropertySignatureStructure;
   /** @inheritdoc **/
-  getParent(): NodeParentType<ts.PropertySignature>;
+  getParent(): NodeParentType<ts.PropertySignatureDeclaration>;
   /** @inheritdoc **/
-  getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.PropertySignature>>;
+  getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.PropertySignatureDeclaration>>;
 }
 
 export declare class TypeElement<TNode extends ts.TypeElement = ts.TypeElement> extends Node<TNode> {
@@ -6436,7 +6329,6 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.ConstructorType]: ConstructorTypeNode;
   [SyntaxKind.ConstructSignature]: ConstructSignatureDeclaration;
   [SyntaxKind.ContinueStatement]: ContinueStatement;
-  [SyntaxKind.CommaListExpression]: CommaListExpression;
   [SyntaxKind.ComputedPropertyName]: ComputedPropertyName;
   [SyntaxKind.ConditionalExpression]: ConditionalExpression;
   [SyntaxKind.DebuggerStatement]: DebuggerStatement;
@@ -6479,19 +6371,13 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.IntersectionType]: IntersectionTypeNode;
   [SyntaxKind.JSDocAllType]: JSDocAllType;
   [SyntaxKind.JSDocAugmentsTag]: JSDocAugmentsTag;
-  [SyntaxKind.JSDocAuthorTag]: JSDocAuthorTag;
   [SyntaxKind.JSDocCallbackTag]: JSDocCallbackTag;
-  [SyntaxKind.JSDocClassTag]: JSDocClassTag;
   [SyntaxKind.JSDocDeprecatedTag]: JSDocDeprecatedTag;
-  [SyntaxKind.JSDocEnumTag]: JSDocEnumTag;
-  [SyntaxKind.JSDocFunctionType]: JSDocFunctionType;
   [SyntaxKind.JSDocImplementsTag]: JSDocImplementsTag;
   [SyntaxKind.JSDocImportTag]: JSDocImportTag;
   [SyntaxKind.JSDocLink]: JSDocLink;
   [SyntaxKind.JSDocLinkCode]: JSDocLinkCode;
   [SyntaxKind.JSDocLinkPlain]: JSDocLinkPlain;
-  [SyntaxKind.JSDocMemberName]: JSDocMemberName;
-  [SyntaxKind.JSDocNamepathType]: JSDocNamepathType;
   [SyntaxKind.JSDocNameReference]: JSDocNameReference;
   [SyntaxKind.JSDocNonNullableType]: JSDocNonNullableType;
   [SyntaxKind.JSDocNullableType]: JSDocNullableType;
@@ -6509,7 +6395,6 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.JSDocSatisfiesTag]: JSDocSatisfiesTag;
   [SyntaxKind.JSDocSeeTag]: JSDocSeeTag;
   [SyntaxKind.JSDocSignature]: JSDocSignature;
-  [SyntaxKind.JSDocTag]: JSDocUnknownTag;
   [SyntaxKind.JSDocTemplateTag]: JSDocTemplateTag;
   [SyntaxKind.JSDocText]: JSDocText;
   [SyntaxKind.JSDocThisTag]: JSDocThisTag;
@@ -6517,7 +6402,6 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.JSDocTypeLiteral]: JSDocTypeLiteral;
   [SyntaxKind.JSDocTypeTag]: JSDocTypeTag;
   [SyntaxKind.JSDocTypedefTag]: JSDocTypedefTag;
-  [SyntaxKind.JSDocUnknownType]: JSDocUnknownType;
   [SyntaxKind.JSDocVariadicType]: JSDocVariadicType;
   [SyntaxKind.JsxAttribute]: JsxAttribute;
   [SyntaxKind.JsxClosingElement]: JsxClosingElement;
@@ -6636,7 +6520,6 @@ export interface KindToExpressionMappings {
   [SyntaxKind.BinaryExpression]: BinaryExpression;
   [SyntaxKind.CallExpression]: CallExpression;
   [SyntaxKind.ClassExpression]: ClassExpression;
-  [SyntaxKind.CommaListExpression]: CommaListExpression;
   [SyntaxKind.ConditionalExpression]: ConditionalExpression;
   [SyntaxKind.DeleteExpression]: DeleteExpression;
   [SyntaxKind.ElementAccessExpression]: ElementAccessExpression;
@@ -7645,7 +7528,15 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
   getLiteralsReferencingOtherSourceFiles(): StringLiteral[];
   /** Gets all the descendant string literals that reference a module. */
   getImportStringLiterals(): StringLiteral[];
-  /** Gets the script target of the source file. */
+  /**
+   * Gets the language version the source file is parsed and emitted as.
+   *
+   * @remarks tsgo does not record a language version on the source file, so this
+   * resolves the project's configured `target` instead, defaulting to
+   * `ScriptTarget.Latest` the way ts-morph's parser always has. That was always the
+   * value the previous per-file property held, but it now follows later changes to
+   * the compiler options rather than being fixed when the file was parsed.
+   */
   getLanguageVersion(): ScriptTarget;
   /** Gets the language variant of the source file. */
   getLanguageVariant(): LanguageVariant;
@@ -7756,28 +7647,19 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
    * Organizes the imports in the file.
    *
    * WARNING! This will forget all the nodes in the file! It's best to do this after you're all done with the file.
-   * @param formatSettings - Format code settings.
-   * @param userPreferences - User preferences for refactoring.
-   */
-  organizeImports(formatSettings?: FormatCodeSettings, userPreferences?: UserPreferences): this;
-  /**
-   * Removes all unused declarations like interfaces, classes, enums, functions, variables, parameters,
-   * methods, properties, imports, etc. from this file.
    *
-   * Tip: For optimal results, sometimes this method needs to be called more than once. There could be nodes
-   * that are only referenced in unused declarations and in this case, another call will also remove them.
-   *
-   * WARNING! This will forget all the nodes in the file! It's best to do this after you're all done with the file.
-   * @param formatSettings - Format code settings.
-   * @param userPreferences - User preferences for refactoring.
+   * Breaking change: the format settings and user preferences parameters are
+   * gone. tsgo's organize-imports takes neither.
    */
-  fixUnusedIdentifiers(formatSettings?: FormatCodeSettings, userPreferences?: UserPreferences): this;
+  organizeImports(): this;
   /**
    * Code fix to add import declarations for identifiers that are referenced, but not imported in the source file.
    * @param formatSettings - Format code settings.
-   * @param userPreferences - User preferences for refactoring.
+   *
+   * Breaking change: the user preferences parameter is gone. tsgo's code fixes
+   * do not take one.
    */
-  fixMissingImports(formatSettings?: FormatCodeSettings, userPreferences?: UserPreferences): this;
+  fixMissingImports(formatSettings?: FormatCodeSettings): this;
   /**
    * Applies the text changes to the source file.
    *
@@ -8018,15 +7900,15 @@ export declare class ForStatement extends ForStatementBase<ts.ForStatement> {
   /** Gets this for statement's initializer or undefined if none exists. */
   getInitializer(): VariableDeclarationList | Expression | undefined;
   /** Gets this for statement's initializer or throws if none exists. */
-  getInitializerOrThrow(message?: string | (() => string)): Expression<ts.Expression> | VariableDeclarationList;
+  getInitializerOrThrow(message?: string | (() => string)): Expression<ts.ExpressionBase> | VariableDeclarationList;
   /** Gets this for statement's condition or undefined if none exists. */
   getCondition(): Expression | undefined;
   /** Gets this for statement's condition or throws if none exists. */
-  getConditionOrThrow(message?: string | (() => string)): Expression<ts.Expression>;
+  getConditionOrThrow(message?: string | (() => string)): Expression<ts.ExpressionBase>;
   /** Gets this for statement's incrementor. */
   getIncrementor(): Expression | undefined;
   /** Gets this for statement's incrementor or throws if none exists. */
-  getIncrementorOrThrow(message?: string | (() => string)): Expression<ts.Expression>;
+  getIncrementorOrThrow(message?: string | (() => string)): Expression<ts.ExpressionBase>;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.ForStatement>;
   /** @inheritdoc **/
@@ -8629,25 +8511,25 @@ export declare class ConditionalTypeNode extends TypeNode<ts.ConditionalTypeNode
    *
    * Ex. In `CheckType extends ExtendsType ? TrueType : FalseType` returns `CheckType`.
    */
-  getCheckType(): TypeNode<ts.TypeNode>;
+  getCheckType(): NodeWithTypeArguments<ts.NodeWithTypeArgumentsBase>;
   /**
    * Gets the conditional type node's extends type.
    *
    * Ex. In `CheckType extends ExtendsType ? TrueType : FalseType` returns `ExtendsType`.
    */
-  getExtendsType(): TypeNode<ts.TypeNode>;
+  getExtendsType(): NodeWithTypeArguments<ts.NodeWithTypeArgumentsBase>;
   /**
    * Gets the conditional type node's true type.
    *
    * Ex. In `CheckType extends ExtendsType ? TrueType : FalseType` returns `TrueType`.
    */
-  getTrueType(): TypeNode<ts.TypeNode>;
+  getTrueType(): NodeWithTypeArguments<ts.NodeWithTypeArgumentsBase>;
   /**
    * Gets the conditional type node's false type.
    *
    * Ex. In `CheckType extends ExtendsType ? TrueType : FalseType` returns `FalseType`.
    */
-  getFalseType(): TypeNode<ts.TypeNode>;
+  getFalseType(): NodeWithTypeArguments<ts.NodeWithTypeArgumentsBase>;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.ConditionalTypeNode>;
   /** @inheritdoc **/
@@ -8797,7 +8679,7 @@ declare const NamedTupleMemberBase: Constructor<TypedNode> & Constructor<Questio
  */
 export declare class NamedTupleMember extends NamedTupleMemberBase<ts.NamedTupleMember> {
   /** Gets the named tuple type's type. */
-  getTypeNode(): TypeNode<ts.TypeNode>;
+  getTypeNode(): TypeNode<ts.TypeNodeBase>;
   /** Throws. This is not supported for NamedTupleMember. */
   removeType(): never;
   /** @inheritdoc **/
@@ -8808,7 +8690,7 @@ export declare class NamedTupleMember extends NamedTupleMemberBase<ts.NamedTuple
 
 export declare class OptionalTypeNode extends TypeNode<ts.OptionalTypeNode> {
   /** Gets the optional type node's inner type. */
-  getTypeNode(): TypeNode<ts.TypeNode>;
+  getTypeNode(): NodeWithTypeArguments<ts.NodeWithTypeArgumentsBase>;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.OptionalTypeNode>;
   /** @inheritdoc **/
@@ -8831,7 +8713,7 @@ export declare class ParenthesizedTypeNode extends TypeNode<ts.ParenthesizedType
 
 export declare class RestTypeNode extends TypeNode<ts.RestTypeNode> {
   /** Gets the rest type node's inner type. */
-  getTypeNode(): TypeNode<ts.TypeNode>;
+  getTypeNode(): NodeWithTypeArguments<ts.NodeWithTypeArgumentsBase>;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.RestTypeNode>;
   /** @inheritdoc **/
@@ -8842,7 +8724,7 @@ export declare class TemplateLiteralTypeNode extends TypeNode<ts.TemplateLiteral
   /** Gets the template head. */
   getHead(): TemplateHead;
   /** Gets the template spans. */
-  getTemplateSpans(): TypeNode<ts.TypeNode>[];
+  getTemplateSpans(): NodeWithTypeArguments<ts.NodeWithTypeArgumentsBase>[];
   /**
    * Sets the literal value.
    *
@@ -8866,7 +8748,7 @@ export declare class ThisTypeNode extends TypeNode<ts.ThisTypeNode> {
 
 export declare class TupleTypeNode extends TypeNode<ts.TupleTypeNode> {
   /** Gets the tuple element type nodes. */
-  getElements(): (TypeNode<ts.TypeNode> | NamedTupleMember)[];
+  getElements(): NodeWithTypeArguments<ts.NodeWithTypeArgumentsBase>[];
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.TupleTypeNode>;
   /** @inheritdoc **/
@@ -8939,7 +8821,7 @@ export declare class TypeParameterDeclaration extends TypeParameterDeclarationBa
   /** Gets the constraint of the type parameter. */
   getConstraint(): TypeNode | undefined;
   /** Gets the constraint of the type parameter or throws if it doesn't exist. */
-  getConstraintOrThrow(message?: string | (() => string)): TypeNode<ts.TypeNode>;
+  getConstraintOrThrow(message?: string | (() => string)): TypeNode<ts.TypeNodeBase>;
   /**
    * Sets the type parameter constraint.
    * @param text - Text to set as the constraint.
@@ -8950,7 +8832,7 @@ export declare class TypeParameterDeclaration extends TypeParameterDeclarationBa
   /** Gets the default node of the type parameter. */
   getDefault(): TypeNode | undefined;
   /** Gets the default node of the type parameter or throws if it doesn't exist. */
-  getDefaultOrThrow(message?: string | (() => string)): TypeNode<ts.TypeNode>;
+  getDefaultOrThrow(message?: string | (() => string)): TypeNode<ts.TypeNodeBase>;
   /**
    * Sets the type parameter default type node.
    * @param text - Text to set as the default type node.
@@ -9113,12 +8995,12 @@ export declare class Signature {
   getParameters(): Symbol[];
   /** Gets the signature return type. */
   getReturnType(): Type;
-  /** Get the documentation comments. */
+  /** Gets the documentation comments. */
   getDocumentationComments(): SymbolDisplayPart[];
   /** Gets the JS doc tags. */
   getJsDocTags(): JSDocTagInfo[];
   /** Gets the signature's declaration. */
-  getDeclaration(): MethodSignature | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | CallSignatureDeclaration | ConstructSignatureDeclaration | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | FunctionExpression | ArrowFunction | FunctionDeclaration | JSDocFunctionType;
+  getDeclaration(): MethodSignature | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | CallSignatureDeclaration | ConstructSignatureDeclaration | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | FunctionExpression | ArrowFunction | FunctionDeclaration;
 }
 
 export declare class Symbol {
@@ -9138,17 +9020,6 @@ export declare class Symbol {
   getImmediatelyAliasedSymbolOrThrow(message?: string | (() => string)): Symbol;
   /** Gets the aliased symbol or returns undefined if it doesn't exist. */
   getAliasedSymbol(): Symbol | undefined;
-  /**
-   * Gets the export symbol of the symbol if its a local symbol with a corresponding export symbol. Otherwise returns the current symbol.
-   *
-   * The following is from the compiler API documentation:
-   *
-   * For example, at `export type T = number;`:
-   *     - `getSymbolAtLocation` at the location `T` will return the exported symbol for `T`.
-   *     - But the result of `getSymbolsInScope` will contain the *local* symbol for `T`, not the exported symbol.
-   *     - Calling `getExportSymbol` on that local symbol will return the exported symbol.
-   */
-  getExportSymbol(): Symbol;
   /** Gets if the symbol is an alias. */
   isAlias(): boolean;
   /** Gets if the symbol is optional. */
@@ -9167,6 +9038,35 @@ export declare class Symbol {
   /** Gets the symbol declarations. */
   getDeclarations(): Node[];
   /**
+   * Gets the export symbol of the symbol if its a local symbol with a corresponding export symbol.
+   * Otherwise returns the current symbol.
+   *
+   * The following is from the compiler API documentation:
+   *
+   * For example, at `export type T = number;`:
+   *     - `getSymbolAtLocation` at the location `T` will return the exported symbol for `T`.
+   *     - But the result of `getSymbolsInScope` will contain the *local* symbol for `T`, not the exported symbol.
+   *     - Calling `getExportSymbolOfSymbol` on that local symbol will return the exported symbol.
+   */
+  getExportSymbol(): Symbol;
+  /** Gets the fully qualified name, that is the symbol's name qualified by each of its parents. */
+  getFullyQualifiedName(): string;
+  /**
+   * Gets the global export of the symbol by the specified name or throws if not exists.
+   * @param name - Name of the global export.
+   */
+  getGlobalExportOrThrow(name: string, message?: string | (() => string)): Symbol;
+  /**
+   * Gets the global export of the symbol by the specified name or returns undefined if not exists.
+   * @param name - Name of the global export.
+   */
+  getGlobalExport(name: string): Symbol | undefined;
+  /**
+   * Gets the global exports from the symbol, that is the names it introduces with
+   * `export as namespace X`.
+   */
+  getGlobalExports(): Symbol[];
+  /**
    * Gets the export of the symbol by the specified name or throws if not exists.
    * @param name - Name of the export.
    */
@@ -9178,18 +9078,6 @@ export declare class Symbol {
   getExport(name: string): Symbol | undefined;
   /** Gets the exports from the symbol. */
   getExports(): Symbol[];
-  /**
-   * Gets the global export of the symbol by the specified name or throws if not exists.
-   * @param name - Name of the global export.
-   */
-  getGlobalExportOrThrow(name: string, message?: string | (() => string)): Symbol;
-  /**
-   * Gets the global export of the symbol by the specified name or returns undefined if not exists.
-   * @param name - Name of the global export.
-   */
-  getGlobalExport(name: string): Symbol | undefined;
-  /** Gets the global exports from the symbol. */
-  getGlobalExports(): Symbol[];
   /**
    * Gets the member of the symbol by the specified name or throws if not exists.
    * @param name - Name of the export.
@@ -9209,14 +9097,26 @@ export declare class Symbol {
    * @param node - Location to get the type at for this symbol.
    */
   getTypeAtLocation(node: Node): Type<ts.Type>;
-  /** Gets the fully qualified name. */
-  getFullyQualifiedName(): string;
   /** Gets the JS doc tag infos of the symbol. */
   getJsDocTags(): JSDocTagInfo[];
 }
 
+/**
+ * Format settings accepted by ts-morph's formatting operations.
+ *
+ * The members inherited from `ts.FormatCodeSettings` are what tsgo's formatter
+ * reads; the members declared here are applied by ts-morph itself, either to the
+ * formatter's output or by its own structure printers.
+ */
 export interface FormatCodeSettings extends ts.FormatCodeSettings {
+  /** Whether to ensure the file ends with a newline. Applied after formatting. */
   ensureNewLineAtEndOfFile?: boolean;
+  /**
+   * Whether to insert a space after opening and before closing non-empty braces.
+   *
+   * ex. `import { Item } from "./Item";` or `import {Item} from "./Item";`
+   */
+  insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces?: boolean;
 }
 
 /** Options for renaming a node. */
@@ -9243,10 +9143,19 @@ export interface RenameOptions {
 export interface UserPreferences extends ts.UserPreferences {
 }
 
+/**
+ * Wrapper around the language service operations.
+ *
+ * Breaking change: tsgo has no `LanguageService` object. Every operation below
+ * is a method on the session's project, which is what `compilerObject` returns,
+ * and the operations tsgo does not implement are gone — see
+ * `getEditsForRefactor` and `getIdentationAtPosition` in the breaking changes
+ * list.
+ */
 export declare class LanguageService {
   #private;
   private constructor();
-  /** Gets the compiler language service. */
+  /** Gets the compiler object the language service operations are performed on. */
   get compilerObject(): ts.LanguageService;
   /** Gets the language service's program. */
   getProgram(): Program;
@@ -9290,15 +9199,20 @@ export declare class LanguageService {
   findReferencesAtPosition(sourceFile: SourceFile, pos: number): ReferencedSymbol[];
   /**
    * Find the rename locations for the specified node.
+   *
+   * Breaking change: `newName` is now required. tsgo computes a rename as the
+   * edits that perform it, so the locations cannot be found without knowing what
+   * the node is being renamed to.
    * @param node - Node to get the rename locations for.
+   * @param newName - New name the node is being renamed to.
    * @param options - Options for renaming.
    */
-  findRenameLocations(node: Node, options?: RenameOptions): RenameLocation[];
+  findRenameLocations(node: Node, newName: string, options?: RenameOptions): RenameLocation[];
   /**
    * Gets the suggestion diagnostics.
    * @param filePathOrSourceFile - The source file or file path to get suggestions for.
    */
-  getSuggestionDiagnostics(filePathOrSourceFile: SourceFile | string): DiagnosticWithLocation[];
+  getSuggestionDiagnostics(filePathOrSourceFile: SourceFile | string): Diagnostic[];
   /**
    * Gets the formatting edits for a range.
    * @param filePath - File path.
@@ -9331,70 +9245,48 @@ export declare class LanguageService {
    */
   getEmitOutput(filePath: string, emitOnlyDtsFiles?: boolean): EmitOutput;
   /**
-   * Gets the indentation at the specified position.
-   * @param sourceFile - Source file.
-   * @param position - Position.
-   * @param settings - Editor settings.
-   */
-  getIdentationAtPosition(sourceFile: SourceFile, position: number, settings?: EditorSettings): number;
-  /**
-   * Gets the indentation at the specified position.
-   * @param filePath - File path.
-   * @param position - Position.
-   * @param settings - Editor settings.
-   */
-  getIdentationAtPosition(filePath: string, position: number, settings?: EditorSettings): number;
-  /**
    * Gets the file text changes for organizing the imports in a source file.
    *
-   * @param sourceFile - Source file.
-   * @param formatSettings - Format code settings.
-   * @param userPreferences - User preferences for refactoring.
+   * Breaking change: the format settings and user preferences parameters are
+   * gone. tsgo's organize-imports takes only a mode, which selects between
+   * sorting, combining and removing unused imports.
+   * @param filePathOrSourceFile - File path or source file to organize.
+   * @param mode - Which of sorting, combining and removing unused to do.
    */
-  organizeImports(sourceFile: SourceFile, formatSettings?: FormatCodeSettings, userPreferences?: UserPreferences): FileTextChanges[];
-  /**
-   * Gets the file text changes for organizing the imports in a source file.
-   *
-   * @param filePath - File path of the source file.
-   * @param formatSettings - Format code settings.
-   * @param userPreferences - User preferences for refactoring.
-   */
-  organizeImports(filePath: string, formatSettings?: FormatCodeSettings, userPreferences?: UserPreferences): FileTextChanges[];
-  /**
-   * Gets the edit information for applying a refactor at a the provided position in a source file.
-   * @param filePathOrSourceFile - File path or source file to get the edits for.
-   * @param formatSettings - Fomat code settings.
-   * @param positionOrRange - Position in the source file where to apply given refactor.
-   * @param refactorName - Refactor name.
-   * @param actionName - Refactor action name.
-   * @param preferences - User preferences for refactoring.
-   */
-  getEditsForRefactor(filePathOrSourceFile: string | SourceFile, formatSettings: FormatCodeSettings, positionOrRange: number | {
-        getPos(): number;
-        getEnd(): number;
-    }, refactorName: string, actionName: string, preferences?: UserPreferences): RefactorEditInfo | undefined;
+  organizeImports(filePathOrSourceFile: string | SourceFile, mode?: ts.OrganizeImportsMode): FileTextChanges[];
   /**
    * Gets file changes and actions to perform for the provided fixId.
    * @param filePathOrSourceFile - File path or source file to get the combined code fixes for.
-   * @param fixId - Identifier for the code fix (ex. "fixMissingImport"). These ids are found in the `ts.codefix` namespace in the compiler api source.
+   * @param fixId - Identifier for the code fix (ex. "fixMissingImport").
    * @param formatSettings - Format code settings.
-   * @param preferences - User preferences for refactoring.
+   *
+   * Breaking change: the user preferences parameter is gone, and the fix ids are
+   * tsgo's — `"fixMissingImport"`, `"fixMissingTypeAnnotationOnExports"` and
+   * `"fixClassIncorrectlyImplementsInterface"` are the only ones that exist.
    */
-  getCombinedCodeFix(filePathOrSourceFile: string | SourceFile, fixId: {}, formatSettings?: FormatCodeSettings, preferences?: UserPreferences): CombinedCodeActions;
+  getCombinedCodeFix(filePathOrSourceFile: string | SourceFile, fixId: string, formatSettings?: FormatCodeSettings): CombinedCodeActions;
   /**
    * Gets the edit information for applying a code fix at the provided text range in a source file.
    * @param filePathOrSourceFile - File path or source file to get the code fixes for.
    * @param start - Start position of the text range to be fixed.
    * @param end - End position of the text range to be fixed.
    * @param errorCodes - One or more error codes associated with the code fixes to retrieve.
-   * @param formatOptions - Format code settings.
-   * @param preferences - User preferences for refactoring.
+   *
+   * Breaking change: the format settings and user preferences parameters are
+   * gone. tsgo's code fixes take neither.
    */
-  getCodeFixesAtPosition(filePathOrSourceFile: string | SourceFile, start: number, end: number, errorCodes: ReadonlyArray<number>, formatOptions?: FormatCodeSettings, preferences?: UserPreferences): CodeFixAction[];
+  getCodeFixesAtPosition(filePathOrSourceFile: string | SourceFile, start: number, end: number, errorCodes: ReadonlyArray<number>): CodeFixAction[];
 }
 
 /** Options for emitting from a Program. */
 export interface ProgramEmitOptions extends EmitOptions {
+  /**
+   * Called for each output file instead of writing it to the file system.
+   *
+   * Breaking change: `sourceFiles` holds at most the one source file the output
+   * came from. tsgo reports a single originating file per output, so a bundled
+   * output cannot list every file that fed it.
+   */
   writeFile?: ts.WriteFileCallback;
 }
 
@@ -9404,11 +9296,13 @@ export interface EmitOptions extends EmitOptionsBase {
   targetSourceFile?: SourceFile;
 }
 
+/**
+ * Breaking change: `customTransformers` is gone. tsgo's emitter runs in the
+ * compiler and does not accept JavaScript transforms.
+ */
 export interface EmitOptionsBase {
   /** Whether only .d.ts files should be emitted. */
   emitOnlyDtsFiles?: boolean;
-  /** Transformers to act on the files when emitting. */
-  customTransformers?: ts.CustomTransformers;
 }
 
 /** Wrapper around Program. */
@@ -9437,9 +9331,12 @@ export declare class Program {
   emitToMemory(options?: EmitOptions): MemoryEmitResult;
   /**
    * Gets the syntactic diagnostics.
+   *
+   * Breaking change: these are `Diagnostic`s. tsgo has no separate
+   * `DiagnosticWithLocation` type — see {@link Diagnostic#getSourceFile}.
    * @param sourceFile - Optional source file to filter by.
    */
-  getSyntacticDiagnostics(sourceFile?: SourceFile): DiagnosticWithLocation[];
+  getSyntacticDiagnostics(sourceFile?: SourceFile): Diagnostic[];
   /**
    * Gets the semantic diagnostics.
    * @param sourceFile - Optional source file to filter by.
@@ -9449,10 +9346,16 @@ export declare class Program {
    * Gets the declaration diagnostics.
    * @param sourceFile - Optional source file to filter by.
    */
-  getDeclarationDiagnostics(sourceFile?: SourceFile): DiagnosticWithLocation[];
+  getDeclarationDiagnostics(sourceFile?: SourceFile): Diagnostic[];
   /** Gets the global diagnostics. */
   getGlobalDiagnostics(): Diagnostic[];
-  /** Gets the diagnostics found when parsing the tsconfig.json file. */
+  /**
+   * Gets the diagnostics found when parsing the tsconfig.json file.
+   *
+   * These are the ones the project's own tsconfig produced. Asking the compiler
+   * object would instead report on the synthetic config the document registry
+   * opens its project from, which the user never wrote.
+   */
   getConfigFileParsingDiagnostics(): Diagnostic[];
   /** Gets the emit module resolution kind. */
   getEmitModuleResolutionKind(): ModuleResolutionKind;
@@ -9475,23 +9378,21 @@ export declare class CodeAction<TCompilerObject extends ts.CodeAction = ts.CodeA
   getChanges(): FileTextChanges[];
 }
 
-/** Represents a code fix action. */
+/**
+ * Represents a code fix action.
+ *
+ * Breaking change: `getFixName()`, `getFixId()` and `getFixAllDescription()` are
+ * gone. tsgo returns a description and the edits, and does not group fixes into
+ * fix-alls, so there is no id to report or to feed back in.
+ */
 export declare class CodeFixAction extends CodeAction<ts.CodeFixAction> {
-  /** Short name to identify the fix, for use by telemetry. */
-  getFixName(): string;
-  /**
-   * If present, one may call 'getCombinedCodeFix' with this fixId.
-   * This may be omitted to indicate that the code fix can't be applied in a group.
-   */
-  getFixId(): {} | undefined;
-  /** Gets the description of the code fix when fixing everything. */
-  getFixAllDescription(): string | undefined;
 }
 
 /**
  * Represents file changes.
  *
- * @remarks Commands are currently not implemented.
+ * Breaking change: `commands` is gone. tsgo's combined code fixes are edits
+ * only, so there is nothing to run alongside them.
  */
 export declare class CombinedCodeActions {
   #private;
@@ -9513,11 +9414,11 @@ export declare class CombinedCodeActions {
 export declare class DefinitionInfo<TCompilerObject extends ts.DefinitionInfo = ts.DefinitionInfo> extends DocumentSpan<TCompilerObject> {
   protected constructor();
   /** Gets the kind. */
-  getKind(): ts.ScriptElementKind;
+  getKind(): string;
   /** Gets the name. */
   getName(): string;
   /** Gets the container kind. */
-  getContainerKind(): ts.ScriptElementKind;
+  getContainerKind(): string;
   /** Gets the container name. */
   getContainerName(): string;
   /** Gets the declaration node. */
@@ -9529,29 +9430,49 @@ export declare class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagn
   protected constructor();
   /** Gets the underlying compiler diagnostic. */
   get compilerObject(): TCompilerObject;
-  /** Gets the source file. */
+  /**
+   * Gets the source file.
+   *
+   * Breaking change: tsgo reports the file by name rather than handing back the
+   * parsed file, so this resolves the name against the files the project has
+   * wrapped. A diagnostic reported on a file the program pulled in but the
+   * project never added (a lib file, an implicit dependency) has no wrapper to
+   * return, and yields undefined where the `typescript` package returned one.
+   */
   getSourceFile(): SourceFile | undefined;
-  /** Gets the message text. */
-  getMessageText(): string | DiagnosticMessageChain;
+  /**
+   * Gets the message text.
+   *
+   * Breaking change: this is always a string. tsgo puts the message on `text`
+   * and nests any chained messages under `messageChain`, so a chain no longer
+   * arrives in place of the text � see {@link getMessageChain}.
+   */
+  getMessageText(): string;
+  /** Gets the chained messages that elaborate on this diagnostic, if any. */
+  getMessageChain(): DiagnosticMessageChain[] | undefined;
   /** Gets the line number. */
   getLineNumber(): number | undefined;
   /** Gets the start. */
-  getStart(): number | undefined;
+  getStart(): number;
   /** Gets the length. */
-  getLength(): number | undefined;
+  getLength(): number;
   /** Gets the diagnostic category. */
   getCategory(): DiagnosticCategory;
   /** Gets the code of the diagnostic. */
   getCode(): number;
-  /** Gets the source. */
-  getSource(): string | undefined;
 }
 
-/** Diagnostic message chain. */
+/**
+ * A link in a diagnostic's message chain.
+ *
+ * Breaking change: tsgo has no separate message chain type — a chain element is
+ * itself a `Diagnostic`, nested under the parent's `messageChain`. So this wraps
+ * a `ts.Diagnostic`, and `getNext()` reads `messageChain` rather than `next`.
+ */
 export declare class DiagnosticMessageChain {
   private constructor();
   /** Gets the underlying compiler object. */
-  get compilerObject(): ts.DiagnosticMessageChain;
+  get compilerObject(): ts.Diagnostic;
   /** Gets the message text. */
   getMessageText(): string;
   /** Gets the next diagnostic message chains in the chain. */
@@ -9646,12 +9567,14 @@ export declare class FileTextChanges {
   isNewFile(): boolean;
 }
 
+/**
+ * Location of an implementation.
+ *
+ * Breaking change: `getKind()` and `getDisplayParts()` are gone. tsgo reports an
+ * implementation as a file span and nothing else.
+ */
 export declare class ImplementationLocation extends DocumentSpan<ts.ImplementationLocation> {
   private constructor();
-  /** Gets the kind. */
-  getKind(): ts.ScriptElementKind;
-  /** Gets the display parts. */
-  getDisplayParts(): SymbolDisplayPart[];
 }
 
 /** The emitted file in memory. */
@@ -9685,33 +9608,17 @@ export declare class OutputFile {
   private constructor();
   /** TypeScript compiler output file. */
   get compilerObject(): ts.OutputFile;
-  /** Gets the file path. */
+  /**
+   * Gets the file path.
+   *
+   * tsgo keys emit output by path rather than storing the path on the file, so
+   * this comes from the map key the file was found under.
+   */
   getFilePath(): StandardizedFilePath;
-  /** Gets whether the byte order mark should be written. */
-  getWriteByteOrderMark(): boolean;
   /** Gets the file text. */
   getText(): string;
-}
-
-/** Set of edits to make in response to a refactor action, plus an optional location where renaming should be invoked from. */
-export declare class RefactorEditInfo {
-  #private;
-  private constructor();
-  /** Gets the compiler refactor edit info. */
-  get compilerObject(): ts.RefactorEditInfo;
-  /** Gets refactor file text changes */
-  getEdits(): FileTextChanges[];
-  /** Gets the file path for a rename refactor. */
-  getRenameFilePath(): string | undefined;
-  /** Location where renaming should be invoked from. */
-  getRenameLocation(): number | undefined;
-  /**
-   * Executes the combined code actions.
-   *
-   * WARNING: This will cause all nodes to be forgotten in the changed files.
-   * @options - Options used when applying the changes.
-   */
-  applyChanges(options?: ApplyFileTextChangesOptions): this;
+  /** Gets whether the byte order mark should be written. */
+  getWriteByteOrderMark(): boolean;
 }
 
 /** Referenced symbol. */
@@ -9728,7 +9635,12 @@ export declare class ReferencedSymbol {
 
 export declare class ReferencedSymbolDefinitionInfo extends DefinitionInfo<ts.ReferencedSymbolDefinitionInfo> {
   private constructor();
-  /** Gets the display parts. */
+  /**
+   * Gets the display parts.
+   *
+   * Breaking change: a part's `getKind()` is an LSP classification name rather
+   * than one of the `typescript` package's `SymbolDisplayPartKind` names.
+   */
   getDisplayParts(): SymbolDisplayPart[];
 }
 
@@ -9741,7 +9653,7 @@ export declare class ReferenceEntry<T extends ts.ReferenceEntry = ts.ReferenceEn
 export declare class ReferencedSymbolEntry extends ReferenceEntry<ts.ReferencedSymbolEntry> {
   private constructor();
   /** If this is the definition reference. */
-  isDefinition(): boolean | undefined;
+  isDefinition(): boolean;
 }
 
 /** Rename location. */
@@ -9763,7 +9675,8 @@ export declare class SymbolDisplayPart {
   /**
    * Gets the kind.
    *
-   * Examples: "text", "lineBreak"
+   * Breaking change: tsgo renders documentation as plain text rather than a
+   * classified part list, so this is always `"text"`.
    */
   getKind(): string;
 }
@@ -9811,20 +9724,10 @@ export declare class TypeChecker {
    */
   getApparentType(type: Type): Type<ts.Type>;
   /**
-   * Gets the awaited type of a type (ex. `Promise<string>` -> `string`).
-   * @param type - Type to get the awaited type of.
-   */
-  getAwaitedType(type: Type): Type<ts.Type> | undefined;
-  /**
    * Gets the constant value of a declaration.
    * @param node - Node to get the constant value from.
    */
   getConstantValue(node: EnumMember): string | number | undefined;
-  /**
-   * Gets the fully qualified name of a symbol.
-   * @param symbol - Symbol to get the fully qualified name of.
-   */
-  getFullyQualifiedName(symbol: Symbol): string;
   /**
    * Gets the type at the specified location.
    * @param node - Node to get the type for.
@@ -9862,16 +9765,30 @@ export declare class TypeChecker {
    */
   getImmediatelyAliasedSymbol(symbol: Symbol): Symbol | undefined;
   /**
-   * Gets the export symbol of a local symbol with a corresponding export symbol. Otherwise returns the input symbol.
+   * Gets the symbols in the scope of the provided node.
    *
-   * The following is from the compiler API documentation:
-   *
-   * For example, at `export type T = number;`:
-   *     - `getSymbolAtLocation` at the location `T` will return the exported symbol for `T`.
-   *     - But the result of `getSymbolsInScope` will contain the *local* symbol for `T`, not the exported symbol.
-   *     - Calling `getExportSymbolOfSymbol` on that local symbol will return the exported symbol.
+   * Note: This will always return the local symbols. If you want the export symbol from a local
+   * symbol, then use the `#getExportSymbolOfSymbol(symbol)` method.
+   * @param node - Node to check the scope for.
+   * @param meaning - Meaning of symbol to filter by.
    */
-  getExportSymbolOfSymbol(symbol: Symbol): Symbol;
+  getSymbolsInScope(node: Node, meaning: SymbolFlags): Symbol[];
+  /**
+   * Gets the symbols the binder placed in the node's own local scope, in declaration order.
+   * @param node - Node to get the locals of.
+   */
+  getLocals(node: Node): Symbol[];
+  /**
+   * Gets the type a value of the provided type resolves to when awaited, or undefined when
+   * the type cannot be awaited.
+   * @param type - Type to get the awaited type of.
+   */
+  getAwaitedType(type: Type): Type | undefined;
+  /**
+   * Gets the fully qualified name of a symbol, that is its name qualified by each of its parents.
+   * @param symbol - Symbol to get the fully qualified name of.
+   */
+  getFullyQualifiedName(symbol: Symbol): string;
   /**
    * Gets the properties of a type.
    * @param type - Type.
@@ -9922,15 +9839,6 @@ export declare class TypeChecker {
    */
   getBaseTypeOfLiteralType(type: Type): Type<ts.Type>;
   /**
-   * Gets the symbols in the scope of the provided node.
-   *
-   * Note: This will always return the local symbols. If you want the export symbol from a local symbol, then
-   * use the `#getExportSymbolOfSymbol(symbol)` method.
-   * @param node - Node to check the scope for.
-   * @param meaning - Meaning of symbol to filter by.
-   */
-  getSymbolsInScope(node: Node, meaning: SymbolFlags): Symbol[];
-  /**
    * Gets the type arguments from a type reference.
    * @param typeReference - Type reference.
    */
@@ -9961,14 +9869,14 @@ export declare class Type<TType extends ts.Type = ts.Type> {
   getAliasTypeArguments(): Type[];
   /** Gets the apparent type. */
   getApparentType(): Type;
-  /** Gets the awaited type. */
+  /** Gets the type the type resolves to when awaited, or undefined when it cannot be awaited. */
   getAwaitedType(): Type | undefined;
   /** Gets the array element type or throws if it doesn't exist (ex. for `T[]` it would be `T`). */
   getArrayElementTypeOrThrow(message?: string | (() => string)): Type<ts.Type>;
   /** Gets the array element type or returns undefined if it doesn't exist (ex. for `T[]` it would be `T`). */
   getArrayElementType(): Type<ts.Type> | undefined;
   /** Gets the base types. */
-  getBaseTypes(): Type<ts.BaseType>[];
+  getBaseTypes(): Type<ts.Type>[];
   /**
    * Gets the base type of a literal type.
    *
@@ -9981,11 +9889,22 @@ export declare class Type<TType extends ts.Type = ts.Type> {
   getConstructSignatures(): Signature[];
   /** Gets the constraint or throws if it doesn't exist. */
   getConstraintOrThrow(message?: string | (() => string)): Type<ts.Type>;
-  /** Gets the constraint or returns undefined if it doesn't exist. */
+  /**
+   * Gets the constraint or returns undefined if it doesn't exist.
+   *
+   * Breaking change: tsgo only resolves a constraint for type parameters and
+   * substitution types, so an indexed access, index or conditional type now
+   * returns undefined where the `typescript` package returned a type.
+   */
   getConstraint(): Type<ts.Type> | undefined;
   /** Gets the default type or throws if it doesn't exist. */
   getDefaultOrThrow(message?: string | (() => string)): Type<ts.Type>;
-  /** Gets the default type or returns undefined if it doesn't exist. */
+  /**
+   * Gets the default type or returns undefined if it doesn't exist.
+   *
+   * Breaking change: tsgo only resolves a default for type parameters, which is
+   * the only place the `typescript` package ever found one in practice.
+   */
   getDefault(): Type<ts.Type> | undefined;
   /** Gets the properties of the type. */
   getProperties(): Symbol[];
@@ -10036,7 +9955,7 @@ export declare class Type<TType extends ts.Type = ts.Type> {
    * - Given generic type `Promise<T>` returns the same `Promise<T>`.
    * - Given `string` returns `undefined`.
    */
-  getTargetType(): Type<ts.GenericType> | undefined;
+  getTargetType(): Type | undefined;
   /**
    * Returns the generic type when the type is a type reference, returns itself when it's
    * already a generic type, or otherwise throws an error.
@@ -10047,7 +9966,7 @@ export declare class Type<TType extends ts.Type = ts.Type> {
    * - Given generic type `Promise<T>` returns the same `Promise<T>`.
    * - Given `string` throws an error.
    */
-  getTargetTypeOrThrow(message?: string | (() => string)): Type<ts.GenericType>;
+  getTargetTypeOrThrow(message?: string | (() => string)): Type;
   /** Gets type arguments. */
   getTypeArguments(): Type[];
   /** Gets the individual element types of the tuple. */
@@ -10057,9 +9976,9 @@ export declare class Type<TType extends ts.Type = ts.Type> {
   /** Gets the intersection types (ex. for `T & U` it returns the array `[T, U]`). */
   getIntersectionTypes(): Type[];
   /** Gets the value of a literal or returns undefined if this is not a literal type. */
-  getLiteralValue(): string | number | ts.PseudoBigInt | undefined;
+  getLiteralValue(): string | number | bigint | boolean | undefined;
   /** Gets the value of the literal or throws if this is not a literal type. */
-  getLiteralValueOrThrow(message?: string | (() => string)): string | number | ts.PseudoBigInt;
+  getLiteralValueOrThrow(message?: string | (() => string)): string | number | bigint | boolean;
   /**
    * Gets the fresh type of the literal or returns undefined if this is not a literal type.
    *
@@ -10156,7 +10075,7 @@ export declare class Type<TType extends ts.Type = ts.Type> {
    * Gets the object flags.
    * @remarks Returns 0 for a non-object type.
    */
-  getObjectFlags(): 0 | ObjectFlags.Class | ObjectFlags.Interface | ObjectFlags.Reference | ObjectFlags.Tuple | ObjectFlags.Anonymous | ObjectFlags.Mapped | ObjectFlags.Instantiated | ObjectFlags.ObjectLiteral | ObjectFlags.EvolvingArray | ObjectFlags.ObjectLiteralPatternWithComputedProperties | ObjectFlags.ReverseMapped | ObjectFlags.JsxAttributes | ObjectFlags.JSLiteral | ObjectFlags.FreshLiteral | ObjectFlags.ArrayLiteral | ObjectFlags.SingleSignatureType | ObjectFlags.ClassOrInterface | ObjectFlags.ContainsSpread | ObjectFlags.ObjectRestType | ObjectFlags.InstantiationExpressionType;
+  getObjectFlags(): 0 | ObjectFlags.Class | ObjectFlags.Interface | ObjectFlags.Reference | ObjectFlags.Tuple | ObjectFlags.Anonymous | ObjectFlags.Mapped | ObjectFlags.Instantiated | ObjectFlags.ObjectLiteral | ObjectFlags.EvolvingArray | ObjectFlags.ObjectLiteralPatternWithComputedProperties | ObjectFlags.ReverseMapped | ObjectFlags.JsxAttributes | ObjectFlags.JSLiteral | ObjectFlags.FreshLiteral | ObjectFlags.ArrayLiteral | ObjectFlags.PrimitiveUnion | ObjectFlags.ContainsWideningType | ObjectFlags.ContainsObjectOrArrayLiteral | ObjectFlags.NonInferrableType | ObjectFlags.CouldContainTypeVariablesComputed | ObjectFlags.CouldContainTypeVariables | ObjectFlags.MembersResolved | ObjectFlags.ClassOrInterface | ObjectFlags.RequiresWidening | ObjectFlags.PropagatingFlags | ObjectFlags.InstantiatedMapped | ObjectFlags.InstantiationExpressionType | ObjectFlags.SingleSignatureType | ObjectFlags.ObjectTypeKindMask | ObjectFlags.ContainsSpread | ObjectFlags.ObjectRestType | ObjectFlags.IsClassInstanceClone | ObjectFlags.IdenticalBaseTypeCalculated | ObjectFlags.IdenticalBaseTypeExists | ObjectFlags.UnresolvedMembers | ObjectFlags.FromTypeNode | ObjectFlags.IsGenericType;
 }
 
 export declare class TypeParameter extends Type<ts.TypeParameter> {
@@ -10232,7 +10151,7 @@ export declare class ManipulationSettingsContainer extends SettingsContainer<Man
   /** Gets the new line kind. */
   getNewLineKind(): NewLineKind;
   /** Gets the new line kind as a string. */
-  getNewLineKindAsString(): "\r\n" | "\n";
+  getNewLineKindAsString(): "\n" | "\r\n";
   /** Gets the indentation text. */
   getIndentationText(): IndentationText;
   /** Gets whether to use prefix and suffix text when renaming. */
@@ -10991,8 +10910,8 @@ export declare function forEachStructureChild<TStructure>(structures: ReadonlyAr
  * @param callback - Callback to do on each child of the provided structure. Returning a truthy value will return that value in the main function call.
  */
 export declare function forEachStructureChild<TStructure>(structure: Structures, callback: (child: Structures) => TStructure | void): TStructure | undefined;
-import { CompilerOptions, DiagnosticCategory, EditorSettings, EmitHint, ImportPhaseModifierSyntaxKind, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, NodeFlags, ObjectFlags, ScriptKind, ScriptTarget, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags } from "@ts-morph/common";
-export { ts, CompilerOptions, DiagnosticCategory, EditorSettings, EmitHint, ImportPhaseModifierSyntaxKind, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, NodeFlags, ObjectFlags, ScriptKind, ScriptTarget, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags };
+import { CompilerOptions, DiagnosticCategory, EditorSettings, EmitHint, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, NodeFlags, ObjectFlags, ScriptKind, ScriptTarget, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags } from "@ts-morph/common";
+export { ts, CompilerOptions, DiagnosticCategory, EditorSettings, EmitHint, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, NodeFlags, ObjectFlags, ScriptKind, ScriptTarget, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags };
 
 /** Code writer that assists with formatting and visualizing blocks of JavaScript or TypeScript code. */
 export declare class CodeBlockWriter {

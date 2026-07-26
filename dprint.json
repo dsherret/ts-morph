@@ -9,7 +9,7 @@
     "submodules/",
     "**/*-lock.json",
     "packages/*/dist/",
-    "packages/*/lib/*.ts",
+    "packages/*/lib/",
     "**/CHANGELOG.md",
     "packages/ts-morph/src/compiler/ast/common/Node.ts",
     "./deno",

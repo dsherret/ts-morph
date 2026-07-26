@@ -128,24 +128,6 @@ export declare class InMemoryFileSystemHost implements FileSystemHost {
     globSync(patterns: ReadonlyArray<string>): string[];
 }
 
-/** Host for implementing custom module and/or type reference directive resolution. */
-export interface ResolutionHost {
-    resolveModuleNames?: ts.LanguageServiceHost["resolveModuleNames"];
-    getResolvedModuleWithFailedLookupLocationsFromCache?: ts.LanguageServiceHost["getResolvedModuleWithFailedLookupLocationsFromCache"];
-    resolveTypeReferenceDirectives?: ts.LanguageServiceHost["resolveTypeReferenceDirectives"];
-}
-
-/**
- * Factory used to create a resolution host.
- * @remarks The compiler options are retrieved via a function in order to get the project's current compiler options.
- */
-export type ResolutionHostFactory = (moduleResolutionHost: ts.ModuleResolutionHost, getCompilerOptions: () => ts.CompilerOptions) => ResolutionHost;
-
-/** Collection of reusable resolution hosts. */
-export declare const ResolutionHosts: {
-    deno: ResolutionHostFactory;
-};
-
 export declare abstract class SettingsContainer<T extends object> {
     #private;
     protected _settings: T;
@@ -186,6 +168,18 @@ export declare function createProject(options?: ProjectOptions): Promise<Project
  */
 export declare function createProjectSync(options?: ProjectOptions): Project;
 
+/**
+ * Options for adding or creating a source file.
+ *
+ * Breaking change: `scriptKind` no longer has an effect. tsgo owns parsing and
+ * derives the script kind from the file extension, with no way to be told
+ * otherwise, so the option is kept only so existing calls still compile.
+ */
+export interface SourceFileOptions {
+    /** @deprecated Has no effect — the script kind comes from the file extension. */
+    scriptKind?: ts.ScriptKind;
+}
+
 /** Options for creating a project. */
 export interface ProjectOptions {
     /** Compiler options */
@@ -213,14 +207,6 @@ export interface ProjectOptions {
      * @remarks Consider using `useInMemoryFileSystem` instead.
      */
     fileSystem?: FileSystemHost;
-    /** Creates a resolution host for specifying custom module and/or type reference directive resolution. */
-    resolutionHost?: ResolutionHostFactory;
-    /**
-     * Unstable and will probably be removed in the future.
-     * I believe this option should be internal to the library and if you know how to achieve
-     * that then please consider submitting a PR.
-     */
-    isKnownTypesPackageName?: ts.LanguageServiceHost["isKnownTypesPackageName"];
 }
 
 /** Project that holds source files. */
@@ -239,9 +225,7 @@ export declare class Project {
      * @param options - Options for adding the file.
      * @throws FileNotFoundError when the file is not found.
      */
-    addSourceFileAtPath(filePath: string, options?: {
-        scriptKind?: ts.ScriptKind;
-    }): Promise<ts.SourceFile>;
+    addSourceFileAtPath(filePath: string, options?: SourceFileOptions): Promise<ts.SourceFile>;
     /**
      * Synchronously adds an existing source file from a file path or throws if it doesn't exist.
      *
@@ -250,9 +234,7 @@ export declare class Project {
      * @param options - Options for adding the file.
      * @throws FileNotFoundError when the file is not found.
      */
-    addSourceFileAtPathSync(filePath: string, options?: {
-        scriptKind?: ts.ScriptKind;
-    }): ts.SourceFile;
+    addSourceFileAtPathSync(filePath: string, options?: SourceFileOptions): ts.SourceFile;
     /**
      * Asynchronously adds a source file from a file path if it exists or returns undefined.
      *
@@ -261,9 +243,7 @@ export declare class Project {
      * @param options - Options for adding the file.
      * @skipOrThrowCheck
      */
-    addSourceFileAtPathIfExists(filePath: string, options?: {
-        scriptKind?: ts.ScriptKind;
-    }): Promise<ts.SourceFile | undefined>;
+    addSourceFileAtPathIfExists(filePath: string, options?: SourceFileOptions): Promise<ts.SourceFile | undefined>;
     /**
      * Synchronously adds a source file from a file path if it exists or returns undefined.
      *
@@ -272,9 +252,7 @@ export declare class Project {
      * @param options - Options for adding the file.
      * @skipOrThrowCheck
      */
-    addSourceFileAtPathIfExistsSync(filePath: string, options?: {
-        scriptKind?: ts.ScriptKind;
-    }): ts.SourceFile | undefined;
+    addSourceFileAtPathIfExistsSync(filePath: string, options?: SourceFileOptions): ts.SourceFile | undefined;
     /**
      * Asynchronously adds source files based on file globs.
      * @param fileGlobs - File glob or globs to add files based on.
@@ -313,20 +291,20 @@ export declare class Project {
      * @param options - Options.
      * @throws - InvalidOperationError if a source file already exists at the provided file path.
      */
-    createSourceFile(filePath: string, sourceFileText?: string, options?: {
-        scriptKind?: ts.ScriptKind;
-    }): ts.SourceFile;
+    createSourceFile(filePath: string, sourceFileText?: string, options?: SourceFileOptions): ts.SourceFile;
     /**
      * Updates the source file stored in the project at the specified path.
      * @param filePath - File path of the source file.
      * @param sourceFileText - Text of the source file.
      * @param options - Options for updating the source file.
      */
-    updateSourceFile(filePath: string, sourceFileText: string, options?: {
-        scriptKind?: ts.ScriptKind;
-    }): ts.SourceFile;
+    updateSourceFile(filePath: string, sourceFileText: string, options?: SourceFileOptions): ts.SourceFile;
     /**
      * Updates the source file stored in the project. The `fileName` of the source file object is used to tell which file to update.
+     *
+     * Breaking change: the file is re-created from the provided file's text rather
+     * than stored as-is, so the returned file is a new object. tsgo owns parsing,
+     * and a tree it did not produce cannot be put into a project.
      * @param newSourceFile - The new source file.
      */
     updateSourceFile(newSourceFile: ts.SourceFile): ts.SourceFile;
@@ -348,14 +326,24 @@ export declare class Project {
      * * This is done by default when creating a Project and providing a tsconfig.json and
      * not specifying to not add the source files.
      */
-    resolveSourceFileDependencies(): void;
+    resolveSourceFileDependencies(): ts.SourceFile[];
     /**
-     * Creates a new program.
-     * Note: You should get a new program any time source files are added, removed, or changed.
+     * Gets the program.
+     *
+     * Breaking change: this no longer creates a program. tsgo keeps one program per
+     * project and updates it as files change, so the same program is returned for
+     * the project's current state and there are no `CreateProgramOptions` to
+     * override it with.
      */
-    createProgram(options?: ts.CreateProgramOptions): ts.Program;
+    createProgram(): ts.Program;
+    /** Gets the diagnostics from parsing the project's tsconfig, if it had one. */
+    getConfigFileParsingDiagnostics(): readonly ts.Diagnostic[];
     /**
      * Gets the language service.
+     *
+     * Breaking change: tsgo has no `LanguageService`. Formatting, organize-imports,
+     * rename, definitions, implementations and code fixes are methods on the
+     * compiler's project, so that is what this returns.
      */
     getLanguageService(): ts.LanguageService;
     /**
@@ -382,6 +370,10 @@ export declare class Project {
     getSourceFiles(): ts.SourceFile[];
     /**
      * Formats an array of diagnostics with their color and context into a string.
+     *
+     * Breaking change: tsgo has no `formatDiagnosticsWithColorAndContext`, so the
+     * diagnostics are formatted here; the source line, the caret and the ANSI
+     * colouring are gone.
      * @param diagnostics - Diagnostics to get a string of.
      * @param options - Collection of options. For example, the new line character to use (defaults to the OS' new line character).
      */

@@ -1,0 +1,97 @@
+import { CommentDirectiveType } from "../enums/commentDirectiveType.enum";
+import { LanguageVariant } from "../enums/languageVariant.enum";
+import { RegularExpressionFlags } from "../enums/regularExpressionFlags.enum";
+import { ScriptTarget } from "../enums/scriptTarget.enum";
+import { SyntaxKind } from "../enums/syntaxKind.enum";
+import { TokenFlags } from "../enums/tokenFlags.enum";
+import type { JsxTokenSyntaxKind, KeywordSyntaxKind } from "./ast";
+export type JSDocTokenKind = SyntaxKind.EndOfFile | SyntaxKind.WhitespaceTrivia | SyntaxKind.AtToken | SyntaxKind.NewLineTrivia | SyntaxKind.AsteriskToken | SyntaxKind.OpenBraceToken | SyntaxKind.CloseBraceToken | SyntaxKind.LessThanToken | SyntaxKind.GreaterThanToken | SyntaxKind.OpenBracketToken | SyntaxKind.CloseBracketToken | SyntaxKind.OpenParenToken | SyntaxKind.CloseParenToken | SyntaxKind.EqualsToken | SyntaxKind.CommaToken | SyntaxKind.DotToken | SyntaxKind.Identifier | SyntaxKind.BacktickToken | SyntaxKind.HashToken | SyntaxKind.Unknown | KeywordSyntaxKind;
+export interface CommentDirective {
+    range: {
+        pos: number;
+        end: number;
+    };
+    type: CommentDirectiveType;
+}
+export declare function tokenIsIdentifierOrKeyword(token: SyntaxKind): boolean;
+export declare function tokenIsIdentifierOrKeywordOrGreaterThan(token: SyntaxKind): boolean;
+export interface Scanner {
+    getTokenFullStart(): number;
+    getToken(): SyntaxKind;
+    getTokenStart(): number;
+    getTokenEnd(): number;
+    getTokenText(): string;
+    getTokenValue(): string;
+    hasUnicodeEscape(): boolean;
+    hasExtendedUnicodeEscape(): boolean;
+    hasPrecedingLineBreak(): boolean;
+    hasPrecedingJSDocComment(): boolean;
+    hasPrecedingJSDocLeadingAsterisks(): boolean;
+    hasPrecedingJSDocWithDeprecatedTag(): boolean;
+    hasPrecedingJSDocWithSeeOrLink(): boolean;
+    isIdentifier(): boolean;
+    isReservedWord(): boolean;
+    isUnterminated(): boolean;
+    getNumericLiteralFlags(): TokenFlags;
+    getCommentDirectives(): CommentDirective[] | undefined;
+    getTokenFlags(): TokenFlags;
+    reScanGreaterToken(): SyntaxKind;
+    reScanSlashToken(): SyntaxKind;
+    reScanAsteriskEqualsToken(): SyntaxKind;
+    reScanTemplateToken(isTaggedTemplate: boolean): SyntaxKind;
+    reScanTemplateHeadOrNoSubstitutionTemplate(): SyntaxKind;
+    scanJsxIdentifier(): SyntaxKind;
+    scanJsxAttributeValue(): SyntaxKind;
+    reScanJsxAttributeValue(): SyntaxKind;
+    reScanJsxToken(allowMultilineJsxText?: boolean): JsxTokenSyntaxKind;
+    reScanLessThanToken(): SyntaxKind;
+    reScanHashToken(): SyntaxKind;
+    reScanQuestionToken(): SyntaxKind;
+    reScanInvalidIdentifier(): SyntaxKind;
+    scanJsxToken(): JsxTokenSyntaxKind;
+    scanJsDocToken(): JSDocTokenKind;
+    scanJSDocCommentTextToken(inBackticks: boolean): JSDocTokenKind | SyntaxKind.JSDocCommentTextToken;
+    scan(): SyntaxKind;
+    getText(): string;
+    clearCommentDirectives(): void;
+    setText(text: string | undefined, start?: number, length?: number): void;
+    setLanguageVariant(variant: LanguageVariant): void;
+    resetTokenState(pos: number): void;
+    setSkipJsDocLeadingAsterisks(skip: boolean): void;
+    lookAhead<T>(callback: () => T): T;
+    scanRange<T>(start: number, length: number, callback: () => T): T;
+    tryScan<T>(callback: () => T): T;
+}
+export declare const textToKeywordObj: Record<string, KeywordSyntaxKind>;
+export declare function isUnicodeIdentifierStart(code: number): boolean;
+export declare function tokenToString(t: SyntaxKind): string | undefined;
+export declare function stringToToken(s: string): SyntaxKind | undefined;
+export declare function characterCodeToRegularExpressionFlag(ch: number): RegularExpressionFlags | undefined;
+export declare function computeLineStarts(text: string): number[];
+export declare function isWhiteSpaceLike(ch: number): boolean;
+export declare function isWhiteSpaceSingleLine(ch: number): boolean;
+export declare function isLineBreak(ch: number): boolean;
+export declare function couldStartTrivia(text: string, pos: number): boolean;
+export declare function skipTrivia(text: string, pos: number, stopAfterLineBreak?: boolean, stopAtComments?: boolean, inJSDoc?: boolean): number;
+export type CommentKind = SyntaxKind.SingleLineCommentTrivia | SyntaxKind.MultiLineCommentTrivia;
+export interface CommentRange {
+    pos: number;
+    end: number;
+    hasTrailingNewLine?: boolean;
+    kind: CommentKind;
+}
+export declare function forEachLeadingCommentRange<T, U>(text: string, pos: number, cb: (pos: number, end: number, kind: CommentKind, hasTrailingNewLine: boolean, state: T) => U, state: T): U | undefined;
+export declare function forEachLeadingCommentRange<U>(text: string, pos: number, cb: (pos: number, end: number, kind: CommentKind, hasTrailingNewLine: boolean) => U): U | undefined;
+export declare function forEachTrailingCommentRange<T, U>(text: string, pos: number, cb: (pos: number, end: number, kind: CommentKind, hasTrailingNewLine: boolean, state: T) => U, state: T): U | undefined;
+export declare function forEachTrailingCommentRange<U>(text: string, pos: number, cb: (pos: number, end: number, kind: CommentKind, hasTrailingNewLine: boolean) => U): U | undefined;
+export declare function reduceEachLeadingCommentRange<T, U>(text: string, pos: number, cb: (pos: number, end: number, kind: CommentKind, hasTrailingNewLine: boolean, state: T) => U, state: T, initial: U): U | undefined;
+export declare function reduceEachTrailingCommentRange<T, U>(text: string, pos: number, cb: (pos: number, end: number, kind: CommentKind, hasTrailingNewLine: boolean, state: T) => U, state: T, initial: U): U | undefined;
+export declare function getLeadingCommentRanges(text: string, pos: number): CommentRange[] | undefined;
+export declare function getTrailingCommentRanges(text: string, pos: number): CommentRange[] | undefined;
+export declare function getShebang(text: string): string | undefined;
+export declare function isIdentifierStart(ch: number, _languageVersion?: ScriptTarget): boolean;
+export declare function isIdentifierPart(ch: number, _languageVersion?: ScriptTarget, identifierVariant?: LanguageVariant): boolean;
+export declare function isIdentifierText(name: string, _languageVersion?: ScriptTarget, identifierVariant?: LanguageVariant): boolean;
+export declare function utf16EncodeAsString(codePoint: number): string;
+export declare function createScanner(skipTrivia: boolean, languageVariant?: LanguageVariant, textInitial?: string, start?: number, length?: number): Scanner;
+//# sourceMappingURL=scanner.d.ts.map

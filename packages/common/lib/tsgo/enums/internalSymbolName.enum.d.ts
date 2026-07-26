@@ -1,0 +1,23 @@
+export declare enum InternalSymbolName {
+    Call = "__call",
+    Constructor = "__constructor",
+    New = "__new",
+    Index = "__index",
+    ExportStar = "__export",
+    Global = "__global",
+    Missing = "__missing",
+    Type = "__type",
+    Object = "__object",
+    JSXAttributes = "__jsxAttributes",
+    Class = "__class",
+    Function = "__function",
+    Computed = "__computed",
+    AssignmentDeclaration = "__assignment",
+    InstantiationExpression = "__instantiationExpression",
+    ImportAttributes = "__importAttributes",
+    ExportEquals = "export=",
+    Default = "default",
+    This = "this",
+    ModuleExports = "module.exports"
+}
+//# sourceMappingURL=internalSymbolName.enum.d.ts.map

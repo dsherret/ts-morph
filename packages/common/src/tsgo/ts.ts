@@ -701,6 +701,7 @@ export function getPreEmitDiagnostics(program: TsgoProgram, sourceFile?: { reado
  * declarations are suffixed `Declaration`; the rest simply live in other modules.
  */
 export type {
+  FreshableType,
   NodeHandle,
   Program,
   ReferencedSymbolEntry as CompilerReferencedSymbolEntry,

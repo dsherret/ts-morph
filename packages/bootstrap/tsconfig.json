@@ -3,21 +3,15 @@
   "compilerOptions": {
     // the tsgo client's API is disposable
     "lib": ["es2022", "esnext.disposable"],
-    // resolve the sibling package from source: its published declarations are a
-    // pre-built bundle, so type checking against them would test a stale build
-    "paths": {
-      "@ts-morph/common": ["../common/src/index.ts"]
-    },
-    // this config only type-checks; the shipped build is produced by rollup from
-    // tsconfig.rollup.json. See the same note in ../ts-morph/tsconfig.json for
-    // why no rootDir/outDir can be declared alongside the `paths` mapping.
+    // `@ts-morph/common` resolves to its built declarations rather than to its
+    // source. The workspace build orders common first, so they are never stale,
+    // and the declarations emitted here have to be stated against the shape the
+    // package publishes — pointing at source would bake its paths into them.
     "declaration": false,
-    "noEmit": true
+    "rootDir": "./src",
+    "outDir": "./dist"
   },
   "include": [
-    "./src",
-    // `paths` above type-checks @ts-morph/common from source, so its ambient
-    // module declarations have to come along; they are not reachable by import
-    "../common/src/types.d.ts"
+    "./src"
   ]
 }

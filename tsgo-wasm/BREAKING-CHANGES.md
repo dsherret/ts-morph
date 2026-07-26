@@ -924,14 +924,37 @@ Not yet resolved, listed so they are not mistaken for finished work:
   `ts.parseConfigFileTextToJson` and `ts.ParseConfigHost`, none of which have a
   tsgo equivalent; `getTsParseConfigHost` is gone with them. `packages/common`
   type-checks clean.
-- **Packaging** — `packages/common/src/tsgo/*` imports the tsgo client out of
-  `submodules/typescript-go/_packages/native-preview/dist`, which is gitignored,
-  untracked build output, and neither package declares a dependency on
-  `@typescript/native-preview`. A fresh clone cannot build `@ts-morph/common`
-  until the client and the `.wasm` are consumed as a declared dependency (or
-  vendored under a tracked path). `packages/common/tsconfig.json` also still sets
-  `rootDir: ./src` while those imports reach outside it — invisible under
-  `--noEmit`, fatal on a real emit.
+- **Packaging — done.** `npm run build` at the root exits 0 for all three
+  packages, and both publish a package that works on a consumer’s disk: packed
+  with `npm pack`, installed into an empty project and type-checked against
+  TypeScript 7 with `skipLibCheck: false`, they report no errors, and the program
+  runs — project, checker, enums, `ts.getVersion()` and manipulation all work.
+  What it took:
+  - The tsgo client’s declarations are vendored into `packages/common/lib/tsgo`
+    by `scripts/vendorTsgoTypes.ts`, with `#enums/*` rewritten to relative paths.
+    Nothing outside the tsgo package can follow a `#` specifier, and once these
+    files are vendored they are outside it.
+  - `lib/typescript.d.ts` is now generated and is four lines: it re-exports the
+    `ts` namespace from `lib/tsNamespace.d.ts`, which is `src/tsgo/ts.ts` as
+    emitted. It used to be a copy of TypeScript’s own 588 KB `typescript.d.ts`,
+    which `bundleLocalTs.ts` kept copying long after nothing read it; that script
+    is deleted.
+  - Both flatteners had to learn where the compiler surface lives. They keyed on
+    `node_modules/typescript`, so every compiler name either vanished or was
+    restated against import aliases (`TsgoCompilerOptions`) that mean nothing
+    once flattened.
+  - `packages/bootstrap` could not emit declarations at all: its tsconfig said
+    `noEmit`, so the declaration project produced nothing and the build died
+    looking for `dist/index.d.ts`. It now emits, and resolves `@ts-morph/common`
+    to the built package rather than to source — which is what a published
+    declaration has to be stated against.
+
+  Two things are worth knowing about the result. The published tarball is 10.6 MB
+  (49 MB unpacked), almost entirely `dist/typescript.wasm`. And `typescript` is
+  still a devDependency of `packages/common`: `scripts/createLibFile.ts` reads the
+  default library files out of `node_modules/typescript/lib` and embeds them. They
+  should come from tsgo, which carries its own copies inside the wasm — a
+  behavioural change worth doing deliberately, not as part of this.
 - **`packages/ts-morph` source** — type-checks clean, its suite is green (4362
   passing, 9 pending, 0 failing) and `tsgo-wasm/project.mts` drives a real
   `Project` end to end (create, read, checker, manipulate, rename, format,
@@ -939,14 +962,14 @@ Not yet resolved, listed so they are not mistaken for finished work:
   because ts-morph’s sources use extensionless relative imports that Node cannot
   resolve directly; it rebuilds them when they are stale. The 22 type errors that
   remain are all in tests for API still off the surface — see “Measured state”.
-  Three known runtime gaps in the seam:
-  the `DocumentRegistry` owns a purely virtual file system seeded with a
-  synthetic `/tsconfig.json`, so a project rooted anywhere else (any Windows
-  path, anything with a `node_modules`) will not resolve modules until the
-  registry reads through `createFileSystemAdapter`; the registry is built once
-  from the compiler options and is not rebuilt when
-  `CompilerOptionsContainer#onModified` fires; and `SourceFileCreateOptions.scriptKind`
-  is now accepted and ignored, because tsgo derives the script kind from the file
+  Two runtime gaps this list used to claim are **not** real, and were removed
+  after being tested rather than re-read: the registry does read through
+  `createFileSystemAdapter` (`CompilerFactory` passes it), and it _is_ rebuilt
+  when `CompilerOptionsContainer#onModified` fires. A real on-disk project at a
+  Windows path, with a `node_modules` dependency, resolves that dependency,
+  picks its files up from `include`, reports no diagnostics and infers types
+  through it. One gap does remain: `SourceFileCreateOptions.scriptKind` is
+  accepted and ignored, because tsgo derives the script kind from the file
   extension — it should be removed from the public surface.
 - **`NoSubstitutionTemplateLiteral`'s position in the AST** — tsgo puts it
   straight on `ExpressionBase` rather than on the primary-expression chain,

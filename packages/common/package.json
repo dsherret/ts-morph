@@ -8,10 +8,11 @@
   "repository": "git+https://github.com/dsherret/ts-morph.git",
   "types": "lib/ts-morph-common.d.ts",
   "scripts": {
-    "build": "deno task build:declarations && deno task build:node",
-    "build:node": "rimraf dist && deno task createLibFile && deno task rollup && deno run -A scripts/bundleLocalTs.ts",
+    "build": "deno task vendorTsgoTypes && deno task build:declarations && deno task build:node",
+    "build:node": "rimraf dist && deno task createLibFile && deno task rollup",
     "build:deno": "rimraf ../../deno/common && rimraf dist-deno && deno task rollup --environment BUILD:deno && deno task build:declarations && deno run -A scripts/buildDeno.ts",
     "build:declarations": "deno run -A scripts/buildDeclarations.ts",
+    "vendorTsgoTypes": "deno run -A scripts/vendorTsgoTypes.ts",
     "createLibFile": "deno run -A scripts/createLibFile.ts",
     "test": "deno run -A npm:mocha",
     "test:ci": "deno task test",

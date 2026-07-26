@@ -33,7 +33,16 @@ export function getDeclarationFileStatements(mainFile: tsMorph.SourceFile) {
         continue;
       const sourceFile = declaration.getSourceFile();
       const filePath = sourceFile.getFilePath();
-      if (filePath.includes("common/lib/typescript.d.ts")) {
+      // The compiler surface is imported from @ts-morph/common rather than
+      // restated here. It arrives in three shapes: the `ts` namespace shim, the
+      // module that assembles it, and the vendored tsgo client behind both.
+      // Restating one would copy a declaration written against import aliases
+      // (`TsgoCompilerOptions`) that mean nothing in this file.
+      if (
+        filePath.includes("common/lib/typescript.d.ts")
+        || filePath.includes("common/lib/tsNamespace.d.ts")
+        || filePath.includes("common/lib/tsgo/")
+      ) {
         if (name !== "ts")
           tsNames.push(name);
         continue;
@@ -54,14 +63,17 @@ export function getDeclarationFileStatements(mainFile: tsMorph.SourceFile) {
     }
   }
 
+  // deduplicated: a name can reach this file through more than one of the
+  // compiler declaration files, and naming it twice is a redeclaration
+  const uniqueTsNames = [...new Set(tsNames)];
   statements.push({
     kind: tsMorph.StructureKind.ImportDeclaration,
-    namedImports: tsNames,
+    namedImports: uniqueTsNames,
     moduleSpecifier: "@ts-morph/common",
   });
   statements.push({
     kind: tsMorph.StructureKind.ExportDeclaration,
-    namedExports: ["ts", ...tsNames],
+    namedExports: ["ts", ...uniqueTsNames],
   });
 
   return statements;

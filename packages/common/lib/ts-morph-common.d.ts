@@ -1,4 +1,13 @@
 import { ts } from "./typescript";
+type Diagnostic = ts.Diagnostic;
+import ModuleResolutionHost = ts.ModuleResolutionHost;
+type Program = ts.Program;
+type Path = ts.Path;
+type Node = ts.Node;
+type SourceFile = ts.SourceFile;
+type Decorator = ts.Decorator;
+import type { FileSystem } from "./tsgo/api/fs";
+import type { API, Project } from "./tsgo/api/sync/api";
 
 export interface CompilerOptionsFromTsConfigOptions {
     encoding?: string;
@@ -21,11 +30,16 @@ export declare class TsConfigResolver {
     #private;
     constructor(fileSystem: TransactionalFileSystem, tsConfigFilePath: StandardizedFilePath, encoding: string);
     getCompilerOptions(): ts.CompilerOptions;
+    /** Gets the diagnostics from parsing the tsconfig. */
     getErrors(): ts.Diagnostic[];
     getPaths(compilerOptions?: ts.CompilerOptions): {
         filePaths: StandardizedFilePath[];
         directoryPaths: StandardizedFilePath[];
     };
+    /**
+     * Parses the tsconfig through tsgo, which reads the project's files through the
+     * adapted file system so it sees the same state ts-morph does.
+     */
     private _parseJsonConfigFileContent;
 }
 
@@ -154,177 +168,6 @@ export interface StoredComparer<T> {
      * @param value - Value to compare.
      */
     compareTo(value: T): number;
-}
-
-/**
- * Creates a language service host and compiler host.
- * @param options - Options for creating the hosts.
- */
-export declare function createHosts(options: CreateHostsOptions): {
-    languageServiceHost: ts.LanguageServiceHost;
-    compilerHost: ts.CompilerHost;
-};
-
-/**
- * Options for creating the hosts.
- */
-export interface CreateHostsOptions {
-    /** The transactional file system to use. */
-    transactionalFileSystem: TransactionalFileSystem;
-    /** Container of source files to use. */
-    sourceFileContainer: TsSourceFileContainer;
-    /** Compiler options container to use. */
-    compilerOptions: CompilerOptionsContainer;
-    /** Newline kind to use. */
-    getNewLine: () => "\r\n" | "\n";
-    /** The resolution host used for resolving modules and type reference directives. */
-    resolutionHost: ResolutionHost;
-    /** Provides the current project version to be used to tell if source files have
-     * changed. Provide this for a performance improvement. */
-    getProjectVersion?: () => string;
-    isKnownTypesPackageName?: ts.LanguageServiceHost["isKnownTypesPackageName"];
-    /**
-     * Set this to true to not load the typescript lib files.
-     * @default false
-     */
-    skipLoadingLibFiles?: boolean;
-    /**
-     * Specify this to use a custom folder to load the lib files from.
-     * @remarks skipLoadingLibFiles cannot be explicitly false if this is set.
-     */
-    libFolderPath?: string;
-}
-
-/**
- * Creates a module resolution host based on the provided options.
- * @param options - Options for creating the module resolution host.
- */
-export declare function createModuleResolutionHost(options: CreateModuleResolutionHostOptions): ts.ModuleResolutionHost;
-
-/**
- * Options for creating a module resolution host.
- */
-export interface CreateModuleResolutionHostOptions {
-    /** The transactional file system to use. */
-    transactionalFileSystem: TransactionalFileSystem;
-    /** The source file container to use. */
-    sourceFileContainer: TsSourceFileContainer;
-    /** Gets the encoding to use. */
-    getEncoding(): string;
-}
-
-/**
- * An implementation of a ts.DocumentRegistry that uses a transactional file system.
- */
-export declare class DocumentRegistry implements ts.DocumentRegistry {
-    #private;
-    /**
-     * Constructor.
-     * @param transactionalFileSystem - The transaction file system to use.
-     */
-    constructor(transactionalFileSystem: TransactionalFileSystem);
-    /**
-     * Creates or updates a source file in the document registry.
-     * @param fileName - File name to create or update.
-     * @param compilationSettings - Compiler options to use.
-     * @param scriptSnapshot - Script snapshot (text) of the file.
-     * @param scriptKind - Script kind of the file.
-     */
-    createOrUpdateSourceFile(fileName: StandardizedFilePath, compilationSettings: ts.CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, scriptKind: ts.ScriptKind | undefined): ts.SourceFile;
-    /**
-     * Removes the source file from the document registry.
-     * @param fileName - File name to remove.
-     */
-    removeSourceFile(fileName: StandardizedFilePath): void;
-    /** @inheritdoc */
-    acquireDocument(fileName: string, compilationSettings: ts.CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind: ts.ScriptKind | undefined): ts.SourceFile;
-    /** @inheritdoc */
-    acquireDocumentWithKey(fileName: string, path: ts.Path, compilationSettings: ts.CompilerOptions, key: ts.DocumentRegistryBucketKey, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind: ts.ScriptKind | undefined): ts.SourceFile;
-    /** @inheritdoc */
-    updateDocument(fileName: string, compilationSettings: ts.CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind: ts.ScriptKind | undefined): ts.SourceFile;
-    /** @inheritdoc */
-    updateDocumentWithKey(fileName: string, path: ts.Path, compilationSettings: ts.CompilerOptions, key: ts.DocumentRegistryBucketKey, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind: ts.ScriptKind | undefined): ts.SourceFile;
-    /** @inheritdoc */
-    getKeyForCompilationSettings(settings: ts.CompilerOptions): ts.DocumentRegistryBucketKey;
-    /** @inheritdoc */
-    releaseDocument(fileName: string, compilationSettings: ts.CompilerOptions): void;
-    /** @inheritdoc */
-    releaseDocumentWithKey(path: ts.Path, key: ts.DocumentRegistryBucketKey): void;
-    /** @inheritdoc */
-    reportStats(): string;
-    /** @inheritdoc */
-    getSourceFileVersion(sourceFile: ts.SourceFile): string;
-}
-
-/** Host for implementing custom module and/or type reference directive resolution. */
-export interface ResolutionHost {
-    resolveModuleNames?: ts.LanguageServiceHost["resolveModuleNames"];
-    getResolvedModuleWithFailedLookupLocationsFromCache?: ts.LanguageServiceHost["getResolvedModuleWithFailedLookupLocationsFromCache"];
-    resolveTypeReferenceDirectives?: ts.LanguageServiceHost["resolveTypeReferenceDirectives"];
-}
-
-/**
- * Factory used to create a resolution host.
- * @remarks The compiler options are retrieved via a function in order to get the project's current compiler options.
- */
-export type ResolutionHostFactory = (moduleResolutionHost: ts.ModuleResolutionHost, getCompilerOptions: () => ts.CompilerOptions) => ResolutionHost;
-
-/** Collection of reusable resolution hosts. */
-export declare const ResolutionHosts: {
-    deno: ResolutionHostFactory;
-};
-
-/**
- * A container of source files.
- */
-export interface TsSourceFileContainer {
-    /**
-     * Gets if a source file exists at the specified file path.
-     * @param filePath - File path to check.
-     */
-    containsSourceFileAtPath(filePath: StandardizedFilePath): boolean;
-    /**
-     * Gets the source file paths of all the source files in the container.
-     */
-    getSourceFilePaths(): Iterable<StandardizedFilePath>;
-    /**
-     * Gets a source file from a file path, but only if it exists in the container's cache.
-     * @param filePath - File path to get the source file from.
-     */
-    getSourceFileFromCacheFromFilePath(filePath: StandardizedFilePath): ts.SourceFile | undefined;
-    /**
-     * Asynchronously adds or gets a source file from a file path.
-     * @param filePath - File path to get.
-     * @param opts - Options for adding or getting the file.
-     */
-    addOrGetSourceFileFromFilePath(filePath: StandardizedFilePath, opts: {
-        markInProject: boolean;
-        scriptKind: ts.ScriptKind | undefined;
-    }): Promise<ts.SourceFile | undefined>;
-    /**
-     * Synchronously adds or gets a source file from a file path.
-     * @param filePath - File path to get.
-     * @param opts - Options for adding or getting the file.
-     */
-    addOrGetSourceFileFromFilePathSync(filePath: StandardizedFilePath, opts: {
-        markInProject: boolean;
-        scriptKind: ts.ScriptKind | undefined;
-    }): ts.SourceFile | undefined;
-    /**
-     * Gets the source file version of the specified source file.
-     * @param sourceFile - Source file to inspect.
-     */
-    getSourceFileVersion(sourceFile: ts.SourceFile): string;
-    /**
-     * Gets if the container contains the specified directory.
-     * @param dirPath - Path of the directory to check.
-     */
-    containsDirectoryAtPath(dirPath: StandardizedFilePath): boolean;
-    /**
-     * Gets the child directories of the specified directory.
-     * @param dirPath - Path of the directory to check.
-     */
-    getChildDirectoriesOfDirectory(dirPath: StandardizedFilePath): StandardizedFilePath[];
 }
 
 /** Decorator for memoizing the result of a method or get accessor. */
@@ -947,26 +790,173 @@ export interface RuntimePath {
     relative(from: string, to: string): string;
 }
 
-export declare function matchFiles(this: any, path: string, extensions: ReadonlyArray<string>, excludes: ReadonlyArray<string>, includes: ReadonlyArray<string>, useCaseSensitiveFileNames: boolean, currentDirectory: string, depth: number | undefined, getEntries: (path: string) => FileSystemEntries, realpath: (path: string) => string, directoryExists: (path: string) => boolean): string[];
-
-export declare function getFileMatcherPatterns(this: any, path: string, excludes: ReadonlyArray<string>, includes: ReadonlyArray<string>, useCaseSensitiveFileNames: boolean, currentDirectory: string): FileMatcherPatterns;
-
-export declare function getEmitModuleResolutionKind(this: any, compilerOptions: ts.CompilerOptions): any;
-
-export interface FileMatcherPatterns {
-    /** One pattern for each "include" spec. */
-    includeFilePatterns: ReadonlyArray<string>;
-    /** One pattern matching one of any of the "include" specs. */
-    includeFilePattern: string;
-    includeDirectoryPattern: string;
-    excludePattern: string;
-    basePaths: ReadonlyArray<string>;
+export declare class DocumentRegistry {
+    #private;
+    constructor(options?: DocumentRegistryOptions);
+    /**
+     * Adds a file or replaces its contents, and returns the parsed file. The
+     * returned node tree is only valid until the next change to the same file.
+     */
+    createOrUpdateSourceFile(fileName: string, text: string): SourceFile;
+    /**
+     * Replaces the compiler options the registry's project is opened with.
+     *
+     * The options live in the synthetic tsconfig, so changing them rewrites it and
+     * reopens the project — every file is reparsed against the new options.
+     */
+    setCompilerOptions(compilerOptions: CompilerOptions): void;
+    /** Removes a file from the registry. */
+    removeSourceFile(fileName: string): void;
+    /** Returns the parsed file, or `undefined` when it is not in the project. */
+    getSourceFile(fileName: string): SourceFile | undefined;
+    getSourceFileOrThrow(fileName: string): SourceFile;
+    /**
+     * The number of times a file's contents have been replaced, or `undefined`
+     * when the registry does not know the file. A file that has never been edited
+     * is version "0", so an unknown file must not report one.
+     */
+    getSourceFileVersion(fileName: string): string | undefined;
+    /**
+     * The project the registry's files belong to.
+     *
+     * tsgo hangs the language service operations — formatting, organize imports,
+     * rename, definitions, implementations, code fixes — off the project, so this
+     * is the session seam callers reach them through.
+     */
+    get project(): Project;
+    /** The project's checker, for type and symbol queries. */
+    get checker(): import("./tsgo/api/sync/api").Checker;
+    /** The project's program, for diagnostics and file enumeration. */
+    get program(): import("./tsgo/api/sync/api").Program;
+    dispose(): void;
 }
 
-export interface FileSystemEntries {
-    readonly files: ReadonlyArray<string>;
-    readonly directories: ReadonlyArray<string>;
+export interface DocumentRegistryOptions {
+    /** Compiler options for the registry's project. */
+    compilerOptions?: CompilerOptions;
+    /** Files to seed the registry with, as path → contents. */
+    files?: Record<string, string>;
+    /**
+     * File system the compiler resolves through for anything the registry does not
+     * hold — node_modules, `/// <reference>` targets, and files a tsconfig glob
+     * would pull in. Defaults to nothing being reachable beyond the registry.
+     */
+    fs?: FileSystem;
+    /**
+     * Directory the default lib files are read from, through {@link fs}. tsgo
+     * carries its own copies inside the wasm module and reads those unless a
+     * folder is named here, which is how ts-morph's `libFolderPath` — and its
+     * in-memory `/node_modules/typescript/lib` default — reach the compiler.
+     */
+    libFolderPath?: string;
+    /**
+     * Whether the file system distinguishes case. Defaults to true; a project on a
+     * Windows or macOS disk says false so the compiler resolves a differently cased
+     * module specifier the way that disk does.
+     */
+    useCaseSensitiveFileNames?: boolean;
 }
+
+/** Adapts a {@link TransactionalFileSystem} to the file system tsgo expects. */
+export declare function createFileSystemAdapter(fileSystem: TransactionalFileSystem, options?: FileSystemAdapterOptions): FileSystem;
+
+export interface FileSystemAdapterOptions {
+    /** Encoding used to read files. Defaults to "utf-8". */
+    encoding?: string;
+}
+
+/** Creates a fully synchronous {@link API} backed by the in-process tsgo build. */
+export declare function createInProcessApi(options?: InProcessApiOptions): API;
+
+export interface InProcessApiOptions {
+    /** Initial in-memory files (path → contents), including tsconfig.json. */
+    files?: Record<string, string>;
+    /** A custom virtual filesystem. Takes precedence over `files`. */
+    fs?: FileSystem;
+    /** Current working directory used for module resolution. Defaults to "/". */
+    cwd?: string;
+    /**
+     * Directory the default lib files are read from, through the file system.
+     * Defaults to the lib files bundled inside the wasm module.
+     */
+    defaultLibraryPath?: string;
+    /** Whether the file system distinguishes case. Defaults to true. */
+    useCaseSensitiveFileNames?: boolean;
+    /**
+     * The reactor module: a path to the `.wasm` file, or its bytes. Defaults to
+     * the module shipped with the tsgo client.
+     */
+    wasm?: string | Uint8Array | ArrayBuffer;
+}
+
+/**
+ * Creates a module resolution host based on the provided options.
+ *
+ * The host answers out of the project's in-memory state first and falls back to
+ * the file system, so a file that only exists in the project is still found.
+ * @param options - Options for creating the module resolution host.
+ */
+export declare function createModuleResolutionHost(options: CreateModuleResolutionHostOptions): ModuleResolutionHost;
+
+/** Options for creating a module resolution host. */
+export interface CreateModuleResolutionHostOptions {
+    /** The transactional file system to use. */
+    transactionalFileSystem: TransactionalFileSystem;
+    /** The source file container to use. */
+    sourceFileContainer: ModuleResolutionSourceFileContainer;
+    /** Gets the encoding to use. */
+    getEncoding(): string;
+}
+
+/**
+ * The subset of a source file cache a module resolution host consults.
+ *
+ * Declared structurally so that both ts-morph's `CompilerFactory` and
+ * `@ts-morph/bootstrap`'s `SourceFileCache` satisfy it as they are.
+ */
+export interface ModuleResolutionSourceFileContainer {
+    containsDirectoryAtPath(dirPath: StandardizedFilePath): boolean;
+    containsSourceFileAtPath(filePath: StandardizedFilePath): boolean;
+    getSourceFileFromCacheFromFilePath(filePath: StandardizedFilePath): {
+        getFullText(): string;
+    } | undefined;
+    getChildDirectoriesOfDirectory(dirPath: StandardizedFilePath): StandardizedFilePath[];
+}
+
+/**
+ * Assigns `value` to `key` even when the prototype exposes it as a getter with
+ * no setter, by defining an own data property that shadows it.
+ */
+export declare function setSourceFileProperty(sourceFile: SourceFile, key: string, value: unknown): void;
+
+/**
+ * Resolves the module resolution kind the compiler will actually use for the
+ * given options.
+ *
+ * This mirrors `CompilerOptions.GetModuleResolutionKind` in
+ * `internal/core/compileroptions.go`. It used to be `ts.getEmitModuleResolutionKind`
+ * from the `typescript` package, which tsgo does not expose to JS, so it is
+ * reimplemented here — it is a small pure function of the options.
+ */
+export declare function getEmitModuleResolutionKind(compilerOptions: ts.CompilerOptions): ModuleResolutionKind;
+
+/**
+ * Resolves the script target the compiler will actually use for the given options.
+ *
+ * Mirrors `CompilerOptions.GetEmitScriptTarget`, whose no-target fallback is
+ * `ScriptTargetLatestStandard` (ES2025).
+ */
+export declare function getEmitScriptTarget(compilerOptions: ts.CompilerOptions): ScriptTarget;
+
+/**
+ * Resolves the script target source files are parsed at for the given options.
+ *
+ * This is deliberately not `getEmitScriptTarget`: the compiler's *emit* target
+ * falls back to ES2025, but ts-morph has always parsed at `ScriptTarget.Latest`
+ * when no target is configured, and that is the value `SourceFile#getLanguageVersion`
+ * reports.
+ */
+export declare function getParseScriptTarget(compilerOptions: ts.CompilerOptions): ScriptTarget;
 
 export declare class ArrayUtils {
     private constructor();
@@ -1062,11 +1052,14 @@ export declare class StringUtils {
     }): string;
 }
 
+export { getChildren, getLastToken } from "./tsgo/ast/children";
 export import CompilerOptions = ts.CompilerOptions;
 export import DiagnosticCategory = ts.DiagnosticCategory;
 export import EditorSettings = ts.EditorSettings;
 export import EmitHint = ts.EmitHint;
-export import ImportPhaseModifierSyntaxKind = ts.ImportPhaseModifierSyntaxKind;
+export type FreshableType = ts.FreshableType;
+export type ImportPhaseModifierSyntaxKind = ts.ImportPhaseModifierSyntaxKind;
+export import IndentStyle = ts.IndentStyle;
 export import LanguageVariant = ts.LanguageVariant;
 export import ModuleKind = ts.ModuleKind;
 export import ModuleResolutionKind = ts.ModuleResolutionKind;
@@ -1077,6 +1070,7 @@ export import ScriptKind = ts.ScriptKind;
 export import ScriptTarget = ts.ScriptTarget;
 export import SymbolFlags = ts.SymbolFlags;
 export import SyntaxKind = ts.SyntaxKind;
+export import TokenFlags = ts.TokenFlags;
 export import TypeFlags = ts.TypeFlags;
 export import TypeFormatFlags = ts.TypeFormatFlags;
 export { ts };

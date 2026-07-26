@@ -3,6 +3,15 @@
   "compilerOptions": {
     "lib": ["es2022", "esnext.disposable"],
     "declaration": false,
+    // The tsgo client's own declarations import its enums through the package's
+    // `imports` map, which only a resolver that reads `imports` can follow. This
+    // config's `module` is CommonJS, so the resolution mode is `node10`, which
+    // does not — and the build scripts run under a TypeScript old enough to still
+    // have `node10`. Map the specifiers the way that `imports` map does; the
+    // rollup config does the same for the JS side.
+    "paths": {
+      "#enums/*": ["../../submodules/typescript-go/_packages/native-preview/dist/enums/*.enum.d.ts"]
+    },
     // NOTE: src/tsgo imports the tsgo client from the submodule, which is outside
     // this rootDir. That is a TS6059 on a real emit; it only passes today because
     // the package is type-checked with --noEmit and shipped through rollup. It
