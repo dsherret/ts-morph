@@ -2363,8 +2363,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
   /** Gets if the node is a ClassStaticBlockDeclaration. */
   static readonly isClassStaticBlockDeclaration: (node: compiler.Node | undefined) => node is compiler.ClassStaticBlockDeclaration = Node.is(SyntaxKind.ClassStaticBlockDeclaration);
-  /** Gets if the node is a CommaListExpression. */
-  static readonly isCommaListExpression: (node: compiler.Node | undefined) => node is compiler.CommaListExpression = Node.is(SyntaxKind.CommaListExpression);
   /** Gets if the node is a ComputedPropertyName. */
   static readonly isComputedPropertyName: (node: compiler.Node | undefined) => node is compiler.ComputedPropertyName = Node.is(SyntaxKind.ComputedPropertyName);
   /** Gets if the node is a ConditionalExpression. */
@@ -2514,7 +2512,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.BinaryExpression:
       case SyntaxKind.CallExpression:
       case SyntaxKind.ClassExpression:
-      case SyntaxKind.CommaListExpression:
       case SyntaxKind.ConditionalExpression:
       case SyntaxKind.DeleteExpression:
       case SyntaxKind.ElementAccessExpression:
@@ -2848,18 +2845,10 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isJSDocAllType: (node: compiler.Node | undefined) => node is compiler.JSDocAllType = Node.is(SyntaxKind.JSDocAllType);
   /** Gets if the node is a JSDocAugmentsTag. */
   static readonly isJSDocAugmentsTag: (node: compiler.Node | undefined) => node is compiler.JSDocAugmentsTag = Node.is(SyntaxKind.JSDocAugmentsTag);
-  /** Gets if the node is a JSDocAuthorTag. */
-  static readonly isJSDocAuthorTag: (node: compiler.Node | undefined) => node is compiler.JSDocAuthorTag = Node.is(SyntaxKind.JSDocAuthorTag);
   /** Gets if the node is a JSDocCallbackTag. */
   static readonly isJSDocCallbackTag: (node: compiler.Node | undefined) => node is compiler.JSDocCallbackTag = Node.is(SyntaxKind.JSDocCallbackTag);
-  /** Gets if the node is a JSDocClassTag. */
-  static readonly isJSDocClassTag: (node: compiler.Node | undefined) => node is compiler.JSDocClassTag = Node.is(SyntaxKind.JSDocClassTag);
   /** Gets if the node is a JSDocDeprecatedTag. */
   static readonly isJSDocDeprecatedTag: (node: compiler.Node | undefined) => node is compiler.JSDocDeprecatedTag = Node.is(SyntaxKind.JSDocDeprecatedTag);
-  /** Gets if the node is a JSDocEnumTag. */
-  static readonly isJSDocEnumTag: (node: compiler.Node | undefined) => node is compiler.JSDocEnumTag = Node.is(SyntaxKind.JSDocEnumTag);
-  /** Gets if the node is a JSDocFunctionType. */
-  static readonly isJSDocFunctionType: (node: compiler.Node | undefined) => node is compiler.JSDocFunctionType = Node.is(SyntaxKind.JSDocFunctionType);
   /** Gets if the node is a JSDocImplementsTag. */
   static readonly isJSDocImplementsTag: (node: compiler.Node | undefined) => node is compiler.JSDocImplementsTag = Node.is(SyntaxKind.JSDocImplementsTag);
 
@@ -2874,10 +2863,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isJSDocLinkCode: (node: compiler.Node | undefined) => node is compiler.JSDocLinkCode = Node.is(SyntaxKind.JSDocLinkCode);
   /** Gets if the node is a JSDocLinkPlain. */
   static readonly isJSDocLinkPlain: (node: compiler.Node | undefined) => node is compiler.JSDocLinkPlain = Node.is(SyntaxKind.JSDocLinkPlain);
-  /** Gets if the node is a JSDocMemberName. */
-  static readonly isJSDocMemberName: (node: compiler.Node | undefined) => node is compiler.JSDocMemberName = Node.is(SyntaxKind.JSDocMemberName);
-  /** Gets if the node is a JSDocNamepathType. */
-  static readonly isJSDocNamepathType: (node: compiler.Node | undefined) => node is compiler.JSDocNamepathType = Node.is(SyntaxKind.JSDocNamepathType);
   /** Gets if the node is a JSDocNameReference. */
   static readonly isJSDocNameReference: (node: compiler.Node | undefined) => node is compiler.JSDocNameReference = Node.is(SyntaxKind.JSDocNameReference);
   /** Gets if the node is a JSDocNonNullableType. */
@@ -2927,11 +2912,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   static isJSDocTag(node: compiler.Node | undefined): node is compiler.JSDocTag {
     switch (node?.getKind()) {
       case SyntaxKind.JSDocAugmentsTag:
-      case SyntaxKind.JSDocAuthorTag:
       case SyntaxKind.JSDocCallbackTag:
-      case SyntaxKind.JSDocClassTag:
       case SyntaxKind.JSDocDeprecatedTag:
-      case SyntaxKind.JSDocEnumTag:
       case SyntaxKind.JSDocImplementsTag:
       case SyntaxKind.JSDocImportTag:
       case SyntaxKind.JSDocOverloadTag:
@@ -2970,14 +2952,11 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   static isJSDocType(node: compiler.Node | undefined): node is compiler.JSDocType {
     switch (node?.getKind()) {
       case SyntaxKind.JSDocAllType:
-      case SyntaxKind.JSDocFunctionType:
-      case SyntaxKind.JSDocNamepathType:
       case SyntaxKind.JSDocNonNullableType:
       case SyntaxKind.JSDocNullableType:
       case SyntaxKind.JSDocOptionalType:
       case SyntaxKind.JSDocSignature:
       case SyntaxKind.JSDocTypeLiteral:
-      case SyntaxKind.JSDocUnknownType:
       case SyntaxKind.JSDocVariadicType:
         return true;
       default:
@@ -3021,8 +3000,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     return node?.getKind() === SyntaxKind.JSDocTag;
   }
 
-  /** Gets if the node is a JSDocUnknownType. */
-  static readonly isJSDocUnknownType: (node: compiler.Node | undefined) => node is compiler.JSDocUnknownType = Node.is(SyntaxKind.JSDocUnknownType);
   /** Gets if the node is a JSDocVariadicType. */
   static readonly isJSDocVariadicType: (node: compiler.Node | undefined) => node is compiler.JSDocVariadicType = Node.is(SyntaxKind.JSDocVariadicType);
   /** Gets if the node is a JsxAttribute. */
@@ -3410,7 +3387,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.FunctionExpression:
       case SyntaxKind.FunctionType:
       case SyntaxKind.GetAccessor:
-      case SyntaxKind.JSDocFunctionType:
       case SyntaxKind.MethodDeclaration:
       case SyntaxKind.MethodSignature:
       case SyntaxKind.SetAccessor:
@@ -3640,7 +3616,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.FunctionType:
       case SyntaxKind.GetAccessor:
       case SyntaxKind.IndexSignature:
-      case SyntaxKind.JSDocFunctionType:
       case SyntaxKind.MethodDeclaration:
       case SyntaxKind.MethodSignature:
       case SyntaxKind.SetAccessor:
@@ -3695,7 +3670,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.FunctionExpression:
       case SyntaxKind.FunctionType:
       case SyntaxKind.GetAccessor:
-      case SyntaxKind.JSDocFunctionType:
       case SyntaxKind.MethodDeclaration:
       case SyntaxKind.MethodSignature:
       case SyntaxKind.SetAccessor:
@@ -3960,15 +3934,12 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.InferType:
       case SyntaxKind.IntersectionType:
       case SyntaxKind.JSDocAllType:
-      case SyntaxKind.JSDocFunctionType:
-      case SyntaxKind.JSDocNamepathType:
       case SyntaxKind.JSDocNonNullableType:
       case SyntaxKind.JSDocNullableType:
       case SyntaxKind.JSDocOptionalType:
       case SyntaxKind.JSDocSignature:
       case SyntaxKind.JSDocTypeExpression:
       case SyntaxKind.JSDocTypeLiteral:
-      case SyntaxKind.JSDocUnknownType:
       case SyntaxKind.JSDocVariadicType:
       case SyntaxKind.LiteralType:
       case SyntaxKind.MappedType:

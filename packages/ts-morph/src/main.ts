@@ -16,7 +16,6 @@ export {
   ObjectFlags,
   type ResolutionHost,
   type ResolutionHostFactory,
-  ResolutionHosts,
   type RuntimeDirEntry,
   ScriptKind,
   ScriptTarget,

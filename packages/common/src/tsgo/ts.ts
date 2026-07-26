@@ -148,7 +148,6 @@ export type {
 } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/sync/api.js";
 
 export type {
-  EmitOutput,
   EmitResult,
   InterfaceType,
   IntersectionType,
@@ -167,7 +166,6 @@ export type {
 } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/sync/types.js";
 
 export type {
-  CodeFixAction,
 } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/proto.js";
 
 export type {
@@ -229,4 +227,126 @@ export interface ObjectDestructuringAssignment extends AssignmentExpression<Equa
 
 export interface ArrayDestructuringAssignment extends AssignmentExpression<EqualsToken> {
   readonly left: ArrayLiteralExpression;
+}
+
+/*
+ * Plain data shapes the language service layer passes around. tsgo returns its
+ * own equivalents (character offsets rather than LSP positions), but ts-morph's
+ * tools layer is typed against these names, so they are declared here with the
+ * shapes it consumes.
+ */
+export interface TextSpan {
+  start: number;
+  length: number;
+}
+
+export interface TextChange {
+  span: TextSpan;
+  newText: string;
+}
+
+export interface FileTextChanges {
+  fileName: string;
+  isNewFile?: boolean;
+  textChanges: readonly TextChange[];
+}
+
+export interface DocumentSpan {
+  textSpan: TextSpan;
+  fileName: string;
+  originalTextSpan?: TextSpan;
+  originalFileName?: string;
+  contextSpan?: TextSpan;
+  originalContextSpan?: TextSpan;
+}
+
+export interface DefinitionInfo extends DocumentSpan {
+  kind: string;
+  name: string;
+  containerKind: string;
+  containerName: string;
+}
+
+export interface ImplementationLocation extends DocumentSpan {
+  kind: string;
+  displayParts: readonly SymbolDisplayPart[];
+}
+
+export interface ReferenceEntry extends DocumentSpan {
+  isWriteAccess: boolean;
+  isInString?: true;
+}
+
+export interface ReferencedSymbolDefinitionInfo extends DefinitionInfo {
+  displayParts: readonly SymbolDisplayPart[];
+}
+
+export interface ReferencedSymbol {
+  definition: ReferencedSymbolDefinitionInfo;
+  references: readonly ReferenceEntry[];
+}
+
+export interface RenameLocation extends DocumentSpan {
+  readonly prefixText?: string;
+  readonly suffixText?: string;
+}
+
+export interface SymbolDisplayPart {
+  text: string;
+  kind: string;
+}
+
+export interface CodeAction {
+  description: string;
+  changes: FileTextChanges[];
+}
+
+export interface CodeFixAction extends CodeAction {
+  fixName: string;
+  fixId?: {};
+  fixAllDescription?: string;
+}
+
+export interface CombinedCodeActions {
+  changes: readonly FileTextChanges[];
+}
+
+export interface RefactorEditInfo {
+  edits: readonly FileTextChanges[];
+  renameFilename?: string;
+  renameLocation?: number;
+}
+
+export interface OutputFile {
+  name: string;
+  writeByteOrderMark: boolean;
+  text: string;
+}
+
+export interface EmitOutput {
+  outputFiles: readonly OutputFile[];
+  emitSkipped: boolean;
+}
+
+export interface DiagnosticMessageChain {
+  messageText: string;
+  category: number;
+  code: number;
+  next?: DiagnosticMessageChain[];
+}
+
+export interface OrganizeImportsArgs {
+  type: "file";
+  fileName: string;
+}
+
+/** Editor and user preferences accepted by the language service operations. */
+export interface UserPreferences {
+  readonly quotePreference?: "auto" | "double" | "single";
+  readonly providePrefixAndSuffixTextForRename?: boolean;
+  readonly [key: string]: unknown;
+}
+
+export interface FormatCodeSettings extends EditorSettings {
+  readonly [key: string]: unknown;
 }

@@ -1,13 +1,10 @@
 import {
   CompilerOptionsContainer,
-  createModuleResolutionHost,
   errors,
   Memoize,
-  ResolutionHostFactory,
   StandardizedFilePath,
   TransactionalFileSystem,
   ts,
-  TsSourceFileContainer,
 } from "@ts-morph/common";
 import { CodeBlockWriter } from "./codeBlockWriter";
 import { Diagnostic, LanguageService, QuoteKind, SourceFile, TypeChecker } from "./compiler";

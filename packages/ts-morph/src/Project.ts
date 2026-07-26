@@ -8,7 +8,6 @@ import {
   IterableUtils,
   matchGlobs,
   RealFileSystemHost,
-  ResolutionHostFactory,
   runtime,
   ScriptKind,
   StandardizedFilePath,
