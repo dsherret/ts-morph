@@ -15,10 +15,13 @@ import { createInProcessApi } from "../packages/common/src/tsgo/inProcessApi.ts"
 
 const dir = mkdtempSync(join(tmpdir(), "tsgo-tsconfig-")).split("\\").join("/");
 mkdirSync(join(dir, "src"));
-writeFileSync(join(dir, "tsconfig.json"), JSON.stringify({
-  compilerOptions: { strict: true, target: "ES2020" },
-  include: ["src"],
-}));
+writeFileSync(
+  join(dir, "tsconfig.json"),
+  JSON.stringify({
+    compilerOptions: { strict: true, target: "ES2020" },
+    include: ["src"],
+  }),
+);
 writeFileSync(join(dir, "src", "a.ts"), "export const a = 1;\n");
 writeFileSync(join(dir, "src", "b.ts"), "export const b = 2;\n");
 writeFileSync(join(dir, "ignored.txt"), "not typescript\n");
@@ -28,13 +31,30 @@ writeFileSync(join(dir, "ignored.txt"), "not typescript\n");
 // must swallow that rather than let it cross the wasm host boundary.
 const transactionalFileSystem = {
   getStandardizedAbsolutePath: (p: string) => p.split("\\").join("/"),
-  fileExistsSync: (p: string) => { try { return statSync(p).isFile(); } catch { return false; } },
-  directoryExistsSync: (p: string) => { try { return statSync(p).isDirectory(); } catch { return false; } },
+  fileExistsSync: (p: string) => {
+    try {
+      return statSync(p).isFile();
+    } catch {
+      return false;
+    }
+  },
+  directoryExistsSync: (p: string) => {
+    try {
+      return statSync(p).isDirectory();
+    } catch {
+      return false;
+    }
+  },
   realpathSync: (p: string) => p,
-  readFileIfExistsSync: (p: string) => { try { return readFileSync(p, "utf-8"); } catch { return undefined; } },
+  readFileIfExistsSync: (p: string) => {
+    try {
+      return readFileSync(p, "utf-8");
+    } catch {
+      return undefined;
+    }
+  },
   writeFileSync: (p: string, content: string) => writeFileSync(p, content),
-  readDirSync: (p: string) =>
-    readdirSync(p, { withFileTypes: true }).map(e => ({ path: `${p}/${e.name}`, isDirectory: e.isDirectory() })),
+  readDirSync: (p: string) => readdirSync(p, { withFileTypes: true }).map(e => ({ path: `${p}/${e.name}`, isDirectory: e.isDirectory() })),
 };
 
 const fs = createFileSystemAdapter(transactionalFileSystem as never);

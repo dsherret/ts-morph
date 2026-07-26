@@ -22,7 +22,7 @@ function show(span: { fileName: string; pos: number; end: number }): string {
 
 // 1. Definition of `Square` at its use site resolves to the class declaration.
 {
-  const pos = files["/src/use.ts"].indexOf("Square()") ;
+  const pos = files["/src/use.ts"].indexOf("Square()");
   const defs = project.getDefinition("/src/use.ts", pos);
   console.log("definition of Square:", defs.map(show).join(", "));
   assert.ok(defs.length > 0, "expected a definition");

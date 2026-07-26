@@ -8,8 +8,8 @@ import { createVirtualFileSystem } from "../submodules/typescript-go/_packages/n
 import { createInProcessApi } from "./seam.mts";
 
 const files: Record<string, string> = {
-    "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
-    "/src/index.ts": `export const x: number = 1;\n`,
+  "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+  "/src/index.ts": `export const x: number = 1;\n`,
 };
 
 // The virtual FS is mutable, so edits are applied by writing through it.
@@ -17,16 +17,16 @@ const fs = createVirtualFileSystem(files);
 const api = createInProcessApi({ fs });
 
 function typeOfX(): string {
-    const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
-    const project = snapshot.getProject("/tsconfig.json")!;
-    const symbol = project.checker.getSymbolAtPosition("/src/index.ts", "export const ".length)!;
-    return project.checker.typeToString(project.checker.getTypeOfSymbol(symbol)!);
+  const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+  const project = snapshot.getProject("/tsconfig.json")!;
+  const symbol = project.checker.getSymbolAtPosition("/src/index.ts", "export const ".length)!;
+  return project.checker.typeToString(project.checker.getTypeOfSymbol(symbol)!);
 }
 
 function statementCount(): number {
-    const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
-    const project = snapshot.getProject("/tsconfig.json")!;
-    return project.program.getSourceFile("/src/index.ts")!.statements.length;
+  const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+  const project = snapshot.getProject("/tsconfig.json")!;
+  return project.program.getSourceFile("/src/index.ts")!.statements.length;
 }
 
 // 1. Baseline.
@@ -46,11 +46,11 @@ console.log("after edit: typeof x = string, statements = 2");
 fs.writeFile!("/src/other.ts", `export const other = 123;\n`);
 api.updateSnapshot({ fileChanges: { created: ["/src/other.ts"] } });
 {
-    const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
-    const project = snapshot.getProject("/tsconfig.json")!;
-    const other = project.program.getSourceFile("/src/other.ts");
-    assert.ok(other, "newly created file should be in the program");
-    console.log("after create: /src/other.ts has", other.statements.length, "statement(s)");
+  const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+  const project = snapshot.getProject("/tsconfig.json")!;
+  const other = project.program.getSourceFile("/src/other.ts");
+  assert.ok(other, "newly created file should be in the program");
+  console.log("after create: /src/other.ts has", other.statements.length, "statement(s)");
 }
 
 // 4. Delete it again.
@@ -58,11 +58,11 @@ fs.removeFile!("/src/other.ts");
 api.updateSnapshot({ fileChanges: { deleted: ["/src/other.ts"] } });
 api.clearSourceFileCache();
 {
-    const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
-    const project = snapshot.getProject("/tsconfig.json")!;
-    const names = project.program.getSourceFileNames();
-    assert.ok(!names.includes("/src/other.ts"), "deleted file should leave the program");
-    console.log("after delete: /src/other.ts removed from program");
+  const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+  const project = snapshot.getProject("/tsconfig.json")!;
+  const names = project.program.getSourceFileNames();
+  assert.ok(!names.includes("/src/other.ts"), "deleted file should leave the program");
+  console.log("after delete: /src/other.ts removed from program");
 }
 
 api.close();

@@ -122,15 +122,15 @@ reparse — there is no incremental update). That is the swap point.
 
 What ts-morph needs that the new AST does not give directly:
 
-| Need | Status |
-|---|---|
-| `getChildren()` + `SyntaxList` | **Solved** — parity with classic apart from two tsgo AST differences (see above), cached for node identity |
-| `getLastToken()` (`Node.ts:1251`) | **Solved** — same machinery |
-| Reparse after edit | **Solved** — `edit-loop.mts` |
-| Mutable `sourceFile.fileName` | **Solved** — `setSourceFileProperty` shadows the getter-only field with a writable own property on the file itself. |
-| `sourceFile.version` stamping, `node.parent` assignment | Work as-is |
-| `.symbol` / `.locals` / `.emitNode` | **Absent** — binder internals are not exposed. Route through the checker (`getSymbolAtLocation`) instead. |
-| `.imports` / `.scriptKind` / `.modifiers` | Present |
+| Need                                                                 | Status                                                                                                                                                                  |
+| -------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `getChildren()` + `SyntaxList`                                       | **Solved** — parity with classic apart from two tsgo AST differences (see above), cached for node identity                                                              |
+| `getLastToken()` (`Node.ts:1251`)                                    | **Solved** — same machinery                                                                                                                                             |
+| Reparse after edit                                                   | **Solved** — `edit-loop.mts`                                                                                                                                            |
+| Mutable `sourceFile.fileName`                                        | **Solved** — `setSourceFileProperty` shadows the getter-only field with a writable own property on the file itself.                                                     |
+| `sourceFile.version` stamping, `node.parent` assignment              | Work as-is                                                                                                                                                              |
+| `.symbol` / `.locals` / `.emitNode`                                  | **Absent** — binder internals are not exposed. Route through the checker (`getSymbolAtLocation`) instead.                                                               |
+| `.imports` / `.scriptKind` / `.modifiers`                            | Present                                                                                                                                                                 |
 | Recursive `deepClone` of a SourceFile (`createDocumentCache.ts:134`) | Risky — nodes are lazy `DataView` views with a circular `_sourceFile` back-reference. The server-side snapshot cache likely replaces this path rather than shimming it. |
 
 Checker coverage is good: of the 26 `ts.TypeChecker` methods ts-morph calls, the

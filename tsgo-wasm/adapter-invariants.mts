@@ -5,9 +5,9 @@
 //   - a SourceFile accepts fileName/version re-stamping
 //   node --experimental-strip-types --no-warnings --conditions @typescript/source tsgo-wasm/adapter-invariants.mts
 import assert from "node:assert";
-import { SyntaxKind } from "../submodules/typescript-go/_packages/native-preview/src/ast/index.ts";
 import { getChildren, getLastToken } from "../packages/common/src/tsgo/getChildren.ts";
 import { setSourceFileProperty } from "../packages/common/src/tsgo/mutableSourceFile.ts";
+import { SyntaxKind } from "../submodules/typescript-go/_packages/native-preview/src/ast/index.ts";
 import { createInProcessApi } from "./seam.mts";
 
 const api = createInProcessApi({

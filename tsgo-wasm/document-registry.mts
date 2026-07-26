@@ -25,7 +25,7 @@ const symbol = registry.checker.getSymbolAtPosition("/src/index.ts", "export con
 const typeText = registry.checker.typeToString(registry.checker.getTypeOfSymbol(symbol)!);
 console.log("typeof x:", typeText);
 // a `const` initialized with a literal narrows to that literal type
-assert.equal(typeText, '"a"');
+assert.equal(typeText, "\"a\"");
 
 // 4. Adding a file brings it into the program.
 registry.createOrUpdateSourceFile("/src/added.ts", `export const added = true;\n`);

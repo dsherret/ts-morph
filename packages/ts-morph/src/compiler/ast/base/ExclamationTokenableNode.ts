@@ -6,7 +6,9 @@ import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 
-export type ExclamationTokenableNodeExtensionType = Node<ts.Node & { exclamationToken?: ts.ExclamationToken; postfixToken?: ts.QuestionToken | ts.ExclamationToken }>;
+export type ExclamationTokenableNodeExtensionType = Node<
+  ts.Node & { exclamationToken?: ts.ExclamationToken; postfixToken?: ts.QuestionToken | ts.ExclamationToken }
+>;
 
 export interface ExclamationTokenableNode {
   /**

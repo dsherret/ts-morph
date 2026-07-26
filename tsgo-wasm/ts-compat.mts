@@ -2,8 +2,8 @@
 // scanner utilities ts-morph reaches for are present and behave as expected.
 //   node --experimental-strip-types --no-warnings --conditions @typescript/source tsgo-wasm/ts-compat.mts
 import assert from "node:assert";
-import * as ts from "../packages/common/src/tsgo/ts.ts";
 import { getChildren, getLastToken } from "../packages/common/src/tsgo/getChildren.ts";
+import * as ts from "../packages/common/src/tsgo/ts.ts";
 
 console.log("SyntaxKind.ClassDeclaration =", ts.SyntaxKind.ClassDeclaration);
 console.log("reverse map =", ts.SyntaxKind[ts.SyntaxKind.ClassDeclaration]);

@@ -14,8 +14,8 @@
 import type { CompilerOptions } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/compilerOptions.js";
 import { createVirtualFileSystem, type FileSystem } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/fs.js";
 import type { API, Project, Snapshot } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/sync/api.js";
-import type { SourceFile } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/index.js";
 import { createWasmAPI } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/wasm/node.js";
+import type { SourceFile } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/index.js";
 import { JsxEmit } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/jsxEmit.enum.js";
 import { ModuleDetectionKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/moduleDetectionKind.enum.js";
 import { ModuleKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/moduleKind.enum.js";
@@ -374,7 +374,13 @@ function getCommonDirectory(filePaths: readonly string[]): string | undefined {
 const internalOptionNames = new Set(["configFilePath", "pathsBasePath"]);
 
 const enumOptionNames: Record<string, Record<number, string>> = {
-  jsx: { [JsxEmit.Preserve]: "preserve", [JsxEmit.ReactNative]: "react-native", [JsxEmit.React]: "react", [JsxEmit.ReactJSX]: "react-jsx", [JsxEmit.ReactJSXDev]: "react-jsxdev" },
+  jsx: {
+    [JsxEmit.Preserve]: "preserve",
+    [JsxEmit.ReactNative]: "react-native",
+    [JsxEmit.React]: "react",
+    [JsxEmit.ReactJSX]: "react-jsx",
+    [JsxEmit.ReactJSXDev]: "react-jsxdev",
+  },
   module: {
     [ModuleKind.CommonJS]: "commonjs",
     [ModuleKind.AMD]: "amd",

@@ -14,12 +14,7 @@ import {
   ts,
 } from "@ts-morph/common";
 import { Directory } from "../../../fileSystem";
-import {
-  getTextFromTextChanges,
-  replaceNodeText,
-  replaceSourceFileForFilePathMove,
-  replaceSourceFileTextForFormatting,
-} from "../../../manipulation";
+import { getTextFromTextChanges, replaceNodeText, replaceSourceFileForFilePathMove, replaceSourceFileTextForFormatting } from "../../../manipulation";
 import { insertIntoTextRange } from "../../../manipulation/manipulations";
 import { getNextMatchingPos, getPreviousMatchingPos } from "../../../manipulation/textSeek";
 import { ProjectContext } from "../../../ProjectContext";

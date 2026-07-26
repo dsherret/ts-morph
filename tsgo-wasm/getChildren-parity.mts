@@ -9,8 +9,8 @@
 import assert from "node:assert";
 import ts from "typescript";
 import { formatSyntaxKind } from "../submodules/typescript-go/_packages/native-preview/src/ast/utils.ts";
-import { createInProcessApi } from "./seam.mts";
 import { getChildren, getLastToken } from "./getChildren.mts";
+import { createInProcessApi } from "./seam.mts";
 
 // Grammar breadth: declarations, generics, control flow, destructuring, mapped
 // and union types, enums.
@@ -90,9 +90,8 @@ const project = snapshot.getProject("/tsconfig.json")!;
 // noise. Instead compare spans exactly and require the kind correspondence to be
 // a consistent bijection across the whole tree.
 function tsKindName(kind: ts.SyntaxKind): string {
-  for (const [name, value] of Object.entries(ts.SyntaxKind)) {
+  for (const [name, value] of Object.entries(ts.SyntaxKind))
     if (value === kind && !/^(First|Last)/.test(name)) return name;
-  }
   return String(kind);
 }
 function span(n: { pos: number; end: number }): string {
@@ -141,9 +140,8 @@ function recordKindMapping(goKind: number, tsKind: ts.SyntaxKind, path: string):
   const tsName = tsKindName(tsKind);
   const seenTs = goToTs.get(goKind);
   if (seenTs === undefined) goToTs.set(goKind, tsName);
-  else if (seenTs !== tsName) {
+  else if (seenTs !== tsName)
     mismatches.push(`at ${path}: tsgo kind ${formatSyntaxKind(goKind)} maps to both ${seenTs} and ${tsName}`);
-  }
   const seenGo = tsToGo.get(tsName);
   if (seenGo === undefined) tsToGo.set(tsName, goKind);
   else if (seenGo !== goKind) {
@@ -155,10 +153,16 @@ function recordKindMapping(goKind: number, tsKind: ts.SyntaxKind, path: string):
 
 function compareFile(fileName: string, text: string, scriptKind: ts.ScriptKind): void {
   const goFile = project.program.getSourceFile(fileName)!;
-  const tsFile = ts.createSourceFile(fileName, text, {
-    languageVersion: ts.ScriptTarget.ESNext,
-    jsDocParsingMode: ts.JSDocParsingMode.ParseAll,
-  }, /*setParentNodes*/ true, scriptKind);
+  const tsFile = ts.createSourceFile(
+    fileName,
+    text,
+    {
+      languageVersion: ts.ScriptTarget.ESNext,
+      jsDocParsingMode: ts.JSDocParsingMode.ParseAll,
+    },
+    /*setParentNodes*/ true,
+    scriptKind,
+  );
 
   function walk(goNode: any, tsNode: ts.Node, path: string): void {
     let goKids: any[] = getChildren(goNode, goFile);
@@ -168,10 +172,9 @@ function compareFile(fileName: string, text: string, scriptKind: ts.ScriptKind):
     const goSig = goKids.map(span).join(" ");
     const tsSig = tsKids.map(span).join(" ");
     if (goSig !== tsSig) {
-      const report =
-        `at ${fileName} ${path}\n  tsgo:    ${goKids.map(k => formatSyntaxKind(k.kind) + span(k)).join(" ")}\n  classic: ${
-          tsKids.map(k => tsKindName(k.kind) + span(k)).join(" ")
-        }`;
+      const report = `at ${fileName} ${path}\n  tsgo:    ${goKids.map(k => formatSyntaxKind(k.kind) + span(k)).join(" ")}\n  classic: ${
+        tsKids.map(k => tsKindName(k.kind) + span(k)).join(" ")
+      }`;
       const aligned = alignKnownAstDivergence(goKids, tsKids);
       if (aligned == null) {
         mismatches.push(report);
