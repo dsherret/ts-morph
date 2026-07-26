@@ -87,6 +87,18 @@ export {
   unescapeLeadingUnderscores,
 } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/utils.js";
 
+// Comments attached to a node rather than read from a file, which a transform
+// uses to annotate what it builds. They travel with the node when it is printed.
+export {
+  addSyntheticLeadingComment,
+  addSyntheticTrailingComment,
+  getSyntheticLeadingComments,
+  getSyntheticTrailingComments,
+  setSyntheticLeadingComments,
+  setSyntheticTrailingComments,
+} from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/comments.js";
+export type { SynthesizedComment } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/comments.js";
+
 // Node construction and traversal, which `Node#transform` hands to its visitor.
 export { visitEachChild, visitNode, visitNodes } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/visitor.js";
 export type { Visitor } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/visitor.js";
@@ -108,8 +120,8 @@ export type { Visitor } from "../../../../submodules/typescript-go/_packages/nat
  *     the printer reads out of the file. Each `updateX` therefore carries the
  *     original's range and parent over, which is what `factory.update()` did.
  */
-import * as generatedFactory from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/factory.generated.js";
 import type { Identifier as TsgoIdentifier } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/ast.js";
+import * as generatedFactory from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/factory.generated.js";
 import { TokenFlags as TsgoTokenFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/tokenFlags.enum.js";
 
 type GeneratedFactory = typeof generatedFactory;
@@ -324,7 +336,10 @@ export interface EditorSettings {
  * `NoTruncation`, `UseFullyQualifiedType`, `WriteTypeArgumentsOfSignature`,
  * `InTypeAlias`) have identical values in both enums.
  */
-export { NodeBuilderFlags, NodeBuilderFlags as TypeFormatFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/nodeBuilderFlags.enum.js";
+export {
+  NodeBuilderFlags,
+  NodeBuilderFlags as TypeFormatFlags,
+} from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/nodeBuilderFlags.enum.js";
 
 import type { Node } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/ast.js";
 
@@ -349,15 +364,15 @@ export { isClassLikeDeclaration as isClassLike } from "../../../../submodules/ty
  * `modifiers` array, modifier flags are precomputed per node — so these are
  * derived rather than reimplemented.
  */
-import { isDecorator, isVariableDeclarationList, isVariableStatement } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/is.js";
-import { SyntaxKind as SyntaxKindValue } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/syntaxKind.enum.js";
-import { ModifierFlags as ModifierFlagsValue } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/modifierFlags.enum.js";
 import type {
   Decorator as TsgoDecorator,
   ExclamationToken as ExclamationTokenType,
   ModifiersBase,
   QuestionToken as QuestionTokenType,
 } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/ast.generated.js";
+import { isDecorator, isVariableDeclarationList, isVariableStatement } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/is.js";
+import { ModifierFlags as ModifierFlagsValue } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/modifierFlags.enum.js";
+import { SyntaxKind as SyntaxKindValue } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/syntaxKind.enum.js";
 
 /** Whether the node is one that can carry decorators — i.e. one that has a modifier list. */
 export function canHaveDecorators(node: Node): node is ModifiersBase {
@@ -431,8 +446,8 @@ function getPostfixTokenOfKind(node: Node, kind: SyntaxKindValue) {
 }
 
 import { createVirtualFileSystem } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/fs.js";
-import { createWasmAPI } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/wasm/node.js";
 import type { API, PrintNodeOptions, Project } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/sync/api.js";
+import { createWasmAPI } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/wasm/node.js";
 import type { SourceFile as TsgoSourceFile } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/index.js";
 import { ScriptKind as ScriptKindValue } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/scriptKind.enum.js";
 
@@ -491,6 +506,21 @@ export type { PrintNodeOptions };
  */
 export function printNode(node: Node, options: PrintNodeOptions = {}): string {
   return scratchProject().emitter.printNode(node as never, options);
+}
+
+/**
+ * The compiler's version, e.g. `7.1.0-dev`.
+ *
+ * This is the Go compiler's own version, read from the session rather than from a
+ * `package.json`, so it says what is actually doing the compiling.
+ *
+ * Breaking change: this is a function where the `typescript` package had a
+ * `version` constant. The version comes from the compiler, and reaching it means
+ * having a session to ask — which is not something to do at module load.
+ */
+export function getVersion(): string {
+  scratchFileSystem();
+  return scratchApi!.version;
 }
 
 /**
@@ -743,10 +773,7 @@ export type {
   UpdateExpressionBase as UpdateExpression,
 } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/ast.generated.js";
 
-export type {
-  CommentKind,
-  CommentRange,
-} from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/scanner.js";
+export type { CommentKind, CommentRange } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/scanner.js";
 
 /*
  * Narrowed node types the `typescript` package declares but tsgo does not.
@@ -813,11 +840,11 @@ import type {
   ComputedPropertyName,
   DeclarationBase as TsgoDeclarationBase,
   Expression,
-  PrivateIdentifier,
   MemberExpressionBase,
   NodeWithTypeArgumentsBase,
   NumericLiteral,
   PrimaryExpressionBase,
+  PrivateIdentifier,
   RegularExpressionLiteral,
   TemplateExpression,
   TemplateLiteralLikeNodeBase as TsgoTemplateLiteralLikeNodeBase,
@@ -1002,7 +1029,6 @@ export interface JSDocTypeTag extends Omit<TsgoJSDocTypeTag, "typeExpression"> {
 
 export type JSDocPropertyLikeTag = JSDocParameterTag | JSDocPropertyTag;
 
-
 export interface SuperPropertyAccessExpression extends PropertyAccessExpression {
   readonly expression: TsgoSuperExpression;
 }
@@ -1113,11 +1139,20 @@ export const ScriptElementKind = {
 } as const;
 export type ScriptElementKind = typeof ScriptElementKind[keyof typeof ScriptElementKind];
 
-/**
- * Breaking change: `displayParts` is gone. tsgo does not build the highlighted
- * signature text the `typescript` package returned alongside a definition.
- */
 export interface ReferencedSymbolDefinitionInfo extends DefinitionInfo {
+  displayParts: SymbolDisplayPart[];
+}
+
+/**
+ * One classified piece of the text that labels a symbol.
+ *
+ * Breaking change: `kind` is a plain string. tsgo classifies a run with an LSP
+ * classification name rather than the `typescript` package's `SymbolDisplayPartKind`,
+ * and the two vocabularies do not line up member for member.
+ */
+export interface SymbolDisplayPart {
+  text: string;
+  kind: string;
 }
 
 export interface ReferencedSymbol {

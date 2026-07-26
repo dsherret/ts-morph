@@ -1667,37 +1667,37 @@ describe("Directory", () => {
     }
 
     it("should emit correctly when not specifying anything", async () => {
-      const { directory, fileSystem } = setup({ target: ScriptTarget.ES5, outDir: "dist", declaration: true, sourceMap: true });
+      const { directory, fileSystem } = setup({ target: ScriptTarget.ES2015, outDir: "dist", declaration: true, sourceMap: true });
       const result = await directory.emit();
       runChecks(fileSystem, result, "/dist", "/dist");
     });
 
     it("should emit correctly when specifying a different out dir and no declaration dir in compiler options", async () => {
-      const { directory, fileSystem } = setup({ target: ScriptTarget.ES5, outDir: "dist", declaration: true, sourceMap: true });
+      const { directory, fileSystem } = setup({ target: ScriptTarget.ES2015, outDir: "dist", declaration: true, sourceMap: true });
       const result = await directory.emit({ outDir: "../newOutDir" });
       runChecks(fileSystem, result, "/newOutDir", "/newOutDir");
     });
 
     it("should emit correctly when specifying a different out dir and a declaration dir in compiler options", async () => {
-      const { directory, fileSystem } = setup({ target: ScriptTarget.ES5, outDir: "dist", declarationDir: "dec", declaration: true, sourceMap: true });
+      const { directory, fileSystem } = setup({ target: ScriptTarget.ES2015, outDir: "dist", declarationDir: "dec", declaration: true, sourceMap: true });
       const result = await directory.emit({ outDir: "../newOutDir" });
       runChecks(fileSystem, result, "/newOutDir", "/dec");
     });
 
     it("should emit correctly when specifying a different declaration dir", async () => {
-      const { directory, fileSystem } = setup({ target: ScriptTarget.ES5, outDir: "dist", declarationDir: "dec", declaration: true, sourceMap: true });
+      const { directory, fileSystem } = setup({ target: ScriptTarget.ES2015, outDir: "dist", declarationDir: "dec", declaration: true, sourceMap: true });
       const result = await directory.emit({ declarationDir: "newDeclarationDir" });
       runChecks(fileSystem, result, "/dist", "/dir/newDeclarationDir");
     });
 
     it("should emit correctly when specifying a different out and declaration dir", async () => {
-      const { directory, fileSystem } = setup({ target: ScriptTarget.ES5, outDir: "dist", declarationDir: "dec", declaration: true, sourceMap: true });
+      const { directory, fileSystem } = setup({ target: ScriptTarget.ES2015, outDir: "dist", declarationDir: "dec", declaration: true, sourceMap: true });
       const result = await directory.emit({ outDir: "", declarationDir: "newDeclarationDir" });
       runChecks(fileSystem, result, "/dir", "/dir/newDeclarationDir");
     });
 
     it("should emit correctly when specifying to only emit declaration files", async () => {
-      const { directory, fileSystem } = setup({ target: ScriptTarget.ES5, outDir: "dist", declarationDir: "dec", declaration: true, sourceMap: true });
+      const { directory, fileSystem } = setup({ target: ScriptTarget.ES2015, outDir: "dist", declarationDir: "dec", declaration: true, sourceMap: true });
       const result = await directory.emit({ outDir: "", declarationDir: "newDeclarationDir", emitOnlyDtsFiles: true });
 
       const writeLog = fileSystem.getWriteLog();
@@ -1726,7 +1726,7 @@ describe("Directory", () => {
       expect(result.getOutputFilePaths()).to.deep.equal(writeLog.map(l => l.filePath));
       expect(writeLog[0].filePath).to.equal(outDir + "/file1.js.map");
       expect(writeLog[1].filePath).to.equal(outDir + "/file1.js");
-      expect(writeLog[1].fileText).to.equal("\"use strict\";\nvar t = '';\n//# sourceMappingURL=file1.js.map");
+      expect(writeLog[1].fileText).to.equal("\"use strict\";\nconst t = '';\n//# sourceMappingURL=file1.js.map");
       expect(writeLog[2].filePath).to.equal(declarationDir + "/file1.d.ts");
       expect(writeLog[3].filePath).to.equal(outDir + "/subDir/file2.js.map");
       expect(writeLog[4].filePath).to.equal(outDir + "/subDir/file2.js");
@@ -1735,7 +1735,7 @@ describe("Directory", () => {
     }
 
     it("should emit correctly when not specifying anything", () => {
-      const { directory, fileSystem } = setup({ target: ScriptTarget.ES5, outDir: "dist", declaration: true, sourceMap: true });
+      const { directory, fileSystem } = setup({ target: ScriptTarget.ES2015, outDir: "dist", declaration: true, sourceMap: true });
       const result = directory.emitSync();
       runChecks(fileSystem, result, "/dist", "/dist");
     });
@@ -1827,13 +1827,8 @@ describe("Directory", () => {
       doSourceFileTest("/dir", "/dir2/index.d.ts", "../dir2/index");
     });
 
-    it("should use an explicit index when the module resolution strategy is classic", () => {
-      doSourceFileTest("/dir", "/dir2/index.d.ts", "../dir2/index", { moduleResolution: ModuleResolutionKind.Classic });
-    });
-
-    it("should use an implicit index when the module resolution strategy is node10", () => {
-      doSourceFileTest("/dir", "/dir2/index.d.ts", "../dir2", { moduleResolution: ModuleResolutionKind.NodeJs });
-    });
+    // the module resolution mode no longer changes the answer: TypeScript 7 removed
+    // both classic and node10, and the index is spelled out under every mode left.
 
     it("should use an implicit index when specifying the index file in the same directory", () => {
       doSourceFileTest("/dir", "/dir/index.ts", "./index");
@@ -1852,10 +1847,6 @@ describe("Directory", () => {
 
     it("should get the path to a directory as a module specifier", () => {
       doDirectoryTest("/dir", "/dir/dir2", "./dir2/index");
-    });
-
-    it("should use an explicit index when getting the module specifier to a directory and the module resolution strategy is classic", () => {
-      doDirectoryTest("/dir", "/dir2", "../dir2/index", { moduleResolution: ModuleResolutionKind.Classic });
     });
 
     it("should get the module specifier to the same directory", () => {

@@ -161,13 +161,15 @@ describe("ImportDeclaration", () => {
       expect(mainSourceFile.getImportDeclarations()[0].getModuleSpecifierSourceFile()).to.equal(classSourceFile);
     });
 
-    it("should not get the source file when it's an index.ts file and using classic module resolution", () => {
-      // needs to be NodeJs resolution to work
+    it("should get the source file when it's an index.ts file and asking for classic module resolution", () => {
+      // classic no longer resolves as classic: TypeScript 7 folds it into bundler
+      // resolution, so an implicit index resolves where it previously would not.
+      // See CompilerOptions.GetModuleResolutionKind in internal/core/compileroptions.go.
       const project = new Project({ useInMemoryFileSystem: true, compilerOptions: { moduleResolution: ModuleResolutionKind.Classic } });
       const mainSourceFile = project.createSourceFile("main.ts", `import {Class} from "./class";`);
       const classSourceFile = project.createSourceFile("class/index.ts", `export class Class {}`);
 
-      expect(mainSourceFile.getImportDeclarations()[0].getModuleSpecifierSourceFile()).to.be.undefined;
+      expect(mainSourceFile.getImportDeclarations()[0].getModuleSpecifierSourceFile()).to.equal(classSourceFile);
     });
 
     it("should return undefined when it doesn't exist", () => {

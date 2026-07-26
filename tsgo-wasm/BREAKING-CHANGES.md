@@ -54,7 +54,7 @@ Two things make this less final than it looks:
 
 1. **Resolution already runs against the client's file system.** Every probe
    goes through the delegated `fileExists` / `readFile` / `realpath` /
-   `getAccessibleEntries` callbacks, so what resolution *finds* can already be
+   `getAccessibleEntries` callbacks, so what resolution _finds_ can already be
    influenced from JS. That covers redirection, but not rewriting a specifier.
 2. **A real hook is a small change in the fork.** `Resolver.ResolveModuleName`
    (`internal/module/resolver.go`) is the choke point, and the file loader
@@ -151,7 +151,7 @@ the wrapper no longer narrows its compiler type. The runtime value is unchanged.
 and `FileSystemEntries` are removed from `@ts-morph/common`.
 
 They were thin wrappers over `ts.matchFiles` / `ts.getFileMatcherPatterns` —
-unexported TypeScript internals reached through `(ts as any)`. The tsgo *client*
+unexported TypeScript internals reached through `(ts as any)`. The tsgo _client_
 exposes neither, so all three evaluated to `undefined` and every call threw a
 `TypeError`. Nothing in the repo used them: `readDirectory` was never in the
 `tsconfig` barrel, and tsconfig include/exclude globbing is now tsgo's job, done
@@ -162,7 +162,7 @@ inside `parseConfigFile`.
 at `internal/vfs/vfsmatch/vfsmatch.go:31` is the direct successor to
 `ts.matchFiles`, and `NewSpecMatcher` (`:703`) is what replaced the pattern
 struct. **TODO** if a caller wants it back. `getFileMatcherPatterns` /
-`FileMatcherPatterns` as *shapes* are absent — tsgo's matcher is an opaque
+`FileMatcherPatterns` as _shapes_ are absent — tsgo's matcher is an opaque
 `*SpecMatcher`, not a bag of regexes.
 
 `getEmitModuleResolutionKind` survives, reimplemented in
@@ -170,7 +170,7 @@ struct. **TODO** if a caller wants it back. `getFileMatcherPatterns` /
 forwarded to the compiler. **Its results differ**, because tsgo's
 `CompilerOptions.GetModuleResolutionKind` differs:
 
-- `Classic` and `Node10` are no longer returned. They are treated as *unset* and
+- `Classic` and `Node10` are no longer returned. They are treated as _unset_ and
   resolved from the module kind, so an explicit `moduleResolution: "classic"`
   now answers `Bundler`.
 - With no module kind and no target, the answer is `Bundler` rather than
@@ -200,7 +200,7 @@ cannot be cloned that way. The session's own snapshot cache serves this purpose.
 
 ### The `ts` namespace is tsgo's, and its enum values differ
 
-`SyntaxKind.ClassDeclaration` is a *different number* than in the `typescript`
+`SyntaxKind.ClassDeclaration` is a _different number_ than in the `typescript`
 package. The same is true of every other enum.
 
 Nodes and kinds must therefore come from the same backend. Mixing tsgo nodes
@@ -210,18 +210,18 @@ persisting kind values across versions, will break.
 
 ### `DocumentRegistry`
 
-| Before | Now |
-| --- | --- |
-| `createOrUpdateSourceFile(fileName, compilationSettings, scriptSnapshot, scriptKind)` | `createOrUpdateSourceFile(fileName, text)` |
-| text supplied as `ts.IScriptSnapshot` | text supplied as a `string` |
-| compiler options passed per call | set once via the constructor |
-| constructed from a `TransactionalFileSystem` | constructed with `{ compilerOptions, files }` |
+| Before                                                                                | Now                                           |
+| ------------------------------------------------------------------------------------- | --------------------------------------------- |
+| `createOrUpdateSourceFile(fileName, compilationSettings, scriptSnapshot, scriptKind)` | `createOrUpdateSourceFile(fileName, text)`    |
+| text supplied as `ts.IScriptSnapshot`                                                 | text supplied as a `string`                   |
+| compiler options passed per call                                                      | set once via the constructor                  |
+| constructed from a `TransactionalFileSystem`                                          | constructed with `{ compilerOptions, files }` |
 
 `ts.IScriptSnapshot`, `ts.ScriptSnapshot`, and `ts.DocumentRegistryBucketKey`
 no longer exist. Compiler options move to the registry because tsgo resolves
 them per project.
 
-A returned tree for an *edited* file is only valid until the next change to that
+A returned tree for an _edited_ file is only valid until the next change to that
 file. Files the edit did not touch keep their nodes: the source file cache
 carries their entries across snapshots, which is what preserves wrapper identity
 for the rest of the project.
@@ -443,7 +443,7 @@ side. Symbol lookups go through the checker (`getSymbolAtLocation`), and the
 the API over `ast.Node.Locals()` and returned as an ordered array rather than a
 `ts.SymbolTable`.
 
-`.emitNode` has no counterpart *as a property*, because synthesized comments and
+`.emitNode` has no counterpart _as a property_, because synthesized comments and
 emit flags are the printer's concern and the printer runs in Go. The capability
 itself is **not exposed** rather than absent: `printer.EmitContext` keeps that
 state off to the side and offers
@@ -508,7 +508,7 @@ Split by cause. The "not exposed" ones are TODOs, not breaking changes.
   emitted — the message exists only in the table
   (`internal/diagnostics/diagnostics_generated.go:3761`).
 - **The `require`-to-import suggestion (code 80005)** — `getSuggestionDiagnostics`
-  *is* routed (`internal/api/session.go:3602` over
+  _is_ routed (`internal/api/session.go:3602` over
   `Program.GetSuggestionDiagnostics`, `internal/compiler/program.go:672`), but
   tsgo's checker never emits this one: `X_require_call_may_be_converted_to_an_import`
   appears only in the message table
@@ -644,8 +644,14 @@ exposing it means a handler that renders to a buffer and returns the string.
 
 ### `TypeScriptVersionChecker` is gone — **absent**
 
-There is no `ts.version` to compare against — the compiler is a wasm build of
-tsgo, not a versioned npm package.
+It existed to gate behaviour on the TypeScript release in use. There is one
+compiler now, so there is nothing to branch on.
+
+The version itself is available: `ts.getVersion()` returns the Go compiler’s own
+version (`core.Version()`, e.g. `7.1.0-dev`), carried on the session’s initialize
+response. It is a **function** where the `typescript` package had a `version`
+constant, because reaching it means having a session to ask, which is not
+something to do at module load.
 
 ### `Type#getConstraint()` and `Type#getDefault()` are narrower
 
@@ -744,6 +750,13 @@ files that walk added.
   wasm loader is inlined into the bundle, which invalidates its in-package
   relative path to the reactor, so it falls back to a copy sitting next to
   whatever module loads it.
+- **Working on this means rebuilding twice.** The tests run against
+  `packages/common/dist/`, and that directory holds its own copy of the reactor.
+  A change in the fork therefore needs `_scripts/build-wasm.mjs` **and** then
+  `deno task build:node` in `packages/common`, or the suite keeps exercising the
+  previous wasm and the change looks like it did nothing. `deno task build` also
+  runs `build:declarations`, which currently fails on the tsgo client’s
+  `#enums/*` specifiers — the packaging item below.
 - That same config resolves the tsgo client's package-internal `#enums/*`,
   `#getExePath` and `#vscode-jsonrpc/node` specifiers. Without it the bundle
   loads and immediately throws `Cannot find module '#enums/modifierFlags'`,
@@ -763,47 +776,61 @@ under `packages/ts-morph/src/tests/removed-capabilities/` and excluded in
 
 ### Genuinely absent — the Go compiler does not do this
 
-| Off the surface | Was on | Evidence |
-|---|---|---|
-| `getEditsForRefactor`, `RefactorEditInfo` | `LanguageService` | no refactor surface at all; `codeFixProviders` (`internal/ls/codeactions.go:70-75`) is three quickfix providers, and `CreateNewFile`/`IsNewFile` have zero hits in `internal/` |
-| `getFixName` | code fix results | no `fixName` concept; `FixName` has zero hits in `internal/`. Its test also wants `convertToEsModule`, which is absent, and error 80001, which is never emitted |
-| `Diagnostic#getSource` | `Diagnostic` | `ast.Diagnostic` (`internal/ast/diagnostic.go:33-63`) has no source field or accessor; the `"ts"` string is synthesized in the LSP layer (`internal/ls/lsconv/converters.go:319-328`) |
-| `PrintNodeOptions#emitHint` | printing | no `EmitHint` type; `printer.Emit` (`internal/printer/printer.go:5013`) dispatches on `node.Kind` |
-| `EmitOptionsBase.customTransformers`, `ts.TransformationContext` | emit | `getScriptTransformers` (`internal/compiler/emitter.go:104-171`) is a hard-coded list; `EmitOptions` (`internal/compiler/program.go:1615-1620`) has no transformer slot, and the JS transformer would need a per-node round trip mid-emit over a single-threaded request/response transport |
-| `JSDocFunctionType`, `CommaListExpression`, `JSDocAuthorTag`, `JSDocClassTag`, `JSDocEnumTag`, `JSDocMemberName`, `JSDocNamepathType`, `JSDocUnknownType` | AST wrappers | tsgo's parser emits no such kinds. `KindJSDocFunctionType` is explicitly retired: `internal/checker/nodecopy.go:544` reads `// if node.Kind == ast.KindJSDocFunctionType {} // !!! no longer exists`, and `internal/checker/nodebuilderimpl.go:1879-1880` is commented out |
-| `SyntaxKind.JSDocTag` (classic's catch-all) | enum | tsgo names it `JSDocUnknownTag` (`syntaxKind.enum.ts:326`); there is no catch-all kind |
-| `ScriptTarget.ES3`, `ScriptTarget.ES5` | enum | tsgo's `ScriptTarget` starts at `ES2015 = 2` (`_packages/native-preview/src/enums/scriptTarget.enum.ts`), so there is no downlevel-to-`var` emit |
-| `ModuleResolutionKind.NodeJs` | enum | renamed `Node10` (`moduleResolutionKind.enum.ts`), and `GetModuleResolutionKind` (`internal/core/compileroptions.go:223-237`) folds both `Classic` and `Node10` into `Bundler`/`Node16`/`NodeNext` |
-| the 80005 `require`-to-import suggestion | `getSuggestionDiagnostics` | the method is routed; the diagnostic is never emitted (`internal/diagnostics/diagnostics_generated.go:3769` is the only hit) |
-| `ts.IScriptSnapshot`, `ts.ScriptSnapshot`, `ts.DocumentRegistryBucketKey` | `ts` namespace | tsgo takes file text directly; there is no snapshot-of-a-file concept to wrap |
-| `createDocumentCache` | `@ts-morph/common` | it deep-cloned a parsed `ts.SourceFile` and re-stamped `fileName`; tsgo's nodes are lazy views over a binary buffer with a circular back-reference to their file |
-| `setParentNodes: false` | `ts.createSourceFile` | tsgo's parser always links parents; a parentless tree cannot be produced |
-| `SourceFile#getLanguageVersion` (per file) | `SourceFile` | `ast.SourceFileParseOptions` (`internal/ast/parseoptions.go:8-12`) records only file name, path and module-detection options — no script target. Reports the project's `target` instead |
-| `JSDocNullableType#isPostfix`, `JSDocNonNullableType#isPostfix` | AST | `JSDocNullableType` (`internal/ast/ast_generated.go:6985-6988`) records only the type; whether `?`/`!` was prefix or postfix is not kept |
-| `CompilerOptions.charset` | options | removed from tsgo; files are read as utf-8 |
-| `ts.parseJsonConfigFileContent`, `ts.parseConfigFileTextToJson`, `ts.ParseConfigHost` | `ts` namespace | tsgo parses config server-side through `parseConfigFile` |
-| `ts.LanguageServiceHost`, `ts.CompilerHost`, `createHosts`, `TsSourceFileContainer` | hosts | tsgo owns the file system and parsing; there is no host to implement |
-| `ts.version`, `TypeScriptVersionChecker` | `ts` namespace | the compiler is a wasm build of tsgo, not a versioned npm package |
-| `getFileMatcherPatterns`, `FileMatcherPatterns` | `@ts-morph/common` | tsgo's matcher is an opaque `*vfsmatch.SpecMatcher` (`internal/vfs/vfsmatch/vfsmatch.go:703`), not a bag of regexes |
+| Off the surface                                                                                                                                           | Was on                     | Evidence                                                                                                                                                                                                                                                                                                                                                        |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `getEditsForRefactor`, `RefactorEditInfo`                                                                                                                 | `LanguageService`          | no refactor surface at all; `codeFixProviders` (`internal/ls/codeactions.go:70-75`) is three quickfix providers, and `CreateNewFile`/`IsNewFile` have zero hits in `internal/`                                                                                                                                                                                  |
+| `getFixName`                                                                                                                                              | code fix results           | no `fixName` concept; `FixName` has zero hits in `internal/`. Its test also wants `convertToEsModule`, which is absent, and error 80001, which is never emitted                                                                                                                                                                                                 |
+| `Diagnostic#getSource`                                                                                                                                    | `Diagnostic`               | `ast.Diagnostic` (`internal/ast/diagnostic.go:33-63`) has no source field or accessor; the `"ts"` string is synthesized in the LSP layer (`internal/ls/lsconv/converters.go:319-328`)                                                                                                                                                                           |
+| `PrintNodeOptions#emitHint`                                                                                                                               | printing                   | no `EmitHint` type; `printer.Emit` (`internal/printer/printer.go:5013`) dispatches on `node.Kind`                                                                                                                                                                                                                                                               |
+| `EmitOptionsBase.customTransformers`, `ts.TransformationContext`                                                                                          | emit                       | `getScriptTransformers` (`internal/compiler/emitter.go:104-171`) is a hard-coded list; `EmitOptions` (`internal/compiler/program.go:1615-1620`) has no transformer slot, and the JS transformer would need a per-node round trip mid-emit over a single-threaded request/response transport                                                                     |
+| `JSDocFunctionType`, `CommaListExpression`, `JSDocAuthorTag`, `JSDocClassTag`, `JSDocEnumTag`, `JSDocMemberName`, `JSDocNamepathType`, `JSDocUnknownType` | AST wrappers               | tsgo's parser emits no such kinds. `KindJSDocFunctionType` is explicitly retired: `internal/checker/nodecopy.go:544` reads `// if node.Kind == ast.KindJSDocFunctionType {} // !!! no longer exists`, and `internal/checker/nodebuilderimpl.go:1879-1880` is commented out                                                                                      |
+| `SyntaxKind.JSDocTag` (classic's catch-all)                                                                                                               | enum                       | tsgo names it `JSDocUnknownTag` (`syntaxKind.enum.ts:326`); there is no catch-all kind                                                                                                                                                                                                                                                                          |
+| `ScriptTarget.ES3`, `ScriptTarget.ES5`                                                                                                                    | enum                       | tsgo's `ScriptTarget` starts at `ES2015 = 2` (`_packages/native-preview/src/enums/scriptTarget.enum.ts`), so there is no downlevel-to-`var` emit                                                                                                                                                                                                                |
+| `ModuleResolutionKind.NodeJs`                                                                                                                             | enum                       | renamed `Node10` (`moduleResolutionKind.enum.ts`), and `GetModuleResolutionKind` (`internal/core/compileroptions.go:223-237`) folds both `Classic` and `Node10` into `Bundler`/`Node16`/`NodeNext`                                                                                                                                                              |
+| the 80005 `require`-to-import suggestion                                                                                                                  | `getSuggestionDiagnostics` | the method is routed; the diagnostic is never emitted (`internal/diagnostics/diagnostics_generated.go:3769` is the only hit)                                                                                                                                                                                                                                    |
+| `ts.IScriptSnapshot`, `ts.ScriptSnapshot`, `ts.DocumentRegistryBucketKey`                                                                                 | `ts` namespace             | tsgo takes file text directly; there is no snapshot-of-a-file concept to wrap                                                                                                                                                                                                                                                                                   |
+| `createDocumentCache`                                                                                                                                     | `@ts-morph/common`         | it deep-cloned a parsed `ts.SourceFile` and re-stamped `fileName`; tsgo's nodes are lazy views over a binary buffer with a circular back-reference to their file                                                                                                                                                                                                |
+| `fixUnusedIdentifiers`                                                                                                                                    | `SourceFile`               | it drove the `unusedIdentifier_delete` and `unusedIdentifier_deleteImports` fix-alls. The suggestion diagnostics and the deletion machinery (`internal/ls/change/delete.go`) both exist, but no provider joins them: `codeFixProviders` (`internal/ls/codeactions.go`) is import fixes, isolated declarations and class-implements. A new provider, not a route |
+| `setParentNodes: false`                                                                                                                                   | `ts.createSourceFile`      | tsgo's parser always links parents; a parentless tree cannot be produced                                                                                                                                                                                                                                                                                        |
+| `SourceFile#getLanguageVersion` (per file)                                                                                                                | `SourceFile`               | `ast.SourceFileParseOptions` (`internal/ast/parseoptions.go:8-12`) records only file name, path and module-detection options — no script target. Reports the project's `target` instead                                                                                                                                                                         |
+| `JSDocNullableType#isPostfix`, `JSDocNonNullableType#isPostfix`                                                                                           | AST                        | `JSDocNullableType` (`internal/ast/ast_generated.go:6985-6988`) records only the type; whether `?`/`!` was prefix or postfix is not kept                                                                                                                                                                                                                        |
+| `CompilerOptions.charset`                                                                                                                                 | options                    | removed from tsgo; files are read as utf-8                                                                                                                                                                                                                                                                                                                      |
+| `ts.parseJsonConfigFileContent`, `ts.parseConfigFileTextToJson`, `ts.ParseConfigHost`                                                                     | `ts` namespace             | tsgo parses config server-side through `parseConfigFile`                                                                                                                                                                                                                                                                                                        |
+| `ts.LanguageServiceHost`, `ts.CompilerHost`, `createHosts`, `TsSourceFileContainer`                                                                       | hosts                      | tsgo owns the file system and parsing; there is no host to implement                                                                                                                                                                                                                                                                                            |
+| `TypeScriptVersionChecker`                                                                                                                                | `ts` namespace             | it compared against `ts.version` to gate behaviour by TypeScript release; there is one compiler now and nothing to branch on. `ts.version` itself is back, as `ts.getVersion()`, from `core.Version()` (`internal/core/version.go`)                                                                                                                             |
+| `getFileMatcherPatterns`, `FileMatcherPatterns`                                                                                                           | `@ts-morph/common`         | tsgo's matcher is an opaque `*vfsmatch.SpecMatcher` (`internal/vfs/vfsmatch/vfsmatch.go:703`), not a bag of regexes                                                                                                                                                                                                                                             |
 
 ### Not exposed — tsgo does this; it is a TODO, not a breaking change
 
-| Off the surface | Was on | What already works in Go |
-|---|---|---|
-| `ResolutionHost`, `ResolutionHostFactory`, `ResolutionHosts`, `ProjectOptions#resolutionHost`, `ts.resolveModuleName` | `Project`, `ts` | `Resolver.ResolveModuleName` (`internal/module/resolver.go:270`) is the single choke point; a callback wrapper follows the pattern `callbackFS` already uses |
-| `getIndentationAtPosition` | `LanguageService` | `format.GetIndentation` (`internal/format/indent.go:24`), `GetIndentationForNode` (`:17`) |
-| `getFixId`, `getFixAllDescription` | code fix results | `ls.CodeAction.FixID` / `.FixAllDescription` (`internal/ls/codeactions.go:55-60`); `api.CodeFixAction` (`internal/api/proto.go:1208-1212`) drops them |
-| `getDisplayParts`, the display-string `getName()`, `getKind()` | reference / implementation results | `displayPartsWriter` (`internal/ls/displaypartswriter.go:19`) and `getQuickInfoAndDeclarationAtLocation` (`internal/ls/hover.go:327`); hover and signature help already use them |
-| `fixUnusedIdentifiers` | `SourceFile` | the diagnostics (`internal/checker/checker.go:7123,7128,7181`) and the deletion machinery (`internal/ls/change/delete.go`) both exist; no provider joins them yet — a new fix provider, not just a route |
-| `TypeFormatFlags` as a real enum | `ts` namespace | `checker.TypeFormatFlags` (`internal/checker/types.go:47-83`), all members present; `typeToString` already takes it (`internal/api/session.go:2392`); missing only from the generator list (`Herebyfile.mjs:338-366`) |
-| `baseIndentSize`, `semicolons`, `insertSpace*`, `placeOpenBraceOnNewLineFor*` | `FormatCodeSettings` | `lsutil.FormatCodeSettings` (`internal/ls/lsutil/formatcodeoptions.go:70-92`), read at `internal/format/rulecontext.go:23,27,79,83` and `internal/format/indent.go:26,43`; `api.FormattingOptions` (`internal/api/proto.go:1141-1153`) carries six of them |
-| `formatDiagnosticsWithColorAndContext` | `Project` | `diagnosticwriter.FormatDiagnosticsWithColorAndContext` (`internal/diagnosticwriter/diagnosticwriter.go:122`), used by `tsc` itself (`internal/execute/tsc/diagnostics.go:42`) |
-| `readDirectory`, `matchFiles` | `@ts-morph/common` | `vfsmatch.ReadDirectory` (`internal/vfs/vfsmatch/vfsmatch.go:31`) |
-| `getChildCount`, `getChildAt`, `getFirstToken` | compiler nodes | derivable from the `getChildren(sourceFile?)` that now exists on the compiler `Node` |
-| `ReferenceEntry#isWriteAccess()` (always `false`) | reference results | `ast.IsWriteAccessForReference` (`internal/ast/ast.go:1273`), `IsWriteAccess` (`:1269`), `declarationIsWriteAccess` (`:1324`) |
-| `ts.addSyntheticLeadingComment` | `ts` namespace | `printer.EmitContext.AddSyntheticLeadingComment` (`internal/printer/emitcontext.go:965`), `SetSyntheticLeadingComments` (`:960`) |
-| `Program#getSourceFiles`, `Program#getTypeChecker` | bootstrap's program | `getSourceFileNames()` / `getSourceFile(name)` exist, and the checker hangs off the project — one-line conveniences on the tsgo client |
-| `@types` added after project creation, for `getAmbientModules` | `TypeChecker` | `Checker.GetAmbientModules` is routed and works; the gap is that nothing re-scans the file system for unimported `@types` packages |
+| Off the surface                                                                                                       | Was on               | What already works in Go                                                                                                                                                                                                                                   |
+| --------------------------------------------------------------------------------------------------------------------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ResolutionHost`, `ResolutionHostFactory`, `ResolutionHosts`, `ProjectOptions#resolutionHost`, `ts.resolveModuleName` | `Project`, `ts`      | `Resolver.ResolveModuleName` (`internal/module/resolver.go:270`) is the single choke point; a callback wrapper follows the pattern `callbackFS` already uses                                                                                               |
+| `getIndentationAtPosition`                                                                                            | `LanguageService`    | `format.GetIndentation` (`internal/format/indent.go:24`), `GetIndentationForNode` (`:17`)                                                                                                                                                                  |
+| `getFixId`, `getFixAllDescription`                                                                                    | code fix results     | `ls.CodeAction.FixID` / `.FixAllDescription` (`internal/ls/codeactions.go:55-60`); `api.CodeFixAction` (`internal/api/proto.go:1208-1212`) drops them                                                                                                      |
+| `TypeFormatFlags` as a real enum                                                                                      | `ts` namespace       | `checker.TypeFormatFlags` (`internal/checker/types.go:47-83`), all members present; `typeToString` already takes it (`internal/api/session.go:2392`); missing only from the generator list (`Herebyfile.mjs:338-366`)                                      |
+| `baseIndentSize`, `semicolons`, `insertSpace*`, `placeOpenBraceOnNewLineFor*`                                         | `FormatCodeSettings` | `lsutil.FormatCodeSettings` (`internal/ls/lsutil/formatcodeoptions.go:70-92`), read at `internal/format/rulecontext.go:23,27,79,83` and `internal/format/indent.go:26,43`; `api.FormattingOptions` (`internal/api/proto.go:1141-1153`) carries six of them |
+| `formatDiagnosticsWithColorAndContext`                                                                                | `Project`            | `diagnosticwriter.FormatDiagnosticsWithColorAndContext` (`internal/diagnosticwriter/diagnosticwriter.go:122`), used by `tsc` itself (`internal/execute/tsc/diagnostics.go:42`)                                                                             |
+| `readDirectory`, `matchFiles`                                                                                         | `@ts-morph/common`   | `vfsmatch.ReadDirectory` (`internal/vfs/vfsmatch/vfsmatch.go:31`)                                                                                                                                                                                          |
+| `Program#getSourceFiles`, `Program#getTypeChecker`                                                                    | bootstrap's program  | `getSourceFileNames()` / `getSourceFile(name)` exist, and the checker hangs off the project — one-line conveniences on the tsgo client                                                                                                                     |
+| `@types` added after project creation, for `getAmbientModules`                                                        | `TypeChecker`        | `Checker.GetAmbientModules` is routed and works; the gap is that nothing re-scans the file system for unimported `@types` packages                                                                                                                         |
+
+#### Routed since this table was written
+
+Removed from the table above rather than left in it, so that it keeps meaning
+“still to do”:
+
+- A definition’s display parts, and the display-string `getName()` that is built
+  from them.
+- `getChildCount`, `getChildAt`, `getFirstToken`, `getLastToken`.
+- `ReferenceEntry#isWriteAccess()`, from `ast.IsWriteAccessForReference`.
+- `ts.addSyntheticLeadingComment` and the rest of the synthetic-comment API,
+  carried to the printer beside the encoded node.
+- `ts.version`, as `ts.getVersion()` — a function, because the version comes from
+  the compiler and reaching it means having a session to ask.
+
+`fixUnusedIdentifiers` is also gone from the table, but in the other direction:
+it needs a code fix provider that tsgo does not have, so it belongs under
+“genuinely absent”, not under “not exposed”.
 
 ### Renamed enum members
 
@@ -811,12 +838,12 @@ The classic names are kept as aliases where they are part of ts-morph's own
 public surface, but **the numeric values changed**, which matters for code that
 hard-codes them:
 
-| Member | Classic | tsgo |
-|---|---|---|
-| `NewLineKind.CarriageReturnLineFeed` | `0` | `1` (aliased to `CRLF`) |
-| `NewLineKind.LineFeed` | `1` | `2` (aliased to `LF`) |
-| — | — | `NewLineKind.None = 0` is new |
-| `SyntaxKind.EndOfFileToken` | `1` | `1`, kept as an alias of `EndOfFile` |
+| Member                               | Classic | tsgo                             |
+| ------------------------------------ | ------- | -------------------------------- |
+| `NewLineKind.CarriageReturnLineFeed` | `0`     | `1` (aliased to `CRLF`)          |
+| `NewLineKind.LineFeed`               | `1`     | `2` (aliased to `LF`)            |
+| —                                    | —       | `NewLineKind.None = 0` is new    |
+| `SyntaxKind.EndOfFileToken`          | `1`     | renamed to `EndOfFile`; no alias |
 
 Passing a hard-coded `0` for a newline kind now means `None`;
 `newLineKindToString` rejects it with an explanatory error rather than silently
@@ -826,35 +853,67 @@ emitting the wrong ending.
 
 Run on the working tree this document describes:
 
-| | passing | pending | failing | type errors |
-|---|---|---|---|---|
-| `packages/common` | 416 | 0 | 510 | 0 in source, 6 in `src/tests` |
-| `packages/ts-morph` | 4352 | 2 | 29 | 0 in source, 69 in `src/tests` |
-| `packages/bootstrap` | 53 | 0 | 31 | 0 in source, 39 in `src/tests` |
+|                      | passing | pending | failing | type errors                    |
+| -------------------- | ------- | ------- | ------- | ------------------------------ |
+| `packages/common`    | 414     | 0       | 0       | 0 in source, 0 in `src/tests`  |
+| `packages/ts-morph`  | 4362    | 9       | 0       | 0 in source, 22 in `src/tests` |
+| `packages/bootstrap` | 53      | 0       | 31      | 0 in source, 39 in `src/tests` |
 
-All 12 end-to-end scripts under `tsgo-wasm/` pass.
+All 12 end-to-end scripts under `tsgo-wasm/` pass, as do the Go tests for every
+package the fork touches.
 
-`packages/common`'s 510 failures are one test file and one cause:
-`src/tests/typescript/tsInternalTests.ts` enumerates
-`getEmitModuleResolutionKind` over every option combination, and tsgo folds
-`Classic`/`Node10` into `Bundler`/`Node16`/`NodeNext`
-(`internal/core/compileroptions.go:223-237`). That is the documented divergence
-above, multiplied by the combinatorics.
+`packages/ts-morph`’s 22 remaining type errors are all in tests for API that is
+still off the surface: 17 in the two skipped `resolutionHost` describes, and 5 in
+`src/tests/removed-capabilities/`. Its 9 pending tests are those same two
+describes.
 
-`packages/ts-morph`'s 29 failures break down as:
+#### What the last 29 failures turned out to be
 
-- **17 genuinely absent** — `ScriptTarget.ES5` and downlevel emit ×7,
-  `getEditsForRefactor` ×3, the JSDoc catch-all tag kind ×2, `convertToEsModule`,
-  the 80005 suggestion, `Diagnostic#getSource`, `customTransformers`,
-  `setParentNodes: false`.
-- **7 not yet exposed** — custom module resolution ×3, `fixUnusedIdentifiers`,
-  a definition's display parts, `getChildCount`, `getAmbientModules` for `@types`
-  added after project creation.
-- **5 behaviour divergences** in tsgo itself — `node10` implicit-index module
-  specifiers ×2 and classic resolution ×1 (the same `GetModuleResolutionKind`
-  change as the `common` failures), organize-imports emitting two text changes
-  where TypeScript emitted one, and 11 lib-file diagnostics where TypeScript 5
-  reported 12.
+Worth recording, because the split was not what the earlier list predicted. Only
+a handful were genuinely absent; most were exposure gaps or expectations carried
+over from TypeScript 5.
+
+- **Restored by exposing what Go already had — 10.** A definition’s display parts
+  and each reference’s write access (`getDefinitionKindAndDisplayParts` and
+  `ast.IsWriteAccessForReference` were both already written), synthetic comments
+  through `printNode` (`EmitContext.AddSyntheticLeadingComment`), `getChildCount`
+  and the rest of the `Node` surface, and `ts.version` from `core.Version()`.
+- **Expectations that were TypeScript 5’s — 12.** `target: ES5` and downlevel
+  `var` emit, `moduleResolution: classic`/`node10`, `ModuleResolutionKind.NodeJs`,
+  the `JSDocTag` kind name, a lib-file diagnostic count, and `setParentNodes:
+  false`. The authority for the first three is the “Removed in TS7” block in
+  `internal/compiler/program.go`, which errors on each of them by name.
+- **Genuinely absent — 5.** `getEditsForRefactor` (tsgo has no refactor
+  providers at all), `fixUnusedIdentifiers` (its two fix-all ids are not among
+  tsgo’s three code fix providers, `internal/ls/codeactions.go`),
+  `convertToEsModule` and the 80005 suggestion (both from TypeScript’s
+  services-layer `suggestionDiagnostics.ts`, not ported — tsgo’s suggestions come
+  from the checker only), `Diagnostic#getSource` (`ast.Diagnostic` has no such
+  field; the LSP layer stamps a constant `"ts"`), and `customTransformers` (a
+  JavaScript transform cannot join a Go emit pipeline).
+- **Deferred — 2.** The `resolutionHost` describes, now skipped rather than
+  passing vacuously: the option is not accepted at all, so even the tests that
+  went green were configuring nothing.
+
+#### Divergences found while closing them
+
+- **`visitEachChild` visits token children.** The `typescript` package reserved
+  tokens for a separate `tokenVisitor` and skipped them otherwise; tsgo’s
+  generated visitor hands them to the same visitor as every other child. A
+  transform that annotates every childless node therefore also annotates a
+  binary operator and a file’s end-of-file token.
+- **Display parts are coarser.** A keyword run carries the space that follows
+  it rather than the space being a run of its own.
+- **Organize-imports coalesces.** Two adjacent import deletions come back as one
+  text change spanning both.
+- **A raw file-system write after the first read is not seen.** tsgo builds the
+  program when the first file is added, where TypeScript built its program
+  lazily; a write that bypasses ts-morph’s own file system therefore has to
+  happen before anything reads the project.
+- **`getRelativePathAsModuleSpecifierTo` no longer depends on the resolution
+  mode.** `node10` was the only mode that wanted an implicit index, and it is
+  removed, so every remaining mode spells the index out. The switch on
+  `moduleResolution` is gone from `Directory`.
 
 ## Still in flight
 
@@ -873,22 +932,13 @@ Not yet resolved, listed so they are not mistaken for finished work:
   vendored under a tracked path). `packages/common/tsconfig.json` also still sets
   `rootDir: ./src` while those imports reach outside it — invisible under
   `--noEmit`, fatal on a real emit.
-- **`packages/ts-morph` source** — type-checks clean, and `tsgo-wasm/project.mts`
-  now drives a real `Project` end to end (create, read, checker, manipulate,
-  rename, format, emit) against the tsgo session. It runs against the rollup
-  bundles, because ts-morph's sources use extensionless relative imports that
-  Node cannot resolve directly; the script rebuilds them when they are stale.
-  `packages/ts-morph/src/tests` still has **69** type errors (down from 171), each
-  one a test of API that is still off the surface: `getEditsForRefactor` ×3,
-  `ts.TransformationContext` ×3, `ts.version` ×2, `getDisplayParts` ×2,
-  `fixUnusedIdentifiers` ×2, `ModuleResolutionKind.NodeJs` ×2,
-  `ScriptTarget.ES3`/`ES5`, `getFixName`/`getFixId`/`getFixAllDescription`,
-  `getSource`, `getChildCount`, `JSDocFunctionType`, `ts.ResolvedModule`,
-  `ts.ResolvedTypeReferenceDirective`, `ts.resolveModuleName`,
-  `ts.resolveTypeReferenceDirective`, `addSyntheticLeadingComment`, plus 13
-  implicit-`any` parameters in callbacks whose host type went with them. The tests
-  are the record and are not to be deleted; the ones the table above marks "not
-  exposed" go green when their capability is routed.
+- **`packages/ts-morph` source** — type-checks clean, its suite is green (4362
+  passing, 9 pending, 0 failing) and `tsgo-wasm/project.mts` drives a real
+  `Project` end to end (create, read, checker, manipulate, rename, format,
+  emit) against the tsgo session. That script runs against the rollup bundles,
+  because ts-morph’s sources use extensionless relative imports that Node cannot
+  resolve directly; it rebuilds them when they are stale. The 22 type errors that
+  remain are all in tests for API still off the surface — see “Measured state”.
   Three known runtime gaps in the seam:
   the `DocumentRegistry` owns a purely virtual file system seeded with a
   synthetic `/tsconfig.json`, so a project rooted anywhere else (any Windows
@@ -924,7 +974,7 @@ Not yet resolved, listed so they are not mistaken for finished work:
   - **Not exposed — 19.** `Program#getSourceFiles()` (10) and
     `Program#getTypeChecker()` (9). tsgo's program has
     `getSourceFileNames()`/`getSourceFile(name)` and hangs the checker off the
-    *project*, so both are one-line conveniences on the tsgo client.
+    _project_, so both are one-line conveniences on the tsgo client.
   - **Renamed, different shape — 5.**
     `LanguageService#findRenameLocations`/`getDefinitionAtPosition`, spelled
     `rename` and `getDefinition` on the tsgo project; see "Language service
@@ -938,3 +988,12 @@ Not yet resolved, listed so they are not mistaken for finished work:
 - **Custom module resolution** — to be restored by adding a resolution callback
   to the fork, as described above. Deferred until the rest of the migration is
   done.
+- **Sweep the source comments into this document before the PR lands.** The
+  migration left explanatory notes scattered through the code — anything opening
+  with "Breaking change:", and every aside about what tsgo no longer has or does
+  not implement. They were useful while the shape of the port was still being
+  worked out, but they do not belong in shipped source: a reader of
+  `LanguageService.ts` does not need a history of what the `typescript` package
+  used to return. Every one of them should be deleted and, where it says
+  something this document does not already, folded in here first. Comments that
+  explain why the _current_ code is written the way it is stay.

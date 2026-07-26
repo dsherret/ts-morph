@@ -46,7 +46,7 @@ import { myExport } from "my-package";
     "compilerOptions": {
         "strict": true,
         "module": "commonjs",
-        "target": "es5",
+        "target": "es2015",
         "noLib": true,
         "rootDir": "./src",
         "types": ["my-package"]

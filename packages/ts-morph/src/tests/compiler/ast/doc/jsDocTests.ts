@@ -214,7 +214,7 @@ describe("JSDoc", () => {
       const { sourceFile } = getInfoFromText(text);
       const jsDoc = sourceFile.getFunctions()[0].getJsDocs()[0];
       const result = jsDoc.insertTag(index, structure);
-      expect(result.getKindName()).to.equal("JSDocTag");
+      expect(result.getKindName()).to.equal("JSDocUnknownTag");
       expect(sourceFile.getFullText()).to.equal(expectedText);
     }
 
@@ -251,7 +251,7 @@ describe("JSDoc", () => {
       const { sourceFile } = getInfoFromText(text);
       const jsDoc = sourceFile.getFunctions()[0].getJsDocs()[0];
       const result = jsDoc.addTag(structure);
-      expect(result.getKindName()).to.equal("JSDocTag");
+      expect(result.getKindName()).to.equal("JSDocUnknownTag");
       expect(sourceFile.getFullText()).to.equal(expectedText);
     }
 

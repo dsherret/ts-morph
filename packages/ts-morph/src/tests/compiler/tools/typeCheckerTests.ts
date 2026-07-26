@@ -1,12 +1,17 @@
 import { nameof, SymbolFlags, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { CallExpression, NamedNode, Node, SourceFile, TypeChecker } from "../../../compiler";
+import { Project } from "../../../Project";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../testHelpers";
 
 describe("TypeChecker", () => {
   describe(nameof<TypeChecker>("getAmbientModules"), () => {
     it("should get the ambient modules when they exist", () => {
-      const { project } = getInfoFromText("", { compilerOptions: { types: ["jquery"] } });
+      // the @types files are written before the project reads anything. tsgo owns
+      // the program, and it is built when the first file is added, so a write that
+      // goes straight to the file system afterwards is not seen — where classic
+      // TypeScript built its program lazily and would have picked one up.
+      const project = new Project({ useInMemoryFileSystem: true, compilerOptions: { types: ["jquery"] } });
       const fileSystem = project.getFileSystem();
 
       fileSystem.writeFileSync(
@@ -24,6 +29,7 @@ describe("TypeChecker", () => {
         "/node_modules/@types/jquery/package.json",
         `{ "name": "@types/jquery", "version": "1.0.0", "typeScriptVersion": "2.3" }`,
       );
+      project.createSourceFile("/main.ts", "");
 
       const ambientModules = project.getTypeChecker().getAmbientModules();
       expect(ambientModules.length).to.equal(1);

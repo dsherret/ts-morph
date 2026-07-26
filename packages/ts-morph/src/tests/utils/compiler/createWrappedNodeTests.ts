@@ -5,14 +5,15 @@ import { Project } from "../../../Project";
 import { createWrappedNode } from "../../../utils/compiler/createWrappedNode";
 
 describe("createWrappedNode", () => {
-  it("should throw an exception if passing in a node not created with setParentNodes set to true.", () => {
-    const sourceFile = ts.createSourceFile("file.ts", "class MyClass {}", ScriptTarget.ES2016, false);
-    let child: ts.Node;
-    ts.forEachChild(sourceFile, node => child = node);
-    expect(child!.parent).to.equal(undefined);
+  it("should throw an exception if passing in a node that has no parent.", () => {
+    // `setParentNodes: false` used to be the way to get one of these. TypeScript 7
+    // always links parents while parsing, so a factory node is now the only kind
+    // that reaches createWrappedNode without a source file above it.
+    const child = ts.factory.createIdentifier("MyClass") as ts.Node;
+    expect(child.parent).to.equal(undefined);
     expect(() => {
       createWrappedNode(child);
-    }).to.throw(errors.InvalidOperationError, "Please ensure the node was created from a source file with 'setParentNodes' set to 'true'.");
+    }).to.throw(errors.InvalidOperationError, "Please ensure the node is part of a source file.");
   });
 
   it("should get a wrapped node", () => {

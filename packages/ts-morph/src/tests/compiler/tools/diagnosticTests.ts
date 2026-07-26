@@ -56,11 +56,9 @@ describe("Diagnostic", () => {
     });
   });
 
-  describe(nameof<Diagnostic>("getSource"), () => {
-    it("should get the source", () => {
-      expect(constError.getSource()).to.be.undefined;
-    });
-  });
+  // getSource is gone: tsgo's ast.Diagnostic carries no source field. The LSP
+  // layer stamps a constant "ts" on the way out (internal/ls/lsconv/converters.go),
+  // so there is nothing per-diagnostic left to read.
 
   describe(nameof<Diagnostic>("getSourceFile"), () => {
     it("should get the source file", () => {

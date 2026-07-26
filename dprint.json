@@ -6,6 +6,7 @@
   },
   "excludes": [
     "**/node_modules",
+    "submodules/",
     "**/*-lock.json",
     "packages/*/dist/",
     "packages/*/lib/*.ts",

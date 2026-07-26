@@ -8,7 +8,7 @@ const fileSystem = new RealFileSystemHost();
 function getTextForLibFile(fileName: string) {
   return {
     filePath: path.join("node_modules/typescript/lib", fileName),
-    text: fileSystem.readFileSync(path.join(getCompilerLibFolder(ts.version), fileName)),
+    text: fileSystem.readFileSync(path.join(getCompilerLibFolder(ts.getVersion()), fileName)),
   };
 }
 

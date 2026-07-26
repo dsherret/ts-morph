@@ -89,7 +89,10 @@ describe("Identifier", () => {
       expect(definition.getName()).to.equal("function myFunction(): void");
       expect(definition.getTextSpan().getStart()).to.equal(9);
       expect(definition.getTextSpan().getLength()).to.equal("myFunction".length);
-      expect(definition.getDisplayParts()[0].getText()).to.equal("function"); // only bother testing the first one
+      // tsgo splits the display text into fewer runs than the `typescript` package
+      // did: the keyword carries the space that followed it rather than the space
+      // being a run of its own
+      expect(definition.getDisplayParts()[0].getText()).to.equal("function "); // only bother testing the first one
       expect(definition.getDisplayParts()[0].getKind()).to.equal("keyword");
 
       // first reference

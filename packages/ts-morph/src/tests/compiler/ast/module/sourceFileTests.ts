@@ -698,7 +698,7 @@ describe("SourceFile", () => {
       expect(result).to.be.instanceof(EmitResult);
       const writeLog = fileSystem.getWriteLog();
       expect(writeLog[0].filePath).to.equal("/dist/file1.js");
-      expect(writeLog[0].fileText).to.equal("var num1 = 1;\n");
+      expect(writeLog[0].fileText).to.equal("const num1 = 1;\n");
       expect(writeLog.length).to.equal(1);
     }
 
@@ -713,20 +713,20 @@ describe("SourceFile", () => {
 
   describe(nameof<SourceFile>("getEmitOutput"), () => {
     it("should get the emit output for the source file", () => {
-      const project = new Project({ compilerOptions: { noLib: true, outDir: "dist", target: ScriptTarget.ES5 }, useInMemoryFileSystem: true });
+      const project = new Project({ compilerOptions: { noLib: true, outDir: "dist", target: ScriptTarget.ES2015 }, useInMemoryFileSystem: true });
       const sourceFile = project.createSourceFile("file1.ts", "const num1 = 1;");
       const result = sourceFile.getEmitOutput();
 
       expect(result.getEmitSkipped()).to.be.false;
       expect(result.getOutputFiles().length).to.equal(1);
       const outputFile = result.getOutputFiles()[0];
-      expect(outputFile.getText()).to.equal("\"use strict\";\nvar num1 = 1;\n");
+      expect(outputFile.getText()).to.equal("\"use strict\";\nconst num1 = 1;\n");
       expect(outputFile.getFilePath()).to.equal("/dist/file1.js");
     });
 
     it("should only emit the declaration file when specified", () => {
       const project = new Project({
-        compilerOptions: { noLib: true, declaration: true, outDir: "dist", target: ScriptTarget.ES5 },
+        compilerOptions: { noLib: true, declaration: true, outDir: "dist", target: ScriptTarget.ES2015 },
         useInMemoryFileSystem: true,
       });
       const sourceFile = project.createSourceFile("file1.ts", "const num1 = 1;");
@@ -1145,13 +1145,8 @@ function myFunction(param: MyClass) {
       doSourceFileTest("/dir/file.ts", "/dir2/index.d.ts", "../dir2/index");
     });
 
-    it("should use an explicit index when the module resolution strategy is classic", () => {
-      doSourceFileTest("/dir/file.ts", "/dir2/index.d.ts", "../dir2/index", { moduleResolution: ModuleResolutionKind.Classic });
-    });
-
-    it("should use an implicit index when the module resolution strategy is node10", () => {
-      doSourceFileTest("/dir/file.ts", "/dir2/index.d.ts", "../dir2", { moduleResolution: ModuleResolutionKind.NodeJs });
-    });
+    // the module resolution mode no longer changes the answer: TypeScript 7 removed
+    // both classic and node10, and the index is spelled out under every mode left.
 
     it("should use an implicit index when specifying the index file in the same directory", () => {
       doSourceFileTest("/dir/file.ts", "/dir/index.ts", "./index");
@@ -1170,10 +1165,6 @@ function myFunction(param: MyClass) {
 
     it("should get the path to a directory as a module specifier", () => {
       doDirectoryTest("/dir/file.ts", "/dir/dir2", "./dir2/index");
-    });
-
-    it("should use an explicit index when getting the module specifier to a directory and the module resolution strategy is classic", () => {
-      doDirectoryTest("/dir/file.ts", "/dir2", "../dir2/index", { moduleResolution: ModuleResolutionKind.Classic });
     });
   });
 
@@ -1696,63 +1687,7 @@ interface I {
     });
   });
 
-  describe(nameof<SourceFile>("fixUnusedIdentifiers"), () => {
-    it("should remove unused import declarations, import names, and default imports", () => {
-      const project = new Project({ useInMemoryFileSystem: true });
-      project.createSourceFile(
-        "test.d.ts",
-        `
-declare module "foo";
-declare module "a";
-declare module "b";
-declare module "bar";
-`,
-      );
-      const sourceFile = project.createSourceFile(
-        "/test.ts",
-        `
-/// <reference path="./test.d.ts" />
-import {foo} from 'foo'
-import * as a from 'a'
-import b from 'b'
-import {used, unused} from 'bar'
-export const c = used + 1
-export function f(...args: any[]) {
-    var a
-    const c = 5;
-    const {x, y, z} = {x: 1, y: 1, z: 1}
-    return y + c
-}
-export class C<T> {
-    private constructor(a: number, b: Date) { this.a = a; this.b = b }
-    private m() { }
-    private b: Date
-    private a = 1
-    protected n({a, b, c}: {a: number, b: string, c: boolean}) { return this.b.getTime() + a }
-}
-export type T<S, V> = V extends string ? never : any
-            `,
-      );
-      expect(project.getPreEmitDiagnostics().map(d => d.getMessageText())).to.deep.equal([]);
-      sourceFile.fixUnusedIdentifiers();
-      sourceFile.fixUnusedIdentifiers();
-      expect(sourceFile.getFullText().trim()).to.equals(`
-/// <reference path="./test.d.ts" />
-import {used} from 'bar'
-export const c = used + 1
-export function f() {
-    const c = 5;
-    const {y} = {x: 1, y: 1, z: 1}
-    return y + c
-}
-export class C {
-    private constructor(a: number, b: Date) { this.a = a; this.b = b }
-    private b: Date
-    private a = 1
-    protected n({a}: {a: number, b: string, c: boolean}) { return this.b.getTime() + a }
-}
-export type T<V> = V extends string ? never : any
-                        `.trim());
-    });
-  });
+  // fixUnusedIdentifiers is gone: it drove the unusedIdentifier_delete and
+  // unusedIdentifier_deleteImports fix-alls, and tsgo registers neither. Its three
+  // code fix providers are listed at internal/ls/codeactions.go:86.
 });

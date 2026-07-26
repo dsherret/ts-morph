@@ -6,7 +6,7 @@ describe("tests for issue #415", () => {
     const { project } = getInfoFromText("", {
       includeLibDts: true,
       compilerOptions: {
-        target: ScriptTarget.ES5,
+        target: ScriptTarget.ES2015,
         rootDir: "src",
         typeRoots: ["typings"],
       },

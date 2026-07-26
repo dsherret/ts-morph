@@ -52,7 +52,7 @@ export function createWrappedNode<T extends ts.Node = ts.Node>(node: T, opts: Cr
     if (compilerNode.kind === SyntaxKind.SourceFile)
       return compilerNode as ts.SourceFile;
     if (compilerNode.parent == null)
-      throw new errors.InvalidOperationError("Please ensure the node was created from a source file with 'setParentNodes' set to 'true'.");
+      throw new errors.InvalidOperationError("Please ensure the node is part of a source file. A node built by the factory has no parent to find one through.");
 
     let parent = compilerNode;
     while (parent.parent != null)

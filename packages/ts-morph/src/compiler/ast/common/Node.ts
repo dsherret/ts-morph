@@ -1588,7 +1588,10 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     function handleTransformation(oldNode: ts.Node, newNode: ts.Node, start: number, end: number) {
-      if (oldNode === newNode)
+      // an annotated node counts as changed even when it is the same object: a
+      // synthetic comment lives on the node's `emitNode` rather than in its
+      // fields, so nothing else here would notice it was added
+      if (oldNode === newNode && (newNode as { emitNode?: unknown }).emitNode == null)
         return;
 
       let lastTransformation: Transformation | undefined;

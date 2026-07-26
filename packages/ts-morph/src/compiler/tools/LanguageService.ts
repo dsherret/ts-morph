@@ -373,19 +373,23 @@ export class LanguageService {
       // an anonymous `export default class {}` has no name to match, and the
       // reference tsgo reports for it is the `default` keyword on the declaration
       definitionName == null ? node.parent === definitionNode : node === definitionName;
+    // the definition's name is its display text — "function myFunction(): void"
+    // rather than "myFunction" — which is what the classified runs spell out
+    const displayParts = entry.displayParts.map(part => ({ text: part.text, kind: part.kind }));
     return {
       definition: {
         ...toNodeSpan(entry.definition.path, definitionName ?? definitionNode),
         kind: getScriptElementKind(entry.symbol),
-        name: entry.symbol?.name ?? "",
+        name: displayParts.length > 0 ? displayParts.map(part => part.text).join("") : entry.symbol?.name ?? "",
+        displayParts,
         containerKind: ts.ScriptElementKind.unknown,
         containerName: "",
       },
-      references: entry.references.map(handle => {
+      references: entry.references.map((handle, i) => {
         const node = handle.resolve();
         return {
           ...toNodeSpan(handle.path, node),
-          isWriteAccess: false,
+          isWriteAccess: entry.writeAccess[i] ?? false,
           isDefinition: handle.path === entry.definition.path && node != null && isDefinitionNode(node),
         };
       }),

@@ -873,62 +873,21 @@ export class Directory {
   /** @internal */
   getRelativePathAsModuleSpecifierTo(sourceFileOrDir: SourceFile | Directory | string): string;
   getRelativePathAsModuleSpecifierTo(sourceFileDirOrFilePath: SourceFile | Directory | string) {
-    // what the project asked for wins over what the compiler resolves it to:
-    // tsgo folds the deprecated Node10 and Classic values into Bundler, but the
-    // shape of a generated module specifier should still follow the request
-    const specifiedModuleResolution = this._context.compilerOptions.get().moduleResolution;
-    const moduleResolution = specifiedModuleResolution == null || specifiedModuleResolution === ModuleResolutionKind.Unknown
-      ? this._context.program.getEmitModuleResolutionKind()
-      : specifiedModuleResolution;
+    // the specifier no longer depends on the module resolution mode. It used to:
+    // `node10` asked for an implicit index (`../dir`) where every other mode
+    // wanted it spelled out (`../dir/index`). TypeScript 7 removed both `node10`
+    // and `classic` — see the "Removed in TS7" block in
+    // internal/compiler/program.go — and every mode that is left spells it out.
     const thisDirectory = this;
     const moduleSpecifier = FileUtils.getRelativePathTo(this.getPath(), getPath()).replace(/((\.d\.ts$)|(\.[^/.]+$))/i, "");
     return moduleSpecifier.startsWith("../") ? moduleSpecifier : "./" + moduleSpecifier;
 
     function getPath() {
       return sourceFileDirOrFilePath instanceof SourceFile
-        ? getPathForSourceFile(sourceFileDirOrFilePath)
+        ? sourceFileDirOrFilePath.getFilePath()
         : sourceFileDirOrFilePath instanceof Directory
-        ? getPathForDirectory(sourceFileDirOrFilePath)
-        : getPathForFilePath(thisDirectory._context.fileSystemWrapper.getStandardizedAbsolutePath(sourceFileDirOrFilePath, thisDirectory.getPath()));
-
-      function getPathForSourceFile(sourceFile: SourceFile) {
-        return getPathForFilePath(sourceFile.getFilePath());
-      }
-
-      function getPathForDirectory(dir: Directory) {
-        switch (moduleResolution) {
-          case ModuleResolutionKind.Node10:
-            if (dir === thisDirectory)
-              return FileUtils.pathJoin(dir.getPath(), "index.ts");
-            return dir.getPath();
-          case ModuleResolutionKind.Unknown:
-          case ModuleResolutionKind.Classic:
-          case ModuleResolutionKind.Node16:
-          case ModuleResolutionKind.NodeNext:
-          case ModuleResolutionKind.Bundler:
-            return FileUtils.pathJoin(dir.getPath(), "index.ts");
-          default:
-            return errors.throwNotImplementedForNeverValueError(moduleResolution);
-        }
-      }
-
-      function getPathForFilePath(filePath: StandardizedFilePath) {
-        const dirPath = FileUtils.getDirPath(filePath);
-        switch (moduleResolution) {
-          case ModuleResolutionKind.Node10:
-            if (dirPath === thisDirectory.getPath())
-              return filePath;
-            return filePath.replace(/\/index?(\.d\.ts|\.ts|\.js)$/i, "") as StandardizedFilePath;
-          case ModuleResolutionKind.Unknown:
-          case ModuleResolutionKind.Classic:
-          case ModuleResolutionKind.Node16:
-          case ModuleResolutionKind.NodeNext:
-          case ModuleResolutionKind.Bundler:
-            return filePath;
-          default:
-            return errors.throwNotImplementedForNeverValueError(moduleResolution);
-        }
-      }
+        ? FileUtils.pathJoin(sourceFileDirOrFilePath.getPath(), "index.ts")
+        : thisDirectory._context.fileSystemWrapper.getStandardizedAbsolutePath(sourceFileDirOrFilePath, thisDirectory.getPath());
     }
   }
 

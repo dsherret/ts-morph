@@ -12,26 +12,26 @@ describe("LanguageService", () => {
           emitSkipped: false,
           outputFiles: [{
             fileName: "/" + sourceFile.getBaseName().replace(".ts", ".js"),
-            text: "\"use strict\";\nvar t = 5;\n",
+            text: "\"use strict\";\nconst t = 5;\n",
             writeByteOrderMark: false,
           }],
         });
       }
 
-      const { sourceFile } = getInfoFromText("const t = 5;", { compilerOptions: { target: ScriptTarget.ES5 } });
+      const { sourceFile } = getInfoFromText("const t = 5;", { compilerOptions: { target: ScriptTarget.ES2015 } });
 
       doTest(sourceFile);
       doTest(sourceFile.getFilePath());
     });
 
     it("should get the emit output when specifying a source file", () => {
-      const { sourceFile, project } = getInfoFromText("const t = 5;", { compilerOptions: { target: ScriptTarget.ES5 } });
+      const { sourceFile, project } = getInfoFromText("const t = 5;", { compilerOptions: { target: ScriptTarget.ES2015 } });
       const output = sourceFile._context.languageService.getEmitOutput(sourceFile);
       checkOutput(output, {
         emitSkipped: false,
         outputFiles: [{
           fileName: "/" + sourceFile.getBaseName().replace(".ts", ".js"),
-          text: "\"use strict\";\nvar t = 5;\n",
+          text: "\"use strict\";\nconst t = 5;\n",
           writeByteOrderMark: false,
         }],
       });
@@ -61,14 +61,13 @@ describe("LanguageService", () => {
       const { sourceFile, project } = getInfoFromText("import * as bravo from 'bravo';\nimport * as alpha from 'alpha';", { filePath: "/file.ts" });
       const results = project.getLanguageService().organizeImports(sourceFile);
       expect(results.length).to.equal(1);
+      // one change rather than two: tsgo's change tracker coalesces the adjacent
+      // deletions into a single span covering both import declarations.
       checkFileTextChanges(results[0], {
         fileName: "/file.ts",
         textChanges: [{
           newText: "",
-          span: { start: 0, length: 32 },
-        }, {
-          newText: "",
-          span: { start: 32, length: 31 },
+          span: { start: 0, length: 63 },
         }],
       });
     });
@@ -101,53 +100,8 @@ describe("LanguageService", () => {
     });
   });
 
-  describe(nameof<LanguageService>("getEditsForRefactor"), () => {
-    it("should get edits for known refactor 'Move to a new file'", () => {
-      const { sourceFile, project } = getInfoFromText("export class A {}\nfunction f() { return new A(); }", { filePath: "/file.ts" });
-      const nameNode = sourceFile.getClassOrThrow("A").getNameNodeOrThrow();
-      const results = project.getLanguageService().getEditsForRefactor(sourceFile, {}, nameNode, "Move to a new file", "Move to a new file", {});
-      expect(results!.getEdits()).to.lengthOf(2);
-      expect(results!.getRenameFilePath()).to.be.undefined;
-      expect(results!.getRenameLocation()).to.be.undefined;
-
-      const edit1 = results!.getEdits().find(edit => edit.getFilePath() === sourceFile.getFilePath());
-      const edit2 = results!.getEdits().find(edit => edit.getFilePath() === "/A.ts");
-
-      expect(results!.getEdits()[0].isNewFile()).to.be.false;
-      expect(results!.getEdits()[1].isNewFile()).to.be.true;
-
-      checkFileTextChanges(edit1!, {
-        fileName: "/file.ts",
-        textChanges: [{
-          newText: "import { A } from \"./A\";\n\n",
-          span: { start: 0, length: 0 },
-        }, {
-          newText: "",
-          span: { start: 0, length: 18 },
-        }],
-      });
-
-      checkFileTextChanges(edit2!, {
-        fileName: "/A.ts",
-        textChanges: [{
-          newText: "export class A { }\n",
-          span: { start: 0, length: 0 },
-        }],
-      });
-    });
-
-    it("should return undefined if given refactor doesn't exists", () => {
-      const { project, sourceFile } = getInfoFromText("const moment = require('moment'); moment(); ");
-      expect(project.getLanguageService().getEditsForRefactor(sourceFile, {}, 1, "Non Existent Refactor", "Non Existent Refactor Action", {}))
-        .to.be.undefined;
-    });
-
-    it("should throw for a file that doesn't exist", () => {
-      const { project } = getInfoFromText("const moment = require('moment'); moment(); ");
-      expect(() => project.getLanguageService().getEditsForRefactor("nonExistent.ts", {}, 1, "Move to a new file", "Move to a new file", {}))
-        .to.throw(errors.FileNotFoundError);
-    });
-  });
+  // getEditsForRefactor is gone: tsgo has no refactor surface at all. See
+  // src/tests/removed-capabilities/refactorEditInfoTests.ts for the record.
 
   describe(nameof<LanguageService>("getCombinedCodeFix"), () => {
     it("should get the combined code fixes", () => {
@@ -170,47 +124,49 @@ describe("LanguageService", () => {
   });
 
   describe(nameof<LanguageService>("getCodeFixesAtPosition"), () => {
-    it("should get code fixes at position for known code fixes convertToEsModule (error code 80001)", () => {
-      const { sourceFile, project } = getInfoFromText("const moment = require('moment'); moment(); ", { filePath: "/file.ts" });
-      const variableDeclaration = sourceFile.getVariableDeclarationOrThrow("moment");
-      const results = project.getLanguageService().getCodeFixesAtPosition(
-        sourceFile,
-        variableDeclaration.getStart(),
-        variableDeclaration.getEnd(),
-        [80001],
-      );
+    // this used to exercise convertToEsModule (error code 80001), which tsgo has
+    // no provider for — its three are import fixes, isolated declarations and
+    // class-implements. See internal/ls/codeactions.go:86.
+    it("should get code fixes at position for known code fixes fixMissingImport (error code 2304)", () => {
+      const { sourceFile, project } = getInfoFromText("export class T extends Node {}", { filePath: "/file.ts" });
+      project.createSourceFile("/Node.ts", "export class Node { prop: string; }");
+      const nameNode = sourceFile.getClassOrThrow("T").getExtendsOrThrow().getExpression();
+      const results = project.getLanguageService().getCodeFixesAtPosition(sourceFile, nameNode.getStart(), nameNode.getEnd(), [2304]);
 
+      // getFixName, getFixId and getFixAllDescription are gone with the fix-all
+      // grouping; see the note on the CodeFixAction wrapper.
       expect(results).to.lengthOf(1);
-      expect(results[0]!.getFixName()).to.equal("convertToEsModule");
-      expect(results[0]!.getDescription()).to.equal("Convert to ES module");
-
-      expect(results[0]!.getFixId()).to.be.undefined;
-      expect(results[0]!.getFixAllDescription()).to.be.undefined;
+      expect(results[0]!.getDescription()).to.equal("Add import from \"./Node\"");
 
       checkFileTextChanges(results[0]!.getChanges()[0], {
         fileName: "/file.ts",
         textChanges: [{
-          newText: "import moment from 'moment';",
-          span: { start: 0, length: 33 },
+          newText: "import { Node } from \"./Node\";\n\n",
+          span: { start: 0, length: 0 },
         }],
       });
     });
 
     it("should throw for a file that doesn't exist", () => {
       const { project } = getInfoFromText("const moment = require('moment'); moment(); ");
-      expect(() => project.getLanguageService().getCodeFixesAtPosition("nonExistent.ts", 0, 1, [80001], {}, {})).to.throw(errors.FileNotFoundError);
+      // the trailing formatSettings and userPreferences arguments are gone: tsgo
+      // takes neither for a code fix
+      expect(() => project.getLanguageService().getCodeFixesAtPosition("nonExistent.ts", 0, 1, [2304])).to.throw(errors.FileNotFoundError);
     });
   });
 
   describe(nameof<LanguageService>("getSuggestionDiagnostics"), () => {
+    // this used to assert 80005, "'require' call may be converted to an import".
+    // tsgo's suggestions come from the checker only — deprecated declarations and
+    // unused ones — so the services-layer suggestions classic TypeScript computed
+    // in suggestionDiagnostics.ts are not produced.
     it("should return default suggestion diagnostics for file", () => {
-      const { sourceFile, project } = getInfoFromText("const moment = require('moment'); moment(); ");
+      const { sourceFile, project } = getInfoFromText("/** @deprecated */\nfunction old() {}\nold();");
       const diagnostics = project.getLanguageService().getSuggestionDiagnostics(sourceFile);
       expect(diagnostics).to.lengthOf(1);
-      expect(diagnostics[0].getCode()).to.equal(80005);
-      expect(diagnostics[0].getMessageText()).to.equal("'require' call may be converted to an import.");
-      expect(diagnostics[0].getStart()).to.equal(15);
-      expect(diagnostics[0].getLength()).to.equal(17);
+      expect(diagnostics[0].getCode()).to.equal(6387);
+      expect(diagnostics[0].getStart()).to.equal(37);
+      expect(diagnostics[0].getLength()).to.equal(3);
     });
 
     it("should throw for a file that doesn't exist", () => {
