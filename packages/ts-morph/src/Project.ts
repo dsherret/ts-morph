@@ -9,6 +9,7 @@ import {
   IterableUtils,
   matchGlobs,
   RealFileSystemHost,
+  ResolutionHostFactory,
   runtime,
   ScriptKind,
   StandardizedFilePath,
@@ -46,6 +47,14 @@ export interface ProjectOptions {
   skipLoadingLibFiles?: boolean;
   /** The folder to use for loading lib files. */
   libFolderPath?: string;
+  /**
+   * Resolves module specifiers in place of the compiler.
+   *
+   * The compiler asks the host before resolving anything itself, so a project
+   * can resolve by rules the compiler does not implement. See
+   * `ResolutionHosts.deno` for the ready-made one.
+   */
+  resolutionHost?: ResolutionHostFactory;
   /** Manipulation settings */
   manipulationSettings?: Partial<ManipulationSettings>;
   /** Whether to use an in-memory file system. @default false */
@@ -111,6 +120,7 @@ export class Project {
       configFileParsingDiagnostics: tsConfigResolver?.getErrors() ?? [],
       skipLoadingLibFiles: options.skipLoadingLibFiles,
       libFolderPath: options.libFolderPath,
+      resolutionHost: options.resolutionHost,
     });
 
     // initialize manipulation settings

@@ -29,6 +29,11 @@ export interface SessionOptions {
     /** Current working directory used for module resolution. */
     cwd: string;
     /**
+     * Whether the host answers module resolutions itself. Off by default: with
+     * it on the compiler asks the host about every specifier.
+     */
+    resolveModuleName?: boolean;
+    /**
      * Directory the default lib files are read from. Defaults to the libs bundled
      * in the module; a host that supplies its own lib files points this at them.
      */

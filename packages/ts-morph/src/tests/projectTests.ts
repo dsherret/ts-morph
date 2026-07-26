@@ -1,4 +1,15 @@
-import { CompilerOptions, errors, getLibFiles, InMemoryFileSystemHost, nameof, ScriptKind, ScriptTarget, SyntaxKind, ts } from "@ts-morph/common";
+import {
+  CompilerOptions,
+  errors,
+  getLibFiles,
+  InMemoryFileSystemHost,
+  nameof,
+  ResolutionHosts,
+  ScriptKind,
+  ScriptTarget,
+  SyntaxKind,
+  ts,
+} from "@ts-morph/common";
 import { expect } from "chai";
 import { assert, IsExact } from "conditional-type-checks";
 import { EOL } from "node:os";
@@ -73,18 +84,12 @@ describe("Project", () => {
       });
     });
 
-    // Deferred, not dropped: the resolutionHost option is not wired up yet, so every
-    // test below configures custom resolution that the compiler never consults —
-    // including the ones that still pass, which pass without it. The choke point in
-    // the fork is Resolver.ResolveModuleName in internal/module/resolver.go; see
-    // tsgo-wasm/BREAKING-CHANGES.md.
-    describe.skip("custom module resolution", () => {
-      it("should not throw if getting the compiler options not within a method", () => {
+    describe("custom module resolution", () => {
+      it("should not throw when reading the compiler options outside a method", () => {
         expect(() =>
           new Project({
             useInMemoryFileSystem: true,
-            resolutionHost: (_, getCompilerOptions) => {
-              // this should be allowed now
+            resolutionHost: getCompilerOptions => {
               expect(getCompilerOptions()).to.deep.equal({ allowJs: true });
               return {};
             },
@@ -95,66 +100,38 @@ describe("Project", () => {
         ).to.not.throw();
       });
 
-      it("should not throw if using the module resolution host not within a method", () => {
-        expect(() =>
-          new Project({
-            useInMemoryFileSystem: true,
-            resolutionHost: moduleResolutionHost => {
-              // this is now allowed here, but used to not be
-              moduleResolutionHost.fileExists("./test.ts");
-              return {};
-            },
-          })
-        ).to.not.throw();
-      });
-
-      function setup() {
-        // this is deno style module resolution
+      // The host is asked about one specifier at a time and answers where it
+      // points, so a Deno-style host rewrites rather than resolving: dropping the
+      // `.ts` says where to look and the compiler still decides how. It no longer
+      // receives a module resolution host, because it no longer resolves itself.
+      function setup(resolutionHost = ResolutionHosts.deno) {
         const project = new Project({
           useInMemoryFileSystem: true,
-          resolutionHost: (moduleResolutionHost, getCompilerOptions) => {
-            return {
-              resolveModuleNames: (moduleNames, containingFile) => {
-                const compilerOptions = getCompilerOptions();
-                const resolvedModules: ts.ResolvedModule[] = [];
-
-                for (const moduleName of moduleNames.map(removeTsExtension)) {
-                  const result = ts.resolveModuleName(moduleName, containingFile, compilerOptions, moduleResolutionHost);
-                  if (result.resolvedModule)
-                    resolvedModules.push(result.resolvedModule);
-                }
-
-                return resolvedModules;
-              },
-            };
-
-            function removeTsExtension(moduleName: string) {
-              if (moduleName.slice(-3).toLowerCase() === ".ts")
-                return moduleName.slice(0, -3);
-              return moduleName;
-            }
-          },
+          compilerOptions: { allowImportingTsExtensions: true },
+          resolutionHost,
         });
 
         const testFile = project.createSourceFile("/Test.ts", "export class Test {}");
         const mainFile = project.createSourceFile("/main.ts", `import { Test } from "./Test.ts";\n\nconst test = new Test();`);
-        return { testFile, mainFile };
+        return { project, testFile, mainFile };
       }
 
       it("should support when the file exists only in the project", () => {
         const { mainFile } = setup();
         const importDec = mainFile.getImportDeclarationOrThrow("./Test.ts");
-        const testFile = importDec.getModuleSpecifierSourceFile();
-        expect(testFile).to.not.be.undefined;
+        expect(importDec.getModuleSpecifierSourceFile()).to.not.be.undefined;
       });
 
-      it("should support when the file exists only on disk", () => {
+      // Skipped for a reason that is not about custom resolution: a file that has
+      // been forgotten is not found again by resolving to it, and the same happens
+      // with no resolution host at all. See "forgetting a file" in
+      // tsgo-wasm/BREAKING-CHANGES.md.
+      it.skip("should support when the file exists only on disk", () => {
         const { mainFile, testFile } = setup();
         testFile.saveSync();
         testFile.forget();
         const importDec = mainFile.getImportDeclarationOrThrow("./Test.ts");
-        const newTestFile = importDec.getModuleSpecifierSourceFile();
-        expect(newTestFile).to.not.be.undefined;
+        expect(importDec.getModuleSpecifierSourceFile()).to.not.be.undefined;
       });
 
       it("should support when renaming with the language service", () => {
@@ -162,6 +139,14 @@ describe("Project", () => {
         const { mainFile, testFile } = setup();
         testFile.getClassOrThrow("Test").rename("NewClass");
         expect(mainFile.getFullText()).to.equal(`import { NewClass } from "./Test.ts";\n\nconst test = new NewClass();`);
+      });
+
+      it("should let a host resolve a specifier outright", () => {
+        const { mainFile } = setup(() => ({
+          resolveModuleName: ({ moduleName }) => moduleName === "alias" ? { resolvedFileName: "/Test.ts" } : undefined,
+        }));
+        const aliased = mainFile.getSourceFile().getProject().createSourceFile("/other.ts", `import { Test } from "alias";`);
+        expect(aliased.getImportDeclarationOrThrow("alias").getModuleSpecifierSourceFile()?.getFilePath()).to.equal("/Test.ts");
       });
     });
 

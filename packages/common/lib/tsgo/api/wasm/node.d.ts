@@ -7,6 +7,7 @@
  * until the session is ready; every subsequent request is a plain function call.
  */
 import type { FileSystem } from "../fs";
+import type { ModuleNameResolver } from "../options";
 import { API } from "../sync/api";
 export interface NodeWasmApiOptions {
     /**
@@ -25,6 +26,11 @@ export interface NodeWasmApiOptions {
     useCaseSensitiveFileNames?: boolean;
     /** Virtual filesystem callbacks. */
     fs?: FileSystem;
+    /**
+     * Resolves a module specifier in place of the compiler. See the option of
+     * the same name in ../options.ts for what an answer means.
+     */
+    resolveModuleName?: ModuleNameResolver;
     /** When true, collect per-request timing information. */
     collectTiming?: boolean;
 }

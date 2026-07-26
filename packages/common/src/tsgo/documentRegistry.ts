@@ -13,6 +13,7 @@
  */
 import type { CompilerOptions } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/compilerOptions.js";
 import { createVirtualFileSystem, type FileSystem } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/fs.js";
+import type { ModuleNameResolver } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/options.js";
 import type { API, Project, Snapshot } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/sync/api.js";
 import { createWasmAPI } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/wasm/node.js";
 import type { SourceFile } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/index.js";
@@ -30,6 +31,11 @@ const configFilePath = "/tsconfig.json";
 const retiredSnapshotLimit = 2;
 
 export interface DocumentRegistryOptions {
+  /**
+   * Resolves module specifiers in place of the compiler. Nothing is asked of it
+   * when absent, which is also when the compiler pays nothing for it.
+   */
+  resolveModuleName?: ModuleNameResolver;
   /** Compiler options for the registry's project. */
   compilerOptions?: CompilerOptions;
   /** Files to seed the registry with, as path → contents. */
@@ -77,6 +83,7 @@ export class DocumentRegistry {
     this.#api = createWasmAPI({
       cwd: "/",
       fs: options.fs == null ? this.#fs : overlay(this.#fs, options.fs),
+      resolveModuleName: options.resolveModuleName,
       defaultLibraryPath: options.libFolderPath,
       useCaseSensitiveFileNames: options.useCaseSensitiveFileNames,
     });

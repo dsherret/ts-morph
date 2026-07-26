@@ -10,6 +10,7 @@ import {
   StandardizedFilePath,
   StringUtils,
   SyntaxKind,
+  toModuleNameResolver,
   ts,
   TypeFlags,
   WeakCache,
@@ -89,6 +90,9 @@ export class CompilerFactory {
       // so module resolution, `/// <reference>`s and typeRoots see everything
       // ts-morph's file system holds, not only the files pushed into the registry
       fs: createFileSystemAdapter(context.fileSystemWrapper, { encoding: context.compilerOptions.getEncoding() }),
+      // the compiler asks this before resolving a specifier itself; absent when
+      // the project named no resolution host, which is when it costs nothing
+      resolveModuleName: toModuleNameResolver(context.resolutionHost),
       // ts-morph keeps the lib files on its own file system, so the compiler is
       // pointed at them rather than at the copies bundled inside the wasm module
       libFolderPath: context.skipLoadingLibFiles ? undefined : context.libFolderPath ?? libFolderInMemoryPath,

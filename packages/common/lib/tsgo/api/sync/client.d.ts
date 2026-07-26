@@ -7,6 +7,13 @@ export declare class Client {
     private timing;
     constructor(options: ClientOptions);
     /**
+     * Wires the module resolver onto the channel.
+     *
+     * An empty answer on the wire means the host declined, which the compiler
+     * reads as "resolve this one yourself".
+     */
+    private registerModuleNameResolver;
+    /**
      * Wires virtual filesystem callbacks onto the channel. The wire contract is
      * transport-independent, so this is shared by the subprocess and Wasm paths.
      */

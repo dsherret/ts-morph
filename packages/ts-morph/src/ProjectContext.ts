@@ -1,4 +1,12 @@
-import { CompilerOptionsContainer, createModuleResolutionHost, errors, TransactionalFileSystem, ts } from "@ts-morph/common";
+import {
+  CompilerOptionsContainer,
+  createModuleResolutionHost,
+  errors,
+  type ResolutionHost,
+  type ResolutionHostFactory,
+  TransactionalFileSystem,
+  ts,
+} from "@ts-morph/common";
 import { CodeBlockWriter } from "./codeBlockWriter";
 import { Diagnostic, LanguageService, QuoteKind, SourceFile, TypeChecker } from "./compiler";
 import { CompilerFactory, InProjectCoordinator, StructurePrinterFactory } from "./factories";
@@ -18,6 +26,7 @@ export interface ProjectContextCreationParams {
   typeChecker?: ts.TypeChecker;
   skipLoadingLibFiles: boolean | undefined;
   libFolderPath: string | undefined;
+  resolutionHost?: ResolutionHostFactory;
 }
 
 /**
@@ -49,6 +58,12 @@ export class ProjectContext {
   readonly skipLoadingLibFiles: boolean | undefined;
   /** Folder the lib files are read from, when the project named one. */
   readonly libFolderPath: string | undefined;
+  /**
+   * Resolves module specifiers in place of the compiler, or undefined when the
+   * project did not ask to. Built here rather than per call so a host that
+   * keeps state keeps it for the life of the project.
+   */
+  readonly resolutionHost: ResolutionHost | undefined;
 
   constructor(params: ProjectContextCreationParams) {
     this.#project = params.project;
@@ -56,6 +71,7 @@ export class ProjectContext {
     this.#compilerOptions = params.compilerOptionsContainer;
     this.skipLoadingLibFiles = params.skipLoadingLibFiles;
     this.libFolderPath = params.libFolderPath;
+    this.resolutionHost = params.resolutionHost?.(() => this.#compilerOptions.get());
     this.compilerFactory = new CompilerFactory(this);
     this.inProjectCoordinator = new InProjectCoordinator(this.compilerFactory);
     this.structurePrinterFactory = new StructurePrinterFactory(() => this.manipulationSettings.getFormatCodeSettings());

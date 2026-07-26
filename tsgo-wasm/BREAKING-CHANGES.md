@@ -1008,9 +1008,27 @@ Not yet resolved, listed so they are not mistaken for finished work:
     where TypeScript 5 reported 12.
   - **Unclassified — 2.** A source file version reported as `undefined` rather
     than `"0"`, and one empty resolution result.
-- **Custom module resolution** — to be restored by adding a resolution callback
-  to the fork, as described above. Deferred until the rest of the migration is
-  done.
+- **Custom module resolution — restored, with a different shape.**
+  `ProjectOptions#resolutionHost` and `ResolutionHosts.deno` are back, and the
+  compiler asks the host before resolving anything itself. What changed:
+  - A host answers one specifier at a time, because that is how the compiler
+    asks. `resolveModuleNames` taking an array is gone.
+  - A host that only rewrites hands back a different specifier and lets the
+    compiler resolve that, which is what `ResolutionHosts.deno` now does.
+    Previously it called `ts.resolveModuleName` itself; there is no such entry
+    point now, and rewriting is a better fit anyway.
+  - The factory takes only `getCompilerOptions`. There is no module resolution
+    host to hand it, because a host no longer resolves for itself.
+  - `getResolvedModuleWithFailedLookupLocationsFromCache` is gone; the compiler
+    owns the cache.
+  - **Type reference directives are still not covered.** They resolve down a
+    separate path in the compiler with no hook, so the
+    `custom type reference directive resolution` tests stay skipped.
+- **Forgetting a file does not un-resolve it — and does not re-resolve it.** A
+  file that has been `forget()`ten is not found again by resolving to it, even
+  though it is still on the file system. This is not about custom resolution:
+  it happens with no resolution host at all, verified with a plain relative
+  import. One `custom module resolution` test is skipped for it.
 - **Sweep the source comments into this document before the PR lands.** The
   migration left explanatory notes scattered through the code — anything opening
   with "Breaking change:", and every aside about what tsgo no longer has or does

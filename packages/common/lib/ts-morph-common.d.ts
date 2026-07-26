@@ -5,6 +5,7 @@ type Diagnostic = ts.Diagnostic;
 import ModuleResolutionHost = ts.ModuleResolutionHost;
 type Program = ts.Program;
 import type { FileSystem } from "./tsgo/api/fs";
+import type { ModuleNameResolver } from "./tsgo/api/options";
 import type { API, Project } from "./tsgo/api/sync/api";
 
 export interface CompilerOptionsFromTsConfigOptions {
@@ -830,6 +831,11 @@ export declare class DocumentRegistry {
 }
 
 export interface DocumentRegistryOptions {
+    /**
+     * Resolves module specifiers in place of the compiler. Nothing is asked of it
+     * when absent, which is also when the compiler pays nothing for it.
+     */
+    resolveModuleName?: ModuleNameResolver;
     /** Compiler options for the registry's project. */
     compilerOptions?: CompilerOptions;
     /** Files to seed the registry with, as path → contents. */
@@ -926,6 +932,67 @@ export interface ModuleResolutionSourceFileContainer {
  * no setter, by defining an own data property that shadows it.
  */
 export declare function setSourceFileProperty(sourceFile: SourceFile, key: string, value: unknown): void;
+
+/**
+ * Adapts a {@link ResolutionHost} to the resolver the tsgo client takes.
+ *
+ * Returns undefined when the host resolves nothing, so a project that was given
+ * a host with no `resolveModuleName` does not pay a callback per specifier.
+ */
+export declare function toModuleNameResolver(host: ResolutionHost | undefined): ModuleNameResolver | undefined;
+
+/** What a host is told about a specifier it is asked to resolve. */
+export interface ModuleResolutionRequest {
+    /** The specifier as written, e.g. `./mod.ts` or `lodash`. */
+    moduleName: string;
+    /** The file the specifier was written in. */
+    containingFile: string;
+}
+
+/**
+ * How a host answers.
+ *
+ * Returning nothing declines the question and leaves the specifier to the
+ * compiler, so a host that only handles some specifiers says nothing about the
+ * rest.
+ */
+export type ModuleResolutionAnswer = 
+/** Resolve to this file. */
+{
+    resolvedFileName: string;
+}
+/** Resolve to nothing, and do not let the compiler try. */
+ | {
+    resolvedFileName: null;
+}
+/** Resolve this specifier instead, using the compiler's own rules. */
+ | {
+    moduleName: string;
+} | undefined;
+
+/** Resolves module specifiers in place of the compiler. */
+export interface ResolutionHost {
+    resolveModuleName?(request: ModuleResolutionRequest): ModuleResolutionAnswer;
+}
+
+/**
+ * Creates a resolution host for a project.
+ *
+ * The compiler options are given as a function because a project's options can
+ * change after it is created, and a host that reads them wants the current ones.
+ */
+export type ResolutionHostFactory = (getCompilerOptions: () => CompilerOptions) => ResolutionHost;
+
+/**
+ * Ready-made resolution hosts.
+ *
+ * `deno` is for Deno-style code, which writes the extension node omits. It
+ * rewrites rather than resolves: dropping `.ts` says where to look, and the
+ * compiler still decides how.
+ */
+export declare const ResolutionHosts: {
+    deno: () => ResolutionHost;
+};
 
 /**
  * Resolves the module resolution kind the compiler will actually use for the
@@ -1050,6 +1117,7 @@ export declare class StringUtils {
     }): string;
 }
 
+export { ResolvedModuleName } from "./tsgo/api/options";
 export { getChildren, getLastToken } from "./tsgo/ast/children";
 export import CompilerOptions = ts.CompilerOptions;
 export import DiagnosticCategory = ts.DiagnosticCategory;
