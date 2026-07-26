@@ -21,8 +21,9 @@ describe("Project", () => {
           skipLoadingLibFiles: true,
         });
         expect(project.getSourceFiles().map(s => s.fileName).sort()).to.deep.equal(["/test/file.ts", "/test/test2/file2.ts"].sort());
-        // a source file no longer reports a languageVersion: ast.SourceFileParseOptions
-        // records no script target, so the target belongs to the project
+        // the target is read off the project rather than off each file:
+        // ast.SourceFileParseOptions records no per-file script target
+        expect(project.compilerOptions.get().target).to.equal(1);
       });
 
       it("should add the files from tsconfig.json by default and also take into account the passed in compiler options", async () => {
@@ -353,6 +354,7 @@ describe("Project", () => {
       project.createSourceFile("/test.ts", "class Test {}");
       const updated = project.updateSourceFile(ts.createSourceFile("/test.ts", "class Other {}", ts.ScriptTarget.Latest));
       expect(updated.text).to.equal("class Other {}");
+      expect(project.getSourceFileOrThrow("/test.ts")).to.equal(updated);
       assertProjectHasSourceFiles(project, [updated]);
     });
   });
@@ -371,7 +373,9 @@ describe("Project", () => {
         const file2 = await action(project, "file2.ts", { scriptKind: ts.ScriptKind.TSX });
 
         assertProjectHasSourceFiles(project, [file1, file2]);
-        // scriptKind is accepted and ignored: tsgo derives it from the file extension
+        // scriptKind is accepted and ignored: tsgo derives it from the file extension,
+        // so a .ts file is TS however the caller asks for it
+        expect((file2 as any).scriptKind).to.equal(ts.ScriptKind.TS);
       });
 
       it("should throw if a file doesn't exist", async () => {
@@ -402,7 +406,9 @@ describe("Project", () => {
         const file2 = await action(project, "file2.ts", { scriptKind: ts.ScriptKind.TSX });
 
         assertProjectHasSourceFiles(project, [file1!, file2!]);
-        // scriptKind is accepted and ignored: tsgo derives it from the file extension
+        // scriptKind is accepted and ignored: tsgo derives it from the file extension,
+        // so a .ts file is TS however the caller asks for it
+        expect((file2 as any).scriptKind).to.equal(ts.ScriptKind.TS);
       });
 
       it("should return undefined if it doesn't exist", async () => {
@@ -669,11 +675,8 @@ describe("Project", () => {
   describe(nameof<Project>("getLanguageService"), () => {
     it("should create a language service", () => {
       const { project } = setup();
+      const languageSerivce = project.getLanguageService(); // define it first
       const sourceFile = project.createSourceFile("./test.ts", "const t = 5;");
-      // taken after the file is created: a language service is the compiler's project,
-      // which belongs to one snapshot, so one taken beforehand would be looking at a
-      // snapshot this file is not in
-      const languageSerivce = project.getLanguageService();
       const declaration = (sourceFile.statements[0] as ts.VariableStatement).declarationList.declarations[0];
       // `findRenameLocations` is spelled `rename` and computes a rename rather than
       // locating one, so it takes the new name and answers with the edits that
@@ -690,7 +693,12 @@ describe("Project", () => {
 
     it("should return the same reference each time", () => {
       const { project } = setup();
-      expect(project.getLanguageService()).to.equal(project.getLanguageService());
+      const languageService = project.getLanguageService();
+      // still the same object after a change, which is the point: the compiler's
+      // project is replaced with every snapshot, so what is handed out stands in
+      // for it rather than being it
+      project.createSourceFile("./test.ts", "const t = 5;");
+      expect(project.getLanguageService()).to.equal(languageService);
     });
   });
 
@@ -781,7 +789,7 @@ describe("Project", () => {
       fileSystem.writeFileSync("/tsconfig.json", `{ "fies": [] }`);
       const project = createProjectSync({ fileSystem, tsConfigFilePath: "/tsconfig.json" });
       expect(project.createProgram().getConfigFileParsingDiagnostics().map(d => d.text)).to.deep.equal([
-        `The 'files' list in config file '/tsconfig.json' is empty.`,
+        `No inputs were found in config file '/tsconfig.json'. Specified 'include' paths were '[\"**/*\"]' and 'exclude' paths were '[]'.`,
       ]);
     });
   });

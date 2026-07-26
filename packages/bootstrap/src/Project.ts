@@ -134,6 +134,10 @@ function createProjectCommon(options: ProjectOptions) {
 /** Project that holds source files. */
 export class Project {
   readonly #sourceFileCache: SourceFileCache;
+  /** Stands in for the compiler program; see createProgram. */
+  #program: ts.Program | undefined;
+  /** Stands in for the compiler project; see getLanguageService. */
+  #languageService: ts.LanguageService | undefined;
   #moduleResolutionHost: ts.ModuleResolutionHost | undefined;
   readonly #fileSystemWrapper: TransactionalFileSystem;
   readonly #configFileParsingDiagnostics: ts.Diagnostic[];
@@ -414,7 +418,19 @@ export class Project {
    * override it with.
    */
   createProgram(): ts.Program {
-    return this.#sourceFileCache.documentRegistry.program;
+    return this.#program ??= new Proxy({} as ts.Program, {
+      get: (_target, property) => {
+        // The registry opens the project against a tsconfig it writes itself, so
+        // the compiler's own config diagnostics are about that synthetic file and
+        // say nothing about the caller's. The ones from the caller's tsconfig were
+        // read when the project was created, and are what belongs here.
+        if (property === "getConfigFileParsingDiagnostics")
+          return () => this.#configFileParsingDiagnostics;
+        const program = this.#sourceFileCache.documentRegistry.program as unknown as Record<PropertyKey, unknown>;
+        const value = program[property];
+        return typeof value === "function" ? value.bind(program) : value;
+      },
+    });
   }
 
   /** Gets the diagnostics from parsing the project's tsconfig, if it had one. */
@@ -428,9 +444,21 @@ export class Project {
    * Breaking change: tsgo has no `LanguageService`. Formatting, organize-imports,
    * rename, definitions, implementations and code fixes are methods on the
    * compiler's project, so that is what this returns.
+   *
+   * The object handed back stands in for that project rather than being it. A
+   * project belongs to one snapshot, and a new snapshot is taken every time a
+   * file changes, so a caller holding the project itself would find it throwing
+   * `snapshot N not found` after the next edit. This resolves the current one per
+   * call, which is also what lets the same reference stay valid.
    */
   getLanguageService(): ts.LanguageService {
-    return this.#sourceFileCache.documentRegistry.project;
+    return this.#languageService ??= new Proxy({} as ts.LanguageService, {
+      get: (_target, property) => {
+        const project = this.#sourceFileCache.documentRegistry.project as unknown as Record<PropertyKey, unknown>;
+        const value = project[property];
+        return typeof value === "function" ? value.bind(project) : value;
+      },
+    });
   }
 
   /**

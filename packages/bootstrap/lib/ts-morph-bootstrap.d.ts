@@ -344,6 +344,12 @@ export declare class Project {
      * Breaking change: tsgo has no `LanguageService`. Formatting, organize-imports,
      * rename, definitions, implementations and code fixes are methods on the
      * compiler's project, so that is what this returns.
+     *
+     * The object handed back stands in for that project rather than being it. A
+     * project belongs to one snapshot, and a new snapshot is taken every time a
+     * file changes, so a caller holding the project itself would find it throwing
+     * `snapshot N not found` after the next edit. This resolves the current one per
+     * call, which is also what lets the same reference stay valid.
      */
     getLanguageService(): ts.LanguageService;
     /**

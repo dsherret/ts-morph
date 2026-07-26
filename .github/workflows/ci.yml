@@ -29,6 +29,7 @@ jobs:
       - name: Build the tsgo compiler
         run: |
           cd submodules/typescript-go
+          npm ci
           node _scripts/build-wasm.mjs
           cd _packages/native-preview
           npx tsc -b
@@ -68,6 +69,7 @@ jobs:
       - name: Build the tsgo compiler
         run: |
           cd submodules/typescript-go
+          npm ci
           node _scripts/build-wasm.mjs
           cd _packages/native-preview
           npx tsc -b
