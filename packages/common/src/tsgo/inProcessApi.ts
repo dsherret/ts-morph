@@ -19,6 +19,18 @@ export interface InProcessApiOptions {
   fs?: FileSystem;
   /** Current working directory used for module resolution. Defaults to "/". */
   cwd?: string;
+  /**
+   * Directory the default lib files are read from, through the file system.
+   * Defaults to the lib files bundled inside the wasm module.
+   */
+  defaultLibraryPath?: string;
+  /** Whether the file system distinguishes case. Defaults to true. */
+  useCaseSensitiveFileNames?: boolean;
+  /**
+   * The reactor module: a path to the `.wasm` file, or its bytes. Defaults to
+   * the module shipped with the tsgo client.
+   */
+  wasm?: string | Uint8Array | ArrayBuffer;
 }
 
 /** Creates a fully synchronous {@link API} backed by the in-process tsgo build. */
@@ -26,5 +38,8 @@ export function createInProcessApi(options: InProcessApiOptions = {}): API {
   return createWasmAPI({
     cwd: options.cwd ?? "/",
     fs: options.fs ?? createVirtualFileSystem(options.files ?? {}),
+    wasm: options.wasm,
+    defaultLibraryPath: options.defaultLibraryPath,
+    useCaseSensitiveFileNames: options.useCaseSensitiveFileNames,
   });
 }

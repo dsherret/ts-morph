@@ -38,13 +38,6 @@ export class TypeChecker {
   }
 
   /**
-   * Gets the ambient module symbols (ex. modules in the @types folder or node_modules).
-   */
-  getAmbientModules() {
-    return this.compilerObject.getAmbientModules().map(s => this.#context.compilerFactory.getSymbol(s));
-  }
-
-  /**
    * Gets the apparent type of a type.
    * @param type - Type to get the apparent type of.
    */
@@ -53,28 +46,11 @@ export class TypeChecker {
   }
 
   /**
-   * Gets the awaited type of a type (ex. `Promise<string>` -> `string`).
-   * @param type - Type to get the awaited type of.
-   */
-  getAwaitedType(type: Type) {
-    const awaitedType = this.compilerObject.getAwaitedType(type.compilerType);
-    return awaitedType ? this.#context.compilerFactory.getType(awaitedType) : undefined;
-  }
-
-  /**
    * Gets the constant value of a declaration.
    * @param node - Node to get the constant value from.
    */
   getConstantValue(node: EnumMember) {
     return this.compilerObject.getConstantValue(node.compilerNode);
-  }
-
-  /**
-   * Gets the fully qualified name of a symbol.
-   * @param symbol - Symbol to get the fully qualified name of.
-   */
-  getFullyQualifiedName(symbol: Symbol) {
-    return this.compilerObject.getFullyQualifiedName(symbol.compilerSymbol);
   }
 
   /**
@@ -139,20 +115,6 @@ export class TypeChecker {
   getImmediatelyAliasedSymbol(symbol: Symbol): Symbol | undefined {
     const tsAliasSymbol = this.compilerObject.getImmediateAliasedSymbol(symbol.compilerSymbol);
     return tsAliasSymbol == null ? undefined : this.#context.compilerFactory.getSymbol(tsAliasSymbol);
-  }
-
-  /**
-   * Gets the export symbol of a local symbol with a corresponding export symbol. Otherwise returns the input symbol.
-   *
-   * The following is from the compiler API documentation:
-   *
-   * For example, at `export type T = number;`:
-   *     - `getSymbolAtLocation` at the location `T` will return the exported symbol for `T`.
-   *     - But the result of `getSymbolsInScope` will contain the *local* symbol for `T`, not the exported symbol.
-   *     - Calling `getExportSymbolOfSymbol` on that local symbol will return the exported symbol.
-   */
-  getExportSymbolOfSymbol(symbol: Symbol) {
-    return this.#context.compilerFactory.getSymbol(this.compilerObject.getExportSymbolOfSymbol(symbol.compilerSymbol));
   }
 
   /**
@@ -241,19 +203,6 @@ export class TypeChecker {
   }
 
   /**
-   * Gets the symbols in the scope of the provided node.
-   *
-   * Note: This will always return the local symbols. If you want the export symbol from a local symbol, then
-   * use the `#getExportSymbolOfSymbol(symbol)` method.
-   * @param node - Node to check the scope for.
-   * @param meaning - Meaning of symbol to filter by.
-   */
-  getSymbolsInScope(node: Node, meaning: SymbolFlags) {
-    return this.compilerObject.getSymbolsInScope(node.compilerNode, meaning)
-      .map(s => this.#context.compilerFactory.getSymbol(s));
-  }
-
-  /**
    * Gets the type arguments from a type reference.
    * @param typeReference - Type reference.
    */
@@ -287,7 +236,7 @@ export class TypeChecker {
   }
 
   resolveName(name: string, location: Node | undefined, meaning: SymbolFlags, excludeGlobals: boolean) {
-    const symbol = this.compilerObject.resolveName(name, location?.compilerNode, meaning, excludeGlobals);
+    const symbol = this.compilerObject.resolveName(name, meaning, location?.compilerNode, excludeGlobals);
     return symbol ? this.#context.compilerFactory.getSymbol(symbol) : undefined;
   }
 }

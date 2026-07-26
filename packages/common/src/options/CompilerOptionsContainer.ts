@@ -23,5 +23,7 @@ export class CompilerOptionsContainer extends SettingsContainer<ts.CompilerOptio
    * Gets the encoding from the compiler options or returns utf-8.
    */
   getEncoding() {
+    // tsgo dropped the `charset` compiler option, which used to supply this.
+    return "utf-8";
   }
 }

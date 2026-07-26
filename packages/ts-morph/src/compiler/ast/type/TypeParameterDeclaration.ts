@@ -86,7 +86,7 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
    * Gets the default node of the type parameter.
    */
   getDefault(): TypeNode | undefined {
-    return this._getNodeFromCompilerNodeIfExists(this.compilerNode.default);
+    return this._getNodeFromCompilerNodeIfExists(this.compilerNode.defaultType);
   }
 
   /**

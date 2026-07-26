@@ -1,5 +1,10 @@
 {
   "compilerOptions": {
+    // TypeScript 6 no longer pulls in every @types package it can find, and each
+    // package here has an empty node_modules/@types that would shadow the
+    // workspace root's anyway, so name them and where they live
+    "typeRoots": ["./node_modules/@types"],
+    "types": ["node", "chai", "mocha", "diff"],
     "target": "es2022",
     "module": "CommonJS",
     "strict": true,

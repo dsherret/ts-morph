@@ -3,27 +3,10 @@ import { CodeAction } from "./CodeAction";
 
 /**
  * Represents a code fix action.
+ *
+ * Breaking change: `getFixName()`, `getFixId()` and `getFixAllDescription()` are
+ * gone. tsgo returns a description and the edits, and does not group fixes into
+ * fix-alls, so there is no id to report or to feed back in.
  */
 export class CodeFixAction extends CodeAction<ts.CodeFixAction> {
-  /**
-   * Short name to identify the fix, for use by telemetry.
-   */
-  getFixName() {
-    return this.compilerObject.fixName;
-  }
-
-  /**
-   * If present, one may call 'getCombinedCodeFix' with this fixId.
-   * This may be omitted to indicate that the code fix can't be applied in a group.
-   */
-  getFixId() {
-    return this.compilerObject.fixId;
-  }
-
-  /**
-   * Gets the description of the code fix when fixing everything.
-   */
-  getFixAllDescription() {
-    return this.compilerObject.fixAllDescription;
-  }
 }

@@ -1,11 +1,13 @@
 // Checks the invariants the adapter exists to provide:
 //   - getChildren returns identical node objects across calls (ts-morph keys its
 //     wrapper cache on compiler-node identity, so this is correctness, not perf)
-//   - a mutable SourceFile view accepts fileName/version assignment
+//   - getLastToken matches classic TypeScript, including zero-width tokens
+//   - a SourceFile accepts fileName/version re-stamping
 //   node --experimental-strip-types --no-warnings --conditions @typescript/source tsgo-wasm/adapter-invariants.mts
 import assert from "node:assert";
+import { SyntaxKind } from "../submodules/typescript-go/_packages/native-preview/src/ast/index.ts";
 import { getChildren, getLastToken } from "../packages/common/src/tsgo/getChildren.ts";
-import { createMutableSourceFile, setSourceFileProperty } from "../packages/common/src/tsgo/mutableSourceFile.ts";
+import { setSourceFileProperty } from "../packages/common/src/tsgo/mutableSourceFile.ts";
 import { createInProcessApi } from "./seam.mts";
 
 const api = createInProcessApi({
@@ -43,27 +45,42 @@ let nodes = 0;
 })(sourceFile);
 console.log(`identity stable across ${nodes} nodes`);
 
-// 2. getLastToken finds the trailing token.
+// 2. getLastToken returns the file's EndOfFileToken, which is zero-width when
+//    the source has no trailing newline. Classic returns it; a "skip empty
+//    children" rule would return the preceding semicolon instead.
 const lastToken = getLastToken(sourceFile)!;
 assert.ok(lastToken, "expected a last token");
-console.log("last token span:", `[${lastToken.pos},${lastToken.end})`);
+assert.equal(lastToken.kind, SyntaxKind.EndOfFile, "last token of a source file is its EndOfFileToken");
+assert.equal(lastToken.end, sourceFile.end, "last token must end where the file does");
+console.log("last token:", SyntaxKind[lastToken.kind], `[${lastToken.pos},${lastToken.end})`);
 
-// 3. The raw source file rejects fileName assignment; the mutable view accepts it.
+// And on a non-SourceFile node it is the close brace, which is what
+// Node#getLastToken's documentation describes.
+const classDecl = (sourceFile as any).statements[0];
+const classLast = getLastToken(classDecl, sourceFile)!;
+assert.equal(classLast.kind, SyntaxKind.CloseBraceToken, "last token of a class declaration is its close brace");
+assert.equal(classLast.end, classDecl.end);
+
+// 3. A source file rejects plain fileName assignment; re-stamping shadows the
+//    getter on the file itself, so node identity and memoization are unaffected.
 assert.throws(() => {
   (sourceFile as any).fileName = "/src/renamed.ts";
 }, "raw RemoteSourceFile should reject fileName assignment");
 
-const renamed = createMutableSourceFile(sourceFile, { fileName: "/src/renamed.ts", version: "2" });
-assert.equal(renamed.fileName, "/src/renamed.ts");
-assert.equal((renamed as any).version, "2");
-// Everything else still resolves against the original.
-assert.equal(renamed.text, sourceFile.text);
-assert.equal(renamed.statements.length, sourceFile.statements.length);
-assert.equal(sourceFile.fileName, "/src/index.ts", "original must be untouched");
-console.log("mutable view:", renamed.fileName, "| original:", sourceFile.fileName);
-
-setSourceFileProperty(renamed, "fileName", "/src/again.ts");
-assert.equal(renamed.fileName, "/src/again.ts");
+const statementsBefore = (sourceFile as any).statements;
+const childrenBefore = getChildren(sourceFile);
+setSourceFileProperty(sourceFile, "fileName", "/src/renamed.ts");
+setSourceFileProperty(sourceFile, "version", "2");
+assert.equal(sourceFile.fileName, "/src/renamed.ts");
+assert.equal((sourceFile as any).version, "2");
+assert.equal((sourceFile as any).statements, statementsBefore, "re-stamping must not disturb the tree");
+assert.equal(getChildren(sourceFile), childrenBefore, "re-stamping must not invalidate synthesized children");
+assert.equal(
+  (sourceFile as any).statements[0].getSourceFile().fileName,
+  "/src/renamed.ts",
+  "nodes must see the new name, which a prototype view could not provide",
+);
+console.log("re-stamped fileName:", sourceFile.fileName);
 
 api.close();
 console.log("ADAPTER INVARIANTS OK");

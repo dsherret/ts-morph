@@ -3,6 +3,7 @@ import { JSDocableNode } from "../base";
 import { ExpressionedNode } from "../expression";
 import { Statement } from "./Statement";
 
-export const ExpressionStatementBase = ExpressionedNode(JSDocableNode(Statement));
+const createBase = <T extends typeof Statement>(ctor: T) => ExpressionedNode(JSDocableNode(ctor));
+export const ExpressionStatementBase = createBase(Statement);
 export class ExpressionStatement extends ExpressionStatementBase<ts.ExpressionStatement> {
 }

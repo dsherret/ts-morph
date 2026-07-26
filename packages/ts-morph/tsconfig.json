@@ -7,11 +7,20 @@
     "paths": {
       "@ts-morph/common": ["../common/src/index.ts"]
     },
+    // This config only type-checks; the shipped build is produced by rollup. It
+    // therefore sets no `rootDir`/`outDir` and emits nothing, because `paths`
+    // resolves @ts-morph/common to ../common/src, which in turn imports the tsgo
+    // client out of the submodule — no directory under this package contains
+    // every input, so there is no honest emit layout to declare. Consuming the
+    // tsgo client as a declared dependency is what would fix that.
     "declaration": false,
     "strict": true,
-    "outDir": "./dist"
+    "noEmit": true
   },
   "include": [
-    "./src"
+    "./src",
+    // `paths` above type-checks @ts-morph/common from source, so its ambient
+    // module declarations have to come along; they are not reachable by import
+    "../common/src/types.d.ts"
   ]
 }

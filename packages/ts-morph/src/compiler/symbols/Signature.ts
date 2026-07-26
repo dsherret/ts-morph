@@ -1,7 +1,5 @@
 import { ts } from "@ts-morph/common";
 import { ProjectContext } from "../../ProjectContext";
-import { JSDocTagInfo } from "../ast";
-import { SymbolDisplayPart } from "../tools";
 import { Type } from "../types";
 import { Symbol } from "./Symbol";
 
@@ -33,15 +31,14 @@ export class Signature {
    * Gets the type parameters.
    */
   getTypeParameters() {
-    const typeParameters = this.compilerSignature.typeParameters || [];
-    return typeParameters.map(t => this.#context.compilerFactory.getTypeParameter(t));
+    return this.compilerSignature.getTypeParameters().map(t => this.#context.compilerFactory.getTypeParameter(t));
   }
 
   /**
    * Gets the parameters.
    */
   getParameters(): Symbol[] {
-    return this.compilerSignature.parameters.map(p => this.#context.compilerFactory.getSymbol(p));
+    return this.compilerSignature.getParameters().map(p => this.#context.compilerFactory.getSymbol(p));
   }
 
   /**
@@ -52,22 +49,6 @@ export class Signature {
   }
 
   /**
-   * Get the documentation comments.
-   */
-  getDocumentationComments(): SymbolDisplayPart[] {
-    const docs = this.compilerSignature.getDocumentationComment(this.#context.typeChecker.compilerObject);
-    return docs.map(d => this.#context.compilerFactory.getSymbolDisplayPart(d));
-  }
-
-  /**
-   * Gets the JS doc tags.
-   */
-  getJsDocTags(): JSDocTagInfo[] {
-    const tags = this.compilerSignature.getJsDocTags();
-    return tags.map(t => this.#context.compilerFactory.getJSDocTagInfo(t));
-  }
-
-  /**
    * Gets the signature's declaration.
    */
   getDeclaration() {
@@ -75,7 +56,10 @@ export class Signature {
     // the compiler says this is non-nullable, but it can return undefined for an unknown signature
     // returned by calling `TypeChecker#getResolvedType()`; however, we're returning undefined in that scenario
     // and so this should never be null (hopefully)
-    const compilerSignatureDeclaration = this.compilerSignature.getDeclaration();
+    // tsgo resolves a node handle to a bare `Node`, but a signature's declaration is
+    // always function-like, so this restates what the compiler already guarantees and
+    // keeps the wrapped return type narrow.
+    const compilerSignatureDeclaration = this.compilerSignature.declaration!.resolve()! as ts.SignatureDeclaration;
     return compilerFactory.getNodeFromCompilerNode(compilerSignatureDeclaration, compilerFactory.getSourceFileForNode(compilerSignatureDeclaration));
   }
 }

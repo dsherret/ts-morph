@@ -13,7 +13,6 @@ export function doManipulation(sourceFile: SourceFile, textManipulator: TextMani
     const replacementSourceFile = sourceFile._context.compilerFactory.createCompilerSourceFileFromText(
       newFilePath || sourceFile.getFilePath(),
       newFileText,
-      sourceFile.getScriptKind(),
     );
     nodeHandler.handleNode(sourceFile, replacementSourceFile, replacementSourceFile);
   } catch (err: any) {

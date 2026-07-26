@@ -3,6 +3,10 @@
   "compilerOptions": {
     "lib": ["es2022", "esnext.disposable"],
     "declaration": false,
+    // NOTE: src/tsgo imports the tsgo client from the submodule, which is outside
+    // this rootDir. That is a TS6059 on a real emit; it only passes today because
+    // the package is type-checked with --noEmit and shipped through rollup. It
+    // must be resolved by consuming the client as a declared dependency.
     "rootDir": "./src",
     "outDir": "./dist"
   },

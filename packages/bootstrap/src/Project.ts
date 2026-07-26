@@ -1,21 +1,30 @@
 import {
   CompilerOptionsContainer,
-  createHosts,
-  createModuleResolutionHost,
   errors,
   FileSystemHost,
   FileUtils,
   InMemoryFileSystemHost,
-  Memoize,
   RealFileSystemHost,
-  ResolutionHostFactory,
   runtime,
   StandardizedFilePath,
+  StringUtils,
   TransactionalFileSystem,
   ts,
   TsConfigResolver,
 } from "@ts-morph/common";
 import { SourceFileCache } from "./SourceFileCache";
+
+/**
+ * Options for adding or creating a source file.
+ *
+ * Breaking change: `scriptKind` no longer has an effect. tsgo owns parsing and
+ * derives the script kind from the file extension, with no way to be told
+ * otherwise, so the option is kept only so existing calls still compile.
+ */
+export interface SourceFileOptions {
+  /** @deprecated Has no effect — the script kind comes from the file extension. */
+  scriptKind?: ts.ScriptKind;
+}
 
 /** Options for creating a project. */
 export interface ProjectOptions {
@@ -44,14 +53,6 @@ export interface ProjectOptions {
    * @remarks Consider using `useInMemoryFileSystem` instead.
    */
   fileSystem?: FileSystemHost;
-  /** Creates a resolution host for specifying custom module and/or type reference directive resolution. */
-  resolutionHost?: ResolutionHostFactory;
-  /**
-   * Unstable and will probably be removed in the future.
-   * I believe this option should be internal to the library and if you know how to achieve
-   * that then please consider submitting a PR.
-   */
-  isKnownTypesPackageName?: ts.LanguageServiceHost["isKnownTypesPackageName"];
 }
 
 /**
@@ -106,7 +107,7 @@ function createProjectCommon(options: ProjectOptions) {
     : new TsConfigResolver(
       fileSystemWrapper,
       fileSystemWrapper.getStandardizedAbsolutePath(options.tsConfigFilePath),
-      getEncodingFromProvidedOptions(),
+      new CompilerOptionsContainer().getEncoding(),
     );
 
   const project = new Project({
@@ -127,21 +128,12 @@ function createProjectCommon(options: ProjectOptions) {
       return new InMemoryFileSystemHost();
     return options.fileSystem ?? new RealFileSystemHost();
   }
-
-  function getEncodingFromProvidedOptions() {
-    const defaultEncoding = "utf-8";
-    if (options.compilerOptions != null)
-      return options.compilerOptions.charset || defaultEncoding;
-    return defaultEncoding;
-  }
 }
 
 /** Project that holds source files. */
 export class Project {
   readonly #sourceFileCache: SourceFileCache;
   readonly #fileSystemWrapper: TransactionalFileSystem;
-  readonly #languageServiceHost: ts.LanguageServiceHost;
-  readonly #compilerHost: ts.CompilerHost;
   readonly #configFileParsingDiagnostics: ts.Diagnostic[];
 
   /** @private */
@@ -159,28 +151,11 @@ export class Project {
     this.compilerOptions = new CompilerOptionsContainer();
     this.compilerOptions.set(tsCompilerOptions);
 
-    // initialize the source file cache
-    this.#sourceFileCache = new SourceFileCache(this.#fileSystemWrapper, this.compilerOptions);
-
-    // initialize the compiler resolution host
-    const resolutionHost = !options.resolutionHost
-      ? undefined
-      : options.resolutionHost(this.getModuleResolutionHost(), () => this.compilerOptions.get());
-    // setup context
-    const newLineKind = "\n";
-    const { languageServiceHost, compilerHost } = createHosts({
-      transactionalFileSystem: this.#fileSystemWrapper,
-      sourceFileContainer: this.#sourceFileCache,
-      compilerOptions: this.compilerOptions,
-      getNewLine: () => newLineKind,
-      resolutionHost: resolutionHost || {},
-      getProjectVersion: () => this.#sourceFileCache.getProjectVersion().toString(),
-      isKnownTypesPackageName: options.isKnownTypesPackageName,
+    // initialize the source file cache, which owns the compiler session
+    this.#sourceFileCache = new SourceFileCache(this.#fileSystemWrapper, this.compilerOptions, {
       libFolderPath: options.libFolderPath,
       skipLoadingLibFiles: options.skipLoadingLibFiles,
     });
-    this.#languageServiceHost = languageServiceHost;
-    this.#compilerHost = compilerHost;
     this.#configFileParsingDiagnostics = tsConfigResolver?.getErrors() ?? [];
 
     function getCompilerOptions(): ts.CompilerOptions {
@@ -211,7 +186,7 @@ export class Project {
    * @param options - Options for adding the file.
    * @throws FileNotFoundError when the file is not found.
    */
-  async addSourceFileAtPath(filePath: string, options?: { scriptKind?: ts.ScriptKind }): Promise<ts.SourceFile> {
+  async addSourceFileAtPath(filePath: string, options?: SourceFileOptions): Promise<ts.SourceFile> {
     const sourceFile = await this.addSourceFileAtPathIfExists(filePath, options);
     if (sourceFile == null)
       throw new errors.FileNotFoundError(this.#fileSystemWrapper.getStandardizedAbsolutePath(filePath));
@@ -226,7 +201,7 @@ export class Project {
    * @param options - Options for adding the file.
    * @throws FileNotFoundError when the file is not found.
    */
-  addSourceFileAtPathSync(filePath: string, options?: { scriptKind?: ts.ScriptKind }): ts.SourceFile {
+  addSourceFileAtPathSync(filePath: string, options?: SourceFileOptions): ts.SourceFile {
     const sourceFile = this.addSourceFileAtPathIfExistsSync(filePath, options);
     if (sourceFile == null)
       throw new errors.FileNotFoundError(this.#fileSystemWrapper.getStandardizedAbsolutePath(filePath));
@@ -241,10 +216,8 @@ export class Project {
    * @param options - Options for adding the file.
    * @skipOrThrowCheck
    */
-  addSourceFileAtPathIfExists(filePath: string, options?: { scriptKind?: ts.ScriptKind }): Promise<ts.SourceFile | undefined> {
-    return this.#sourceFileCache.addOrGetSourceFileFromFilePath(this.#fileSystemWrapper.getStandardizedAbsolutePath(filePath), {
-      scriptKind: options && options.scriptKind,
-    });
+  addSourceFileAtPathIfExists(filePath: string, options?: SourceFileOptions): Promise<ts.SourceFile | undefined> {
+    return this.#sourceFileCache.addOrGetSourceFileFromFilePath(this.#fileSystemWrapper.getStandardizedAbsolutePath(filePath));
   }
 
   /**
@@ -255,10 +228,8 @@ export class Project {
    * @param options - Options for adding the file.
    * @skipOrThrowCheck
    */
-  addSourceFileAtPathIfExistsSync(filePath: string, options?: { scriptKind?: ts.ScriptKind }): ts.SourceFile | undefined {
-    return this.#sourceFileCache.addOrGetSourceFileFromFilePathSync(this.#fileSystemWrapper.getStandardizedAbsolutePath(filePath), {
-      scriptKind: options && options.scriptKind,
-    });
+  addSourceFileAtPathIfExistsSync(filePath: string, options?: SourceFileOptions): ts.SourceFile | undefined {
+    return this.#sourceFileCache.addOrGetSourceFileFromFilePathSync(this.#fileSystemWrapper.getStandardizedAbsolutePath(filePath));
   }
 
   /**
@@ -348,12 +319,11 @@ export class Project {
   createSourceFile(
     filePath: string,
     sourceFileText?: string,
-    options?: { scriptKind?: ts.ScriptKind },
+    options?: SourceFileOptions,
   ): ts.SourceFile {
     return this.#sourceFileCache.createSourceFileFromText(
       this.#fileSystemWrapper.getStandardizedAbsolutePath(filePath),
       sourceFileText || "",
-      { scriptKind: options && options.scriptKind },
     );
   }
 
@@ -363,37 +333,21 @@ export class Project {
    * @param sourceFileText - Text of the source file.
    * @param options - Options for updating the source file.
    */
-  updateSourceFile(filePath: string, sourceFileText: string, options?: { scriptKind?: ts.ScriptKind }): ts.SourceFile;
+  updateSourceFile(filePath: string, sourceFileText: string, options?: SourceFileOptions): ts.SourceFile;
   /**
    * Updates the source file stored in the project. The `fileName` of the source file object is used to tell which file to update.
+   *
+   * Breaking change: the file is re-created from the provided file's text rather
+   * than stored as-is, so the returned file is a new object. tsgo owns parsing,
+   * and a tree it did not produce cannot be put into a project.
    * @param newSourceFile - The new source file.
    */
   updateSourceFile(newSourceFile: ts.SourceFile): ts.SourceFile;
-  updateSourceFile(filePathOrSourceFile: string | ts.SourceFile, sourceFileText?: string, options?: { scriptKind?: ts.ScriptKind }) {
+  updateSourceFile(filePathOrSourceFile: string | ts.SourceFile, sourceFileText?: string, options?: SourceFileOptions) {
     if (typeof filePathOrSourceFile === "string")
       return this.createSourceFile(filePathOrSourceFile, sourceFileText, options);
 
-    // ensure this has the language service properties set
-    incrementVersion(filePathOrSourceFile);
-    ensureScriptSnapshot(filePathOrSourceFile);
-
-    return this.#sourceFileCache.setSourceFile(filePathOrSourceFile);
-
-    function incrementVersion(sourceFile: ts.SourceFile) {
-      let version = (sourceFile as any).version || "-1";
-      const parsedVersion = parseInt(version, 10);
-      if (isNaN(parsedVersion))
-        version = "0";
-      else
-        version = (parsedVersion + 1).toString();
-
-      (sourceFile as any).version = version;
-    }
-
-    function ensureScriptSnapshot(sourceFile: ts.SourceFile) {
-      if ((sourceFile as any).scriptSnapshot == null)
-        (sourceFile as any).scriptSnapshot = ts.ScriptSnapshot.fromString(sourceFile.text);
-    }
+    return this.createSourceFile(filePathOrSourceFile.fileName, filePathOrSourceFile.text);
   }
 
   /**
@@ -421,37 +375,60 @@ export class Project {
    * not specifying to not add the source files.
    */
   resolveSourceFileDependencies() {
-    // creating a program will resolve any dependencies
-    this.createProgram();
+    const addedSourceFiles: ts.SourceFile[] = [];
+    const seen = new Set<string>();
+    let addedAny: boolean;
+
+    // tsgo resolves modules, `/// <reference>`s and type directives inside the
+    // compiler, and there is no host callback to report a file it loaded, so the
+    // program is asked what it ended up with. Adding a file can pull in more, so
+    // this repeats until the program stops growing.
+    do {
+      addedAny = false;
+      for (const fileName of this.createProgram().getSourceFileNames()) {
+        // the lib files live in the compiler's own bundle rather than on a file system
+        if (fileName.startsWith("bundled:///") || !seen.add(fileName))
+          continue;
+        const filePath = this.#fileSystemWrapper.getStandardizedAbsolutePath(fileName);
+        if (this.#sourceFileCache.containsSourceFileAtPath(filePath))
+          continue;
+        const sourceFile = this.addSourceFileAtPathIfExistsSync(filePath);
+        if (sourceFile != null) {
+          addedSourceFiles.push(sourceFile);
+          addedAny = true;
+        }
+      }
+    } while (addedAny);
+
+    return addedSourceFiles;
   }
 
-  /** @internal */
-  #oldProgram: ts.Program | undefined;
-
   /**
-   * Creates a new program.
-   * Note: You should get a new program any time source files are added, removed, or changed.
+   * Gets the program.
+   *
+   * Breaking change: this no longer creates a program. tsgo keeps one program per
+   * project and updates it as files change, so the same program is returned for
+   * the project's current state and there are no `CreateProgramOptions` to
+   * override it with.
    */
-  createProgram(options?: ts.CreateProgramOptions): ts.Program {
-    const oldProgram = this.#oldProgram;
-    const program = ts.createProgram({
-      rootNames: Array.from(this.#sourceFileCache.getSourceFilePaths()),
-      options: this.compilerOptions.get(),
-      host: this.#compilerHost,
-      oldProgram,
-      configFileParsingDiagnostics: this.#configFileParsingDiagnostics,
-      ...options,
-    });
-    this.#oldProgram = program;
-    return program;
+  createProgram(): ts.Program {
+    return this.#sourceFileCache.documentRegistry.program;
+  }
+
+  /** Gets the diagnostics from parsing the project's tsconfig, if it had one. */
+  getConfigFileParsingDiagnostics(): readonly ts.Diagnostic[] {
+    return this.#configFileParsingDiagnostics;
   }
 
   /**
    * Gets the language service.
+   *
+   * Breaking change: tsgo has no `LanguageService`. Formatting, organize-imports,
+   * rename, definitions, implementations and code fixes are methods on the
+   * compiler's project, so that is what this returns.
    */
-  @Memoize
   getLanguageService(): ts.LanguageService {
-    return ts.createLanguageService(this.#languageServiceHost, this.#sourceFileCache.documentRegistry);
+    return this.#sourceFileCache.documentRegistry.project;
   }
 
   /**
@@ -548,28 +525,31 @@ export class Project {
 
   /**
    * Formats an array of diagnostics with their color and context into a string.
+   *
+   * Breaking change: tsgo has no `formatDiagnosticsWithColorAndContext`, so the
+   * diagnostics are formatted here; the source line, the caret and the ANSI
+   * colouring are gone.
    * @param diagnostics - Diagnostics to get a string of.
    * @param options - Collection of options. For example, the new line character to use (defaults to the OS' new line character).
    */
   formatDiagnosticsWithColorAndContext(diagnostics: ReadonlyArray<ts.Diagnostic>, opts: { newLineChar?: "\n" | "\r\n" } = {}) {
-    return ts.formatDiagnosticsWithColorAndContext(diagnostics, {
-      getCurrentDirectory: () => this.#fileSystemWrapper.getCurrentDirectory(),
-      getCanonicalFileName: fileName => fileName,
-      getNewLine: () => opts.newLineChar || runtime.getEndOfLine(),
-    });
+    const newLineChar = opts.newLineChar ?? runtime.getEndOfLine();
+    return diagnostics
+      .map(diagnostic => {
+        const category = ts.DiagnosticCategory[diagnostic.category].toLowerCase();
+        const message = `${category} TS${diagnostic.code}: ${diagnostic.text}`;
+        if (diagnostic.fileName == null)
+          return message;
+        const sourceFile = this.getSourceFile(diagnostic.fileName);
+        if (sourceFile == null)
+          return `${diagnostic.fileName}: ${message}`;
+        const line = StringUtils.getLineNumberAtPos(sourceFile.text, diagnostic.pos);
+        const column = StringUtils.getLengthFromLineStartAtPos(sourceFile.text, diagnostic.pos) + 1;
+        return `${diagnostic.fileName}(${line},${column}): ${message}`;
+      })
+      .join(newLineChar);
   }
 
-  /**
-   * Gets a ts.ModuleResolutionHost for the project.
-   */
-  @Memoize
-  getModuleResolutionHost(): ts.ModuleResolutionHost {
-    return createModuleResolutionHost({
-      transactionalFileSystem: this.#fileSystemWrapper,
-      getEncoding: () => this.compilerOptions.getEncoding(),
-      sourceFileContainer: this.#sourceFileCache,
-    });
-  }
 }
 
 async function addSourceFilesForTsConfigResolver(project: Project, tsConfigResolver: TsConfigResolver, compilerOptions: ts.CompilerOptions) {

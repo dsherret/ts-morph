@@ -1,9 +1,11 @@
 import {
+  createFileSystemAdapter,
   DocumentRegistry,
   errors,
   EventContainer,
   FileUtils,
   KeyValueCache,
+  libFolderInMemoryPath,
   ScriptKind,
   StandardizedFilePath,
   StringUtils,
@@ -33,7 +35,6 @@ import {
   Signature,
   SourceFile,
   Symbol,
-  SymbolDisplayPart,
   Type,
   TypeParameter,
 } from "../compiler";
@@ -60,11 +61,10 @@ export class CompilerFactory {
   readonly #diagnosticCache = new WeakCache<ts.Diagnostic, Diagnostic>();
   readonly #definitionInfoCache = new WeakCache<ts.DefinitionInfo, DefinitionInfo>();
   readonly #documentSpanCache = new WeakCache<ts.DocumentSpan, DocumentSpan>();
-  readonly #diagnosticMessageChainCache = new WeakCache<ts.DiagnosticMessageChain, DiagnosticMessageChain>();
+  readonly #diagnosticMessageChainCache = new WeakCache<ts.Diagnostic, DiagnosticMessageChain>();
   readonly #jsDocTagInfoCache = new WeakCache<ts.JSDocTagInfo, JSDocTagInfo>();
   readonly #signatureCache = new WeakCache<ts.Signature, Signature>();
   readonly #symbolCache = new WeakCache<ts.Symbol, Symbol>();
-  readonly #symbolDisplayPartCache = new WeakCache<ts.SymbolDisplayPart, SymbolDisplayPart>();
   readonly #referencedSymbolEntryCache = new WeakCache<ts.ReferencedSymbolEntry, ReferencedSymbolEntry>();
   readonly #referencedSymbolCache = new WeakCache<ts.ReferencedSymbol, ReferencedSymbol>();
   readonly #referencedSymbolDefinitionInfoCache = new WeakCache<ts.ReferencedSymbolDefinitionInfo, ReferencedSymbolDefinitionInfo>();
@@ -82,11 +82,23 @@ export class CompilerFactory {
    * @param context - Project context.
    */
   constructor(context: ProjectContext) {
-    this.documentRegistry = new DocumentRegistry(context.fileSystemWrapper);
+    // the registry owns the tsgo session: the wasm compiler, the snapshot, and
+    // the project every source file, the program and the checker come from
+    this.documentRegistry = new DocumentRegistry({
+      compilerOptions: getRegistryCompilerOptions(context),
+      // so module resolution, `/// <reference>`s and typeRoots see everything
+      // ts-morph's file system holds, not only the files pushed into the registry
+      fs: createFileSystemAdapter(context.fileSystemWrapper, { encoding: context.compilerOptions.getEncoding() }),
+      // ts-morph keeps the lib files on its own file system, so the compiler is
+      // pointed at them rather than at the copies bundled inside the wasm module
+      libFolderPath: context.skipLoadingLibFiles ? undefined : context.libFolderPath ?? libFolderInMemoryPath,
+      useCaseSensitiveFileNames: context.fileSystemWrapper.getFileSystem().isCaseSensitive(),
+    });
     this.#directoryCache = new DirectoryCache(context);
 
     // prevent memory leaks when the document registry key changes by just resetting it
     context.compilerOptions.onModified(() => {
+      this.documentRegistry.setCompilerOptions(getRegistryCompilerOptions(context));
       // repopulate the cache
       const currentSourceFiles = Array.from(this.#sourceFileCacheByFilePath.values()); // store this to prevent modifying while iterating
       for (const sourceFile of currentSourceFiles) {
@@ -209,7 +221,7 @@ export class CompilerFactory {
     const existingSourceFile = this.addOrGetSourceFileFromFilePath(filePath, options);
     if (existingSourceFile != null) {
       existingSourceFile.getChildren().forEach(c => c.forget());
-      this.replaceCompilerNode(existingSourceFile, this.createCompilerSourceFileFromText(filePath, sourceText, options.scriptKind));
+      this.replaceCompilerNode(existingSourceFile, this.createCompilerSourceFileFromText(filePath, sourceText));
       return existingSourceFile;
     }
 
@@ -248,6 +260,21 @@ export class CompilerFactory {
       sourceFile._markAsInProject();
 
     return sourceFile;
+  }
+
+  /**
+   * Adds a file the compiler resolved into the program but ts-morph was never told about.
+   *
+   * tsgo resolves modules, `/// <reference>`s and type directives inside the
+   * compiler and reports no callback for the files it loads, so a file can be in
+   * the program without having gone through the factory. Only files the program
+   * already holds are added — this must not turn a lookup into a file load.
+   */
+  addSourceFileFromProgramFromFilePath(filePath: StandardizedFilePath): SourceFile | undefined {
+    filePath = this.#context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
+    if (this.documentRegistry.getSourceFile(filePath) == null)
+      return undefined;
+    return this.addOrGetSourceFileFromFilePath(filePath, { markInProject: false, scriptKind: undefined });
   }
 
   /**
@@ -363,14 +390,20 @@ export class CompilerFactory {
     const hasBom = StringUtils.hasBom(text);
     if (hasBom)
       text = StringUtils.stripBom(text);
-    const sourceFile = this.getSourceFile(this.createCompilerSourceFileFromText(filePath, text, options.scriptKind), options);
+    const sourceFile = this.getSourceFile(this.createCompilerSourceFileFromText(filePath, text), options);
     if (hasBom)
       sourceFile._hasBom = true;
     return sourceFile;
   }
 
-  createCompilerSourceFileFromText(filePath: StandardizedFilePath, text: string, scriptKind: ScriptKind | undefined): ts.SourceFile {
-    return this.documentRegistry.createOrUpdateSourceFile(filePath, this.#context.compilerOptions.get(), ts.ScriptSnapshot.fromString(text), scriptKind);
+  /**
+   * Parses text as a source file.
+   *
+   * Breaking change: there is no script kind parameter. tsgo derives the script
+   * kind from the file extension and has no way to be told otherwise.
+   */
+  createCompilerSourceFileFromText(filePath: StandardizedFilePath, text: string): ts.SourceFile {
+    return this.documentRegistry.createOrUpdateSourceFile(filePath, text);
   }
 
   /**
@@ -468,14 +501,6 @@ export class CompilerFactory {
   }
 
   /**
-   * Gets a warpped symbol display part form a compiler symbol display part.
-   * @param compilerObject - Compiler symbol display part.
-   */
-  getSymbolDisplayPart(compilerObject: ts.SymbolDisplayPart) {
-    return this.#symbolDisplayPartCache.getOrCreate(compilerObject, () => new SymbolDisplayPart(compilerObject));
-  }
-
-  /**
    * Gets a wrapped type from a compiler type.
    * @param type - Compiler type.
    */
@@ -555,7 +580,7 @@ export class CompilerFactory {
    */
   getDiagnostic(diagnostic: ts.Diagnostic): Diagnostic {
     return this.#diagnosticCache.getOrCreate(diagnostic, () => {
-      if (diagnostic.start != null)
+      if (diagnostic.fileName != null)
         return new DiagnosticWithLocation(this.#context, diagnostic as ts.DiagnosticWithLocation);
       return new Diagnostic(this.#context, diagnostic);
     });
@@ -573,7 +598,7 @@ export class CompilerFactory {
    * Gets a wrapped diagnostic message chain from a compiler diagnostic message chain.
    * @param diagnosticMessageChain - Compiler diagnostic message chain.
    */
-  getDiagnosticMessageChain(compilerObject: ts.DiagnosticMessageChain): DiagnosticMessageChain {
+  getDiagnosticMessageChain(compilerObject: ts.Diagnostic): DiagnosticMessageChain {
     return this.#diagnosticMessageChainCache.getOrCreate(compilerObject, () => new DiagnosticMessageChain(compilerObject));
   }
 
@@ -695,4 +720,20 @@ export class CompilerFactory {
       return value != null && typeof (value as any).then === "function";
     }
   }
+}
+
+/**
+ * The compiler options the tsgo project is opened with.
+ *
+ * `skipLoadingLibFiles` works by not putting the lib files where the compiler
+ * looks, which tsgo makes impossible — its lib files are embedded in the wasm
+ * module and load whatever the file system holds. `noLib` is the option that has
+ * the same effect, so the translation happens here rather than being exposed on
+ * the project's own compiler options.
+ */
+function getRegistryCompilerOptions(context: ProjectContext): ts.CompilerOptions {
+  const compilerOptions = context.compilerOptions.get();
+  if (context.skipLoadingLibFiles)
+    compilerOptions.noLib = true;
+  return compilerOptions;
 }

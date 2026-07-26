@@ -14,14 +14,38 @@ const names = Object.keys(ts.SyntaxKind).filter(k => isNaN(Number(k)));
 console.log("SyntaxKind names =", names.length);
 assert.ok(names.length > 100);
 
-for (const fn of ["isClassDeclaration", "skipTrivia", "createScanner", "forEachChild"] as const) {
-  assert.equal(typeof (ts as any)[fn], "function", `${fn} should be a function`);
-}
+// The scanner utilities are load-bearing: getChildren drives createScanner to
+// rebuild the tokens tsgo does not store, so a wrong implementation must fail
+// here rather than pass a typeof check.
+assert.equal(ts.skipTrivia("  /*c*/x", 0), 7, "skipTrivia should skip whitespace and comments");
+assert.equal(ts.skipTrivia("x", 0), 0, "skipTrivia should not move past real text");
+
+const scanner = ts.createScanner(/* skipTrivia */ true, ts.LanguageVariant.Standard, "  const x = 1;");
+const scanned: string[] = [];
+scanner.resetTokenState(0);
+for (let kind = scanner.scan(); kind !== ts.SyntaxKind.EndOfFile; kind = scanner.scan())
+  scanned.push(`${ts.SyntaxKind[kind]}[${scanner.getTokenStart()},${scanner.getTokenEnd()})`);
+console.log("scanned:", scanned.join(" "));
+assert.deepEqual(
+  scanned,
+  // The reverse map yields whichever name the enum declares first, so the
+  // EqualsToken and NumericLiteral kinds come back under their range aliases.
+  ["ConstKeyword[2,7)", "Identifier[8,9)", "FirstAssignment[10,11)", "FirstLiteralToken[12,13)", "SemicolonToken[13,14)"],
+  "the scanner should produce the expected tokens and spans",
+);
+
+assert.equal(ts.tokenToString(ts.SyntaxKind.ConstKeyword), "const");
+
+// The guards discriminate on kind, so a bare kind is enough to exercise them.
+assert.equal(ts.isClassDeclaration({ kind: ts.SyntaxKind.ClassDeclaration } as never), true);
+assert.equal(ts.isClassDeclaration({ kind: ts.SyntaxKind.InterfaceDeclaration } as never), false);
+// forEachChild delegates to the node, so it needs a real tree; getChildren-parity
+// covers it over the whole grammar.
+assert.equal(typeof ts.forEachChild, "function");
 assert.equal(typeof getChildren, "function");
 assert.equal(typeof getLastToken, "function");
 assert.equal(ts.escapeLeadingUnderscores("__x"), "___x");
-// ESNext shares its value with the Latest alias, so check the value round-trips.
-assert.equal(ts.ScriptTarget[ts.ScriptTarget.ESNext as number] !== undefined, true);
-console.log("enums, guards, scanner utilities all present");
+assert.equal(ts.unescapeLeadingUnderscores("___x" as never), "__x");
+console.log("enums, guards, scanner utilities all behave");
 
 console.log("TS COMPAT OK");

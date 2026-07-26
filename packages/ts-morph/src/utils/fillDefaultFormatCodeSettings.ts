@@ -3,19 +3,20 @@ import { ManipulationSettingsContainer } from "../options";
 import { fillDefaultEditorSettings } from "./fillDefaultEditorSettings";
 import { setValueIfUndefined } from "./setValueIfUndefined";
 
+/**
+ * Fills in the format settings tsgo understands.
+ *
+ * Breaking change: most of the `insertSpace…` and `placeOpenBraceOnNewLine…`
+ * options are gone. tsgo's formatter accepts only tab size, spaces-versus-tabs
+ * and trailing whitespace trimming, so the defaults that used to be set here had
+ * no effect to set.
+ *
+ * `ensureNewLineAtEndOfFile` and `insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces`
+ * are kept because ts-morph's own structure printers implement them, rather than
+ * handing them to the formatter.
+ */
 export function fillDefaultFormatCodeSettings(settings: FormatCodeSettings, manipulationSettings: ManipulationSettingsContainer) {
   fillDefaultEditorSettings(settings, manipulationSettings);
-  setValueIfUndefined(settings, "insertSpaceAfterCommaDelimiter", true);
-  setValueIfUndefined(settings, "insertSpaceAfterConstructor", false);
-  setValueIfUndefined(settings, "insertSpaceAfterSemicolonInForStatements", true);
-  setValueIfUndefined(settings, "insertSpaceAfterKeywordsInControlFlowStatements", true);
   setValueIfUndefined(settings, "insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces", true);
-  setValueIfUndefined(settings, "insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets", false);
-  setValueIfUndefined(settings, "insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces", false);
-  setValueIfUndefined(settings, "insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces", false);
-  setValueIfUndefined(settings, "insertSpaceBeforeFunctionParenthesis", false);
-  setValueIfUndefined(settings, "insertSpaceBeforeAndAfterBinaryOperators", true);
-  setValueIfUndefined(settings, "placeOpenBraceOnNewLineForFunctions", false);
-  setValueIfUndefined(settings, "placeOpenBraceOnNewLineForControlBlocks", false);
   setValueIfUndefined(settings, "ensureNewLineAtEndOfFile", true);
 }

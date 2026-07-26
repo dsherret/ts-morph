@@ -7,6 +7,7 @@ import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { Identifier } from "../name";
+import { getJSDocComment } from "./utils/getJSDocComment";
 import { getTextWithoutStars } from "./utils/getTextWithoutStars";
 
 export const JSDocTagBase = Node;
@@ -40,12 +41,7 @@ export class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extends JSDocT
 
   /** Gets the tag's comment property. Use `#getCommentText()` to get the text of the JS doc tag comment if necessary. */
   getComment() {
-    if (this.compilerNode.comment == null)
-      return undefined;
-    else if (typeof this.compilerNode.comment === "string")
-      return this.compilerNode.comment;
-    else
-      return this.compilerNode.comment.map(n => this._getNodeFromCompilerNodeIfExists(n));
+    return getJSDocComment(this, n => this._getNodeFromCompilerNodeIfExists(n));
   }
 
   /** Gets the text of the JS doc tag comment (ex. `"Some description."` for `&#64;param value Some description.`). */

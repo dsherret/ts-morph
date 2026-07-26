@@ -233,9 +233,12 @@ export class TransactionalFileSystem {
     this.#fileSystem = options.fileSystem;
     this.#pathCasingMaintainer = new PathCasingMaintainer(options.fileSystem);
 
+    // resolving the folder validates the two options against each other, so it
+    // happens whether or not the in-memory lib files end up being stored
+    const libFolderPath = getLibFolderPath(options);
+
     if (!options.skipLoadingLibFiles && options.libFolderPath == null) {
       // add the lib files into the map for use later
-      const libFolderPath = getLibFolderPath(options);
       this.#libFileMap = new Map<StandardizedFilePath, string>();
       const libFiles = getLibFiles();
       for (const libFile of libFiles) {
@@ -850,6 +853,10 @@ export class TransactionalFileSystem {
 
     while (!FileUtils.isRootDirPath(currentDirPath)) {
       const nextDirPath = FileUtils.getDirPath(currentDirPath);
+      // a path whose parent is itself is its own root — without this a directory
+      // would become its own parent and every ancestor walk would never end
+      if (nextDirPath === currentDirPath)
+        return dir;
       const hadNextDir = this.#directories.has(nextDirPath);
       const nextDir = getOrCreateDir(nextDirPath);
 

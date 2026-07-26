@@ -1,11 +1,4 @@
-import {
-  CompilerOptionsContainer,
-  errors,
-  Memoize,
-  StandardizedFilePath,
-  TransactionalFileSystem,
-  ts,
-} from "@ts-morph/common";
+import { CompilerOptionsContainer, errors, TransactionalFileSystem, ts } from "@ts-morph/common";
 import { CodeBlockWriter } from "./codeBlockWriter";
 import { Diagnostic, LanguageService, QuoteKind, SourceFile, TypeChecker } from "./compiler";
 import { CompilerFactory, InProjectCoordinator, StructurePrinterFactory } from "./factories";
@@ -22,7 +15,6 @@ export interface ProjectContextCreationParams {
   compilerOptionsContainer: CompilerOptionsContainer;
   configFileParsingDiagnostics: ts.Diagnostic[];
   createLanguageService: boolean;
-  resolutionHost?: ResolutionHostFactory;
   typeChecker?: ts.TypeChecker;
   skipLoadingLibFiles: boolean | undefined;
   libFolderPath: string | undefined;
@@ -52,11 +44,17 @@ export class ProjectContext {
   readonly structurePrinterFactory: StructurePrinterFactory;
   readonly compilerFactory: CompilerFactory;
   readonly inProjectCoordinator: InProjectCoordinator;
+  /** Whether the project was asked not to make the lib files available. */
+  readonly skipLoadingLibFiles: boolean | undefined;
+  /** Folder the lib files are read from, when the project named one. */
+  readonly libFolderPath: string | undefined;
 
   constructor(params: ProjectContextCreationParams) {
     this.#project = params.project;
     this.fileSystemWrapper = params.fileSystemWrapper;
     this.#compilerOptions = params.compilerOptionsContainer;
+    this.skipLoadingLibFiles = params.skipLoadingLibFiles;
+    this.libFolderPath = params.libFolderPath;
     this.compilerFactory = new CompilerFactory(this);
     this.inProjectCoordinator = new InProjectCoordinator(this.compilerFactory);
     this.structurePrinterFactory = new StructurePrinterFactory(() => this.manipulationSettings.getFormatCodeSettings());
@@ -66,7 +64,6 @@ export class ProjectContext {
       ? new LanguageService({
         context: this,
         configFileParsingDiagnostics: params.configFileParsingDiagnostics,
-        resolutionHost: params.resolutionHost && params.resolutionHost(this.getModuleResolutionHost(), () => this.compilerOptions.get()),
         skipLoadingLibFiles: params.skipLoadingLibFiles,
         libFolderPath: params.libFolderPath,
       })
@@ -167,46 +164,10 @@ export class ProjectContext {
    * @param sourceFile - Optional source file to filter the results by.
    */
   getPreEmitDiagnostics(sourceFile?: SourceFile): Diagnostic[] {
+    // tsgo has no `getPreEmitDiagnostics`; the adapter assembles it out of every
+    // category the compiler reports before an emit.
     const compilerDiagnostics = ts.getPreEmitDiagnostics(this.program.compilerObject, sourceFile?.compilerNode);
     return compilerDiagnostics.map(d => this.compilerFactory.getDiagnostic(d));
-  }
-
-  /**
-   * Gets a source file container that is used to interact with the @ts-morph/common library.
-   */
-  @Memoize
-  getSourceFileContainer(): TsSourceFileContainer {
-    return {
-      addOrGetSourceFileFromFilePath: (filePath, opts) => {
-        return Promise.resolve(this.compilerFactory.addOrGetSourceFileFromFilePath(filePath, opts)?.compilerNode);
-      },
-      addOrGetSourceFileFromFilePathSync: (filePath, opts) => {
-        return this.compilerFactory.addOrGetSourceFileFromFilePath(filePath, opts)?.compilerNode;
-      },
-      containsDirectoryAtPath: dirPath => this.compilerFactory.containsDirectoryAtPath(dirPath),
-      containsSourceFileAtPath: filePath => this.compilerFactory.containsSourceFileAtPath(filePath),
-      getSourceFileFromCacheFromFilePath: filePath => {
-        const sourceFile = this.compilerFactory.getSourceFileFromCacheFromFilePath(filePath);
-        return sourceFile?.compilerNode;
-      },
-      getSourceFilePaths: () => this.compilerFactory.getSourceFilePaths(),
-      getSourceFileVersion: sourceFile => this.compilerFactory.documentRegistry.getSourceFileVersion(sourceFile),
-      getChildDirectoriesOfDirectory: dirPath => {
-        const result: StandardizedFilePath[] = [];
-        for (const dir of this.compilerFactory.getChildDirectoriesOfDirectory(dirPath))
-          result.push(dir.getPath());
-        return result;
-      },
-    };
-  }
-
-  @Memoize
-  getModuleResolutionHost(): ts.ModuleResolutionHost {
-    return createModuleResolutionHost({
-      transactionalFileSystem: this.fileSystemWrapper,
-      getEncoding: () => this.getEncoding(),
-      sourceFileContainer: this.getSourceFileContainer(),
-    });
   }
 
   #getToolRequiredError(name: string) {

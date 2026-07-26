@@ -17,7 +17,7 @@ export class ImportAttributes extends ImportAttributesBase<ts.ImportAttributes> 
 
   /** Gets the elements of the import attributes. */
   getElements(): ImportAttribute[] {
-    return this.compilerNode.elements.map(e => this._getNodeFromCompilerNode(e));
+    return this.compilerNode.attributes.map(e => this._getNodeFromCompilerNode(e));
   }
 
   /** Removes the assert clause. */

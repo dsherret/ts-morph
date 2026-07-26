@@ -13,4 +13,4 @@ export { DocumentRegistry, type DocumentRegistryOptions } from "./documentRegist
 export { createFileSystemAdapter, type FileSystemAdapterOptions } from "./fileSystemAdapter";
 export { getChildren, getLastToken } from "./getChildren";
 export { createInProcessApi, type InProcessApiOptions } from "./inProcessApi";
-export { createMutableSourceFile, type MutableSourceFileOverrides, setSourceFileProperty } from "./mutableSourceFile";
+export { setSourceFileProperty } from "./mutableSourceFile";

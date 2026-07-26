@@ -11,11 +11,16 @@ export class TsInspector {
     this.#project = project;
   }
 
+  /** The `@ts-morph/common` module symbol. */
+  @Memoize
+  getCommonSymbol() {
+    return this.#project.getSourceFileOrThrow("src/main.ts").getExportDeclarationOrThrow("@ts-morph/common").getModuleSpecifier()!
+      .getSymbolOrThrow();
+  }
+
   @Memoize
   getTsSymbol() {
-    const tsMorphCommon = this.#project.getSourceFileOrThrow("src/main.ts").getExportDeclarationOrThrow("@ts-morph/common").getModuleSpecifier()!
-      .getSymbolOrThrow();
-    return tsMorphCommon.getExportOrThrow("ts").getAliasedSymbolOrThrow();
+    return this.getCommonSymbol().getExportOrThrow("ts").getAliasedSymbolOrThrow();
   }
 
   @Memoize

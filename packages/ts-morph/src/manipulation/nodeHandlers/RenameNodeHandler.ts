@@ -40,7 +40,7 @@ export class RenameNodeHandler extends StraightReplacementNodeHandler {
 
     function handleImportOrExportSpecifier(compilerFactory: CompilerFactory) {
       function getNameText(node: ts.ModuleExportName) {
-        return node.kind === SyntaxKind.Identifier ? node.escapedText : node.text;
+        return node.text;
       }
 
       // move the name to the property name. Ex. { a } -> { b as a } or { a } -> { a as b }

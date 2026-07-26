@@ -44,6 +44,7 @@ export class EmitOutput {
    */
   @Memoize
   getOutputFiles() {
-    return this.compilerObject.outputFiles.map(f => new OutputFile(this.#context, f));
+    // tsgo keys output files by their path rather than storing it on the file.
+    return [...this.compilerObject.outputFiles].map(([filePath, file]) => new OutputFile(this.#context, filePath, file));
   }
 }

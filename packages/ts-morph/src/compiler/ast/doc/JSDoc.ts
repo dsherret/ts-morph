@@ -8,6 +8,7 @@ import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { JSDocTag } from "./JSDocTag";
+import { getJSDocComment } from "./utils/getJSDocComment";
 import { getTextWithoutStars } from "./utils/getTextWithoutStars";
 
 export const JSDocBase = Node;
@@ -38,12 +39,7 @@ export class JSDoc extends JSDocBase<ts.JSDoc> {
 
   /** Gets the comment property. Use `#getCommentText()` to get the text of the JS doc comment if necessary. */
   getComment() {
-    if (this.compilerNode.comment == null)
-      return undefined;
-    else if (typeof this.compilerNode.comment === "string")
-      return this.compilerNode.comment;
-    else
-      return this.compilerNode.comment.map(n => this._getNodeFromCompilerNodeIfExists(n));
+    return getJSDocComment(this, n => this._getNodeFromCompilerNodeIfExists(n));
   }
 
   /** Gets the text of the JS doc comment. */

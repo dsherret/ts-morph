@@ -12,6 +12,6 @@ export class JSDocTypeLiteral extends JSDocType<ts.JSDocTypeLiteral> {
 
   /** Gets the JS doc property tags if they exist. */
   getPropertyTags() {
-    return this.compilerNode.jsDocPropertyTags ? this.compilerNode.jsDocPropertyTags.map(t => this._getNodeFromCompilerNode(t)) : undefined;
+    return this.compilerNode.jsdocPropertyTags ? this.compilerNode.jsdocPropertyTags.map(t => this._getNodeFromCompilerNode(t)) : undefined;
   }
 }

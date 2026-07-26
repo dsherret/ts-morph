@@ -65,7 +65,7 @@ export class ManipulationSettingsContainer extends SettingsContainer<Manipulatio
   constructor() {
     super({
       indentationText: IndentationText.FourSpaces,
-      newLineKind: NewLineKind.LineFeed,
+      newLineKind: NewLineKind.LF,
       quoteKind: QuoteKind.Double,
       insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true,
       usePrefixAndSuffixTextForRename: false,

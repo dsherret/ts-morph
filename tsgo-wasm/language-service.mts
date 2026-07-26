@@ -35,9 +35,28 @@ const formatted = applyEdits(unformatted, formatEdits);
 console.log("--- formatted ---\n" + formatted + "-----------------");
 assert.ok(!formatted.includes("method( a:string )"), "spacing should be normalized");
 
-// 2. Format only a range (the first line).
-const rangeEdits = project.formatDocumentRange("/src/format.ts", 0, unformatted.indexOf("\n"));
-console.log("formatDocumentRange edits:", rangeEdits.length);
+// 2. Format only a range (the first line). The offsets are character offsets,
+//    not LSP line/character positions, and only the range may change.
+{
+  const firstLineEnd = unformatted.indexOf("\n");
+  const rangeEdits = project.formatDocumentRange("/src/format.ts", 0, firstLineEnd);
+  console.log("formatDocumentRange edits:", rangeEdits.length);
+  assert.ok(rangeEdits.length > 0, "expected range formatting edits");
+  for (const edit of rangeEdits) {
+    assert.ok(
+      edit.pos >= 0 && edit.end <= firstLineEnd,
+      `edit [${edit.pos},${edit.end}) should stay inside the requested range [0,${firstLineEnd})`,
+    );
+  }
+  const rangeFormatted = applyEdits(unformatted, rangeEdits);
+  const [firstLine, ...restLines] = rangeFormatted.split("\n");
+  assert.equal(firstLine, "export class C {", "the first line should be normalized");
+  assert.equal(
+    restLines.join("\n"),
+    unformatted.split("\n").slice(1).join("\n"),
+    "lines outside the range must be untouched",
+  );
+}
 
 // 3. Organize imports.
 const importEdits = project.organizeImports("/src/imports.ts");

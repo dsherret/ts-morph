@@ -6,7 +6,7 @@ import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 
-export type QuestionTokenableNodeExtensionType = Node<ts.Node & { questionToken?: ts.QuestionToken }>;
+export type QuestionTokenableNodeExtensionType = Node<ts.Node & { questionToken?: ts.QuestionToken; postfixToken?: ts.QuestionToken | ts.ExclamationToken }>;
 
 export interface QuestionTokenableNode {
   /**
@@ -31,11 +31,11 @@ export interface QuestionTokenableNode {
 export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNodeExtensionType>>(Base: T): Constructor<QuestionTokenableNode> & T {
   return class extends Base implements QuestionTokenableNode {
     hasQuestionToken() {
-      return this.compilerNode.questionToken != null;
+      return ts.getQuestionToken(this.compilerNode) != null;
     }
 
     getQuestionTokenNode(): Node<ts.QuestionToken> | undefined {
-      return this._getNodeFromCompilerNodeIfExists(this.compilerNode.questionToken);
+      return this._getNodeFromCompilerNodeIfExists(ts.getQuestionToken(this.compilerNode));
     }
 
     getQuestionTokenNodeOrThrow(message?: string | (() => string)): Node<ts.QuestionToken> {

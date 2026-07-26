@@ -460,7 +460,7 @@ export class Directory {
 
         for (const outputFile of output.getOutputFiles()) {
           let filePath = outputFile.getFilePath();
-          const fileText = outputFile.getWriteByteOrderMark() ? FileUtils.getTextWithByteOrderMark(outputFile.getText()) : outputFile.getText();
+          const fileText = outputFile.getText();
 
           if (outDir != null && (isJsFile!.test(filePath) || isMapFile!.test(filePath) || (!hasDeclarationDir && isDtsFile!.test(filePath))))
             filePath = FileUtils.pathJoin(outDir, FileUtils.getBaseName(filePath));
@@ -873,7 +873,13 @@ export class Directory {
   /** @internal */
   getRelativePathAsModuleSpecifierTo(sourceFileOrDir: SourceFile | Directory | string): string;
   getRelativePathAsModuleSpecifierTo(sourceFileDirOrFilePath: SourceFile | Directory | string) {
-    const moduleResolution = this._context.program.getEmitModuleResolutionKind();
+    // what the project asked for wins over what the compiler resolves it to:
+    // tsgo folds the deprecated Node10 and Classic values into Bundler, but the
+    // shape of a generated module specifier should still follow the request
+    const specifiedModuleResolution = this._context.compilerOptions.get().moduleResolution;
+    const moduleResolution = specifiedModuleResolution == null || specifiedModuleResolution === ModuleResolutionKind.Unknown
+      ? this._context.program.getEmitModuleResolutionKind()
+      : specifiedModuleResolution;
     const thisDirectory = this;
     const moduleSpecifier = FileUtils.getRelativePathTo(this.getPath(), getPath()).replace(/((\.d\.ts$)|(\.[^/.]+$))/i, "");
     return moduleSpecifier.startsWith("../") ? moduleSpecifier : "./" + moduleSpecifier;
@@ -895,6 +901,7 @@ export class Directory {
             if (dir === thisDirectory)
               return FileUtils.pathJoin(dir.getPath(), "index.ts");
             return dir.getPath();
+          case ModuleResolutionKind.Unknown:
           case ModuleResolutionKind.Classic:
           case ModuleResolutionKind.Node16:
           case ModuleResolutionKind.NodeNext:
@@ -912,6 +919,7 @@ export class Directory {
             if (dirPath === thisDirectory.getPath())
               return filePath;
             return filePath.replace(/\/index?(\.d\.ts|\.ts|\.js)$/i, "") as StandardizedFilePath;
+          case ModuleResolutionKind.Unknown:
           case ModuleResolutionKind.Classic:
           case ModuleResolutionKind.Node16:
           case ModuleResolutionKind.NodeNext:

@@ -42,7 +42,8 @@ export class Type<TType extends ts.Type = ts.Type> {
    * Gets the alias symbol if it exists.
    */
   getAliasSymbol(): Symbol | undefined {
-    return this.compilerType.aliasSymbol == null ? undefined : this._context.compilerFactory.getSymbol(this.compilerType.aliasSymbol);
+    const aliasSymbol = this.compilerType.getAliasSymbol();
+    return aliasSymbol == null ? undefined : this._context.compilerFactory.getSymbol(aliasSymbol);
   }
 
   /**
@@ -56,7 +57,7 @@ export class Type<TType extends ts.Type = ts.Type> {
    * Gets the alias type arguments.
    */
   getAliasTypeArguments(): Type[] {
-    const aliasTypeArgs = this.compilerType.aliasTypeArguments || [];
+    const aliasTypeArgs = this.compilerType.getAliasTypeArguments();
     return aliasTypeArgs.map(t => this._context.compilerFactory.getType(t));
   }
 
@@ -65,13 +66,6 @@ export class Type<TType extends ts.Type = ts.Type> {
    */
   getApparentType(): Type {
     return this._context.typeChecker.getApparentType(this);
-  }
-
-  /**
-   * Gets the awaited type.
-   */
-  getAwaitedType(): Type | undefined {
-    return this._context.typeChecker.getAwaitedType(this);
   }
 
   /**
@@ -130,9 +124,16 @@ export class Type<TType extends ts.Type = ts.Type> {
 
   /**
    * Gets the constraint or returns undefined if it doesn't exist.
+   *
+   * Breaking change: tsgo only resolves a constraint for type parameters and
+   * substitution types, so an indexed access, index or conditional type now
+   * returns undefined where the `typescript` package returned a type.
    */
   getConstraint() {
-    const constraint = this.compilerType.getConstraint();
+    const compilerType = this.compilerType;
+    const constraint = compilerType.isTypeParameter() || compilerType.isSubstitutionType()
+      ? compilerType.getConstraint()
+      : undefined;
     return constraint == null ? undefined : this._context.compilerFactory.getType(constraint);
   }
 
@@ -145,9 +146,13 @@ export class Type<TType extends ts.Type = ts.Type> {
 
   /**
    * Gets the default type or returns undefined if it doesn't exist.
+   *
+   * Breaking change: tsgo only resolves a default for type parameters, which is
+   * the only place the `typescript` package ever found one in practice.
    */
   getDefault() {
-    const defaultType = this.compilerType.getDefault();
+    const compilerType = this.compilerType;
+    const defaultType = compilerType.isTypeParameter() ? compilerType.getDefault() : undefined;
     return defaultType == null ? undefined : this._context.compilerFactory.getType(defaultType);
   }
 
@@ -251,8 +256,9 @@ export class Type<TType extends ts.Type = ts.Type> {
    * - Given generic type `Promise<T>` returns the same `Promise<T>`.
    * - Given `string` returns `undefined`.
    */
-  getTargetType(): Type<ts.GenericType> | undefined {
-    const targetType = (this.compilerType as any as ts.TypeReference).target || undefined;
+  getTargetType(): Type | undefined {
+    const compilerType = this.compilerType;
+    const targetType = compilerType.isTypeReference() ? compilerType.getTarget() : undefined;
     return targetType == null ? undefined : this._context.compilerFactory.getType(targetType);
   }
 
@@ -267,7 +273,7 @@ export class Type<TType extends ts.Type = ts.Type> {
    * - Given `string` throws an error.
    */
 
-  getTargetTypeOrThrow(message?: string | (() => string)): Type<ts.GenericType> {
+  getTargetTypeOrThrow(message?: string | (() => string)): Type {
     return errors.throwIfNullOrUndefined(this.getTargetType(), message ?? "Expected to find the target type.");
   }
 
@@ -292,7 +298,7 @@ export class Type<TType extends ts.Type = ts.Type> {
     if (!this.isUnion())
       return [];
 
-    return this.compilerType.types.map(t => this._context.compilerFactory.getType(t));
+    return this.compilerType.getTypes().map(t => this._context.compilerFactory.getType(t));
   }
 
   /**
@@ -302,7 +308,7 @@ export class Type<TType extends ts.Type = ts.Type> {
     if (!this.isIntersection())
       return [];
 
-    return (this.compilerType as any as ts.IntersectionType).types.map(t => this._context.compilerFactory.getType(t));
+    return this.compilerType.getTypes().map(t => this._context.compilerFactory.getType(t));
   }
 
   /**
@@ -325,7 +331,7 @@ export class Type<TType extends ts.Type = ts.Type> {
    * Note: I have no idea what this means. Please help contribute to these js docs if you know.
    */
   getLiteralFreshType() {
-    const type = (this.compilerType as any as ts.LiteralType | undefined)?.freshType;
+    const type = this.compilerType.isLiteralType() ? this.compilerType.getFreshType() : undefined;
     return type == null ? undefined : this._context.compilerFactory.getType(type);
   }
 
@@ -344,7 +350,7 @@ export class Type<TType extends ts.Type = ts.Type> {
    * Note: I have no idea what this means. Please help contribute to these js docs if you know.
    */
   getLiteralRegularType() {
-    const type = (this.compilerType as any as ts.LiteralType | undefined)?.regularType;
+    const type = this.compilerType.isLiteralType() ? this.compilerType.getRegularType() : undefined;
     return type == null ? undefined : this._context.compilerFactory.getType(type);
   }
 
@@ -463,7 +469,7 @@ export class Type<TType extends ts.Type = ts.Type> {
   isLiteral() {
     // todo: remove this when https://github.com/Microsoft/TypeScript/issues/26075 is fixed
     const isBooleanLiteralForTs3_0 = this.isBooleanLiteral();
-    return this.compilerType.isLiteral() || isBooleanLiteralForTs3_0;
+    return this.compilerType.isLiteralType() || isBooleanLiteralForTs3_0;
   }
 
   /**
@@ -498,14 +504,14 @@ export class Type<TType extends ts.Type = ts.Type> {
    * Gets if this is a string literal type.
    */
   isStringLiteral(): this is Type<ts.StringLiteralType> {
-    return this.compilerType.isStringLiteral();
+    return this.compilerType.isStringLiteralType();
   }
 
   /**
    * Gets if this is a class type.
    */
   isClass(): this is Type<ts.InterfaceType> {
-    return this.compilerType.isClass();
+    return this.#hasObjectFlag(ObjectFlags.Class);
   }
 
   /**
@@ -569,21 +575,21 @@ export class Type<TType extends ts.Type = ts.Type> {
    * Gets if this is a union type.
    */
   isUnion(): this is Type<ts.UnionType> {
-    return this.compilerType.isUnion();
+    return this.compilerType.isUnionType();
   }
 
   /**
    * Gets if this is an intersection type.
    */
   isIntersection(): this is Type<ts.IntersectionType> {
-    return this.compilerType.isIntersection();
+    return this.compilerType.isIntersectionType();
   }
 
   /**
    * Gets if this is a union or intersection type.
    */
   isUnionOrIntersection(): this is Type<ts.UnionOrIntersectionType> {
-    return this.compilerType.isUnionOrIntersection();
+    return this.compilerType.isUnionType() || this.compilerType.isIntersectionType();
   }
 
   /**

@@ -1,46 +1,43 @@
 import { DiagnosticCategory, ts } from "@ts-morph/common";
-import { AssertTrue, IsExact } from "conditional-type-checks";
 
 /**
- * Diagnostic message chain.
+ * A link in a diagnostic's message chain.
+ *
+ * Breaking change: tsgo has no separate message chain type — a chain element is
+ * itself a `Diagnostic`, nested under the parent's `messageChain`. So this wraps
+ * a `ts.Diagnostic`, and `getNext()` reads `messageChain` rather than `next`.
  */
 export class DiagnosticMessageChain {
   /** @internal */
-  readonly _compilerObject: ts.DiagnosticMessageChain;
+  readonly _compilerObject: ts.Diagnostic;
 
   /** @private */
-  constructor(compilerObject: ts.DiagnosticMessageChain) {
+  constructor(compilerObject: ts.Diagnostic) {
     this._compilerObject = compilerObject;
   }
 
   /**
    * Gets the underlying compiler object.
    */
-  get compilerObject(): ts.DiagnosticMessageChain {
+  get compilerObject(): ts.Diagnostic {
     return this._compilerObject;
   }
 
   /**
    * Gets the message text.
    */
-  getMessageText() {
-    return this.compilerObject.messageText;
+  getMessageText(): string {
+    return this.compilerObject.text;
   }
 
   /**
    * Gets the next diagnostic message chains in the chain.
    */
   getNext(): DiagnosticMessageChain[] | undefined {
-    // pre-TS 3.6 this was not an array
-    type _assertType = AssertTrue<IsExact<ts.DiagnosticMessageChain["next"], ts.DiagnosticMessageChain[] | undefined>>;
-    const next = this.compilerObject.next as ts.DiagnosticMessageChain | ts.DiagnosticMessageChain[] | undefined;
+    const next = this.compilerObject.messageChain;
     if (next == null)
       return undefined;
-
-    if (next instanceof Array)
-      return next.map(n => new DiagnosticMessageChain(n));
-
-    return [new DiagnosticMessageChain(next)];
+    return next.map(n => new DiagnosticMessageChain(n));
   }
 
   /**

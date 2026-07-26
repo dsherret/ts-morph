@@ -3,6 +3,7 @@ import { ModifierableNode } from "../base";
 import { AbstractableNode } from "../class";
 import { FunctionOrConstructorTypeNodeBase } from "./FunctionOrConstructorTypeNodeBase";
 
-export const ConstructorTypeNodeBase = AbstractableNode(ModifierableNode(FunctionOrConstructorTypeNodeBase));
+const createBase = <T extends typeof FunctionOrConstructorTypeNodeBase>(ctor: T) => AbstractableNode(ModifierableNode(ctor));
+export const ConstructorTypeNodeBase = createBase(FunctionOrConstructorTypeNodeBase);
 export class ConstructorTypeNode extends ConstructorTypeNodeBase<ts.ConstructorTypeNode> {
 }

@@ -30,27 +30,44 @@ export class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagnostic> {
 
   /**
    * Gets the source file.
+   *
+   * Breaking change: tsgo reports the file by name rather than handing back the
+   * parsed file, so this resolves the name against the files the project has
+   * wrapped. A diagnostic reported on a file the program pulled in but the
+   * project never added (a lib file, an implicit dependency) has no wrapper to
+   * return, and yields undefined where the `typescript` package returned one.
    */
   @Memoize
   getSourceFile(): SourceFile | undefined {
     if (this._context == null)
       return undefined;
-    const file = this.compilerObject.file;
-    return file == null ? undefined : this._context.compilerFactory.getSourceFile(file, { markInProject: false });
+    const fileName = this.compilerObject.fileName;
+    return fileName == null ? undefined : this._context.compilerFactory.getSourceFileFromCacheFromFilePath(
+      this._context.fileSystemWrapper.getStandardizedAbsolutePath(fileName),
+    );
   }
 
   /**
    * Gets the message text.
+   *
+   * Breaking change: this is always a string. tsgo puts the message on `text`
+   * and nests any chained messages under `messageChain`, so a chain no longer
+   * arrives in place of the text � see {@link getMessageChain}.
    */
-  getMessageText(): string | DiagnosticMessageChain {
-    const messageText = this._compilerObject.messageText;
-    if (typeof messageText === "string")
-      return messageText;
+  getMessageText(): string {
+    return this._compilerObject.text;
+  }
 
+  /**
+   * Gets the chained messages that elaborate on this diagnostic, if any.
+   */
+  getMessageChain(): DiagnosticMessageChain[] | undefined {
+    const messageChain = this._compilerObject.messageChain;
+    if (messageChain == null)
+      return undefined;
     if (this._context == null)
-      return new DiagnosticMessageChain(messageText);
-    else
-      return this._context.compilerFactory.getDiagnosticMessageChain(messageText);
+      return messageChain.map(m => new DiagnosticMessageChain(m));
+    return messageChain.map(m => this._context!.compilerFactory.getDiagnosticMessageChain(m));
   }
 
   /**
@@ -68,14 +85,14 @@ export class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagnostic> {
    * Gets the start.
    */
   getStart() {
-    return this.compilerObject.start;
+    return this.compilerObject.pos;
   }
 
   /**
    * Gets the length.
    */
   getLength() {
-    return this.compilerObject.length;
+    return this.compilerObject.end - this.compilerObject.pos;
   }
 
   /**
@@ -90,12 +107,5 @@ export class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagnostic> {
    */
   getCode() {
     return this.compilerObject.code;
-  }
-
-  /**
-   * Gets the source.
-   */
-  getSource() {
-    return this.compilerObject.source;
   }
 }

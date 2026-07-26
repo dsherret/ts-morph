@@ -4,7 +4,8 @@ import { Expression, ExpressionedNode } from "../expression";
 import { VariableDeclarationList } from "../variable";
 import { IterationStatement } from "./IterationStatement";
 
-export const ForOfStatementBase = ExpressionedNode(AwaitableNode(IterationStatement));
+const createBase = <T extends typeof IterationStatement>(ctor: T) => ExpressionedNode(AwaitableNode(ctor));
+export const ForOfStatementBase = createBase(IterationStatement);
 export class ForOfStatement extends ForOfStatementBase<ts.ForOfStatement> {
   /**
    * Gets this for of statement's initializer.

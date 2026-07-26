@@ -16,6 +16,7 @@ import {
   ScriptTarget,
   SymbolFlags,
   SyntaxKind,
+  TokenFlags,
   TypeFlags,
   TypeFormatFlags,
 } from "../tsgo/ts";
@@ -35,6 +36,7 @@ export {
   ScriptTarget,
   SymbolFlags,
   SyntaxKind,
+  TokenFlags,
   ts,
   TypeFlags,
   TypeFormatFlags,

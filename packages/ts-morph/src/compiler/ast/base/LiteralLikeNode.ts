@@ -1,4 +1,4 @@
-import { ts } from "@ts-morph/common";
+import { TokenFlags, ts } from "@ts-morph/common";
 import { Constructor } from "../../../types";
 import { Node } from "../common";
 
@@ -27,11 +27,11 @@ export function LiteralLikeNode<T extends Constructor<LiteralLikeNodeExtensionTy
 
     isTerminated() {
       // I'm sorry, but this should not be a negative
-      return !(this.compilerNode.isUnterminated || false);
+      return (this.compilerNode.tokenFlags & TokenFlags.Unterminated) === 0;
     }
 
     hasExtendedUnicodeEscape() {
-      return this.compilerNode.hasExtendedUnicodeEscape || false;
+      return (this.compilerNode.tokenFlags & TokenFlags.ExtendedUnicodeEscape) !== 0;
     }
   };
 }

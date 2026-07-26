@@ -1,4 +1,4 @@
-import { SyntaxKind, ts } from "@ts-morph/common";
+import { getChildren, SyntaxKind, ts } from "@ts-morph/common";
 import { CommentNodeParser, ContainerNodes } from "./CommentNodeParser";
 
 const forEachChildSaver = new WeakMap<ts.Node, ts.Node[]>();
@@ -51,12 +51,12 @@ export class ExtendedParser {
     let result = getChildrenSaver.get(node);
     if (result == null) {
       if (isStatementMemberOrPropertyHoldingSyntaxList()) {
-        // This merges in comment nodes.
+        // @code-fence-allow(getChildren): This merges in comment nodes.
         const newArray = [...getChildren(node, sourceFile)]; // make a copy; do not modify the returned array
         mergeInComments(newArray, CommentNodeParser.getOrParseChildren(node as ts.SyntaxList, sourceFile));
         result = newArray;
       } else {
-        // No need to merge in comment nodes.
+        // @code-fence-allow(getChildren): No need to merge in comment nodes.
         result = getChildren(node, sourceFile);
       }
       getChildrenSaver.set(node, result);

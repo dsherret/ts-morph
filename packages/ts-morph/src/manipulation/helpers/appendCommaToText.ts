@@ -1,5 +1,5 @@
 import { ts } from "@ts-morph/common";
-const scanner = ts.createScanner(ts.ScriptTarget.Latest, true);
+const scanner = ts.createScanner(true);
 
 /**
  * Appends a comma to the text taking into account the various language aspects.
@@ -23,7 +23,7 @@ export function getAppendCommaPos(text: string) {
   try {
     let token = scanner.scan();
 
-    if (token === ts.SyntaxKind.EndOfFileToken)
+    if (token === ts.SyntaxKind.EndOfFile)
       return -1;
 
     // A stack to track nested template literals and their inner brace expressions
@@ -31,7 +31,7 @@ export function getAppendCommaPos(text: string) {
     // e.g. the /* in `${p}/*` will be interpreted as a comment, not inside the template literal
     const templateStack: ts.SyntaxKind[] = [];
 
-    while (token !== ts.SyntaxKind.EndOfFileToken) {
+    while (token !== ts.SyntaxKind.EndOfFile) {
       switch (token) {
         case ts.SyntaxKind.TemplateHead:
           templateStack.push(token);

@@ -10,5 +10,4 @@ export * from "./newLineKindToString";
 export * from "./references";
 export * from "./setValueIfUndefined";
 export * from "./tsconfig";
-export * from "./TypeScriptVersionChecker";
 export * from "./WriterUtils";

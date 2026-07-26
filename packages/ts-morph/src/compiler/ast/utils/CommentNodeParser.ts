@@ -1,4 +1,4 @@
-import { errors, getSyntaxKindName, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
+import { errors, getChildren, getSyntaxKindName, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
 import {
   CommentNodeKind,
   CompilerCommentClassElement,

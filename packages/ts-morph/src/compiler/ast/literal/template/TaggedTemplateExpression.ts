@@ -1,4 +1,4 @@
-import { ts } from "@ts-morph/common";
+import { getChildren, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange } from "../../../../manipulation";
 import { TemplateLiteral } from "../../aliases";
 import { LeftHandSideExpression, MemberExpression } from "../../expression";

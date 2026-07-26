@@ -6,7 +6,7 @@ import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 
-export type ExclamationTokenableNodeExtensionType = Node<ts.Node & { exclamationToken?: ts.ExclamationToken }>;
+export type ExclamationTokenableNodeExtensionType = Node<ts.Node & { exclamationToken?: ts.ExclamationToken; postfixToken?: ts.QuestionToken | ts.ExclamationToken }>;
 
 export interface ExclamationTokenableNode {
   /**
@@ -31,11 +31,11 @@ export interface ExclamationTokenableNode {
 export function ExclamationTokenableNode<T extends Constructor<ExclamationTokenableNodeExtensionType>>(Base: T): Constructor<ExclamationTokenableNode> & T {
   return class extends Base implements ExclamationTokenableNode {
     hasExclamationToken() {
-      return this.compilerNode.exclamationToken != null;
+      return ts.getExclamationToken(this.compilerNode) != null;
     }
 
     getExclamationTokenNode(): Node<ts.ExclamationToken> | undefined {
-      return this._getNodeFromCompilerNodeIfExists(this.compilerNode.exclamationToken);
+      return this._getNodeFromCompilerNodeIfExists(ts.getExclamationToken(this.compilerNode));
     }
 
     getExclamationTokenNodeOrThrow(message?: string | (() => string)): Node<ts.ExclamationToken> {

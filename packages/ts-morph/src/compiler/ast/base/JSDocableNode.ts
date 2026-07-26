@@ -8,7 +8,7 @@ import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { JSDoc } from "../doc/JSDoc";
 
-export type JSDocableNodeExtensionType = Node<ts.Node & { jsDoc?: ts.NodeArray<ts.JSDoc> }>;
+export type JSDocableNodeExtensionType = Node<ts.Node>;
 
 export interface JSDocableNode {
   /**
@@ -42,7 +42,8 @@ export interface JSDocableNode {
 export function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>(Base: T): Constructor<JSDocableNode> & T {
   return class extends Base implements JSDocableNode {
     getJsDocs(): JSDoc[] {
-      const nodes = this.compilerNode.jsDoc;
+      // tsgo types `jsDoc` as plain nodes on every node, but only JS doc nodes are ever stored there
+      const nodes = this.compilerNode.jsDoc as readonly ts.JSDoc[] | undefined;
       return nodes?.map(n => this._getNodeFromCompilerNode(n)) ?? [];
     }
 

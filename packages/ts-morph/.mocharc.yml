@@ -2,4 +2,9 @@ recursive: true
 reporter: progress
 timeout: 10000
 spec: src/tests/**/*.ts
-ignore: src/tests/performance/**/*.ts
+ignore:
+  - src/tests/performance/**/*.ts
+  # these cover capabilities tsgo does not provide, so they import exports that no
+  # longer exist and would abort the whole run at module load. kept in the tree as
+  # the record of what was dropped; see tsgo-wasm/BREAKING-CHANGES.md
+  - src/tests/removed-capabilities/**/*.ts

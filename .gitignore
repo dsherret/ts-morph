@@ -14,3 +14,7 @@ npm-debug.log
 
 #IDE
 .idea
+
+# scratch output (raw compiler dumps, etc.)
+_*.txt
+_*.log

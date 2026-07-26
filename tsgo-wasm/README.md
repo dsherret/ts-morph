@@ -29,14 +29,26 @@ ts-morph via WebAssembly — no subprocess, no native addon, fully synchronous.
 - `getChildren.mts` / `getChildren-parity.mts` — `getChildren()` for the new AST,
   reconstructing tokens and `SyntaxList` nodes that `forEachChild` omits.
 - `adapter-invariants.mts` — node identity is stable across `getChildren` calls,
-  and the mutable source-file view accepts `fileName`/`version`.
+  `getLastToken` matches classic, and a source file accepts `fileName`/`version`
+  re-stamping.
 - `language-service.mts` — formatting, organize-imports, and rename.
 - `definitions.mts` — go-to-definition and find-implementations.
 - `code-fixes.mts` — quick fixes for a span, filtered by diagnostic code.
+- `document-registry.mts` — the tsgo-backed replacement for `ts.DocumentRegistry`.
+- `tsconfig-resolver.mts` — tsconfig parsing through `createFileSystemAdapter`.
+- `project.mts` — the ts-morph package itself: a real `Project` created, read
+  through the wrappers and the checker, manipulated, renamed, formatted and
+  emitted. Unlike the others this runs against the rollup bundles, because
+  ts-morph's sources use extensionless relative imports that Node cannot resolve;
+  it rebuilds them when they are older than their sources.
 
 The adapter itself lives in **`packages/common/src/tsgo`** (`getChildren`,
-`getLastToken`, `createMutableSourceFile`, `createInProcessApi`); the scripts
-here drive it end-to-end.
+`getLastToken`, `createFileSystemAdapter`, `DocumentRegistry`,
+`createInProcessApi`); the scripts here drive it end-to-end.
+
+All but `project.mts` are **backend and adapter smoke tests** rather than
+migration coverage. `packages/common`'s own mocha suite runs today; the
+`packages/ts-morph` suite does not yet compile, and it is the real gate.
 
 ## Build & run
 
@@ -52,6 +64,18 @@ node --experimental-strip-types --no-warnings --conditions @typescript/source ts
 node --experimental-strip-types --no-warnings --conditions @typescript/source tsgo-wasm/language-service.mts
 node --experimental-strip-types --no-warnings --conditions @typescript/source tsgo-wasm/definitions.mts
 node --experimental-strip-types --no-warnings --conditions @typescript/source tsgo-wasm/code-fixes.mts
+node --experimental-strip-types --no-warnings --conditions @typescript/source tsgo-wasm/document-registry.mts
+node --experimental-strip-types --no-warnings --conditions @typescript/source tsgo-wasm/tsconfig-resolver.mts
+node --experimental-strip-types --no-warnings --conditions @typescript/source tsgo-wasm/project.mts
+
+# type check, and run the tests that compile
+(cd packages/common && npx tsc --noEmit -p tsconfig.json && deno run -A npm:mocha)
+(cd packages/ts-morph && npx tsc --noEmit -p tsconfig.json)
+
+# the bundle catches what the type check cannot: a member reached off the tsgo
+# namespace that does not exist is only a rollup `is not exported by
+# src/tsgo/ts.ts` warning
+(cd packages/common && npx rollup --config)
 ```
 
 ## Why this shape
@@ -72,10 +96,15 @@ rewrite — and buys native performance without changing ts-morph's public API.
 - **Edit → reparse** works (`edit-loop.mts`): text edits, file creation, and
   deletion all propagate to the AST and the checker. This is the primitive the
   manipulation engine is built on.
-- **`getChildren()` + `SyntaxList`** are reconstructible client-side with *exact*
-  parity against classic TypeScript — verified over a stress-test source (311
-  nodes, 106 distinct kinds mapping 1:1). This was the largest node-level gap,
-  since `forEachChild` alone omits tokens and syntax lists.
+- **`getChildren()` + `SyntaxList`** are reconstructible client-side, matching
+  classic TypeScript's spans, order and token parents — verified over a
+  stress-test source plus doc comments, inline/leading/trailing comments and JSX
+  (509 nodes, 129 distinct kinds mapping 1:1). This was the largest node-level
+  gap, since `forEachChild` alone omits tokens, JSDoc and syntax lists. Two
+  differences remain, and both come from tsgo's AST rather than from the
+  reconstruction: a `JSDoc` node's `pos` is its full start rather than the `/**`,
+  and a doc comment's prose is a `JSDocText` child where classic keeps it as a
+  plain string.
 - The submodule is **ahead of npm `typescript@7.0.2`** and already exposes `emit`,
   `emitToString`, `getDeclarationEmit`, `getJavaScriptEmit`, and
   `getImportAdderEdits`, plus references (`getReferencedSymbolsForNode`,
@@ -95,10 +124,10 @@ What ts-morph needs that the new AST does not give directly:
 
 | Need | Status |
 |---|---|
-| `getChildren()` + `SyntaxList` | **Solved** — exact parity, cached for node identity |
+| `getChildren()` + `SyntaxList` | **Solved** — parity with classic apart from two tsgo AST differences (see above), cached for node identity |
 | `getLastToken()` (`Node.ts:1251`) | **Solved** — same machinery |
 | Reparse after edit | **Solved** — `edit-loop.mts` |
-| Mutable `sourceFile.fileName` | **Solved** — `createMutableSourceFile` shadows the getter-only field with a writable own property. |
+| Mutable `sourceFile.fileName` | **Solved** — `setSourceFileProperty` shadows the getter-only field with a writable own property on the file itself. |
 | `sourceFile.version` stamping, `node.parent` assignment | Work as-is |
 | `.symbol` / `.locals` / `.emitNode` | **Absent** — binder internals are not exposed. Route through the checker (`getSymbolAtLocation`) instead. |
 | `.imports` / `.scriptKind` / `.modifiers` | Present |

@@ -181,13 +181,20 @@ export class ModuleDeclaration extends ModuleDeclarationBase<ts.ModuleDeclaratio
   /**
    * Gets the namesapce declaration kind.
    */
-  getDeclarationKind() {
-    const nodeFlags = this.getFlags();
-    if ((nodeFlags & ts.NodeFlags.GlobalAugmentation) !== 0)
-      return ModuleDeclarationKind.Global;
-    if ((nodeFlags & ts.NodeFlags.Namespace) !== 0)
-      return ModuleDeclarationKind.Namespace;
-    return ModuleDeclarationKind.Module;
+  getDeclarationKind(): ModuleDeclarationKind {
+    // tsgo does not flag the declaration kind on the node, so read the keyword.
+    const keyword = this.getDeclarationKindKeyword();
+    if (keyword != null)
+      return keyword.getKind() === SyntaxKind.NamespaceKeyword ? ModuleDeclarationKind.Namespace : ModuleDeclarationKind.Module;
+
+    // A dotted name (`namespace A.B { }`) nests a keyword-less declaration for
+    // every segment after the first; those take their kind from the outer one.
+    const parentModule = this.getParentIfKind(SyntaxKind.ModuleDeclaration);
+    if (parentModule != null)
+      return parentModule.getDeclarationKind();
+
+    // Only a global augmentation (`declare global { }`) has no keyword at all.
+    return ModuleDeclarationKind.Global;
   }
 
   /**

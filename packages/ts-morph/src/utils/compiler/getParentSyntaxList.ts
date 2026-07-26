@@ -2,7 +2,7 @@ import { SyntaxKind, ts } from "@ts-morph/common";
 import { ExtendedParser } from "../../compiler/ast/utils";
 
 export function getParentSyntaxList(node: ts.Node, sourceFile: ts.SourceFile) {
-  if (node.kind === SyntaxKind.EndOfFileToken)
+  if (node.kind === SyntaxKind.EndOfFile)
     return undefined;
 
   const parent = node.parent;

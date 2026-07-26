@@ -4,7 +4,8 @@ import { ReferenceFindableNode, RenameableNode } from "../base";
 import { PrimaryExpression } from "../expression/PrimaryExpression";
 import { CommonIdentifierBase } from "./base";
 
-export const IdentifierBase = CommonIdentifierBase(ReferenceFindableNode(RenameableNode(PrimaryExpression)));
+const createBase = <T extends typeof PrimaryExpression>(ctor: T) => CommonIdentifierBase(ReferenceFindableNode(RenameableNode(ctor)));
+export const IdentifierBase = createBase(PrimaryExpression);
 export class Identifier extends IdentifierBase<ts.Identifier> {
   /**
    * Gets the implementations of the identifier.

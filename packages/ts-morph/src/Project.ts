@@ -1,6 +1,7 @@
 import {
   CompilerOptions,
   CompilerOptionsContainer,
+  DiagnosticCategory,
   errors,
   FileSystemHost,
   FileUtils,
@@ -54,8 +55,6 @@ export interface ProjectOptions {
    * @remarks Consider using `useInMemoryFileSystem` instead.
    */
   fileSystem?: FileSystemHost;
-  /** Creates a resolution host for specifying custom module and/or type reference directive resolution. */
-  resolutionHost?: ResolutionHostFactory;
 }
 
 /** Options for creating a source file. */
@@ -109,7 +108,6 @@ export class Project {
       compilerOptionsContainer,
       fileSystemWrapper,
       createLanguageService: true,
-      resolutionHost: options.resolutionHost,
       configFileParsingDiagnostics: tsConfigResolver?.getErrors() ?? [],
       skipLoadingLibFiles: options.skipLoadingLibFiles,
       libFolderPath: options.libFolderPath,
@@ -149,11 +147,9 @@ export class Project {
       return tsConfigResolver?.getCompilerOptions() ?? {};
     }
 
+    // tsgo has no `charset` compiler option, so files are always read as utf-8.
     function getEncoding() {
-      const defaultEncoding = "utf-8";
-      if (options.compilerOptions != null)
-        return options.compilerOptions.charset ?? defaultEncoding;
-      return defaultEncoding;
+      return "utf-8";
     }
   }
 
@@ -184,7 +180,7 @@ export class Project {
     compilerFactory.onSourceFileAdded(onSourceFileAdded);
 
     try {
-      this.getProgram().compilerObject; // create the program
+      this.#addProgramSourceFiles();
     } finally {
       compilerFactory.onSourceFileAdded(onSourceFileAdded, false); // unsubscribe
     }
@@ -196,6 +192,33 @@ export class Project {
       sourceFiles.delete(sourceFile);
 
     return Array.from(sourceFiles.values());
+  }
+
+  /**
+   * Adds every file the compiler pulled into the program.
+   *
+   * tsgo resolves modules, `/// <reference>`s and type directives inside the
+   * compiler, and there is no host callback to report a file it loaded, so the
+   * program is asked what it ended up with instead. Adding a file can pull in
+   * more, so this repeats until the program stops growing.
+   */
+  #addProgramSourceFiles() {
+    const { compilerFactory, fileSystemWrapper } = this._context;
+    const seen = new Set<string>();
+    let addedAny: boolean;
+    do {
+      addedAny = false;
+      for (const fileName of this.getProgram().compilerObject.getSourceFileNames()) {
+        // the lib files live in the compiler's own bundle rather than on a file system
+        if (fileName.startsWith("bundled:///") || !seen.add(fileName))
+          continue;
+        const filePath = fileSystemWrapper.getStandardizedAbsolutePath(fileName);
+        if (compilerFactory.containsSourceFileAtPath(filePath))
+          continue;
+        if (compilerFactory.addOrGetSourceFileFromFilePath(filePath, { markInProject: false, scriptKind: undefined }) != null)
+          addedAny = true;
+      }
+    } while (addedAny);
   }
 
   /**
@@ -433,7 +456,9 @@ export class Project {
 
     if (isStandardizedFilePath(filePathOrSearchFunction)) {
       // when a file path is specified, return even source files not in the project
-      return this._context.compilerFactory.getSourceFileFromCacheFromFilePath(filePathOrSearchFunction);
+      const { compilerFactory } = this._context;
+      return compilerFactory.getSourceFileFromCacheFromFilePath(filePathOrSearchFunction)
+        ?? compilerFactory.addSourceFileFromProgramFromFilePath(filePathOrSearchFunction);
     }
 
     return IterableUtils.find(this.#getProjectSourceFilesByDirectoryDepth(), filePathOrSearchFunction);
@@ -508,33 +533,6 @@ export class Project {
       if (inProjectCoordinator.isDirectoryInProject(directory))
         yield directory;
     }
-  }
-
-  /**
-   * Gets the specified ambient module symbol or returns undefined if not found.
-   * @param moduleName - The ambient module name with or without quotes.
-   */
-  getAmbientModule(moduleName: string) {
-    moduleName = normalizeAmbientModuleName(moduleName);
-    return this.getAmbientModules().find(s => s.getName() === moduleName);
-  }
-
-  /**
-   * Gets the specified ambient module symbol or throws if not found.
-   * @param moduleName - The ambient module name with or without quotes.
-   */
-  getAmbientModuleOrThrow(moduleName: string, message?: string | (() => string)) {
-    return errors.throwIfNullOrUndefined(
-      this.getAmbientModule(moduleName),
-      message ?? (() => `Could not find ambient module with name: ${normalizeAmbientModuleName(moduleName)}`),
-    );
-  }
-
-  /**
-   * Gets the ambient module symbols (ex. modules in the @types folder or node_modules).
-   */
-  getAmbientModules() {
-    return this.getTypeChecker().getAmbientModules();
   }
 
   /**
@@ -680,31 +678,25 @@ export class Project {
 
   /**
    * Formats an array of diagnostics with their color and context into a string.
+   *
+   * Breaking change: the output is plain text. tsgo has no
+   * `formatDiagnosticsWithColorAndContext`, so ts-morph formats the diagnostics
+   * itself; the source line, the caret and the ANSI colouring are gone.
    * @param diagnostics - Diagnostics to get a string of.
    * @param options - Collection of options. For example, the new line character to use (defaults to the OS' new line character).
    */
   formatDiagnosticsWithColorAndContext(diagnostics: ReadonlyArray<Diagnostic>, opts: { newLineChar?: "\n" | "\r\n" } = {}) {
-    return ts.formatDiagnosticsWithColorAndContext(diagnostics.map(d => d.compilerObject), {
-      getCurrentDirectory: () => this._context.fileSystemWrapper.getCurrentDirectory(),
-      getCanonicalFileName: fileName => fileName,
-      getNewLine: () => opts.newLineChar ?? runtime.getEndOfLine(),
-    });
-  }
-
-  /**
-   * Gets a ts.ModuleResolutionHost for the project.
-   */
-  getModuleResolutionHost(): ts.ModuleResolutionHost {
-    return this._context.getModuleResolutionHost();
-  }
-}
-
-function normalizeAmbientModuleName(moduleName: string) {
-  if (isQuote(moduleName[0]) && isQuote(moduleName[moduleName.length - 1]))
-    moduleName = moduleName.substring(1, moduleName.length - 1);
-  return `"${moduleName}"`;
-
-  function isQuote(char: string) {
-    return char === `"` || char === "'";
+    const newLineChar = opts.newLineChar ?? runtime.getEndOfLine();
+    return diagnostics
+      .map(diagnostic => {
+        const sourceFile = diagnostic.getSourceFile();
+        const category = DiagnosticCategory[diagnostic.getCategory()].toLowerCase();
+        const message = `${category} TS${diagnostic.getCode()}: ${diagnostic.getMessageText()}`;
+        if (sourceFile == null)
+          return message;
+        const { line, column } = sourceFile.getLineAndColumnAtPos(diagnostic.getStart() ?? 0);
+        return `${sourceFile.getFilePath()}(${line},${column}): ${message}`;
+      })
+      .join(newLineChar);
   }
 }

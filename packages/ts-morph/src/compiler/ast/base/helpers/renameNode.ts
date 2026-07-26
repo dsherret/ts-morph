@@ -10,7 +10,7 @@ export function renameNode(node: Node, newName: string, options?: RenameOptions)
   if (node.getText() === newName)
     return;
 
-  const renameLocations = node._context.languageService.findRenameLocations(node, options);
+  const renameLocations = node._context.languageService.findRenameLocations(node, newName, options);
   const renameLocationsBySourceFile = new KeyValueCache<SourceFile, RenameLocation[]>();
 
   for (const renameLocation of renameLocations) {

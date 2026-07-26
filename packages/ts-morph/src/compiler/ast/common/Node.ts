@@ -16,7 +16,7 @@ import { Project } from "../../../Project";
 import { ProjectContext } from "../../../ProjectContext";
 import { Structure, Structures } from "../../../structures";
 import { WriterFunction } from "../../../types";
-import { CharCodes, getParentSyntaxList, getTextFromStringOrWriter, isStringKind, printNode, PrintNodeOptions } from "../../../utils";
+import { CharCodes, getParentSyntaxList, getTextFromStringOrWriter, isStringKind, newLineKindToString, PrintNodeOptions } from "../../../utils";
 import { Symbol } from "../../symbols";
 import { FormatCodeSettings } from "../../tools";
 import { Type } from "../../types";
@@ -229,13 +229,21 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    * @param options - Options.
    */
   print(options: PrintNodeOptions = {}): string {
-    if (options.newLineKind == null)
-      options.newLineKind = this._context.manipulationSettings.getNewLineKind();
-
-    if (this.getKind() === SyntaxKind.SourceFile)
-      return printNode(this.compilerNode, options);
-    else
-      return printNode(this.compilerNode, this._sourceFile.compilerNode, options);
+    const sourceFile = this._sourceFile;
+    const text = this._context.compilerFactory.documentRegistry.project.emitter.printNode(this.compilerNode, {
+      // the printer reads the node's comments and original token text out of the
+      // file it was parsed from, so the node is printed alongside its own text
+      sourceText: sourceFile.getFullText(),
+      fileName: sourceFile.getFilePath(),
+      preserveSourceNewlines: options.preserveSourceNewlines,
+      neverAsciiEscape: options.neverAsciiEscape,
+      terminateUnterminatedLiterals: options.terminateUnterminatedLiterals,
+    });
+    // tsgo's printer has no newline option, so ts-morph normalizes the result.
+    const newLineChar = options.newLineKind == null
+      ? this._context.manipulationSettings.getNewLineKindAsString()
+      : newLineKindToString(options.newLineKind);
+    return text.replace(/\r?\n/g, newLineChar);
   }
 
   /**
@@ -263,60 +271,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       return this._getNodeFromCompilerNode(nameNode).getSymbol();
 
     return undefined;
-  }
-
-  /**
-   * Gets the symbols in the scope of the node.
-   *
-   * Note: This will always return the local symbols. If you want the export symbol from a local symbol, then
-   * use the `#getExportSymbol()` method on the symbol.
-   * @param meaning - Meaning of symbol to filter by.
-   */
-  getSymbolsInScope(meaning: SymbolFlags): Symbol[] {
-    return this._context.typeChecker.getSymbolsInScope(this, meaning);
-  }
-
-  /**
-   * Gets the specified local symbol by name or throws if it doesn't exist.
-   *
-   * WARNING: The symbol table of locals is not exposed publicly by the compiler. Use this at your own risk knowing it may break.
-   * @param name - Name of the local symbol.
-   */
-  getLocalOrThrow(name: string, message?: string | (() => string)): Symbol {
-    return errors.throwIfNullOrUndefined(this.getLocal(name), message ?? (() => `Expected to find local symbol with name: ${name}`), this);
-  }
-
-  /**
-   * Gets the specified local symbol by name or returns undefined if it doesn't exist.
-   *
-   * WARNING: The symbol table of locals is not exposed publicly by the compiler. Use this at your own risk knowing it may break.
-   * @param name - Name of the local symbol.
-   */
-  getLocal(name: string): Symbol | undefined {
-    const locals = this.#getCompilerLocals();
-    if (locals == null)
-      return undefined;
-
-    const tsSymbol = locals.get(ts.escapeLeadingUnderscores(name));
-    return tsSymbol == null ? undefined : this._context.compilerFactory.getSymbol(tsSymbol);
-  }
-
-  /**
-   * Gets the symbols within the current scope.
-   *
-   * WARNING: The symbol table of locals is not exposed publicly by the compiler. Use this at your own risk knowing it may break.
-   */
-  getLocals(): Symbol[] {
-    const locals = this.#getCompilerLocals();
-    if (locals == null)
-      return [];
-    return Array.from(locals.values()).map(symbol => this._context.compilerFactory.getSymbol(symbol));
-  }
-
-  /** @internal */
-  #getCompilerLocals() {
-    this._ensureBound();
-    return (this.compilerNode as any).locals as ts.SymbolTable | undefined;
   }
 
   /**
@@ -1308,10 +1262,26 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
   /**
    * Gets the indentation level of the current node.
+   *
+   * Breaking change: tsgo has no smart-indentation service, so this is worked
+   * out from the text: the deeper of the indentation the node's line actually
+   * has and one level past the ancestor that opened it. Taking the deeper of the
+   * two is what keeps a node whose own line is under-indented — a class member
+   * written flush against a two-space margin — reading as a member of its class,
+   * while code that is deliberately indented further keeps its own depth.
+   *
+   * The level is rounded down to the nearest half, which is the granularity
+   * ts-morph's writers indent at — that is what keeps half-indented code
+   * half-indented when statements are written into it, without a stray space of
+   * leading whitespace reading as a level of its own.
    */
-  getIndentationLevel() {
-    const indentationText = this._context.manipulationSettings.getIndentationText();
-    return this._context.languageService.getIdentationAtPosition(this._sourceFile, this.getStart()) / indentationText.length;
+  getIndentationLevel(): number {
+    const fullText = this._sourceFile.getFullText();
+    const ownLevel = this.#getLineIndentationLevel(fullText, this.getStart());
+    const container = this.#getIndentationContainer();
+    if (container == null)
+      return ownLevel;
+    return Math.max(ownLevel, this.#getLineIndentationLevel(fullText, container.getStart()) + 1);
   }
 
   /**
@@ -1345,6 +1315,42 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    */
   #getIndentationTextForLevel(level: number) {
     return this._context.manipulationSettings.getIndentationText().repeat(level);
+  }
+
+  /**
+   * The nearest ancestor that starts on an earlier line, which is the node whose
+   * indentation this one is written relative to. `undefined` when there is none
+   * — a node at the top of its file is indented only by whatever its own line
+   * already has.
+   * @internal
+   */
+  #getIndentationContainer(): Node | undefined {
+    const startLinePos = this.getStartLinePos();
+    let ancestor = this.getParent();
+    while (ancestor != null && !Node.isSourceFile(ancestor)) {
+      // a doc comment's contents line up under its asterisks rather than being
+      // indented a level past the comment, so there is nothing to measure from
+      if (Node.isJSDoc(ancestor))
+        return undefined;
+      if (ancestor.getStartLinePos() < startLinePos)
+        return ancestor;
+      ancestor = ancestor.getParent();
+    }
+    return undefined;
+  }
+
+  /** The indentation of the line `pos` is on, in levels rounded down to the nearest half. */
+  /** @internal */
+  #getLineIndentationLevel(fullText: string, pos: number) {
+    let lineStart = pos;
+    while (lineStart > 0 && fullText[lineStart - 1] !== "\n")
+      lineStart--;
+
+    let width = 0;
+    while (lineStart + width < fullText.length && StringUtils.isWhitespaceCharCode(fullText.charCodeAt(lineStart + width)))
+      width++;
+
+    return Math.floor(width * 2 / this._context.manipulationSettings.getIndentationText().length) / 2;
   }
 
   /**
@@ -2932,7 +2938,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       case SyntaxKind.JSDocThrowsTag:
       case SyntaxKind.JSDocTypedefTag:
       case SyntaxKind.JSDocTypeTag:
-      case SyntaxKind.JSDocTag:
+      case SyntaxKind.JSDocUnknownTag:
         return true;
       default:
         return false;
@@ -2997,7 +3003,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
   /** Gets if the node is a JSDocUnknownTag. */
   static isJSDocUnknownTag(node: compiler.Node | undefined): node is compiler.JSDocUnknownTag {
-    return node?.getKind() === SyntaxKind.JSDocTag;
+    return node?.getKind() === SyntaxKind.JSDocUnknownTag;
   }
 
   /** Gets if the node is a JSDocVariadicType. */

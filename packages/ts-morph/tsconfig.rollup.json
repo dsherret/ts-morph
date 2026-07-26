@@ -3,6 +3,13 @@
   "compilerOptions": {
     "module": "es2015",
     "moduleResolution": "node",
-    "removeComments": true
+    "removeComments": true,
+    // `Node` initializes its static members by calling `Node.is(...)`, and the
+    // class-fields transform rewrites that self-reference to a class alias it only
+    // assigns after the class body has run. At es2022 the statics stay inside the
+    // body as static blocks and read the alias before it exists; one target lower
+    // they are emitted as assignments after the class, where the alias is set.
+    // Type checking still runs at the workspace target — this is emit only.
+    "target": "es2021"
   }
 }
