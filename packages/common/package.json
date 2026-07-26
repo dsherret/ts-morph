@@ -10,7 +10,7 @@
   "scripts": {
     "build": "deno task vendorTsgoTypes && deno task build:declarations && deno task build:node",
     "build:node": "rimraf dist && deno task createLibFile && deno task rollup",
-    "build:deno": "rimraf ../../deno/common && rimraf dist-deno && deno task rollup --environment BUILD:deno && deno task build:declarations && deno run -A scripts/buildDeno.ts",
+    "build:deno": "rimraf ../../deno/common && rimraf dist-deno && deno task vendorTsgoTypes && deno task rollup --environment BUILD:deno && deno task build:declarations && deno run -A scripts/buildDeno.ts",
     "build:declarations": "deno run -A scripts/buildDeclarations.ts",
     "vendorTsgoTypes": "deno run -A scripts/vendorTsgoTypes.ts",
     "createLibFile": "deno run -A scripts/createLibFile.ts",

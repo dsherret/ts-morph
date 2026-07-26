@@ -27,4 +27,3 @@ export declare enum TokenFlags {
     RegularExpressionLiteralFlags = 4,
     IsInvalid = 26656
 }
-//# sourceMappingURL=tokenFlags.enum.d.ts.map

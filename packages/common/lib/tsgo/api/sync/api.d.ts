@@ -195,6 +195,15 @@ export declare class Program {
     getSourceFile(file: DocumentIdentifier): SourceFile | undefined;
     getSourceFileNames(): readonly string[];
     /**
+     * Every source file in the program.
+     *
+     * Each one is fetched and decoded on the way out, so a caller that only needs
+     * the names should ask for {@link getSourceFileNames} instead.
+     */
+    getSourceFiles(): readonly SourceFile[];
+    /** The checker for this program, which the project owns. */
+    getTypeChecker(): Checker;
+    /**
      * Returns program-stored metadata for the given source file, or `undefined` if the file
      * is not part of the program. Metadata is fetched lazily per file and cached on this
      * `Program` instance.
@@ -749,4 +758,3 @@ export declare class Signature {
     getJsDocTags(checker: Checker): readonly JSDocTagInfo[];
     getDocumentationComment(checker: Checker): string;
 }
-//# sourceMappingURL=api.d.ts.map

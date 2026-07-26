@@ -47,4 +47,3 @@ export declare function visitNodesArray<T extends Node>(nodes: readonly T[] | un
  */
 export declare function visitEachChild<T extends Node>(node: T, visitor: Visitor): T;
 export declare function visitEachChild<T extends Node>(node: T | undefined, visitor: Visitor): T | undefined;
-//# sourceMappingURL=visitor.generated.d.ts.map

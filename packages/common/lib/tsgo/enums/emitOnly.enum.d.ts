@@ -3,4 +3,3 @@ export declare enum EmitOnly {
     OnlyJs = 1,
     OnlyDts = 2
 }
-//# sourceMappingURL=emitOnly.enum.d.ts.map

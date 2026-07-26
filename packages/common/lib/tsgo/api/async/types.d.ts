@@ -356,4 +356,3 @@ export type ImportAdderAction = ImportSymbolAction;
 export interface GetImportEditsForSymbolsOptions {
     readonly isValidTypeOnlyUseSite?: boolean;
 }
-//# sourceMappingURL=types.d.ts.map

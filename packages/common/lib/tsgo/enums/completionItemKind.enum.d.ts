@@ -25,4 +25,3 @@ export declare enum CompletionItemKind {
     Operator = 24,
     TypeParameter = 25
 }
-//# sourceMappingURL=completionItemKind.enum.d.ts.map

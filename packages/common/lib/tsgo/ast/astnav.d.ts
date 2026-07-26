@@ -16,4 +16,3 @@ export declare function findNextToken(previousToken: Node, parent: Node, sourceF
 export declare function findPrecedingToken(sourceFile: SourceFile, position: number): Node | undefined;
 /** @internal */
 export declare function getTokenPosOfNode(node: Node, sourceFile: SourceFile, includeJSDoc?: boolean): number;
-//# sourceMappingURL=astnav.d.ts.map

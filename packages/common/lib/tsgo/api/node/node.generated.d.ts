@@ -179,4 +179,3 @@ export declare class RemoteNode extends RemoteNodeBase implements Node {
     get flags(): number;
     get modifierFlags(): ModifierFlags;
 }
-//# sourceMappingURL=node.generated.d.ts.map

@@ -50,7 +50,9 @@ function rewriteSpecifiers(text: string, fileRelativePath: string): string {
   const toRoot = depth === 0 ? "./" : "../".repeat(depth);
   return disposableLibReference(text) + text
     .replace(/(["'])#enums\/([A-Za-z0-9_]+)\1/g, (_, quote, name) => `${quote}${toRoot}enums/${name}.enum${quote}`)
-    .replace(/(from\s*["']\.{1,2}\/[^"']+)\.ts(["'])/g, "$1$2");
+    .replace(/(from\s*["']\.{1,2}\/[^"']+)\.ts(["'])/g, "$1$2")
+    // the source maps are not vendored, so the link would only dangle
+    .replace(/\n?\/\/# sourceMappingURL=[^\n]*\n?/g, "\n");
 }
 
 /**

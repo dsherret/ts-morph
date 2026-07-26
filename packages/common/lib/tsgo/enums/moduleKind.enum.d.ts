@@ -14,4 +14,3 @@ export declare enum ModuleKind {
     NodeNext = 199,
     Preserve = 200
 }
-//# sourceMappingURL=moduleKind.enum.d.ts.map

@@ -386,4 +386,3 @@ export declare enum SyntaxKind {
     FirstTriviaToken = 2,
     LastTriviaToken = 6
 }
-//# sourceMappingURL=syntaxKind.enum.d.ts.map

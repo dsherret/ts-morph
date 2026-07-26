@@ -94,4 +94,3 @@ export declare function isIdentifierPart(ch: number, _languageVersion?: ScriptTa
 export declare function isIdentifierText(name: string, _languageVersion?: ScriptTarget, identifierVariant?: LanguageVariant): boolean;
 export declare function utf16EncodeAsString(codePoint: number): string;
 export declare function createScanner(skipTrivia: boolean, languageVariant?: LanguageVariant, textInitial?: string, start?: number, length?: number): Scanner;
-//# sourceMappingURL=scanner.d.ts.map

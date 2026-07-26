@@ -522,4 +522,3 @@ export declare function updateJSDocParameterTag(node: JSDocParameterTag, tagName
 export declare function updateJSDocPropertyTag(node: JSDocPropertyTag, tagName: Identifier, name: EntityName, typeExpression: TypeNode | undefined, comment: readonly JSDocComment[] | undefined): JSDocPropertyTag;
 export declare function createSourceFile(statements: readonly Statement[], endOfFileToken: EndOfFile, text: string, fileName: string, path: Path): SourceFile;
 export declare function updateSourceFile(node: SourceFile, statements: readonly Statement[], endOfFileToken: EndOfFile): SourceFile;
-//# sourceMappingURL=factory.generated.d.ts.map

@@ -8,4 +8,3 @@ export declare function getAllJSDocTags<T extends JSDocTag>(node: Node, predicat
 export declare function getAllJSDocTagsOfKind(node: Node, kind: SyntaxKind): readonly JSDocTag[];
 /** Gets the text of a jsdoc comment, flattening links to their text. */
 export declare function getTextOfJSDocComment(comment?: string | NodeArray<JSDocComment>): string | undefined;
-//# sourceMappingURL=jsdoc.d.ts.map

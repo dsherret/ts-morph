@@ -12,4 +12,3 @@ export declare enum SignatureFlags {
     PropagatingFlags = 335,
     CallChainFlags = 48
 }
-//# sourceMappingURL=signatureFlags.enum.d.ts.map

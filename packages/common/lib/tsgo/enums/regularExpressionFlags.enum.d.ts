@@ -10,4 +10,3 @@ export declare enum RegularExpressionFlags {
     Sticky = 128,
     AnyUnicodeMode = 96
 }
-//# sourceMappingURL=regularExpressionFlags.enum.d.ts.map

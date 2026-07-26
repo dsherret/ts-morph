@@ -326,4 +326,3 @@ export declare function isFalseLiteral(node: Node): node is FalseLiteral;
 export declare function isThisExpression(node: Node): node is ThisExpression;
 export declare function isSuperExpression(node: Node): node is SuperExpression;
 export declare function isImportExpression(node: Node): node is ImportExpression;
-//# sourceMappingURL=is.generated.d.ts.map

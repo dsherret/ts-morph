@@ -33,4 +33,3 @@ export declare function isLiteralTypeLiteral(node: Node): node is NullLiteral | 
 export declare function isIdentifierOrJSDocNamespaceDeclaration(node: Node): node is Identifier | JSDocNamespaceDeclaration;
 export declare function isJSDocTypeExpressionOrJSDocTypeLiteral(node: Node): node is JSDocTypeExpression | JSDocTypeLiteral;
 export declare function isJsxTagNameExpression(node: Node): node is JsxTagNameExpression;
-//# sourceMappingURL=is.d.ts.map

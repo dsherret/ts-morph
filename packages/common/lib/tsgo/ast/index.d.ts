@@ -19,4 +19,3 @@ export * from "./jsdoc";
 export * from "./scanner";
 export * from "./utils";
 export * from "./visitor";
-//# sourceMappingURL=index.d.ts.map

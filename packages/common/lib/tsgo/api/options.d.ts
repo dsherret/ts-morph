@@ -43,4 +43,3 @@ export interface LSPConnectionOptions extends ClientSocketOptions {
 }
 export interface APIOptions extends ClientSpawnOptions {
 }
-//# sourceMappingURL=options.d.ts.map

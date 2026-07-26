@@ -1158,4 +1158,3 @@ export type ImportAttributeList = NodeArray<ImportAttribute>;
 export type TemplateLiteralTypeSpanList = NodeArray<TemplateLiteralTypeSpan>;
 export type JsxChildList = NodeArray<JsxChild>;
 export type JsxAttributeList = NodeArray<JsxAttributeLike>;
-//# sourceMappingURL=ast.generated.d.ts.map

@@ -39,4 +39,3 @@ export declare function getSyntheticLeadingComments(node: Node): SynthesizedComm
 export declare function getSyntheticTrailingComments(node: Node): SynthesizedComment[] | undefined;
 /** The node's annotations, or `undefined` when it has never been annotated. */
 export declare function getEmitNode(node: Node): EmitNode | undefined;
-//# sourceMappingURL=comments.d.ts.map

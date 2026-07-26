@@ -39,4 +39,3 @@ export declare enum ModifierFlags {
     Modifier = 98303,
     JavaScript = 3872
 }
-//# sourceMappingURL=modifierFlags.enum.d.ts.map

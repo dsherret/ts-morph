@@ -18,4 +18,3 @@ export declare function hasExpression(node: Node): node is HasExpression;
 export declare function hasInitializer(node: Node): node is HasInitializer;
 export declare function hasObjectAssignmentInitializer(node: Node): node is ObjectAssignmentInitializer;
 export declare function cloneSourceFileData(sourceFile: SourceFile): Record<string, unknown>;
-//# sourceMappingURL=utils.d.ts.map

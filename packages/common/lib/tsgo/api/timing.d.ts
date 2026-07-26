@@ -172,4 +172,3 @@ export declare class TimingCollector {
     /** Clears all accumulated totals and recent-request history. */
     reset(): void;
 }
-//# sourceMappingURL=timing.d.ts.map

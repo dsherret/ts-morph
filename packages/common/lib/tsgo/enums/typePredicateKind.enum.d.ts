@@ -4,4 +4,3 @@ export declare enum TypePredicateKind {
     AssertsThis = 2,
     AssertsIdentifier = 3
 }
-//# sourceMappingURL=typePredicateKind.enum.d.ts.map

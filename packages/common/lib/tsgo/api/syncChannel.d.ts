@@ -111,4 +111,3 @@ export declare class SyncRpcChannel {
      */
     private writeAllBuf;
 }
-//# sourceMappingURL=syncChannel.d.ts.map

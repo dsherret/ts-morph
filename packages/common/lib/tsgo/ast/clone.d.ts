@@ -13,4 +13,3 @@ export declare function getSynthesizedDeepClone<T extends Node>(node: T | undefi
  */
 export declare function getSynthesizedDeepClones<T extends Node>(nodes: NodeArray<T>, includeTrivia?: boolean): NodeArray<T>;
 export declare function getSynthesizedDeepClones<T extends Node>(nodes: NodeArray<T> | undefined, includeTrivia?: boolean): NodeArray<T> | undefined;
-//# sourceMappingURL=clone.d.ts.map

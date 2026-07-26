@@ -20,4 +20,3 @@ export interface MapLike<T> {
 export declare function hasProperty(map: MapLike<any>, key: string): boolean;
 export declare function assertNever(member: never, message?: string, stackCrawlMark?: AnyFunction): never;
 export declare function fail(message?: string, stackCrawlMark?: AnyFunction): never;
-//# sourceMappingURL=utils.d.ts.map

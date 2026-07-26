@@ -14,6 +14,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
+        with:
+          submodules: recursive
       - uses: denoland/setup-deno@v2
         with:
           deno-version: canary
@@ -21,6 +23,16 @@ jobs:
         with:
           node-version: "24.x"
           registry-url: "https://registry.npmjs.org"
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: submodules/typescript-go/go.mod
+          cache-dependency-path: submodules/typescript-go/go.sum
+      - name: Build the tsgo compiler
+        run: |
+          cd submodules/typescript-go
+          node _scripts/build-wasm.mjs
+          cd _packages/native-preview
+          npx tsc -b
       - run: deno install
       - name: Build JSR
         run: deno task build:deno

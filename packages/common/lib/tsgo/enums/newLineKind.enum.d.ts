@@ -3,4 +3,3 @@ export declare enum NewLineKind {
     CRLF = 1,
     LF = 2
 }
-//# sourceMappingURL=newLineKind.enum.d.ts.map

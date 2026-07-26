@@ -9,4 +9,3 @@ export declare enum ElementFlags {
     NonRequired = 14,
     NonRest = 11
 }
-//# sourceMappingURL=elementFlags.enum.d.ts.map

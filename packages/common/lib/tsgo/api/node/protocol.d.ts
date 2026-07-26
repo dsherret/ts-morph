@@ -26,4 +26,3 @@ export declare const NODE_DATA_TYPE_EXTENDED = 2147483648;
 export declare const NODE_STRING_INDEX_MASK = 16777215;
 export declare const NODE_EXTENDED_DATA_MASK = 16777215;
 export { childProperties, singleChildNodePropertyNames } from "./protocol.generated";
-//# sourceMappingURL=protocol.d.ts.map

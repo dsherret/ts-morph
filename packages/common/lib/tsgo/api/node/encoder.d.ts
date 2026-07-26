@@ -25,4 +25,3 @@ export declare function encodeNode(node: Node, nodeIndices?: Map<Node, number>):
  * Encode a Uint8Array to a base64 string.
  */
 export declare function uint8ArrayToBase64(data: Uint8Array): string;
-//# sourceMappingURL=encoder.d.ts.map

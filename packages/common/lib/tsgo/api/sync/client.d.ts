@@ -32,4 +32,3 @@ export declare class Client {
     private recordTiming;
     close(): void;
 }
-//# sourceMappingURL=client.d.ts.map

@@ -36,4 +36,3 @@ export declare class Client {
     private fetchServerTiming;
     close(): Promise<void>;
 }
-//# sourceMappingURL=client.d.ts.map

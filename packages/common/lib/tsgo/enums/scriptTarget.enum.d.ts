@@ -14,4 +14,3 @@ export declare enum ScriptTarget {
     JSON = 100,
     Latest = 99
 }
-//# sourceMappingURL=scriptTarget.enum.d.ts.map

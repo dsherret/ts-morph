@@ -20,4 +20,3 @@ export declare enum InternalSymbolName {
     This = "this",
     ModuleExports = "module.exports"
 }
-//# sourceMappingURL=internalSymbolName.enum.d.ts.map

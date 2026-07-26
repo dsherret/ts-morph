@@ -106,4 +106,3 @@ export interface CompilerOptions {
     verbatimModuleSyntax?: boolean;
     maxNodeModuleJsDepth?: number;
 }
-//# sourceMappingURL=compilerOptions.d.ts.map

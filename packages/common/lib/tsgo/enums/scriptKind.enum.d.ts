@@ -8,4 +8,3 @@ export declare enum ScriptKind {
     JSON = 6,
     Deferred = 7
 }
-//# sourceMappingURL=scriptKind.enum.d.ts.map

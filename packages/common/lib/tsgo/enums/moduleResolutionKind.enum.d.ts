@@ -6,4 +6,3 @@ export declare enum ModuleResolutionKind {
     NodeNext = 99,
     Bundler = 100
 }
-//# sourceMappingURL=moduleResolutionKind.enum.d.ts.map

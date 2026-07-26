@@ -4,4 +4,3 @@ export declare enum DiagnosticCategory {
     Suggestion = 2,
     Message = 3
 }
-//# sourceMappingURL=diagnosticCategory.enum.d.ts.map

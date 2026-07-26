@@ -5,6 +5,9 @@ const vendoredTsgoDir = "./tsgo";
 /** The part of a submodule specifier that precedes the path within the client's `dist`. */
 const clientDistSpecifier = "submodules/typescript-go/_packages/native-preview/dist/";
 
+/** Memoizes stripComments, which runs once per candidate name otherwise. */
+const strippedCache = new Map<string, string>();
+
 const declarationProject = createDeclarationProject({
   tsConfigFilePath: path.join(folders.common, "tsconfig.json"),
 });
@@ -109,17 +112,11 @@ function header(body: string) {
   const fromClient = new Map<string, string[]>();
   const reintroduced = new Set<string>();
 
-  // Names the body uses under the same name the `ts` namespace gives them.
-  for (const name of tsNamespaceExports) {
-    if (declaredNames.has(name) || !isReferenced(name, body))
-      continue;
-    reintroduced.add(name);
-    lines.push(aliasFromTs(name, name));
-  }
-
-  // Names the body uses under an alias, or that the client alone declares.
+  // What the declaration actually imported comes first: it is the record of what
+  // the name meant where it was written, so it decides even when the `ts`
+  // namespace happens to export something under the same name.
   for (const [localName, imported] of clientImports) {
-    if (declaredNames.has(localName) || reintroduced.has(localName) || !isReferenced(localName, body))
+    if (declaredNames.has(localName) || !isReferenced(localName, body))
       continue;
     reintroduced.add(localName);
     if (tsNamespaceExports.has(imported.name))
@@ -130,6 +127,15 @@ function header(body: string) {
       names.push(imported.name === localName ? localName : `${imported.name} as ${localName}`);
       fromClient.set(specifier, names);
     }
+  }
+
+  // Then names the body uses that no import accounted for, which the `ts`
+  // namespace declares itself.
+  for (const name of tsNamespaceExports) {
+    if (declaredNames.has(name) || reintroduced.has(name) || !isReferenced(name, body))
+      continue;
+    reintroduced.add(name);
+    lines.push(aliasFromTs(name, name));
   }
 
   for (const [specifier, names] of [...fromClient].sort())
@@ -239,6 +245,16 @@ function getClientImports() {
       const modulePath = specifier.slice(index + clientDistSpecifier.length).replace(/\.js$/, "");
       for (const namedImport of importDeclaration.getNamedImports()) {
         const alias = namedImport.getAliasNode()?.getText() ?? namedImport.getName();
+        // One local name has to mean one thing, because the flattened file has a
+        // single scope. Two modules disagreeing about it would otherwise resolve
+        // to whichever was read last, silently.
+        const existing = result.get(alias);
+        if (existing != null && (existing.name !== namedImport.getName() || existing.path !== modulePath)) {
+          throw new Error(
+            `The local name ${alias} means ${existing.name} from ${existing.path} in one module and `
+              + `${namedImport.getName()} from ${modulePath} in another. Rename one of them.`,
+          );
+        }
         result.set(alias, { name: namedImport.getName(), path: modulePath });
       }
     }
@@ -267,9 +283,23 @@ function isFromCompiler(sourceFile: tsMorph.SourceFile) {
   return false;
 }
 
-/** Whether `name` appears in `text` as an identifier rather than as part of one. */
+/**
+ * Whether `name` appears in `text` as an identifier rather than as part of one.
+ *
+ * Comments are stripped first. Otherwise a name that only appears in prose —
+ * `@param fileOrDirPath - Path to standardize` mentions `Path` — is read as a
+ * reference and reintroduced for nothing.
+ */
 function isReferenced(name: string, text: string) {
-  return new RegExp(`\\b${name}\\b`).test(text);
+  return new RegExp(`\\b${name}\\b`).test(stripComments(text));
+}
+
+/** `text` with its block and line comments blanked out. */
+function stripComments(text: string) {
+  let stripped = strippedCache.get(text);
+  if (stripped === undefined)
+    strippedCache.set(text, stripped = text.replace(/\/\*[\s\S]*?\*\/|\/\/[^\n]*/g, ""));
+  return stripped;
 }
 
 /** Brings `tsName` into scope under `localName`, however the namespace exports it. */

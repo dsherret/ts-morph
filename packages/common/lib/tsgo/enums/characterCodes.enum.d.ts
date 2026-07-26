@@ -126,4 +126,3 @@ export declare enum CharacterCodes {
     tab = 9,// \t
     verticalTab = 11
 }
-//# sourceMappingURL=characterCodes.enum.d.ts.map

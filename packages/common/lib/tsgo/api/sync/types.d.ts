@@ -365,4 +365,3 @@ export interface RenameOptions {
      */
     readonly useAliasesForRename?: boolean;
 }
-//# sourceMappingURL=types.d.ts.map

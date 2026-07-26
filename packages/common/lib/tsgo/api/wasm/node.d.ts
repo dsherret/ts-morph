@@ -32,4 +32,3 @@ export interface NodeWasmApiOptions {
  * Creates a synchronous {@link API} backed by the in-process WebAssembly reactor.
  */
 export declare function createWasmAPI(options?: NodeWasmApiOptions): API;
-//# sourceMappingURL=node.d.ts.map

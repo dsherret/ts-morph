@@ -1,11 +1,9 @@
 import { ts } from "./typescript";
+type SourceFile = ts.SourceFile;
+type Node = ts.Node;
 type Diagnostic = ts.Diagnostic;
 import ModuleResolutionHost = ts.ModuleResolutionHost;
 type Program = ts.Program;
-type Path = ts.Path;
-type Node = ts.Node;
-type SourceFile = ts.SourceFile;
-type Decorator = ts.Decorator;
 import type { FileSystem } from "./tsgo/api/fs";
 import type { API, Project } from "./tsgo/api/sync/api";
 

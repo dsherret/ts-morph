@@ -28,4 +28,3 @@ export declare enum CheckFlags {
     NonUniformAndLiteral = 192,
     Partial = 48
 }
-//# sourceMappingURL=checkFlags.enum.d.ts.map

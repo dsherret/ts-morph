@@ -4,4 +4,3 @@ export declare enum ModuleDetectionKind {
     Legacy = 2,
     Force = 3
 }
-//# sourceMappingURL=moduleDetectionKind.enum.d.ts.map

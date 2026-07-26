@@ -14,4 +14,3 @@ export declare function getChildren(node: Node, sourceFile?: SourceFile): Node[]
 export declare function getFirstToken(node: Node, sourceFile?: SourceFile): Node | undefined;
 /** Returns the last child token of `node`, or `undefined` when it has none. */
 export declare function getLastToken(node: Node, sourceFile?: SourceFile): Node | undefined;
-//# sourceMappingURL=children.d.ts.map

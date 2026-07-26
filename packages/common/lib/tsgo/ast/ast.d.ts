@@ -114,4 +114,3 @@ export type HasExpression = ExpressionStatement | IfStatement | DoStatement | Wh
 export interface ObjectAssignmentInitializer extends ShorthandPropertyAssignment {
     readonly objectAssignmentInitializer: Expression;
 }
-//# sourceMappingURL=ast.d.ts.map

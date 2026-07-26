@@ -73,4 +73,3 @@ export declare class RemoteNodeBase {
     protected getFileText(start: number, end: number): string;
     protected get sourceFile(): SourceFileInfo;
 }
-//# sourceMappingURL=node.infrastructure.d.ts.map

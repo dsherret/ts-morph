@@ -6,4 +6,3 @@ export declare enum JsxEmit {
     ReactJSX = 4,
     ReactJSXDev = 5
 }
-//# sourceMappingURL=jsxEmit.enum.d.ts.map

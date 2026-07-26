@@ -107,4 +107,3 @@ export declare function fileNameToDocumentURI(fileName: string): string;
  * documentURIToFileName("vscode-vfs://github/microsoft/typescript-go/file.ts") === "^/vscode-vfs/github/microsoft/typescript-go/file.ts"
  */
 export declare function documentURIToFileName(uri: string): string;
-//# sourceMappingURL=path.d.ts.map

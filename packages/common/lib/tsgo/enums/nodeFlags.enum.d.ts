@@ -41,4 +41,3 @@ export declare enum NodeFlags {
     IdentifierIsInJSDocNamespace = 262144,
     NestedNamespace = 32
 }
-//# sourceMappingURL=nodeFlags.enum.d.ts.map

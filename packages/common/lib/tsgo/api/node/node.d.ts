@@ -73,4 +73,3 @@ export declare function decodeNode(data: Uint8Array): Node;
  * Throws if the node is not a RemoteNode (i.e. not decoded from binary data).
  */
 export declare function getNodeId(node: Node): string;
-//# sourceMappingURL=node.d.ts.map

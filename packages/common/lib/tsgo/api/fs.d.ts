@@ -20,4 +20,3 @@ export interface FileSystem {
 /** The callback names supported by the Go server for virtual FS delegation. */
 export declare const fsCallbackNames: readonly ["readFile", "fileExists", "directoryExists", "getAccessibleEntries", "realpath", "writeFile"];
 export declare function createVirtualFileSystem(files: Record<string, string>): FileSystem;
-//# sourceMappingURL=fs.d.ts.map

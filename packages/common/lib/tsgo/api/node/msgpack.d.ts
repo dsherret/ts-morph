@@ -29,4 +29,3 @@ export declare class MsgpackReader {
     readString(): string;
     readBool(): boolean;
 }
-//# sourceMappingURL=msgpack.d.ts.map

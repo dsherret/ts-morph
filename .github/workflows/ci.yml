@@ -13,10 +13,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          submodules: recursive
       - uses: denoland/setup-deno@v2
         with:
           cache: true
           deno-version: canary
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: submodules/typescript-go/go.mod
+          cache-dependency-path: submodules/typescript-go/go.sum
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24.x"
+      - name: Build the tsgo compiler
+        run: |
+          cd submodules/typescript-go
+          node _scripts/build-wasm.mjs
+          cd _packages/native-preview
+          npx tsc -b
       - name: Build
         run: |
           deno install
@@ -37,10 +52,25 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
+        with:
+          submodules: recursive
       - uses: denoland/setup-deno@v2
         with:
           cache: true
           deno-version: canary
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: submodules/typescript-go/go.mod
+          cache-dependency-path: submodules/typescript-go/go.sum
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24.x"
+      - name: Build the tsgo compiler
+        run: |
+          cd submodules/typescript-go
+          node _scripts/build-wasm.mjs
+          cd _packages/native-preview
+          npx tsc -b
       - run: deno install
       - name: Build
         run: deno task build:deno

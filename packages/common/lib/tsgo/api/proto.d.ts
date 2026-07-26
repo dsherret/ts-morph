@@ -350,4 +350,3 @@ export interface CompletionInfoResponse {
     isIncomplete: boolean;
     entries: CompletionEntryResponse[];
 }
-//# sourceMappingURL=proto.d.ts.map

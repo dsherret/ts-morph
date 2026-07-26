@@ -13,4 +13,3 @@ export declare enum OuterExpressionKinds {
     AllExceptAssertionsOrExpressionsWithTypeArguments = 9,
     ExpressionTypePassthrough = 385
 }
-//# sourceMappingURL=outerExpressionKinds.enum.d.ts.map

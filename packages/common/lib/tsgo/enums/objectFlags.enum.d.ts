@@ -47,4 +47,3 @@ export declare enum ObjectFlags {
     IsNeverIntersection = 67108864,
     IsConstrainedTypeVariable = 134217728
 }
-//# sourceMappingURL=objectFlags.enum.d.ts.map
