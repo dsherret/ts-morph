@@ -1,5 +1,6 @@
 import {
   CompilerOptionsContainer,
+  createModuleResolutionHost,
   errors,
   FileSystemHost,
   FileUtils,
@@ -133,6 +134,7 @@ function createProjectCommon(options: ProjectOptions) {
 /** Project that holds source files. */
 export class Project {
   readonly #sourceFileCache: SourceFileCache;
+  #moduleResolutionHost: ts.ModuleResolutionHost | undefined;
   readonly #fileSystemWrapper: TransactionalFileSystem;
   readonly #configFileParsingDiagnostics: ts.Diagnostic[];
 
@@ -550,6 +552,24 @@ export class Project {
       .join(newLineChar);
   }
 
+  /**
+   * Gets a ts.ModuleResolutionHost for the project.
+   */
+  getModuleResolutionHost(): ts.ModuleResolutionHost {
+    return this.#moduleResolutionHost ??= createModuleResolutionHost({
+      transactionalFileSystem: this.#fileSystemWrapper,
+      getEncoding: () => this.compilerOptions.getEncoding(),
+      sourceFileContainer: {
+        containsDirectoryAtPath: dirPath => this.#sourceFileCache.containsDirectoryAtPath(dirPath),
+        containsSourceFileAtPath: filePath => this.#sourceFileCache.containsSourceFileAtPath(filePath),
+        getSourceFileFromCacheFromFilePath: filePath => {
+          const sourceFile = this.#sourceFileCache.getSourceFileFromCacheFromFilePath(filePath);
+          return sourceFile == null ? undefined : { getFullText: () => sourceFile.text };
+        },
+        getChildDirectoriesOfDirectory: dirPath => this.#sourceFileCache.getChildDirectoriesOfDirectory(dirPath),
+      },
+    });
+  }
 }
 
 async function addSourceFilesForTsConfigResolver(project: Project, tsConfigResolver: TsConfigResolver, compilerOptions: ts.CompilerOptions) {

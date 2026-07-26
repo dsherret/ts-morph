@@ -4,7 +4,9 @@ timeout: 10000
 spec: src/tests/**/*.ts
 ignore:
   - src/tests/performance/**/*.ts
-  # these cover capabilities tsgo does not provide, so they import exports that no
-  # longer exist and would abort the whole run at module load. kept in the tree as
-  # the record of what was dropped; see tsgo-wasm/BREAKING-CHANGES.md
+  # two files, both for capabilities the Go compiler genuinely lacks
+  # (getEditsForRefactor, JSDocFunctionType). they import exports that no longer
+  # exist, which would abort the whole run at module load. kept in the tree as the
+  # record of what was dropped; see that directory's README and
+  # tsgo-wasm/BREAKING-CHANGES.md
   - src/tests/removed-capabilities/**/*.ts

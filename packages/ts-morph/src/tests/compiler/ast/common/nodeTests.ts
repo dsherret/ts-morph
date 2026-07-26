@@ -234,7 +234,7 @@ describe("Node", () => {
   describe(nameof<Node>("getParentSyntaxList"), () => {
     it("should return undefined for an end of file token", () => {
       const { sourceFile } = getInfoFromText("class C {}");
-      const endOfFileToken = sourceFile.getFirstChildByKindOrThrow(SyntaxKind.EndOfFileToken);
+      const endOfFileToken = sourceFile.getFirstChildByKindOrThrow(SyntaxKind.EndOfFile);
       expect(endOfFileToken.getParentSyntaxList()).to.be.undefined;
     });
   });
@@ -1473,7 +1473,7 @@ class MyClass {
 
     it("should iterate over all the children of a source file", () => {
       const { sourceFile } = getInfoFromText("class Test {} interface Interface {}");
-      doNodeCbSyntaxKindTest(sourceFile, [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.EndOfFileToken]);
+      doNodeCbSyntaxKindTest(sourceFile, [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.EndOfFile]);
     });
 
     it("should iterate over all the children when it includes an array", () => {
@@ -1603,7 +1603,7 @@ class MyClass {
         SyntaxKind.Identifier,
         SyntaxKind.InterfaceDeclaration,
         SyntaxKind.Identifier,
-        SyntaxKind.EndOfFileToken,
+        SyntaxKind.EndOfFile,
       ]);
     });
 
@@ -1648,7 +1648,7 @@ class MyClass {
         SyntaxKind.ClassDeclaration,
         SyntaxKind.InterfaceDeclaration,
         SyntaxKind.Identifier,
-        SyntaxKind.EndOfFileToken,
+        SyntaxKind.EndOfFile,
       ], (node, traversal) => {
         if (node.getKind() === SyntaxKind.ClassDeclaration)
           traversal.skip();
@@ -1663,7 +1663,7 @@ class MyClass {
         SyntaxKind.PropertyDeclaration,
         SyntaxKind.InterfaceDeclaration,
         SyntaxKind.Identifier,
-        SyntaxKind.EndOfFileToken,
+        SyntaxKind.EndOfFile,
       ], (node, traversal) => {
         if (node.getKind() === SyntaxKind.PropertyDeclaration)
           traversal.up();
@@ -1714,7 +1714,7 @@ class MyClass {
           SyntaxKind.Block,
           SyntaxKind.Identifier,
           SyntaxKind.Identifier,
-          SyntaxKind.EndOfFileToken,
+          SyntaxKind.EndOfFile,
         ],
         [
           [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration],
@@ -1769,7 +1769,7 @@ class MyClass {
       const { sourceFile } = getInfoFromText("class Test { prop: string; prop2: string; } interface Interface { prop: string; }");
       doNodeArrayCbSyntaxKindTest(
         sourceFile,
-        [SyntaxKind.Identifier, SyntaxKind.Identifier, SyntaxKind.Identifier, SyntaxKind.StringKeyword, SyntaxKind.EndOfFileToken],
+        [SyntaxKind.Identifier, SyntaxKind.Identifier, SyntaxKind.Identifier, SyntaxKind.StringKeyword, SyntaxKind.EndOfFile],
         [
           [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration],
           [SyntaxKind.PropertyDeclaration, SyntaxKind.PropertyDeclaration],
@@ -1786,7 +1786,7 @@ class MyClass {
       const { sourceFile } = getInfoFromText("class Test { prop: string; prop2: string; } interface Interface { prop: string; }");
       doNodeArrayCbSyntaxKindTest(
         sourceFile,
-        [SyntaxKind.Identifier, SyntaxKind.Identifier, SyntaxKind.Identifier, SyntaxKind.StringKeyword, SyntaxKind.EndOfFileToken],
+        [SyntaxKind.Identifier, SyntaxKind.Identifier, SyntaxKind.Identifier, SyntaxKind.StringKeyword, SyntaxKind.EndOfFile],
         [
           [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration],
           [SyntaxKind.PropertySignature],
@@ -1869,7 +1869,7 @@ class MyClass {
       runTest(
         "class T {} interface I {}",
         sourceFile => sourceFile,
-        [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.EndOfFileToken],
+        [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.EndOfFile],
       );
     });
 
@@ -1877,7 +1877,7 @@ class MyClass {
       runTest(
         "// testing\nclass T {}",
         sourceFile => sourceFile,
-        [SyntaxKind.ClassDeclaration, SyntaxKind.EndOfFileToken],
+        [SyntaxKind.ClassDeclaration, SyntaxKind.EndOfFile],
       );
     });
 
@@ -1902,7 +1902,7 @@ class MyClass {
       runTest(
         "class T {} interface I {}",
         sourceFile => sourceFile,
-        [SyntaxKind.ClassDeclaration, SyntaxKind.Identifier, SyntaxKind.InterfaceDeclaration, SyntaxKind.Identifier, SyntaxKind.EndOfFileToken],
+        [SyntaxKind.ClassDeclaration, SyntaxKind.Identifier, SyntaxKind.InterfaceDeclaration, SyntaxKind.Identifier, SyntaxKind.EndOfFile],
       );
     });
   });

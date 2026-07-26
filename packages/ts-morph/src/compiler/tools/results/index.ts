@@ -1,5 +1,6 @@
 export * from "./CodeAction";
 export * from "./CodeFixAction";
+export * from "./CombinedCodeActions";
 export * from "./DefinitionInfo";
 export * from "./Diagnostic";
 export * from "./DiagnosticMessageChain";
@@ -15,5 +16,6 @@ export * from "./ReferencedSymbol";
 export * from "./ReferencedSymbolDefinitionInfo";
 export * from "./ReferenceEntry";
 export * from "./RenameLocation";
+export * from "./SymbolDisplayPart";
 export * from "./TextChange";
 export * from "./TextSpan";

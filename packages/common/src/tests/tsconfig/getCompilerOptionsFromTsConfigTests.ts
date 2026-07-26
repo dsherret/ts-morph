@@ -27,9 +27,9 @@ describe("getCompilerOptionsFromTsConfig", () => {
 
   it("should get the compiler options plus the defaults when providing some", () => {
     const fileSystem = new InMemoryFileSystemHost();
-    fileSystem.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`);
+    fileSystem.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES2015" } }`);
     fileSystem.writeFileSync("main.ts", "");
-    doTest(fileSystem, { options: { rootDir: "/test", target: 1, configFilePath: "/tsconfig.json" }, errorCount: 0 });
+    doTest(fileSystem, { options: { rootDir: "/test", target: 2, configFilePath: "/tsconfig.json" }, errorCount: 0 });
   });
 
   it("should get the error when specifying an invalid compiler option", () => {
@@ -41,9 +41,9 @@ describe("getCompilerOptionsFromTsConfig", () => {
 
   it("should get compiler options when using extends", () => {
     const fileSystem = new InMemoryFileSystemHost();
-    fileSystem.writeFileSync("tsconfig.json", `{ "compilerOptions": { "target": "es5" }, "extends": "./base" }`);
+    fileSystem.writeFileSync("tsconfig.json", `{ "compilerOptions": { "target": "es2015" }, "extends": "./base" }`);
     fileSystem.writeFileSync("base.json", `{ "compilerOptions": { "rootDir": "/test" } }`);
     fileSystem.writeFileSync("main.ts", "");
-    doTest(fileSystem, { options: { target: 1, rootDir: "/test", configFilePath: "/tsconfig.json" }, errorCount: 0 });
+    doTest(fileSystem, { options: { target: 2, rootDir: "/test", configFilePath: "/tsconfig.json" }, errorCount: 0 });
   });
 });

@@ -13,4 +13,5 @@ export { DocumentRegistry, type DocumentRegistryOptions } from "./documentRegist
 export { createFileSystemAdapter, type FileSystemAdapterOptions } from "./fileSystemAdapter";
 export { getChildren, getLastToken } from "./getChildren";
 export { createInProcessApi, type InProcessApiOptions } from "./inProcessApi";
+export { createModuleResolutionHost, type CreateModuleResolutionHostOptions, type ModuleResolutionSourceFileContainer } from "./moduleResolutionHost";
 export { setSourceFileProperty } from "./mutableSourceFile";

@@ -5,3 +5,4 @@ export * from "./isNodeAmbientOrInAmbientContext";
 export * from "./isStringKind";
 export * from "./ModuleUtils";
 export * from "./printNode";
+export * from "./toSymbolDisplayParts";

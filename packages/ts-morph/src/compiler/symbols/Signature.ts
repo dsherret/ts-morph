@@ -1,5 +1,8 @@
 import { ts } from "@ts-morph/common";
 import { ProjectContext } from "../../ProjectContext";
+import { toSymbolDisplayParts } from "../../utils";
+import { JSDocTagInfo } from "../ast/doc/JSDocTagInfo";
+import { SymbolDisplayPart } from "../tools/results";
 import { Type } from "../types";
 import { Symbol } from "./Symbol";
 
@@ -46,6 +49,22 @@ export class Signature {
    */
   getReturnType(): Type {
     return this.#context.compilerFactory.getType(this.compilerSignature.getReturnType());
+  }
+
+  /**
+   * Gets the documentation comments.
+   */
+  getDocumentationComments(): SymbolDisplayPart[] {
+    return toSymbolDisplayParts(this.compilerSignature.getDocumentationComment(this.#context.typeChecker.compilerObject))
+      .map(part => new SymbolDisplayPart(part));
+  }
+
+  /**
+   * Gets the JS doc tags.
+   */
+  getJsDocTags(): JSDocTagInfo[] {
+    return this.compilerSignature.getJsDocTags(this.#context.typeChecker.compilerObject)
+      .map(info => new JSDocTagInfo(info));
   }
 
   /**

@@ -699,4 +699,48 @@ export class Project {
       })
       .join(newLineChar);
   }
+
+  /**
+   * Gets a ts.ModuleResolutionHost for the project.
+   */
+  getModuleResolutionHost(): ts.ModuleResolutionHost {
+    return this._context.getModuleResolutionHost();
+  }
+
+  /**
+   * Gets the specified ambient module symbol or returns undefined if not found.
+   * @param moduleName - The ambient module name with or without quotes.
+   */
+  getAmbientModule(moduleName: string) {
+    moduleName = normalizeAmbientModuleName(moduleName);
+    return this.getAmbientModules().find(s => s.getName() === moduleName);
+  }
+
+  /**
+   * Gets the specified ambient module symbol or throws if not found.
+   * @param moduleName - The ambient module name with or without quotes.
+   */
+  getAmbientModuleOrThrow(moduleName: string, message?: string | (() => string)) {
+    return errors.throwIfNullOrUndefined(
+      this.getAmbientModule(moduleName),
+      message ?? (() => `Could not find ambient module with name: ${normalizeAmbientModuleName(moduleName)}`),
+    );
+  }
+
+  /**
+   * Gets the ambient module symbols (ex. modules in the @types folder or node_modules).
+   */
+  getAmbientModules() {
+    return this.getTypeChecker().getAmbientModules();
+  }
+}
+
+function normalizeAmbientModuleName(moduleName: string) {
+  if (isQuote(moduleName[0]) && isQuote(moduleName[moduleName.length - 1]))
+    moduleName = moduleName.substring(1, moduleName.length - 1);
+  return `"${moduleName}"`;
+
+  function isQuote(char: string) {
+    return char === `"` || char === "'";
+  }
 }

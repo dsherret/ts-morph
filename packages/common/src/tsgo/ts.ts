@@ -87,6 +87,152 @@ export {
   unescapeLeadingUnderscores,
 } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/utils.js";
 
+// Node construction and traversal, which `Node#transform` hands to its visitor.
+export { visitEachChild, visitNode, visitNodes } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/visitor.js";
+export type { Visitor } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/visitor.js";
+/**
+ * The node factory, adapted to the shape ts-morph's callers expect.
+ *
+ * tsgo ships a complete factory of free `createX`/`updateX` functions. Three
+ * things differ from the object `typescript` handed a transformer, and this
+ * reconciles them:
+ *
+ *   - A name is always a node there. Classic accepted a bare string almost
+ *     everywhere a name is taken, so a string argument is turned into an
+ *     identifier before the call, except in the functions whose arguments really
+ *     are text.
+ *   - The literal creators take token flags. Classic did not have them, so they
+ *     default to none.
+ *   - `updateX` builds a fresh node instead of re-ranging the original, so it
+ *     loses the position the node held and with it the comments and doc comments
+ *     the printer reads out of the file. Each `updateX` therefore carries the
+ *     original's range and parent over, which is what `factory.update()` did.
+ */
+import * as generatedFactory from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/factory.generated.js";
+import type { Identifier as TsgoIdentifier } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/ast.js";
+import { TokenFlags as TsgoTokenFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/tokenFlags.enum.js";
+
+type GeneratedFactory = typeof generatedFactory;
+
+/** Widens the parameters that name a node so a bare string is accepted. */
+type AcceptsNames<T> = T extends (...args: infer TArgs) => infer TReturn ? (...args: NameArgs<TArgs>) => TReturn : T;
+type NameArgs<TArgs extends readonly unknown[]> = { [K in keyof TArgs]: [TsgoIdentifier] extends [TArgs[K]] ? TArgs[K] | string : TArgs[K] };
+
+/** The literal creators, whose token flags classic TypeScript did not have. */
+interface OptionalTokenFlags {
+  createStringLiteral(text: string, tokenFlags?: TsgoTokenFlags): ReturnType<GeneratedFactory["createStringLiteral"]>;
+  createNumericLiteral(text: string, tokenFlags?: TsgoTokenFlags): ReturnType<GeneratedFactory["createNumericLiteral"]>;
+  createBigIntLiteral(text: string, tokenFlags?: TsgoTokenFlags): ReturnType<GeneratedFactory["createBigIntLiteral"]>;
+  createRegularExpressionLiteral(text: string, tokenFlags?: TsgoTokenFlags): ReturnType<GeneratedFactory["createRegularExpressionLiteral"]>;
+}
+
+/** The names of the functions whose string arguments really are text. */
+type TextTaking = Extract<
+  | "createIdentifier"
+  | "createPrivateIdentifier"
+  | "createStringLiteral"
+  | "createNumericLiteral"
+  | "createBigIntLiteral"
+  | "createRegularExpressionLiteral"
+  | "createNoSubstitutionTemplateLiteral"
+  | "createTemplateHead"
+  | "createTemplateMiddle"
+  | "createTemplateTail"
+  | "createJsxText"
+  | "createJSDocText"
+  | "createJSDocLink"
+  | "createJSDocLinkPlain"
+  | "createJSDocLinkCode"
+  | "createSourceFile",
+  keyof GeneratedFactory
+>;
+
+export type NodeFactory =
+  & {
+    [K in Exclude<keyof GeneratedFactory, TextTaking | keyof OptionalTokenFlags>]: K extends `create${string}` | `update${string}`
+      ? AcceptsNames<GeneratedFactory[K]>
+      : GeneratedFactory[K];
+  }
+  & { [K in Exclude<TextTaking, keyof OptionalTokenFlags>]: GeneratedFactory[K] }
+  & OptionalTokenFlags;
+
+/** The factory a transform hands to its visitor. */
+export const factory: NodeFactory = createNodeFactory();
+
+function createNodeFactory(): NodeFactory {
+  // the functions whose arguments are text rather than names, which therefore
+  // take a string straight through
+  const textTakingFunctions = new Set<string>([
+    "createIdentifier",
+    "createPrivateIdentifier",
+    "createStringLiteral",
+    "createNumericLiteral",
+    "createBigIntLiteral",
+    "createRegularExpressionLiteral",
+    "createNoSubstitutionTemplateLiteral",
+    "createTemplateHead",
+    "createTemplateMiddle",
+    "createTemplateTail",
+    "createJsxText",
+    "createJSDocText",
+    "createJSDocLink",
+    "createJSDocLinkPlain",
+    "createJSDocLinkCode",
+    "createSourceFile",
+  ]);
+  // the literal creators whose trailing token flags argument may be left out
+  const tokenFlagLiterals = new Set<string>([
+    "createStringLiteral",
+    "createNumericLiteral",
+    "createBigIntLiteral",
+    "createRegularExpressionLiteral",
+  ]);
+
+  const result: Record<string, unknown> = {};
+  for (const [name, value] of Object.entries(generatedFactory)) {
+    if (typeof value !== "function" || (!name.startsWith("create") && !name.startsWith("update")))
+      result[name] = value;
+    else if (name.startsWith("update"))
+      result[name] = rangePreserving(value as (...args: unknown[]) => Node);
+    else if (tokenFlagLiterals.has(name))
+      result[name] = withDefaultTokenFlags(value as (...args: unknown[]) => unknown);
+    else if (textTakingFunctions.has(name))
+      result[name] = value;
+    else
+      result[name] = namesFromStrings(value as (...args: unknown[]) => unknown);
+  }
+  return result as unknown as NodeFactory;
+}
+
+/** Wraps an `updateX` so the node it returns stands where the one it updates did. */
+function rangePreserving(update: (...args: unknown[]) => Node) {
+  return (...args: unknown[]) => {
+    const original = args[0] as Node | undefined;
+    const updated = update(...args.map(toNameNode));
+    if (original != null && updated !== original) {
+      const mutable = updated as { pos: number; end: number; parent: Node };
+      mutable.pos = original.pos;
+      mutable.end = original.end;
+      mutable.parent = original.parent;
+    }
+    return updated;
+  };
+}
+
+/** Wraps a `createX` so a string lands where a name node is wanted. */
+function namesFromStrings(create: (...args: unknown[]) => unknown) {
+  return (...args: unknown[]) => create(...args.map(toNameNode));
+}
+
+/** Wraps a literal creator so its token flags may be left out. */
+function withDefaultTokenFlags(create: (...args: unknown[]) => unknown) {
+  return (text: unknown, tokenFlags: unknown) => create(text, tokenFlags ?? TsgoTokenFlags.None);
+}
+
+function toNameNode(value: unknown) {
+  return typeof value === "string" ? generatedFactory.createIdentifier(value) : value;
+}
+
 import type { CompilerOptions as TsgoCompilerOptions } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/compilerOptions.js";
 
 /**
@@ -124,18 +270,33 @@ export const EmitHint = {
 } as const;
 export type EmitHint = typeof EmitHint[keyof typeof EmitHint];
 
+/** How the formatter indents a new line. */
+export const IndentStyle = {
+  None: 0,
+  Block: 1,
+  Smart: 2,
+} as const;
+export type IndentStyle = typeof IndentStyle[keyof typeof IndentStyle];
+
 /**
  * Formatting settings, as accepted by the formatter.
  *
- * Breaking change: this is a reduced form of the `typescript` package's
- * `EditorSettings`, and matches tsgo's `FormattingOptions` exactly — tab size,
- * spaces-versus-tabs, and trailing whitespace trimming, and nothing else. Note
- * that `insertSpaces` is `convertTabsToSpaces` under its tsgo name; the two mean
- * the same thing. `indentStyle`, `indentSize` and `newLineCharacter` are gone.
+ * Every member is read by tsgo's formatter: `tabSize` and `convertTabsToSpaces`
+ * shape the indentation text, `indentSize` is the step it grows by,
+ * `indentStyle` picks between no, block and smart indentation, and
+ * `newLineCharacter` is the line ending inserted text is written with. Note that
+ * the wire form of `convertTabsToSpaces` is tsgo's `insertSpaces` — the two mean
+ * the same thing.
+ *
+ * Breaking change: `baseIndentSize` is not accepted. tsgo's formatter has the
+ * field but the API does not carry it, as nothing in ts-morph set it.
  */
 export interface EditorSettings {
   tabSize?: number;
-  insertSpaces?: boolean;
+  indentSize?: number;
+  convertTabsToSpaces?: boolean;
+  indentStyle?: IndentStyle;
+  newLineCharacter?: string;
   trimTrailingWhitespace?: boolean;
 }
 
@@ -269,18 +430,163 @@ function getPostfixTokenOfKind(node: Node, kind: SyntaxKindValue) {
   return withTokens.postfixToken?.kind === kind ? withTokens.postfixToken : undefined;
 }
 
+import { createVirtualFileSystem } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/fs.js";
+import { createWasmAPI } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/wasm/node.js";
+import type { API, PrintNodeOptions, Project } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/sync/api.js";
+import type { SourceFile as TsgoSourceFile } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/index.js";
+import { ScriptKind as ScriptKindValue } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/scriptKind.enum.js";
+
+/**
+ * Parses text into a source file that belongs to no project of the caller's.
+ *
+ * tsgo parses on the server and every server-side parse belongs to a project, so
+ * there is no free-standing parser to call. What there is instead is a project
+ * nobody else uses: the scratch session below, which holds only the files handed
+ * to this function. Parsing is the only thing asked of it, so it opens no
+ * checker, resolves no modules and loads no lib files.
+ *
+ * Breaking changes against the `typescript` package's `createSourceFile`:
+ *
+ *   - `languageVersion` is ignored. tsgo records no per-file script target —
+ *     `ast.SourceFileParseOptions` carries only the file name, its path and the
+ *     module-detection options — and its scanner always scans at the latest
+ *     target.
+ *   - `setParentNodes` is ignored. tsgo's parser always links parents, so a node
+ *     from here always has one.
+ *   - The result is valid until {@link scratchFileLimit} further calls have been
+ *     made, at which point its path is reparsed and its nodes go stale.
+ */
+export function createSourceFile(
+  fileName: string,
+  sourceText: string,
+  languageVersion?: unknown,
+  setParentNodes?: boolean,
+  scriptKind?: ScriptKindValue,
+): TsgoSourceFile {
+  const scratchPath = `/__scratch${scratchIndex}__${scratchExtension(fileName, scriptKind)}`;
+  scratchIndex = (scratchIndex + 1) % scratchFileLimit;
+
+  scratchFiles.set(scratchPath, sourceText);
+  const sourceFile = openScratchProject(scratchPath, sourceText);
+  // the caller named the file, and its name is part of what they get back; the
+  // scratch path stays the identity the compiler resolved against. Assigning
+  // straight through would throw — see ./mutableSourceFile for why.
+  Object.defineProperty(sourceFile, "fileName", { value: fileName, writable: true, enumerable: true, configurable: true });
+  return sourceFile;
+}
+
+export type { PrintNodeOptions };
+
+/**
+ * Prints a node with the compiler's printer, outside any project of the caller's.
+ *
+ * Printing is the one compiler service that needs no program: the node travels to
+ * the server as its own encoded subtree and is printed there, so which session
+ * does the printing is not observable. This uses the same scratch session
+ * {@link createSourceFile} parses in, which is why a node parsed by that function
+ * can be printed without a project ever being opened.
+ *
+ * Comments and original token text are read off `options.sourceText`, so a node
+ * printed without it prints structurally, without its comments.
+ */
+export function printNode(node: Node, options: PrintNodeOptions = {}): string {
+  return scratchProject().emitter.printNode(node as never, options);
+}
+
+/**
+ * How many files the scratch project keeps. Reparsing a path invalidates the
+ * tree previously returned for it, so calls rotate through this many paths
+ * before reusing one — that is how long a returned file stays usable.
+ */
+const scratchFileLimit = 32;
+const scratchConfigPath = "/__scratch__/tsconfig.json";
+const scratchFiles = new Map<string, string>();
+let scratchIndex = 0;
+let scratchApi: API | undefined;
+let scratchFs: ReturnType<typeof createVirtualFileSystem> | undefined;
+
+function openScratchProject(scratchPath: string, sourceText: string): TsgoSourceFile {
+  scratchFileSystem().writeFile!(scratchPath, sourceText);
+  const sourceFile = scratchProject([scratchPath]).program.getSourceFile(scratchPath);
+  if (sourceFile == null)
+    throw new Error(`Could not parse ${scratchPath}.`);
+  return sourceFile;
+}
+
+/** Reopens the scratch project so it sees the files written since the last call. */
+function scratchProject(changedFiles: string[] = []): Project {
+  const fs = scratchFileSystem();
+  fs.writeFile!(scratchConfigPath, scratchConfigText());
+  const snapshot = scratchApi!.updateSnapshot({
+    fileChanges: { changed: [...changedFiles, scratchConfigPath] },
+    openProject: scratchConfigPath,
+  });
+  const project = snapshot.getProject(scratchConfigPath);
+  if (project == null)
+    throw new Error("Could not open the project the standalone parser runs in.");
+  return project;
+}
+
+/** The scratch session's file system, creating the session on first use. */
+function scratchFileSystem() {
+  if (scratchApi == null) {
+    scratchFs = createVirtualFileSystem({ [scratchConfigPath]: scratchConfigText() });
+    scratchApi = createWasmAPI({ cwd: "/", fs: scratchFs });
+  }
+  return scratchFs!;
+}
+
+/**
+ * The scratch project's tsconfig. `noLib` keeps the default libraries out of a
+ * project that only ever parses, and the file list is explicit for the same
+ * reason the document registry's is: a wildcard drops files that share a stem.
+ */
+function scratchConfigText(): string {
+  return JSON.stringify({ compilerOptions: { allowJs: true, noLib: true, noResolve: true }, files: [...scratchFiles.keys()] });
+}
+
+/**
+ * The file extension the scratch parse happens under.
+ *
+ * tsgo derives the script kind from the file name rather than taking one, so an
+ * explicit `scriptKind` is expressed by choosing the extension that implies it,
+ * and otherwise the caller's own extension carries over.
+ */
+function scratchExtension(fileName: string, scriptKind: ScriptKindValue | undefined): string {
+  switch (scriptKind) {
+    case ScriptKindValue.JS:
+      return ".js";
+    case ScriptKindValue.JSX:
+      return ".jsx";
+    case ScriptKindValue.TS:
+      return ".ts";
+    case ScriptKindValue.TSX:
+      return ".tsx";
+    case ScriptKindValue.JSON:
+      return ".json";
+    default:
+      return knownExtension(fileName) ?? ".ts";
+  }
+}
+
+function knownExtension(fileName: string): string | undefined {
+  const extensions = [".d.ts", ".d.mts", ".d.cts", ".tsx", ".ts", ".mts", ".cts", ".jsx", ".js", ".mjs", ".cjs", ".json"];
+  const lower = fileName.toLowerCase();
+  return extensions.find(extension => lower.endsWith(extension));
+}
+
 /*
  * Not yet available from tsgo, and still sourced from `typescript`:
  *
- * - Parsing: `createSourceFile` / `createLanguageServiceSourceFile`. tsgo parses
- *   on the server; source files are obtained from a project's program, so the
- *   document registry and its ScriptSnapshot model have no direct counterpart.
+ * - `createLanguageServiceSourceFile`. tsgo parses on the server; source files
+ *   are obtained from a project's program, so the ScriptSnapshot model the
+ *   incremental variant is built on has no counterpart.
  * - `LanguageService` / `Program` / `TypeChecker` as objects. The equivalents
  *   hang off a tsgo `Project` (`project.program`, `project.checker`) and are
  *   reached through `createInProcessApi`.
- * - Printer and transforms: `createPrinter`, `EmitHint`, `transform`,
- *   `visitEachChild`, and `factory` (which ts-morph only exposes to users of
- *   `Node#transform`). tsgo has a server-side `printNode` instead.
+ * - The emit transformation pipeline: `createPrinter` and `transform`. tsgo
+ *   prints on the server (see `printNode` above) and builds its emit transformers
+ *   in Go from the compiler options, with no injection point.
  * - `TypeFormatFlags`; tsgo's `typeToString` takes NodeBuilderFlags.
  * - Config parsing: `parseJsonConfigFileContent`, `parseConfigFileTextToJson`,
  *   and `resolveModuleName`. tsgo exposes `parseConfigFile` on the API instead,
@@ -302,6 +608,42 @@ import type { Diagnostic as TsgoDiagnostic } from "../../../../submodules/typesc
  * a matter of whether it names a file.
  */
 export type DiagnosticWithLocation = TsgoDiagnostic & { readonly fileName: string };
+
+/**
+ * The file system questions module resolution asks.
+ *
+ * tsgo resolves modules inside the compiler and answers those questions through
+ * its own delegated file system, so it declares no such interface. The shape is
+ * kept because it is ts-morph's public contract for
+ * `Project#getModuleResolutionHost()`, and it is the classic
+ * `ts.ModuleResolutionHost` verbatim.
+ */
+export interface ModuleResolutionHost {
+  fileExists(fileName: string): boolean;
+  readFile(fileName: string, encoding?: string): string | undefined;
+  trace?(s: string): void;
+  directoryExists?(directoryName: string): boolean;
+  /**
+   * Resolves a symlink to its realpath. Used to compute the shortest path to a
+   * module, and to detect the same file reached by two paths.
+   */
+  realpath?(path: string): string;
+  getCurrentDirectory?(): string;
+  getDirectories?(path: string): string[];
+}
+
+/**
+ * A run of text in a rendered documentation comment or JSDoc tag.
+ *
+ * Breaking change: tsgo renders documentation as a single plain string rather
+ * than a classified part list, so every part produced from it has kind `"text"`.
+ * The shape is kept because it is ts-morph's public contract for
+ * `Signature#getDocumentationComments()` and `JSDocTagInfo#getText()`.
+ */
+export interface SymbolDisplayPart {
+  text: string;
+  kind: string;
+}
 
 import type { Program as TsgoProgram } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/sync/api.js";
 
@@ -801,6 +1143,15 @@ export interface CodeAction {
 export interface CodeFixAction extends CodeAction {
 }
 
+/**
+ * The result of applying one fix id across a whole file.
+ *
+ * Breaking change: `commands` is gone. tsgo's combined fixes are edits only.
+ */
+export interface CombinedCodeActions {
+  changes: FileTextChanges[];
+}
+
 /*
  * Emit output comes straight from tsgo. Note that `outputFiles` is a
  * `ReadonlyMap` keyed by output path, not an array, and an `EmitOutputFile`
@@ -808,6 +1159,20 @@ export interface CodeFixAction extends CodeAction {
  * byte order mark at all.
  */
 export type { EmitOutput, EmitOutputFile as OutputFile } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/sync/types.js";
+
+/**
+ * Called for each output file in place of writing it.
+ *
+ * Breaking change: `sourceFiles` holds at most one file. tsgo names a single
+ * originating source file per output rather than the whole set that fed it.
+ */
+export type WriteFileCallback = (
+  fileName: string,
+  text: string,
+  writeByteOrderMark: boolean,
+  onError?: (message: string) => void,
+  sourceFiles?: readonly TsgoSourceFile[],
+) => void;
 
 /*
  * There is no separate `DiagnosticMessageChain`: tsgo chains diagnostics by
@@ -830,9 +1195,9 @@ export interface UserPreferences {
 /**
  * Formatting settings, as accepted by the formatter.
  *
- * Breaking change: tsgo's formatter takes only what {@link EditorSettings}
- * declares, so this adds nothing. The `typescript` package's several dozen
- * `insertSpace…` / `placeOpenBraceOnNewLine…` / `semicolons` options are gone.
+ * Breaking change: the API carries only what {@link EditorSettings} declares, so
+ * this adds nothing. The `typescript` package's several dozen `insertSpace…` /
+ * `placeOpenBraceOnNewLine…` / `semicolons` options are gone.
  */
 export interface FormatCodeSettings extends EditorSettings {
 }

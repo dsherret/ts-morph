@@ -8,6 +8,7 @@ import { FormatCodeSettings, RenameOptions } from "./inputs";
 import { Program } from "./Program";
 import {
   CodeFixAction,
+  CombinedCodeActions,
   DefinitionInfo,
   Diagnostic,
   EmitOutput,
@@ -31,8 +32,8 @@ export interface LanguageServiceCreationParams {
  * Breaking change: tsgo has no `LanguageService` object. Every operation below
  * is a method on the session's project, which is what `compilerObject` returns,
  * and the operations tsgo does not implement are gone — see
- * `getEditsForRefactor`, `getCombinedCodeFix` and `getIdentationAtPosition` in
- * the breaking changes list.
+ * `getEditsForRefactor` and `getIdentationAtPosition` in the breaking changes
+ * list.
  */
 export class LanguageService {
   /** @internal */
@@ -297,6 +298,22 @@ export class LanguageService {
   }
 
   /**
+   * Gets file changes and actions to perform for the provided fixId.
+   * @param filePathOrSourceFile - File path or source file to get the combined code fixes for.
+   * @param fixId - Identifier for the code fix (ex. "fixMissingImport").
+   * @param formatSettings - Format code settings.
+   *
+   * Breaking change: the user preferences parameter is gone, and the fix ids are
+   * tsgo's — `"fixMissingImport"`, `"fixMissingTypeAnnotationOnExports"` and
+   * `"fixClassIncorrectlyImplementsInterface"` are the only ones that exist.
+   */
+  getCombinedCodeFix(filePathOrSourceFile: string | SourceFile, fixId: string, formatSettings: FormatCodeSettings = {}): CombinedCodeActions {
+    const fileName = this.#getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
+    const result = this.compilerObject.getCombinedCodeFix(fileName, fixId, this.#getFilledSettings(formatSettings));
+    return new CombinedCodeActions(this.#context, { changes: result.changes.map(toFileTextChanges) });
+  }
+
+  /**
    * Gets the edit information for applying a code fix at the provided text range in a source file.
    * @param filePathOrSourceFile - File path or source file to get the code fixes for.
    * @param start - Start position of the text range to be fixed.
@@ -433,7 +450,10 @@ export class LanguageService {
     fillDefaultFormatCodeSettings(filled, this.#context.manipulationSettings);
     return {
       tabSize: filled.tabSize,
-      insertSpaces: filled.insertSpaces,
+      indentSize: filled.indentSize,
+      insertSpaces: filled.convertTabsToSpaces,
+      indentStyle: filled.indentStyle,
+      newLineCharacter: filled.newLineCharacter,
       trimTrailingWhitespace: filled.trimTrailingWhitespace,
     };
   }

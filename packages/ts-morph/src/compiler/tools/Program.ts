@@ -1,4 +1,4 @@
-import { getEmitModuleResolutionKind, ModuleResolutionKind, ts } from "@ts-morph/common";
+import { errors, getEmitModuleResolutionKind, ModuleResolutionKind, nameof, ts } from "@ts-morph/common";
 import { ProjectContext } from "../../ProjectContext";
 import { SourceFile } from "../ast/module";
 import { Diagnostic, EmitResult, MemoryEmitResult, MemoryEmitResultFile } from "./results";
@@ -6,12 +6,16 @@ import { TypeChecker } from "./TypeChecker";
 
 /**
  * Options for emitting from a Program.
- *
- * Breaking change: `writeFile` is gone. tsgo emits inside the compiler and
- * reports the file names it wrote; there is no callback to intercept a write
- * with. Use `emitToMemory()` to get the text instead.
  */
 export interface ProgramEmitOptions extends EmitOptions {
+  /**
+   * Called for each output file instead of writing it to the file system.
+   *
+   * Breaking change: `sourceFiles` holds at most the one source file the output
+   * came from. tsgo reports a single originating file per output, so a bundled
+   * output cannot list every file that fed it.
+   */
+  writeFile?: ts.WriteFileCallback;
 }
 
 /**
@@ -99,10 +103,18 @@ export class Program {
    * @param options - Options for emitting.
    */
   async emit(options: ProgramEmitOptions = {}) {
+    if (options.writeFile) {
+      const message = `Cannot specify a ${nameof<ProgramEmitOptions>("writeFile")} option when emitting asynchrously. `
+        + `Use ${nameof<Program>("emitSync")}() instead.`;
+      throw new errors.InvalidOperationError(message);
+    }
+
     const { fileSystemWrapper } = this.#context;
     const output = this.#getEmitOutput(options);
     await Promise.all(
-      [...output.outputFiles].map(([filePath, file]) => fileSystemWrapper.writeFile(fileSystemWrapper.getStandardizedAbsolutePath(filePath), file.text)),
+      [...output.outputFiles].map(([filePath, file]) =>
+        fileSystemWrapper.writeFile(fileSystemWrapper.getStandardizedAbsolutePath(filePath), textToWrite(file))
+      ),
     );
     return new EmitResult(this.#context, toEmitResult(output));
   }
@@ -115,9 +127,28 @@ export class Program {
   emitSync(options: ProgramEmitOptions = {}) {
     const { fileSystemWrapper } = this.#context;
     const output = this.#getEmitOutput(options);
-    for (const [filePath, file] of output.outputFiles)
-      fileSystemWrapper.writeFileSync(fileSystemWrapper.getStandardizedAbsolutePath(filePath), file.text);
+    for (const [filePath, file] of output.outputFiles) {
+      const standardizedFilePath = fileSystemWrapper.getStandardizedAbsolutePath(filePath);
+      if (options.writeFile)
+        options.writeFile(standardizedFilePath, file.text, file.writeByteOrderMark ?? false, undefined, this.#getEmitSourceFiles(file));
+      else
+        fileSystemWrapper.writeFileSync(standardizedFilePath, textToWrite(file));
+    }
     return new EmitResult(this.#context, toEmitResult(output));
+  }
+
+  /**
+   * The source files an output file came from, for a write callback.
+   *
+   * tsgo names a single originating file per output, so this is empty or a
+   * one-element list; a file the program does not know is skipped.
+   * @internal
+   */
+  #getEmitSourceFiles(file: ts.OutputFile): ts.SourceFile[] {
+    if (file.sourceFileName == null)
+      return [];
+    const sourceFile = this.compilerObject.getSourceFile(file.sourceFileName);
+    return sourceFile == null ? [] : [sourceFile];
   }
 
   /**
@@ -128,13 +159,12 @@ export class Program {
     const output = this.#getEmitOutput(options);
     const { fileSystemWrapper } = this.#context;
     const sourceFiles: MemoryEmitResultFile[] = [];
-    // tsgo keys the output by path rather than storing it on the file, and does
-    // not model a byte order mark on emit output.
+    // tsgo keys the output by path rather than storing it on the file.
     for (const [filePath, file] of output.outputFiles) {
       sourceFiles.push({
         filePath: fileSystemWrapper.getStandardizedAbsolutePath(filePath),
         text: file.text,
-        writeByteOrderMark: false,
+        writeByteOrderMark: file.writeByteOrderMark ?? false,
       });
     }
     return new MemoryEmitResult(this.#context, toEmitResult(output), sourceFiles);
@@ -311,4 +341,14 @@ function toEmitResult(output: ts.EmitOutput): ts.EmitResult {
     diagnostics: output.diagnostics,
     emittedFiles: [...output.outputFiles.keys()],
   };
+}
+
+/**
+ * The bytes an output file is written as.
+ *
+ * The emit output reports its text and its byte order mark separately, so the
+ * mark goes back on the front when the file is actually written.
+ */
+function textToWrite(file: ts.OutputFile) {
+  return file.writeByteOrderMark ? "﻿" + file.text : file.text;
 }

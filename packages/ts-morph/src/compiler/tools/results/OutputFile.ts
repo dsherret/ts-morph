@@ -3,9 +3,6 @@ import { ProjectContext } from "../../../ProjectContext";
 
 /**
  * Output file of an emit.
- *
- * Breaking change: `getWriteByteOrderMark()` is gone. tsgo does not model a byte
- * order mark on emit output, so there is nothing to report.
  */
 export class OutputFile {
   /** @internal */
@@ -46,5 +43,12 @@ export class OutputFile {
    */
   getText() {
     return this.compilerObject.text;
+  }
+
+  /**
+   * Gets whether the byte order mark should be written.
+   */
+  getWriteByteOrderMark() {
+    return this.compilerObject.writeByteOrderMark ?? false;
   }
 }

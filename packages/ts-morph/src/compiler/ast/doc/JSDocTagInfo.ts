@@ -1,4 +1,5 @@
 import { ts } from "@ts-morph/common";
+import { toSymbolDisplayParts } from "../../../utils";
 
 /**
  * JS doc tag info.
@@ -27,7 +28,7 @@ export class JSDocTagInfo {
   /**
    * Gets the text.
    */
-  getText() {
-    return this.compilerObject.text ?? [];
+  getText(): ts.SymbolDisplayPart[] {
+    return toSymbolDisplayParts(this.compilerObject.text);
   }
 }

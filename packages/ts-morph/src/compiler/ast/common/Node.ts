@@ -16,7 +16,7 @@ import { Project } from "../../../Project";
 import { ProjectContext } from "../../../ProjectContext";
 import { Structure, Structures } from "../../../structures";
 import { WriterFunction } from "../../../types";
-import { CharCodes, getParentSyntaxList, getTextFromStringOrWriter, isStringKind, newLineKindToString, PrintNodeOptions } from "../../../utils";
+import { CharCodes, getParentSyntaxList, getTextFromStringOrWriter, isStringKind, PrintNodeOptions } from "../../../utils";
 import { Symbol } from "../../symbols";
 import { FormatCodeSettings } from "../../tools";
 import { Type } from "../../types";
@@ -29,7 +29,7 @@ import { Statement, StatementedNode } from "../statement";
 import { ExtendedParser } from "../utils";
 import { SyntaxList } from "./SyntaxList";
 import { TextRange } from "./TextRange";
-import { ForEachDescendantTraversalControl } from "./TraversalControl";
+import { ForEachDescendantTraversalControl, TransformTraversalControl } from "./TraversalControl";
 
 export type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName extends keyof NodeType, NonNullableNodeType = NonNullable<NodeType[KeyName]>> =
   NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeTypeForNullable> | undefined ? CompilerNodeToWrappedType<ArrayNodeTypeForNullable>[] | undefined
@@ -230,20 +230,19 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    */
   print(options: PrintNodeOptions = {}): string {
     const sourceFile = this._sourceFile;
-    const text = this._context.compilerFactory.documentRegistry.project.emitter.printNode(this.compilerNode, {
+    return this._context.compilerFactory.documentRegistry.project.emitter.printNode(this.compilerNode, {
       // the printer reads the node's comments and original token text out of the
       // file it was parsed from, so the node is printed alongside its own text
       sourceText: sourceFile.getFullText(),
       fileName: sourceFile.getFilePath(),
+      removeComments: options.removeComments,
+      // the printer writes the line breaks, so a line break the program text owns
+      // — one inside a template literal, say — is left as the source has it
+      newLine: options.newLineKind ?? this._context.manipulationSettings.getNewLineKind(),
       preserveSourceNewlines: options.preserveSourceNewlines,
       neverAsciiEscape: options.neverAsciiEscape,
       terminateUnterminatedLiterals: options.terminateUnterminatedLiterals,
     });
-    // tsgo's printer has no newline option, so ts-morph normalizes the result.
-    const newLineChar = options.newLineKind == null
-      ? this._context.manipulationSettings.getNewLineKindAsString()
-      : newLineKindToString(options.newLineKind);
-    return text.replace(/\r?\n/g, newLineChar);
   }
 
   /**
@@ -271,6 +270,38 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       return this._getNodeFromCompilerNode(nameNode).getSymbol();
 
     return undefined;
+  }
+
+  /**
+   * Gets the symbols within the current scope that match the provided meaning.
+   * @param meaning - Meaning of symbol to filter by.
+   */
+  getSymbolsInScope(meaning: SymbolFlags): Symbol[] {
+    return this._context.typeChecker.getSymbolsInScope(this, meaning);
+  }
+
+  /**
+   * Gets the specified local symbol by name or throws if it doesn't exist.
+   * @param name - Name of the local symbol.
+   */
+  getLocalOrThrow(name: string, message?: string | (() => string)): Symbol {
+    return errors.throwIfNullOrUndefined(this.getLocal(name), message ?? `Expected to find local symbol with name: ${name}`);
+  }
+
+  /**
+   * Gets the specified local symbol by name or returns undefined if it doesn't exist.
+   * @param name - Name of the local symbol.
+   */
+  getLocal(name: string): Symbol | undefined {
+    return this.getLocals().find(s => s.getName() === name);
+  }
+
+  /**
+   * Gets the symbols the binder placed in this node's own local scope, in declaration order.
+   * Nodes that do not hold locals return an empty array.
+   */
+  getLocals(): Symbol[] {
+    return this._context.typeChecker.getLocals(this);
   }
 
   /**
@@ -1471,10 +1502,152 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     });
   }
 
-  // `transform` has been removed: it was built on the typescript package's
-  // printer, transformation pipeline, and node factory (ts.createPrinter,
-  // ts.transform, ts.visitEachChild, and the factory handed to the visitor),
-  // none of which tsgo provides to clients — it prints on the server instead.
+  /**
+   * Transforms the node using the compiler api nodes and functions and returns
+   * the node that was transformed (experimental).
+   *
+   * WARNING: This will forget descendants of transformed nodes and potentially this node.
+   * @example Increments all the numeric literals in a source file.
+   * ```ts
+   * sourceFile.transform(traversal => {
+   *   const node = traversal.visitChildren(); // recommend always visiting the children first (post order)
+   *   if (ts.isNumericLiteral(node))
+   *     return traversal.factory.createNumericLiteral((parseInt(node.text, 10) + 1).toString());
+   *   return node;
+   * });
+   * ```
+   * @example Updates the class declaration node without visiting the children.
+   * ```ts
+   * const classDec = sourceFile.getClassOrThrow("MyClass");
+   * classDec.transform(traversal => {
+   *   const node = traversal.currentNode as ts.ClassDeclaration;
+   *   return traversal.factory.updateClassDeclaration(node, undefined, traversal.factory.createIdentifier("MyUpdatedClass"), undefined, undefined, []);
+   * });
+   * ```
+   */
+  transform(visitNode: (traversal: TransformTraversalControl) => ts.Node): Node {
+    const compilerFactory = this._context.compilerFactory;
+    const emitter = compilerFactory.documentRegistry.project.emitter;
+    const newLine = this._context.manipulationSettings.getNewLineKind();
+    interface Transformation {
+      start: number;
+      end: number;
+      compilerNode: ts.Node;
+    }
+    const transformations: Transformation[] = [];
+    const compilerSourceFile = this._sourceFile.compilerNode;
+    const compilerNode = this.compilerNode;
+
+    if (this.getKind() === SyntaxKind.SourceFile) {
+      innerVisit(compilerNode);
+
+      replaceSourceFileTextStraight({
+        sourceFile: this._sourceFile,
+        newText: getTransformedText([0, this.getEnd()]),
+      });
+
+      return this;
+    } else {
+      const parent = this.getParentSyntaxList() || this.getParentOrThrow();
+      const childIndex = this.getChildIndex();
+      const start = this.getStart(true);
+      const end = this.getEnd();
+
+      innerVisit(compilerNode);
+
+      insertIntoParentTextRange({
+        parent,
+        insertPos: start,
+        newText: getTransformedText([start, end]),
+        replacing: {
+          textLength: end - start,
+        },
+      });
+
+      return parent.getChildren()[childIndex];
+    }
+
+    function innerVisit(node: ts.Node) {
+      // the range is read before the children are visited: tsgo's `updateX` builds
+      // a fresh node rather than re-ranging the one it updates, so a node whose
+      // children changed no longer knows where in the file it came from
+      const start = node.getStart(compilerSourceFile, true);
+      const end = node.end;
+      let currentNode = node;
+      const traversal: TransformTraversalControl = {
+        factory: ts.factory,
+        visitChildren() {
+          currentNode = ts.visitEachChild(currentNode, child => innerVisit(child));
+          return currentNode;
+        },
+        currentNode: node,
+      };
+      const resultNode = visitNode(traversal);
+      handleTransformation(currentNode, resultNode, start, end);
+      return resultNode;
+    }
+
+    function handleTransformation(oldNode: ts.Node, newNode: ts.Node, start: number, end: number) {
+      if (oldNode === newNode)
+        return;
+
+      let lastTransformation: Transformation | undefined;
+
+      // remove any prior transformations nested within this transformation
+      while ((lastTransformation = transformations[transformations.length - 1]) && lastTransformation.start > start)
+        transformations.pop();
+
+      const wrappedNode = compilerFactory.getExistingNodeFromCompilerNode(oldNode);
+      transformations.push({
+        start,
+        end,
+        compilerNode: newNode,
+      });
+
+      // It's very difficult and expensive to tell about changes that could have happened to the descendants
+      // via updating properties. For this reason, descendant nodes will always be forgotten.
+      if (wrappedNode != null) {
+        if (oldNode.kind !== newNode.kind)
+          wrappedNode.forget();
+        else
+          wrappedNode.forgetDescendants();
+      }
+    }
+
+    function getTransformedText(replaceRange: [number, number]) {
+      const fileText = compilerSourceFile.text;
+      let finalText = "";
+      let lastPos = replaceRange[0];
+
+      for (const transform of transformations) {
+        finalText += fileText.substring(lastPos, transform.start);
+        finalText += printTransformedNode(transform.compilerNode);
+        lastPos = transform.end;
+      }
+
+      finalText += fileText.substring(lastPos, replaceRange[1]);
+      return finalText;
+    }
+
+    function printTransformedNode(node: ts.Node) {
+      // the printer reads comments and original token text out of the file the
+      // node came from, which for a replacement taken from elsewhere is not the
+      // file being transformed
+      const nodeSourceFile = getSourceFileOfCompilerNode(node) ?? compilerSourceFile;
+      return emitter.printNode(node, {
+        sourceText: nodeSourceFile.text,
+        fileName: nodeSourceFile.fileName,
+        newLine,
+      });
+    }
+
+    function getSourceFileOfCompilerNode(node: ts.Node) {
+      let current: ts.Node | undefined = node;
+      while (current?.parent != null)
+        current = current.parent;
+      return current?.kind === SyntaxKind.SourceFile ? current as ts.SourceFile : undefined;
+    }
+  }
 
   /**
    * Gets the leading comment ranges of the current node.

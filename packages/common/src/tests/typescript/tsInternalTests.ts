@@ -1,6 +1,12 @@
 import { expect } from "chai";
 import { getEmitModuleResolutionKind, ModuleKind, ModuleResolutionKind, ScriptTarget } from "../../typescript";
 
+// note: ModuleResolutionKind.NodeJs and ScriptTarget.ES3/ES5 were removed in
+// TypeScript 7, and Classic/Node10 are no longer preserved as outcomes — the
+// compiler folds them into Bundler/Node16/NodeNext (see
+// CompilerOptions.GetModuleResolutionKind in internal/core/compileroptions.go).
+// The cases covering the old behaviour are gone rather than aliased.
+
 describe("tsInternal", () => {
   describe("getEmitModuleResolutionKind", () => {
     function doTest(
@@ -23,24 +29,16 @@ describe("tsInternal", () => {
 
     for (const module of getAllModules()) {
       for (const target of getAllTargets()) {
-        doTest(ModuleResolutionKind.NodeJs, module, target, ModuleResolutionKind.NodeJs);
-        doTest(ModuleResolutionKind.Classic, module, target, ModuleResolutionKind.Classic);
       }
     }
 
     for (const target of getAllTargets()) {
-      doTest(undefined, ModuleKind.None, target, ModuleResolutionKind.Classic);
       doTest(undefined, ModuleKind.CommonJS, target, ModuleResolutionKind.Bundler);
-      doTest(undefined, ModuleKind.AMD, target, ModuleResolutionKind.Classic);
-      doTest(undefined, ModuleKind.UMD, target, ModuleResolutionKind.Classic);
-      doTest(undefined, ModuleKind.System, target, ModuleResolutionKind.Classic);
       doTest(undefined, ModuleKind.ES2015, target, ModuleResolutionKind.Bundler);
       doTest(undefined, ModuleKind.ESNext, target, ModuleResolutionKind.Bundler);
     }
 
     doTest(undefined, undefined, undefined, ModuleResolutionKind.Bundler);
-    doTest(undefined, undefined, ScriptTarget.ES3, ModuleResolutionKind.Bundler);
-    doTest(undefined, undefined, ScriptTarget.ES5, ModuleResolutionKind.Bundler);
     doTest(undefined, undefined, ScriptTarget.ES2015, ModuleResolutionKind.Bundler);
     doTest(undefined, undefined, ScriptTarget.ES2016, ModuleResolutionKind.Bundler);
     doTest(undefined, undefined, ScriptTarget.ES2017, ModuleResolutionKind.Bundler);

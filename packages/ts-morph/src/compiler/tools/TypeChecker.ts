@@ -38,6 +38,13 @@ export class TypeChecker {
   }
 
   /**
+   * Gets the ambient module symbols (ex. modules in the @types folder or node_modules).
+   */
+  getAmbientModules(): Symbol[] {
+    return this.compilerObject.getAmbientModules().map(s => this.#context.compilerFactory.getSymbol(s));
+  }
+
+  /**
    * Gets the apparent type of a type.
    * @param type - Type to get the apparent type of.
    */
@@ -115,6 +122,45 @@ export class TypeChecker {
   getImmediatelyAliasedSymbol(symbol: Symbol): Symbol | undefined {
     const tsAliasSymbol = this.compilerObject.getImmediateAliasedSymbol(symbol.compilerSymbol);
     return tsAliasSymbol == null ? undefined : this.#context.compilerFactory.getSymbol(tsAliasSymbol);
+  }
+
+  /**
+   * Gets the symbols in the scope of the provided node.
+   *
+   * Note: This will always return the local symbols. If you want the export symbol from a local
+   * symbol, then use the `#getExportSymbolOfSymbol(symbol)` method.
+   * @param node - Node to check the scope for.
+   * @param meaning - Meaning of symbol to filter by.
+   */
+  getSymbolsInScope(node: Node, meaning: SymbolFlags): Symbol[] {
+    return this.compilerObject.getSymbolsInScope(node.compilerNode, meaning)
+      .map(s => this.#context.compilerFactory.getSymbol(s));
+  }
+
+  /**
+   * Gets the symbols the binder placed in the node's own local scope, in declaration order.
+   * @param node - Node to get the locals of.
+   */
+  getLocals(node: Node): Symbol[] {
+    return this.compilerObject.getLocals(node.compilerNode).map(s => this.#context.compilerFactory.getSymbol(s));
+  }
+
+  /**
+   * Gets the type a value of the provided type resolves to when awaited, or undefined when
+   * the type cannot be awaited.
+   * @param type - Type to get the awaited type of.
+   */
+  getAwaitedType(type: Type): Type | undefined {
+    const awaitedType = this.compilerObject.getAwaitedType(type.compilerType);
+    return awaitedType == null ? undefined : this.#context.compilerFactory.getType(awaitedType);
+  }
+
+  /**
+   * Gets the fully qualified name of a symbol, that is its name qualified by each of its parents.
+   * @param symbol - Symbol to get the fully qualified name of.
+   */
+  getFullyQualifiedName(symbol: Symbol): string {
+    return this.compilerObject.getFullyQualifiedName(symbol.compilerSymbol);
   }
 
   /**

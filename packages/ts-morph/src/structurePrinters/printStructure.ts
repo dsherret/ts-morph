@@ -38,7 +38,7 @@ export function printStructure(structure: Structures, options?: PrintStructureOp
 
   const factory = new StructurePrinterFactory(() => ({
     insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces,
-    insertSpaces: !useTabs,
+    convertTabsToSpaces: !useTabs,
     tabSize: indentNumberOfSpaces,
   }));
 

@@ -1,4 +1,5 @@
 import {
+  ArrayUtils,
   errors,
   EventContainer,
   FileUtils,
@@ -19,6 +20,7 @@ import {
   replaceSourceFileForFilePathMove,
   replaceSourceFileTextForFormatting,
 } from "../../../manipulation";
+import { insertIntoTextRange } from "../../../manipulation/manipulations";
 import { getNextMatchingPos, getPreviousMatchingPos } from "../../../manipulation/textSeek";
 import { ProjectContext } from "../../../ProjectContext";
 import { SourceFileSpecificStructure, SourceFileStructure, StructureKind } from "../../../structures";
@@ -884,6 +886,55 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
   organizeImports() {
     this._context.languageService.organizeImports(this).forEach(fileTextChanges => fileTextChanges.applyChanges());
     return this;
+  }
+
+  /**
+   * Code fix to add import declarations for identifiers that are referenced, but not imported in the source file.
+   * @param formatSettings - Format code settings.
+   *
+   * Breaking change: the user preferences parameter is gone. tsgo's code fixes
+   * do not take one.
+   */
+  fixMissingImports(formatSettings: FormatCodeSettings = {}) {
+    const combinedCodeFix = this._context.languageService.getCombinedCodeFix(this, "fixMissingImport", formatSettings);
+    const sourceFile = this;
+
+    for (const fileTextChanges of combinedCodeFix.getChanges()) {
+      const changes = fileTextChanges.getTextChanges();
+      removeUnnecessaryDoubleBlankLines(changes);
+      applyTextChanges(changes);
+    }
+
+    return this;
+
+    function removeUnnecessaryDoubleBlankLines(changes: TextChange[]) {
+      changes.sort((a, b) => a.getSpan().getStart() - b.getSpan().getStart());
+      // when a file has no imports, it will add a double newline to every change
+      // so remove them except for the last change
+      for (let i = 0; i < changes.length - 1; i++) { // skip last change
+        const { compilerObject } = changes[i];
+        compilerObject.newText = compilerObject.newText.replace(/(\r?)\n\r?\n$/, "$1\n");
+      }
+    }
+
+    function applyTextChanges(changes: ReadonlyArray<TextChange>) {
+      // group all the changes by their start position and insert them into the file
+      const groups = ArrayUtils.groupBy(changes, change => change.getSpan().getStart());
+      let addedLength = 0;
+      for (const group of groups) {
+        // these should all be import declarations so it should be safe
+        const insertPos = group[0].getSpan().getStart() + addedLength;
+        const newText = group.map(item => item.getNewText()).join("");
+
+        insertIntoTextRange({
+          sourceFile,
+          insertPos,
+          newText,
+        });
+
+        addedLength += newText.length;
+      }
+    }
   }
 
   /**

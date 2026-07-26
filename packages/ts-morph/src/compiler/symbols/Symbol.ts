@@ -135,6 +135,53 @@ export class Symbol {
   }
 
   /**
+   * Gets the export symbol of the symbol if its a local symbol with a corresponding export symbol.
+   * Otherwise returns the current symbol.
+   *
+   * The following is from the compiler API documentation:
+   *
+   * For example, at `export type T = number;`:
+   *     - `getSymbolAtLocation` at the location `T` will return the exported symbol for `T`.
+   *     - But the result of `getSymbolsInScope` will contain the *local* symbol for `T`, not the exported symbol.
+   *     - Calling `getExportSymbolOfSymbol` on that local symbol will return the exported symbol.
+   */
+  getExportSymbol(): Symbol {
+    return this.#context.compilerFactory.getSymbol(this.compilerSymbol.getExportSymbol());
+  }
+
+  /**
+   * Gets the fully qualified name, that is the symbol's name qualified by each of its parents.
+   */
+  getFullyQualifiedName(): string {
+    return this.#context.typeChecker.getFullyQualifiedName(this);
+  }
+
+  /**
+   * Gets the global export of the symbol by the specified name or throws if not exists.
+   * @param name - Name of the global export.
+   */
+  getGlobalExportOrThrow(name: string, message?: string | (() => string)): Symbol {
+    return errors.throwIfNullOrUndefined(this.getGlobalExport(name), message ?? (() => `Expected to find global export with name: ${name}`));
+  }
+
+  /**
+   * Gets the global export of the symbol by the specified name or returns undefined if not exists.
+   * @param name - Name of the global export.
+   */
+  getGlobalExport(name: string): Symbol | undefined {
+    const tsSymbol = this.compilerSymbol.getGlobalExports().get(ts.escapeLeadingUnderscores(name));
+    return tsSymbol == null ? undefined : this.#context.compilerFactory.getSymbol(tsSymbol);
+  }
+
+  /**
+   * Gets the global exports from the symbol, that is the names it introduces with
+   * `export as namespace X`.
+   */
+  getGlobalExports(): Symbol[] {
+    return Array.from(this.compilerSymbol.getGlobalExports().values()).map(symbol => this.#context.compilerFactory.getSymbol(symbol));
+  }
+
+  /**
    * Gets the export of the symbol by the specified name or throws if not exists.
    * @param name - Name of the export.
    */

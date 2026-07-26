@@ -69,6 +69,13 @@ export class Type<TType extends ts.Type = ts.Type> {
   }
 
   /**
+   * Gets the type the type resolves to when awaited, or undefined when it cannot be awaited.
+   */
+  getAwaitedType(): Type | undefined {
+    return this._context.typeChecker.getAwaitedType(this);
+  }
+
+  /**
    * Gets the array element type or throws if it doesn't exist (ex. for `T[]` it would be `T`).
    */
   getArrayElementTypeOrThrow(message?: string | (() => string)) {

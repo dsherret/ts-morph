@@ -1,4 +1,4 @@
-import { CompilerOptionsContainer, errors, TransactionalFileSystem, ts } from "@ts-morph/common";
+import { CompilerOptionsContainer, createModuleResolutionHost, errors, TransactionalFileSystem, ts } from "@ts-morph/common";
 import { CodeBlockWriter } from "./codeBlockWriter";
 import { Diagnostic, LanguageService, QuoteKind, SourceFile, TypeChecker } from "./compiler";
 import { CompilerFactory, InProjectCoordinator, StructurePrinterFactory } from "./factories";
@@ -29,6 +29,7 @@ export class ProjectContext {
   readonly #compilerOptions: CompilerOptionsContainer;
   readonly #customTypeChecker: TypeChecker | undefined;
   readonly #project: Project | undefined;
+  #moduleResolutionHost: ts.ModuleResolutionHost | undefined;
 
   get project(): Project {
     if (this.#project == null)
@@ -168,6 +169,23 @@ export class ProjectContext {
     // category the compiler reports before an emit.
     const compilerDiagnostics = ts.getPreEmitDiagnostics(this.program.compilerObject, sourceFile?.compilerNode);
     return compilerDiagnostics.map(d => this.compilerFactory.getDiagnostic(d));
+  }
+
+  /**
+   * Gets a module resolution host that answers out of the project first and the file
+   * system second.
+   */
+  getModuleResolutionHost(): ts.ModuleResolutionHost {
+    return this.#moduleResolutionHost ??= createModuleResolutionHost({
+      transactionalFileSystem: this.fileSystemWrapper,
+      getEncoding: () => this.getEncoding(),
+      sourceFileContainer: {
+        containsDirectoryAtPath: dirPath => this.compilerFactory.containsDirectoryAtPath(dirPath),
+        containsSourceFileAtPath: filePath => this.compilerFactory.containsSourceFileAtPath(filePath),
+        getSourceFileFromCacheFromFilePath: filePath => this.compilerFactory.getSourceFileFromCacheFromFilePath(filePath),
+        getChildDirectoriesOfDirectory: dirPath => Array.from(this.compilerFactory.getChildDirectoriesOfDirectory(dirPath), d => d.getPath()),
+      },
+    });
   }
 
   #getToolRequiredError(name: string) {
