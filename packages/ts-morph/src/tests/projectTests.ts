@@ -141,10 +141,13 @@ const test = new Test();`,
         expect(project.getPreEmitDiagnostics().map(d => d.getCode())).to.deep.equal([5097]);
       });
 
-      // Skipped for a reason that is not about custom resolution: a file that has
-      // been forgotten is not found again by resolving to it, and the same happens
-      // with no resolution host at all. See "forgetting a file" in
-      // tsgo-wasm/BREAKING-CHANGES.md.
+      // Skipped, and not because of custom resolution. Forgetting a file reports it
+      // to the compiler as deleted, which makes the path missing for that snapshot,
+      // so an import of it stops resolving even though the file is still there. The
+      // same happens with no resolution host at all. Reporting it as changed instead
+      // fixes this and breaks `move` with overwrite, which removes a destination
+      // whose stale content must be dropped — the two need different signals and
+      // the one call site cannot tell them apart. See BREAKING-CHANGES.md.
       it.skip("should support when the file exists only on disk", () => {
         const { mainFile, testFile } = setup();
         testFile.saveSync();

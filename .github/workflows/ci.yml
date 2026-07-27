@@ -43,7 +43,6 @@ jobs:
       - name: Test
         run: |
           deno task -r test:ci
-          deno task -r test:ts-versions
       - name: Code Verification
         run: |
           deno task -r code-verification

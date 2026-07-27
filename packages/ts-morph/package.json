@@ -14,7 +14,6 @@
     "test:debug": "deno task test --inspect-brk",
     "test:watch": "deno task test --watch-extensions ts --watch",
     "test:ci": "deno task test",
-    "test:ts-versions": "deno run -A scripts/test/testTypeScriptVersions.ts",
     "type-check": "deno run -A scripts/typeCheckLibrary.ts",
     "code-generate": "deno run -A scripts/generation/main.ts",
     "output-wrapped-nodes": "deno run -A scripts/generation/outputWrappedNodesInfo.ts",

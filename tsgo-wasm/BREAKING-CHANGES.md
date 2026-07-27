@@ -1024,11 +1024,24 @@ Not yet resolved, listed so they are not mistaken for finished work:
   - **Type reference directives are still not covered.** They resolve down a
     separate path in the compiler with no hook, so the
     `custom type reference directive resolution` tests stay skipped.
-- **Forgetting a file does not un-resolve it — and does not re-resolve it.** A
-  file that has been `forget()`ten is not found again by resolving to it, even
-  though it is still on the file system. This is not about custom resolution:
-  it happens with no resolution host at all, verified with a plain relative
-  import. One `custom module resolution` test is skipped for it.
+- **Forgetting a file makes imports of it stop resolving.** `forget()` reports
+  the file to the compiler as deleted, which makes that path missing for the
+  snapshot, so an import of it fails even though the file is still on the file
+  system. Diagnosed rather than guessed:
+  - It is not about custom resolution — it happens with no resolution host.
+  - It is not the file being invisible — a _new_ session over the same file
+    system resolves it, and so does a new importer in a later snapshot.
+  - It is the `deleted` signal itself, and the next snapshot recovers, including
+    for the original importer.
+
+  Reporting it as `changed` instead — the content at that path is now whatever
+  the file system has — fixes this and breaks `SourceFile#move` with `overwrite`,
+  which removes a destination whose stale on-disk content has to be dropped
+  rather than re-read. The two cases need different signals and reach
+  `DocumentRegistry#removeSourceFile` through one call site,
+  `CompilerFactory#removeCompilerNodeFromCache`, which cannot tell them apart.
+  The fix is to carry the caller's intent down to it; attempted and reverted
+  once for exactly this reason.
 - **Sweep the source comments into this document before the PR lands.** The
   migration left explanatory notes scattered through the code — anything opening
   with "Breaking change:", and every aside about what tsgo no longer has or does
