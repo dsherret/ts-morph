@@ -104,12 +104,8 @@ describe("Project", () => {
       // points, so a Deno-style host rewrites rather than resolving: dropping the
       // `.ts` says where to look and the compiler still decides how. It no longer
       // receives a module resolution host, because it no longer resolves itself.
-      function setup(resolutionHost = ResolutionHosts.deno) {
-        const project = new Project({
-          useInMemoryFileSystem: true,
-          compilerOptions: { allowImportingTsExtensions: true },
-          resolutionHost,
-        });
+      function setup(resolutionHost: ProjectOptions["resolutionHost"] = ResolutionHosts.deno) {
+        const project = new Project({ useInMemoryFileSystem: true, resolutionHost });
 
         const testFile = project.createSourceFile("/Test.ts", "export class Test {}");
         const mainFile = project.createSourceFile("/main.ts", `import { Test } from "./Test.ts";\n\nconst test = new Test();`);
@@ -120,6 +116,29 @@ describe("Project", () => {
         const { mainFile } = setup();
         const importDec = mainFile.getImportDeclarationOrThrow("./Test.ts");
         expect(importDec.getModuleSpecifierSourceFile()).to.not.be.undefined;
+      });
+
+      // What the host is actually for. tsgo finds the file behind `./Test.ts`
+      // either way — resolution is not the part that needs help — but it rejects
+      // the specifier as written unless `allowImportingTsExtensions` is on, and
+      // that option demands `noEmit`. Rewriting the specifier means the rule never
+      // applies, so this is the assertion that fails with the host removed.
+      it("should accept a .ts specifier that the compiler would reject", () => {
+        const { project } = setup();
+        expect(project.getPreEmitDiagnostics().map(d => d.getCode())).to.deep.equal([]);
+      });
+
+      it("should be the host doing that, not the compiler", () => {
+        const project = new Project({ useInMemoryFileSystem: true });
+        project.createSourceFile("/Test.ts", "export class Test {}");
+        project.createSourceFile(
+          "/main.ts",
+          `import { Test } from "./Test.ts";
+
+const test = new Test();`,
+        );
+        // 5097: an import path can only end with .ts when allowImportingTsExtensions is enabled
+        expect(project.getPreEmitDiagnostics().map(d => d.getCode())).to.deep.equal([5097]);
       });
 
       // Skipped for a reason that is not about custom resolution: a file that has
@@ -135,10 +154,12 @@ describe("Project", () => {
       });
 
       it("should support when renaming with the language service", () => {
-        // this test indicates that the language service was passed the custom module resolution
-        const { mainFile, testFile } = setup();
+        const { project, mainFile, testFile } = setup();
         testFile.getClassOrThrow("Test").rename("NewClass");
         expect(mainFile.getFullText()).to.equal(`import { NewClass } from "./Test.ts";\n\nconst test = new NewClass();`);
+        // the language service resolved through the host too, or the rewritten
+        // specifier would have been rejected here the way it is above
+        expect(project.getPreEmitDiagnostics().map(d => d.getCode())).to.deep.equal([]);
       });
 
       it("should let a host resolve a specifier outright", () => {
@@ -147,65 +168,6 @@ describe("Project", () => {
         }));
         const aliased = mainFile.getSourceFile().getProject().createSourceFile("/other.ts", `import { Test } from "alias";`);
         expect(aliased.getImportDeclarationOrThrow("alias").getModuleSpecifierSourceFile()?.getFilePath()).to.equal("/Test.ts");
-      });
-    });
-
-    // Deferred, not dropped: the resolutionHost option is not wired up yet, so every
-    // test below configures custom resolution that the compiler never consults —
-    // including the ones that still pass, which pass without it. The choke point in
-    // the fork is Resolver.ResolveModuleName in internal/module/resolver.go; see
-    // tsgo-wasm/BREAKING-CHANGES.md.
-    describe.skip("custom type reference directive resolution", () => {
-      function setup() {
-        const fileSystem = new InMemoryFileSystemHost();
-        const testFilePath = "/other/test.d.ts";
-        fileSystem.writeFileSync("/dir/tsconfig.json", `{ "compilerOptions": { "target": "ES2015" } }`);
-        fileSystem.writeFileSync("/dir/main.ts", `/// <reference types="../other/testasdf" />\n\nconst test = new Test();`);
-        fileSystem.writeFileSync(testFilePath, `declare class Test {}`);
-        fileSystem.getCurrentDirectory = () => "/dir";
-        const project = new Project({
-          fileSystem,
-          resolutionHost: (moduleResolutionHost, getCompilerOptions) => {
-            return {
-              resolveTypeReferenceDirectives: (typeDirectiveNames: string[] | ts.FileReference[], containingFile: string) => {
-                const compilerOptions = getCompilerOptions();
-                const resolvedTypeReferenceDirectives: ts.ResolvedTypeReferenceDirective[] = [];
-
-                for (const typeDirectiveName of typeDirectiveNames.map(replaceAsdfExtension)) {
-                  const result = ts.resolveTypeReferenceDirective(typeDirectiveName, containingFile, compilerOptions, moduleResolutionHost);
-                  if (result.resolvedTypeReferenceDirective)
-                    resolvedTypeReferenceDirectives.push(result.resolvedTypeReferenceDirective);
-                }
-
-                return resolvedTypeReferenceDirectives;
-              },
-            };
-
-            function replaceAsdfExtension(moduleName: string | ts.FileReference) {
-              moduleName = typeof moduleName === "string" ? moduleName : moduleName.fileName;
-              return moduleName.replace("asdf", "");
-            }
-          },
-          tsConfigFilePath: "/dir/tsconfig.json",
-          skipLoadingLibFiles: true,
-        });
-
-        const mainFile = project.getSourceFileOrThrow("main.ts");
-        const testIdentifier = mainFile.getFirstDescendantOrThrow(d => d.getText() === "Test") as Identifier;
-        return { project, mainFile, testFilePath, testIdentifier };
-      }
-
-      it("should support custom resolution", () => {
-        const { testIdentifier } = setup();
-        expect(testIdentifier.getDefinitionNodes().map(d => d.getText())).to.deep.equal(["declare class Test {}"]);
-      });
-
-      it("should support when renaming with the language service", () => {
-        // todo: this should be investigated in the future as this test doesn't fail when the custom type reference directive resolution
-        // is not provided to the language service.
-        const { testIdentifier } = setup();
-        testIdentifier.rename("NewClass");
-        expect(testIdentifier.getDefinitionNodes().map(d => d.getText())).to.deep.equal(["declare class NewClass {}"]);
       });
     });
 

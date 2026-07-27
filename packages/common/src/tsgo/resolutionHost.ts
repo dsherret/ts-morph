@@ -63,7 +63,14 @@ export type ResolutionHostFactory = (getCompilerOptions: () => CompilerOptions) 
  */
 export const ResolutionHosts = {
   deno: (): ResolutionHost => ({
-    resolveModuleName: ({ moduleName }) => moduleName.toLowerCase().endsWith(".ts") ? { moduleName: moduleName.slice(0, -".ts".length) } : undefined,
+    resolveModuleName: ({ moduleName }) => {
+      if (!moduleName.toLowerCase().endsWith(".ts"))
+        return undefined;
+      const stripped = moduleName.slice(0, -".ts".length);
+      // a bare ".ts" strips to nothing, and an empty rewrite is indistinguishable
+      // from no rewrite on the wire, so leave it to the compiler to reject
+      return stripped === "" ? undefined : { moduleName: stripped };
+    },
   }),
 } satisfies Record<string, ResolutionHostFactory>;
 

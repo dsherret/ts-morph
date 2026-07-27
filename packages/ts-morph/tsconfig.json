@@ -5,7 +5,11 @@
     // resolve the sibling package from source: its published declarations are a
     // pre-built bundle, so type checking against them would test a stale build
     "paths": {
-      "@ts-morph/common": ["../common/src/index.ts"]
+      "@ts-morph/common": ["../common/src/index.ts"],
+      // the tsgo client’s declarations reach its enums through the package’s
+      // `imports` map, which this config’s resolution mode cannot follow; see the
+      // same mapping in ../common/tsconfig.json
+      "#enums/*": ["../../submodules/typescript-go/_packages/native-preview/dist/enums/*.enum.d.ts"]
     },
     // This config only type-checks; the shipped build is produced by rollup. It
     // therefore sets no `rootDir`/`outDir` and emits nothing, because `paths`
@@ -17,6 +21,12 @@
     "strict": true,
     "noEmit": true
   },
+  // the quarantined tests name API that no longer exists — that is what they
+  // record — so they are no more type-checkable than they are runnable. They are
+  // excluded from the mocha run for the same reason; see that directory’s README.
+  "exclude": [
+    "./src/tests/removed-capabilities"
+  ],
   "include": [
     "./src",
     // `paths` above type-checks @ts-morph/common from source, so its ambient
