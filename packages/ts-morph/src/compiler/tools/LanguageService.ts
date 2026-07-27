@@ -1,4 +1,4 @@
-import { errors, SymbolFlags, SyntaxKind, ts } from "@ts-morph/common";
+import { errors, getStoredNode, SymbolFlags, SyntaxKind, ts } from "@ts-morph/common";
 import { getTextFromTextChanges } from "../../manipulation";
 import { ProjectContext } from "../../ProjectContext";
 import { fillDefaultFormatCodeSettings } from "../../utils";
@@ -135,17 +135,25 @@ export class LanguageService {
    */
   findReferencesAsNodes(node: Node) {
     const referencedSymbols = this.findReferences(node);
+    const originFilePath = node._sourceFile.getFilePath();
+    const originStart = node.getStart();
     return Array.from(getReferencingNodes());
 
     function* getReferencingNodes() {
       for (const referencedSymbol of referencedSymbols) {
         const isAlias = referencedSymbol.getDefinition().getKind() === ts.ScriptElementKind.alias;
         const references = referencedSymbol.getReferences();
+        // this group is the one the search started from, so its leading definition
+        // is the node being searched for rather than a reference to it. tsgo also
+        // flags the *declaring* file's entry as a definition, where the `typescript`
+        // package only flagged the origin's — dropping those would lose a real
+        // reference, so the check is scoped to the origin's own group.
+        const isOriginGroup = references.some(r => r.getSourceFile().getFilePath() === originFilePath && r.getNode().getStart() === originStart);
         for (let i = 0; i < references.length; i++) {
           // the first reference always seems to be the main definition... the other definitions
           // could be constructed in initializers or elsewhere
           const reference = references[i];
-          if (isAlias || !reference.isDefinition() || i > 0)
+          if (isAlias || !reference.isDefinition() || i > 0 || !isOriginGroup)
             yield reference.getNode();
         }
       }
@@ -158,11 +166,17 @@ export class LanguageService {
    * @param pos - Position to find the reference at.
    */
   findReferencesAtPosition(sourceFile: SourceFile, pos: number) {
-    // tsgo resolves references from a node rather than from a bare position.
+    // tsgo resolves references from a node rather than from a bare position, and
+    // the node under a position is often a rebuilt one — punctuation, a keyword,
+    // a syntax list — which the compiler has no handle for. References are a
+    // question about a position, so ask about the node that encloses it.
     const node = sourceFile.getDescendantAtPos(pos);
     if (node == null)
       return [];
-    const entries = this.#context.compilerFactory.documentRegistry.checker.getReferencedSymbolsForNode(node.compilerNode, pos);
+    const location = getStoredNode(node.compilerNode);
+    if (location == null)
+      return [];
+    const entries = this.#context.compilerFactory.documentRegistry.checker.getReferencedSymbolsForNode(location, pos);
     return entries.map(entry => this.#context.compilerFactory.getReferencedSymbol(this.#toReferencedSymbol(entry)));
   }
 

@@ -15,4 +15,5 @@ export { getChildren, getLastToken } from "./getChildren";
 export { createInProcessApi, type InProcessApiOptions } from "./inProcessApi";
 export { createModuleResolutionHost, type CreateModuleResolutionHostOptions, type ModuleResolutionSourceFileContainer } from "./moduleResolutionHost";
 export { setSourceFileProperty } from "./mutableSourceFile";
+export { getStoredNode, isReconstructedNode } from "./reconstructedNodes";
 export * from "./resolutionHost";

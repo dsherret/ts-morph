@@ -362,7 +362,7 @@ export interface InstanceofExpression extends BinaryExpression {
 export interface SourceFileLike {
     readonly text: string;
 }
-import type { BigIntLiteral, ComputedPropertyName, DeclarationBase as TsgoDeclarationBase, Expression, MemberExpressionBase, NamedTupleMember, NodeWithTypeArgumentsBase, NumericLiteral, PrimaryExpressionBase, PrivateIdentifier, RegularExpressionLiteral, TemplateExpression, JSDocTagBase as TsgoJSDocTagBase, TemplateLiteralLikeNodeBase as TsgoTemplateLiteralLikeNodeBase, TypeNodeBase as TsgoTypeNodeBase, TypeParameterDeclaration } from "./tsgo/ast/ast.generated";
+import type { BigIntLiteral, ComputedPropertyName, DeclarationBase as TsgoDeclarationBase, Expression, JSDocTagBase as TsgoJSDocTagBase, MemberExpressionBase, NamedTupleMember, NodeWithTypeArgumentsBase, NumericLiteral, PrimaryExpressionBase, PrivateIdentifier, RegularExpressionLiteral, TemplateExpression, TemplateLiteralLikeNodeBase as TsgoTemplateLiteralLikeNodeBase, TypeNodeBase as TsgoTypeNodeBase, TypeParameterDeclaration } from "./tsgo/ast/ast.generated";
 import type { NodeArray as TsgoNodeArray } from "./tsgo/ast/ast";
 /** tsgo parses the keyword expressions as one `KeywordExpression` off `ExpressionBase`. */
 export interface ThisExpression extends PrimaryExpressionBase {

@@ -942,6 +942,20 @@ export interface ModuleResolutionSourceFileContainer {
 export declare function setSourceFileProperty(sourceFile: SourceFile, key: string, value: unknown): void;
 
 /**
+ * The nearest node the compiler actually stores — the node itself, or the closest
+ * ancestor that is not reconstructed.
+ *
+ * Positional questions (what is in scope here, what references this) still have an
+ * answer for a rebuilt node, and it is the answer for the node that encloses it.
+ * Returns undefined only if nothing in the chain is stored, which a node reached
+ * from a parsed file cannot be.
+ */
+export declare function getStoredNode(node: Node): Node | undefined;
+
+/** Gets if the node was rebuilt on the client and so has no compiler handle. */
+export declare function isReconstructedNode(node: Node): boolean;
+
+/**
  * Adapts a {@link ResolutionHost} to the resolver the tsgo client takes.
  *
  * Returns undefined when the host resolves nothing, so a project that was given

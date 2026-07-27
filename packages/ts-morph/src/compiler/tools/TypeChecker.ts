@@ -1,4 +1,4 @@
-import { errors, SymbolFlags, SyntaxKind, ts, TypeFormatFlags } from "@ts-morph/common";
+import { errors, getStoredNode, isReconstructedNode, SymbolFlags, SyntaxKind, ts, TypeFormatFlags } from "@ts-morph/common";
 import { ProjectContext } from "../../ProjectContext";
 import { CallLikeExpression } from "../ast/aliases";
 import { Node } from "../ast/common";
@@ -65,6 +65,10 @@ export class TypeChecker {
    * @param node - Node to get the type for.
    */
   getTypeAtLocation(node: Node): Type {
+    // a rebuilt node has no handle to ask the compiler about; `any` is what the
+    // checker answered for one of these anyway
+    if (isReconstructedNode(node.compilerNode))
+      return this.#context.compilerFactory.getType(this.compilerObject.getAnyType());
     return this.#context.compilerFactory.getType(this.compilerObject.getTypeAtLocation(node.compilerNode));
   }
 
@@ -99,6 +103,9 @@ export class TypeChecker {
    * @param node - Node to get the symbol for.
    */
   getSymbolAtLocation(node: Node): Symbol | undefined {
+    // punctuation and syntax lists have no symbol, and no handle to ask with
+    if (isReconstructedNode(node.compilerNode))
+      return undefined;
     const compilerSymbol = this.compilerObject.getSymbolAtLocation(node.compilerNode);
     return compilerSymbol == null ? undefined : this.#context.compilerFactory.getSymbol(compilerSymbol);
   }
@@ -133,7 +140,10 @@ export class TypeChecker {
    * @param meaning - Meaning of symbol to filter by.
    */
   getSymbolsInScope(node: Node, meaning: SymbolFlags): Symbol[] {
-    return this.compilerObject.getSymbolsInScope(node.compilerNode, meaning)
+    // what is in scope is a question about a position, so a rebuilt node is asked
+    // about as the node that encloses it
+    const location = getStoredNode(node.compilerNode) ?? node.compilerNode;
+    return this.compilerObject.getSymbolsInScope(location, meaning)
       .map(s => this.#context.compilerFactory.getSymbol(s));
   }
 
