@@ -843,6 +843,7 @@ import type {
   DeclarationBase as TsgoDeclarationBase,
   Expression,
   MemberExpressionBase,
+  NamedTupleMember,
   NodeWithTypeArgumentsBase,
   NumericLiteral,
   PrimaryExpressionBase,
@@ -850,7 +851,9 @@ import type {
   RegularExpressionLiteral,
   TemplateExpression,
   TemplateLiteralLikeNodeBase as TsgoTemplateLiteralLikeNodeBase,
+  TypeNodeBase as TsgoTypeNodeBase,
 } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/ast.generated.js";
+import type { NodeArray as TsgoNodeArray } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/ast.js";
 
 /** tsgo parses the keyword expressions as one `KeywordExpression` off `ExpressionBase`. */
 export interface ThisExpression extends PrimaryExpressionBase {
@@ -878,6 +881,18 @@ export interface FalseLiteral extends PrimaryExpressionBase {
 }
 
 export type BooleanLiteral = TrueLiteral | FalseLiteral;
+
+/**
+ * tsgo types a tuple's elements as plain type nodes. A named member
+ * (`[a: string]`) is one at runtime and is returned as one, but the declared
+ * type no longer says so, which would leave `TupleTypeNode#getElements()`
+ * unable to be narrowed to `NamedTupleMember`. The real fix is in the fork's
+ * generated AST.
+ */
+export interface TupleTypeNode extends TsgoTypeNodeBase {
+  readonly kind: SyntaxKindEnum.TupleType;
+  readonly elements: TsgoNodeArray<TypeNode | NamedTupleMember>;
+}
 
 /**
  * tsgo puts this straight on `ExpressionBase` rather than on the

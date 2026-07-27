@@ -18,8 +18,13 @@ export type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ObjectDe
   : T extends ts.SyntaxList ? compiler.SyntaxList
   : T extends ts.JSDocTypeExpression ? compiler.JSDocTypeExpression
   : T extends ts.JSDocType ? compiler.JSDocType
-  : T extends ts.NodeWithTypeArguments ? compiler.NodeWithTypeArguments
+  // TypeNode is tested first: tsgo's NodeWithTypeArguments adds only an optional
+  // `typeArguments`, so a plain TypeNode satisfies it and would take that arm.
+  // Nothing is typed as NodeWithTypeArguments anyway — it is the base of three
+  // concrete nodes (TypeReferenceNode, TypeQueryNode, ImportTypeNode), each
+  // matched by its kind above.
   : T extends ts.TypeNode ? compiler.TypeNode
+  : T extends ts.NodeWithTypeArguments ? compiler.NodeWithTypeArguments
   : T extends ts.JSDocTag ? compiler.JSDocTag
   : T extends ts.LiteralExpression ? compiler.LiteralExpression
   : T extends ts.PrimaryExpression ? compiler.PrimaryExpression

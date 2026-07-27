@@ -362,7 +362,8 @@ export interface InstanceofExpression extends BinaryExpression {
 export interface SourceFileLike {
     readonly text: string;
 }
-import type { BigIntLiteral, ComputedPropertyName, DeclarationBase as TsgoDeclarationBase, Expression, MemberExpressionBase, NodeWithTypeArgumentsBase, NumericLiteral, PrimaryExpressionBase, PrivateIdentifier, RegularExpressionLiteral, TemplateExpression, TemplateLiteralLikeNodeBase as TsgoTemplateLiteralLikeNodeBase } from "./tsgo/ast/ast.generated";
+import type { BigIntLiteral, ComputedPropertyName, DeclarationBase as TsgoDeclarationBase, Expression, MemberExpressionBase, NamedTupleMember, NodeWithTypeArgumentsBase, NumericLiteral, PrimaryExpressionBase, PrivateIdentifier, RegularExpressionLiteral, TemplateExpression, TemplateLiteralLikeNodeBase as TsgoTemplateLiteralLikeNodeBase, TypeNodeBase as TsgoTypeNodeBase } from "./tsgo/ast/ast.generated";
+import type { NodeArray as TsgoNodeArray } from "./tsgo/ast/ast";
 /** tsgo parses the keyword expressions as one `KeywordExpression` off `ExpressionBase`. */
 export interface ThisExpression extends PrimaryExpressionBase {
     readonly kind: SyntaxKindEnum.ThisKeyword;
@@ -383,6 +384,17 @@ export interface FalseLiteral extends PrimaryExpressionBase {
     readonly kind: SyntaxKindEnum.FalseKeyword;
 }
 export type BooleanLiteral = TrueLiteral | FalseLiteral;
+/**
+ * tsgo types a tuple's elements as plain type nodes. A named member
+ * (`[a: string]`) is one at runtime and is returned as one, but the declared
+ * type no longer says so, which would leave `TupleTypeNode#getElements()`
+ * unable to be narrowed to `NamedTupleMember`. The real fix is in the fork's
+ * generated AST.
+ */
+export interface TupleTypeNode extends TsgoTypeNodeBase {
+    readonly kind: SyntaxKindEnum.TupleType;
+    readonly elements: TsgoNodeArray<TypeNode | NamedTupleMember>;
+}
 /**
  * tsgo puts this straight on `ExpressionBase` rather than on the
  * primary-expression chain, unlike the `typescript` package, which would leave
@@ -411,7 +423,7 @@ export interface JsxTagNamePropertyAccess extends PropertyAccessExpression {
     readonly expression: Identifier | ThisExpression | JsxTagNamePropertyAccess;
 }
 export type JsxTagNameExpression = Identifier | ThisExpression | JsxTagNamePropertyAccess | JsxNamespacedName;
-import type { ForInStatement as TsgoForInStatement, ForOfStatement as TsgoForOfStatement, ForStatement as TsgoForStatement, JSDocParameterTag as TsgoJSDocParameterTag, JSDocPropertyTag as TsgoJSDocPropertyTag, JSDocTypeExpression, JSDocTypeTag as TsgoJSDocTypeTag, TaggedTemplateExpression as TsgoTaggedTemplateExpression, TypeNodeBase, UnaryExpressionBase, UpdateExpressionBase, VariableDeclarationList as TsgoVariableDeclarationList, VariableStatement } from "./tsgo/ast/ast.generated";
+import type { ForInStatement as TsgoForInStatement, ForOfStatement as TsgoForOfStatement, ForStatement as TsgoForStatement, JSDocParameterTag as TsgoJSDocParameterTag, JSDocPropertyTag as TsgoJSDocPropertyTag, JSDocTypeExpression, JSDocTypeTag as TsgoJSDocTypeTag, TaggedTemplateExpression as TsgoTaggedTemplateExpression, TypeNode, TypeNodeBase, UnaryExpressionBase, UpdateExpressionBase, VariableDeclarationList as TsgoVariableDeclarationList, VariableStatement } from "./tsgo/ast/ast.generated";
 export interface PrefixUnaryExpression extends UpdateExpressionBase {
     readonly kind: SyntaxKindEnum.PrefixUnaryExpression;
     readonly operator: SyntaxKindEnum.PlusToken | SyntaxKindEnum.MinusToken | SyntaxKindEnum.TildeToken | SyntaxKindEnum.ExclamationToken | SyntaxKindEnum.PlusPlusToken | SyntaxKindEnum.MinusMinusToken;

@@ -4462,7 +4462,7 @@ export interface TransformTraversalControl {
   visitChildren(): ts.Node;
 }
 
-export type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ObjectDestructuringAssignment ? ObjectDestructuringAssignment : T extends ts.ArrayDestructuringAssignment ? ArrayDestructuringAssignment : T extends ts.SuperElementAccessExpression ? SuperElementAccessExpression : T extends ts.SuperPropertyAccessExpression ? SuperPropertyAccessExpression : T extends ts.AssignmentExpression<infer U> ? AssignmentExpression<ts.AssignmentExpression<U>> : T["kind"] extends keyof ImplementedKindToNodeMappings ? ImplementedKindToNodeMappings[T["kind"]] : T extends ts.SyntaxList ? SyntaxList : T extends ts.JSDocTypeExpression ? JSDocTypeExpression : T extends ts.JSDocType ? JSDocType : T extends ts.NodeWithTypeArguments ? NodeWithTypeArguments : T extends ts.TypeNode ? TypeNode : T extends ts.JSDocTag ? JSDocTag : T extends ts.LiteralExpression ? LiteralExpression : T extends ts.PrimaryExpression ? PrimaryExpression : T extends ts.MemberExpression ? MemberExpression : T extends ts.LeftHandSideExpression ? LeftHandSideExpression : T extends ts.UpdateExpression ? UpdateExpression : T extends ts.UnaryExpression ? UnaryExpression : T extends ts.Expression ? Expression : T extends ts.IterationStatement ? IterationStatement : T extends CompilerCommentStatement ? CommentStatement : T extends CompilerCommentClassElement ? CommentClassElement : T extends CompilerCommentTypeElement ? CommentTypeElement : T extends CompilerCommentObjectLiteralElement ? CommentObjectLiteralElement : T extends CompilerCommentEnumMember ? CommentEnumMember : T extends ts.TypeElement ? TypeElement : T extends ts.Statement ? Statement : T extends ts.ClassElement ? ClassElement : T extends ts.ObjectLiteralElement ? ObjectLiteralElement : Node<T>;
+export type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ObjectDestructuringAssignment ? ObjectDestructuringAssignment : T extends ts.ArrayDestructuringAssignment ? ArrayDestructuringAssignment : T extends ts.SuperElementAccessExpression ? SuperElementAccessExpression : T extends ts.SuperPropertyAccessExpression ? SuperPropertyAccessExpression : T extends ts.AssignmentExpression<infer U> ? AssignmentExpression<ts.AssignmentExpression<U>> : T["kind"] extends keyof ImplementedKindToNodeMappings ? ImplementedKindToNodeMappings[T["kind"]] : T extends ts.SyntaxList ? SyntaxList : T extends ts.JSDocTypeExpression ? JSDocTypeExpression : T extends ts.JSDocType ? JSDocType : T extends ts.TypeNode ? TypeNode : T extends ts.NodeWithTypeArguments ? NodeWithTypeArguments : T extends ts.JSDocTag ? JSDocTag : T extends ts.LiteralExpression ? LiteralExpression : T extends ts.PrimaryExpression ? PrimaryExpression : T extends ts.MemberExpression ? MemberExpression : T extends ts.LeftHandSideExpression ? LeftHandSideExpression : T extends ts.UpdateExpression ? UpdateExpression : T extends ts.UnaryExpression ? UnaryExpression : T extends ts.Expression ? Expression : T extends ts.IterationStatement ? IterationStatement : T extends CompilerCommentStatement ? CommentStatement : T extends CompilerCommentClassElement ? CommentClassElement : T extends CompilerCommentTypeElement ? CommentTypeElement : T extends CompilerCommentObjectLiteralElement ? CommentObjectLiteralElement : T extends CompilerCommentEnumMember ? CommentEnumMember : T extends ts.TypeElement ? TypeElement : T extends ts.Statement ? Statement : T extends ts.ClassElement ? ClassElement : T extends ts.ObjectLiteralElement ? ObjectLiteralElement : Node<T>;
 declare const DecoratorBase: Constructor<LeftHandSideExpressionedNode> & typeof Node;
 
 export declare class Decorator extends DecoratorBase<ts.Decorator> {
@@ -4751,7 +4751,7 @@ export declare class JSDocNameReference extends Node<ts.JSDocNameReference> {
 /** JS doc non-nullable type. */
 export declare class JSDocNonNullableType extends JSDocType<ts.JSDocNonNullableType> {
   /** Gets the type node of the JS doc non-nullable type node. */
-  getTypeNode(): NodeWithTypeArguments<ts.NodeWithTypeArgumentsBase>;
+  getTypeNode(): TypeNode<ts.TypeNodeBase>;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.JSDocNonNullableType>;
   /** @inheritdoc **/
@@ -4761,7 +4761,7 @@ export declare class JSDocNonNullableType extends JSDocType<ts.JSDocNonNullableT
 /** JS doc nullable type. */
 export declare class JSDocNullableType extends JSDocType<ts.JSDocNullableType> {
   /** Gets the type node of the JS doc nullable type node. */
-  getTypeNode(): NodeWithTypeArguments<ts.NodeWithTypeArgumentsBase>;
+  getTypeNode(): TypeNode<ts.TypeNodeBase>;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.JSDocNullableType>;
   /** @inheritdoc **/
@@ -4771,7 +4771,7 @@ export declare class JSDocNullableType extends JSDocType<ts.JSDocNullableType> {
 /** JS doc optional type. */
 export declare class JSDocOptionalType extends JSDocType<ts.JSDocOptionalType> {
   /** Gets the type node of the JS doc optional type node. */
-  getTypeNode(): NodeWithTypeArguments<ts.NodeWithTypeArgumentsBase>;
+  getTypeNode(): TypeNode<ts.TypeNodeBase>;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.JSDocOptionalType>;
   /** @inheritdoc **/
@@ -4881,7 +4881,7 @@ export declare class JSDocSeeTag extends JSDocSeeTagBase<ts.JSDocSeeTag> {
 /** JS doc signature node. */
 export declare class JSDocSignature extends JSDocType<ts.JSDocSignature> {
   /** Gets the type node of the JS doc signature. */
-  getTypeNode(): NodeWithTypeArguments<ts.NodeWithTypeArgumentsBase> | undefined;
+  getTypeNode(): TypeNode<ts.TypeNodeBase> | undefined;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.JSDocSignature>;
   /** @inheritdoc **/
@@ -4990,7 +4990,7 @@ export declare class JSDocTypedefTag extends JSDocTag<ts.JSDocTypedefTag> {
 /** JS doc type expression node. */
 export declare class JSDocTypeExpression extends TypeNode<ts.JSDocTypeExpression> {
   /** Gets the type node of the JS doc type expression. */
-  getTypeNode(): NodeWithTypeArguments<ts.NodeWithTypeArgumentsBase>;
+  getTypeNode(): TypeNode<ts.TypeNodeBase>;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.JSDocTypeExpression>;
   /** @inheritdoc **/
@@ -5030,7 +5030,7 @@ export declare class JSDocUnknownTag extends JSDocTag<ts.JSDocUnknownTag> {
 /** JS doc variadic type. */
 export declare class JSDocVariadicType extends JSDocType<ts.JSDocVariadicType> {
   /** Gets the type node of the JS doc variadic type node. */
-  getTypeNode(): NodeWithTypeArguments<ts.NodeWithTypeArgumentsBase>;
+  getTypeNode(): TypeNode<ts.TypeNodeBase>;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.JSDocVariadicType>;
   /** @inheritdoc **/
@@ -8624,25 +8624,25 @@ export declare class ConditionalTypeNode extends TypeNode<ts.ConditionalTypeNode
    *
    * Ex. In `CheckType extends ExtendsType ? TrueType : FalseType` returns `CheckType`.
    */
-  getCheckType(): NodeWithTypeArguments<ts.NodeWithTypeArgumentsBase>;
+  getCheckType(): TypeNode<ts.TypeNodeBase>;
   /**
    * Gets the conditional type node's extends type.
    *
    * Ex. In `CheckType extends ExtendsType ? TrueType : FalseType` returns `ExtendsType`.
    */
-  getExtendsType(): NodeWithTypeArguments<ts.NodeWithTypeArgumentsBase>;
+  getExtendsType(): TypeNode<ts.TypeNodeBase>;
   /**
    * Gets the conditional type node's true type.
    *
    * Ex. In `CheckType extends ExtendsType ? TrueType : FalseType` returns `TrueType`.
    */
-  getTrueType(): NodeWithTypeArguments<ts.NodeWithTypeArgumentsBase>;
+  getTrueType(): TypeNode<ts.TypeNodeBase>;
   /**
    * Gets the conditional type node's false type.
    *
    * Ex. In `CheckType extends ExtendsType ? TrueType : FalseType` returns `FalseType`.
    */
-  getFalseType(): NodeWithTypeArguments<ts.NodeWithTypeArgumentsBase>;
+  getFalseType(): TypeNode<ts.TypeNodeBase>;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.ConditionalTypeNode>;
   /** @inheritdoc **/
@@ -8803,7 +8803,7 @@ export declare class NamedTupleMember extends NamedTupleMemberBase<ts.NamedTuple
 
 export declare class OptionalTypeNode extends TypeNode<ts.OptionalTypeNode> {
   /** Gets the optional type node's inner type. */
-  getTypeNode(): NodeWithTypeArguments<ts.NodeWithTypeArgumentsBase>;
+  getTypeNode(): TypeNode<ts.TypeNodeBase>;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.OptionalTypeNode>;
   /** @inheritdoc **/
@@ -8826,7 +8826,7 @@ export declare class ParenthesizedTypeNode extends TypeNode<ts.ParenthesizedType
 
 export declare class RestTypeNode extends TypeNode<ts.RestTypeNode> {
   /** Gets the rest type node's inner type. */
-  getTypeNode(): NodeWithTypeArguments<ts.NodeWithTypeArgumentsBase>;
+  getTypeNode(): TypeNode<ts.TypeNodeBase>;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.RestTypeNode>;
   /** @inheritdoc **/
@@ -8837,7 +8837,7 @@ export declare class TemplateLiteralTypeNode extends TypeNode<ts.TemplateLiteral
   /** Gets the template head. */
   getHead(): TemplateHead;
   /** Gets the template spans. */
-  getTemplateSpans(): NodeWithTypeArguments<ts.NodeWithTypeArgumentsBase>[];
+  getTemplateSpans(): TypeNode<ts.TypeNodeBase>[];
   /**
    * Sets the literal value.
    *
@@ -8861,7 +8861,7 @@ export declare class ThisTypeNode extends TypeNode<ts.ThisTypeNode> {
 
 export declare class TupleTypeNode extends TypeNode<ts.TupleTypeNode> {
   /** Gets the tuple element type nodes. */
-  getElements(): NodeWithTypeArguments<ts.NodeWithTypeArgumentsBase>[];
+  getElements(): (TypeNode<ts.TypeNodeBase> | NamedTupleMember)[];
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.TupleTypeNode>;
   /** @inheritdoc **/

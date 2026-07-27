@@ -298,24 +298,24 @@ exceptions that come from tsgo's AST rather than from the reconstruction:
 
 ### `TypeFormatFlags` is aliased to `NodeBuilderFlags` — **not exposed, and the alias is wrong**
 
-**tsgo has `TypeFormatFlags`.** `internal/checker/types.go:47-83` declares the
+**tsgo has `TypeFormatFlags`.** `internal/checker/types.go,`TypeFormatFlags``declares the
 whole enum, including all six members previously recorded as gone —
 `AddUndefined` (1&nbsp;<<&nbsp;17), `WriteArrowStyleSignature` (1&nbsp;<<&nbsp;18),
 `InArrayType` (1&nbsp;<<&nbsp;19), `InElementType` (1&nbsp;<<&nbsp;21),
 `InFirstTypeArgument` (1&nbsp;<<&nbsp;22) — and `NodeBuilderFlagsMask`
 (`types.go:79`). Every value matches the `typescript` package's. The checker reads
 them (`internal/checker/printer.go:182,197,201,320`), and **the API already sends
-the client's number through as one**: `internal/api/session.go:2392` calls
+the client's number through as one**: `internal/api/session.go, `TypeToStringEx`` calls
 `setup.checker.TypeToStringEx(t, enclosingDeclaration, checker.TypeFormatFlags(params.Flags), nil)`.
 
 So the server interprets the flags as `TypeFormatFlags` while ts-morph currently
 hands callers a `NodeBuilderFlags` enum under that name
-(`packages/common/src/tsgo/ts.ts:327`). That alias is not merely imprecise, it is
+(`packages/common/src/tsgo/ts.ts, the`TypeFormatFlags`alias`). That alias is not merely imprecise, it is
 backwards: classic `TypeFormatFlags` values are the correct thing to put on the
 wire, and a `NodeBuilderFlags` member is what gets silently misread.
 
 **TODO, not a breaking change.** `TypeFormatFlags` is missing only from the enum
-generator's list in `submodules/typescript-go/Herebyfile.mjs:338-366` — a one-line
+generator's list in `submodules/typescript-go/Herebyfile.mjs, the`enumDefs`list` — a one-line
 entry (`goPrefix: "TypeFormatFlags", goFile: "internal/checker/types.go"`)
 generates it, after which the alias can be replaced with the real enum.
 
@@ -340,7 +340,7 @@ are all really read by the formatter — see `internal/format/rulecontext.go:23`
 (`BaseIndentSize`).
 
 What is missing is the wire: the API's `FormattingOptions`
-(`internal/api/proto.go:1141-1153`) carries only the six that ts-morph now
+(`internal/api/proto.go,`api.FormattingOptions``) carries only the six that ts-morph now
 declares. **TODO:** widen that struct and `toFormatCodeSettings`
 (`internal/api/session_ls.go`) and the whole family comes back. Until then,
 neither interface has an index signature, so passing one is a compile error
@@ -354,11 +354,11 @@ from its manipulation settings.
 
 ### `EmitHint` — **absent**
 
-`ts.EmitHint` is retained for shape only (`packages/common/src/tsgo/ts.ts:261`),
+`ts.EmitHint` is retained for shape only (`packages/common/src/tsgo/ts.ts,`EmitHint``),
 and nothing consumes it: `PrintNodeOptions#emitHint` is gone, because tsgo's
 printer dispatches on `node.Kind` and its entry point
 `Emit(node *ast.Node, sourceFile *ast.SourceFile)`
-(`internal/printer/printer.go:5013`) takes no hint. There is no `EmitHint` type in
+(`internal/printer/printer.go, `Printer.Emit``) takes no hint. There is no `EmitHint` type in
 tsgo at all — the five occurrences of the name in `internal/` are commented-out
 `PrintHandlers` fields (`printer.go:77,99,102`) and prose about Strada's behaviour
 (`internal/transformers/estransforms/classfields.go:264,1096`,
@@ -384,7 +384,7 @@ chain no longer arrives in place of the text — use the new
 `Diagnostic#getMessageChain()`. `Diagnostic#getSource()` is gone — **absent**:
 `ast.Diagnostic` (`internal/ast/diagnostic.go:33-48`) has no source field and no
 `Source()` accessor among its methods (`:50-63`), and neither
-`api.DiagnosticResponse` (`internal/api/proto.go:1374-1395`) nor the client's
+`api.DiagnosticResponse` (`internal/api/proto.go,`DiagnosticResponse``) nor the client's
 `Diagnostic` carries one. The only source string tsgo produces anywhere is a
 constant synthesized on the way into LSP —
 `internal/ls/lsconv/converters.go:319-328` sets `source = new("ts")` for
@@ -515,7 +515,7 @@ Split by cause. The "not exposed" ones are TODOs, not breaking changes.
   never-read user preference (`internal/ls/lsutil/userpreferences.go:27,154`,
   marked `// !!!`). The LSP server registers `textDocument/codeAction` only
   (`internal/lsp/server.go:806,813` → `:1678`), and `codeFixProviders`
-  (`internal/ls/codeactions.go:70-75`) has exactly three entries, all quickfix.
+  (`internal/ls/codeactions.go,`codeFixProviders``) has exactly three entries, all quickfix.
   Separately, the change infrastructure cannot express the result: `CreateNewFile`
   / `newFileChanges` / `IsNewFile` have zero hits across `internal/`, so "Move to
   a new file" has nowhere to put the new file, and `api.FileTextEdits` has no
@@ -529,7 +529,7 @@ Split by cause. The "not exposed" ones are TODOs, not breaking changes.
   emitted — the message exists only in the table
   (`internal/diagnostics/diagnostics_generated.go:3761`).
 - **The `require`-to-import suggestion (code 80005)** — `getSuggestionDiagnostics`
-  _is_ routed (`internal/api/session.go:3602` over
+  _is_ routed (`internal/api/session.go,`handleGetSuggestionDiagnostics`` over
   `Program.GetSuggestionDiagnostics`, `internal/compiler/program.go:672`), but
   tsgo's checker never emits this one: `X_require_call_may_be_converted_to_an_import`
   appears only in the message table
@@ -560,7 +560,7 @@ Split by cause. The "not exposed" ones are TODOs, not breaking changes.
 - **`CodeFixAction#getFixId` / `getFixAllDescription`** — `ls.CodeAction` carries
   both (`internal/ls/codeactions.go:55-60`: `FixID`, `FixAllDescription`), and
   `GetCombinedCodeFix` already matches on the fix id. The API's `CodeFixAction`
-  (`internal/api/proto.go:1208-1212`) simply drops them, carrying only
+  (`internal/api/proto.go,`api.CodeFixAction``) simply drops them, carrying only
   `Description` and `Changes`. Two fields on that struct and its client mirror.
 - **`ImplementationLocation#getKind`/`getDisplayParts`** — tsgo does build
   classified display parts: `displayPartsWriter`
@@ -619,7 +619,7 @@ Split by cause. The "not exposed" ones are TODOs, not breaking changes.
   user preferences parameter is gone, and `fixId` is typed `string` rather than
   `{}`. The only ids that exist are tsgo's three: `"fixMissingImport"`,
   `"fixMissingTypeAnnotationOnExports"` and
-  `"fixClassIncorrectlyImplementsInterface"` (`internal/ls/codeactions.go:70-75`).
+  `"fixClassIncorrectlyImplementsInterface"` (`internal/ls/codeactions.go,`codeFixProviders``).
 - **`SourceFile#fixMissingImports(formatSettings?)`** — the user preferences
   parameter is gone, following `getCombinedCodeFix`.
 
@@ -851,11 +851,11 @@ under `packages/ts-morph/src/tests/removed-capabilities/` and excluded in
 
 | Off the surface                                                                                                                                           | Was on                     | Evidence                                                                                                                                                                                                                                                                                                                                                        |
 | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `getEditsForRefactor`, `RefactorEditInfo`                                                                                                                 | `LanguageService`          | no refactor surface at all; `codeFixProviders` (`internal/ls/codeactions.go:70-75`) is three quickfix providers, and `CreateNewFile`/`IsNewFile` have zero hits in `internal/`                                                                                                                                                                                  |
+| `getEditsForRefactor`, `RefactorEditInfo`                                                                                                                 | `LanguageService`          | no refactor surface at all; `codeFixProviders` (`internal/ls/codeactions.go,`codeFixProviders``) is three quickfix providers, and `CreateNewFile`/`IsNewFile` have zero hits in `internal/`                                                                                                                                                                     |
 | `getFixName`                                                                                                                                              | code fix results           | no `fixName` concept; `FixName` has zero hits in `internal/`. Its test also wants `convertToEsModule`, which is absent, and error 80001, which is never emitted                                                                                                                                                                                                 |
 | `Diagnostic#getSource`                                                                                                                                    | `Diagnostic`               | `ast.Diagnostic` (`internal/ast/diagnostic.go:33-63`) has no source field or accessor; the `"ts"` string is synthesized in the LSP layer (`internal/ls/lsconv/converters.go:319-328`)                                                                                                                                                                           |
-| `PrintNodeOptions#emitHint`                                                                                                                               | printing                   | no `EmitHint` type; `printer.Emit` (`internal/printer/printer.go:5013`) dispatches on `node.Kind`                                                                                                                                                                                                                                                               |
-| `EmitOptionsBase.customTransformers`, `ts.TransformationContext`                                                                                          | emit                       | `getScriptTransformers` (`internal/compiler/emitter.go:104-171`) is a hard-coded list; `EmitOptions` (`internal/compiler/program.go:1615-1620`) has no transformer slot, and the JS transformer would need a per-node round trip mid-emit over a single-threaded request/response transport                                                                     |
+| `PrintNodeOptions#emitHint`                                                                                                                               | printing                   | no `EmitHint` type; `printer.Emit` (`internal/printer/printer.go,`Printer.Emit``) dispatches on `node.Kind`                                                                                                                                                                                                                                                     |
+| `EmitOptionsBase.customTransformers`, `ts.TransformationContext`                                                                                          | emit                       | `getScriptTransformers` (`internal/compiler/emitter.go:104-171`) is a hard-coded list; `EmitOptions` (`internal/compiler/program.go,`EmitOptions``) has no transformer slot, and the JS transformer would need a per-node round trip mid-emit over a single-threaded request/response transport                                                                 |
 | `JSDocFunctionType`, `CommaListExpression`, `JSDocAuthorTag`, `JSDocClassTag`, `JSDocEnumTag`, `JSDocMemberName`, `JSDocNamepathType`, `JSDocUnknownType` | AST wrappers               | tsgo's parser emits no such kinds. `KindJSDocFunctionType` is explicitly retired: `internal/checker/nodecopy.go:544` reads `// if node.Kind == ast.KindJSDocFunctionType {} // !!! no longer exists`, and `internal/checker/nodebuilderimpl.go:1879-1880` is commented out                                                                                      |
 | `SyntaxKind.JSDocTag` (classic's catch-all)                                                                                                               | enum                       | tsgo names it `JSDocUnknownTag` (`syntaxKind.enum.ts:326`); there is no catch-all kind                                                                                                                                                                                                                                                                          |
 | `ScriptTarget.ES3`, `ScriptTarget.ES5`                                                                                                                    | enum                       | tsgo's `ScriptTarget` starts at `ES2015 = 2` (`_packages/native-preview/src/enums/scriptTarget.enum.ts`), so there is no downlevel-to-`var` emit                                                                                                                                                                                                                |
@@ -875,16 +875,16 @@ under `packages/ts-morph/src/tests/removed-capabilities/` and excluded in
 
 ### Not exposed — tsgo does this; it is a TODO, not a breaking change
 
-| Off the surface                                                               | Was on               | What already works in Go                                                                                                                                                                                                                                   |
-| ----------------------------------------------------------------------------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ts.resolveModuleName`                                                        | `ts`                 | `Resolver.ResolveModuleName` (`internal/module/resolver.go`) resolves, but the entry point is not exposed to a client; `ProjectOptions#resolutionHost` now covers the case it existed for                                                                  |
-| `getIdentationAtPosition`                                                     | `LanguageService`    | `format.GetIndentation` (`internal/format/indent.go:24`), `GetIndentationForNode` (`:17`)                                                                                                                                                                  |
-| `getFixId`, `getFixAllDescription`                                            | code fix results     | `ls.CodeAction.FixID` / `.FixAllDescription` (`internal/ls/codeactions.go:55-60`); `api.CodeFixAction` (`internal/api/proto.go:1208-1212`) drops them                                                                                                      |
-| `TypeFormatFlags` as a real enum                                              | `ts` namespace       | `checker.TypeFormatFlags` (`internal/checker/types.go:47-83`), all members present; `typeToString` already takes it (`internal/api/session.go:2392`); missing only from the generator list (`Herebyfile.mjs:338-366`)                                      |
-| `baseIndentSize`, `semicolons`, `insertSpace*`, `placeOpenBraceOnNewLineFor*` | `FormatCodeSettings` | `lsutil.FormatCodeSettings` (`internal/ls/lsutil/formatcodeoptions.go:70-92`), read at `internal/format/rulecontext.go:23,27,79,83` and `internal/format/indent.go:26,43`; `api.FormattingOptions` (`internal/api/proto.go:1141-1153`) carries six of them |
-| `formatDiagnosticsWithColorAndContext`                                        | `Project`            | `diagnosticwriter.FormatDiagnosticsWithColorAndContext` (`internal/diagnosticwriter/diagnosticwriter.go:122`), used by `tsc` itself (`internal/execute/tsc/diagnostics.go:42`)                                                                             |
-| `readDirectory`, `matchFiles`                                                 | `@ts-morph/common`   | `vfsmatch.ReadDirectory` (`internal/vfs/vfsmatch/vfsmatch.go:31`)                                                                                                                                                                                          |
-| `@types` added after project creation, for `getAmbientModules`                | `TypeChecker`        | `Checker.GetAmbientModules` is routed and works; the gap is that nothing re-scans the file system for unimported `@types` packages                                                                                                                         |
+| Off the surface                                                               | Was on               | What already works in Go                                                                                                                                                                                                                                                 |
+| ----------------------------------------------------------------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `ts.resolveModuleName`                                                        | `ts`                 | `Resolver.ResolveModuleName` (`internal/module/resolver.go`) resolves, but the entry point is not exposed to a client; `ProjectOptions#resolutionHost` now covers the case it existed for                                                                                |
+| `getIdentationAtPosition`                                                     | `LanguageService`    | `format.GetIndentation` (`internal/format/indent.go:24`), `GetIndentationForNode` (`:17`)                                                                                                                                                                                |
+| `getFixId`, `getFixAllDescription`                                            | code fix results     | `ls.CodeAction.FixID` / `.FixAllDescription` (`internal/ls/codeactions.go:55-60`); `api.CodeFixAction` (`internal/api/proto.go,`api.CodeFixAction``) drops them                                                                                                          |
+| `TypeFormatFlags` as a real enum                                              | `ts` namespace       | `checker.TypeFormatFlags` (`internal/checker/types.go,`TypeFormatFlags``), all members present; `typeToString` already takes it (`internal/api/session.go, `TypeToStringEx``); missing only from the generator list (`Herebyfile.mjs, the`enumDefs`list`)                |
+| `baseIndentSize`, `semicolons`, `insertSpace*`, `placeOpenBraceOnNewLineFor*` | `FormatCodeSettings` | `lsutil.FormatCodeSettings` (`internal/ls/lsutil/formatcodeoptions.go:70-92`), read at `internal/format/rulecontext.go:23,27,79,83` and `internal/format/indent.go:26,43`; `api.FormattingOptions` (`internal/api/proto.go,`api.FormattingOptions``) carries six of them |
+| `formatDiagnosticsWithColorAndContext`                                        | `Project`            | `diagnosticwriter.FormatDiagnosticsWithColorAndContext` (`internal/diagnosticwriter/diagnosticwriter.go:122`), used by `tsc` itself (`internal/execute/tsc/diagnostics.go:42`)                                                                                           |
+| `readDirectory`, `matchFiles`                                                 | `@ts-morph/common`   | `vfsmatch.ReadDirectory` (`internal/vfs/vfsmatch/vfsmatch.go:31`)                                                                                                                                                                                                        |
+| `@types` added after project creation, for `getAmbientModules`                | `TypeChecker`        | `Checker.GetAmbientModules` is routed and works; the gap is that nothing re-scans the file system for unimported `@types` packages                                                                                                                                       |
 
 #### Routed since this table was written
 
@@ -1057,6 +1057,11 @@ Not yet resolved, listed so they are not mistaken for finished work:
   `StringLiteralLike`, `PropertyName`). The real fix is in the fork's generated
   AST — `NoSubstitutionTemplateLiteral` should embed `LiteralExpressionBase`
   like every other literal — after which the restatement can go.
+- **`TupleTypeNode.elements`** — tsgo types it `NodeArray<TypeNode>`, where the
+  `typescript` package had `NodeArray<TypeNode | NamedTupleMember>`. A named
+  member (`[a: string]`) is one at runtime and is returned as one, so it is
+  restated in `packages/common/src/tsgo/ts.ts` for the same reason and with the
+  same real fix: the union belongs in the fork's generated AST.
 - **`getChildren-parity.mts` no longer fails on every mismatch** — it gained an
   `alignKnownAstDivergence()` carve-out for two documented cases (JSDoc nodes
   whose `pos` is the full start, and `JSDocText` prose nodes). It reclassifies 9
