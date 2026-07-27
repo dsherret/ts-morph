@@ -249,9 +249,11 @@ export class LanguageService {
 
     const formattingEdits = this.getFormattingEditsForDocument(standardizedFilePath, formatSettings);
     let newText = getTextFromTextChanges(sourceFile, formattingEdits);
-    // tsgo's formatter has no newline option, so ts-morph normalizes line
-    // endings itself, from its own manipulation settings.
-    const newLineChar = this.#context.manipulationSettings.getNewLineKindAsString();
+    // The caller decides, the way it did before; the manipulation setting is only
+    // the default. tsgo does take a newline option — the same setting reaches it
+    // through getCombinedCodeFix — so overriding one here would honour it on one
+    // path and ignore it on another.
+    const newLineChar = formatSettings.newLineCharacter ?? this.#context.manipulationSettings.getNewLineKindAsString();
 
     if (formatSettings.ensureNewLineAtEndOfFile && !newText.endsWith(newLineChar))
       newText += newLineChar;

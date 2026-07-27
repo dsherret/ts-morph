@@ -165,6 +165,7 @@ describe("LanguageService", () => {
       const diagnostics = project.getLanguageService().getSuggestionDiagnostics(sourceFile);
       expect(diagnostics).to.lengthOf(1);
       expect(diagnostics[0].getCode()).to.equal(6387);
+      expect(diagnostics[0].getMessageText()).to.equal("The signature '(): void' of 'old' is deprecated.");
       expect(diagnostics[0].getStart()).to.equal(37);
       expect(diagnostics[0].getLength()).to.equal(3);
     });

@@ -14,6 +14,12 @@ export function getNodeByNameOrFindFunction<T extends Node>(items: T[], nameOrFi
 export function nodeHasName(node: Node, name: string): boolean {
   if ((node as any).getNameNode == null)
     return false;
+  // An elision in an array binding pattern — the hole in `const [, a] = x` — is a
+  // BindingElement with no name at all, where the `typescript` package produced an
+  // OmittedExpression. Asking it for its name node throws, so the check has to
+  // happen before the call rather than on its result.
+  if ((node.compilerNode as { name?: unknown }).name == null && Node.isBindingElement(node))
+    return false;
   const nameNode = (node as any).getNameNode() as Node;
   if (nameNode == null)
     return false;

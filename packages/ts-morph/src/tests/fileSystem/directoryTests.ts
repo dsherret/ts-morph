@@ -1812,19 +1812,19 @@ describe("Directory", () => {
     });
 
     it("should use an explicit index when specifying the index file in a different directory", () => {
-      doSourceFileTest("/dir", "/dir2/index.ts", "../dir2/index");
+      doSourceFileTest("/dir", "/dir2/index.ts", "../dir2");
     });
 
     it("should use an explicit index when specifying the index file in a parent directory", () => {
-      doSourceFileTest("/dir/parent", "/dir/index.ts", "../index");
+      doSourceFileTest("/dir/parent", "/dir/index.ts", "../../dir");
     });
 
     it("should use an explicit index when specifying the index file in a different directory that has different casing", () => {
-      doSourceFileTest("/dir", "/dir2/INDEX.ts", "../dir2/INDEX");
+      doSourceFileTest("/dir", "/dir2/INDEX.ts", "../dir2");
     });
 
     it("should use an explicit index when specifying the index file of a declaration file in a different directory", () => {
-      doSourceFileTest("/dir", "/dir2/index.d.ts", "../dir2/index");
+      doSourceFileTest("/dir", "/dir2/index.d.ts", "../dir2");
     });
 
     // the module resolution mode no longer changes the answer: TypeScript 7 removed
@@ -1846,7 +1846,7 @@ describe("Directory", () => {
     }
 
     it("should get the path to a directory as a module specifier", () => {
-      doDirectoryTest("/dir", "/dir/dir2", "./dir2/index");
+      doDirectoryTest("/dir", "/dir/dir2", "./dir2");
     });
 
     it("should get the module specifier to the same directory", () => {

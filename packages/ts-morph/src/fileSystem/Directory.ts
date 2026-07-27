@@ -460,7 +460,11 @@ export class Directory {
 
         for (const outputFile of output.getOutputFiles()) {
           let filePath = outputFile.getFilePath();
-          const fileText = outputFile.getText();
+          // the compiler strips the byte order mark and reports it separately, so
+          // every consumer that writes a file has to put it back
+          const fileText = outputFile.getWriteByteOrderMark()
+            ? FileUtils.getTextWithByteOrderMark(outputFile.getText())
+            : outputFile.getText();
 
           if (outDir != null && (isJsFile!.test(filePath) || isMapFile!.test(filePath) || (!hasDeclarationDir && isDtsFile!.test(filePath))))
             filePath = FileUtils.pathJoin(outDir, FileUtils.getBaseName(filePath));
@@ -873,21 +877,38 @@ export class Directory {
   /** @internal */
   getRelativePathAsModuleSpecifierTo(sourceFileOrDir: SourceFile | Directory | string): string;
   getRelativePathAsModuleSpecifierTo(sourceFileDirOrFilePath: SourceFile | Directory | string) {
-    // the specifier no longer depends on the module resolution mode. It used to:
-    // `node10` asked for an implicit index (`../dir`) where every other mode
-    // wanted it spelled out (`../dir/index`). TypeScript 7 removed both `node10`
-    // and `classic` — see the "Removed in TS7" block in
-    // internal/compiler/program.go — and every mode that is left spells it out.
+    // The index is left implicit, which is what the compiler itself writes. It no
+    // longer depends on the module resolution mode: `node10` was the one mode that
+    // wanted `../dir` where the others spelled out `../dir/index`, and TypeScript 7
+    // removed both `node10` and `classic` (the "Removed in TS7" block in
+    // internal/compiler/program.go). What is left all prefers the implicit form —
+    // getModuleSpecifierEndingPreference defaults to Minimal and processEnding
+    // trims a trailing `/index` (internal/modulespecifiers), and tsgo's own import
+    // fixer emits `../dir2` under every mode.
     const thisDirectory = this;
     const moduleSpecifier = FileUtils.getRelativePathTo(this.getPath(), getPath()).replace(/((\.d\.ts$)|(\.[^/.]+$))/i, "");
     return moduleSpecifier.startsWith("../") ? moduleSpecifier : "./" + moduleSpecifier;
 
     function getPath() {
       return sourceFileDirOrFilePath instanceof SourceFile
-        ? sourceFileDirOrFilePath.getFilePath()
+        ? getPathForFilePath(sourceFileDirOrFilePath.getFilePath())
         : sourceFileDirOrFilePath instanceof Directory
-        ? FileUtils.pathJoin(sourceFileDirOrFilePath.getPath(), "index.ts")
-        : thisDirectory._context.fileSystemWrapper.getStandardizedAbsolutePath(sourceFileDirOrFilePath, thisDirectory.getPath());
+        ? getPathForDirectory(sourceFileDirOrFilePath)
+        : getPathForFilePath(thisDirectory._context.fileSystemWrapper.getStandardizedAbsolutePath(sourceFileDirOrFilePath, thisDirectory.getPath()));
+
+      function getPathForDirectory(dir: Directory) {
+        // a directory names itself, except from inside itself, where the bare
+        // relative path would be empty
+        if (dir === thisDirectory)
+          return FileUtils.pathJoin(dir.getPath(), "index.ts");
+        return dir.getPath();
+      }
+
+      function getPathForFilePath(filePath: StandardizedFilePath) {
+        if (FileUtils.getDirPath(filePath) === thisDirectory.getPath())
+          return filePath;
+        return filePath.replace(/\/index?(\.d\.ts|\.ts|\.js)$/i, "") as StandardizedFilePath;
+      }
     }
   }
 

@@ -65,7 +65,7 @@ export { Project, type ProjectOptions, type SourceFileCreateOptions } from "./Pr
 export * from "./structures";
 export { type Constructor, type InstanceOf as Instance, type WriterFunction } from "./types";
 export { createWrappedNode, type CreateWrappedNodeOptions } from "./utils/compiler/createWrappedNode";
-export { type PrintNodeOptions } from "./utils/compiler/printNode";
+export { printNode, type PrintNodeOptions } from "./utils/compiler/printNode";
 export { type SourceFileReferencingNodes } from "./utils/references/SourceFileReferenceContainer";
 export {
   type CompilerOptionsFromTsConfigOptions,

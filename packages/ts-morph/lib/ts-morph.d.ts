@@ -839,6 +839,23 @@ export interface CreateWrappedNodeOptions {
 }
 
 /**
+ * Prints the provided node using the compiler's printer.
+ * @param node - Compiler node.
+ * @param options - Options.
+ * @remarks The node is printed on its own, without the comments and original
+ * token text that only the file it was parsed from can supply. Use the overload
+ * that accepts a source file to print those too.
+ */
+export declare function printNode(node: ts.Node, options?: PrintNodeOptions): string;
+/**
+ * Prints the provided node using the compiler's printer.
+ * @param node - Compiler node.
+ * @param sourceFile - Compiler source file.
+ * @param options - Options.
+ */
+export declare function printNode(node: ts.Node, sourceFile: ts.SourceFile, options?: PrintNodeOptions): string;
+
+/**
  * Options for printing a node.
  *
  * Breaking change: `emitHint` is gone. tsgo's printer has no hint parameter — it

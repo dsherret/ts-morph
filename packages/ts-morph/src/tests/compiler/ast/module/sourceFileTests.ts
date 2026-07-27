@@ -263,8 +263,8 @@ describe("SourceFile", () => {
       const file1 = project.createSourceFile("/file.ts", `import * as test from "./sub";`);
       const file2 = project.createSourceFile("/file2.ts", `import "./sub/index";`);
       sourceFile.move("/dir/index.ts");
-      expect(file1.getFullText()).to.equal(`import * as test from "./dir/index";`);
-      expect(file2.getFullText()).to.equal(`import "./dir/index";`);
+      expect(file1.getFullText()).to.equal(`import * as test from "./dir";`);
+      expect(file2.getFullText()).to.equal(`import "./dir";`);
     });
 
     it("should change the module specifiers in the current file when moving", () => {
@@ -698,16 +698,16 @@ describe("SourceFile", () => {
       expect(result).to.be.instanceof(EmitResult);
       const writeLog = fileSystem.getWriteLog();
       expect(writeLog[0].filePath).to.equal("/dist/file1.js");
-      expect(writeLog[0].fileText).to.equal("const num1 = 1;\n");
+      expect(writeLog[0].fileText).to.equal("\"use strict\";\nconst num1 = 1;\n");
       expect(writeLog.length).to.equal(1);
     }
 
     it("should emit the source file asynchronously", async () => {
-      doTest(sourceFile => sourceFile.emit());
+      await doTest(sourceFile => sourceFile.emit());
     });
 
     it("should emit the source file synchronously", async () => {
-      doTest(sourceFile => Promise.resolve(sourceFile.emitSync()));
+      await doTest(sourceFile => Promise.resolve(sourceFile.emitSync()));
     });
   });
 
@@ -1130,19 +1130,19 @@ function myFunction(param: MyClass) {
     });
 
     it("should use an explicit index when specifying the index file in a different directory", () => {
-      doSourceFileTest("/dir/file.ts", "/dir2/index.ts", "../dir2/index");
+      doSourceFileTest("/dir/file.ts", "/dir2/index.ts", "../dir2");
     });
 
     it("should use an explicit index when specifying the index file in a parent directory", () => {
-      doSourceFileTest("/dir/parent/file.ts", "/dir/index.ts", "../index");
+      doSourceFileTest("/dir/parent/file.ts", "/dir/index.ts", "../../dir");
     });
 
     it("should use an explicit index when specifying the index file in a different directory that has different casing", () => {
-      doSourceFileTest("/dir/file.ts", "/dir2/INDEX.ts", "../dir2/INDEX");
+      doSourceFileTest("/dir/file.ts", "/dir2/INDEX.ts", "../dir2");
     });
 
     it("should use an explicit index when specifying the index file of a declaration file in a different directory", () => {
-      doSourceFileTest("/dir/file.ts", "/dir2/index.d.ts", "../dir2/index");
+      doSourceFileTest("/dir/file.ts", "/dir2/index.d.ts", "../dir2");
     });
 
     // the module resolution mode no longer changes the answer: TypeScript 7 removed
@@ -1164,7 +1164,7 @@ function myFunction(param: MyClass) {
     }
 
     it("should get the path to a directory as a module specifier", () => {
-      doDirectoryTest("/dir/file.ts", "/dir/dir2", "./dir2/index");
+      doDirectoryTest("/dir/file.ts", "/dir/dir2", "./dir2");
     });
   });
 
