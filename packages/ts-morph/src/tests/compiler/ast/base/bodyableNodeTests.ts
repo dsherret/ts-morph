@@ -52,6 +52,22 @@ describe("BodyableNode", () => {
       it("should add a body if none exists", () => {
         doTest("declare class C {\n    myMethod();\n}", "var myVar;", "declare class C {\n    myMethod() {\n        var myVar;\n    }\n}");
       });
+
+      it("should keep the file's own indentation when it is not a whole number of levels and leave the closing brace alone", () => {
+        doTest(
+          "class C {\n  myMethod() {\n    a();\n  }\n}\n",
+          "b();",
+          "class C {\n  myMethod() {\n      b();\n  }\n}\n",
+        );
+      });
+
+      it("should keep a three space file's own indentation", () => {
+        doTest(
+          "class C {\n   myMethod() {\n      a();\n   }\n}\n",
+          "b();",
+          "class C {\n   myMethod() {\n       b();\n   }\n}\n",
+        );
+      });
     });
 
     describe("function", () => {

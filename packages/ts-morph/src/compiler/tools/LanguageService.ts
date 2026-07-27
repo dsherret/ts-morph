@@ -2,9 +2,10 @@ import { errors, getStoredNode, SymbolFlags, SyntaxKind, ts } from "@ts-morph/co
 import { getTextFromTextChanges } from "../../manipulation";
 import { ProjectContext } from "../../ProjectContext";
 import { fillDefaultFormatCodeSettings } from "../../utils";
+import { ClassDeclaration, ClassExpression } from "../ast/class";
 import { Node } from "../ast/common";
 import { QuoteKind } from "../ast/literal";
-import { SourceFile } from "../ast/module";
+import { ModuleDeclaration, ModuleDeclarationKind, SourceFile } from "../ast/module";
 import { FormatCodeSettings, RenameOptions } from "./inputs";
 import { Program } from "./Program";
 import {
@@ -347,6 +348,10 @@ export class LanguageService {
     errorCodes: ReadonlyArray<number>,
   ): CodeFixAction[] {
     const filePath = this.#getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
+    // No error code selects no fix. tsgo reads an empty list as "every code"
+    // rather than "no code", so the request is answered here instead.
+    if (errorCodes.length === 0)
+      return [];
     const fixes = this.compilerObject.getCodeFixes(filePath, start, end, errorCodes, this.#getQuotePreference());
     return fixes.map(fix =>
       new CodeFixAction(this.#context, {
@@ -367,14 +372,15 @@ export class LanguageService {
     // A definition reached through an alias comes back as the whole declaration
     // rather than the name that declares it — a definition is the name, and
     // callers locate the declaration by walking up from it.
-    const nameSpan = getDeclarationNameSpan(sourceFile, span) ?? span;
+    const node = sourceFile?.getDescendantAtStartWithWidth(span.pos, span.end - span.pos);
+    const nameSpan = getDeclarationNameSpan(node) ?? span;
     const name = sourceFile?.getFullText().substring(nameSpan.pos, nameSpan.end) ?? "";
     return {
       ...toDocumentSpan({ ...span, ...nameSpan }),
       kind: getScriptElementKind(this.#context.compilerFactory.documentRegistry.checker.getSymbolAtPosition(span.fileName, span.pos)),
       name,
       containerKind: ts.ScriptElementKind.unknown,
-      containerName: "",
+      containerName: getDefinitionContainerName(node),
     };
   }
 
@@ -532,15 +538,121 @@ function splitAroundName(newText: string, newName: string): { prefixText?: strin
 }
 
 /**
- * The span of the name of the declaration `span` covers, or `undefined` when the
- * span is not a whole declaration with a name.
+ * The span of the name `node` declares, or `undefined` when the node is not a
+ * declaration with a name.
  */
-function getDeclarationNameSpan(sourceFile: SourceFile | undefined, span: { pos: number; end: number }): { pos: number; end: number } | undefined {
-  const node = sourceFile?.getDescendantAtStartWithWidth(span.pos, span.end - span.pos);
+function getDeclarationNameSpan(node: Node | undefined): { pos: number; end: number } | undefined {
   if (node == null || !Node.hasName(node))
     return undefined;
   const nameNode = node.getNameNode();
   return { pos: nameNode.getStart(), end: nameNode.getEnd() };
+}
+
+/**
+ * The name of what a definition is declared in — the class a method belongs to,
+ * the namespace a namespaced declaration belongs to, and so on.
+ */
+function getDefinitionContainerName(node: Node | undefined): string {
+  const container = getDeclarationContainer(node);
+  if (Node.isClassDeclaration(container) || Node.isClassExpression(container))
+    return container.getName() ?? getUnnamedClassName(container);
+  // the `typescript` package qualified an interface or enum container with the
+  // namespaces around it, but not a class container
+  if (Node.isInterfaceDeclaration(container) || Node.isEnumDeclaration(container))
+    return joinNames(getNamespacePrefix(container), container.getName());
+  if (Node.isModuleDeclaration(container))
+    return getNamespaceName(container);
+  if (Node.isObjectLiteralExpression(container) || Node.isTypeLiteral(container))
+    return getLiteralContainerName(container);
+  return "";
+}
+
+/**
+ * The declaration a definition is a member of, reached by looking through the
+ * nodes that only group members together.
+ */
+function getDeclarationContainer(node: Node | undefined): Node | undefined {
+  if (node == null)
+    return undefined;
+  // the span is either the declaration or the name that declares it
+  const declaration = isNameOfParent(node) ? node.getParent()! : node;
+  let container = declaration.getParent();
+  // a constructor parameter written with a modifier declares a property of the class
+  if (Node.isConstructorDeclaration(container) && Node.isParameterDeclaration(declaration) && declaration.isParameterProperty())
+    container = container.getParent();
+  while (container != null && isMemberGrouping(container))
+    container = container.getParent();
+  return container;
+}
+
+function isNameOfParent(node: Node): boolean {
+  const parent = node.getParent();
+  if (parent == null || !Node.hasName(parent))
+    return false;
+  const nameNode = parent.getNameNode() as Node | undefined;
+  return nameNode?.compilerNode === node.compilerNode;
+}
+
+function isMemberGrouping(node: Node): boolean {
+  switch (node.getKind()) {
+    case SyntaxKind.ModuleBlock:
+    case SyntaxKind.VariableDeclarationList:
+    case SyntaxKind.VariableStatement:
+      return true;
+    default:
+      return false;
+  }
+}
+
+/** A namespace's dotted name — `Outer.Inner` for a namespace declared in another. */
+function getNamespaceName(node: ModuleDeclaration): string {
+  return joinNames(getNamespacePrefix(node), getModuleName(node));
+}
+
+/**
+ * The dotted name of the namespaces a declaration is written in. An ambient
+ * module and `declare global` end the chain rather than join it, which is how the
+ * `typescript` package qualified what they hold.
+ */
+function getNamespacePrefix(node: Node): string {
+  const container = getDeclarationContainer(node);
+  if (!Node.isModuleDeclaration(container) || endsNamespaceChain(container))
+    return "";
+  return getNamespaceName(container);
+}
+
+function endsNamespaceChain(node: ModuleDeclaration): boolean {
+  return node.getDeclarationKind() === ModuleDeclarationKind.Global || Node.isStringLiteral(node.getNameNode());
+}
+
+function getModuleName(node: ModuleDeclaration): string {
+  const nameNode = node.getNameNode();
+  // the `typescript` package always wrote an ambient module's name double quoted
+  return Node.isStringLiteral(nameNode) ? `"${nameNode.getLiteralValue()}"` : nameNode.getText();
+}
+
+/**
+ * What the `typescript` package called an object or type literal's container: the
+ * variable it is written in, or the literal's own symbol name when it is written
+ * anywhere else.
+ */
+function getLiteralContainerName(container: Node): string {
+  const parent = container.getParent();
+  if (Node.isVariableDeclaration(parent))
+    return parent.getName();
+  return Node.isObjectLiteralExpression(container) ? "__object" : "__type";
+}
+
+/** What the binder called a class with no name of its own. */
+function getUnnamedClassName(container: ClassDeclaration | ClassExpression): string {
+  const parent = container.getParent();
+  if (Node.isVariableDeclaration(parent))
+    return parent.getName();
+  return Node.isClassDeclaration(container) && container.isDefaultExport() ? "default" : "";
+}
+
+function joinNames(namespaceName: string, name: string): string {
+  return namespaceName.length === 0 ? name : `${namespaceName}.${name}`;
 }
 
 /** Every offset in `text` where `name` appears as a whole word. */

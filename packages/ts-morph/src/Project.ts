@@ -225,7 +225,7 @@ export class Project {
         const filePath = fileSystemWrapper.getStandardizedAbsolutePath(fileName);
         if (compilerFactory.containsSourceFileAtPath(filePath))
           continue;
-        if (compilerFactory.addOrGetSourceFileFromFilePath(filePath, { markInProject: false, scriptKind: undefined }) != null)
+        if (compilerFactory.addSourceFileFromProgramFromFilePath(filePath) != null)
           addedAny = true;
       }
     } while (addedAny);

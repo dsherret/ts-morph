@@ -1990,6 +1990,78 @@ class MyClass {
     return `Attempted to get information from a node that was removed or forgotten.\n\nNode text: ${nodeText}`;
   }
 
+  describe(nameof<Node>("getIndentationLevel"), () => {
+    function doTest(text: string, selectNode: (sourceFile: SourceFile) => Node, expected: number) {
+      const { sourceFile } = getInfoFromText(text);
+      expect(selectNode(sourceFile).getIndentationLevel()).to.equal(expected);
+    }
+
+    const fourSpaceClass = "class C {\n    m() {\n        const x = 1;\n    }\n}\n";
+    const twoSpaceClass = "class C {\n  m() {\n    a();\n  }\n}\n";
+    const allmanClass = "class C\n{\n    m()\n    {\n        const x = 1;\n    }\n}\n";
+
+    function getCloseBraces(sourceFile: SourceFile) {
+      return sourceFile.getDescendantsOfKind(SyntaxKind.CloseBraceToken);
+    }
+
+    it("should get the level of a node that starts its own line", () => {
+      doTest(fourSpaceClass, sourceFile => sourceFile.getClassOrThrow("C"), 0);
+      doTest(fourSpaceClass, sourceFile => sourceFile.getClassOrThrow("C").getMethodOrThrow("m"), 1);
+      doTest(fourSpaceClass, sourceFile => sourceFile.getClassOrThrow("C").getMethodOrThrow("m").getStatements()[0], 2);
+    });
+
+    it("should not indent a closing brace past the block it closes", () => {
+      const { sourceFile } = getInfoFromText(fourSpaceClass);
+      expect(getCloseBraces(sourceFile).map(b => b.getIndentationLevel())).to.deep.equal([1, 0]);
+    });
+
+    it("should not indent a closing brace past the block it closes when nested", () => {
+      const { sourceFile } = getInfoFromText("function f() {\n    if (true) {\n        a();\n    }\n}\n");
+      expect(getCloseBraces(sourceFile).map(b => b.getIndentationLevel())).to.deep.equal([1, 0]);
+    });
+
+    it("should not indent braces past their block when using allman style", () => {
+      const { sourceFile } = getInfoFromText(allmanClass);
+      expect(getCloseBraces(sourceFile).map(b => b.getIndentationLevel())).to.deep.equal([1, 0]);
+      expect(sourceFile.getDescendantsOfKind(SyntaxKind.OpenBraceToken).map(b => b.getIndentationLevel())).to.deep.equal([0, 1]);
+      doTest(allmanClass, sourceFile => sourceFile.getClassOrThrow("C").getMethodOrThrow("m").getBodyOrThrow(), 1);
+    });
+
+    it("should get a fractional level when the file's indentation is not a whole number of levels", () => {
+      // the default setting is four spaces, so a two space file sits at half a level
+      doTest(twoSpaceClass, sourceFile => sourceFile.getClassOrThrow("C").getMethodOrThrow("m").getBodyOrThrow(), 0.5);
+      doTest(twoSpaceClass, sourceFile => sourceFile.getClassOrThrow("C").getMethodOrThrow("m").getStatements()[0], 1.5);
+      doTest("class C {\n   m() {\n      a();\n   }\n}\n", sourceFile => sourceFile.getClassOrThrow("C").getMethodOrThrow("m").getBodyOrThrow(), 0.75);
+    });
+
+    it("should use the indentation of the line for a node that starts partway through one", () => {
+      doTest(twoSpaceClass, sourceFile => sourceFile.getClassOrThrow("C").getMethodOrThrow("m").getStatements()[0].getLastChildOrThrow(), 1);
+    });
+
+    it("should treat a tab as a tab stop", () => {
+      doTest("class C {\n\tm() {\n\t\ta();\n\t}\n}\n", sourceFile => sourceFile.getClassOrThrow("C").getMethodOrThrow("m").getBodyOrThrow(), 1);
+    });
+
+    it("should line a doc comment's contents up under its asterisks", () => {
+      doTest("/**\n * @example\n */\nfunction test() {}", sourceFile => sourceFile.getFunctions()[0].getJsDocs()[0].getTags()[0], 0);
+      doTest(
+        "class C {\n    /**\n     * @example\n     */\n    m() {}\n}",
+        sourceFile => sourceFile.getClassOrThrow("C").getMethodOrThrow("m").getJsDocs()[0].getTags()[0],
+        1,
+      );
+    });
+  });
+
+  describe(nameof<Node>("getIndentationText"), () => {
+    it("should get the text of a closing brace's own line", () => {
+      const { sourceFile } = getInfoFromText("class C {\n    m() {\n        const x = 1;\n    }\n}\n");
+      const closeBraces = sourceFile.getDescendantsOfKind(SyntaxKind.CloseBraceToken);
+      expect(closeBraces.map(b => b.getIndentationText())).to.deep.equal(["    ", ""]);
+      expect(closeBraces.map(b => b.getChildIndentationText())).to.deep.equal(["        ", "    "]);
+      expect(closeBraces.map(b => b.getChildIndentationLevel())).to.deep.equal([2, 1]);
+    });
+  });
+
   describe(nameof<Node>("getNonWhitespaceStart"), () => {
     function doTest(text: string, selectNode: (sourceFile: SourceFile) => Node, expected: number) {
       const { sourceFile } = getInfoFromText(text);

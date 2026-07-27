@@ -1,6 +1,7 @@
 import { errors, nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { Program } from "../../../compiler";
+import { Project } from "../../../Project";
 import { getFileSystemHostWithFiles } from "../../testHelpers";
 import { getInfoFromText } from "../testHelpers";
 
@@ -68,6 +69,45 @@ describe("Program", () => {
       const { sourceFile, project } = getInfoFromText("import { Test } from 'library';", { host: fileSystem });
       const librarySourceFile = sourceFile.getImportDeclarations()[0].getModuleSpecifierSourceFileOrThrow();
       return { program: project.getProgram(), librarySourceFile };
+    }
+
+    // the setup above reaches the library file through the import declaration's symbol.
+    // resolveSourceFileDependencies takes the other route — the compiler pulls the file
+    // into the program and ts-morph looks it up by path afterwards
+    it("should be for a dependency the compiler resolved into the program", () => {
+      const { project } = resolvedSetup();
+      const librarySourceFile = project.getSourceFileOrThrow("/node_modules/library/index.d.ts");
+      expect(project.getProgram().isSourceFileFromExternalLibrary(librarySourceFile)).to.be.true;
+    });
+
+    it("should not be for the file that imported the dependency", () => {
+      const { project } = resolvedSetup();
+      expect(project.getProgram().isSourceFileFromExternalLibrary(project.getSourceFileOrThrow("/main.ts"))).to.be.false;
+    });
+
+    // the same channel carries the default library flag, so a dead channel shows up here too
+    it("should leave the lib files reported as default library files", () => {
+      const { project } = resolvedSetup();
+      const compilerProgram = project.getProgram().compilerObject;
+      const libFiles = compilerProgram.getSourceFiles().filter(f => compilerProgram.isSourceFileDefaultLibrary(f));
+      expect(libFiles.length).to.be.greaterThan(0);
+      expect(libFiles.every(f => f.fileName.includes("/lib."))).to.be.true;
+    });
+
+    function resolvedSetup() {
+      const fileSystem = getFileSystemHostWithFiles([
+        { filePath: "package.json", text: `{ "name": "testing", "version": "0.0.1" }` },
+        {
+          filePath: "node_modules/library/package.json",
+          text: `{ "name": "library", "version": "0.0.1", "main": "index.js", "typings": "index.d.ts" }`,
+        },
+        { filePath: "node_modules/library/index.d.ts", text: "export declare class Test {}" },
+        { filePath: "main.ts", text: "import { Test } from 'library';\nconst t: Test = null as any;\n" },
+      ], ["node_modules", "node_modules/library"]);
+      const project = new Project({ fileSystem });
+      project.addSourceFileAtPath("/main.ts");
+      project.resolveSourceFileDependencies();
+      return { project };
     }
   });
 });

@@ -306,6 +306,13 @@ describe("StatementedNode", () => {
       );
     });
 
+    it("should insert past the file's own indentation when it is not a whole number of levels", () => {
+      // the file is indented two spaces and the setting is four, so the body sits at half a level
+      const { sourceFile } = getInfoFromText("class C {\n  m() {\n    a();\n  }\n}\n");
+      sourceFile.getClassOrThrow("C").getMethodOrThrow("m").insertStatements(0, "b();");
+      expect(sourceFile.getFullText()).to.equal("class C {\n  m() {\n      b();\n    a();\n  }\n}\n");
+    });
+
     it("should insert between statements right beside each other", () => {
       doFirstChildTest<FunctionDeclaration>(
         "function i() { var t;var m; }",
@@ -440,6 +447,20 @@ describe("StatementedNode", () => {
         2,
         "function a() {}\nfunction b() {}\nnewText;\nsecondText;",
       );
+    });
+
+    it("should add past the file's own indentation when it is not a whole number of levels", () => {
+      // the file is indented two spaces and the setting is four, so the body sits at half a level
+      const { sourceFile } = getInfoFromText("class C {\n  m() {\n    a();\n  }\n}\n");
+      sourceFile.getClassOrThrow("C").getMethodOrThrow("m").addStatements("b();");
+      expect(sourceFile.getFullText()).to.equal("class C {\n  m() {\n    a();\n      b();\n  }\n}\n");
+    });
+
+    it("should add past a plain block's own indentation when it is not a whole number of levels", () => {
+      const { sourceFile } = getInfoFromText("function f() {\n  if (true) {\n    a();\n  }\n}\n");
+      const ifStatement = sourceFile.getFunctionOrThrow("f").getStatementByKindOrThrow(SyntaxKind.IfStatement);
+      (ifStatement.getThenStatement() as any as StatementedNode).addStatements("b();");
+      expect(sourceFile.getFullText()).to.equal("function f() {\n  if (true) {\n    a();\n      b();\n  }\n}\n");
     });
   });
 

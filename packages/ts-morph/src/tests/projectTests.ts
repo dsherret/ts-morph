@@ -250,6 +250,23 @@ const test = new Test();`,
       assertHasSourceFiles(project, [...initialFiles, ...resolvedFiles]);
     });
 
+    // a resolved file is wrapped straight off the program rather than read back in,
+    // and the compiler strips a byte order mark without reporting that it did
+    it("should keep the byte order mark of a resolved file", () => {
+      const fileSystem = testHelpers.getFileSystemHostWithFiles([
+        { filePath: "/dep.ts", text: "﻿export const dep = 1;\n" },
+        { filePath: "/main.ts", text: `import { dep } from "./dep";\nconst a = dep;\n` },
+      ]);
+      const project = new Project({ fileSystem, compilerOptions: { noLib: true } });
+      project.addSourceFileAtPath("/main.ts");
+      project.resolveSourceFileDependencies();
+
+      const dep = project.getSourceFileOrThrow("/dep.ts");
+      dep.addStatements("export const two = 2;");
+      dep.saveSync();
+      expect(fileSystem.readFileSync("/dep.ts").charCodeAt(0)).to.equal(0xFEFF);
+    });
+
     it("should not resolve file dependencies until called", () => {
       const {
         project,
@@ -1081,6 +1098,23 @@ const test = new Test();`,
       const result = await project.emit({ targetSourceFile: project.getSourceFile("file1.ts") });
       expect(result.getEmitSkipped()).to.be.false;
       expect(fileSystem.getWriteLog().map(l => l.filePath)).to.deep.equal(["/dist/file1.js"]);
+    });
+
+    it("should only emit the declaration file for the specified source file when emitDeclarationOnly is on", async () => {
+      const { project, fileSystem } = emitSetup({ noLib: true, outDir: "dist", declaration: true, emitDeclarationOnly: true });
+      const result = await project.emit({ targetSourceFile: project.getSourceFile("file1.ts") });
+      expect(result.getEmitSkipped()).to.be.false;
+
+      const writeLog = fileSystem.getWriteLog();
+      expect(writeLog.map(l => l.filePath)).to.deep.equal(["/dist/file1.d.ts"]);
+      expect(writeLog[0].fileText).to.equal("declare const num1 = 1;\n");
+    });
+
+    it("should not emit the specified source file when emitDeclarationOnly is on and no declarations are emitted", async () => {
+      const { project, fileSystem } = emitSetup({ noLib: true, outDir: "dist", emitDeclarationOnly: true });
+      const result = await project.emit({ targetSourceFile: project.getSourceFile("file1.ts") });
+      expect(result.getEmitSkipped()).to.be.true;
+      expect(fileSystem.getWriteLog().length).to.equal(0);
     });
 
     // custom transformers are gone: tsgo emits in Go, and a JavaScript transform

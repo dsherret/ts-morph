@@ -1295,24 +1295,56 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    * Gets the indentation level of the current node.
    *
    * Breaking change: tsgo has no smart-indentation service, so this is worked
-   * out from the text: the deeper of the indentation the node's line actually
-   * has and one level past the ancestor that opened it. Taking the deeper of the
-   * two is what keeps a node whose own line is under-indented — a class member
-   * written flush against a two-space margin — reading as a member of its class,
-   * while code that is deliberately indented further keeps its own depth.
+   * out from the text. A node that begins its own line reports the deeper of the
+   * indentation that line actually has and one level past the ancestor that
+   * opened it — taking the deeper of the two is what keeps a node whose own line
+   * is under-indented, a class member written flush against a two-space margin,
+   * reading as a member of its class, while code that is deliberately indented
+   * further keeps its own depth. A node that starts partway through a line has no
+   * indentation of its own, so it reports whatever that line already has.
    *
-   * The level is rounded down to the nearest half, which is the granularity
-   * ts-morph's writers indent at — that is what keeps half-indented code
-   * half-indented when statements are written into it, without a stray space of
-   * leading whitespace reading as a level of its own.
+   * A brace lines up with the construct it opens or closes rather than with that
+   * construct's contents, so a node starting with `{` or `}` reports its
+   * container's indentation instead of a level past it.
+   *
+   * The level may be fractional when the file's indentation is not a whole
+   * multiple of `manipulationSettings.indentationText` — a two-space file read
+   * with the default four-space setting is at level 0.5 — and the writers
+   * reproduce that fraction literally, so half-indented code stays
+   * half-indented when statements are written into it.
    */
   getIndentationLevel(): number {
     const fullText = this._sourceFile.getFullText();
-    const ownLevel = this.#getLineIndentationLevel(fullText, this.getStart());
+    const start = this.getStart();
+    const jsDoc = this.#getJsDocAncestor();
+    if (jsDoc != null)
+      return this.#getJsDocIndentationLevel(fullText, jsDoc, start);
+
+    const ownLevel = this.#getLineIndentationLevel(fullText, start);
     const container = this.#getIndentationContainer();
-    if (container == null)
+    if (container == null || !isStartOfLine())
       return ownLevel;
-    return Math.max(ownLevel, this.#getLineIndentationLevel(fullText, container.getStart()) + 1);
+
+    const containerLevel = this.#getLineIndentationLevel(fullText, container.getStart());
+    if (startsWithBrace())
+      return containerLevel;
+    return Math.max(ownLevel, containerLevel + 1);
+
+    function isStartOfLine() {
+      for (let i = start - 1; i >= 0; i--) {
+        const charCode = fullText.charCodeAt(i);
+        if (charCode === CharCodes.NEWLINE)
+          return true;
+        if (!StringUtils.isWhitespaceCharCode(charCode))
+          return false;
+      }
+      return true;
+    }
+
+    function startsWithBrace() {
+      const char = fullText[start];
+      return char === "{" || char === "}";
+    }
   }
 
   /**
@@ -1359,10 +1391,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     const startLinePos = this.getStartLinePos();
     let ancestor = this.getParent();
     while (ancestor != null && !Node.isSourceFile(ancestor)) {
-      // a doc comment's contents line up under its asterisks rather than being
-      // indented a level past the comment, so there is nothing to measure from
-      if (Node.isJSDoc(ancestor))
-        return undefined;
       if (ancestor.getStartLinePos() < startLinePos)
         return ancestor;
       ancestor = ancestor.getParent();
@@ -1370,18 +1398,75 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     return undefined;
   }
 
-  /** The indentation of the line `pos` is on, in levels rounded down to the nearest half. */
-  /** @internal */
+  /** The doc comment this node is written inside of, if any. @internal */
+  #getJsDocAncestor(): Node | undefined {
+    let ancestor = this.getParent();
+    while (ancestor != null && !Node.isSourceFile(ancestor)) {
+      if (Node.isJSDoc(ancestor))
+        return ancestor;
+      ancestor = ancestor.getParent();
+    }
+    return undefined;
+  }
+
+  /**
+   * A doc comment's contents line up under the asterisk column of the line above
+   * rather than being indented a level past the comment, so the indentation of a
+   * node inside one is read off that line instead of its own.
+   * @internal
+   */
+  #getJsDocIndentationLevel(fullText: string, jsDoc: Node, start: number) {
+    const lineStart = getLineStartPos(start);
+    // on the comment's first line there is no line above to line up with
+    if (lineStart <= jsDoc.getStart())
+      return this.#getLineIndentationLevel(fullText, start);
+
+    const previousLineStart = getLineStartPos(lineStart - 1);
+    const level = this.#getLineIndentationLevel(fullText, previousLineStart);
+    if (level === 0)
+      return 0;
+    const firstCharPos = getNextNonWhitespacePos(previousLineStart);
+    if (fullText.charCodeAt(firstCharPos) !== CharCodes.ASTERISK)
+      return level;
+    return level - 1 / this._context.manipulationSettings.getIndentationText().length;
+
+    function getLineStartPos(pos: number) {
+      while (pos > 0 && fullText.charCodeAt(pos - 1) !== CharCodes.NEWLINE)
+        pos--;
+      return pos;
+    }
+
+    function getNextNonWhitespacePos(pos: number) {
+      while (pos < fullText.length && StringUtils.isWhitespaceCharCode(fullText.charCodeAt(pos)))
+        pos++;
+      return pos;
+    }
+  }
+
+  /**
+   * The indentation of the line `pos` is on, measured in levels of the configured
+   * indentation text. Fractional when the line's indentation is not a whole number
+   * of levels.
+   * @internal
+   */
   #getLineIndentationLevel(fullText: string, pos: number) {
     let lineStart = pos;
-    while (lineStart > 0 && fullText[lineStart - 1] !== "\n")
+    while (lineStart > 0 && fullText.charCodeAt(lineStart - 1) !== CharCodes.NEWLINE)
       lineStart--;
 
-    let width = 0;
-    while (lineStart + width < fullText.length && StringUtils.isWhitespaceCharCode(fullText.charCodeAt(lineStart + width)))
-      width++;
+    const tabSize = this._context.manipulationSettings._getIndentSizeInSpaces();
+    let column = 0;
+    for (let i = lineStart; i < fullText.length; i++) {
+      const charCode = fullText.charCodeAt(i);
+      if (charCode === CharCodes.TAB)
+        column += tabSize - column % tabSize;
+      else if (charCode === CharCodes.SPACE)
+        column++;
+      else
+        break;
+    }
 
-    return Math.floor(width * 2 / this._context.manipulationSettings.getIndentationText().length) / 2;
+    return column / this._context.manipulationSettings.getIndentationText().length;
   }
 
   /**

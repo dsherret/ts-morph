@@ -186,7 +186,9 @@ export class Program {
     const notEmitted = this.#getNotEmittedOutput(filePath, compilerOptions);
     if (notEmitted != null)
       return notEmitted;
-    if (emitOnlyDtsFiles)
+    // `emitDeclarationOnly` restricts the emit the same way the option does, and
+    // leaves nothing to emit at all when no declarations are being produced.
+    if (emitOnlyDtsFiles || compilerOptions.emitDeclarationOnly)
       return emitsDeclarations ? withOrderedOutputFiles(program.getDeclarationEmit([filePath])) : emitSkipped();
     const javaScript = program.getJavaScriptEmit([filePath]);
     if (!emitsDeclarations)

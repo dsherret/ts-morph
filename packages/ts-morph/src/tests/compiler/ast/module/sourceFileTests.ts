@@ -707,6 +707,45 @@ describe("SourceFile", () => {
       const referencedSourceFile = project.getSourceFileOrThrow("node_modules/other/referenced-file.d.ts");
       return { librarySourceFile, referencedSourceFile };
     }
+
+    // the tests above reach the library file through the import declaration's symbol.
+    // resolveSourceFileDependencies takes the other route — the compiler pulls the file
+    // into the program and ts-morph looks it up by path afterwards — and that route has
+    // to end up with the same answer
+    describe("resolved dependencies", () => {
+      it("should be for a dependency the compiler resolved into the program", () => {
+        const { project } = resolvedSetup();
+        expect(project.getSourceFileOrThrow("/node_modules/library/index.d.ts").isFromExternalLibrary()).to.be.true;
+      });
+
+      it("should not be for the file that imported the dependency", () => {
+        const { project } = resolvedSetup();
+        expect(project.getSourceFileOrThrow("/main.ts").isFromExternalLibrary()).to.be.false;
+      });
+
+      it("should be for exactly the files the compiler found searching node_modules", () => {
+        const { project } = resolvedSetup();
+        const compilerProgram = project.getProgram().compilerObject;
+        const external = compilerProgram.getSourceFiles().filter(f => compilerProgram.isSourceFileFromExternalLibrary(f));
+        expect(external.map(f => f.fileName)).to.deep.equal(["/node_modules/library/index.d.ts"]);
+      });
+
+      function resolvedSetup() {
+        const fileSystem = getFileSystemHostWithFiles([
+          { filePath: "package.json", text: `{ "name": "testing", "version": "0.0.1" }` },
+          {
+            filePath: "node_modules/library/package.json",
+            text: `{ "name": "library", "version": "0.0.1", "main": "index.js", "typings": "index.d.ts" }`,
+          },
+          { filePath: "node_modules/library/index.d.ts", text: "export declare class Test {}" },
+          { filePath: "main.ts", text: "import { Test } from 'library';\nconst t: Test = null as any;\n" },
+        ], ["node_modules", "node_modules/library"]);
+        const project = new Project({ fileSystem, skipLoadingLibFiles: true });
+        project.addSourceFileAtPath("/main.ts");
+        project.resolveSourceFileDependencies();
+        return { project };
+      }
+    });
   });
 
   describe(nameof<SourceFile>("isInNodeModules"), () => {

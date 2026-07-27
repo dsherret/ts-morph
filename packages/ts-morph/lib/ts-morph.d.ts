@@ -3892,16 +3892,23 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets the indentation level of the current node.
    *
    * Breaking change: tsgo has no smart-indentation service, so this is worked
-   * out from the text: the deeper of the indentation the node's line actually
-   * has and one level past the ancestor that opened it. Taking the deeper of the
-   * two is what keeps a node whose own line is under-indented — a class member
-   * written flush against a two-space margin — reading as a member of its class,
-   * while code that is deliberately indented further keeps its own depth.
+   * out from the text. A node that begins its own line reports the deeper of the
+   * indentation that line actually has and one level past the ancestor that
+   * opened it — taking the deeper of the two is what keeps a node whose own line
+   * is under-indented, a class member written flush against a two-space margin,
+   * reading as a member of its class, while code that is deliberately indented
+   * further keeps its own depth. A node that starts partway through a line has no
+   * indentation of its own, so it reports whatever that line already has.
    *
-   * The level is rounded down to the nearest half, which is the granularity
-   * ts-morph's writers indent at — that is what keeps half-indented code
-   * half-indented when statements are written into it, without a stray space of
-   * leading whitespace reading as a level of its own.
+   * A brace lines up with the construct it opens or closes rather than with that
+   * construct's contents, so a node starting with `{` or `}` reports its
+   * container's indentation instead of a level past it.
+   *
+   * The level may be fractional when the file's indentation is not a whole
+   * multiple of `manipulationSettings.indentationText` — a two-space file read
+   * with the default four-space setting is at level 0.5 — and the writers
+   * reproduce that fraction literally, so half-indented code stays
+   * half-indented when statements are written into it.
    */
   getIndentationLevel(): number;
   /** Gets the child indentation level of the current node. */

@@ -273,12 +273,32 @@ export class CompilerFactory {
    * compiler and reports no callback for the files it loads, so a file can be in
    * the program without having gone through the factory. Only files the program
    * already holds are added — this must not turn a lookup into a file load.
+   *
+   * The file is wrapped straight off the program rather than pushed back into the
+   * document registry, because the registry names every file it holds in its
+   * tsconfig's `files` and that would make a resolved dependency or a lib file a
+   * root of the project. A root is a file the project asked for by name, so the
+   * compiler stops reporting it as found while searching node_modules or as a
+   * default library — which is what `isFromExternalLibrary` and
+   * `isSourceFileDefaultLibrary` answer from.
    */
   addSourceFileFromProgramFromFilePath(filePath: StandardizedFilePath): SourceFile | undefined {
     filePath = this.#context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
-    if (this.documentRegistry.getSourceFile(filePath) == null)
+    const existingSourceFile = this.#sourceFileCacheByFilePath.get(filePath);
+    if (existingSourceFile != null)
+      return existingSourceFile;
+    const compilerSourceFile = this.documentRegistry.getSourceFile(filePath);
+    if (compilerSourceFile == null)
       return undefined;
-    return this.addOrGetSourceFileFromFilePath(filePath, { markInProject: false, scriptKind: undefined });
+    const sourceFile = this.getSourceFile(compilerSourceFile, { markInProject: false });
+    sourceFile._setIsSaved(true); // the compiler read it off the file system
+    // The compiler strips a byte order mark from the text it parses and does not
+    // report that it did, so the file system is asked instead. Without this the
+    // mark is lost the next time the file is saved.
+    const fileText = this.#context.fileSystemWrapper.readFileIfExistsSync(filePath, this.#context.getEncoding());
+    if (fileText != null && StringUtils.hasBom(fileText))
+      sourceFile._hasBom = true;
+    return sourceFile;
   }
 
   /**

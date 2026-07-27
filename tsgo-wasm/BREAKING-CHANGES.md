@@ -550,13 +550,26 @@ Split by cause. The "not exposed" ones are TODOs, not breaking changes.
   `format.GetIndentation(position, sourceFile, options, assumeNewLineBeforeCloseBrace)`
   at `internal/format/indent.go:24`, with `GetIndentationForNode` at `:17`. It
   needs a handler and a protocol method, nothing more. In the meantime
-  `Node#getIndentationLevel()` is worked out from the text instead: the deeper of
-  the indentation the node's own line has and one level past the ancestor that
-  opened it, rounded down to the nearest half. It agrees with the formatter for a
-  node that starts its own line in well-formatted text, but a node sharing a line
-  with its parent now reports that line's level rather than the continuation level
-  the smart indenter would give it — so an `ImportSpecifier`, a `Parameter`, or an
-  arrow function passed as an argument all report one level less than they did.
+  `Node#getIndentationLevel()` is worked out from the text instead. A node that
+  begins its own line reports the deeper of the indentation that line has and one
+  level past the ancestor that opened it; a node that starts partway through a
+  line reports whatever indentation that line already has; and a node starting
+  with `{` or `}` reports its container's indentation rather than a level past it,
+  so a brace lines up with the construct it delimits. The level is fractional when
+  the file's indentation is not a whole multiple of
+  `manipulationSettings.indentationText` — a two-space file read with the default
+  four-space setting puts a method body at level `0.5` — and the writers reproduce
+  that fraction literally. This is not only a query: the level is what
+  `setBodyText`, `addStatements`, `insertStatements` and `set({ statements })`
+  indent inserted code to, so a wrong level shows up in emitted text.
+
+  What still differs from the smart indenter is list-continuation positions. Where
+  the formatter reports the level a wrapped list item would be written at, the
+  text-based version reports the line's own indentation, one level less: an
+  `ImportSpecifier` or `Parameter` written on the same line as its braces or
+  parens, the empty `SyntaxList`/`CloseParenToken` of an argument or parameter
+  list, and the `;` or `}` trailing a construct whose contents were wrapped over
+  several lines.
 - **`CodeFixAction#getFixId` / `getFixAllDescription`** — `ls.CodeAction` carries
   both (`internal/ls/codeactions.go:55-60`: `FixID`, `FixAllDescription`), and
   `GetCombinedCodeFix` already matches on the fix id. The API's `CodeFixAction`
@@ -610,6 +623,21 @@ Split by cause. The "not exposed" ones are TODOs, not breaking changes.
   `ast.IsWriteAccessForReference`, the same classification TypeScript uses.
   A definition's `getKind()` is derived from the definition symbol's flags; see
   `ts.ScriptElementKind` for the members that survive.
+- **`DefinitionInfo#getContainerName()`** names the declaration the definition is
+  written in rather than the definition symbol's parent, because tsgo reports a
+  definition as a span alone and its checker has no `symbolToString`. A class,
+  interface or enum member, a namespaced or ambient-module declaration, and a
+  declaration written in an object literal all read as they did. Two things do
+  not. What a file itself declares — including everything a module exports —
+  reads `""`, where the `typescript` package named the file's module specifier
+  (`"./mod"`, `"pkg"`); naming it here would mean reimplementing module specifier
+  resolution against the requesting file. And a namespace container is always
+  written out in full (`Outer.Inner`), where the `typescript` package qualified it
+  only as far as the position asking needed — a reference from outside the
+  namespace agrees, one from inside it now reads the qualified name. Both want the
+  same thing of the fork: a `symbolToString` on the API's checker.
+  `getContainerKind()` is `""` rather than the `undefined` the `typescript`
+  package left it as — neither ever classifies the container.
 - **`LanguageService#organizeImports(filePathOrSourceFile, mode?)`** and
   **`SourceFile#organizeImports()`** — the format settings and user preferences
   parameters are gone; tsgo takes only a mode.
@@ -644,14 +672,18 @@ field for the rest.
   file per output rather than the whole set that fed it.
 - **`EmitOptionsBase.customTransformers`** — tsgo's emitter does not run
   JavaScript transforms.
-- **A single-file emit answers `noEmit` and `noEmitOnError` in ts-morph, not in
-  the compiler.** `Directory#emit`/`emitSync`, `SourceFile#emit`/`emitSync`/
+- **A single-file emit answers `noEmit`, `noEmitOnError` and
+  `emitDeclarationOnly` in ts-morph, not in the compiler.**
+  `Directory#emit`/`emitSync`, `SourceFile#emit`/`emitSync`/
   `getEmitOutput`, `LanguageService#getEmitOutput` and `Project#emit`/
   `emitToMemory` with `targetSourceFile` go through tsgo's `getJavaScriptEmit` /
   `getDeclarationEmit`, which the API calls with `ForceEmit`. Left alone that
   writes output where TypeScript reported `emitSkipped: true` and wrote nothing,
-  so `Program#_getEmitOutputForFilePath` checks both options itself and reports
-  a skipped emit, matching TypeScript's `handleNoEmitOptions`. Declaration-emit
+  so `Program#_getEmitOutputForFilePath` checks those options itself and reports
+  a skipped emit, matching TypeScript's `handleNoEmitOptions`.
+  `emitDeclarationOnly` is answered the same way: the targeted emit asks only for
+  the declaration half, and skips entirely when neither `declaration` nor
+  `composite` is on and there are no declarations to produce. Declaration-emit
   diagnostics are **not** replicated: tsgo does not report one for the case
   TypeScript did (an exported class extending a private name), on either the
   targeted or the whole-project path, so there is nothing to gate on.

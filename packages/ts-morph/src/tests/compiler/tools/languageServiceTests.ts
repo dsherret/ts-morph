@@ -147,11 +147,22 @@ describe("LanguageService", () => {
       });
     });
 
+    it("should get no code fixes when no error code is asked for", () => {
+      const { sourceFile, project } = getInfoFromText("export class T extends Node {}", { filePath: "/file.ts" });
+      project.createSourceFile("/Node.ts", "export class Node { prop: string; }");
+      const nameNode = sourceFile.getClassOrThrow("T").getExtendsOrThrow().getExpression();
+      const results = project.getLanguageService().getCodeFixesAtPosition(sourceFile, nameNode.getStart(), nameNode.getEnd(), []);
+
+      expect(results).to.lengthOf(0);
+    });
+
     it("should throw for a file that doesn't exist", () => {
       const { project } = getInfoFromText("const moment = require('moment'); moment(); ");
       // the trailing formatSettings and userPreferences arguments are gone: tsgo
       // takes neither for a code fix
       expect(() => project.getLanguageService().getCodeFixesAtPosition("nonExistent.ts", 0, 1, [2304])).to.throw(errors.FileNotFoundError);
+      // the file is checked before the error codes are, so an empty list throws too
+      expect(() => project.getLanguageService().getCodeFixesAtPosition("nonExistent.ts", 0, 1, [])).to.throw(errors.FileNotFoundError);
     });
   });
 

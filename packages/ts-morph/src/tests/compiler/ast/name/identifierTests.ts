@@ -58,6 +58,83 @@ describe("Identifier", () => {
       expect(definitions.length).to.equal(1);
       expect(definitions[0].getDeclarationNode()).to.equal(sourceFile.getVariableDeclarationOrThrow("myFunction"));
     });
+
+    it("should get the container name of what declares the definition", () => {
+      const { sourceFile } = getInfoFromText(
+        "class C { m() {} }\nnew C().m();\n"
+          + "interface I { p: number }\ndeclare const i: I;\ni.p;\n"
+          + "enum E { A }\nE.A;\n"
+          + "namespace N { export const v = 1; }\nN.v;\n"
+          + "namespace Outer { export namespace Inner { export class IC { icm() {} } export enum IE { X } } }\n"
+          + "new Outer.Inner.IC().icm();\nOuter.Inner.IE.X;\n"
+          + "const obj = { om() {} };\nobj.om();\n"
+          + "function topFn() {}\ntopFn();\n",
+      );
+      const containerNameOf = (name: string) => {
+        const identifiers = sourceFile.getDescendantsOfKind(SyntaxKind.Identifier).filter(i => i.getText() === name);
+        return identifiers[identifiers.length - 1].getDefinitions().map(d => d.getContainerName());
+      };
+
+      expect(containerNameOf("m")).to.deep.equal(["C"]);
+      expect(containerNameOf("p")).to.deep.equal(["I"]);
+      expect(containerNameOf("A")).to.deep.equal(["E"]);
+      expect(containerNameOf("v")).to.deep.equal(["N"]);
+      expect(containerNameOf("om")).to.deep.equal(["obj"]);
+      // a class container is not qualified by the namespaces around it, while an
+      // enum or interface container is — the `typescript` package did the same
+      expect(containerNameOf("icm")).to.deep.equal(["IC"]);
+      expect(containerNameOf("IC")).to.deep.equal(["Outer.Inner"]);
+      expect(containerNameOf("X")).to.deep.equal(["Outer.Inner.IE"]);
+      // what a file declares has no container
+      expect(containerNameOf("topFn")).to.deep.equal([""]);
+    });
+
+    it("should get the container name of a definition that has no name of its own", () => {
+      const { sourceFile } = getInfoFromText(
+        "namespace NN { export class NC { constructor(a: number) {} } }\nnew NN.NC(1);\n"
+          + "interface CY { (): void }\ndeclare const cy: CY;\ncy();\n"
+          + "declare function Inject(): any;\nclass DEC { constructor(@Inject() dp: number) {} }\n"
+          + "class SB { static { const inBlock = 1; inBlock; } }\n"
+          + "const CE = class { cm() {} };\nnew CE().cm();\n",
+      );
+      const containerNameOf = (name: string) => {
+        const identifiers = sourceFile.getDescendantsOfKind(SyntaxKind.Identifier).filter(i => i.getText() === name);
+        return identifiers[identifiers.length - 1].getDefinitions().map(d => d.getContainerName());
+      };
+
+      // a constructor and a call signature have no name, so they must not be
+      // mistaken for the name of what declares them
+      expect(containerNameOf("NC")).to.deep.equal(["NN", "NC"]);
+      expect(containerNameOf("cy")).to.deep.equal(["", "CY"]);
+      // a decorator is not what makes a parameter a property
+      expect(containerNameOf("dp")).to.deep.equal([""]);
+      expect(containerNameOf("inBlock")).to.deep.equal([""]);
+      // an unnamed class is named after the variable it is written in
+      expect(containerNameOf("cm")).to.deep.equal(["CE"]);
+    });
+
+    it("should get the container name of a definition in an ambient module or a global augmentation", () => {
+      const { sourceFile } = getInfoFromText(
+        "declare module \"bar\" {\n  interface BI { bp: number }\n  enum BE { M }\n  class BC { bcm(): void }\n}\n"
+          + "declare module 'sq' { export const sqv: number }\n"
+          + "declare global {\n  class GCl { gclm(): void }\n  interface GI { gm(): void }\n}\nexport {};\n",
+      );
+      const containerNameOf = (name: string) => {
+        const identifiers = sourceFile.getDescendantsOfKind(SyntaxKind.Identifier).filter(i => i.getText() === name);
+        return identifiers[identifiers.length - 1].getDefinitions().map(d => d.getContainerName());
+      };
+
+      // an ambient module ends the namespace chain rather than joining it
+      expect(containerNameOf("bp")).to.deep.equal(["BI"]);
+      expect(containerNameOf("M")).to.deep.equal(["BE"]);
+      expect(containerNameOf("bcm")).to.deep.equal(["BC"]);
+      expect(containerNameOf("BI")).to.deep.equal([`"bar"`]);
+      // a single quoted module name is reported double quoted, as it always was
+      expect(containerNameOf("sqv")).to.deep.equal([`"sq"`]);
+      // so does `declare global`, but it names itself when it is the container
+      expect(containerNameOf("gm")).to.deep.equal(["GI"]);
+      expect(containerNameOf("GCl")).to.deep.equal(["global"]);
+    });
   });
 
   describe(nameof<Identifier>("getImplementations"), () => {

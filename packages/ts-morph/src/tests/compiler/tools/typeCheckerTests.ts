@@ -111,4 +111,30 @@ describe("TypeChecker", () => {
       expect(project.getTypeChecker().getExportSymbolOfSymbol(local)).to.equal(local);
     });
   });
+  // an identifier or qualified name written in type position is not a TypeNode, but
+  // the checker treats one as a type expression and resolves it through its symbol
+  describe(nameof<TypeChecker>("getTypeAtLocation") + " on an entity name in type position", () => {
+    function doTest(text: string, kind: SyntaxKind, expected: string) {
+      const { sourceFile } = getInfoFromText(text);
+      const node = sourceFile.getFirstDescendantByKindOrThrow(kind);
+      const entityName = kind === SyntaxKind.TypeReference ? (node as any).getTypeName() : node;
+      expect(entityName.getType().getText()).to.equal(expected);
+    }
+
+    it("should get the type of an interface name", () => {
+      doTest("interface I { a: 1 }\nlet v: I;", SyntaxKind.TypeReference, "I");
+    });
+
+    it("should get the type of a qualified name", () => {
+      doTest("namespace N { export interface I { a: 1 } }\nlet v: N.I;", SyntaxKind.QualifiedName, "N.I");
+    });
+
+    it("should get the aliased type of a type alias name", () => {
+      doTest("type Al = string;\nlet v: Al;", SyntaxKind.TypeReference, "string");
+    });
+
+    it("should get the type of a type parameter name", () => {
+      doTest("interface Foo<T> { a: T }\nlet v: Foo<string>;", SyntaxKind.TypeReference, "T");
+    });
+  });
 });
