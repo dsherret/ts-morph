@@ -124,6 +124,56 @@ export declare class InMemoryFileSystemHost implements FileSystemHost {
   globSync(patterns: ReadonlyArray<string>): string[];
 }
 
+/**
+ * How a host answers.
+ *
+ * Returning nothing declines the question and leaves the specifier to the
+ * compiler, so a host that only handles some specifiers says nothing about the
+ * rest.
+ */
+export type ModuleResolutionAnswer = {
+      resolvedFileName: string;
+  }
+  /** Resolve to nothing, and do not let the compiler try. */
+   | {
+      resolvedFileName: null;
+  }
+  /** Resolve this specifier instead, using the compiler's own rules. */
+   | {
+      moduleName: string;
+  } | undefined;
+
+/** What a host is told about a specifier it is asked to resolve. */
+export interface ModuleResolutionRequest {
+  /** The specifier as written, e.g. `./mod.ts` or `lodash`. */
+  moduleName: string;
+  /** The file the specifier was written in. */
+  containingFile: string;
+}
+
+/** Resolves module specifiers in place of the compiler. */
+export interface ResolutionHost {
+  resolveModuleName?(request: ModuleResolutionRequest): ModuleResolutionAnswer;
+}
+
+/**
+ * Creates a resolution host for a project.
+ *
+ * The compiler options are given as a function because a project's options can
+ * change after it is created, and a host that reads them wants the current ones.
+ */
+export type ResolutionHostFactory = (getCompilerOptions: () => CompilerOptions) => ResolutionHost;
+/**
+ * Ready-made resolution hosts.
+ *
+ * `deno` is for Deno-style code, which writes the extension node omits. It
+ * rewrites rather than resolves: dropping `.ts` says where to look, and the
+ * compiler still decides how.
+ */
+export declare const ResolutionHosts: {
+      deno: () => ResolutionHost;
+  };
+
 export interface RuntimeDirEntry {
   name: string;
   isFile: boolean;
