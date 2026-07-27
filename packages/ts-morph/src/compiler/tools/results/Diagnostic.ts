@@ -83,16 +83,26 @@ export class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagnostic> {
 
   /**
    * Gets the start.
+   *
+   * tsgo reports a span rather than a start and a length, and gives `-1` for a
+   * diagnostic with no location (an option error, say) where the `typescript`
+   * package left both undefined. That is reported as `undefined` here, so
+   * `getStart()` stays a position into the file or nothing at all.
    */
-  getStart() {
-    return this.compilerObject.pos;
+  getStart(): number | undefined {
+    return this.#hasLocation() ? this.compilerObject.pos : undefined;
   }
 
   /**
    * Gets the length.
    */
-  getLength() {
-    return this.compilerObject.end - this.compilerObject.pos;
+  getLength(): number | undefined {
+    return this.#hasLocation() ? this.compilerObject.end - this.compilerObject.pos : undefined;
+  }
+
+  /** @internal */
+  #hasLocation() {
+    return this.compilerObject.pos >= 0;
   }
 
   /**

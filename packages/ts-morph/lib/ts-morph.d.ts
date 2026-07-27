@@ -157,7 +157,7 @@ export interface ModuleResolutionRequest {
    * rather than per file, which is finer than the `typescript` package's
    * `resolveModuleNames` gave a host.
    */
-  resolutionMode: ModuleKind | undefined;
+  resolutionMode: ts.ModuleKind | undefined;
 }
 
 /** Resolves module specifiers in place of the compiler. */
@@ -171,7 +171,7 @@ export interface ResolutionHost {
  * The compiler options are given as a function because a project's options can
  * change after it is created, and a host that reads them wants the current ones.
  */
-export type ResolutionHostFactory = (getCompilerOptions: () => CompilerOptions) => ResolutionHost;
+export type ResolutionHostFactory = (getCompilerOptions: () => ts.CompilerOptions) => ResolutionHost;
 /**
  * Ready-made resolution hosts.
  *
@@ -4616,7 +4616,7 @@ export declare class JSDoc extends JSDocBase<ts.JSDoc> {
   /** Gets the JSDoc's text without the surrounding slashes and stars. */
   getInnerText(): string;
   /** Gets the comment property. Use `#getCommentText()` to get the text of the JS doc comment if necessary. */
-  getComment(): string | (Node<ts.Node> | undefined)[] | undefined;
+  getComment(): string | (JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain | undefined)[] | undefined;
   /** Gets the text of the JS doc comment. */
   getCommentText(): string | undefined;
   /**
@@ -4904,7 +4904,7 @@ export declare class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extend
    */
   setTagName(tagName: string): Node<ts.Node>;
   /** Gets the tag's comment property. Use `#getCommentText()` to get the text of the JS doc tag comment if necessary. */
-  getComment(): string | (Node<ts.Node> | undefined)[] | undefined;
+  getComment(): string | (JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain | undefined)[] | undefined;
   /** Gets the text of the JS doc tag comment (ex. `"Some description."` for `&#64;param value Some description.`). */
   getCommentText(): string | undefined;
   /** Removes the JS doc comment. */
@@ -9540,6 +9540,7 @@ export declare class DefinitionInfo<TCompilerObject extends ts.DefinitionInfo = 
 
 /** Diagnostic. */
 export declare class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagnostic> {
+  #private;
   protected constructor();
   /** Gets the underlying compiler diagnostic. */
   get compilerObject(): TCompilerObject;
@@ -9565,10 +9566,17 @@ export declare class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagn
   getMessageChain(): DiagnosticMessageChain[] | undefined;
   /** Gets the line number. */
   getLineNumber(): number | undefined;
-  /** Gets the start. */
-  getStart(): number;
+  /**
+   * Gets the start.
+   *
+   * tsgo reports a span rather than a start and a length, and gives `-1` for a
+   * diagnostic with no location (an option error, say) where the `typescript`
+   * package left both undefined. That is reported as `undefined` here, so
+   * `getStart()` stays a position into the file or nothing at all.
+   */
+  getStart(): number | undefined;
   /** Gets the length. */
-  getLength(): number;
+  getLength(): number | undefined;
   /** Gets the diagnostic category. */
   getCategory(): DiagnosticCategory;
   /** Gets the code of the diagnostic. */
@@ -9886,6 +9894,19 @@ export declare class TypeChecker {
    * @param meaning - Meaning of symbol to filter by.
    */
   getSymbolsInScope(node: Node, meaning: SymbolFlags): Symbol[];
+  /**
+   * Gets the export symbol of a local symbol with a corresponding export symbol.
+   * Otherwise returns the passed in symbol.
+   *
+   * For example, at `export type T = number;`:
+   *     - `getSymbolAtLocation` at the location `T` will return the exported symbol for `T`.
+   *     - But the result of `getSymbolsInScope` will contain the *local* symbol for `T`, not the exported symbol.
+   *     - Calling `getExportSymbolOfSymbol` on that local symbol will return the exported symbol.
+   *
+   * The checker has no such method in tsgo, so this goes through the symbol; it is
+   * the same call {@link Symbol#getExportSymbol} makes.
+   */
+  getExportSymbolOfSymbol(symbol: Symbol): Symbol;
   /**
    * Gets the symbols the binder placed in the node's own local scope, in declaration order.
    * @param node - Node to get the locals of.

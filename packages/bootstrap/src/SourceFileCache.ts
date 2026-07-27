@@ -4,8 +4,10 @@ import {
   DocumentRegistry,
   FileUtils,
   libFolderInMemoryPath,
+  type ResolutionHost,
   StandardizedFilePath,
   StringUtils,
+  toModuleNameResolver,
   TransactionalFileSystem,
   ts,
 } from "@ts-morph/common";
@@ -15,6 +17,8 @@ export interface SourceFileCacheOptions {
   skipLoadingLibFiles?: boolean;
   /** Folder the default lib files are read from. */
   libFolderPath?: string;
+  /** Resolves module specifiers in place of the compiler. */
+  resolutionHost?: ResolutionHost;
 }
 
 /**
@@ -50,6 +54,7 @@ export class SourceFileCache {
       // pointed at them rather than at the copies bundled inside the wasm module
       libFolderPath: options.skipLoadingLibFiles ? undefined : options.libFolderPath ?? libFolderInMemoryPath,
       useCaseSensitiveFileNames: fileSystemWrapper.getFileSystem().isCaseSensitive(),
+      resolveModuleName: toModuleNameResolver(options.resolutionHost),
     });
 
     // changing the options reopens the project, which reparses every file, so the

@@ -95,4 +95,20 @@ describe("TypeChecker", () => {
       );
     });
   });
+
+  describe(nameof<TypeChecker>("getExportSymbolOfSymbol"), () => {
+    it("should get the export symbol of a local symbol", () => {
+      const { sourceFile, project } = getInfoFromText("export type T = number;");
+      const local = sourceFile.getTypeAliasOrThrow("T").getNameNode().getSymbolsInScope(SymbolFlags.TypeAlias)[0];
+      const exportSymbol = project.getTypeChecker().getExportSymbolOfSymbol(local);
+      expect(exportSymbol).to.not.equal(local);
+      expect(exportSymbol.getName()).to.equal("T");
+    });
+
+    it("should return the symbol when it is not a local symbol with an export symbol", () => {
+      const { sourceFile, project } = getInfoFromText("type T = number;");
+      const local = sourceFile.getTypeAliasOrThrow("T").getNameNode().getSymbolsInScope(SymbolFlags.TypeAlias)[0];
+      expect(project.getTypeChecker().getExportSymbolOfSymbol(local)).to.equal(local);
+    });
+  });
 });

@@ -963,7 +963,7 @@ export interface ModuleResolutionRequest {
      * rather than per file, which is finer than the `typescript` package's
      * `resolveModuleNames` gave a host.
      */
-    resolutionMode: ModuleKind | undefined;
+    resolutionMode: ts.ModuleKind | undefined;
 }
 
 /**
@@ -998,7 +998,7 @@ export interface ResolutionHost {
  * The compiler options are given as a function because a project's options can
  * change after it is created, and a host that reads them wants the current ones.
  */
-export type ResolutionHostFactory = (getCompilerOptions: () => CompilerOptions) => ResolutionHost;
+export type ResolutionHostFactory = (getCompilerOptions: () => ts.CompilerOptions) => ResolutionHost;
 
 /**
  * Ready-made resolution hosts.

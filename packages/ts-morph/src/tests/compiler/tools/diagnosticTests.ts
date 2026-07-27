@@ -65,4 +65,18 @@ describe("Diagnostic", () => {
       expect(constError.getSourceFile()!.getFilePath()).to.equal(sourceFile.getFilePath());
     });
   });
+
+  // tsgo reports a span rather than a start and a length, and gives -1 for a
+  // diagnostic with no location, where the `typescript` package left both undefined
+  describe("a diagnostic with no location", () => {
+    it("should have no start, length or line number", () => {
+      const { project } = getInfoFromText("", { compilerOptions: { types: ["does-not-exist"] } });
+      const diagnostic = project.getPreEmitDiagnostics().find(d => d.getCode() === 2688)!;
+      expect(diagnostic).to.not.be.undefined;
+      expect(diagnostic.getSourceFile()).to.be.undefined;
+      expect(diagnostic.getStart()).to.be.undefined;
+      expect(diagnostic.getLength()).to.be.undefined;
+      expect(diagnostic.getLineNumber()).to.be.undefined;
+    });
+  });
 });

@@ -1,4 +1,4 @@
-import { getLibFiles, InMemoryFileSystemHost, nameof, ts } from "@ts-morph/common";
+import { getLibFiles, InMemoryFileSystemHost, nameof, ResolutionHosts, ts } from "@ts-morph/common";
 import { expect } from "chai";
 import { EOL } from "node:os";
 import { createProject, createProjectSync, Project, ProjectOptions } from "../Project";
@@ -60,6 +60,17 @@ describe("Project", () => {
         expect(project.getSourceFiles().map(s => s.fileName)).to.deep.equal([...initialFiles, ...resolvedFiles, ...nodeModuleFiles]);
       });
 
+      // the lib files are served from this project's own file system rather than
+      // from the wasm bundle, so the program names them as ordinary paths and
+      // resolving dependencies would otherwise read all 80-odd of them back in
+      it("should not add the lib files when resolving dependencies", async () => {
+        const fileSystem = new InMemoryFileSystemHost();
+        fileSystem.writeFileSync("tsconfig.json", `{ "files": ["src/main.ts"] }`);
+        fileSystem.writeFileSync("/src/main.ts", "export const a: Date = null as any;");
+        const project = await create({ tsConfigFilePath: "tsconfig.json", fileSystem });
+        expect(project.getSourceFiles().map(s => s.fileName)).to.deep.equal(["/src/main.ts"]);
+      });
+
       describe("skipFileDependencyResolution", () => {
         it("should not skip dependency resolution when false", async () => {
           const { project, initialFiles, resolvedFiles, nodeModuleFiles } = await fileDependencyResolutionSetup({
@@ -74,106 +85,89 @@ describe("Project", () => {
         });
       });
 
-      // Deferred, not dropped: the resolutionHost option is not wired up yet, so
-      // every test below configures custom resolution that the compiler never
-      // consults. The choke point in the fork is Resolver.ResolveModuleName in
-      // internal/module/resolver.go; see tsgo-wasm/BREAKING-CHANGES.md.
-      describe.skip("custom module resolution", () => {
-        it("should not throw if getting the compiler options not within a method", async () => {
-          try {
-            await create({
-              useInMemoryFileSystem: true,
-              resolutionHost: (_, getCompilerOptions) => {
-                // this should be allowed now
-                expect(getCompilerOptions()).to.deep.equal({ allowJs: true });
-                return {};
-              },
-              compilerOptions: {
-                allowJs: true,
-              },
-            });
-          } catch {
-            expect.fail("should not throw");
-          }
-        });
-
-        it("should not throw if using the module resolution host not within a method", async () => {
-          try {
-            await create({
-              useInMemoryFileSystem: true,
-              resolutionHost: moduleResolutionHost => {
-                // this is now allowed here, but used to not be
-                moduleResolutionHost.fileExists("./test.ts");
-                return {};
-              },
-            });
-          } catch {
-            expect.fail("should not throw");
-          }
-        });
-
-        async function setup() {
-          // this is deno style module resolution
-          const project = await create({
+      // The host answers one specifier at a time and says where it points, so a
+      // Deno-style host rewrites rather than resolving: dropping the `.ts` says
+      // where to look and the compiler still decides how. It no longer receives a
+      // module resolution host, because it no longer resolves for itself.
+      describe("custom module resolution", () => {
+        it("should not throw when reading the compiler options outside a method", async () => {
+          await create({
             useInMemoryFileSystem: true,
-            resolutionHost: (moduleResolutionHost, getCompilerOptions) => {
-              return {
-                resolveModuleNames: (moduleNames, containingFile) => {
-                  const compilerOptions = getCompilerOptions();
-                  const resolvedModules: ts.ResolvedModule[] = [];
-
-                  for (const moduleName of moduleNames.map(removeTsExtension)) {
-                    const result = ts.resolveModuleName(moduleName, containingFile, compilerOptions, moduleResolutionHost);
-                    if (result.resolvedModule)
-                      resolvedModules.push(result.resolvedModule);
-                  }
-
-                  return resolvedModules;
-                },
-              };
-
-              function removeTsExtension(moduleName: string) {
-                if (moduleName.slice(-3).toLowerCase() === ".ts")
-                  return moduleName.slice(0, -3);
-                return moduleName;
-              }
+            resolutionHost: getCompilerOptions => {
+              expect(getCompilerOptions()).to.deep.equal({ allowJs: true });
+              return {};
             },
+            compilerOptions: { allowJs: true },
           });
+        });
 
+        async function setup(resolutionHost: ProjectOptions["resolutionHost"] = ResolutionHosts.deno) {
+          const project = await create({ useInMemoryFileSystem: true, resolutionHost });
           const testFile = project.createSourceFile("/Test.ts", "export class Test {}");
-          const mainFile = project.createSourceFile("/main.ts", `import { Test } from "./Test.ts";\n\nconst test = new Test();`);
-          return { testFile, mainFile, typeChecker: project.createProgram().getTypeChecker(), languageService: project.getLanguageService() };
+          const mainFile = project.createSourceFile(
+            "/main.ts",
+            `import { Test } from "./Test.ts";
+
+const test = new Test();`,
+          );
+          return { project, testFile, mainFile };
         }
 
         it("should resolve the module", async () => {
-          const { mainFile, typeChecker } = await setup();
+          const { project, mainFile } = await setup();
           const moduleSpecifier = (mainFile.statements[0] as ts.ImportDeclaration).moduleSpecifier;
-          const symbol = typeChecker.getSymbolAtLocation(moduleSpecifier);
-          expect(symbol).to.not.be.undefined;
-          expect(symbol!.getName()).to.equal(`"/Test"`);
+          const symbol = project.createProgram().getTypeChecker().getSymbolAtLocation(moduleSpecifier);
+          // a symbol carries its name as a field rather than behind getName()
+          expect(symbol?.name).to.equal(`"/Test"`);
         });
 
+        // what the host is for: tsgo finds the file behind `./Test.ts` either way,
+        // but rejects the specifier as written unless allowImportingTsExtensions is
+        // on, and that option demands noEmit. Rewriting means the rule never applies.
+        it("should accept a .ts specifier that the compiler would reject", async () => {
+          const { project } = await setup();
+          expect(project.createProgram().getSemanticDiagnostics().map(d => d.code)).to.deep.equal([]);
+        });
+
+        it("should be the host doing that, not the compiler", async () => {
+          const project = await create({ useInMemoryFileSystem: true });
+          project.createSourceFile("/Test.ts", "export class Test {}");
+          project.createSourceFile(
+            "/main.ts",
+            `import { Test } from "./Test.ts";
+
+const test = new Test();`,
+          );
+          // 5097: an import path can only end with .ts when allowImportingTsExtensions is enabled
+          expect(project.createProgram().getSemanticDiagnostics().map(d => d.code)).to.deep.equal([5097]);
+        });
+
+        // this shows the language service resolved through the host too
         it("should support when renaming with the language service", async () => {
-          // this test indicates that the language service was passed the custom module resolution
-          const { testFile, languageService } = await setup();
-          const results = languageService.findRenameLocations(
+          const { project, testFile } = await setup();
+          const results = project.getLanguageService().rename(
             testFile.fileName,
             (testFile.statements[0] as ts.ClassDeclaration).name!.getStart(),
-            false,
-            false,
+            "NewClass",
           );
-          expect(results!.map(r => r.fileName).sort()).to.deep.equal([
-            "/Test.ts",
-            "/main.ts",
-            "/main.ts",
-          ]);
+          expect(results.map(r => r.fileName).sort()).to.deep.equal(["/Test.ts", "/main.ts"]);
+        });
+
+        it("should let a host resolve a specifier outright", async () => {
+          const { project } = await setup(() => ({
+            resolveModuleName: ({ moduleName }) => moduleName === "alias" ? { resolvedFileName: "/Test.ts" } : undefined,
+          }));
+          const aliased = project.createSourceFile("/other.ts", `import { Test } from "alias";`);
+          const moduleSpecifier = (aliased.statements[0] as ts.ImportDeclaration).moduleSpecifier;
+          const symbol = project.createProgram().getTypeChecker().getSymbolAtLocation(moduleSpecifier);
+          // a symbol carries its name as a field rather than behind getName()
+          expect(symbol?.name).to.equal(`"/Test"`);
         });
       });
 
-      // Deferred, not dropped: the resolutionHost option is not wired up yet, so
-      // every test below configures custom resolution that the compiler never
-      // consults. The choke point in the fork is Resolver.ResolveModuleName in
-      // internal/module/resolver.go; see tsgo-wasm/BREAKING-CHANGES.md.
+      // Deferred, not dropped: type reference directives resolve down a separate
+      // path in the compiler that has no hook, so a resolution host is never asked
+      // about one. Module resolution itself is wired up — see the describe above.
       describe.skip("custom type reference directive resolution", async () => {
         async function setup() {
           const fileSystem = new InMemoryFileSystemHost();

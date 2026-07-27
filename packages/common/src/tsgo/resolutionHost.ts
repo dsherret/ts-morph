@@ -12,9 +12,8 @@
  * are not covered — they resolve down a separate path in the compiler that has
  * no hook yet.
  */
-import type { CompilerOptions } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/compilerOptions.js";
 import type { ModuleNameResolver, ResolvedModuleName } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/options.js";
-import type { ModuleKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/moduleKind.enum.js";
+import type * as ts from "./ts";
 
 export type { ResolvedModuleName };
 
@@ -32,7 +31,7 @@ export interface ModuleResolutionRequest {
    * rather than per file, which is finer than the `typescript` package's
    * `resolveModuleNames` gave a host.
    */
-  resolutionMode: ModuleKind | undefined;
+  resolutionMode: ts.ModuleKind | undefined;
 }
 
 /**
@@ -62,7 +61,7 @@ export interface ResolutionHost {
  * The compiler options are given as a function because a project's options can
  * change after it is created, and a host that reads them wants the current ones.
  */
-export type ResolutionHostFactory = (getCompilerOptions: () => CompilerOptions) => ResolutionHost;
+export type ResolutionHostFactory = (getCompilerOptions: () => ts.CompilerOptions) => ResolutionHost;
 
 /**
  * Ready-made resolution hosts.
@@ -100,7 +99,7 @@ export function toModuleNameResolver(host: ResolutionHost | undefined): ModuleNa
       moduleName: request.moduleName,
       containingFile: request.containingFile,
       // zero is the compiler having no opinion, which is not a ModuleKind
-      resolutionMode: request.resolutionMode === 0 ? undefined : request.resolutionMode as ModuleKind,
+      resolutionMode: request.resolutionMode === 0 ? undefined : request.resolutionMode as ts.ModuleKind,
     });
     if (answer == null)
       return undefined;

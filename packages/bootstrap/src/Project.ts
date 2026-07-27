@@ -6,6 +6,7 @@ import {
   FileUtils,
   InMemoryFileSystemHost,
   RealFileSystemHost,
+  type ResolutionHostFactory,
   runtime,
   StandardizedFilePath,
   StringUtils,
@@ -54,6 +55,17 @@ export interface ProjectOptions {
    * @remarks Consider using `useInMemoryFileSystem` instead.
    */
   fileSystem?: FileSystemHost;
+  /**
+   * Resolves module specifiers in place of the compiler.
+   *
+   * The compiler asks the host before resolving anything itself, so a project
+   * can resolve by rules the compiler does not implement. See
+   * `ResolutionHosts.deno` for the ready-made one.
+   *
+   * Breaking change: type reference directives are not covered — they resolve
+   * down a separate path in the compiler that has no hook.
+   */
+  resolutionHost?: ResolutionHostFactory;
 }
 
 /**
@@ -161,6 +173,7 @@ export class Project {
     this.#sourceFileCache = new SourceFileCache(this.#fileSystemWrapper, this.compilerOptions, {
       libFolderPath: options.libFolderPath,
       skipLoadingLibFiles: options.skipLoadingLibFiles,
+      resolutionHost: options.resolutionHost?.(() => this.compilerOptions.get()),
     });
     this.#configFileParsingDiagnostics = tsConfigResolver?.getErrors() ?? [];
 
@@ -396,6 +409,11 @@ export class Project {
         if (fileName.startsWith("bundled:///") || !seen.add(fileName))
           continue;
         const filePath = this.#fileSystemWrapper.getStandardizedAbsolutePath(fileName);
+        // this project serves the lib files from its own file system rather than
+        // from the wasm bundle, so the program names them as ordinary paths. They
+        // are not the user's files and do not belong in getSourceFiles().
+        if (this.#fileSystemWrapper.libFileExists(filePath))
+          continue;
         if (this.#sourceFileCache.containsSourceFileAtPath(filePath))
           continue;
         const sourceFile = this.addSourceFileAtPathIfExistsSync(filePath);

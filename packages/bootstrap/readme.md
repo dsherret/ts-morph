@@ -75,7 +75,7 @@ project.fileSystem.writeFileSync("MyClass.ts", "class MyClass {}");
 ```ts
 const project = await createProject({
   compilerOptions: {
-    target: ts.ScriptTarget.ES3,
+    target: ts.ScriptTarget.ES2015,
   },
 });
 ```
@@ -106,44 +106,32 @@ const project = await createProject({
 
 ### Custom Module Resolution
 
-Custom module resolution can be specified by providing a resolution host factory function. This also supports providing custom type reference directive resolution.
+Custom module resolution can be specified by providing a resolution host factory function. Type reference directives are not covered — they resolve down a separate path in the compiler that has no hook.
 
 For example:
 
 ```ts
-import { createProject, ts } from "@ts-morph/bootstrap";
+import { createProject, ResolutionHosts } from "@ts-morph/bootstrap";
 
 // This is deno style module resolution.
 // Ex. `import { MyClass } from "./MyClass.ts"`;
+const project = await createProject({ resolutionHost: ResolutionHosts.deno });
+```
+
+A host is asked about one specifier at a time and says where it points. It may
+answer with a file, with nothing, or with a different specifier for the compiler
+to resolve instead — which is what the Deno host above does, since dropping the
+`.ts` says where to look and the compiler still decides how:
+
+```ts
 const project = await createProject({
-  resolutionHost: (moduleResolutionHost, getCompilerOptions) => {
-    return {
-      resolveModuleNames: (moduleNames, containingFile) => {
-        const compilerOptions = getCompilerOptions();
-        const resolvedModules: ts.ResolvedModule[] = [];
-
-        for (const moduleName of moduleNames.map(removeTsExtension)) {
-          const result = ts.resolveModuleName(
-            moduleName,
-            containingFile,
-            compilerOptions,
-            moduleResolutionHost,
-          );
-
-          if (result.resolvedModule)
-            resolvedModules.push(result.resolvedModule);
-        }
-
-        return resolvedModules;
-      },
-    };
-
-    function removeTsExtension(moduleName: string) {
-      if (moduleName.slice(-3).toLowerCase() === ".ts")
-        return moduleName.slice(0, -3);
-      return moduleName;
-    }
-  },
+  resolutionHost: getCompilerOptions => ({
+    resolveModuleName: ({ moduleName, containingFile, resolutionMode }) => {
+      if (moduleName === "alias")
+        return { resolvedFileName: "/Test.ts" };
+      return undefined; // let the compiler resolve it
+    },
+  }),
 });
 ```
 

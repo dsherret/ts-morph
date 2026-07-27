@@ -268,26 +268,24 @@ Three differences follow from that:
 `scriptKind` is honoured, by choosing the file extension that implies it, since
 tsgo derives the script kind from the file name.
 
-### `getLastToken` is a free function
+### `getChildren` is reconstructed
 
-Compiler nodes have no `getChildCount`, `getChildAt`, `getFirstToken`, or
-`getLastToken` methods. tsgo's AST stores only real nodes — punctuation and
-keyword tokens, and the `SyntaxList` nodes ts-morph exposes, are not in the tree.
+tsgo's AST stores only real nodes — punctuation and keyword tokens, and the
+`SyntaxList` nodes ts-morph exposes, are not in the tree. They are rebuilt by
+scanning the gaps between the stored children.
 
-A compiler node does have `getChildren(sourceFile?)`, and the same reconstruction
-is available as the free `getChildren(node, sourceFile)` and
-`getLastToken(node, sourceFile)` from `@ts-morph/common`. Both rebuild the
-missing children by scanning the gaps between stored children.
-Results are cached per node, since ts-morph keys its wrapper cache on node
-identity, and share the source file's own token cache so a token reached through
-`getTokenAtPosition` is the same object.
+`getChildren`, `getChildCount`, `getChildAt`, `getFirstToken` and `getLastToken`
+are all methods on a compiler node, declared on the compiler `Node` interface
+(`_packages/native-preview/src/ast/ast.ts`) and implemented twice — on
+`RemoteNodeBase` in `src/api/node/node.infrastructure.ts` and on `NodeObject` in
+`src/ast/factory.generated.ts`. `issues/1273tests.ts` exercises `getChildCount()`
+and passes.
 
-**`getChildCount`, `getChildAt` and `getFirstToken` are back.** They are declared
-on the compiler `Node` interface (`_packages/native-preview/src/ast/ast.ts`) and
-implemented twice — on `RemoteNodeBase` in `src/api/node/node.infrastructure.ts`
-and on `NodeObject` in `src/ast/factory.generated.ts` — derived from
-`getChildren(sourceFile?)` in the same place. `issues/1273tests.ts` exercises
-`getChildCount()` and passes.
+`getChildren(node, sourceFile)` and `getLastToken(node, sourceFile)` are also
+exported as free functions from `@ts-morph/common`, and that is the form
+ts-morph's own `Node#getLastToken` calls. Results are cached per node, since
+ts-morph keys its wrapper cache on node identity, and share the source file's own
+token cache so a token reached through `getTokenAtPosition` is the same object.
 
 Output matches classic TypeScript's spans, order and token parents, with two
 exceptions that come from tsgo's AST rather than from the reconstruction:
@@ -552,39 +550,47 @@ Split by cause. The "not exposed" ones are TODOs, not breaking changes.
   `format.GetIndentation(position, sourceFile, options, assumeNewLineBeforeCloseBrace)`
   at `internal/format/indent.go:24`, with `GetIndentationForNode` at `:17`. It
   needs a handler and a protocol method, nothing more. In the meantime
-  `Node#getIndentationLevel()` measures the indentation the node's line actually
-  has rather than the indentation the formatter would give it; the two differ only
-  for text that is already mis-indented.
+  `Node#getIndentationLevel()` is worked out from the text instead: the deeper of
+  the indentation the node's own line has and one level past the ancestor that
+  opened it, rounded down to the nearest half. It agrees with the formatter for a
+  node that starts its own line in well-formatted text, but a node sharing a line
+  with its parent now reports that line's level rather than the continuation level
+  the smart indenter would give it — so an `ImportSpecifier`, a `Parameter`, or an
+  arrow function passed as an argument all report one level less than they did.
 - **`CodeFixAction#getFixId` / `getFixAllDescription`** — `ls.CodeAction` carries
   both (`internal/ls/codeactions.go:55-60`: `FixID`, `FixAllDescription`), and
   `GetCombinedCodeFix` already matches on the fix id. The API's `CodeFixAction`
   (`internal/api/proto.go:1208-1212`) simply drops them, carrying only
   `Description` and `Changes`. Two fields on that struct and its client mirror.
-- **`ImplementationLocation#getKind/getDisplayParts`** and
-  **`ReferencedSymbolDefinitionInfo#getDisplayParts`/`getName`** — tsgo does build
+- **`ImplementationLocation#getKind`/`getDisplayParts`** — tsgo does build
   classified display parts: `displayPartsWriter`
   (`internal/ls/displaypartswriter.go:19`) and
   `getQuickInfoAndDeclarationAtLocation` (`internal/ls/hover.go:327`, the port of
   `getSymbolDisplayPartsDocumentationAndSymbolKind`) produce exactly the parts and
-  the symbol kind these wrappers want, and hover and signature help already use
-  them. What is missing is that the references and implementations responses carry
-  only handles and spans (`api.ReferencedSymbolEntry`,
-  `internal/api/proto.go:948-953`; implementations return `[]*FileSpan`,
-  `internal/api/session_ls.go:160`). Exposing `getQuickInfoAndDeclarationAtLocation`
-  for a symbol at a location restores `getDisplayParts()`, the display-string
-  `getName()` (`"function myFunction(): void"`) and `getKind()` together. The
-  `SymbolDisplayPart` wrapper itself is already back, for the documentation
-  comments and JSDoc tag text described above.
+  the symbol kind this wrapper wants, and hover and signature help already use
+  them. What is missing is that the implementations response carries spans alone
+  (`internal/api/session_ls.go:160`). The equivalent was done for references, so
+  this is the same change again. The `SymbolDisplayPart` wrapper itself is
+  already back, for the documentation comments and JSDoc tag text described
+  above.
 
 **Restored:**
 
+- **`ReferencedSymbolDefinitionInfo#getDisplayParts`/`getName`** and
+  **`ReferenceEntry#isWriteAccess()`** — `api.ReferencedSymbolEntry` now carries
+  the display parts and the write-access flag, so all three read as they did.
+  `SymbolDisplayPart#getKind()` on one of these parts reports the LSP
+  classification name (`"method name"`, `"whitespace"`) where the `typescript`
+  package reported a `SymbolDisplayPartKind` name (`"functionName"`, `"space"`).
 - `TypeChecker#getAmbientModules` (and `Project#getAmbientModule(s)` /
   `getAmbientModuleOrThrow`), `#getAwaitedType` (and `Type#getAwaitedType`),
   `#getFullyQualifiedName` (and `Symbol#getFullyQualifiedName`),
   `#getExportSymbolOfSymbol` (and `Symbol#getExportSymbol`) and
   `#getSymbolsInScope` (and `Node#getSymbolsInScope`) all work again. tsgo's
   checker implements every one of them; they were simply not routed through the
-  API. One gap remains: `getAmbientModules` reports nothing for `@types`
+  API. `getExportSymbolOfSymbol` goes through the symbol rather than the checker,
+  which has no such method in tsgo — it is the same call `Symbol#getExportSymbol`
+  makes. One gap remains: `getAmbientModules` reports nothing for `@types`
   packages added to the file system after the project was created unless some
   file imports them.
 - **`ProjectOptions.resolutionHost`** and the `ResolutionHostFactory` type —
@@ -599,13 +605,9 @@ Split by cause. The "not exposed" ones are TODOs, not breaking changes.
 - **`LanguageService#findReferencesAtPosition`** resolves from the node at the
   position, because that is what tsgo's `getReferencedSymbolsForNode` takes; a
   position with no node under it yields no references. A reference's
-  `isDefinition()` is now "this reference is the entry's definition node", and
-  `isWriteAccess()` is always false. That last one is **not exposed** rather than
-  absent: `ast.IsWriteAccessForReference(node)` (`internal/ast/ast.go:1273`, over
-  `IsWriteAccess` at `:1269` and `declarationIsWriteAccess` at `:1324`) is the same
-  classification TypeScript uses, and the reference response
-  (`api.ReferencedSymbolEntry`, `internal/api/proto.go:948-953`) just carries no
-  flag for it. **TODO.**
+  `isDefinition()` is now "this reference is the entry's definition node".
+  `isWriteAccess()` works — `api.ReferencedSymbolEntry` carries the flag, from
+  `ast.IsWriteAccessForReference`, the same classification TypeScript uses.
   A definition's `getKind()` is derived from the definition symbol's flags; see
   `ts.ScriptElementKind` for the members that survive.
 - **`LanguageService#organizeImports(filePathOrSourceFile, mode?)`** and
@@ -882,7 +884,6 @@ under `packages/ts-morph/src/tests/removed-capabilities/` and excluded in
 | `baseIndentSize`, `semicolons`, `insertSpace*`, `placeOpenBraceOnNewLineFor*` | `FormatCodeSettings` | `lsutil.FormatCodeSettings` (`internal/ls/lsutil/formatcodeoptions.go:70-92`), read at `internal/format/rulecontext.go:23,27,79,83` and `internal/format/indent.go:26,43`; `api.FormattingOptions` (`internal/api/proto.go:1141-1153`) carries six of them |
 | `formatDiagnosticsWithColorAndContext`                                        | `Project`            | `diagnosticwriter.FormatDiagnosticsWithColorAndContext` (`internal/diagnosticwriter/diagnosticwriter.go:122`), used by `tsc` itself (`internal/execute/tsc/diagnostics.go:42`)                                                                             |
 | `readDirectory`, `matchFiles`                                                 | `@ts-morph/common`   | `vfsmatch.ReadDirectory` (`internal/vfs/vfsmatch/vfsmatch.go:31`)                                                                                                                                                                                          |
-| `Program#getSourceFiles`, `Program#getTypeChecker`                            | bootstrap's program  | `getSourceFileNames()` / `getSourceFile(name)` exist, and the checker hangs off the project — one-line conveniences on the tsgo client                                                                                                                     |
 | `@types` added after project creation, for `getAmbientModules`                | `TypeChecker`        | `Checker.GetAmbientModules` is routed and works; the gap is that nothing re-scans the file system for unimported `@types` packages                                                                                                                         |
 
 #### Routed since this table was written
@@ -898,6 +899,8 @@ Removed from the table above rather than left in it, so that it keeps meaning
   carried to the printer beside the encoded node.
 - `ts.version`, as `ts.getVersion()` — a function, because the version comes from
   the compiler and reaching it means having a session to ask.
+- `Program#getSourceFiles()` and `Program#getTypeChecker()` on bootstrap's program.
+- `ProjectOptions#resolutionHost` on `@ts-morph/bootstrap`, alongside ts-morph's.
 
 `fixUnusedIdentifiers` is also gone from the table, but in the other direction:
 it needs a code fix provider that tsgo does not have, so it belongs under
@@ -927,17 +930,19 @@ Run on the working tree this document describes:
 |                      | passing | pending | failing | `ensure-no-project-compile-errors` |
 | -------------------- | ------- | ------- | ------- | ---------------------------------- |
 | `packages/common`    | 414     | 0       | 0       | 0                                  |
-| `packages/ts-morph`  | 4387    | 3       | 0       | 0                                  |
-| `packages/bootstrap` | 71      | 12      | 0       | no such task                       |
+| `packages/ts-morph`  | 4390    | 3       | 0       | 0                                  |
+| `packages/bootstrap` | 85      | 4       | 0       | no such task                       |
 
 All 15 end-to-end scripts under `tsgo-wasm/` pass, as do the Go tests for every
 package the fork touches.
 
 `packages/ts-morph`’s 3 pending tests are the two `elementAccessExpressionTests`
-cases and the `forget()` one under `custom module resolution`; nothing is skipped
-for want of a `resolutionHost`. `packages/bootstrap` has no
-`ensure-no-project-compile-errors` task, so its type errors cannot be stated
-through the gate CI actually runs.
+cases and the `forget()` one under `custom module resolution`.
+`packages/bootstrap`’s 4 are its `custom type reference directive resolution`
+describe, twice over — once for each of the async and sync constructors. Neither
+package skips anything for want of a `resolutionHost`. `packages/bootstrap` has
+no `ensure-no-project-compile-errors` task; `npx tsc --noEmit -p tsconfig.json`
+reports 8 errors, all inside that skipped describe.
 
 #### What the last 29 failures turned out to be
 
@@ -1027,13 +1032,13 @@ Not yet resolved, listed so they are not mistaken for finished work:
   default library files out of `node_modules/typescript/lib` and embeds them. They
   should come from tsgo, which carries its own copies inside the wasm — a
   behavioural change worth doing deliberately, not as part of this.
-- **`packages/ts-morph` source** — type-checks clean, its suite is green (4362
-  passing, 9 pending, 0 failing) and `tsgo-wasm/project.mts` drives a real
-  `Project` end to end (create, read, checker, manipulate, rename, format,
-  emit) against the tsgo session. That script runs against the rollup bundles,
-  because ts-morph’s sources use extensionless relative imports that Node cannot
-  resolve directly; it rebuilds them when they are stale. The 22 type errors that
-  remain are all in tests for API still off the surface — see “Measured state”.
+- **`packages/ts-morph` source** — type-checks clean, its suite is green (see
+  “Measured state” for the counts, which live in one place) and
+  `tsgo-wasm/project.mts` drives a real `Project` end to end (create, read,
+  checker, manipulate, rename, format, emit) against the tsgo session. That
+  script runs against the rollup bundles, because ts-morph’s sources use
+  extensionless relative imports that Node cannot resolve directly; it rebuilds
+  them when they are stale.
   Two runtime gaps this list used to claim are **not** real, and were removed
   after being tested rather than re-read: the registry does read through
   `createFileSystemAdapter` (`CompilerFactory` passes it), and it _is_ rebuilt
@@ -1061,25 +1066,15 @@ Not yet resolved, listed so they are not mistaken for finished work:
 - **`packages/bootstrap`** — its source is migrated: `SourceFileCache` now owns a
   tsgo `DocumentRegistry` built over `createFileSystemAdapter`, and `Project`
   takes its program, its language service and its lib files from that session.
-  `src` type-checks clean and the package loads again (it previously failed at
-  import on `createHosts`), so its suite runs: **53 passing, 31 failing**, and
-  `src/tests/projectTests.ts` still has **39 type errors**. The test file is frozen
-  and was left as it is. `Project#getModuleResolutionHost()` was restored here (12
-  tests, now green). The remaining failures, counted by their error:
-  - **Not exposed — 19.** `Program#getSourceFiles()` (10) and
-    `Program#getTypeChecker()` (9). tsgo's program has
-    `getSourceFileNames()`/`getSourceFile(name)` and hangs the checker off the
-    _project_, so both are one-line conveniences on the tsgo client.
-  - **Renamed, different shape — 5.**
-    `LanguageService#findRenameLocations`/`getDefinitionAtPosition`, spelled
-    `rename` and `getDefinition` on the tsgo project; see "Language service
-    operations whose signature changed".
-  - **Absent — 3.** `SourceFile#languageVersion` (2; no per-file script target)
-    and `ts.ScriptSnapshot.fromString` (1).
-  - **Divergence — 2.** `skipLoadingLibFiles`' diagnostic count: tsgo reports 11
-    where TypeScript 5 reported 12.
-  - **Unclassified — 2.** A source file version reported as `undefined` rather
-    than `"0"`, and one empty resolution result.
+  `src` type-checks clean and the suite is green (see "Measured state"). What was
+  a list of 31 failures here is closed: `Program#getSourceFiles()` and
+  `getTypeChecker()` are routed, `findRenameLocations`/`getDefinitionAtPosition`
+  are retargeted onto the tsgo project's `rename`/`getDefinition`, and
+  `ProjectOptions#resolutionHost` is wired through `SourceFileCache` the way
+  ts-morph's is. `packages/bootstrap` has no
+  `ensure-no-project-compile-errors` task, so its type errors can only be
+  counted with `npx tsc --noEmit -p tsconfig.json`: **8**, all in the still-skipped
+  `custom type reference directive resolution` describe.
 - **Custom module resolution — restored, with a different shape.**
   `ProjectOptions#resolutionHost` and `ResolutionHosts.deno` are back, and the
   compiler asks the host before resolving anything itself. What changed:

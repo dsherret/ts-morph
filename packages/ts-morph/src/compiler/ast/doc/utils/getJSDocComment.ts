@@ -1,5 +1,9 @@
 import { SyntaxKind, ts } from "@ts-morph/common";
 import { Node } from "../../common";
+import { JSDocLink } from "../JSDocLink";
+import { JSDocLinkCode } from "../JSDocLinkCode";
+import { JSDocLinkPlain } from "../JSDocLinkPlain";
+import { JSDocText } from "../JSDocText";
 
 /**
  * The comment of a doc comment or one of its tags, as ts-morph reports it.
@@ -12,7 +16,7 @@ import { Node } from "../../common";
 export function getJSDocComment(
   node: { compilerNode: { comment?: string | ts.NodeArray<ts.JSDocComment> } },
   getNode: (compilerNode: ts.JSDocComment) => Node | undefined,
-): string | (Node | undefined)[] | undefined {
+): string | (JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain | undefined)[] | undefined {
   const comment = node.compilerNode.comment;
   if (comment == null)
     return undefined;
@@ -20,5 +24,5 @@ export function getJSDocComment(
     return comment;
   if (comment.every(part => part.kind === SyntaxKind.JSDocText))
     return comment.map(part => (part as ts.JSDocText).text).join("");
-  return comment.map(getNode);
+  return comment.map(getNode) as (JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain | undefined)[];
 }

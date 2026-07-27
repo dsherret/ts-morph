@@ -138,6 +138,22 @@ export class TypeChecker {
   }
 
   /**
+   * Gets the export symbol of a local symbol with a corresponding export symbol.
+   * Otherwise returns the passed in symbol.
+   *
+   * For example, at `export type T = number;`:
+   *     - `getSymbolAtLocation` at the location `T` will return the exported symbol for `T`.
+   *     - But the result of `getSymbolsInScope` will contain the *local* symbol for `T`, not the exported symbol.
+   *     - Calling `getExportSymbolOfSymbol` on that local symbol will return the exported symbol.
+   *
+   * The checker has no such method in tsgo, so this goes through the symbol; it is
+   * the same call {@link Symbol#getExportSymbol} makes.
+   */
+  getExportSymbolOfSymbol(symbol: Symbol): Symbol {
+    return this.#context.compilerFactory.getSymbol(symbol.compilerSymbol.getExportSymbol());
+  }
+
+  /**
    * Gets the symbols the binder placed in the node's own local scope, in declaration order.
    * @param node - Node to get the locals of.
    */
