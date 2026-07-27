@@ -1057,6 +1057,13 @@ Not yet resolved, listed so they are not mistaken for finished work:
   `StringLiteralLike`, `PropertyName`). The real fix is in the fork's generated
   AST — `NoSubstitutionTemplateLiteral` should embed `LiteralExpressionBase`
   like every other literal — after which the restatement can go.
+- **`JSDocSignature#getTypeNode()`** — declared `TypeNode | undefined`, where the
+  `typescript` package had `JSDocReturnTag | undefined`. The runtime value really
+  is a `JSDocReturnTag` (`parseJSDocSignature` in `internal/parser/jsdoc.go`
+  passes the return tag as the signature's type), so the declaration is wrong
+  rather than the value. Not restated, because overriding the member means
+  reshaping `JSDocSignature` around `FunctionLikeBase`, which declares
+  `type?: TypeNode`; the fix belongs in the fork's generated AST.
 - **`TupleTypeNode.elements`** — tsgo types it `NodeArray<TypeNode>`, where the
   `typescript` package had `NodeArray<TypeNode | NamedTupleMember>`. A named
   member (`[a: string]`) is one at runtime and is returned as one, so it is

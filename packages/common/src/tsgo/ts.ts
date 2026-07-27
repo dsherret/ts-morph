@@ -842,6 +842,7 @@ import type {
   ComputedPropertyName,
   DeclarationBase as TsgoDeclarationBase,
   Expression,
+  JSDocTagBase as TsgoJSDocTagBase,
   MemberExpressionBase,
   NamedTupleMember,
   NodeWithTypeArgumentsBase,
@@ -852,6 +853,7 @@ import type {
   TemplateExpression,
   TemplateLiteralLikeNodeBase as TsgoTemplateLiteralLikeNodeBase,
   TypeNodeBase as TsgoTypeNodeBase,
+  TypeParameterDeclaration,
 } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/ast.generated.js";
 import type { NodeArray as TsgoNodeArray } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/ast.js";
 
@@ -881,6 +883,17 @@ export interface FalseLiteral extends PrimaryExpressionBase {
 }
 
 export type BooleanLiteral = TrueLiteral | FalseLiteral;
+
+/**
+ * tsgo types a template tag's constraint as a plain `Node`, and as always
+ * present. It is a `JSDocTypeExpression` when there is one — verified at
+ * runtime — so the shape is restated rather than leaving every caller to cast.
+ */
+export interface JSDocTemplateTag extends TsgoJSDocTagBase {
+  readonly kind: SyntaxKindEnum.JSDocTemplateTag;
+  readonly constraint?: JSDocTypeExpression;
+  readonly typeParameters: TsgoNodeArray<TypeParameterDeclaration>;
+}
 
 /**
  * tsgo types a tuple's elements as plain type nodes. A named member

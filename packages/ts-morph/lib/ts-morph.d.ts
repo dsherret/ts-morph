@@ -4938,9 +4938,9 @@ declare const JSDocTemplateTagBase: Constructor<JSDocTypeParameteredTag> & typeo
 /** JS doc template tag node. */
 export declare class JSDocTemplateTag extends JSDocTemplateTagBase<ts.JSDocTemplateTag> {
   /** Gets the template tag's constraint if it exists or returns undefined. */
-  getConstraint(): Node<ts.Node> | undefined;
+  getConstraint(): JSDocTypeExpression | undefined;
   /** Gets the template tag's constraint if it exists or throws otherwise. */
-  getConstraintOrThrow(message?: string | (() => string)): Node<ts.Node>;
+  getConstraintOrThrow(message?: string | (() => string)): JSDocTypeExpression;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.JSDocTemplateTag>;
   /** @inheritdoc **/

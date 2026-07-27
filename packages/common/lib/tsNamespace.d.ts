@@ -362,7 +362,7 @@ export interface InstanceofExpression extends BinaryExpression {
 export interface SourceFileLike {
     readonly text: string;
 }
-import type { BigIntLiteral, ComputedPropertyName, DeclarationBase as TsgoDeclarationBase, Expression, MemberExpressionBase, NamedTupleMember, NodeWithTypeArgumentsBase, NumericLiteral, PrimaryExpressionBase, PrivateIdentifier, RegularExpressionLiteral, TemplateExpression, TemplateLiteralLikeNodeBase as TsgoTemplateLiteralLikeNodeBase, TypeNodeBase as TsgoTypeNodeBase } from "./tsgo/ast/ast.generated";
+import type { BigIntLiteral, ComputedPropertyName, DeclarationBase as TsgoDeclarationBase, Expression, MemberExpressionBase, NamedTupleMember, NodeWithTypeArgumentsBase, NumericLiteral, PrimaryExpressionBase, PrivateIdentifier, RegularExpressionLiteral, TemplateExpression, JSDocTagBase as TsgoJSDocTagBase, TemplateLiteralLikeNodeBase as TsgoTemplateLiteralLikeNodeBase, TypeNodeBase as TsgoTypeNodeBase, TypeParameterDeclaration } from "./tsgo/ast/ast.generated";
 import type { NodeArray as TsgoNodeArray } from "./tsgo/ast/ast";
 /** tsgo parses the keyword expressions as one `KeywordExpression` off `ExpressionBase`. */
 export interface ThisExpression extends PrimaryExpressionBase {
@@ -384,6 +384,16 @@ export interface FalseLiteral extends PrimaryExpressionBase {
     readonly kind: SyntaxKindEnum.FalseKeyword;
 }
 export type BooleanLiteral = TrueLiteral | FalseLiteral;
+/**
+ * tsgo types a template tag's constraint as a plain `Node`, and as always
+ * present. It is a `JSDocTypeExpression` when there is one — verified at
+ * runtime — so the shape is restated rather than leaving every caller to cast.
+ */
+export interface JSDocTemplateTag extends TsgoJSDocTagBase {
+    readonly kind: SyntaxKindEnum.JSDocTemplateTag;
+    readonly constraint?: JSDocTypeExpression;
+    readonly typeParameters: TsgoNodeArray<TypeParameterDeclaration>;
+}
 /**
  * tsgo types a tuple's elements as plain type nodes. A named member
  * (`[a: string]`) is one at runtime and is returned as one, but the declared
