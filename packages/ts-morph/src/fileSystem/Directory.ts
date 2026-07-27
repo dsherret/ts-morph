@@ -907,7 +907,9 @@ export class Directory {
       function getPathForFilePath(filePath: StandardizedFilePath) {
         if (FileUtils.getDirPath(filePath) === thisDirectory.getPath())
           return filePath;
-        return filePath.replace(/\/index?(\.d\.ts|\.ts|\.js)$/i, "") as StandardizedFilePath;
+        // `index?` — an optional `x` — was a typo, and made `/dir/inde.ts` resolve
+        // to `/dir`, a different module
+        return filePath.replace(/\/index(\.d\.ts|\.ts|\.js)$/i, "") as StandardizedFilePath;
       }
     }
   }

@@ -1706,6 +1706,37 @@ describe("Directory", () => {
       expect(writeLog.length).to.equal(2);
       expect(result.getSkippedFilePaths()).to.deep.equal([]);
     });
+
+    // this used `{ declaration: true }` and an unresolved base class, relying on the
+    // declaration-emit diagnostic to skip the file. tsgo emits a declaration for that
+    // file without complaint, so the skip is driven by `noEmitOnError` instead.
+    it("should emit with bom if specified", async () => {
+      // the compiler strips the byte order mark and reports it separately, so an
+      // emit that writes files itself has to put it back
+      const fileSystem = getFileSystemHostWithFiles([]);
+      const project = new Project({ compilerOptions: { outDir: "dist", emitBOM: true }, fileSystem });
+      const directory = project.createDirectory("dir");
+      directory.createSourceFile("file1.ts", "const t = '';");
+      await directory.emit();
+      expect(fileSystem.getWriteLog()[0].fileText).to.equal("﻿\"use strict\";\nconst t = '';\n");
+    });
+
+    it("should get a list of files it didn't emit", async () => {
+      const fileSystem = getFileSystemHostWithFiles([]);
+      const project = new Project({ compilerOptions: { declaration: true, noEmitOnError: true }, fileSystem });
+      const directory = project.createDirectory("dir");
+      const subDir = directory.createDirectory("sub");
+      subDir.createSourceFile("file1.ts", "export class Parent extends Child {}");
+      subDir.createSourceFile("file2.ts", "");
+      const result = await directory.emit();
+      expect(result.getSkippedFilePaths()).to.deep.equal(["/dir/sub/file1.ts"]);
+
+      const writeLog = fileSystem.getWriteLog();
+      expect(result.getOutputFilePaths()).to.deep.equal(writeLog.map(l => l.filePath));
+      expect(writeLog[0].filePath).to.equal("/dir/sub/file2.js");
+      expect(writeLog[1].filePath).to.equal("/dir/sub/file2.d.ts");
+      expect(writeLog.length).to.equal(2);
+    });
   });
 
   describe(nameof<Directory>("emitSync"), () => {
@@ -1754,6 +1785,23 @@ describe("Directory", () => {
       expect(writeLog[0].filePath).to.equal("/dir/sub2/file1.js");
       expect(writeLog.length).to.equal(1);
       expect(result.getSkippedFilePaths()).to.deep.equal([]);
+    });
+
+    it("should get a list of files it didn't emit", () => {
+      const fileSystem = getFileSystemHostWithFiles([]);
+      const project = new Project({ compilerOptions: { declaration: true, noEmitOnError: true }, fileSystem });
+      const directory = project.createDirectory("dir");
+      const subDir = directory.createDirectory("sub");
+      subDir.createSourceFile("file1.ts", "export class Parent extends Child {}");
+      subDir.createSourceFile("file2.ts", "");
+      const result = directory.emitSync();
+      expect(result.getSkippedFilePaths()).to.deep.equal(["/dir/sub/file1.ts"]);
+
+      const writeLog = fileSystem.getWriteLog();
+      expect(result.getOutputFilePaths()).to.deep.equal(writeLog.map(l => l.filePath));
+      expect(writeLog[0].filePath).to.equal("/dir/sub/file2.js");
+      expect(writeLog[1].filePath).to.equal("/dir/sub/file2.d.ts");
+      expect(writeLog.length).to.equal(2);
     });
   });
 
@@ -1811,24 +1859,24 @@ describe("Directory", () => {
       doSourceFileTest("/dir", "/dir2/to.D.TS", "../dir2/to");
     });
 
-    it("should use an explicit index when specifying the index file in a different directory", () => {
+    it("should use an implicit index when specifying the index file in a different directory", () => {
       doSourceFileTest("/dir", "/dir2/index.ts", "../dir2");
     });
 
-    it("should use an explicit index when specifying the index file in a parent directory", () => {
+    it("should use an implicit index when specifying the index file in a parent directory", () => {
       doSourceFileTest("/dir/parent", "/dir/index.ts", "../../dir");
     });
 
-    it("should use an explicit index when specifying the index file in a different directory that has different casing", () => {
+    it("should use an implicit index when specifying the index file in a different directory that has different casing", () => {
       doSourceFileTest("/dir", "/dir2/INDEX.ts", "../dir2");
     });
 
-    it("should use an explicit index when specifying the index file of a declaration file in a different directory", () => {
+    it("should use an implicit index when specifying the index file of a declaration file in a different directory", () => {
       doSourceFileTest("/dir", "/dir2/index.d.ts", "../dir2");
     });
 
     // the module resolution mode no longer changes the answer: TypeScript 7 removed
-    // both classic and node10, and the index is spelled out under every mode left.
+    // both classic and node10, and every mode left trims a trailing `/index`.
 
     it("should use an implicit index when specifying the index file in the same directory", () => {
       doSourceFileTest("/dir", "/dir/index.ts", "./index");

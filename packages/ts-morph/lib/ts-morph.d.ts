@@ -149,6 +149,15 @@ export interface ModuleResolutionRequest {
   moduleName: string;
   /** The file the specifier was written in. */
   containingFile: string;
+  /**
+   * How the containing file imports, when the compiler has an opinion.
+   *
+   * `ModuleKind.CommonJS` or `ModuleKind.ESNext`, so a host can resolve one
+   * specifier differently for an ESM and a CommonJS importer. This is per import
+   * rather than per file, which is finer than the `typescript` package's
+   * `resolveModuleNames` gave a host.
+   */
+  resolutionMode: ModuleKind | undefined;
 }
 
 /** Resolves module specifiers in place of the compiler. */
@@ -2409,6 +2418,30 @@ export declare class ArrayBindingPattern extends Node<ts.ArrayBindingPattern> {
 declare const BindingElementBase: Constructor<DotDotDotTokenableNode> & Constructor<InitializerExpressionableNode> & Constructor<BindingNamedNode> & typeof Node;
 
 export declare class BindingElement extends BindingElementBase<ts.BindingElement> {
+  #private;
+  /**
+   * Gets if this is an elision — the hole in `const [, a] = x`.
+   *
+   * The `typescript` package parsed a hole as an `OmittedExpression`; tsgo emits
+   * a zero-width binding element with no name, initializer or dot-dot-dot token,
+   * so `ArrayBindingPattern#getElements()` can return one of these and asking it
+   * for its name throws.
+   */
+  isElision(): boolean;
+  /**
+   * Gets the name node, throwing on an elision.
+   *
+   * The base implementation would fail with a `TypeError` instead. See
+   * {@link BindingElement#isElision}.
+   */
+  getNameNode(): BindingName;
+  /**
+   * Gets the name as a string, throwing on an elision.
+   *
+   * The base implementation would fail with a `TypeError` instead. See
+   * {@link BindingElement#isElision}.
+   */
+  getName(): string;
   /**
    * Gets binding element's property name node or throws if not found.
    *
@@ -7623,7 +7656,12 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
   isFromExternalLibrary(): boolean;
   /** Gets if the source file is a descendant of a node_modules directory. */
   isInNodeModules(): boolean;
-  /** Gets if this source file has been saved or if the latest changes have been saved. */
+  /**
+   * Gets if this source file has been saved or if the latest changes have been saved.
+   *
+   * An in-memory lib file always reports `false`: `save()` cannot write it, so
+   * its changes are never persisted anywhere.
+   */
   isSaved(): boolean;
   /** Gets the pre-emit diagnostics of the specified source file. */
   getPreEmitDiagnostics(): Diagnostic[];

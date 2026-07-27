@@ -5,7 +5,6 @@ import {
   FileUtils,
   getParseScriptTarget,
   LanguageVariant,
-  libFolderInMemoryPath,
   Memoize,
   ScriptKind,
   ScriptTarget,
@@ -664,6 +663,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
   /**
    * Gets if this source file has been saved or if the latest changes have been saved.
+   *
+   * An in-memory lib file always reports `false`: `save()` cannot write it, so
+   * its changes are never persisted anywhere.
    */
   isSaved() {
     return this.#isSaved && !this._isLibFileInMemory();
@@ -987,9 +989,16 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     return FileSystemRefreshResult.Updated;
   }
 
-  /** @internal */
+  /**
+   * Gets if this is one of the lib files the file system serves from memory.
+   *
+   * The file system is asked rather than the path being tested, so that a user
+   * file that merely sits in the lib folder — or every file, when the lib files
+   * are skipped or read from a real folder — is not mistaken for one.
+   * @internal
+   */
   _isLibFileInMemory() {
-    return this.compilerNode.fileName.startsWith(libFolderInMemoryPath);
+    return this._context.fileSystemWrapper.libFileExists(this.getFilePath());
   }
 
   /** @internal */

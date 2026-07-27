@@ -3,6 +3,8 @@ import {
   errors,
   getLibFiles,
   InMemoryFileSystemHost,
+  ModuleKind,
+  ModuleResolutionKind,
   nameof,
   ResolutionHosts,
   ScriptKind,
@@ -163,6 +165,29 @@ const test = new Test();`,
         // the language service resolved through the host too, or the rewritten
         // specifier would have been rejected here the way it is above
         expect(project.getPreEmitDiagnostics().map(d => d.getCode())).to.deep.equal([]);
+      });
+
+      it("should tell a host how the containing file imports", () => {
+        // the compiler may ask about the same specifier more than once, so this
+        // records the answer per specifier rather than a call log
+        const seen = new Map<string, ModuleKind | undefined>();
+        const project = new Project({
+          useInMemoryFileSystem: true,
+          compilerOptions: { moduleResolution: ModuleResolutionKind.NodeNext, module: ModuleKind.NodeNext },
+          resolutionHost: () => ({
+            resolveModuleName: ({ moduleName, resolutionMode }) => {
+              seen.set(moduleName, resolutionMode);
+              return undefined;
+            },
+          }),
+        });
+        project.createSourceFile("/dep.mts", "export const a = 1;");
+        project.createSourceFile("/dep2.cts", "export const b = 1;");
+        project.createSourceFile("/esm.mts", `import { a } from "./dep.mjs";`);
+        project.createSourceFile("/cjs.cts", `import { b } from "./dep2.cjs";`);
+        project.getPreEmitDiagnostics();
+        expect(seen.get("./dep.mjs")).to.equal(ModuleKind.ESNext);
+        expect(seen.get("./dep2.cjs")).to.equal(ModuleKind.CommonJS);
       });
 
       it("should let a host resolve a specifier outright", () => {
@@ -1029,6 +1054,33 @@ const test = new Test();`,
       expect(writeLog[1].filePath).to.equal("/dist/file2.d.ts");
       expect(writeLog[1].fileText).to.equal("declare const num2 = 2;\n");
       expect(writeLog.length).to.equal(2);
+    });
+
+    // tsgo's per-file emit is a forced one, so a targeted emit has to answer
+    // noEmit and noEmitOnError itself; these check it answers them the same way
+    // a whole-project emit does.
+    it("should not emit the specified source file when noEmit is on", async () => {
+      const { project, fileSystem } = emitSetup({ noLib: true, outDir: "dist", noEmit: true });
+      const result = await project.emit({ targetSourceFile: project.getSourceFile("file1.ts") });
+      expect(result.getEmitSkipped()).to.be.true;
+      expect(fileSystem.getWriteLog().length).to.equal(0);
+    });
+
+    it("should not emit the specified source file when noEmitOnError is on and it has an error", async () => {
+      // no noLib here: without the lib files every file has global-type errors
+      const { project, fileSystem } = emitSetup({ outDir: "dist", noEmitOnError: true });
+      project.createSourceFile("file3.ts", "const num3: number = '';");
+      const result = await project.emit({ targetSourceFile: project.getSourceFile("file3.ts") });
+      expect(result.getEmitSkipped()).to.be.true;
+      expect(result.getDiagnostics().map(d => d.getCode())).to.deep.equal([2322]);
+      expect(fileSystem.getWriteLog().length).to.equal(0);
+    });
+
+    it("should emit the specified source file when noEmitOnError is on and it has no error", async () => {
+      const { project, fileSystem } = emitSetup({ outDir: "dist", noEmitOnError: true });
+      const result = await project.emit({ targetSourceFile: project.getSourceFile("file1.ts") });
+      expect(result.getEmitSkipped()).to.be.false;
+      expect(fileSystem.getWriteLog().map(l => l.filePath)).to.deep.equal(["/dist/file1.js"]);
     });
 
     // custom transformers are gone: tsgo emits in Go, and a JavaScript transform

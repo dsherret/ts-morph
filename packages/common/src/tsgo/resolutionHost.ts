@@ -14,6 +14,7 @@
  */
 import type { CompilerOptions } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/compilerOptions.js";
 import type { ModuleNameResolver, ResolvedModuleName } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/options.js";
+import type { ModuleKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/moduleKind.enum.js";
 
 export type { ResolvedModuleName };
 
@@ -23,6 +24,15 @@ export interface ModuleResolutionRequest {
   moduleName: string;
   /** The file the specifier was written in. */
   containingFile: string;
+  /**
+   * How the containing file imports, when the compiler has an opinion.
+   *
+   * `ModuleKind.CommonJS` or `ModuleKind.ESNext`, so a host can resolve one
+   * specifier differently for an ESM and a CommonJS importer. This is per import
+   * rather than per file, which is finer than the `typescript` package's
+   * `resolveModuleNames` gave a host.
+   */
+  resolutionMode: ModuleKind | undefined;
 }
 
 /**
@@ -86,7 +96,12 @@ export function toModuleNameResolver(host: ResolutionHost | undefined): ModuleNa
     return undefined;
 
   return request => {
-    const answer = resolve.call(host, { moduleName: request.moduleName, containingFile: request.containingFile });
+    const answer = resolve.call(host, {
+      moduleName: request.moduleName,
+      containingFile: request.containingFile,
+      // zero is the compiler having no opinion, which is not a ModuleKind
+      resolutionMode: request.resolutionMode === 0 ? undefined : request.resolutionMode as ModuleKind,
+    });
     if (answer == null)
       return undefined;
     if ("moduleName" in answer)

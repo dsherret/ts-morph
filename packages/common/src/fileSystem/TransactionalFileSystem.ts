@@ -250,6 +250,17 @@ export class TransactionalFileSystem {
     }
   }
 
+  /**
+   * Gets if the path is one of the lib files this file system serves from memory.
+   *
+   * These have no backing file, so every write, move and delete onto one is
+   * rejected. There are none when the lib files are skipped or read from a real
+   * folder, so this is a lookup rather than a test of the path.
+   */
+  libFileExists(filePath: StandardizedFilePath) {
+    return this.#libFileMap != null && this.#libFileMap.has(filePath);
+  }
+
   queueFileDelete(filePath: StandardizedFilePath) {
     this.#throwIfLibFile(filePath);
     const parentDir = this.#getOrCreateParentDirectory(filePath);
@@ -598,7 +609,7 @@ export class TransactionalFileSystem {
   }
 
   fileExists(filePath: StandardizedFilePath) {
-    if (this.#libFileExists(filePath))
+    if (this.libFileExists(filePath))
       return true;
     if (this.#fileDeletedInMemory(filePath))
       return false;
@@ -606,7 +617,7 @@ export class TransactionalFileSystem {
   }
 
   fileExistsSync(filePath: StandardizedFilePath) {
-    if (this.#libFileExists(filePath))
+    if (this.libFileExists(filePath))
       return true;
     if (this.#fileDeletedInMemory(filePath))
       return false;
@@ -736,7 +747,7 @@ export class TransactionalFileSystem {
   }
 
   realpathSync(path: StandardizedFilePath) {
-    if (this.#libFileExists(path))
+    if (this.libFileExists(path))
       return path;
 
     // The TypeScript compiler does a try catch in ts.sys.realpathSync, so do that here too.
@@ -928,10 +939,6 @@ export class TransactionalFileSystem {
     }
   }
 
-  #libFileExists(filePath: StandardizedFilePath) {
-    return this.#libFileMap != null && this.#libFileMap.has(filePath);
-  }
-
   #readLibFile(filePath: StandardizedFilePath) {
     if (this.#libFileMap != null)
       return this.#libFileMap.get(filePath);
@@ -940,7 +947,7 @@ export class TransactionalFileSystem {
   }
 
   #throwIfLibFile(filePath: StandardizedFilePath) {
-    if (this.#libFileExists(filePath))
+    if (this.libFileExists(filePath))
       throw new errors.InvalidOperationError(`This operation is not permitted on an in memory lib folder file.`);
   }
 }

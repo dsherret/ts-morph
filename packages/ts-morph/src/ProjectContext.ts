@@ -150,13 +150,6 @@ export class ProjectContext {
   }
 
   /**
-   * Helper for getting the user preferences.
-   */
-  getUserPreferences() {
-    return this.manipulationSettings.getUserPreferences();
-  }
-
-  /**
    * Resets the program.
    */
   resetProgram() {

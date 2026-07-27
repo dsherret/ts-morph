@@ -1,6 +1,8 @@
 import { NewLineKind, ScriptKind, ScriptTarget, SyntaxKind, ts } from "@ts-morph/common";
 import { expect } from "chai";
-import { printNode } from "../../../utils";
+// imported the way a user would: the entry point once exported the type but not
+// the function, and importing through ../../../utils hid that
+import { printNode } from "../../../main";
 
 describe("printNode", () => {
   const nodeText = "class MyClass {\n    // comment\n    prop: string;\n}";

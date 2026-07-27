@@ -1,6 +1,6 @@
 import { CompilerOptions, errors, LanguageVariant, ModuleResolutionKind, nameof, NewLineKind, ScriptTarget, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
-import { EmitResult, FileSystemRefreshResult, FormatCodeSettings, SourceFile, TextChange, VariableDeclarationKind } from "../../../../compiler";
+import { EmitResult, FileSystemRefreshResult, FormatCodeSettings, QuoteKind, SourceFile, TextChange, VariableDeclarationKind } from "../../../../compiler";
 import { IndentationText, ManipulationSettings } from "../../../../options";
 import { Project } from "../../../../Project";
 import { SourceFileStructure, StructureKind } from "../../../../structures";
@@ -605,6 +605,52 @@ describe("SourceFile", () => {
     });
   });
 
+  // the lib files are served from memory by the file system, which has no backing
+  // file to write to, so every operation that would modify one is refused. they are
+  // reachable by navigating to a declaration, not from getSourceFiles().
+  describe("in memory lib files", () => {
+    const message = "This operation is not permitted on an in memory lib folder file.";
+
+    function getLibFile(project: Project) {
+      const sourceFile = project.createSourceFile("/file.ts", "const a: Date = null as any;");
+      return sourceFile.getVariableDeclarationOrThrow("a").getType().getSymbolOrThrow().getDeclarations()[0].getSourceFile();
+    }
+
+    it("should refuse to copy, move or delete one", () => {
+      const libFile = getLibFile(new Project({ useInMemoryFileSystem: true }));
+      expect(libFile.getFilePath()).to.equal("/node_modules/typescript/lib/lib.es5.d.ts");
+      expect(() => libFile.copy("/copy.d.ts")).to.throw(errors.InvalidOperationError, message);
+      expect(() => libFile.move("/moved.d.ts")).to.throw(errors.InvalidOperationError, message);
+      expect(() => libFile.delete()).to.throw(errors.InvalidOperationError, message);
+      expect(() => libFile.deleteImmediatelySync()).to.throw(errors.InvalidOperationError, message);
+    });
+
+    it("should do nothing when saving one", () => {
+      const project = new Project({ useInMemoryFileSystem: true });
+      const libFile = getLibFile(project);
+      libFile.saveSync();
+      expect(libFile.isSaved()).to.be.false;
+    });
+
+    it("should save a user file that merely sits in the lib folder", () => {
+      const project = new Project({ useInMemoryFileSystem: true });
+      const fileSystem = project.getFileSystem();
+      // neither of these is a lib file: one is a sibling of the folder, the other
+      // is inside it under a name no lib file has
+      for (const filePath of ["/node_modules/typescript/libfoo.ts", "/node_modules/typescript/lib/mine.ts"]) {
+        project.createSourceFile(filePath, "export const b = 1;").saveSync();
+        expect(fileSystem.fileExistsSync(filePath)).to.be.true;
+      }
+    });
+
+    it("should save a file in the lib folder when the lib files are skipped", () => {
+      const project = new Project({ useInMemoryFileSystem: true, skipLoadingLibFiles: true });
+      const filePath = "/node_modules/typescript/lib/lib.es5.d.ts";
+      project.createSourceFile(filePath, "declare const b: number;").saveSync();
+      expect(project.getFileSystem().fileExistsSync(filePath)).to.be.true;
+    });
+  });
+
   describe(nameof<SourceFile>("isDeclarationFile"), () => {
     it("should be a source file when the file name ends with .d.ts", () => {
       const project = new Project({ useInMemoryFileSystem: true });
@@ -784,6 +830,10 @@ describe("SourceFile", () => {
 
     it("should not add a newline when specifying not to ensure", () => {
       doTest("class MyClass{ }", "class MyClass { }", {}, { ensureNewLineAtEndOfFile: false });
+    });
+
+    it("should use the newline character from the format settings over the manipulation setting", () => {
+      doTest("class MyClass{\n}", "class MyClass {\r\n}\r\n", { newLineKind: NewLineKind.LineFeed }, { newLineCharacter: "\r\n" });
     });
 
     it("should by default add spaces immediately within named import braces", () => {
@@ -1129,24 +1179,24 @@ function myFunction(param: MyClass) {
       doSourceFileTest("/dir/from.ts", "/dir2/to.D.TS", "../dir2/to");
     });
 
-    it("should use an explicit index when specifying the index file in a different directory", () => {
+    it("should use an implicit index when specifying the index file in a different directory", () => {
       doSourceFileTest("/dir/file.ts", "/dir2/index.ts", "../dir2");
     });
 
-    it("should use an explicit index when specifying the index file in a parent directory", () => {
+    it("should use an implicit index when specifying the index file in a parent directory", () => {
       doSourceFileTest("/dir/parent/file.ts", "/dir/index.ts", "../../dir");
     });
 
-    it("should use an explicit index when specifying the index file in a different directory that has different casing", () => {
+    it("should use an implicit index when specifying the index file in a different directory that has different casing", () => {
       doSourceFileTest("/dir/file.ts", "/dir2/INDEX.ts", "../dir2");
     });
 
-    it("should use an explicit index when specifying the index file of a declaration file in a different directory", () => {
+    it("should use an implicit index when specifying the index file of a declaration file in a different directory", () => {
       doSourceFileTest("/dir/file.ts", "/dir2/index.d.ts", "../dir2");
     });
 
     // the module resolution mode no longer changes the answer: TypeScript 7 removed
-    // both classic and node10, and the index is spelled out under every mode left.
+    // both classic and node10, and every mode left trims a trailing `/index`.
 
     it("should use an implicit index when specifying the index file in the same directory", () => {
       doSourceFileTest("/dir/file.ts", "/dir/index.ts", "./index");
@@ -1421,6 +1471,14 @@ function myFunction(param: MyClass) {
           newLineCharacter: "\r\n",
         },
       );
+    });
+
+    it("should use the quote kind from the manipulation settings", () => {
+      const project = new Project({ useInMemoryFileSystem: true, manipulationSettings: { quoteKind: QuoteKind.Single } });
+      project.createSourceFile("/MyClass.ts", "export class MyClass {}");
+      const sourceFile = project.createSourceFile("/main.ts", "const t = new MyClass();");
+      sourceFile.fixMissingImports();
+      expect(sourceFile.getFullText()).to.equal("import { MyClass } from './MyClass';\n\nconst t = new MyClass();");
     });
 
     it("should add missing imports when some exist", () => {

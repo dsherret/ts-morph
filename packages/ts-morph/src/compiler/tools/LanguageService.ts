@@ -3,6 +3,7 @@ import { getTextFromTextChanges } from "../../manipulation";
 import { ProjectContext } from "../../ProjectContext";
 import { fillDefaultFormatCodeSettings } from "../../utils";
 import { Node } from "../ast/common";
+import { QuoteKind } from "../ast/literal";
 import { SourceFile } from "../ast/module";
 import { FormatCodeSettings, RenameOptions } from "./inputs";
 import { Program } from "./Program";
@@ -311,7 +312,7 @@ export class LanguageService {
    */
   getCombinedCodeFix(filePathOrSourceFile: string | SourceFile, fixId: string, formatSettings: FormatCodeSettings = {}): CombinedCodeActions {
     const fileName = this.#getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
-    const result = this.compilerObject.getCombinedCodeFix(fileName, fixId, this.#getFilledSettings(formatSettings));
+    const result = this.compilerObject.getCombinedCodeFix(fileName, fixId, this.#getFilledSettings(formatSettings), this.#getQuotePreference());
     return new CombinedCodeActions(this.#context, { changes: result.changes.map(toFileTextChanges) });
   }
 
@@ -332,7 +333,7 @@ export class LanguageService {
     errorCodes: ReadonlyArray<number>,
   ): CodeFixAction[] {
     const filePath = this.#getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
-    const fixes = this.compilerObject.getCodeFixes(filePath, start, end, errorCodes);
+    const fixes = this.compilerObject.getCodeFixes(filePath, start, end, errorCodes, this.#getQuotePreference());
     return fixes.map(fix =>
       new CodeFixAction(this.#context, {
         description: fix.description,
@@ -448,6 +449,17 @@ export class LanguageService {
     if (!this.#context.compilerFactory.containsSourceFileAtPath(filePath))
       throw new errors.FileNotFoundError(filePath);
     return filePath;
+  }
+
+  /**
+   * The quotes a code fix should write a new string literal with.
+   *
+   * This is the one user preference the compiler takes on a request. The rest of
+   * `ManipulationSettingsContainer#getUserPreferences()` has nowhere to go.
+   * @internal
+   */
+  #getQuotePreference(): ts.QuotePreference {
+    return this.#context.manipulationSettings.getQuoteKind() === QuoteKind.Single ? "single" : "double";
   }
 
   /** @internal */

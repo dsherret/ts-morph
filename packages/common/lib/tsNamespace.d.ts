@@ -340,7 +340,7 @@ export type { Project as LanguageService } from "./tsgo/api/sync/api";
  * `emitOnlyDtsFiles` boolean, which had no way to say "JS only".
  */
 export { EmitOnly } from "./tsgo/enums/emitOnly.enum";
-export type { DocumentIdentifier, FileSpan, FileTextEdits, FormattingOptions, OrganizeImportsMode, TextEdit, } from "./tsgo/api/proto";
+export type { DocumentIdentifier, FileSpan, FileTextEdits, FormattingOptions, OrganizeImportsMode, QuotePreference, TextEdit, } from "./tsgo/api/proto";
 export type { EmitResult, InterfaceType, InterfaceType as GenericType, IntersectionType, JSDocTagInfo, LiteralType, NumberLiteralType, ObjectType, StringLiteralType, TemplateLiteralType, TupleType, Type, TypeParameter, TypeReference, UnionOrIntersectionType, UnionType, } from "./tsgo/api/sync/types";
 export type { IterationStatementBase as IterationStatement, JSDocTypeBase as JSDocType, MemberExpressionBase as MemberExpression, MethodSignatureDeclaration as MethodSignature, NodeWithTypeArgumentsBase as NodeWithTypeArguments, PrimaryExpressionBase as PrimaryExpression, PropertySignatureDeclaration as PropertySignature, UnaryExpressionBase as UnaryExpression, UpdateExpressionBase as UpdateExpression, } from "./tsgo/ast/ast.generated";
 export type { CommentKind, CommentRange } from "./tsgo/ast/scanner";

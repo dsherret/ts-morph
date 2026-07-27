@@ -181,11 +181,15 @@ export class Program {
    */
   _getEmitOutputForFilePath(filePath: string, emitOnlyDtsFiles?: boolean): ts.EmitOutput {
     const program = this.compilerObject;
-    if (emitOnlyDtsFiles)
-      return withOrderedOutputFiles(program.getDeclarationEmit([filePath]));
-    const javaScript = program.getJavaScriptEmit([filePath]);
     const compilerOptions = program.getCompilerOptions();
-    if (!compilerOptions.declaration && !compilerOptions.composite)
+    const emitsDeclarations = !!(compilerOptions.declaration || compilerOptions.composite);
+    const notEmitted = this.#getNotEmittedOutput(filePath, compilerOptions);
+    if (notEmitted != null)
+      return notEmitted;
+    if (emitOnlyDtsFiles)
+      return emitsDeclarations ? withOrderedOutputFiles(program.getDeclarationEmit([filePath])) : emitSkipped();
+    const javaScript = program.getJavaScriptEmit([filePath]);
+    if (!emitsDeclarations)
       return withOrderedOutputFiles(javaScript);
 
     const declarations = program.getDeclarationEmit([filePath]);
@@ -194,6 +198,33 @@ export class Program {
       diagnostics: [...javaScript.diagnostics, ...declarations.diagnostics],
       outputFiles: new Map([...javaScript.outputFiles, ...declarations.outputFiles]),
     });
+  }
+
+  /**
+   * The result of a targeted emit the compiler options forbid, if they do.
+   *
+   * A per-file emit in tsgo is a forced one: it produces the output whatever the
+   * options say and reports nothing skipped. `noEmit` and `noEmitOnError` are
+   * therefore answered here, the way the compiler answers them for a
+   * whole-project emit.
+   * @internal
+   */
+  #getNotEmittedOutput(filePath: string, compilerOptions: ts.CompilerOptions): ts.EmitOutput | undefined {
+    if (compilerOptions.noEmit)
+      return emitSkipped();
+    if (!compilerOptions.noEmitOnError)
+      return undefined;
+
+    const program = this.compilerObject;
+    let diagnostics: readonly ts.Diagnostic[] = [
+      ...this.#configFileParsingDiagnostics,
+      ...program.getSyntacticDiagnostics(filePath),
+      ...program.getGlobalDiagnostics(),
+      ...program.getSemanticDiagnostics(filePath),
+    ];
+    if (diagnostics.length === 0 && (compilerOptions.declaration || compilerOptions.composite))
+      diagnostics = program.getDeclarationDiagnostics();
+    return diagnostics.length === 0 ? undefined : emitSkipped(diagnostics);
   }
 
   /**
@@ -276,6 +307,10 @@ export class Program {
     // Read more in sourceFile.isFromExternalLibrary()'s method body.
     return sourceFile.isFromExternalLibrary();
   }
+}
+
+function emitSkipped(diagnostics: readonly ts.Diagnostic[] = []): ts.EmitOutput {
+  return { emitSkipped: true, diagnostics, outputFiles: new Map() };
 }
 
 /** tsgo restricts an emit by output kind rather than by a boolean. */

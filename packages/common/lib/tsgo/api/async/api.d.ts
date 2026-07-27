@@ -15,7 +15,7 @@ import { TypeFlags } from "../../enums/typeFlags.enum";
 import { TypePredicateKind } from "../../enums/typePredicateKind.enum";
 import { type __String, type Expression, type Identifier, ModifierFlags, type Node, type Path, type SourceFile, type SyntaxKind, type TypeNode } from "../../ast/index";
 import type { APIOptions, LSPConnectionOptions } from "../options";
-import type { CompilerOptions, DocumentIdentifier, DocumentPosition, CodeFixAction, CombinedCodeActions, FileSpan, FileTextEdits, FormattingOptions, OrganizeImportsMode, LSPUpdateSnapshotParams, ParsedCommandLine, ProjectReference, ProjectResponse, SignatureResponse, SourceFileMetadata, SymbolResponse, TextEdit, TypeAcquisition, TypeResponse, UpdateSnapshotParams, UpdateSnapshotResponse } from "../proto";
+import type { CompilerOptions, DocumentIdentifier, DocumentPosition, CodeFixAction, CombinedCodeActions, FileSpan, FileTextEdits, FormattingOptions, OrganizeImportsMode, LSPUpdateSnapshotParams, ParsedCommandLine, ProjectReference, ProjectResponse, QuotePreference, SignatureResponse, SourceFileMetadata, SymbolResponse, TextEdit, TypeAcquisition, TypeResponse, UpdateSnapshotParams, UpdateSnapshotResponse } from "../proto";
 import { SourceFileCache } from "../sourceFileCache";
 import type { RequestTiming, TimingAccumulators, TimingInfo } from "../timing";
 import { Client, type ClientSocketOptions, type ClientSpawnOptions } from "./client";
@@ -168,13 +168,13 @@ export declare class Project {
      * Returns the quick fixes available for the `[pos, end)` span. When
      * `errorCodes` is given, only fixes addressing those diagnostics are returned.
      */
-    getCodeFixes(file: DocumentIdentifier, pos: number, end: number, errorCodes?: readonly number[]): Promise<readonly CodeFixAction[]>;
+    getCodeFixes(file: DocumentIdentifier, pos: number, end: number, errorCodes?: readonly number[], quotePreference?: QuotePreference): Promise<readonly CodeFixAction[]>;
     /**
      * Returns the edits that apply `fixId` everywhere it is needed in the file,
      * i.e. the "fix all" form of a quick fix. Throws when no provider owns the
      * fix id.
      */
-    getCombinedCodeFix(file: DocumentIdentifier, fixId: string, options?: FormattingOptions): Promise<CombinedCodeActions>;
+    getCombinedCodeFix(file: DocumentIdentifier, fixId: string, options?: FormattingOptions, quotePreference?: QuotePreference): Promise<CombinedCodeActions>;
     dispose(): void;
 }
 export declare class Program {

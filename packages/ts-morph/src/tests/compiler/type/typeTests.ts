@@ -1012,7 +1012,7 @@ let stringWithPromiseType: Promise<string>;
   });
 
   describe(nameof<Type>("getLiteralValue"), () => {
-    function runTest(text: string, expectedValue: number | string | boolean | undefined) {
+    function runTest(text: string, expectedValue: number | string | boolean | bigint | undefined) {
       const { firstType } = getTypeFromText(text);
       expect(firstType.getLiteralValue()).to.equal(expectedValue);
       if (expectedValue == null)
@@ -1023,6 +1023,21 @@ let stringWithPromiseType: Promise<string>;
 
     it("should get the literal value", () => {
       runTest("let myType: 6;", 6);
+    });
+
+    it("should get the literal value of a string", () => {
+      runTest("let myType: 'test';", "test");
+    });
+
+    // the `typescript` package gave a `ts.PseudoBigInt` here and `undefined` for a
+    // boolean literal; tsgo gives the JavaScript values
+    it("should get the literal value of a bigint", () => {
+      runTest("let myType: 5n;", 5n);
+    });
+
+    it("should get the literal value of a boolean", () => {
+      runTest("let myType: true;", true);
+      runTest("let myType: false;", false);
     });
 
     it("should return undefined when not a literal type", () => {

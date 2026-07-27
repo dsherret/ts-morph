@@ -604,6 +604,14 @@ export declare class TransactionalFileSystem {
      * @param fileSystem - File system host to commit the operations to.
      */
     constructor(options: TransactionalFileSystemOptions);
+    /**
+     * Gets if the path is one of the lib files this file system serves from memory.
+     *
+     * These have no backing file, so every write, move and delete onto one is
+     * rejected. There are none when the lib files are skipped or read from a real
+     * folder, so this is a lookup rather than a test of the path.
+     */
+    libFileExists(filePath: StandardizedFilePath): boolean;
     queueFileDelete(filePath: StandardizedFilePath): void;
     removeFileDelete(filePath: StandardizedFilePath): void;
     queueMkdir(dirPath: StandardizedFilePath): void;
@@ -947,6 +955,15 @@ export interface ModuleResolutionRequest {
     moduleName: string;
     /** The file the specifier was written in. */
     containingFile: string;
+    /**
+     * How the containing file imports, when the compiler has an opinion.
+     *
+     * `ModuleKind.CommonJS` or `ModuleKind.ESNext`, so a host can resolve one
+     * specifier differently for an ESM and a CommonJS importer. This is per import
+     * rather than per file, which is finer than the `typescript` package's
+     * `resolveModuleNames` gave a host.
+     */
+    resolutionMode: ModuleKind | undefined;
 }
 
 /**

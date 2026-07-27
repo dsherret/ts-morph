@@ -739,6 +739,7 @@ export type {
   FileTextEdits,
   FormattingOptions,
   OrganizeImportsMode,
+  QuotePreference,
   TextEdit,
 } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/proto.js";
 
