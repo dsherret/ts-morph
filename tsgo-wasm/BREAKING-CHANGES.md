@@ -702,24 +702,27 @@ response. It is a **function** where the `typescript` package had a `version`
 constant, because reaching it means having a session to ask, which is not
 something to do at module load.
 
-### In-memory lib files are read-only
+### In-memory lib files are read-only — unchanged, but the test was too broad
 
-They moved out of the compiler host's lookup map and into
-`TransactionalFileSystem`, which serves them from memory and so has no backing
-file to write to. It rejects every write, move and delete onto one, and
-`SourceFile` refuses the same operations one layer up: `#copy`, `#move`,
-`#delete`, `#deleteImmediately` and `#deleteImmediatelySync` throw an
+Not a breaking change: 28.0.0 already rejected every write, move and delete onto
+an in-memory lib file, at both layers. Recorded here only because the fix below
+changes which files count as one.
+
+Whether a file is an in-memory lib file is now decided by asking the file system,
+which holds the map, rather than by testing whether its path starts with the lib
+folder. 28.0.0 used the prefix, with no trailing separator and no awareness of
+the options, so a user's own file at `/node_modules/typescript/libfoo.ts` — or
+any file under that folder when `skipLoadingLibFiles` or a custom
+`libFolderPath` meant there were no in-memory lib files at all — was mistaken for
+one and silently failed to save.
+
+What the prohibition covers, unchanged: `SourceFile#copy`, `#move`, `#delete`,
+`#deleteImmediately` and `#deleteImmediatelySync` throw an
 `InvalidOperationError`, `#save`/`#saveSync` do nothing, and `#isSaved()` is
-therefore always `false`. Previously the operations ran, and `Project#save` would
-write `lib.es5.d.ts` out to disk.
-
-These files are reachable by navigating to a declaration inside one
+therefore always `false`. These files are reachable by navigating to a
+declaration inside one
 (`type.getSymbol().getDeclarations()[0].getSourceFile()`), not from
-`Project#getSourceFiles()`. Whether a file is one of them is decided by asking
-the file system, not by testing the path, so a user's own file that happens to
-live under `/node_modules/typescript/lib` — or every file, when
-`skipLoadingLibFiles` or a custom `libFolderPath` means there are no in-memory
-lib files at all — is unaffected.
+`Project#getSourceFiles()`.
 
 ### `Type#getConstraint()` and `Type#getDefault()` are narrower
 

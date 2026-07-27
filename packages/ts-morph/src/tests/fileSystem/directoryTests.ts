@@ -1707,9 +1707,6 @@ describe("Directory", () => {
       expect(result.getSkippedFilePaths()).to.deep.equal([]);
     });
 
-    // this used `{ declaration: true }` and an unresolved base class, relying on the
-    // declaration-emit diagnostic to skip the file. tsgo emits a declaration for that
-    // file without complaint, so the skip is driven by `noEmitOnError` instead.
     it("should emit with bom if specified", async () => {
       // the compiler strips the byte order mark and reports it separately, so an
       // emit that writes files itself has to put it back
@@ -1721,6 +1718,10 @@ describe("Directory", () => {
       expect(fileSystem.getWriteLog()[0].fileText).to.equal("﻿\"use strict\";\nconst t = '';\n");
     });
 
+    // 28.0.0 had no coverage of a skipped file. tsgo's per-file emit is a forced
+    // one, so `noEmitOnError` is the only thing that produces a skip: it does not
+    // report the declaration-emit diagnostic TypeScript did for an exported class
+    // extending a private name, on this path or the whole-project one.
     it("should get a list of files it didn't emit", async () => {
       const fileSystem = getFileSystemHostWithFiles([]);
       const project = new Project({ compilerOptions: { declaration: true, noEmitOnError: true }, fileSystem });
@@ -1859,24 +1860,24 @@ describe("Directory", () => {
       doSourceFileTest("/dir", "/dir2/to.D.TS", "../dir2/to");
     });
 
-    it("should use an implicit index when specifying the index file in a different directory", () => {
-      doSourceFileTest("/dir", "/dir2/index.ts", "../dir2");
+    it("should use an explicit index when specifying the index file in a different directory", () => {
+      doSourceFileTest("/dir", "/dir2/index.ts", "../dir2/index");
     });
 
-    it("should use an implicit index when specifying the index file in a parent directory", () => {
-      doSourceFileTest("/dir/parent", "/dir/index.ts", "../../dir");
+    it("should use an explicit index when specifying the index file in a parent directory", () => {
+      doSourceFileTest("/dir/parent", "/dir/index.ts", "../index");
     });
 
-    it("should use an implicit index when specifying the index file in a different directory that has different casing", () => {
-      doSourceFileTest("/dir", "/dir2/INDEX.ts", "../dir2");
+    it("should use an explicit index when specifying the index file in a different directory that has different casing", () => {
+      doSourceFileTest("/dir", "/dir2/INDEX.ts", "../dir2/INDEX");
     });
 
-    it("should use an implicit index when specifying the index file of a declaration file in a different directory", () => {
-      doSourceFileTest("/dir", "/dir2/index.d.ts", "../dir2");
+    it("should use an explicit index when specifying the index file of a declaration file in a different directory", () => {
+      doSourceFileTest("/dir", "/dir2/index.d.ts", "../dir2/index");
     });
 
-    // the module resolution mode no longer changes the answer: TypeScript 7 removed
-    // both classic and node10, and every mode left trims a trailing `/index`.
+    // the module resolution mode no longer changes the answer: node10 was the only
+    // mode that left the index implicit, and TypeScript 7 removed it along with classic.
 
     it("should use an implicit index when specifying the index file in the same directory", () => {
       doSourceFileTest("/dir", "/dir/index.ts", "./index");
@@ -1894,7 +1895,7 @@ describe("Directory", () => {
     }
 
     it("should get the path to a directory as a module specifier", () => {
-      doDirectoryTest("/dir", "/dir/dir2", "./dir2");
+      doDirectoryTest("/dir", "/dir/dir2", "./dir2/index");
     });
 
     it("should get the module specifier to the same directory", () => {

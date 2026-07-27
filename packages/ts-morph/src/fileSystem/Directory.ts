@@ -877,40 +877,21 @@ export class Directory {
   /** @internal */
   getRelativePathAsModuleSpecifierTo(sourceFileOrDir: SourceFile | Directory | string): string;
   getRelativePathAsModuleSpecifierTo(sourceFileDirOrFilePath: SourceFile | Directory | string) {
-    // The index is left implicit, which is what the compiler itself writes. It no
-    // longer depends on the module resolution mode: `node10` was the one mode that
-    // wanted `../dir` where the others spelled out `../dir/index`, and TypeScript 7
-    // removed both `node10` and `classic` (the "Removed in TS7" block in
-    // internal/compiler/program.go). What is left all prefers the implicit form —
-    // getModuleSpecifierEndingPreference defaults to Minimal and processEnding
-    // trims a trailing `/index` (internal/modulespecifiers), and tsgo's own import
-    // fixer emits `../dir2` under every mode.
+    // The index is spelled out, and no longer depends on the module resolution
+    // mode. `node10` was the one mode that wanted `../dir` where every other mode
+    // wrote `../dir/index`, and TypeScript 7 removed both `node10` and `classic`
+    // (the "Removed in TS7" block in internal/compiler/program.go). Bundler,
+    // node16 and nodenext are what is left, and all three took this branch.
     const thisDirectory = this;
     const moduleSpecifier = FileUtils.getRelativePathTo(this.getPath(), getPath()).replace(/((\.d\.ts$)|(\.[^/.]+$))/i, "");
     return moduleSpecifier.startsWith("../") ? moduleSpecifier : "./" + moduleSpecifier;
 
     function getPath() {
       return sourceFileDirOrFilePath instanceof SourceFile
-        ? getPathForFilePath(sourceFileDirOrFilePath.getFilePath())
+        ? sourceFileDirOrFilePath.getFilePath()
         : sourceFileDirOrFilePath instanceof Directory
-        ? getPathForDirectory(sourceFileDirOrFilePath)
-        : getPathForFilePath(thisDirectory._context.fileSystemWrapper.getStandardizedAbsolutePath(sourceFileDirOrFilePath, thisDirectory.getPath()));
-
-      function getPathForDirectory(dir: Directory) {
-        // a directory names itself, except from inside itself, where the bare
-        // relative path would be empty
-        if (dir === thisDirectory)
-          return FileUtils.pathJoin(dir.getPath(), "index.ts");
-        return dir.getPath();
-      }
-
-      function getPathForFilePath(filePath: StandardizedFilePath) {
-        if (FileUtils.getDirPath(filePath) === thisDirectory.getPath())
-          return filePath;
-        // `index?` — an optional `x` — was a typo, and made `/dir/inde.ts` resolve
-        // to `/dir`, a different module
-        return filePath.replace(/\/index(\.d\.ts|\.ts|\.js)$/i, "") as StandardizedFilePath;
-      }
+        ? FileUtils.pathJoin(sourceFileDirOrFilePath.getPath(), "index.ts")
+        : thisDirectory._context.fileSystemWrapper.getStandardizedAbsolutePath(sourceFileDirOrFilePath, thisDirectory.getPath());
     }
   }
 
