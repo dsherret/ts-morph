@@ -7,8 +7,14 @@
 // class, the host must have been asked.
 //   node --experimental-strip-types --no-warnings --conditions @typescript/source tsgo-wasm/custom-resolution.mts
 import assert from "node:assert";
+import { readFileSync } from "node:fs";
 import { createVirtualFileSystem } from "../submodules/typescript-go/_packages/native-preview/dist/api/fs.js";
-import { createWasmAPI } from "../submodules/typescript-go/_packages/native-preview/dist/api/wasm/node.js";
+import { createWasmAPI } from "../submodules/typescript-go/_packages/native-preview/dist/api/wasm/api.js";
+
+// The loader no longer reads the module: where it comes from is the host's
+// decision, which is what lets the same loader run in a browser. Compile once
+// and instantiate it per API, the way `@ts-morph/common` does.
+const wasm = new WebAssembly.Module(readFileSync(new URL("../submodules/typescript-go/_packages/native-preview/dist/typescript.wasm", import.meta.url)));
 
 const files = {
   "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true, noLib: true } }),
@@ -18,7 +24,7 @@ const files = {
 
 // 1. Without the callback the specifier does not resolve, so the import is an error.
 {
-  const api = createWasmAPI({ cwd: "/", fs: createVirtualFileSystem(files) });
+  const api = createWasmAPI({ wasm, cwd: "/", fs: createVirtualFileSystem(files) });
   const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
   const project = snapshot.getProject("/tsconfig.json")!;
   const diagnostics = project.program.getSemanticDiagnostics("/main.ts");
@@ -34,6 +40,7 @@ const files = {
 {
   const asked: string[] = [];
   const api = createWasmAPI({
+    wasm,
     cwd: "/",
     fs: createVirtualFileSystem(files),
     resolveModuleName: ({ moduleName, containingFile }) => {
@@ -65,6 +72,7 @@ const files = {
 //    second-guess it — `./Test` would resolve on its own, and does not here.
 {
   const api = createWasmAPI({
+    wasm,
     cwd: "/",
     fs: createVirtualFileSystem({
       ...files,
@@ -85,6 +93,7 @@ const files = {
 //    write `./Test`, and stripping the extension is the whole of the host's job.
 {
   const api = createWasmAPI({
+    wasm,
     cwd: "/",
     fs: createVirtualFileSystem({
       ...files,

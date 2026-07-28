@@ -46,6 +46,9 @@ jobs:
       - name: Code Verification
         run: |
           deno task -r code-verification
+      - name: Browser
+        run: |
+          node tsgo-wasm/browser/run.mjs
 
   jsr:
     runs-on: ubuntu-latest

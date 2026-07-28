@@ -7,6 +7,8 @@ export {
   EmitHint,
   type FileSystemHost,
   type ImportPhaseModifierSyntaxKind,
+  initializeWasm,
+  type InitializeWasmOptions,
   InMemoryFileSystemHost,
   LanguageVariant,
   ModuleKind,

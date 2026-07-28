@@ -459,7 +459,7 @@ function getPostfixTokenOfKind(node: Node, kind: SyntaxKindValue) {
 
 import { createVirtualFileSystem } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/fs.js";
 import type { API, PrintNodeOptions, Project } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/sync/api.js";
-import { createWasmAPI } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/wasm/node.js";
+import { createWasmAPI } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/wasm/api.js";
 import type { SourceFile as TsgoSourceFile } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/index.js";
 import { ScriptKind as ScriptKindValue } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/scriptKind.enum.js";
 

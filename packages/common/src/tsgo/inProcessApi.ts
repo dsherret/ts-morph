@@ -8,7 +8,7 @@
  */
 import { createVirtualFileSystem, type FileSystem } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/fs.js";
 import type { API } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/sync/api.js";
-import { createWasmAPI } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/wasm/node.js";
+import { createWasmAPI } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/wasm/api.js";
 
 export type { API, FileSystem };
 
@@ -27,10 +27,10 @@ export interface InProcessApiOptions {
   /** Whether the file system distinguishes case. Defaults to true. */
   useCaseSensitiveFileNames?: boolean;
   /**
-   * The reactor module: a path to the `.wasm` file, or its bytes. Defaults to
-   * the module shipped with the tsgo client.
+   * The reactor module's bytes. Defaults to the module shipped beside this
+   * bundle, or to whatever `initializeWasm` compiled.
    */
-  wasm?: string | Uint8Array | ArrayBuffer;
+  wasm?: Uint8Array | ArrayBuffer;
 }
 
 /** Creates a fully synchronous {@link API} backed by the in-process tsgo build. */

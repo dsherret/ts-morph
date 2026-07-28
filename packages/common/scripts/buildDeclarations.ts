@@ -83,7 +83,7 @@ for (const tsName of tsNames) {
 
 writer.writeLine(`export { ts };`);
 
-const body = rewriteInlineImports(writer.toString());
+const body = rewriteTsNamespaceImports(rewriteInlineImports(writer.toString()));
 declarationFile.replaceWithText(header(body) + body);
 makeConstructorsPrivate(declarationFile);
 declarationFile.saveSync();
@@ -142,6 +142,19 @@ function header(body: string) {
     lines.push(`import type { ${names.sort().join(", ")} } from "${specifier}";`);
 
   return lines.join("\n") + "\n\n";
+}
+
+/**
+ * Rewrites an inline `import("./ts")` to the `ts` namespace.
+ *
+ * `src/tsgo/ts.ts` is what `lib/typescript.d.ts` presents as `ts`, and the
+ * emitter names a type through it whenever that is the shortest way to reach the
+ * declaration. Flattening moves the reference away from the file that specifier
+ * was relative to, and nothing named `ts` sits beside the flattened
+ * declarations — but `ts` itself is always in scope, so say it that way.
+ */
+function rewriteTsNamespaceImports(text: string) {
+  return text.replace(/import\(["']\.\/ts(?:\.js)?["']\)\./g, "ts.");
 }
 
 /**

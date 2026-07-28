@@ -2,6 +2,12 @@
   "extends": "../../tsconfig.common.json",
   "compilerOptions": {
     "lib": ["es2022", "esnext.disposable"],
+    // @ts-morph/common is type-checked from source here (see `paths` below), and
+    // it locates `typescript.wasm` with `import.meta.url`, which the CommonJS
+    // module target this used to inherit rejects outright. Matching what that
+    // package sets is also what its own bundle is built with.
+    "module": "esnext",
+    "moduleResolution": "bundler",
     // resolve the sibling package from source: its published declarations are a
     // pre-built bundle, so type checking against them would test a stale build
     "paths": {

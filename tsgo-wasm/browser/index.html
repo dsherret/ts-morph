@@ -1,0 +1,21 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>ts-morph in a browser worker</title>
+<h1>ts-morph in a browser worker</h1>
+<p>No cross-origin isolation headers are served: nothing here needs SharedArrayBuffer.</p>
+<pre id="out">starting the worker…</pre>
+<script type="module">
+  const out = document.getElementById("out");
+  const lines = [];
+  const worker = new Worker("./worker.js", { type: "module" });
+  worker.onmessage = event => {
+    lines.push(event.data);
+    out.textContent = lines.join("\n");
+  };
+  worker.onerror = event => {
+    out.textContent += `\nworker error: ${event.message}`;
+    // The worker reports its own result; this is the case where it never got
+    // far enough to have one.
+    void fetch("/result", { method: "POST", body: JSON.stringify({ result: "FAILED", lines: [String(event.message)] }) });
+  };
+</script>

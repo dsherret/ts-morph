@@ -17,3 +17,4 @@ export { createModuleResolutionHost, type CreateModuleResolutionHostOptions, typ
 export { setSourceFileProperty } from "./mutableSourceFile";
 export { getStoredNode, isReconstructedNode } from "./reconstructedNodes";
 export * from "./resolutionHost";
+export { initializeWasm, type InitializeWasmOptions } from "./wasmModule";

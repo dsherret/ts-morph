@@ -2,12 +2,17 @@
   "extends": "../../tsconfig.common.json",
   "compilerOptions": {
     "lib": ["es2022", "esnext.disposable"],
+    // The sources locate `typescript.wasm` with `import.meta.url`, which the
+    // CommonJS module target this used to inherit rejects outright. This is the
+    // same pair `tsconfig.rollup.json` sets, so what the type check sees is now
+    // what the bundle is actually built with.
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "declaration": false,
     // The tsgo client's own declarations import its enums through the package's
-    // `imports` map, which only a resolver that reads `imports` can follow. This
-    // config's `module` is CommonJS, so the resolution mode is `node10`, which
-    // does not — and the build scripts run under a TypeScript old enough to still
-    // have `node10`. Map the specifiers the way that `imports` map does; the
+    // `imports` map, which only a resolver that reads `imports` can follow. Map
+    // the specifiers the way that `imports` map does, for the sake of the build
+    // scripts, which read this config through a TypeScript of their own; the
     // rollup config does the same for the JS side.
     "paths": {
       "#enums/*": ["../../submodules/typescript-go/_packages/native-preview/dist/enums/*.enum.d.ts"]
