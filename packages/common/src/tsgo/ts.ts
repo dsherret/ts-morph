@@ -694,17 +694,91 @@ import type { Program as TsgoProgram } from "../../../../submodules/typescript-g
  *
  * tsgo has no `getPreEmitDiagnostics`: the program reports each category
  * separately, so this concatenates them in the order the `typescript` package
- * used to.
+ * asked for them and deduplicates the result, which that package also did
+ * because the categories overlap — see {@link getCheckerGlobalDiagnostics} for
+ * how.
+ *
+ * Breaking change: the result is in category order rather than sorted by file
+ * and position. The `typescript` package sorted as part of deduplicating; there
+ * is nothing to gain by reproducing that here, and a caller reading a diagnostic
+ * out by index would see it move.
  */
 export function getPreEmitDiagnostics(program: TsgoProgram, sourceFile?: { readonly fileName: string }): TsgoDiagnostic[] {
   const fileName = sourceFile?.fileName;
-  return [
-    ...program.getConfigFileParsingDiagnostics(),
+  return dedupeDiagnostics([
+    // This category is about the config the document registry writes, never one
+    // the caller wrote — the compiler is only ever opened on that one, and a
+    // config the caller wrote is parsed separately (see
+    // `Program#getConfigFileParsingDiagnostics`). So its complaint that the
+    // `files` list is empty is about ts-morph's own bookkeeping: it says the
+    // project holds no source files, which the caller knows and which is not an
+    // error. What it otherwise reports is the compiler's verdict on the options
+    // the caller set, and stays.
+    ...program.getConfigFileParsingDiagnostics().filter(d => d.code !== emptyFilesListDiagnosticCode),
     ...program.getProgramDiagnostics(),
     ...program.getSyntacticDiagnostics(fileName),
+    // the raw category, options diagnostics and all: the deduplication above is
+    // what drops the ones the program category already reported, and keeping the
+    // program category's copy is what preserves the order the two arrived in
     ...program.getGlobalDiagnostics(),
     ...program.getSemanticDiagnostics(fileName),
-  ];
+  ]);
+}
+
+/**
+ * The diagnostics that belong to the program rather than to any of its files.
+ *
+ * tsgo's global category is every project diagnostic without a file, which
+ * sweeps in the options diagnostics `getProgramDiagnostics` already reports. The
+ * `typescript` package's global diagnostics were the checker's alone — "cannot
+ * find global type 'Array'" and the like — so the options ones are taken back
+ * out.
+ */
+export function getCheckerGlobalDiagnostics(program: TsgoProgram): TsgoDiagnostic[] {
+  const optionsDiagnostics = new Set(program.getProgramDiagnostics().map(diagnosticIdentity));
+  return program.getGlobalDiagnostics().filter(d => !optionsDiagnostics.has(diagnosticIdentity(d)));
+}
+
+/** "The 'files' list in config file '{0}' is empty." */
+const emptyFilesListDiagnosticCode = 18002;
+
+/**
+ * Drops the diagnostics that repeat one an earlier category already reported.
+ *
+ * The categories overlap — see {@link getCheckerGlobalDiagnostics} — and two
+ * diagnostics alike in file, span, code, category and message are the same
+ * report twice over, indistinguishable to whoever reads them.
+ *
+ * Identity stops at the message, so copies that differ only in what elaborates
+ * it still collapse. Which one survives is therefore decided rather than left to
+ * arrival order: the first is kept unless a later one carries more elaboration,
+ * so the fuller message is the one that comes out.
+ */
+function dedupeDiagnostics(diagnostics: readonly TsgoDiagnostic[]): TsgoDiagnostic[] {
+  const byIdentity = new Map<string, TsgoDiagnostic>();
+  for (const diagnostic of diagnostics) {
+    const identity = diagnosticIdentity(diagnostic);
+    const kept = byIdentity.get(identity);
+    // re-setting an existing key keeps its place, so this stays in first-seen order
+    if (kept == null || detailCount(kept) < detailCount(diagnostic))
+      byIdentity.set(identity, diagnostic);
+  }
+  return [...byIdentity.values()];
+}
+
+/**
+ * What makes two diagnostics the same report, as far as a reader can tell.
+ *
+ * The parts are joined on a character neither a file name nor a message can
+ * contain, so no two unlike diagnostics can spell the same identity between them.
+ */
+function diagnosticIdentity(diagnostic: TsgoDiagnostic): string {
+  return [diagnostic.fileName ?? "", diagnostic.pos, diagnostic.end, diagnostic.code, diagnostic.category, diagnostic.text].join("\u0000");
+}
+
+/** How much a diagnostic says beyond its own message. */
+function detailCount(diagnostic: TsgoDiagnostic): number {
+  return (diagnostic.messageChain?.length ?? 0) + (diagnostic.relatedInformation?.length ?? 0);
 }
 
 /*

@@ -16,6 +16,16 @@ describe("Program", () => {
       const { project } = getInfoFromText("const t: string;", { includeLibDts: true });
       expect(project.getProgram().getGlobalDiagnostics().length).to.equal(0);
     });
+
+    // tsgo's own global category is every project diagnostic without a file,
+    // which is what an options diagnostic is; these are the checker's alone
+    it("should not report the options diagnostics the program reports", () => {
+      const project = new Project({ useInMemoryFileSystem: true, compilerOptions: { allowJs: true } });
+      project.createSourceFile("/a.js", "var x = 1;");
+      // 5055, from the program category
+      expect(project.getProgram().getGlobalDiagnostics().map(d => d.getCode())).to.deep.equal([]);
+      expect(project.getPreEmitDiagnostics().map(d => d.getCode())).to.deep.equal([5055]);
+    });
   });
 
   describe(nameof<Program>("emit"), () => {

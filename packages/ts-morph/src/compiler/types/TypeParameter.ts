@@ -1,4 +1,5 @@
 import { errors, ts } from "@ts-morph/common";
+import { wrapStaleHandleErrors } from "../../utils/compiler/wrapStaleHandleErrors";
 import { Node } from "../ast";
 import { Type } from "./Type";
 
@@ -58,3 +59,6 @@ export class TypeParameter extends Type<ts.TypeParameter> {
     return declaration;
   }
 }
+
+// the overrides here are handles into their program too, the same as the ones on Type
+wrapStaleHandleErrors(TypeParameter.prototype);

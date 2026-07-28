@@ -1,4 +1,4 @@
-import { nameof, SymbolFlags } from "@ts-morph/common";
+import { errors, nameof, SymbolFlags } from "@ts-morph/common";
 import { expect } from "chai";
 import { Symbol, TypeAliasDeclaration } from "../../../compiler";
 import { getInfoFromText } from "../testHelpers";
@@ -230,6 +230,19 @@ describe("Symbol", () => {
 
       const exportSymbol = typeAliasSymbol.getExportSymbol();
       expect(exportSymbol).to.equal(typeAliasSymbol);
+    });
+  });
+
+  describe("using a symbol after a manipulation", () => {
+    // a symbol is a handle into the snapshot it was taken from, so it goes stale
+    // for the same reason a type does and has to say so the same way
+    it("should throw an error that says the program has been replaced", () => {
+      const { firstChild, sourceFile } = getInfoFromText<TypeAliasDeclaration>("type T = number;");
+      const symbol = firstChild.getNameNode().getSymbolOrThrow();
+      sourceFile.addStatements("let other: number;");
+
+      expect(() => symbol.getFullyQualifiedName())
+        .to.throw(errors.InvalidOperationError, "This symbol came from a program that a manipulation has since replaced.");
     });
   });
 });

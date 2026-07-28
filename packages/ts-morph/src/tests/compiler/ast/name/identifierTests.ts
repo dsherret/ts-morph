@@ -1,6 +1,14 @@
 import { nameof, SyntaxKind, ts } from "@ts-morph/common";
 import { expect } from "chai";
-import { CallExpression, FunctionDeclaration, Identifier, InterfaceDeclaration, ModuleDeclaration, PropertyAccessExpression } from "../../../../compiler";
+import {
+  CallExpression,
+  FunctionDeclaration,
+  Identifier,
+  InterfaceDeclaration,
+  ModuleDeclaration,
+  PropertyAccessExpression,
+  SourceFile,
+} from "../../../../compiler";
 import { Project } from "../../../../Project";
 import { getInfoFromText } from "../../testHelpers";
 
@@ -57,6 +65,52 @@ describe("Identifier", () => {
 
       expect(definitions.length).to.equal(1);
       expect(definitions[0].getDeclarationNode()).to.equal(sourceFile.getVariableDeclarationOrThrow("myFunction"));
+    });
+
+    // tsgo answers a position with every declaration the symbol there has, in
+    // source order, which puts an overload signature ahead of the implementation
+    function getDefinitionTextsOf(sourceFile: SourceFile, name: string) {
+      return sourceFile.getDescendantsOfKind(SyntaxKind.Identifier)
+        .filter(identifier => identifier.getText() === name)
+        .map(identifier => identifier.getDefinitions().map(d => d.getDeclarationNode()!.getText()));
+    }
+
+    it("should get only the implementation from the name of an overloaded declaration", () => {
+      const { sourceFile } = getInfoFromText(
+        "function f(a: number): void;\nfunction f(a: string): void;\nfunction f(a: any) {}\n"
+          + "class C {\n  m(a: number): void;\n  m(a: string): void;\n  m(a: any) {}\n}\n",
+      );
+
+      expect(getDefinitionTextsOf(sourceFile, "f")).to.deep.equal([
+        ["function f(a: any) {}"],
+        ["function f(a: any) {}"],
+        ["function f(a: any) {}"],
+      ]);
+      expect(getDefinitionTextsOf(sourceFile, "m")).to.deep.equal([["m(a: any) {}"], ["m(a: any) {}"], ["m(a: any) {}"]]);
+    });
+
+    it("should get the last signature from the name of an overloaded declaration with no implementation", () => {
+      const { sourceFile } = getInfoFromText(
+        "declare function amb(a: number): void;\ndeclare function amb(a: string): void;\n"
+          + "interface I {\n  n(a: number): void;\n  n(a: string): void;\n}\n",
+      );
+
+      expect(getDefinitionTextsOf(sourceFile, "amb")).to.deep.equal([
+        ["declare function amb(a: string): void;"],
+        ["declare function amb(a: string): void;"],
+      ]);
+      expect(getDefinitionTextsOf(sourceFile, "n")).to.deep.equal([["n(a: string): void;"], ["n(a: string): void;"]]);
+    });
+
+    it("should get every declaration when the position is not the name of a function-like declaration", () => {
+      const { sourceFile } = getInfoFromText(
+        "function f(a: number): void;\nfunction f(a: string): void;\nfunction f(a: any) {}\nf(1);\nconst g = f;\n",
+      );
+      const [call, reference] = getDefinitionTextsOf(sourceFile, "f").slice(3);
+
+      // a call site is answered by the overload it resolves to
+      expect(call).to.deep.equal(["function f(a: number): void;"]);
+      expect(reference).to.deep.equal(["function f(a: number): void;", "function f(a: string): void;", "function f(a: any) {}"]);
     });
 
     it("should get the container name of what declares the definition", () => {
@@ -135,6 +189,31 @@ describe("Identifier", () => {
       expect(containerNameOf("gm")).to.deep.equal(["GI"]);
       expect(containerNameOf("GCl")).to.deep.equal(["global"]);
     });
+
+    it("should qualify a namespace container only as far as the asking position needs", () => {
+      const { sourceFile, project } = getInfoFromText(
+        "namespace Outer {\n"
+          + "  export namespace Inner { export const iv = 1; export enum IE { X } }\n"
+          + "  export function useInner() { Inner.iv; Inner.IE.X; }\n"
+          + "  export namespace Deep { export function fromDeep() { Inner.iv; } }\n"
+          + "}\n"
+          + "namespace Other { export function fromOther() { Outer.Inner.iv; } }\n"
+          + "Outer.Inner.iv;\nOuter.Inner.IE.X;\n",
+        { filePath: "/a.ts" },
+      );
+      const otherFile = project.createSourceFile("/b.ts", "Outer.Inner.iv;\nnamespace Outer { export function inB() { Inner.iv; } }\n");
+      const containerNamesOf = (file: typeof sourceFile, name: string) =>
+        file.getDescendantsOfKind(SyntaxKind.Identifier)
+          .filter(identifier => identifier.getText() === name)
+          .map(identifier => identifier.getDefinitions().map(d => d.getContainerName()).join("|"));
+
+      // the declaration itself, then from `Outer`, from `Outer.Deep`, from
+      // `Other`, and from the file's top level
+      expect(containerNamesOf(sourceFile, "iv")).to.deep.equal(["Inner", "Inner", "Inner", "Outer.Inner", "Outer.Inner"]);
+      expect(containerNamesOf(sourceFile, "X")).to.deep.equal(["IE", "Inner.IE", "Outer.Inner.IE"]);
+      // namespaces merge across files, so being inside `Outer` in another file counts
+      expect(containerNamesOf(otherFile, "iv")).to.deep.equal(["Outer.Inner", "Inner"]);
+    });
   });
 
   describe(nameof<Identifier>("getImplementations"), () => {
@@ -145,6 +224,20 @@ describe("Identifier", () => {
       expect(implementations.length).to.equal(2);
       expect(implementations[0].getNode().getText()).to.equal("Class1");
       expect(implementations[1].getNode().getText()).to.equal("Class2");
+    });
+
+    it("should get what kind of element each implementation is", () => {
+      const { sourceFile } = getInfoFromText(
+        "interface I { m(): void; }\nclass A implements I { m(): void {} }\nconst obj: I = { m() {} };\n",
+      );
+      const implementationKindsOf = (name: string) =>
+        sourceFile.getDescendantsOfKind(SyntaxKind.Identifier)
+          .filter(identifier => identifier.getText() === name)[0]
+          .getImplementations().map(implementation => implementation.getKind());
+
+      // an object literal implements an interface without declaring a symbol that says so
+      expect(implementationKindsOf("I")).to.deep.equal(["class", "interface"]);
+      expect(implementationKindsOf("m")).to.deep.equal(["method", "method"]);
     });
   });
 

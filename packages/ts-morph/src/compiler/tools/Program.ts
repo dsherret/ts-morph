@@ -275,9 +275,14 @@ export class Program {
 
   /**
    * Gets the global diagnostics.
+   *
+   * These are the checker's — a missing global type and the like. tsgo's own
+   * global category also carries the options diagnostics that
+   * `Program#getProgramDiagnostics` reports, which the `typescript` package kept
+   * out of this one.
    */
   getGlobalDiagnostics(): Diagnostic[] {
-    const compilerDiagnostics = this.compilerObject.getGlobalDiagnostics();
+    const compilerDiagnostics = ts.getCheckerGlobalDiagnostics(this.compilerObject);
     return compilerDiagnostics.map(d => this.#context.compilerFactory.getDiagnostic(d));
   }
 

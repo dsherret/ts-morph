@@ -1418,6 +1418,31 @@ const test = new Test();`,
       project.compilerOptions.set({ target: ScriptTarget.ES2015 });
       expect(sourceFile.getLanguageVersion()).to.equal(ScriptTarget.ES2015);
     });
+
+    // `lib` is typed as the library file names, which is the form the
+    // `typescript` package produced; a tsconfig's `lib` is short names
+    it("should accept a lib given as library file names", () => {
+      function setup(lib: string[]) {
+        const project = new Project({ useInMemoryFileSystem: true, compilerOptions: { lib, target: ScriptTarget.Latest } });
+        project.createSourceFile("/a.ts", "const p = Promise.resolve(1);");
+        return project.getPreEmitDiagnostics().map(d => d.getCode());
+      }
+
+      expect(setup(["lib.es2015.d.ts"])).to.deep.equal([]);
+      // and the list is honoured rather than every library being loaded anyway:
+      // 2585, `Promise` needs a lib of es2015 or later
+      expect(setup(["lib.es5.d.ts"])).to.deep.equal([2585]);
+      // the short name a tsconfig would use goes through untouched, and means the same
+      expect(setup(["es2015"])).to.deep.equal([]);
+      expect(setup(["es5"])).to.deep.equal([2585]);
+    });
+
+    it("should reject a lib that names no library", () => {
+      const project = new Project({ useInMemoryFileSystem: true, compilerOptions: { lib: ["lib.not-a-lib.d.ts"], target: ScriptTarget.Latest } });
+      project.createSourceFile("/a.ts", "const a = 1;");
+      // 6046: the argument for --lib must be one of the known libraries
+      expect(project.getPreEmitDiagnostics().map(d => d.getCode())).to.contain(6046);
+    });
   });
 
   describe("ambient modules", () => {
@@ -1495,6 +1520,53 @@ const test = new Test();`,
       expect(param.getType().getText()).to.equal("string");
       param.setType("number");
       expect(param.getType().getText()).to.equal("number");
+    });
+  });
+
+  describe(nameof<Project>("getPreEmitDiagnostics"), () => {
+    // tsgo reports an options diagnostic from both its program and its global
+    // category, so the categories have to be deduplicated the way the
+    // `typescript` package deduplicated them
+    it("should report an options diagnostic once", () => {
+      const project = new Project({ useInMemoryFileSystem: true, compilerOptions: { allowJs: true } });
+      project.createSourceFile("/a.js", "var x = 1;");
+      // 5055: cannot write file because it would overwrite an input file
+      expect(project.getPreEmitDiagnostics().map(d => d.getCode())).to.deep.equal([5055]);
+    });
+
+    // the compiler is only opened on the document registry's own config, so a
+    // complaint about the caller's tsconfig is not in any of its categories
+    it("should report a diagnostic from the caller's own tsconfig", () => {
+      const fileSystem = testHelpers.getFileSystemHostWithFiles([
+        { filePath: "/tsconfig.json", text: `{ "compilerOptions": { "notARealOption": true } }` },
+        { filePath: "/a.ts", text: "export const a = 1;\n" },
+      ]);
+      const project = new Project({ tsConfigFilePath: "/tsconfig.json", fileSystem });
+      // 5023: unknown compiler option
+      expect(project.getPreEmitDiagnostics().map(d => d.getCode())).to.deep.equal([5023]);
+      expect(project.getSourceFileOrThrow("/a.ts").getPreEmitDiagnostics().map(d => d.getCode())).to.deep.equal([5023]);
+    });
+
+    it("should keep the message chain of a deduplicated diagnostic", () => {
+      const project = new Project({ useInMemoryFileSystem: true, compilerOptions: { outDir: "/dist", rootDir: "/nope" } });
+      project.createSourceFile("/a.ts", "var x = 1;");
+      const diagnostics = project.getPreEmitDiagnostics();
+      // 6059: the file is not under the rootDir
+      expect(diagnostics.map(d => d.getCode())).to.deep.equal([6059]);
+      // 1430: the elaboration naming the rootDir the compiler inferred instead
+      expect(diagnostics[0].getMessageChain()?.map(m => m.getCode())).to.deep.equal([1430]);
+    });
+
+    // ts-morph writes the config the compiler opens its project from, so the
+    // project having no source files is not something to report to the caller
+    it("should not report the synthetic config's file list being empty", () => {
+      expect(new Project({ useInMemoryFileSystem: true }).getPreEmitDiagnostics().map(d => d.getCode())).to.deep.equal([]);
+    });
+
+    it("should not report an empty file list after the last file is removed", () => {
+      const project = new Project({ useInMemoryFileSystem: true });
+      project.removeSourceFile(project.createSourceFile("/a.ts", "var x = 1;"));
+      expect(project.getPreEmitDiagnostics().map(d => d.getCode())).to.deep.equal([]);
     });
   });
 

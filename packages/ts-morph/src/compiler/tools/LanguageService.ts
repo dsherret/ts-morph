@@ -101,7 +101,13 @@ export class LanguageService {
    */
   getDefinitionsAtPosition(sourceFile: SourceFile, pos: number): DefinitionInfo[] {
     const results = this.compilerObject.getDefinition(sourceFile.getFilePath(), pos);
-    return results.map(span => this.#context.compilerFactory.getDefinitionInfo(this.#toDefinitionInfo(span)));
+    if (results.length === 0)
+      return [];
+    // the node asking is what a container name is qualified against, so it is
+    // resolved once here rather than per definition
+    const askingNode = sourceFile.getDescendantAtPos(pos);
+    return this.#toSignatureDefinitions(askingNode, results)
+      .map(span => this.#context.compilerFactory.getDefinitionInfo(this.#toDefinitionInfo(span, askingNode)));
   }
 
   /**
@@ -119,7 +125,7 @@ export class LanguageService {
    */
   getImplementationsAtPosition(sourceFile: SourceFile, pos: number): ImplementationLocation[] {
     const results = this.compilerObject.getImplementations(sourceFile.getFilePath(), pos);
-    return results.map(span => new ImplementationLocation(this.#context, toDocumentSpan(span)));
+    return results.map(span => new ImplementationLocation(this.#context, toDocumentSpan(span), () => this.#getImplementationKind(span)));
   }
 
   /**
@@ -361,17 +367,72 @@ export class LanguageService {
     );
   }
 
-  /** @internal */
-  #toDefinitionInfo(span: ts.FileSpan): ts.DefinitionInfo {
-    // tsgo reports a definition as a span and nothing else, so the name is read
-    // back out of the file and the kinds are what the symbol there says.
-    const sourceFile = this.#context.compilerFactory.addOrGetSourceFileFromFilePath(
+  /**
+   * The definitions of an overloaded declaration, narrowed to the ones the
+   * `typescript` package reported.
+   *
+   * tsgo answers a position with every declaration the symbol there has, in
+   * source order, so asking on the name of an overloaded function or method
+   * leads with a signature rather than with the implementation. The `typescript`
+   * package answered with the implementations when the symbol had any and with
+   * the last signature otherwise, and only when the position was the name of a
+   * function-like declaration — a call site is already answered by the overload
+   * it resolves to, and a plain reference still reports every declaration.
+   * @internal
+   */
+  #toSignatureDefinitions(askingNode: Node | undefined, spans: readonly ts.FileSpan[]): readonly ts.FileSpan[] {
+    if (spans.length < 2 || !isNameOfFunctionLikeDeclaration(askingNode))
+      return spans;
+    const definitions = spans.map(span => ({ span, declaration: getDeclarationOfSpanNode(this.#getSpanNode(span)) }));
+    // narrowing a set that is not fully understood could drop the very declaration
+    // the caller wanted, so a span that cannot be placed in its file stops the filter
+    if (definitions.some(definition => definition.declaration == null))
+      return spans;
+    // a symbol may also be declared by something that is not a signature at all
+    // (a function merged with a namespace), and those declarations drop out
+    const signatures = definitions.filter(definition => isFunctionLike(definition.declaration!));
+    if (signatures.length === 0)
+      return spans;
+    const implementations = signatures.filter(definition => Node.hasBody(definition.declaration!));
+    return (implementations.length > 0 ? implementations : [signatures[signatures.length - 1]]).map(definition => definition.span);
+  }
+
+  /**
+   * What kind of element an implementation is.
+   *
+   * tsgo reports an implementation as a span alone, so the kind is derived from
+   * the symbol at the span, the same way a definition's is. An object literal
+   * implements an interface without declaring a symbol that says so, which is
+   * why the `typescript` package classified that one by its node instead.
+   * @internal
+   */
+  #getImplementationKind(span: ts.FileSpan): ts.ScriptElementKind {
+    if (Node.isObjectLiteralExpression(this.#getSpanNode(span)))
+      return ts.ScriptElementKind.interfaceElement;
+    return getScriptElementKind(this.#context.compilerFactory.documentRegistry.checker.getSymbolAtPosition(span.fileName, span.pos));
+  }
+
+  /** The node a span covers, or undefined when its file does not exist or nothing has exactly that extent. @internal */
+  #getSpanNode(span: ts.FileSpan): Node | undefined {
+    return this.#getSpanSourceFile(span)?.getDescendantAtStartWithWidth(span.pos, span.end - span.pos);
+  }
+
+  /** The file a span is in, pulled into the project's cache without joining the project. @internal */
+  #getSpanSourceFile(span: ts.FileSpan): SourceFile | undefined {
+    return this.#context.compilerFactory.addOrGetSourceFileFromFilePath(
       this.#context.fileSystemWrapper.getStandardizedAbsolutePath(span.fileName),
       { markInProject: false, scriptKind: undefined },
     );
+  }
+
+  /** @internal */
+  #toDefinitionInfo(span: ts.FileSpan, askingNode: Node | undefined): ts.DefinitionInfo {
+    // tsgo reports a definition as a span and nothing else, so the name is read
+    // back out of the file and the kinds are what the symbol there says.
     // A definition reached through an alias comes back as the whole declaration
     // rather than the name that declares it — a definition is the name, and
     // callers locate the declaration by walking up from it.
+    const sourceFile = this.#getSpanSourceFile(span);
     const node = sourceFile?.getDescendantAtStartWithWidth(span.pos, span.end - span.pos);
     const nameSpan = getDeclarationNameSpan(node) ?? span;
     const name = sourceFile?.getFullText().substring(nameSpan.pos, nameSpan.end) ?? "";
@@ -380,7 +441,7 @@ export class LanguageService {
       kind: getScriptElementKind(this.#context.compilerFactory.documentRegistry.checker.getSymbolAtPosition(span.fileName, span.pos)),
       name,
       containerKind: ts.ScriptElementKind.unknown,
-      containerName: getDefinitionContainerName(node),
+      containerName: getDefinitionContainerName(node, askingNode),
     };
   }
 
@@ -537,6 +598,44 @@ function splitAroundName(newText: string, newName: string): { prefixText?: strin
   };
 }
 
+/** A definition's span covers either the declaration or the name that declares it; this is always the declaration. */
+function getDeclarationOfSpanNode(node: Node | undefined): Node | undefined {
+  if (node == null)
+    return undefined;
+  return isNameOfParent(node) ? node.getParent()! : node;
+}
+
+/**
+ * Whether `node` is the identifier that names a function-like declaration, which
+ * is where the `typescript` package answered with the signatures of what is
+ * declared rather than with every declaration.
+ */
+function isNameOfFunctionLikeDeclaration(node: Node | undefined): boolean {
+  return node != null && node.getKind() === SyntaxKind.Identifier && isFunctionLike(node.getParent()) && isNameOfParent(node);
+}
+
+/** The kinds the `typescript` package's `isFunctionLike` covers, minus the JSDoc ones it produced no wrapper for. */
+function isFunctionLike(node: Node | undefined): boolean {
+  switch (node?.getKind()) {
+    case SyntaxKind.ArrowFunction:
+    case SyntaxKind.CallSignature:
+    case SyntaxKind.Constructor:
+    case SyntaxKind.ConstructorType:
+    case SyntaxKind.ConstructSignature:
+    case SyntaxKind.FunctionDeclaration:
+    case SyntaxKind.FunctionExpression:
+    case SyntaxKind.FunctionType:
+    case SyntaxKind.GetAccessor:
+    case SyntaxKind.IndexSignature:
+    case SyntaxKind.MethodDeclaration:
+    case SyntaxKind.MethodSignature:
+    case SyntaxKind.SetAccessor:
+      return true;
+    default:
+      return false;
+  }
+}
+
 /**
  * The span of the name `node` declares, or `undefined` when the node is not a
  * declaration with a name.
@@ -552,16 +651,16 @@ function getDeclarationNameSpan(node: Node | undefined): { pos: number; end: num
  * The name of what a definition is declared in — the class a method belongs to,
  * the namespace a namespaced declaration belongs to, and so on.
  */
-function getDefinitionContainerName(node: Node | undefined): string {
+function getDefinitionContainerName(node: Node | undefined, askingNode: Node | undefined): string {
   const container = getDeclarationContainer(node);
   if (Node.isClassDeclaration(container) || Node.isClassExpression(container))
     return container.getName() ?? getUnnamedClassName(container);
   // the `typescript` package qualified an interface or enum container with the
   // namespaces around it, but not a class container
   if (Node.isInterfaceDeclaration(container) || Node.isEnumDeclaration(container))
-    return joinNames(getNamespacePrefix(container), container.getName());
+    return qualifyByNamespaces(getNamespacePrefix(container), container.getName(), askingNode);
   if (Node.isModuleDeclaration(container))
-    return getNamespaceName(container);
+    return qualifyByNamespaces(getNamespacePrefix(container), getModuleName(container), askingNode);
   if (Node.isObjectLiteralExpression(container) || Node.isTypeLiteral(container))
     return getLiteralContainerName(container);
   return "";
@@ -572,10 +671,9 @@ function getDefinitionContainerName(node: Node | undefined): string {
  * nodes that only group members together.
  */
 function getDeclarationContainer(node: Node | undefined): Node | undefined {
-  if (node == null)
+  const declaration = getDeclarationOfSpanNode(node);
+  if (declaration == null)
     return undefined;
-  // the span is either the declaration or the name that declares it
-  const declaration = isNameOfParent(node) ? node.getParent()! : node;
   let container = declaration.getParent();
   // a constructor parameter written with a modifier declares a property of the class
   if (Node.isConstructorDeclaration(container) && Node.isParameterDeclaration(declaration) && declaration.isParameterProperty())
@@ -604,21 +702,47 @@ function isMemberGrouping(node: Node): boolean {
   }
 }
 
-/** A namespace's dotted name — `Outer.Inner` for a namespace declared in another. */
-function getNamespaceName(node: ModuleDeclaration): string {
-  return joinNames(getNamespacePrefix(node), getModuleName(node));
+/**
+ * A container's name, qualified by the namespaces around it only as far as the
+ * position asking needs.
+ *
+ * The `typescript` package named a namespace from the first segment that is not
+ * already in scope where the question was asked, so `Outer.Inner.iv` read
+ * `Outer.Inner` from the file's top level and `Inner` from inside `Outer`. The
+ * segments are compared by name because namespaces merge across declarations and
+ * across files.
+ */
+function qualifyByNamespaces(namespaces: string[], name: string, askingNode: Node | undefined): string {
+  const inScope = getEnclosingNamespaces(askingNode);
+  let skipped = 0;
+  while (skipped < namespaces.length && namespaces[skipped] === inScope[skipped])
+    skipped++;
+  return [...namespaces.slice(skipped), name].join(".");
 }
 
 /**
- * The dotted name of the namespaces a declaration is written in. An ambient
- * module and `declare global` end the chain rather than join it, which is how the
+ * The namespaces a declaration is written in, outermost first. An ambient module
+ * and `declare global` end the chain rather than join it, which is how the
  * `typescript` package qualified what they hold.
  */
-function getNamespacePrefix(node: Node): string {
+function getNamespacePrefix(node: Node): string[] {
   const container = getDeclarationContainer(node);
   if (!Node.isModuleDeclaration(container) || endsNamespaceChain(container))
-    return "";
-  return getNamespaceName(container);
+    return [];
+  return [...getNamespacePrefix(container), getModuleName(container)];
+}
+
+/** The namespaces a position is written inside, outermost first, on the same terms. */
+function getEnclosingNamespaces(node: Node | undefined): string[] {
+  const namespaces: string[] = [];
+  for (let current = node; current != null; current = current.getParent()) {
+    if (!Node.isModuleDeclaration(current))
+      continue;
+    if (endsNamespaceChain(current))
+      break;
+    namespaces.unshift(getModuleName(current));
+  }
+  return namespaces;
 }
 
 function endsNamespaceChain(node: ModuleDeclaration): boolean {
@@ -649,10 +773,6 @@ function getUnnamedClassName(container: ClassDeclaration | ClassExpression): str
   if (Node.isVariableDeclaration(parent))
     return parent.getName();
   return Node.isClassDeclaration(container) && container.isDefaultExport() ? "default" : "";
-}
-
-function joinNames(namespaceName: string, name: string): string {
-  return namespaceName.length === 0 ? name : `${namespaceName}.${name}`;
 }
 
 /** Every offset in `text` where `name` appears as a whole word. */

@@ -1,6 +1,7 @@
 import { ts } from "@ts-morph/common";
 import { ProjectContext } from "../../ProjectContext";
 import { toSymbolDisplayParts } from "../../utils";
+import { wrapStaleHandleErrors } from "../../utils/compiler/wrapStaleHandleErrors";
 import { JSDocTagInfo } from "../ast/doc/JSDocTagInfo";
 import { SymbolDisplayPart } from "../tools/results";
 import { Type } from "../types";
@@ -82,3 +83,6 @@ export class Signature {
     return compilerFactory.getNodeFromCompilerNode(compilerSignatureDeclaration, compilerFactory.getSourceFileForNode(compilerSignatureDeclaration));
   }
 }
+
+// a signature is a handle into the program that produced it, and any method here can be the one that finds it stale
+wrapStaleHandleErrors(Signature.prototype);

@@ -1,5 +1,6 @@
 import { ArrayUtils, errors, SymbolFlags, SyntaxKind, ts } from "@ts-morph/common";
 import { ProjectContext } from "../../ProjectContext";
+import { wrapStaleHandleErrors } from "../../utils/compiler/wrapStaleHandleErrors";
 import { JSDocTagInfo, Node } from "../ast";
 import { Type } from "../types";
 
@@ -272,3 +273,6 @@ function isPrivateIdentifierClassElementKind(kind: SyntaxKind) {
       return false;
   }
 }
+
+// a symbol is a handle into the snapshot that produced it, and any method here can be the one that finds it stale
+wrapStaleHandleErrors(Symbol.prototype);

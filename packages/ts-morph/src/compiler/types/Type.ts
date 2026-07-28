@@ -1,6 +1,7 @@
 import { errors, ObjectFlags, ts, TypeFlags, TypeFormatFlags } from "@ts-morph/common";
 import { ProjectContext } from "../../ProjectContext";
 import { getNotFoundErrorMessageForNameOrFindFunction, getSymbolByNameOrFindFunction } from "../../utils";
+import { wrapStaleHandleErrors } from "../../utils/compiler/wrapStaleHandleErrors";
 import { Node } from "../ast";
 import { Signature, Symbol } from "../symbols";
 import { TypeParameter } from "./TypeParameter";
@@ -655,3 +656,6 @@ export class Type<TType extends ts.Type = ts.Type> {
     return (this.getObjectFlags() & flag) === flag;
   }
 }
+
+// a type is a handle into the program that produced it, and any method here can be the one that finds it stale
+wrapStaleHandleErrors(Type.prototype);

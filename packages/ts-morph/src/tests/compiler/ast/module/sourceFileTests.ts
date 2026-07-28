@@ -251,6 +251,23 @@ describe("SourceFile", () => {
       expect(project.getPreEmitDiagnostics().map(d => d.getCode())).to.deep.equal([2307]);
     });
 
+    // The destination was never wrapped, so nothing in ts-morph's caches speaks
+    // for it — only the compiler, which resolved the import and parsed the copy
+    // on disk. That copy has to stop speaking for the path the move lands on.
+    it("should overwrite a destination that exists only on the file system", () => {
+      const project = new Project({ useInMemoryFileSystem: true });
+      project.getFileSystem().writeFileSync("/b.ts", "export class Stale {}");
+      const importer = project.createSourceFile("/c.ts", `import { Moved } from "./b";\nconst m = new Moved();`);
+      // 2305: `Moved` is not exported by the copy on disk — this is what resolves it
+      expect(project.getPreEmitDiagnostics().map(d => d.getCode())).to.deep.equal([2305]);
+
+      project.createSourceFile("/a.ts", "export class Moved {}").move("/b.ts", { overwrite: true });
+
+      expect(project.getSourceFileOrThrow("/b.ts").getFullText()).to.equal("export class Moved {}");
+      expect(project.getPreEmitDiagnostics().map(d => d.getCode())).to.deep.equal([]);
+      expect(importer.getFullText()).to.equal(`import { Moved } from "./b";\nconst m = new Moved();`);
+    });
+
     it("should change the module specifiers in other files when moving", () => {
       const fileText = "export interface MyInterface {}\nexport class MyClass {};";
       const { sourceFile, project } = getInfoFromText(fileText, { filePath: "/MyInterface.ts" });

@@ -231,6 +231,28 @@ object: where TypeScript kept the key with an `undefined` value for an option it
 could not use (`{ "target": "FUN" }` gave `{ target: undefined }`), tsgo leaves
 the key out entirely. The accompanying diagnostic is unchanged.
 
+### `incremental` without a `tsBuildInfoFile` is no longer reported
+
+The document registry opens its project from a `tsconfig.json` it writes itself,
+whether or not the caller has one, so the compiler reads every option out of a
+config file. That settles the handful of options whose validity turns on there
+being one: `{ incremental: true }` with no `tsBuildInfoFile` used to report 5074
+("only valid with a known configuration file ... or when `tsBuildInfoFile` is
+explicitly provided") and now reports nothing, because there _is_ a configuration
+file to hold the build info beside
+(`internal/compiler/program.go`, `options.ConfigFilePath == ""`). The option
+itself behaves the same.
+
+### `lib` accepts short names as well as file names
+
+`CompilerOptions#lib` is typed as `string[]` and the `typescript` package filled
+it with library _file_ names — `lib.es2015.d.ts`. A `tsconfig.json`'s `lib` is an
+enum of short names instead, and that config is what the registry hands the
+compiler, so the adapter maps `lib.<name>.d.ts` to `<name>` on the way through.
+File names therefore keep working. A short name given directly (`"es2015"`) now
+works too, where the `typescript` package would have failed to find the library —
+this is a widening, so no existing setting changes meaning.
+
 ### Cross-project document caching — **absent**
 
 `createDocumentCache` is removed. It worked by deep-cloning a parsed
@@ -280,8 +302,12 @@ forever. The registry keeps a superseded snapshot alive when the checker answere
 from it, so a type obtained before a manipulation still answers questions after
 it, but only the two most recent such snapshots are kept — every one pins a
 program and a checker inside the wasm module. A type held across more than that
-many checker generations throws `snapshot N not found`; re-read it from the node
-instead.
+many checker generations is stale. Every method on `Type`, `Symbol`, `Signature`
+and `TypeChecker` translates the compiler's answer to a stale handle — `type
+handle 89 not found`, which names nothing a caller can act on — into an
+`InvalidOperationError` saying the program was replaced by a manipulation and to
+get the type again from the manipulated code, keeping the compiler's own error as
+its `cause`.
 
 ### `ts.createSourceFile` parses in a scratch project
 
@@ -478,7 +504,37 @@ type) and `getNext()` reads `messageChain` rather than `next`.
 `ts.getPreEmitDiagnostics(program, sourceFile?)` is kept, but the adapter
 assembles it: tsgo reports config-file, program, syntactic, global and semantic
 diagnostics separately, and this concatenates them in that order. It takes no
-cancellation token.
+cancellation token. Two of those categories overlap — tsgo's global category is
+every project diagnostic without a file, which is what an options diagnostic is,
+so `getProgramDiagnostics` and `getGlobalDiagnostics` both report it — and the
+result is deduplicated, as the `typescript` package's own `getPreEmitDiagnostics`
+was. `Program#getGlobalDiagnostics()` likewise reports the checker's global
+diagnostics alone, which is the set the `typescript` package returned.
+
+The result is also in category order rather than sorted by file and position, as
+the `typescript` package's was — it sorted as part of deduplicating. Code that
+reads a diagnostic out of the array by index may find a different one there.
+
+The synthetic config the registry writes names every file the project holds, so
+when the project holds none it writes an empty `files` list; 18002 ("the 'files'
+list in config file ... is empty") is about that bookkeeping rather than about
+anything the caller did, and is not reported. What that config otherwise produces
+is the compiler's verdict on the options the caller set, and is reported as
+before.
+
+Separately — and not a consequence of the above — the diagnostics from parsing a
+`tsconfig.json` the _caller_ wrote no longer reach `getPreEmitDiagnostics()` at
+all. The `typescript` package took them as a constructor argument to
+`createProgram` and folded them in; tsgo parses only the synthetic config, so
+they are reachable through `Project#getConfigFileParsingDiagnostics()` and
+`Program#getConfigFileParsingDiagnostics()` alone. A project whose `tsconfig.json`
+sets an unknown option gets that told to it there rather than from the pre-emit
+diagnostics.
+
+An options diagnostic may carry fewer elaborating messages than the `typescript`
+package attached. 5055 ("cannot write file ... because it would overwrite input
+file") arrived there with a 5068 chain suggesting a `tsconfig.json`; tsgo reports
+the message alone.
 
 ### Emit output
 
@@ -650,20 +706,30 @@ Split by cause. The "not exposed" ones are TODOs, not breaking changes.
   `GetCombinedCodeFix` already matches on the fix id. The API's `CodeFixAction`
   (`internal/api/proto.go,`api.CodeFixAction``) simply drops them, carrying only
   `Description` and `Changes`. Two fields on that struct and its client mirror.
-- **`ImplementationLocation#getKind`/`getDisplayParts`** — tsgo does build
-  classified display parts: `displayPartsWriter`
+- **`ImplementationLocation#getDisplayParts`** — tsgo does build classified
+  display parts: `displayPartsWriter`
   (`internal/ls/displaypartswriter.go:19`) and
   `getQuickInfoAndDeclarationAtLocation` (`internal/ls/hover.go:327`, the port of
-  `getSymbolDisplayPartsDocumentationAndSymbolKind`) produce exactly the parts and
-  the symbol kind this wrapper wants, and hover and signature help already use
-  them. What is missing is that the implementations response carries spans alone
-  (`internal/api/session_ls.go:160`). The equivalent was done for references, so
-  this is the same change again. The `SymbolDisplayPart` wrapper itself is
-  already back, for the documentation comments and JSDoc tag text described
-  above.
+  `getSymbolDisplayPartsDocumentationAndSymbolKind`) produce exactly the parts
+  this wrapper wants, and hover and signature help already use them. What is
+  missing is that the implementations response carries spans alone
+  (`internal/api/session_ls.go`, `handleGetImplementations`). The equivalent was
+  done for references, so this is the same change again — but it is a protocol
+  change rather than a field on an existing struct: the handler's return type,
+  the client's `getImplementations` in `_packages/native-preview/src/api/{sync,async}/api.ts`,
+  the copy `packages/common` vendors from it, and a Wasm rebuild before any of it
+  can be read. `getKind()` did not need any of that and is back — see below. The
+  `SymbolDisplayPart` wrapper itself is already back, for the documentation
+  comments and JSDoc tag text described above.
 
 **Restored:**
 
+- **`ImplementationLocation#getKind()`** — worked out from the symbol at the
+  implementation's span, the way a definition's kind already is, so it needed
+  nothing from the compiler. An object literal implementing an interface has no
+  symbol that says so and is classified by its node instead, exactly as the
+  `typescript` package did. One reduction: a class expression reads `class`,
+  because `local class` is not one of the members `ts.ScriptElementKind` kept.
 - **`ReferencedSymbolDefinitionInfo#getDisplayParts`/`getName`** and
   **`ReferenceEntry#isWriteAccess()`** — `api.ReferencedSymbolEntry` now carries
   the display parts and the write-access flag, so all three read as they did.
@@ -702,17 +768,29 @@ Split by cause. The "not exposed" ones are TODOs, not breaking changes.
   written in rather than the definition symbol's parent, because tsgo reports a
   definition as a span alone and its checker has no `symbolToString`. A class,
   interface or enum member, a namespaced or ambient-module declaration, and a
-  declaration written in an object literal all read as they did. Two things do
-  not. What a file itself declares — including everything a module exports —
-  reads `""`, where the `typescript` package named the file's module specifier
-  (`"./mod"`, `"pkg"`); naming it here would mean reimplementing module specifier
-  resolution against the requesting file. And a namespace container is always
-  written out in full (`Outer.Inner`), where the `typescript` package qualified it
-  only as far as the position asking needed — a reference from outside the
-  namespace agrees, one from inside it now reads the qualified name. Both want the
-  same thing of the fork: a `symbolToString` on the API's checker.
-  `getContainerKind()` is `""` rather than the `undefined` the `typescript`
-  package left it as — neither ever classifies the container.
+  declaration written in an object literal all read as they did, and so does a
+  namespace container: it is qualified only as far as the asking position needs,
+  so `Outer.Inner.iv` reads `Outer.Inner` from a file's top level and `Inner`
+  from inside `Outer`. That one turned out not to need the checker at all — the
+  namespaces a position is written inside are in the tree, and the segments they
+  share with the container's are the ones to drop. Namespaces are compared by
+  name, because they merge across declarations and across files; the residue is
+  that a namespace shadowed at the asking position is trimmed as if it were not,
+  so a reference written inside `A.X` — where `A.X.B` shadows `A.B` — reads `B`
+  where `symbolToString`, which walks until the name is actually accessible,
+  wrote `A.B`.
+
+  One thing still differs. What a file itself declares — everything a module
+  exports — reads `""`, where the `typescript` package named the file's module
+  specifier (`"./mod"`, `"pkg"`). That one does want a `symbolToString` on the
+  API's checker, and nothing smaller: the specifier is whatever
+  `moduleSpecifiers.getModuleSpecifiers` would write at the asking file, which is
+  the auto-import computation, not a relative path — `"pkg"` for a package under
+  `node_modules`, and, because that function's result is cached per context file,
+  the `typescript` package itself answers `"../mod"` at an import specifier and
+  `"./mod"` at a call site in the same file. `getContainerKind()` is `""` rather
+  than the `undefined` the `typescript` package left it as — neither ever
+  classifies the container.
 - **`LanguageService#organizeImports(filePathOrSourceFile, mode?)`** and
   **`SourceFile#organizeImports()`** — the format settings and user preferences
   parameters are gone; tsgo takes only a mode.
@@ -933,6 +1011,15 @@ files that walk added.
 ## Runtime and packaging
 
 - Requires a runtime with WebAssembly and `node:wasi`.
+- **Browsers are not supported.** 28.0.0 was plain JavaScript and ran anywhere a
+  bundler could reach; the compiler is now a wasm reactor instantiated with
+  Node's WASI (`require("node:wasi")`, at the top level of both the node and deno
+  bundles), so a browser build fails to resolve it. `@ts-morph/common`'s `browser`
+  field still maps the file-system modules away and `getRuntime()` still answers
+  with a `BrowserRuntime`, because ts-morph's own file system does work in a
+  browser — it is only the compiler that cannot load. Supporting browsers again
+  means a WASI shim and a browser-specific loader, which is a feature rather than
+  a fix, and is not in this release.
 - Ships a large (~43 MB) `.wasm` artifact.
 - Single-threaded: one request runs to completion at a time.
 - The compiler is no longer a plain-JS dependency, so environments that bundled
@@ -1074,7 +1161,7 @@ Run on the working tree this document describes:
 |                      | passing | pending | failing | `ensure-no-project-compile-errors` |
 | -------------------- | ------- | ------- | ------- | ---------------------------------- |
 | `packages/common`    | 424     | 0       | 0       | 0                                  |
-| `packages/ts-morph`  | 4441    | 2       | 0       | 0                                  |
+| `packages/ts-morph`  | 4459    | 2       | 0       | 0                                  |
 | `packages/bootstrap` | 85      | 4       | 0       | no such task                       |
 
 All 15 end-to-end scripts under `tsgo-wasm/` pass, as do the Go tests for every

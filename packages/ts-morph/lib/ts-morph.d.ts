@@ -9469,7 +9469,14 @@ export declare class Program {
    * @param sourceFile - Optional source file to filter by.
    */
   getDeclarationDiagnostics(sourceFile?: SourceFile): Diagnostic[];
-  /** Gets the global diagnostics. */
+  /**
+   * Gets the global diagnostics.
+   *
+   * These are the checker's — a missing global type and the like. tsgo's own
+   * global category also carries the options diagnostics that
+   * `Program#getProgramDiagnostics` reports, which the `typescript` package kept
+   * out of this one.
+   */
   getGlobalDiagnostics(): Diagnostic[];
   /**
    * Gets the diagnostics found when parsing the tsconfig.json file.
@@ -9700,11 +9707,22 @@ export declare class FileTextChanges {
 /**
  * Location of an implementation.
  *
- * Breaking change: `getKind()` and `getDisplayParts()` are gone. tsgo reports an
- * implementation as a file span and nothing else.
+ * Breaking change: `getDisplayParts()` is gone. tsgo reports an implementation
+ * as a file span, so the text that labels one — "(method) A.m(): void" — has
+ * nowhere to come from.
  */
 export declare class ImplementationLocation extends DocumentSpan<ts.ImplementationLocation> {
+  #private;
   private constructor();
+  /**
+   * Gets what kind of element the implementation is.
+   *
+   * Breaking change: the kind is worked out from the symbol at the span rather
+   * than reported by the compiler, so the members are the ones
+   * `ts.ScriptElementKind` kept — a class expression reads `class` where the
+   * `typescript` package said `local class`.
+   */
+  getKind(): ts.ScriptElementKind;
 }
 
 /** The emitted file in memory. */

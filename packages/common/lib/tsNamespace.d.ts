@@ -327,11 +327,28 @@ import type { Program as TsgoProgram } from "./tsgo/api/sync/api";
  *
  * tsgo has no `getPreEmitDiagnostics`: the program reports each category
  * separately, so this concatenates them in the order the `typescript` package
- * used to.
+ * asked for them and deduplicates the result, which that package also did
+ * because the categories overlap — see {@link getCheckerGlobalDiagnostics} for
+ * how.
+ *
+ * Breaking change: the result is in category order rather than sorted by file
+ * and position. The `typescript` package sorted as part of deduplicating; there
+ * is nothing to gain by reproducing that here, and a caller reading a diagnostic
+ * out by index would see it move.
  */
 export declare function getPreEmitDiagnostics(program: TsgoProgram, sourceFile?: {
     readonly fileName: string;
 }): TsgoDiagnostic[];
+/**
+ * The diagnostics that belong to the program rather than to any of its files.
+ *
+ * tsgo's global category is every project diagnostic without a file, which
+ * sweeps in the options diagnostics `getProgramDiagnostics` already reports. The
+ * `typescript` package's global diagnostics were the checker's alone — "cannot
+ * find global type 'Array'" and the like — so the options ones are taken back
+ * out.
+ */
+export declare function getCheckerGlobalDiagnostics(program: TsgoProgram): TsgoDiagnostic[];
 export type { FreshableType, NodeHandle, Program, ReferencedSymbolEntry as CompilerReferencedSymbolEntry, Signature, Symbol, } from "./tsgo/api/sync/api";
 /** tsgo names the type checker `Checker`. */
 export type { Checker as TypeChecker } from "./tsgo/api/sync/api";

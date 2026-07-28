@@ -1,4 +1,4 @@
-import { nameof } from "@ts-morph/common";
+import { errors, nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { Signature } from "../../../compiler";
 import { getInfoFromText } from "../testHelpers";
@@ -107,6 +107,19 @@ let t: MyInterface;
       const signature = getSignature("let t: () => void;");
       const declaration = signature.getDeclaration();
       expect(declaration.getSignature()).to.equal(signature);
+    });
+  });
+
+  describe("using a signature after a manipulation", () => {
+    // a signature is a handle into the program it was taken from, so it goes
+    // stale for the same reason a type does and has to say so the same way
+    it("should throw an error that says the program has been replaced", () => {
+      const { sourceFile } = getInfoFromText("let t: () => void;");
+      const signature = sourceFile.getVariableDeclarations()[0].getType().getCallSignatures()[0];
+      sourceFile.addStatements("let other: number;");
+
+      expect(() => signature.getJsDocTags())
+        .to.throw(errors.InvalidOperationError, "This signature came from a program that a manipulation has since replaced.");
     });
   });
 });

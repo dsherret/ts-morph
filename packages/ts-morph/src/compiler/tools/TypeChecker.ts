@@ -1,5 +1,6 @@
 import { errors, getStoredNode, isReconstructedNode, SymbolFlags, SyntaxKind, ts, TypeFormatFlags } from "@ts-morph/common";
 import { ProjectContext } from "../../ProjectContext";
+import { wrapStaleHandleErrors } from "../../utils/compiler/wrapStaleHandleErrors";
 import { CallLikeExpression } from "../ast/aliases";
 import { Node } from "../ast/common";
 import { EnumMember } from "../ast/enum";
@@ -343,3 +344,7 @@ function isTypeOfModuleLevelFunctionExpression(type: Type) {
       && ts.isVariableStatement(statement) && (ts.isSourceFile(statement.parent) || ts.isModuleBlock(statement.parent));
   });
 }
+
+// the checker is handed the same handles, so one that has gone stale must read
+// the same way here as it does when the type or symbol is asked directly
+wrapStaleHandleErrors(TypeChecker.prototype);

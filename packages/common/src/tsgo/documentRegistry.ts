@@ -71,6 +71,7 @@ export interface RemoveSourceFileOptions {
 
 export class DocumentRegistry {
   readonly #fs: FileSystem;
+  readonly #baseFs: FileSystem | undefined;
   readonly #api: API;
   readonly #versions = new Map<string, number>();
   readonly #retiredSnapshots: Snapshot[] = [];
@@ -88,6 +89,7 @@ export class DocumentRegistry {
       [configFilePath]: this.#configText(),
       ...options.files,
     });
+    this.#baseFs = options.fs;
     this.#api = createWasmAPI({
       cwd: "/",
       fs: options.fs == null ? this.#fs : overlay(this.#fs, options.fs),
@@ -121,11 +123,28 @@ export class DocumentRegistry {
 
     const created = new Set<string>();
     const changed = new Set<string>();
+    let rootsChanged = false;
     for (const { fileName, text } of files) {
-      if (!this.#versions.has(fileName))
-        created.add(fileName);
-      else if (!created.has(fileName)) // a file the batch itself created is not also a change
+      if (!this.#versions.has(fileName)) {
+        rootsChanged = true;
+        // A path the wider file system already has is reported as changed rather
+        // than created, because the compiler may have read that copy already —
+        // resolving an import of it, say. Told the file was created it would keep
+        // the tree it parsed, and the file system's stale text would go on
+        // speaking for the contents just written. #versions cannot answer this on
+        // its own: it tracks only the files the registry itself holds.
+        //
+        // The two are not otherwise interchangeable — a created path also
+        // invalidates the failed lookups that named it, where a changed one does
+        // not — but the roots change either way, so the config is rewritten and
+        // the project reloads regardless.
+        if (this.#baseFs?.fileExists?.(fileName) ?? false)
+          changed.add(fileName);
+        else
+          created.add(fileName);
+      } else if (!created.has(fileName)) { // a file the batch itself created is not also a change
         changed.add(fileName);
+      }
       this.#fs.writeFile!(fileName, text);
       this.#versions.set(fileName, (this.#versions.get(fileName) ?? -1) + 1);
     }
@@ -135,7 +154,7 @@ export class DocumentRegistry {
     this.#applyChange({
       ...created.size > 0 ? { created: [...created] } : {},
       ...changed.size > 0 ? { changed: [...changed] } : {},
-    });
+    }, rootsChanged);
     return files.map(file => this.getSourceFileOrThrow(file.fileName));
   }
 
@@ -240,8 +259,10 @@ export class DocumentRegistry {
    * the source file cache can first carry unchanged files' entries across; that
    * is what preserves node identity for every file the edit did not touch.
    *
-   * `rootsChanged` is for the one case the change itself does not imply it: a file
-   * that left the registry without being reported as deleted — see removeSourceFile.
+   * `rootsChanged` is for the cases the change itself does not imply it, of which
+   * there are two: a file that left the registry without being reported as deleted
+   * (see removeSourceFile), and one that joined it reported as changed rather than
+   * created (see createOrUpdateSourceFiles).
    */
   #applyChange(changes: { changed?: string[]; created?: string[]; deleted?: string[] }, rootsChanged = false): void {
     // adding or removing a file changes the root file list, which lives in the
@@ -261,6 +282,12 @@ export class DocumentRegistry {
    * extension priority, which drops `a.d.ts` and `a.js` on the floor whenever
    * `a.ts` is also present — and ts-morph's contract is that a file the caller
    * added is in the project, whatever else shares its stem.
+   *
+   * Options are read out of a config file whether or not the caller wrote one,
+   * which settles the few compiler options whose validity turns on that: an
+   * `incremental` without a `tsBuildInfoFile` is reported only when there is no
+   * config file to hold the build info beside, so the compiler accepts it here
+   * where a bare options object would not.
    */
   #configText(): string {
     const files = [...this.#versions.keys()];
@@ -365,6 +392,10 @@ function toConfigCompilerOptions(compilerOptions: CompilerOptions, files: readon
       configFilePath = value;
     if (value === undefined || internalOptionNames.has(name))
       continue;
+    if (name === "lib" && Array.isArray(value)) {
+      result[name] = value.map(toConfigLibName);
+      continue;
+    }
     const enumNames = enumOptionNames[name];
     if (enumNames == null) {
       result[name] = value;
@@ -390,6 +421,23 @@ function toConfigCompilerOptions(compilerOptions: CompilerOptions, files: readon
       result.rootDir = rootDir;
   }
   return result;
+}
+
+/**
+ * The name a tsconfig's `lib` list uses for a library.
+ *
+ * `CompilerOptions#lib` holds library *file* names — `lib.es2015.d.ts` — which is
+ * the form the `typescript` package produced and the form ts-morph's own typings
+ * document, but a tsconfig's `lib` is an enum of short names and tsgo's config
+ * parser rejects anything else. Anything that is not a library file name is
+ * passed through, so a short name given directly still works and an unknown one
+ * is still reported.
+ */
+function toConfigLibName(lib: unknown): unknown {
+  if (typeof lib !== "string")
+    return lib;
+  const match = /^lib\.(.+)\.d\.ts$/i.exec(lib);
+  return match == null ? lib : match[1].toLowerCase();
 }
 
 /**

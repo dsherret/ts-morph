@@ -1,4 +1,4 @@
-import { InMemoryFileSystemHost, nameof, ObjectFlags, SymbolFlags, TypeFlags, TypeFormatFlags } from "@ts-morph/common";
+import { errors, InMemoryFileSystemHost, nameof, ObjectFlags, SymbolFlags, TypeFlags, TypeFormatFlags } from "@ts-morph/common";
 import { expect } from "chai";
 import { FunctionDeclaration, Node, Symbol, Type, TypeAliasDeclaration, VariableStatement } from "../../../compiler";
 import { getInfoFromText } from "../testHelpers";
@@ -1081,6 +1081,28 @@ let stringWithPromiseType: Promise<string>;
       const secondType = sourceFile.getVariableDeclarationOrThrow("secondType").getType();
       expect(firstType.isAssignableTo(secondType)).to.be.false;
       expect(secondType.isAssignableTo(firstType)).to.be.true;
+    });
+  });
+
+  describe("using a type after a manipulation", () => {
+    // a type is a handle into the program it was taken from and a manipulation
+    // replaces that program, so the failure must say that rather than report the
+    // compiler's "type handle 89 not found"
+    it("should throw an error that says the program has been replaced", () => {
+      const { sourceFile } = getTypeFromText("let firstType: string;");
+      const type = sourceFile.getVariableDeclarationOrThrow("firstType").getType();
+      sourceFile.addStatements("let other: number;");
+
+      expect(() => type.getText()).to.throw(errors.InvalidOperationError, "This type came from a program that a manipulation has since replaced.");
+    });
+
+    it("should throw the same error when the checker is asked with the type", () => {
+      const { sourceFile, project } = getTypeFromText("let firstType: string;");
+      const type = sourceFile.getVariableDeclarationOrThrow("firstType").getType();
+      sourceFile.addStatements("let other: number;");
+
+      expect(() => project.getTypeChecker().getTypeText(type))
+        .to.throw(errors.InvalidOperationError, "This type came from a program that a manipulation has since replaced.");
     });
   });
 });

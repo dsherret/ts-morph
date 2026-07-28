@@ -175,9 +175,15 @@ export class ProjectContext {
    */
   getPreEmitDiagnostics(sourceFile?: SourceFile): Diagnostic[] {
     // tsgo has no `getPreEmitDiagnostics`; the adapter assembles it out of every
-    // category the compiler reports before an emit.
+    // category the compiler reports before an emit. The compiler is only ever
+    // opened on the document registry's own config, so a complaint about the one
+    // the caller wrote is not among those categories and has to be added back —
+    // it is what the `typescript` package reported first.
     const compilerDiagnostics = ts.getPreEmitDiagnostics(this.program.compilerObject, sourceFile?.compilerNode);
-    return compilerDiagnostics.map(d => this.compilerFactory.getDiagnostic(d));
+    return [
+      ...this.program.getConfigFileParsingDiagnostics(),
+      ...compilerDiagnostics.map(d => this.compilerFactory.getDiagnostic(d)),
+    ];
   }
 
   /**
