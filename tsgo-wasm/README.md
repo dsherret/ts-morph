@@ -68,9 +68,11 @@ node --experimental-strip-types --no-warnings --conditions @typescript/source ts
 node --experimental-strip-types --no-warnings --conditions @typescript/source tsgo-wasm/tsconfig-resolver.mts
 node --experimental-strip-types --no-warnings --conditions @typescript/source tsgo-wasm/project.mts
 
-# type check, and run the tests that compile
-(cd packages/common && npx tsc --noEmit -p tsconfig.json && deno run -A npm:mocha)
-(cd packages/ts-morph && npx tsc --noEmit -p tsconfig.json)
+# type check, and run the tests that compile. The type check is tsgo's: there is
+# no npm `typescript` here, and `.tsgo/tsgo` is what the rollup build compiles out
+# of the submodule, so a build has to have run at least once
+(cd packages/common && ../../.tsgo/tsgo --noEmit -p tsconfig.json && deno run -A npm:mocha)
+(cd packages/ts-morph && ../../.tsgo/tsgo --noEmit -p tsconfig.json)
 
 # the bundle catches what the type check cannot: a member reached off the tsgo
 # namespace that does not exist is only a rollup `is not exported by

@@ -1,12 +1,25 @@
 # Prerequisites
 
-This project requires [Deno](https://docs.deno.com/runtime/manual/getting_started/installation)
+- [Deno](https://docs.deno.com/runtime/manual/getting_started/installation)
+- [Go](https://go.dev/dl/) and [Node](https://nodejs.org) — the TypeScript compiler this
+  project uses is [tsgo](submodules/typescript-go), which is built from the submodule
+  rather than installed from npm. The build compiles the tsgo CLI with `go build`, and
+  the Wasm reactor it ships is produced by the submodule's own Node scripts.
 
 # Getting Started
 
-Install [deno](https://deno.com).
+Clone with submodules (`git clone --recursive`, or `git submodule update --init --recursive`
+in an existing clone), then build the tsgo compiler once:
 
-Run in root of repo:
+```bash
+cd submodules/typescript-go
+npm ci
+node _scripts/build-wasm.mjs
+cd _packages/native-preview
+npx tsc -b
+```
+
+Then run in the root of the repo:
 
 ```bash
 # installs, sets up, and builds all the packages for development

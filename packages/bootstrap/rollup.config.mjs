@@ -1,10 +1,12 @@
-import typescript from "@rollup/plugin-typescript";
+import { tsgo } from "../rollupPluginTsgo.mjs";
+
+const emitDir = "./dist-rollup";
 const isDeno = process.env.BUILD === "deno";
 const outputFolder = isDeno ? "./dist-deno" : "./dist";
 const moduleKind = isDeno ? "es" : "cjs";
 
 export default {
-  input: "./src/index.ts",
+  input: emitDir + "/index.js",
   external: [],
   output: {
     file: outputFolder + "/ts-morph-bootstrap.js",
@@ -12,9 +14,6 @@ export default {
     interop: "compat",
   },
   plugins: [
-    typescript({
-      tsconfig: "tsconfig.rollup.json",
-      outDir: outputFolder,
-    }),
+    tsgo({ tsconfig: "tsconfig.rollup.json", emitDir }),
   ],
 };

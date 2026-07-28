@@ -4,6 +4,7 @@
 /.vscode
 /scripts
 /dist-deno
+/dist-rollup
 /dist-scripts
 /dist/tests
 /src

@@ -2,6 +2,7 @@
 /scripts
 /src
 /dist-deno
+/dist-rollup
 .mocharc.yml
 .npmignore
 CHANGELOG.md

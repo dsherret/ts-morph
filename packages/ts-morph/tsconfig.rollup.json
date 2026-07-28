@@ -1,15 +1,39 @@
 {
+  // The output directory is supplied by the rollup config, which is the only
+  // thing that runs this: it bundles what tsgo emits, so it owns where that lands.
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "module": "es2015",
-    "moduleResolution": "node",
+    "module": "esnext",
+    // `imports`-aware resolution, the same thing rollup does. The base config
+    // resolves as `node10`, which TypeScript 7 has removed.
+    "moduleResolution": "bundler",
     "removeComments": true,
+    // `@rollup/plugin-typescript` forced this on, so the published bundles have
+    // always carried one tree-shaken copy of the helpers rather than a copy per
+    // module. The rollup config resolves `tslib` for the emitted imports.
+    "importHelpers": true,
     // `Node` initializes its static members by calling `Node.is(...)`, and the
     // class-fields transform rewrites that self-reference to a class alias it only
     // assigns after the class body has run. At es2022 the statics stay inside the
     // body as static blocks and read the alias before it exists; one target lower
     // they are emitted as assignments after the class, where the alias is set.
     // Type checking still runs at the workspace target — this is emit only.
-    "target": "es2021"
-  }
+    "target": "es2021",
+    // The base config only type-checks, so it declares no emit layout. This one
+    // emits, and every file it emits is under `src`.
+    "noEmit": false,
+    "rootDir": "./src",
+    // Emptied rather than inherited, to drop the base config's mapping of
+    // `@ts-morph/common` to that package's source. Source is what the type check
+    // wants; an emit run has to stop at the package boundary, or the sibling's
+    // files land in this package's output. Its `#enums/*` mapping goes with it,
+    // and is not missed: `bundler` resolution reads the tsgo package's `imports`
+    // map, which is what that mapping stood in for.
+    "paths": {}
+  },
+  // nothing reachable from the entry point is a test, so emitting them would only
+  // produce files for rollup to ignore
+  "exclude": [
+    "./src/tests"
+  ]
 }

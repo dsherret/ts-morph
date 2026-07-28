@@ -3,11 +3,15 @@
 // parents, whole tree.
 //   node --experimental-strip-types --no-warnings --conditions @typescript/source tsgo-wasm/getChildren-parity.mts
 //
-// `typescript` must stay a devDependency of packages/common for this script:
-// it is the reference implementation the adapter is compared against, and there
-// is no other guard on getChildren's output.
+// This is the only guard on getChildren's output, and it is only worth as much
+// as the compiler it compares against, so it runs the real classic TypeScript.
+// ts-morph itself depends on no such thing — the copy used here is the fork's
+// own devDependency, which exists because the fork builds its TypeScript client
+// with it. Run `npm ci` in submodules/typescript-go if the import below fails.
 import assert from "node:assert";
-import ts from "typescript";
+import { createRequire } from "node:module";
+const require = createRequire(new URL("../submodules/typescript-go/package.json", import.meta.url));
+const ts = require("typescript") as typeof import("typescript");
 import { formatSyntaxKind } from "../submodules/typescript-go/_packages/native-preview/src/ast/utils.ts";
 import { getChildren, getLastToken } from "./getChildren.mts";
 import { createInProcessApi } from "./seam.mts";

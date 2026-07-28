@@ -1,14 +1,15 @@
-import typescript from "@rollup/plugin-typescript";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import { tsgo } from "../rollupPluginTsgo.mjs";
 
 const tsgoPackage = new URL("../../submodules/typescript-go/_packages/native-preview/", import.meta.url);
+const emitDir = "./dist-rollup";
 const isDeno = process.env.BUILD === "deno";
 const outputFolder = isDeno ? "./dist-deno" : "./dist";
 const moduleKind = isDeno ? "es" : "cjs";
 
 export default [{
-  input: ["./src/index.ts"],
+  input: [emitDir + "/index.js"],
   external: [],
   output: {
     file: outputFolder + "/ts-morph-common.js",
@@ -18,11 +19,7 @@ export default [{
   plugins: [
     tsgoInternalImports(),
     tsgoWasmAsset(),
-    typescript({
-      tsconfig: "tsconfig.rollup.json",
-      outDir: outputFolder,
-      experimentalDecorators: false,
-    }),
+    tsgo({ tsconfig: "tsconfig.rollup.json", emitDir }),
   ],
 }];
 

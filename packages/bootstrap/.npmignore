@@ -1,5 +1,6 @@
 /scripts
 /src
+/dist-rollup
 azure-pipelines.yml
 .mocharc.yml
 .npmignore

@@ -8,7 +8,10 @@ packages/*/dist
 packages/*/dist-deno
 packages/*/dist-scripts
 packages/*/dist-declarations
+packages/*/dist-rollup
 node_modules
+# the tsgo CLI the build compiles out of the submodule
+/.tsgo
 *.js.map
 npm-debug.log
 

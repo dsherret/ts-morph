@@ -1,12 +1,23 @@
 {
+  // The output directory is supplied by the rollup config, which is the only
+  // thing that runs this: it bundles what tsgo emits, so it owns where that lands.
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "module": "es2015",
-    "moduleResolution": "node",
-    "removeComments": true
+    "module": "esnext",
+    // `imports`-aware resolution, the same thing rollup does. The base config
+    // resolves as `node10`, which TypeScript 7 has removed.
+    "moduleResolution": "bundler",
+    "removeComments": true,
+    // `@rollup/plugin-typescript` forced this on, so the published bundles have
+    // always carried one tree-shaken copy of the helpers rather than a copy per
+    // module. The rollup config resolves `tslib` for the emitted imports.
+    "importHelpers": true
   },
+  // nothing reachable from the entry point is a test, so emitting them would only
+  // produce files for rollup to ignore
   "exclude": [
     "lib",
-    "scripts"
+    "scripts",
+    "./src/tests"
   ]
 }
