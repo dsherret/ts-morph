@@ -17,6 +17,7 @@ export interface SourceFileInfo {
     readonly _offsetExtendedData: number;
     readonly _offsetStructuredData: number;
     readonly _decoder: TextDecoder;
+    readonly text: string;
     nodes: any[];
     readonly path?: string;
     /**
@@ -47,6 +48,8 @@ export declare class RemoteNodeBase {
     view: DataView;
     protected index: number;
     protected _byteIndex: number;
+    /** Memo for `pos` on a `JSDoc` node, whose start has to be scanned out of the node's leading trivia. */
+    private _docCommentPos;
     constructor(view: DataView, index: number, parent: any, byteIndex: number);
     get kind(): SyntaxKind;
     /**

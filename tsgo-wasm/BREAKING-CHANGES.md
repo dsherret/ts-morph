@@ -143,6 +143,42 @@ the wrapper no longer narrows its compiler type. The runtime value is unchanged.
 `Type#getBaseTypes()` lost the same narrowing: `Type<ts.BaseType>[]` is now
 `Type<ts.Type>[]`.
 
+### A variable initialized with a function prints as `typeof` in nested positions
+
+tsgo widened when the checker writes `typeof x` instead of a signature: upstream
+PR #4507 lets a variable assigned a function expression or arrow take the
+`typeof` form, where the `typescript` package restricted it to static methods
+and module-level function _declarations_
+(`shouldWriteTypeOfFunctionSymbol`). ts-morph clears `UseTypeOfFunction` for
+exactly that widened case, so `const f = (a: number) => a` reports
+`(a: number) => number` as before.
+
+The flag is all-or-nothing for a print, so an occurrence nested inside a larger
+type still differs and cannot be corrected from this side:
+
+|                      | `typescript` package            | tsgo               |
+| -------------------- | ------------------------------- | ------------------ |
+| `const t = [f]`      | `((a: number) => number)[]`     | `(typeof f)[]`     |
+| `const w = { m: f }` | `{ m: (a: number) => number; }` | `{ m: typeof f; }` |
+
+Reverting the widening belongs upstream; it was added deliberately for
+declaration emit, and ts-morph's narrowing becomes a no-op if it ever is.
+
+### `Node#getSymbol()` finds no symbol for an anonymous declaration
+
+An arrow function, object literal, type literal, mapped type, function or
+constructor type, call/construct/index signature, constructor, or export
+assignment reported the binder's internal symbol — `__function`, `__type`,
+`__object`, `__call`, `__new`, `__index`, `__constructor`, `default`. It now
+reports `undefined`, and `getSymbolOrThrow()` throws.
+
+`Node#getSymbol()` reads the binder symbol off the node first, and tsgo's nodes
+carry no such field — see "Binder internals are not on nodes". Its checker
+exposes no node-symbol accessor to ask instead, and `getSymbolAtLocation` is a
+faithful port that answers nothing for these nodes in either compiler. The
+symbol itself still exists: `node.getType().getSymbol()` returns it. Closing
+this needs a `getSymbolOfDeclaration` on the API's checker.
+
 ### `Type#getLiteralValue` returns a `bigint`, and a `boolean`
 
 It returned `string | number | ts.PseudoBigInt | undefined`. tsgo gives the
@@ -287,14 +323,33 @@ ts-morph's own `Node#getLastToken` calls. Results are cached per node, since
 ts-morph keys its wrapper cache on node identity, and share the source file's own
 token cache so a token reached through `getTokenAtPosition` is the same object.
 
-Output matches classic TypeScript's spans, order and token parents, with two
-exceptions that come from tsgo's AST rather than from the reconstruction:
+Output matches classic TypeScript's spans, order and token parents, with one
+exception that comes from tsgo's AST rather than from the reconstruction: a doc
+comment's prose is a `JSDocText` child node, where classic keeps plain prose as a
+string on `JSDoc.comment` and so has no child at all.
 
-- A `JSDoc` node's `pos` is its full start (back to the previous node's end,
-  comments included) rather than the position of the doc comment itself. Its
-  `end` and `getStart()` agree with classic.
-- A doc comment's prose is a `JSDocText` child node; classic keeps plain prose as
-  a string on `JSDoc.comment`, so it is not a child there.
+A `JSDoc` node's span used to be a second exception. The compiler gives such a
+node its **full start** — back to the previous node's end, comments included —
+where classic starts it at the `/**`. That is invisible while the doc comment is
+the only thing in that trivia, and wrong as soon as it is not: a `// …` line
+closing the previous line, or a plain `/* … */` block, fell inside the doc
+comment's span and so inside its text, its `getStart()`, and the
+`includeJsDocComments` start of the node it documents; a position inside that
+comment resolved to the `JSDoc` rather than to the documented node's first token.
+`RemoteNodeBase`'s `pos` therefore walks a `JSDoc` node's leading trivia for the
+comment that ends where the node does, and reports that comment's start instead
+(`_packages/native-preview/src/api/node/node.infrastructure.ts`). The walk is the
+scanner's own comment iteration, trailing ranges before leading ones, which is
+how `parser.GetJSDocCommentRanges` found those comments to begin with — so a
+shebang, a parameter's doc comment (a trailing range, not a leading one) and the
+line separators only the scanner counts as line breaks are all handled the way
+the parser handles them. Spans now agree with classic.
+
+The Go `scanner.GetTokenPosOfNode` still carries the original assumption, and
+`astnav.GetTokenAtPosition` goes through it, so a language service request whose
+position falls inside a comment that precedes a doc comment resolves to the
+`JSDoc` on the Go side. Nothing ts-morph exposes reads a position from that
+range, and the fix belongs upstream in the Go scanner.
 
 ### `TypeFormatFlags` is aliased to `NodeBuilderFlags` — **not exposed, and the alias is wrong**
 
@@ -778,10 +833,20 @@ the auto-import registry, which makes the first call more expensive.
 
 The session declares no LSP client capabilities, so `WorkspaceEdit.DocumentChanges`
 is never populated — the API returns plain per-file edit lists and cannot carry
-versioned edits or create/rename/delete-file operations. Rename fails with an
-error rather than returning a partial edit set if it ever touches a file outside
-the program, and a code fix that does so is dropped whole rather than applied in
-part.
+versioned edits or create/rename/delete-file operations. A code fix that would
+touch a file outside the program is dropped whole rather than applied in part;
+rename raises an error instead of returning a partial edit set. Only a
+declaration source map can put rename in that position, by mapping an edit back
+onto a source file the program never loaded.
+
+Rename rewrites every file the project holds, `node_modules` included, matching
+`findRenameLocations` — the "you cannot rename elements defined in a node_modules
+folder" rule, and the standard-library and `default`-keyword rules beside it, are
+tsserver's `getRenameInfo` rules, which is to say an editor's, and the API is not
+an editor. The standard library is nonetheless never written to: its source files
+are left out of the search, so renaming a symbol declared in `lib.*.d.ts` rewrites
+the project's own references and leaves the lib files alone. The `typescript`
+package splits `getRenameInfo` from `findRenameLocations` in exactly this way.
 
 ---
 
@@ -1102,11 +1167,11 @@ Not yet resolved, listed so they are not mistaken for finished work:
   restated in `packages/common/src/tsgo/ts.ts` for the same reason and with the
   same real fix: the union belongs in the fork's generated AST.
 - **`getChildren-parity.mts` no longer fails on every mismatch** — it gained an
-  `alignKnownAstDivergence()` carve-out for two documented cases (JSDoc nodes
-  whose `pos` is the full start, and `JSDocText` prose nodes). It reclassifies 9
-  span mismatches as non-failing divergences. The carve-out now returns the
-  aligned children and the walk recurses through them, so only the diverging
-  child list itself goes unverified, not the subtree below it.
+  `alignKnownAstDivergence()` carve-out for one documented case (`JSDocText`
+  prose nodes). It reclassifies 6 span mismatches as non-failing divergences.
+  The carve-out returns the aligned children and the walk recurses through them,
+  so only the diverging child list itself goes unverified, not the subtree below
+  it.
 - **`packages/bootstrap`** — its source is migrated: `SourceFileCache` now owns a
   tsgo `DocumentRegistry` built over `createFileSystemAdapter`, and `Project`
   takes its program, its language service and its lib files from that session.

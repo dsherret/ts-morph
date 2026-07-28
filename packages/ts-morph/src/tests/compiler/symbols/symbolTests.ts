@@ -12,6 +12,24 @@ describe("Symbol", () => {
     it("should get the symbol name", () => {
       expect(enumNameNodeSymbol.getName()).to.equal("MyEnum");
     });
+
+    it("should get the declared name of a private identifier class member", () => {
+      const { sourceFile } = getInfoFromText(
+        "class C { #prop = 1; pub = 2; #method() {} get #getter() { return 1; } set #setter(value: number) {} }\nlet c: C;",
+      );
+      const type = sourceFile.getVariableDeclarationOrThrow("c").getType();
+      expect(type.getProperties().map(p => p.getName())).to.deep.equal(["#prop", "pub", "#method", "#getter", "#setter"]);
+      expect(type.getProperty("#prop")?.getName()).to.equal("#prop");
+      // the escaped name keeps the mangled form the symbol table uses
+      expect(type.getPropertyOrThrow("#prop").getEscapedName()).to.match(/^__#\d+@#prop$/);
+    });
+
+    it("should get the declared name of a static and an auto accessor private identifier member", () => {
+      const { sourceFile } = getInfoFromText("class C { static #stat = 1; accessor #auto = 2; }");
+      const classDec = sourceFile.getClassOrThrow("C");
+      expect(classDec.getStaticPropertyOrThrow("#stat").getSymbolOrThrow().getName()).to.equal("#stat");
+      expect(classDec.getPropertyOrThrow("#auto").getSymbolOrThrow().getName()).to.equal("#auto");
+    });
   });
 
   describe(nameof<Symbol>("getDeclarations"), () => {

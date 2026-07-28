@@ -1,4 +1,4 @@
-import { nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { JSDoc } from "../../../../compiler";
 import { JSDocStructure, JSDocTagStructure, OptionalKind, StructureKind } from "../../../../structures";
@@ -306,6 +306,98 @@ describe("JSDoc", () => {
     it("should not modify content's stars", () => {
       doTest("/** Performs `counter *= 2`.*/function identifier() {}", "Performs `counter *= 2`.");
       doTest("/**\nPerforms `counter *= 2`.\n*/function identifier() {}", "Performs `counter *= 2`.");
+    });
+  });
+
+  describe("span", () => {
+    // A doc comment starts at its `/**`. Everything before that — whitespace, and
+    // any comment that is not the doc comment — is the documented node's leading
+    // trivia and belongs to no one else.
+    function doTest(text: string, expected: { text: string; innerText: string; start: number; end: number }) {
+      const { sourceFile } = getInfoFromText(text);
+      const doc = sourceFile.getFunctions()[0].getJsDocs()[0];
+      expect(doc.getText()).to.equal(expected.text);
+      expect(doc.getFullText()).to.equal(expected.text);
+      expect(doc.getInnerText()).to.equal(expected.innerText);
+      expect(doc.getPos()).to.equal(expected.start);
+      expect(doc.getStart()).to.equal(expected.start);
+      expect(doc.getEnd()).to.equal(expected.end);
+      expect(doc.getLeadingTriviaWidth()).to.equal(0);
+      expect(doc.getWidth()).to.equal(expected.end - expected.start);
+    }
+
+    it("should start at the doc comment when nothing precedes it", () => {
+      doTest("const a = 1;\n/** doc */\nfunction f() {}\n", { text: "/** doc */", innerText: "doc", start: 13, end: 23 });
+    });
+
+    it("should not absorb a preceding line comment", () => {
+      doTest("const a = 1; // trailing\n/** doc */\nfunction f() {}\n", { text: "/** doc */", innerText: "doc", start: 25, end: 35 });
+    });
+
+    it("should not absorb a preceding block comment", () => {
+      doTest("const a = 1; /* b */\n/** doc */\nfunction f() {}\n", { text: "/** doc */", innerText: "doc", start: 21, end: 31 });
+    });
+
+    it("should not absorb several preceding comments", () => {
+      doTest("const a = 1;\n// one\n/* two */\n/** doc */\nfunction f() {}\n", { text: "/** doc */", innerText: "doc", start: 30, end: 40 });
+    });
+
+    it("should not absorb a preceding empty block comment", () => {
+      doTest("const a = 1;\n/**/\n/** doc */\nfunction f() {}\n", { text: "/** doc */", innerText: "doc", start: 18, end: 28 });
+    });
+
+    it("should not absorb a preceding shebang", () => {
+      doTest("#!/usr/bin/env node\n/** doc */\nfunction f() {}\n", { text: "/** doc */", innerText: "doc", start: 20, end: 30 });
+      doTest("#!/usr/bin/env node\n// hey\n/** doc */\nfunction f() {}\n", { text: "/** doc */", innerText: "doc", start: 27, end: 37 });
+    });
+
+    it("should treat every line terminator the scanner does as trivia", () => {
+      // a line separator ends a line comment, so a doc comment after one is its own comment
+      doTest("const a = 1;\n// t\u2028/** doc */\nfunction f() {}\n", { text: "/** doc */", innerText: "doc", start: 18, end: 28 });
+      doTest("const a = 1; // t\r\n/** doc */\r\nfunction f() {}\r\n", { text: "/** doc */", innerText: "doc", start: 19, end: 29 });
+    });
+
+    it("should keep consecutive doc comments apart", () => {
+      const { sourceFile } = getInfoFromText("const a = 1; // t\n/** one */\n/** two */\nfunction f() {}\n");
+      const docs = sourceFile.getFunctions()[0].getJsDocs();
+      expect(docs.map(d => d.getText())).to.deep.equal(["/** one */", "/** two */"]);
+      expect(docs.map(d => d.getStart())).to.deep.equal([18, 29]);
+      expect(docs.map(d => d.getPos())).to.deep.equal([18, 29]);
+    });
+
+    it("should leave the preceding comment to the documented node", () => {
+      const { sourceFile } = getInfoFromText("const a = 1; // trailing\n/** doc */\nfunction f() {}\n");
+      const func = sourceFile.getFunctions()[0];
+      expect(func.getText({ includeJsDocComments: true })).to.equal("/** doc */\nfunction f() {}");
+      expect(func.getStart(true)).to.equal(25);
+      expect(func.getStartLinePos(true)).to.equal(25);
+      expect(func.getStartLineNumber(true)).to.equal(2);
+      // a position inside the trailing comment is not inside the doc comment
+      expect(sourceFile.getDescendantAtPos(16)!.getKindName()).to.equal("FunctionKeyword");
+    });
+
+    it("should not absorb a preceding comment on a class member", () => {
+      const { sourceFile } = getInfoFromText("class C {\n  // hey\n  /** m doc */\n  m() {}\n}\n");
+      const method = sourceFile.getClasses()[0].getInstanceMethods()[0];
+      const doc = method.getJsDocs()[0];
+      expect(doc.getText()).to.equal("/** m doc */");
+      expect(doc.getInnerText()).to.equal("m doc");
+      expect(doc.getStart()).to.equal(21);
+      expect(method.getText({ includeJsDocComments: true })).to.equal("/** m doc */\n  m() {}");
+      expect(method.getStart(true)).to.equal(21);
+      expect(method.getStartLineNumber(true)).to.equal(3);
+    });
+
+    it("should not absorb a preceding comment on a parameter", () => {
+      // a parameter's doc comment is found as a trailing comment range of its own start
+      const { sourceFile } = getInfoFromText("function f(/* x */ /** the a */ a: number) {}\n");
+      const param = sourceFile.getFunctions()[0].getParameters()[0];
+      const doc = param.getChildrenOfKind(SyntaxKind.JSDoc)[0];
+      expect(doc.getText()).to.equal("/** the a */");
+      expect(doc.getStart()).to.equal(19);
+      expect(doc.getEnd()).to.equal(31);
+      expect(param.getText({ includeJsDocComments: true })).to.equal("/** the a */ a: number");
+      expect(param.getStart(true)).to.equal(19);
     });
   });
 

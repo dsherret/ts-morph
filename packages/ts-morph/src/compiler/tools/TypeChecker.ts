@@ -205,7 +205,7 @@ export class TypeChecker {
    */
   getTypeText(type: Type, enclosingNode?: Node, typeFormatFlags?: TypeFormatFlags) {
     if (typeFormatFlags == null)
-      typeFormatFlags = this.#getDefaultTypeFormatFlags(enclosingNode);
+      typeFormatFlags = this.#getDefaultTypeFormatFlags(type, enclosingNode);
 
     return this.compilerObject.typeToString(type.compilerType, enclosingNode?.compilerNode, typeFormatFlags);
   }
@@ -289,12 +289,18 @@ export class TypeChecker {
   }
 
   /** @internal */
-  #getDefaultTypeFormatFlags(enclosingNode?: Node) {
+  #getDefaultTypeFormatFlags(type: Type, enclosingNode?: Node) {
     let formatFlags = (TypeFormatFlags.UseTypeOfFunction | TypeFormatFlags.NoTruncation | TypeFormatFlags.UseFullyQualifiedType
       | TypeFormatFlags.WriteTypeArgumentsOfSignature) as TypeFormatFlags;
 
     if (enclosingNode != null && enclosingNode.getKind() === SyntaxKind.TypeAliasDeclaration)
       formatFlags |= TypeFormatFlags.InTypeAlias;
+
+    // The checker honours `UseTypeOfFunction` for a function expression or arrow function
+    // assigned to a module-level variable, printing `typeof f` where the signature used to
+    // be printed. Leave the flag off for those types so the signature is kept.
+    if (isTypeOfModuleLevelFunctionExpression(type))
+      formatFlags &= ~TypeFormatFlags.UseTypeOfFunction;
 
     return formatFlags;
   }
@@ -311,4 +317,29 @@ export class TypeChecker {
     const symbol = this.compilerObject.resolveName(name, meaning, location?.compilerNode, excludeGlobals);
     return symbol ? this.#context.compilerFactory.getSymbol(symbol) : undefined;
   }
+}
+
+/**
+ * Whether the type is the anonymous type of a function expression or arrow function
+ * declared in a module-level variable statement.
+ *
+ * The checker writes `typeof` for those on top of the function declarations and static
+ * methods it has always written it for, so this is the set where `UseTypeOfFunction`
+ * turns a printed signature into a `typeof`.
+ */
+function isTypeOfModuleLevelFunctionExpression(type: Type) {
+  const symbol = type.compilerType.getSymbol();
+  if (symbol == null || (symbol.flags & SymbolFlags.Function) === 0)
+    return false;
+  const declarations = symbol.declarations;
+  if (declarations == null || declarations.length === 0)
+    return false;
+  return declarations.every(handle => {
+    if (handle.kind !== SyntaxKind.FunctionExpression && handle.kind !== SyntaxKind.ArrowFunction)
+      return false;
+    const declaration = handle.resolve();
+    const statement = declaration?.parent?.parent?.parent;
+    return statement != null && ts.isVariableDeclaration(declaration!.parent) && ts.isVariableDeclarationList(declaration!.parent.parent)
+      && ts.isVariableStatement(statement) && (ts.isSourceFile(statement.parent) || ts.isModuleBlock(statement.parent));
+  });
 }

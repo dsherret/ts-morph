@@ -105,30 +105,16 @@ const goToTs = new Map<number, string>();
 const tsToGo = new Map<string, number>();
 
 /**
- * Differences that come from tsgo's AST rather than from getChildren, so no
- * amount of token synthesis can remove them. They are reported separately and
- * do not fail the run; anything else does.
- *
- *   1. A JSDoc node's `pos` is its full start (everything back to the previous
- *      node's end, comments included). Classic sets it to the `/**`. The `end`
- *      agrees, and `getStart()` agrees.
- *   2. tsgo stores doc comment prose as `JSDocText` children, both on the `JSDoc`
- *      node and on its tags. Classic keeps plain prose as a string on the
- *      `comment` property, so it is not a child at all.
+ * The one difference that comes from tsgo's AST rather than from getChildren, so
+ * no amount of token synthesis can remove it: tsgo stores doc comment prose as
+ * `JSDocText` children, both on the `JSDoc` node and on its tags, where classic
+ * keeps plain prose as a string on the `comment` property and so has no child at
+ * all. It is reported separately and does not fail the run; anything else does.
  *
  * Only this node's child list is affected, so the aligned children are returned
  * and the walk keeps comparing everything below them.
  */
 function alignKnownAstDivergence(goKids: any[], tsKids: readonly ts.Node[]): { goKids: any[]; tsKids: readonly ts.Node[] } | undefined {
-  const goJsDoc = goKids.filter(k => k.kind === 315 /* JSDoc */);
-  const tsJsDoc = tsKids.filter(k => k.kind === ts.SyntaxKind.JSDoc);
-  if (goJsDoc.length > 0 && goJsDoc.length === tsJsDoc.length) {
-    // Same doc nodes, same ends, only the full starts differ.
-    const sameEnds = goJsDoc.every((k, i) => k.end === tsJsDoc[i].end);
-    const restMatches = goKids.filter(k => k.kind !== 315).map(span).join(" ")
-      === tsKids.filter(k => k.kind !== ts.SyntaxKind.JSDoc).map(span).join(" ");
-    if (sameEnds && restMatches) return { goKids, tsKids };
-  }
   // JSDocText children that classic does not model as nodes at all.
   const withoutText = goKids.filter(k => k.kind !== 316 /* JSDocText */);
   if (withoutText.length < goKids.length && withoutText.map(span).join(" ") === tsKids.map(span).join(" "))
@@ -224,7 +210,7 @@ compareFile("/src/trivia.ts", triviaText, ts.ScriptKind.TS);
 compareFile("/src/app.tsx", tsxText, ts.ScriptKind.TSX);
 
 console.log(`compared ${compared} nodes, ${goToTs.size} distinct kinds mapped 1:1`);
-console.log(`known tsgo AST divergences (JSDoc full starts, JSDocText nodes): ${divergences.length}`);
+console.log(`known tsgo AST divergences (JSDocText nodes): ${divergences.length}`);
 if (mismatches.length) {
   console.log(`MISMATCHES: ${mismatches.length}`);
   for (const m of mismatches.slice(0, 10)) console.log(m);

@@ -1,4 +1,4 @@
-import { ArrayUtils, errors, SymbolFlags, ts } from "@ts-morph/common";
+import { ArrayUtils, errors, SymbolFlags, SyntaxKind, ts } from "@ts-morph/common";
 import { ProjectContext } from "../../ProjectContext";
 import { JSDocTagInfo, Node } from "../ast";
 import { Type } from "../types";
@@ -35,6 +35,15 @@ export class Symbol {
    * Gets the symbol name.
    */
   getName() {
+    // a private identifier class member lives in the symbol table under a mangled
+    // name (ex. `__#1@#prop`), so recover the declared name from the declaration the
+    // way the compiler's `symbolName` does
+    const valueDeclaration = this.compilerSymbol.valueDeclaration;
+    if (valueDeclaration != null && isPrivateIdentifierClassElementKind(valueDeclaration.kind)) {
+      const name = (valueDeclaration.resolve() as { name?: ts.Node } | undefined)?.name;
+      if (name != null && ts.isPrivateIdentifier(name))
+        return name.text;
+    }
     return this.compilerSymbol.name;
   }
 
@@ -248,5 +257,18 @@ export class Symbol {
   getJsDocTags() {
     return this.compilerSymbol.getJsDocTags(this.#context.typeChecker.compilerObject)
       .map(info => new JSDocTagInfo(info));
+  }
+}
+
+/** The declaration kinds classic TypeScript's `isPrivateIdentifierClassElementDeclaration` accepts. */
+function isPrivateIdentifierClassElementKind(kind: SyntaxKind) {
+  switch (kind) {
+    case SyntaxKind.PropertyDeclaration:
+    case SyntaxKind.MethodDeclaration:
+    case SyntaxKind.GetAccessor:
+    case SyntaxKind.SetAccessor:
+      return true;
+    default:
+      return false;
   }
 }

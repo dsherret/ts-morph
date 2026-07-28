@@ -814,6 +814,36 @@ let stringWithPromiseType: Promise<string>;
       const { firstChild, firstType } = getTypeFromText(`let myType: ${longType};`);
       expect(firstType.getText(firstChild, TypeFormatFlags.None)).to.equal(longType.substring(0, 317) + "...");
     });
+
+    it("should write the signature of a variable initialized with a function expression", () => {
+      const { sourceFile } = getInfoFromTextWithTypeChecking(
+        "const arrow = (a: number) => a;\nexport const exported = (a: number) => a;\n"
+          + "const expr = function (a: number) { return a; };\nnamespace N { export const inNamespace = (a: number) => a; }\n",
+      );
+      for (const name of ["arrow", "exported", "expr"])
+        expect(sourceFile.getVariableDeclarationOrThrow(name).getType().getText()).to.equal("(a: number) => number");
+      expect(sourceFile.getModuleOrThrow("N").getVariableDeclarationOrThrow("inNamespace").getType().getText())
+        .to.equal("(a: number) => number");
+    });
+
+    it("should still write typeof for a function declaration or static method", () => {
+      const { sourceFile } = getInfoFromTextWithTypeChecking(
+        "function fn(a: number) { return a; }\nclass C { static method(a: number) { return a; } }\nconst staticRef = C.method;\n",
+      );
+      expect(sourceFile.getFunctionOrThrow("fn").getType().getText()).to.equal("typeof fn");
+      expect(sourceFile.getVariableDeclarationOrThrow("staticRef").getType().getText()).to.equal("typeof C.method");
+    });
+
+    it("should keep a nested typeof in the signature of a function expression it does not write typeof for", () => {
+      const { sourceFile } = getInfoFromTextWithTypeChecking(
+        "function helper(a: number) { return a; }\nfunction outer() { const local = () => helper; return local; }\n"
+          + "const obj = { m: () => helper };\nconst objMember = obj.m;\nclass C { prop = () => helper; }\nconst classProp = new C().prop;\n",
+      );
+      expect(sourceFile.getFunctionOrThrow("outer").getVariableDeclarationOrThrow("local").getType().getText())
+        .to.equal("() => typeof helper");
+      expect(sourceFile.getVariableDeclarationOrThrow("objMember").getType().getText()).to.equal("() => typeof helper");
+      expect(sourceFile.getVariableDeclarationOrThrow("classProp").getType().getText()).to.equal("() => typeof helper");
+    });
   });
 
   describe(nameof<Type>("getProperties"), () => {

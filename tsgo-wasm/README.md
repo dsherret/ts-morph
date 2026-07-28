@@ -100,11 +100,10 @@ rewrite — and buys native performance without changing ts-morph's public API.
   classic TypeScript's spans, order and token parents — verified over a
   stress-test source plus doc comments, inline/leading/trailing comments and JSX
   (509 nodes, 129 distinct kinds mapping 1:1). This was the largest node-level
-  gap, since `forEachChild` alone omits tokens, JSDoc and syntax lists. Two
-  differences remain, and both come from tsgo's AST rather than from the
-  reconstruction: a `JSDoc` node's `pos` is its full start rather than the `/**`,
-  and a doc comment's prose is a `JSDocText` child where classic keeps it as a
-  plain string.
+  gap, since `forEachChild` alone omits tokens, JSDoc and syntax lists. One
+  difference remains, and it comes from tsgo's AST rather than from the
+  reconstruction: a doc comment's prose is a `JSDocText` child where classic
+  keeps it as a plain string.
 - The submodule is **ahead of npm `typescript@7.0.2`** and already exposes `emit`,
   `emitToString`, `getDeclarationEmit`, `getJavaScriptEmit`, and
   `getImportAdderEdits`, plus references (`getReferencedSymbolsForNode`,
