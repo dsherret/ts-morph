@@ -94,12 +94,41 @@ export class DocumentRegistry {
    * returned node tree is only valid until the next change to the same file.
    */
   createOrUpdateSourceFile(fileName: string, text: string): SourceFile {
+    return this.createOrUpdateSourceFiles([{ fileName, text }])[0];
+  }
+
+  /**
+   * Adds or replaces many files at once, and returns the parsed files in the order
+   * they were given.
+   *
+   * Adding a file rewrites the synthetic tsconfig and reopens the project, and both
+   * cost time proportional to how many files the registry already holds — so adding
+   * files one at a time is quadratic in their number. Everything the batch touches
+   * is reported as a single change, which is what makes a bulk add linear.
+   */
+  createOrUpdateSourceFiles(files: readonly { fileName: string; text: string }[]): SourceFile[] {
     this.#assertNotDisposed();
-    const existed = this.#versions.has(fileName);
-    this.#fs.writeFile!(fileName, text);
-    this.#versions.set(fileName, (this.#versions.get(fileName) ?? -1) + 1);
-    this.#applyChange(existed ? { changed: [fileName] } : { created: [fileName] });
-    return this.getSourceFileOrThrow(fileName);
+    if (files.length === 0)
+      return [];
+
+    const created = new Set<string>();
+    const changed = new Set<string>();
+    for (const { fileName, text } of files) {
+      if (!this.#versions.has(fileName))
+        created.add(fileName);
+      else if (!created.has(fileName)) // a file the batch itself created is not also a change
+        changed.add(fileName);
+      this.#fs.writeFile!(fileName, text);
+      this.#versions.set(fileName, (this.#versions.get(fileName) ?? -1) + 1);
+    }
+
+    // the keys have to be left off when empty: #applyChange rewrites the config
+    // for a `created` it can see, however few files are in it
+    this.#applyChange({
+      ...created.size > 0 ? { created: [...created] } : {},
+      ...changed.size > 0 ? { changed: [...changed] } : {},
+    });
+    return files.map(file => this.getSourceFileOrThrow(file.fileName));
   }
 
   /**

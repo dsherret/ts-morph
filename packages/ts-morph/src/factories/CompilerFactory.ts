@@ -267,6 +267,60 @@ export class CompilerFactory {
   }
 
   /**
+   * Gets many source files from their file paths in one go, using the file path
+   * cache where it can, and returns them in the order the paths were given —
+   * `undefined` where the file system has no such file.
+   *
+   * Equivalent to calling {@link addOrGetSourceFileFromFilePath} for each path,
+   * except that everything read off the file system is parsed as a single batch.
+   * The document registry reopens its project once per batch instead of once per
+   * file, and reopening costs more the more files the project holds, so this is
+   * what keeps adding many files from being quadratic in their number.
+   */
+  addOrGetSourceFilesFromFilePaths(
+    filePaths: readonly StandardizedFilePath[],
+    options: { markInProject: boolean; scriptKind: ScriptKind | undefined },
+  ): (SourceFile | undefined)[] {
+    const standardizedFilePaths = filePaths.map(filePath => this.#context.fileSystemWrapper.getStandardizedAbsolutePath(filePath));
+    const toParse: { filePath: StandardizedFilePath; text: string; hasBom: boolean }[] = [];
+    const queued = new Set<StandardizedFilePath>();
+
+    // a path given twice is read and parsed once, the way the same path asked for
+    // twice one at a time would be — the second ask found the first in the cache,
+    // and nothing reaches the cache until the whole batch has been parsed
+    for (const filePath of standardizedFilePaths) {
+      if (this.#sourceFileCacheByFilePath.has(filePath) || queued.has(filePath))
+        continue;
+      queued.add(filePath);
+      const fileText = this.#context.fileSystemWrapper.readFileIfExistsSync(filePath, this.#context.getEncoding());
+      if (fileText == null)
+        continue;
+      this.#context.logger.log(`Loaded file: ${filePath}`);
+      const hasBom = StringUtils.hasBom(fileText);
+      toParse.push({ filePath, text: hasBom ? StringUtils.stripBom(fileText) : fileText, hasBom });
+    }
+
+    // kept by the path that was asked for, because the file path cache keys on the
+    // name the compiler reports, which a case-insensitive project can spell otherwise
+    const parsed = new Map<StandardizedFilePath, SourceFile>();
+    const compilerSourceFiles = this.documentRegistry.createOrUpdateSourceFiles(toParse.map(f => ({ fileName: f.filePath, text: f.text })));
+    for (let i = 0; i < compilerSourceFiles.length; i++) {
+      const sourceFile = this.getSourceFile(compilerSourceFiles[i], options);
+      if (toParse[i].hasBom)
+        sourceFile._hasBom = true;
+      sourceFile._setIsSaved(true); // source files loaded from the disk are saved to start with
+      parsed.set(toParse[i].filePath, sourceFile);
+    }
+
+    return standardizedFilePaths.map(filePath => {
+      const sourceFile = parsed.get(filePath) ?? this.#sourceFileCacheByFilePath.get(filePath);
+      if (sourceFile != null && options.markInProject)
+        sourceFile._markAsInProject();
+      return sourceFile;
+    });
+  }
+
+  /**
    * Adds a file the compiler resolved into the program but ts-morph was never told about.
    *
    * tsgo resolves modules, `/// <reference>`s and type directives inside the

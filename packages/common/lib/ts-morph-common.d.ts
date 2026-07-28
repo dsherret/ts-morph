@@ -806,6 +806,19 @@ export declare class DocumentRegistry {
      */
     createOrUpdateSourceFile(fileName: string, text: string): SourceFile;
     /**
+     * Adds or replaces many files at once, and returns the parsed files in the order
+     * they were given.
+     *
+     * Adding a file rewrites the synthetic tsconfig and reopens the project, and both
+     * cost time proportional to how many files the registry already holds — so adding
+     * files one at a time is quadratic in their number. Everything the batch touches
+     * is reported as a single change, which is what makes a bulk add linear.
+     */
+    createOrUpdateSourceFiles(files: readonly {
+        fileName: string;
+        text: string;
+    }[]): SourceFile[];
+    /**
      * Replaces the compiler options the registry's project is opened with.
      *
      * The options live in the synthetic tsconfig, so changing them rewrites it and

@@ -380,7 +380,10 @@ export class Project {
   #addSourceFilesForTsConfigResolver(tsConfigResolver: TsConfigResolver, compilerOptions: CompilerOptions) {
     const paths = tsConfigResolver.getPaths(compilerOptions);
 
-    const addedSourceFiles = paths.filePaths.map(p => this.addSourceFileAtPath(p));
+    // added in one batch rather than one at a time, which for a tsconfig with many
+    // files is the difference between linear and quadratic — see
+    // DirectoryCoordinator#addSourceFilesAtFilePaths
+    const addedSourceFiles = this._context.directoryCoordinator.addSourceFilesAtFilePaths(paths.filePaths, { markInProject: true });
     for (const dirPath of paths.directoryPaths)
       this.addDirectoryAtPathIfExists(dirPath);
     return addedSourceFiles;

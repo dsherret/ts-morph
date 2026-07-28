@@ -55,19 +55,40 @@ export class DirectoryCoordinator {
     return sourceFile;
   }
 
+  /**
+   * Adds the files at the given paths, throwing when one of them is not there.
+   *
+   * The files are added in one batch, which the document registry is much faster
+   * at than the same paths added one at a time — see
+   * `CompilerFactory#addOrGetSourceFilesFromFilePaths`.
+   */
+  addSourceFilesAtFilePaths(filePaths: readonly StandardizedFilePath[], options: { markInProject: boolean }): SourceFile[] {
+    const sourceFiles = this.#compilerFactory.addOrGetSourceFilesFromFilePaths(filePaths, {
+      markInProject: options.markInProject,
+      scriptKind: undefined,
+    });
+    return sourceFiles.map((sourceFile, i) => {
+      if (sourceFile == null)
+        throw new errors.FileNotFoundError(this.#fileSystemWrapper.getStandardizedAbsolutePath(filePaths[i]));
+      return sourceFile;
+    });
+  }
+
   addSourceFilesAtPaths(fileGlobs: string | ReadonlyArray<string>, options: { markInProject: boolean }): SourceFile[] {
     if (typeof fileGlobs === "string")
       fileGlobs = [fileGlobs];
 
-    const sourceFiles: SourceFile[] = [];
+    const globbedFilePaths: StandardizedFilePath[] = [];
     const globbedDirectories = new Set<StandardizedFilePath>();
 
     for (const filePath of this.#fileSystemWrapper.globSync(fileGlobs)) {
-      const sourceFile = this.addSourceFileAtPathIfExists(filePath, options);
-      if (sourceFile != null)
-        sourceFiles.push(sourceFile);
+      globbedFilePaths.push(filePath);
       globbedDirectories.add(FileUtils.getDirPath(filePath));
     }
+
+    const sourceFiles = this.#compilerFactory
+      .addOrGetSourceFilesFromFilePaths(globbedFilePaths, { markInProject: options.markInProject, scriptKind: undefined })
+      .filter(sourceFile => sourceFile != null);
 
     for (const dirPath of FileUtils.getParentMostPaths(Array.from(globbedDirectories)))
       this.addDirectoryAtPathIfExists(dirPath, { recursive: true, markInProject: options.markInProject });
