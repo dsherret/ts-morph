@@ -11,16 +11,53 @@ export class TsInspector {
     this.#project = project;
   }
 
-  /** The `@ts-morph/common` module symbol. */
+  /**
+   * An export of `@ts-morph/common`, by name.
+   *
+   * The barrel is reached from source rather than from the built declaration
+   * file — see the `paths` mapping in tsconfig.json — and it re-exports through
+   * `export *`, which the module symbol's own export list does not flatten. The
+   * exported declarations do.
+   */
+  getCommonExportOrThrow(name: string) {
+    const declarations = this.#getCommonExportedDeclarations().get(name);
+    if (declarations == null || declarations.length === 0)
+      throw new Error(`Expected to find an export named ${name} on @ts-morph/common.`);
+    return declarations[0].getSymbolOrThrow();
+  }
+
   @Memoize
-  getCommonSymbol() {
-    return this.#project.getSourceFileOrThrow("src/main.ts").getExportDeclarationOrThrow("@ts-morph/common").getModuleSpecifier()!
-      .getSymbolOrThrow();
+  #getCommonExportedDeclarations() {
+    return this.#project.getSourceFileOrThrow("src/main.ts")
+      .getExportDeclarationOrThrow("@ts-morph/common")
+      .getModuleSpecifierSourceFileOrThrow()
+      .getExportedDeclarations();
   }
 
   @Memoize
   getTsSymbol() {
-    return this.getCommonSymbol().getExportOrThrow("ts").getAliasedSymbolOrThrow();
+    return this.getCommonExportOrThrow("ts");
+  }
+
+  /**
+   * A member of the `ts` namespace, by name.
+   *
+   * Same reason as {@link getCommonExportOrThrow}: the namespace is a module
+   * that re-exports, so its symbol's own export list is not the whole surface.
+   */
+  getTsExportOrThrow(name: string) {
+    const declarations = this.#getTsExportedDeclarations().get(name);
+    if (declarations == null || declarations.length === 0)
+      throw new Error(`Expected to find an export named ${name} on the ts namespace.`);
+    return declarations[0].getSymbolOrThrow();
+  }
+
+  @Memoize
+  #getTsExportedDeclarations() {
+    const declaration = this.getTsSymbol().getDeclarations()[0];
+    if (!tsMorph.Node.isSourceFile(declaration))
+      throw new Error("Expected the ts namespace to resolve to a source file.");
+    return declaration.getExportedDeclarations();
   }
 
   @Memoize
@@ -79,7 +116,7 @@ export class TsInspector {
   @Memoize
   getSyntaxKindNamesAndValues() {
     const foundValues = new Set<number>();
-    return this.getTsSymbol().getExportOrThrow("SyntaxKind").getExports().map(e => {
+    return this.getTsExportOrThrow("SyntaxKind").getExports().map(e => {
       const value = (e.getValueDeclarationOrThrow() as tsMorph.EnumMember).getValue() as number;
       const isAlias = foundValues.has(value);
       foundValues.add(value);

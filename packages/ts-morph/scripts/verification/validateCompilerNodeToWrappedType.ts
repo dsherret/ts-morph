@@ -10,6 +10,22 @@ import { tsMorph } from "../deps.ts";
 import { TsMorphInspector } from "../inspectors/mod.ts";
 import { Problem } from "./Problem.ts";
 
+/**
+ * Wrappers the mapping cannot name, because tsgo's type graph does not
+ * distinguish them from another node's.
+ *
+ * `NodeWithTypeArguments` adds one optional property to `TypeNode`, so the two
+ * are mutually assignable and a conditional type has to pick one. It picks
+ * `TypeNode`, because that is what an inferred type node actually is —
+ * resolving the other way declared 14 members as `NodeWithTypeArguments` that
+ * are not. Nothing is typed as `NodeWithTypeArguments` anyway: it is the base of
+ * three concrete nodes, each matched by its own kind first.
+ *
+ * `JSDocUnknownTag` is reachable only under the kind classic TypeScript called
+ * `JSDocTag`, which is the catch-all the mapping resolves to.
+ */
+const unmappableWrappers = new Set(["NodeWithTypeArguments", "JSDocUnknownTag"]);
+
 export function validateCompilerNodeToWrappedType(inspector: TsMorphInspector, addProblem: (problem: Problem) => void) {
   const wrappedNodes = inspector.getWrappedNodes();
   const sourceFile = inspector.getProject().getSourceFileOrThrow("CompilerNodeToWrappedType.ts");
@@ -40,8 +56,9 @@ export function validateCompilerNodeToWrappedType(inspector: TsMorphInspector, a
 
     for (const addedNode of addedNodes) {
       const typeText = addedNode.getType().getText(addedNode).replace(/\<.*\>$/, "");
-      const nodeText = "compiler." + addedNode.getName().replace("_test", "");
-      if (typeText !== nodeText) {
+      const wrapperName = addedNode.getName().replace("_test", "");
+      const nodeText = "compiler." + wrapperName;
+      if (typeText !== nodeText && !unmappableWrappers.has(wrapperName)) {
         addProblem({
           filePath: sourceFile.getFilePath(),
           lineNumber: sourceFile.getTypeAliasOrThrow("CompilerNodeToWrappedType").getStartLineNumber(),

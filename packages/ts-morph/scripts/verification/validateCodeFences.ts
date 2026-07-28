@@ -40,16 +40,13 @@ export function validateCodeFences(
 
     // todo: add more functions here in the future
     function forGetChildren() {
-      // tsgo's Node has no getChildren method; the adapter provides it as a free
-      // function exported from @ts-morph/common.
       const getChildrenSymbol = tsInspector
-        .getCommonSymbol()
-        .getExportOrThrow("getChildren")
-        .getAliasedSymbol()
-        ?? tsInspector.getCommonSymbol().getExportOrThrow("getChildren");
+        .getTsExportOrThrow("Node")
+        .getMemberOrThrow("getChildren");
 
       // wish it were possible to get the references from a symbol
-      return getChildrenSymbol.getValueDeclarationOrThrow().findReferencesAsNodes();
+      const methodSignature = getChildrenSymbol.getValueDeclarationOrThrow() as tsMorph.MethodSignature;
+      return methodSignature.findReferencesAsNodes();
     }
   }
 
