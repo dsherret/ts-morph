@@ -9,9 +9,11 @@ export interface CompilerOptions {
     allowArbitraryExtensions?: boolean;
     allowImportingTsExtensions?: boolean;
     allowNonTsExtensions?: boolean;
+    allowSyntheticDefaultImports?: boolean;
     allowUmdGlobalAccess?: boolean;
     allowUnreachableCode?: boolean;
     allowUnusedLabels?: boolean;
+    alwaysStrict?: boolean;
     assumeChangesOnlyAffectDirectDependencies?: boolean;
     checkJs?: boolean;
     customConditions?: string[];
@@ -28,6 +30,7 @@ export interface CompilerOptions {
     disableSolutionSearching?: boolean;
     disableReferencedProjectLoad?: boolean;
     erasableSyntaxOnly?: boolean;
+    esModuleInterop?: boolean;
     exactOptionalPropertyTypes?: boolean;
     experimentalDecorators?: boolean;
     forceConsistentCasingInFileNames?: boolean;

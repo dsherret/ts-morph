@@ -431,6 +431,26 @@ reference used to be required.
 `charset` no longer exists. `CompilerOptionsContainer#getEncoding()` therefore
 always returns `"utf-8"`.
 
+`ts.CompilerOptions` is TypeScript 7's option set, so `baseUrl`, `outFile` and
+`downlevelIteration` are gone from the type as well as from the compiler.
+
+`alwaysStrict`, `esModuleInterop` and `allowSyntheticDefaultImports` are **not**
+gone, though an earlier draft of this migration dropped them. TypeScript 7
+removed only their `false` value: the option is still read, `true` is
+`esModuleInterop`'s own default, and setting one to `false` produces a
+removed-option diagnostic (5108) rather than being unrepresentable. Reporting
+that at compile time would have been ts-morph inventing a stricter rule than the
+compiler's, so the three are typed `boolean` and the compiler is left to object.
+
+### The default library files come from tsgo
+
+They are the compiler's own copies, taken from
+`submodules/typescript-go/internal/bundled/libs`, so the checker resolves globals
+against the library it was built against. Until this change they were embedded
+from `node_modules/typescript/lib` — a TypeScript 7 checker type-checking against
+TypeScript 6's declarations. Expect small differences in global types and in the
+diagnostics that mention them.
+
 ### Diagnostics
 
 `Diagnostic#getMessageText()` now always returns a `string`. tsgo puts the
@@ -1123,12 +1143,8 @@ Not yet resolved, listed so they are not mistaken for finished work:
     to the built package rather than to source — which is what a published
     declaration has to be stated against.
 
-  Two things are worth knowing about the result. The published tarball is 10.6 MB
-  (49 MB unpacked), almost entirely `dist/typescript.wasm`. And `typescript` is
-  still a devDependency of `packages/common`: `scripts/createLibFile.ts` reads the
-  default library files out of `node_modules/typescript/lib` and embeds them. They
-  should come from tsgo, which carries its own copies inside the wasm — a
-  behavioural change worth doing deliberately, not as part of this.
+  One thing is worth knowing about the result: the published tarball is 10.6 MB
+  (49 MB unpacked), almost entirely `dist/typescript.wasm`.
 - **`packages/ts-morph` source** — type-checks clean, its suite is green (see
   “Measured state” for the counts, which live in one place) and
   `tsgo-wasm/project.mts` drives a real `Project` end to end (create, read,

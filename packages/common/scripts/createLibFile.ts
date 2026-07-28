@@ -2,8 +2,10 @@ import { createDtsMinifier, folders, path, tsMorph } from "./deps.ts";
 const { ts } = tsMorph;
 
 const libFilesFilePath = path.join(folders.common, "src/data/libFiles.generated.ts");
-// todo: grab this from the TypeScript repo's tag
-const libFolderPath = path.join(folders.root, "node_modules/typescript/lib");
+// The compiler's own copies, so the checker resolves globals against the library
+// it was built against. Reading them from `node_modules/typescript` instead meant
+// a TypeScript 7 checker type-checking against TypeScript 6's declarations.
+const libFolderPath = path.join(folders.root, "submodules/typescript-go/internal/bundled/libs");
 const minifier = createDtsMinifier(ts);
 
 let libFileText = "// dprint-ignore-file\nexport const libFiles: { fileName: string; text: string; }[] = [";
