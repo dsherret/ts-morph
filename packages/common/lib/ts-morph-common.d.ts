@@ -825,8 +825,17 @@ export declare class DocumentRegistry {
      * reopens the project — every file is reparsed against the new options.
      */
     setCompilerOptions(compilerOptions: CompilerOptions): void;
-    /** Removes a file from the registry. */
-    removeSourceFile(fileName: string): void;
+    /**
+     * Removes a file from the registry.
+     *
+     * The registry's copy of a file is what the compiler reads, so dropping it hands
+     * the path back to the wider file system: whatever is there now speaks for it.
+     * That is what keeps an import of a file the caller merely stopped tracking
+     * resolving. Pass `discardContents` when the caller is vacating the path instead
+     * — deleting the file, or putting a different one there — because then whatever
+     * the file system still has is stale and must not be read back.
+     */
+    removeSourceFile(fileName: string, options?: RemoveSourceFileOptions): void;
     /** Returns the parsed file, or `undefined` when it is not in the project. */
     getSourceFile(fileName: string): SourceFile | undefined;
     getSourceFileOrThrow(fileName: string): SourceFile;
@@ -880,6 +889,14 @@ export interface DocumentRegistryOptions {
      * module specifier the way that disk does.
      */
     useCaseSensitiveFileNames?: boolean;
+}
+
+export interface RemoveSourceFileOptions {
+    /**
+     * Whether the file's contents leave with it, rather than the file system's copy
+     * of the path speaking for it again. Defaults to false.
+     */
+    discardContents?: boolean;
 }
 
 /** Adapts a {@link TransactionalFileSystem} to the file system tsgo expects. */

@@ -19,10 +19,12 @@ export interface PrintNodeOptions {
   /**
    * The script kind.
    *
-   * @remarks This names the file the printed text is read back under, so it only
-   * matters when a source file is supplied for the node's comments and original
-   * token text. tsgo prints by node kind, so it no longer decides whether, say,
-   * `<T>x` prints as a type assertion or as JSX.
+   * @remarks This names the file the node's source text is read back under. tsgo
+   * prints by node kind, so it no longer decides whether, say, `<T>x` prints as a
+   * type assertion or as JSX.
+   *
+   * It has nothing to say when a source file is supplied, because that file names
+   * itself; without one it overrides the name of the file the node was parsed from.
    *
    * Defaults to TSX.
    */
@@ -39,9 +41,9 @@ export interface PrintNodeOptions {
  * Prints the provided node using the compiler's printer.
  * @param node - Compiler node.
  * @param options - Options.
- * @remarks The node is printed on its own, without the comments and original
- * token text that only the file it was parsed from can supply. Use the overload
- * that accepts a source file to print those too.
+ * @remarks A node that was parsed is printed against the file it came from, so it
+ * keeps its comments and original token text. A node built with the compiler API
+ * factory methods has no such file and is printed on its own.
  */
 export function printNode(node: ts.Node, options?: PrintNodeOptions): string;
 /**
@@ -54,17 +56,41 @@ export function printNode(node: ts.Node, sourceFile: ts.SourceFile, options?: Pr
 export function printNode(node: ts.Node, sourceFileOrOptions?: PrintNodeOptions | ts.SourceFile, secondOverloadOptions?: PrintNodeOptions) {
   const isFirstOverload = sourceFileOrOptions == null || (sourceFileOrOptions as ts.SourceFile).kind !== SyntaxKind.SourceFile;
   const options = (isFirstOverload ? sourceFileOrOptions as PrintNodeOptions : secondOverloadOptions) ?? {};
-  const sourceFile = isFirstOverload ? undefined : sourceFileOrOptions as ts.SourceFile;
+  const givenSourceFile = isFirstOverload ? undefined : sourceFileOrOptions as ts.SourceFile;
+  // a caller who names no file gets the one the node was parsed from, which is
+  // what supplies its comments and original token text
+  const sourceFile = givenSourceFile ?? getParsedSourceFile(node);
 
   return ts.printNode(node, {
     sourceText: sourceFile?.text,
-    fileName: sourceFile?.fileName ?? printFileName(options.scriptKind),
+    fileName: fileName(),
     removeComments: options.removeComments,
     newLine: options.newLineKind,
     preserveSourceNewlines: options.preserveSourceNewlines,
     neverAsciiEscape: options.neverAsciiEscape,
     terminateUnterminatedLiterals: options.terminateUnterminatedLiterals,
   });
+
+  /**
+   * The name the source text is read back under. A file the caller supplied names
+   * itself, and otherwise an explicit script kind decides — it would have nothing
+   * left to say if the file the node happens to come from spoke for it.
+   */
+  function fileName() {
+    if (givenSourceFile != null)
+      return givenSourceFile.fileName;
+    if (options.scriptKind == null && sourceFile != null)
+      return sourceFile.fileName;
+    return printFileName(options.scriptKind);
+  }
+}
+
+/** The file a node was parsed from, or `undefined` for one the factory built. */
+function getParsedSourceFile(node: ts.Node): ts.SourceFile | undefined {
+  // a factory node has no parent to walk up to, so this answers with the node
+  // itself — which is a source file only when the node is one
+  const sourceFile = node.getSourceFile() as ts.SourceFile | undefined;
+  return sourceFile?.kind === SyntaxKind.SourceFile ? sourceFile : undefined;
 }
 
 /** Names the file a supplied source text is read back under. */

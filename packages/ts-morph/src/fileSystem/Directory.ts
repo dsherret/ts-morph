@@ -769,7 +769,7 @@ export class Directory {
   async deleteImmediately() {
     const { fileSystemWrapper } = this._context;
     const path = this.getPath();
-    this.forget();
+    this._forgetDiscardingContents();
     await fileSystemWrapper.deleteDirectoryImmediately(path);
   }
 
@@ -779,7 +779,7 @@ export class Directory {
   deleteImmediatelySync() {
     const { fileSystemWrapper } = this._context;
     const path = this.getPath();
-    this.forget();
+    this._forgetDiscardingContents();
     fileSystemWrapper.deleteDirectoryImmediatelySync(path);
   }
 
@@ -789,14 +789,36 @@ export class Directory {
    * Note: Does not delete the directory from the file system.
    */
   forget() {
+    this.#forget(false);
+  }
+
+  /**
+   * Forgets the directory and lets the compiler drop what it holds for its files,
+   * rather than leaving the file system's copies to speak for their paths. For a
+   * caller that is deleting them — see `SourceFile#_forgetDiscardingContents`.
+   * @internal
+   */
+  _forgetDiscardingContents() {
+    this.#forget(true);
+  }
+
+  #forget(discardContents: boolean) {
     if (this.wasForgotten())
       return;
 
-    for (const sourceFile of this.getSourceFiles())
-      sourceFile.forget();
+    for (const sourceFile of this.getSourceFiles()) {
+      if (discardContents)
+        sourceFile._forgetDiscardingContents();
+      else
+        sourceFile.forget();
+    }
 
-    for (const dir of this.getDirectories())
-      dir.forget();
+    for (const dir of this.getDirectories()) {
+      if (discardContents)
+        dir._forgetDiscardingContents();
+      else
+        dir.forget();
+    }
 
     this._forgetOnlyThis();
   }

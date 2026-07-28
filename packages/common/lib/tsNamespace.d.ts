@@ -12,19 +12,28 @@
  * must therefore come from the same backend — mixing tsgo nodes with
  * `typescript`'s enums (or vice versa) silently misidentifies every node.
  */
+export { CheckFlags } from "./tsgo/enums/checkFlags.enum";
+export { CompletionItemKind } from "./tsgo/enums/completionItemKind.enum";
 export { DiagnosticCategory } from "./tsgo/enums/diagnosticCategory.enum";
+export { ElementFlags } from "./tsgo/enums/elementFlags.enum";
+export { InternalSymbolName } from "./tsgo/enums/internalSymbolName.enum";
+export { JsxEmit } from "./tsgo/enums/jsxEmit.enum";
 export { LanguageVariant } from "./tsgo/enums/languageVariant.enum";
 export { ModifierFlags } from "./tsgo/enums/modifierFlags.enum";
+export { ModuleDetectionKind } from "./tsgo/enums/moduleDetectionKind.enum";
 export { ModuleKind } from "./tsgo/enums/moduleKind.enum";
 export { ModuleResolutionKind } from "./tsgo/enums/moduleResolutionKind.enum";
 export { NodeFlags } from "./tsgo/enums/nodeFlags.enum";
 export { ObjectFlags } from "./tsgo/enums/objectFlags.enum";
+export { OuterExpressionKinds } from "./tsgo/enums/outerExpressionKinds.enum";
 export { ScriptKind } from "./tsgo/enums/scriptKind.enum";
 export { ScriptTarget } from "./tsgo/enums/scriptTarget.enum";
+export { SignatureKind } from "./tsgo/enums/signatureKind.enum";
 export { SymbolFlags } from "./tsgo/enums/symbolFlags.enum";
 export { SyntaxKind } from "./tsgo/enums/syntaxKind.enum";
 export { TokenFlags } from "./tsgo/enums/tokenFlags.enum";
 export { TypeFlags } from "./tsgo/enums/typeFlags.enum";
+export { TypePredicateKind } from "./tsgo/enums/typePredicateKind.enum";
 import { NewLineKind as TsgoNewLineKind } from "./tsgo/enums/newLineKind.enum";
 /**
  * Which characters end a line.

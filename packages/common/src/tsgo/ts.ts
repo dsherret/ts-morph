@@ -13,8 +13,11 @@
  * `typescript`'s enums (or vice versa) silently misidentifies every node.
  */
 
-// Enums. Every enum ts-morph re-exports has a tsgo counterpart except EmitHint
-// and TypeFormatFlags, which belong to the printer/checker surface below.
+// Enums. Every enum named by a type this namespace exposes is re-exported here,
+// so that reading a member off a value the compiler hands back — a node's
+// `kind`, a symbol's `checkFlags`, a tuple's `elementFlags` — can be written
+// against a name rather than a number. The exceptions are EmitHint and
+// TypeFormatFlags, which belong to the printer/checker surface below.
 //
 // These are re-exported verbatim, which means tsgo owns both the member names
 // and the member values. Both changed relative to the `typescript` package —
@@ -23,19 +26,28 @@
 // ts-morph uses members such as `SyntaxKind.ClassDeclaration` in type position,
 // which only a real `enum` declaration supports; and they cannot be renumbered
 // because the values are the wire format shared with the Go compiler.
+export { CheckFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/checkFlags.enum.js";
+export { CompletionItemKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/completionItemKind.enum.js";
 export { DiagnosticCategory } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/diagnosticCategory.enum.js";
+export { ElementFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/elementFlags.enum.js";
+export { InternalSymbolName } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/internalSymbolName.enum.js";
+export { JsxEmit } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/jsxEmit.enum.js";
 export { LanguageVariant } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/languageVariant.enum.js";
 export { ModifierFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/modifierFlags.enum.js";
+export { ModuleDetectionKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/moduleDetectionKind.enum.js";
 export { ModuleKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/moduleKind.enum.js";
 export { ModuleResolutionKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/moduleResolutionKind.enum.js";
 export { NodeFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/nodeFlags.enum.js";
 export { ObjectFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/objectFlags.enum.js";
+export { OuterExpressionKinds } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/outerExpressionKinds.enum.js";
 export { ScriptKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/scriptKind.enum.js";
 export { ScriptTarget } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/scriptTarget.enum.js";
+export { SignatureKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/signatureKind.enum.js";
 export { SymbolFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/symbolFlags.enum.js";
 export { SyntaxKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/syntaxKind.enum.js";
 export { TokenFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/tokenFlags.enum.js";
 export { TypeFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/typeFlags.enum.js";
+export { TypePredicateKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/typePredicateKind.enum.js";
 
 import { NewLineKind as TsgoNewLineKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/newLineKind.enum.js";
 

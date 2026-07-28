@@ -780,7 +780,9 @@ gains tsgo's `preserveSourceNewlines`, `neverAsciiEscape` and
   no hint.
 - **`scriptKind` only names the file** the supplied source text is read back
   under, so it no longer decides whether `<T>x` prints as a type assertion or as
-  JSX — that follows from the node.
+  JSX — that follows from the node. A node the caller names no file for is
+  printed against the file it was parsed from, which is what keeps its comments,
+  and that file names itself unless a `scriptKind` says otherwise.
 
 `newLineKind` is now applied by the printer rather than by rewriting the printed
 text, so a line break the program owns (inside a template literal, say) keeps
@@ -1029,16 +1031,41 @@ The classic names are kept as aliases where they are part of ts-morph's own
 public surface, but **the numeric values changed**, which matters for code that
 hard-codes them:
 
-| Member                               | Classic | tsgo                             |
-| ------------------------------------ | ------- | -------------------------------- |
-| `NewLineKind.CarriageReturnLineFeed` | `0`     | `1` (aliased to `CRLF`)          |
-| `NewLineKind.LineFeed`               | `1`     | `2` (aliased to `LF`)            |
-| —                                    | —       | `NewLineKind.None = 0` is new    |
-| `SyntaxKind.EndOfFileToken`          | `1`     | renamed to `EndOfFile`; no alias |
+| Member                                           | Classic           | tsgo                                                             |
+| ------------------------------------------------ | ----------------- | ---------------------------------------------------------------- |
+| `NewLineKind.CarriageReturnLineFeed`             | `0`               | `1` (aliased to `CRLF`)                                          |
+| `NewLineKind.LineFeed`                           | `1`               | `2` (aliased to `LF`)                                            |
+| —                                                | —                 | `NewLineKind.None = 0` is new                                    |
+| `SyntaxKind.EndOfFileToken`                      | `1`               | renamed to `EndOfFile`; no alias                                 |
+| `JsxEmit.React`                                  | `2`               | `3`                                                              |
+| `JsxEmit.ReactNative`                            | `3`               | `2`                                                              |
+| `ModuleDetectionKind.Legacy`                     | `1`               | `2`                                                              |
+| `ModuleDetectionKind.Auto`                       | `2`               | `1`                                                              |
+| —                                                | —                 | `ModuleDetectionKind.None = 0` is new                            |
+| `OuterExpressionKinds.ExcludeJSDocTypeAssertion` | `1 << 31`         | `64`                                                             |
+| —                                                | —                 | `OuterExpressionKinds.Assignments = 128`, `.Comma = 256` are new |
+| `CheckFlags.Discriminant`                        | `192`             | renamed to `NonUniformAndLiteral`; same value                    |
+| `InternalSymbolName.Resolving`                   | `"__resolving__"` | removed; `AssignmentDeclaration` and `ModuleExports` are new     |
 
 Passing a hard-coded `0` for a newline kind now means `None`;
 `newLineKindToString` rejects it with an explanatory error rather than silently
 emitting the wrong ending.
+
+`JsxEmit` and `ModuleDetectionKind` are the two that transpose rather than shift:
+a hard-coded `jsx: 2` asked for `React.createElement` under the `typescript`
+package and asks for `react-native` here, and `moduleDetection: 1` moves the
+other way, from `legacy` to `auto`. Neither is rejected, because both numbers are
+valid members — only the meaning changed. Name the member.
+
+Two of the classic enums have no run-time value at all here, because tsgo
+declares them as unions of string literals rather than as enums:
+`OrganizeImportsMode` (`"all" | "sortAndCombine" | "removeUnused"`, where classic
+had `.All` / `.SortAndCombine` / `.RemoveUnused`) and `QuotePreference`
+(`"auto" | "double" | "single"`, where classic had `.Single = 0` / `.Double = 1`).
+`ts.OrganizeImportsMode.All` is therefore a `TypeError`; pass the string.
+
+`ts.Extension` and `ts.SymbolFormatFlags` are gone outright rather than reshaped:
+tsgo generates neither, and nothing left on ts-morph's surface names either one.
 
 ### Measured state
 
@@ -1046,15 +1073,15 @@ Run on the working tree this document describes:
 
 |                      | passing | pending | failing | `ensure-no-project-compile-errors` |
 | -------------------- | ------- | ------- | ------- | ---------------------------------- |
-| `packages/common`    | 414     | 0       | 0       | 0                                  |
-| `packages/ts-morph`  | 4390    | 3       | 0       | 0                                  |
+| `packages/common`    | 424     | 0       | 0       | 0                                  |
+| `packages/ts-morph`  | 4441    | 2       | 0       | 0                                  |
 | `packages/bootstrap` | 85      | 4       | 0       | no such task                       |
 
 All 15 end-to-end scripts under `tsgo-wasm/` pass, as do the Go tests for every
 package the fork touches.
 
-`packages/ts-morph`’s 3 pending tests are the two `elementAccessExpressionTests`
-cases and the `forget()` one under `custom module resolution`.
+`packages/ts-morph`’s pending tests are the two `elementAccessExpressionTests`
+cases.
 `packages/bootstrap`’s 4 are its `custom type reference directive resolution`
 describe, twice over — once for each of the async and sync constructors. Neither
 package skips anything for want of a `resolutionHost`. `packages/bootstrap` has
@@ -1221,24 +1248,39 @@ Not yet resolved, listed so they are not mistaken for finished work:
   - **Type reference directives are still not covered.** They resolve down a
     separate path in the compiler with no hook, so the
     `custom type reference directive resolution` tests stay skipped.
-- **Forgetting a file makes imports of it stop resolving.** `forget()` reports
-  the file to the compiler as deleted, which makes that path missing for the
-  snapshot, so an import of it fails even though the file is still on the file
-  system. Diagnosed rather than guessed:
-  - It is not about custom resolution — it happens with no resolution host.
-  - It is not the file being invisible — a _new_ session over the same file
-    system resolves it, and so does a new importer in a later snapshot.
-  - It is the `deleted` signal itself, and the next snapshot recovers, including
-    for the original importer.
+- **Forgetting a file made imports of it stop resolving — fixed.** `forget()`
+  reported the file to the compiler as deleted, which made that path missing for
+  the snapshot, so an import of it failed even though the file was still on the
+  file system. Diagnosed rather than guessed:
+  - It was not about custom resolution — it happened with no resolution host.
+  - It was not the file being invisible — a _new_ session over the same file
+    system resolved it, and so did a new importer in a later snapshot.
+  - It was the `deleted` signal itself, and the next snapshot recovered,
+    including for the original importer.
 
-  Reporting it as `changed` instead — the content at that path is now whatever
-  the file system has — fixes this and breaks `SourceFile#move` with `overwrite`,
-  which removes a destination whose stale on-disk content has to be dropped
-  rather than re-read. The two cases need different signals and reach
-  `DocumentRegistry#removeSourceFile` through one call site,
-  `CompilerFactory#removeCompilerNodeFromCache`, which cannot tell them apart.
-  The fix is to carry the caller's intent down to it; attempted and reverted
-  once for exactly this reason.
+  `deleted` is nonetheless the right signal wherever the caller is vacating the
+  path rather than handing it back: `move` with `overwrite` removes a destination
+  whose stale on-disk content has to be dropped rather than re-read, every `move`
+  leaves an old path the file is no longer at, and `delete` on a `SourceFile` or
+  `Directory` forgets before the file system is told. All of those reach
+  `DocumentRegistry#removeSourceFile` through the same call site,
+  `CompilerFactory#removeCompilerNodeFromCache`, so it now takes the signal from
+  its caller: a `discardContents` option, off by default — a file merely leaving
+  the registry hands its path back to the file system, and whatever is there
+  speaks for it. It is carried down through `Node#_forgetOnlyThis`, and the
+  callers that vacate a path reach it through `SourceFile#`/
+  `Directory#_forgetDiscardingContents` or, for the path a move leaves behind,
+  `CompilerFactory#replaceCompilerNode`.
+
+  Still outstanding, and older than this: `SourceFile#move` with `overwrite` onto
+  a path that exists only on the file system keeps the stale text when the
+  compiler has already resolved that path. Nothing removes the destination —
+  `_moveInternal` only forgets one that is in the source file cache — and the
+  write that follows is classified `created`, because `#versions` tracks only the
+  registry's own files while the compiler may hold the path from the base file
+  system, and a `created` for a path already read leaves the old contents. It
+  would take the registry keeping the base file system to hand so it could call
+  that write a `changed`.
 - **Sweep the source comments into this document before the PR lands.** The
   migration left explanatory notes scattered through the code — anything opening
   with "Breaking change:", and every aside about what tsgo no longer has or does

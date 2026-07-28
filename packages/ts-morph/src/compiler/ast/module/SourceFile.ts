@@ -344,7 +344,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
       const existingSourceFile = this._context.compilerFactory.getSourceFileFromCacheFromFilePath(filePath);
       if (existingSourceFile != null) {
         markAsInProject = existingSourceFile._isInProject();
-        existingSourceFile.forget();
+        // the moved file takes the path next, so the copy on the file system must
+        // not be read back in the meantime
+        existingSourceFile._forgetDiscardingContents();
       }
     } else {
       this._context.compilerFactory.throwIfFileExists(filePath, "Did you mean to provide the overwrite option?");
@@ -430,7 +432,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
   delete() {
     this._throwIfIsInMemoryLibFile();
     const filePath = this.getFilePath();
-    this.forget();
+    this._forgetDiscardingContents();
     this._context.fileSystemWrapper.queueFileDelete(filePath);
   }
 
@@ -440,7 +442,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
   async deleteImmediately() {
     this._throwIfIsInMemoryLibFile();
     const filePath = this.getFilePath();
-    this.forget();
+    this._forgetDiscardingContents();
     await this._context.fileSystemWrapper.deleteFileImmediately(filePath);
   }
 
@@ -450,8 +452,26 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
   deleteImmediatelySync() {
     this._throwIfIsInMemoryLibFile();
     const filePath = this.getFilePath();
-    this.forget();
+    this._forgetDiscardingContents();
     this._context.fileSystemWrapper.deleteFileImmediatelySync(filePath);
+  }
+
+  /**
+   * Forgets the file and lets the compiler drop what it holds for the path, rather
+   * than leaving the file system's copy to speak for it.
+   *
+   * This is what a caller who is vacating the path wants — deleting the file, or
+   * putting a different one there. A plain `forget()` means the opposite: ts-morph
+   * has stopped tracking a file that is still on the file system, and an import of
+   * it has to keep resolving.
+   * @internal
+   */
+  _forgetDiscardingContents() {
+    if (this.wasForgotten())
+      return;
+
+    this.forgetDescendants();
+    this._forgetOnlyThis({ discardContents: true });
   }
 
   /**

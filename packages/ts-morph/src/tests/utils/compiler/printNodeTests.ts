@@ -11,7 +11,9 @@ describe("printNode", () => {
   const tsClass = tsSourceFile.getChildren(tsSourceFile)[0].getChildren(tsSourceFile)[0];
 
   it("should print the node when specifying a compiler node and options", () => {
-    expect(printNode(tsClass, { newLineKind: NewLineKind.CarriageReturnLineFeed })).to.equal(nodeTextNoComment.replace(/\n/g, "\r\n"));
+    expect(printNode(tsClass, { newLineKind: NewLineKind.CarriageReturnLineFeed })).to.equal(nodeText.replace(/\n/g, "\r\n"));
+    expect(printNode(tsClass, { newLineKind: NewLineKind.CarriageReturnLineFeed, removeComments: true }))
+      .to.equal(nodeTextNoComment.replace(/\n/g, "\r\n"));
   });
 
   it("should print with comments when specifying a source file", () => {
@@ -26,8 +28,17 @@ describe("printNode", () => {
     expect(printNode(tsClass, tsSourceFile, { newLineKind: NewLineKind.CarriageReturnLineFeed })).to.equal(nodeText.replace(/\n/g, "\r\n"));
   });
 
-  it("should print the node when specifying a compiler node and source file", () => {
-    expect(printNode(tsClass)).to.equal(nodeTextNoComment);
+  // the file the node was parsed from is what supplies the comment, and the node
+  // is printed against it without the caller having to name it
+  it("should print the node with its comments when specifying only a compiler node", () => {
+    expect(printNode(tsClass)).to.equal(nodeText);
+  });
+
+  // the counterpart to the test above: a factory node has no file to be printed
+  // against, and asking it for one answers with the node itself
+  it("should print a node the factory built, which has no file of its own", () => {
+    const node = ts.factory.createClassDeclaration(undefined, ts.factory.createIdentifier("MyClass"), undefined, undefined, []);
+    expect(printNode(node)).to.equal("class MyClass {\n}");
   });
 
   it("should print a parsed node that has parents set", () => {

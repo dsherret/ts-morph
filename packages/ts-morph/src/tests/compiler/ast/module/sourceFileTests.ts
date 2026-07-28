@@ -238,6 +238,19 @@ describe("SourceFile", () => {
       doTest("/dir/file.ts", "../subDir/existingFile.ts", "/subDir/existingFile.ts");
     });
 
+    // the file the move left behind is still on disk until the move is saved, and
+    // the compiler must not resolve to it
+    it("should stop an import of the old path resolving", () => {
+      const project = new Project({ useInMemoryFileSystem: true });
+      const sourceFile = project.createSourceFile("/dir/a.ts", "export class A {}");
+      project.saveSync();
+
+      sourceFile.move("/dir/b.ts");
+      project.createSourceFile("/importer.ts", `import { A } from "./dir/a";\nconst a = new A();`);
+      // 2307: cannot find module
+      expect(project.getPreEmitDiagnostics().map(d => d.getCode())).to.deep.equal([2307]);
+    });
+
     it("should change the module specifiers in other files when moving", () => {
       const fileText = "export interface MyInterface {}\nexport class MyClass {};";
       const { sourceFile, project } = getInfoFromText(fileText, { filePath: "/MyInterface.ts" });
@@ -544,6 +557,20 @@ describe("SourceFile", () => {
       expect(entry.path).to.equal(filePath);
       expect(host.getDeleteLog().length).to.equal(1);
       expect(host.getFiles()).to.deep.equal([]);
+    });
+
+    // the compiler reads the file system for anything the project no longer holds,
+    // so a deleted file has to be reported as gone rather than left to the copy
+    // still sitting on disk until the delete is saved
+    it("should stop an import of the file resolving", () => {
+      const project = new Project({ useInMemoryFileSystem: true });
+      const sourceFile = project.createSourceFile("/dir/a.ts", "export class A {}");
+      project.createSourceFile("/importer.ts", `import { A } from "./dir/a";\nconst a = new A();`);
+      project.saveSync();
+
+      sourceFile.delete();
+      // 2307: cannot find module
+      expect(project.getPreEmitDiagnostics().map(d => d.getCode())).to.deep.equal([2307]);
     });
   });
 

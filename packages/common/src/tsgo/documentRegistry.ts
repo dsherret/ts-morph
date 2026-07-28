@@ -61,6 +61,14 @@ export interface DocumentRegistryOptions {
   useCaseSensitiveFileNames?: boolean;
 }
 
+export interface RemoveSourceFileOptions {
+  /**
+   * Whether the file's contents leave with it, rather than the file system's copy
+   * of the path speaking for it again. Defaults to false.
+   */
+  discardContents?: boolean;
+}
+
 export class DocumentRegistry {
   readonly #fs: FileSystem;
   readonly #api: API;
@@ -144,13 +152,23 @@ export class DocumentRegistry {
     this.#openProject({ fileChanges: { changed: [configFilePath] }, openProject: configFilePath });
   }
 
-  /** Removes a file from the registry. */
-  removeSourceFile(fileName: string): void {
+  /**
+   * Removes a file from the registry.
+   *
+   * The registry's copy of a file is what the compiler reads, so dropping it hands
+   * the path back to the wider file system: whatever is there now speaks for it.
+   * That is what keeps an import of a file the caller merely stopped tracking
+   * resolving. Pass `discardContents` when the caller is vacating the path instead
+   * — deleting the file, or putting a different one there — because then whatever
+   * the file system still has is stale and must not be read back.
+   */
+  removeSourceFile(fileName: string, options: RemoveSourceFileOptions = {}): void {
     this.#assertNotDisposed();
     if (!this.#versions.delete(fileName))
       return;
     this.#fs.removeFile!(fileName);
-    this.#applyChange({ deleted: [fileName] });
+    // the file stops being a root either way, so the config is rewritten without it
+    this.#applyChange(options.discardContents ? { deleted: [fileName] } : { changed: [fileName] }, true);
   }
 
   /** Returns the parsed file, or `undefined` when it is not in the project. */
@@ -221,11 +239,15 @@ export class DocumentRegistry {
    * that means disposing it. Letting go happens after the new snapshot exists so
    * the source file cache can first carry unchanged files' entries across; that
    * is what preserves node identity for every file the edit did not touch.
+   *
+   * `rootsChanged` is for the one case the change itself does not imply it: a file
+   * that left the registry without being reported as deleted — see removeSourceFile.
    */
-  #applyChange(changes: { changed?: string[]; created?: string[]; deleted?: string[] }): void {
-    // adding or removing a file changes the root file list, so the config has to
-    // be rewritten with it — see #configText for why the list is explicit
-    if (changes.created != null || changes.deleted != null) {
+  #applyChange(changes: { changed?: string[]; created?: string[]; deleted?: string[] }, rootsChanged = false): void {
+    // adding or removing a file changes the root file list, which lives in the
+    // config, so that has to be rewritten too — see #configText for why the list
+    // is explicit
+    if (rootsChanged || changes.created != null || changes.deleted != null) {
       this.#fs.writeFile!(configFilePath, this.#configText());
       changes = { ...changes, changed: [...changes.changed ?? [], configFilePath] };
     }

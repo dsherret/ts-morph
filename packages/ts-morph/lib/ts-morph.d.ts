@@ -851,9 +851,9 @@ export interface CreateWrappedNodeOptions {
  * Prints the provided node using the compiler's printer.
  * @param node - Compiler node.
  * @param options - Options.
- * @remarks The node is printed on its own, without the comments and original
- * token text that only the file it was parsed from can supply. Use the overload
- * that accepts a source file to print those too.
+ * @remarks A node that was parsed is printed against the file it came from, so it
+ * keeps its comments and original token text. A node built with the compiler API
+ * factory methods has no such file and is printed on its own.
  */
 export declare function printNode(node: ts.Node, options?: PrintNodeOptions): string;
 /**
@@ -883,10 +883,12 @@ export interface PrintNodeOptions {
   /**
    * The script kind.
    *
-   * @remarks This names the file the printed text is read back under, so it only
-   * matters when a source file is supplied for the node's comments and original
-   * token text. tsgo prints by node kind, so it no longer decides whether, say,
-   * `<T>x` prints as a type assertion or as JSX.
+   * @remarks This names the file the node's source text is read back under. tsgo
+   * prints by node kind, so it no longer decides whether, say, `<T>x` prints as a
+   * type assertion or as JSX.
+   *
+   * It has nothing to say when a source file is supplied, because that file names
+   * itself; without one it overrides the name of the file the node was parsed from.
    *
    * Defaults to TSX.
    */

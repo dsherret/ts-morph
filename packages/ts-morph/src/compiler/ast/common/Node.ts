@@ -1,4 +1,16 @@
-import { ArrayUtils, errors, getLastToken as getCompilerLastToken, getSyntaxKindName, nameof, StoredComparer, StringUtils, SymbolFlags, SyntaxKind, ts } from "@ts-morph/common";
+import {
+  ArrayUtils,
+  errors,
+  getLastToken as getCompilerLastToken,
+  getSyntaxKindName,
+  nameof,
+  RemoveSourceFileOptions,
+  StoredComparer,
+  StringUtils,
+  SymbolFlags,
+  SyntaxKind,
+  ts,
+} from "@ts-morph/common";
 import { CodeBlockWriter } from "../../../codeBlockWriter";
 import * as compiler from "../../../compiler";
 import {
@@ -125,7 +137,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    * Only forgets this node.
    * @internal
    */
-  _forgetOnlyThis() {
+  _forgetOnlyThis(options?: RemoveSourceFileOptions) {
     if (this.wasForgotten())
       return;
 
@@ -134,7 +146,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       parent._wrappedChildCount--;
 
     this.#storeTextForForgetting();
-    this._context.compilerFactory.removeNodeFromCache(this);
+    this._context.compilerFactory.removeNodeFromCache(this, options);
     this._clearInternals();
   }
 

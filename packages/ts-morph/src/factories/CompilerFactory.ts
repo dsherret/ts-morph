@@ -6,6 +6,7 @@ import {
   FileUtils,
   KeyValueCache,
   libFolderInMemoryPath,
+  RemoveSourceFileOptions,
   ScriptKind,
   StandardizedFilePath,
   StringUtils,
@@ -699,7 +700,9 @@ export class CompilerFactory {
 
     if (nodeToReplace.kind === SyntaxKind.SourceFile && (nodeToReplace as ts.SourceFile).fileName !== (newNode as ts.SourceFile).fileName) {
       const sourceFile = node! as SourceFile;
-      this.#removeCompilerNodeFromCache(nodeToReplace);
+      // the file is moving off this path, so the compiler drops what it holds for
+      // it rather than reading the copy still sitting on the file system
+      this.#removeCompilerNodeFromCache(nodeToReplace, { discardContents: true });
       sourceFile._replaceCompilerNodeFromFactory(newNode as ts.SourceFile);
       this.#nodeCache.set(newNode, sourceFile);
       this.#addSourceFileToCache(sourceFile);
@@ -714,16 +717,18 @@ export class CompilerFactory {
   /**
    * Removes a node from the cache.
    * @param node - Node to remove.
+   * @param options - How a source file's removal is reported to the compiler.
    */
-  removeNodeFromCache(node: Node) {
-    this.#removeCompilerNodeFromCache(node.compilerNode);
+  removeNodeFromCache(node: Node, options?: RemoveSourceFileOptions) {
+    this.#removeCompilerNodeFromCache(node.compilerNode, options);
   }
 
   /**
    * Removes a compiler node from the cache.
    * @param compilerNode - Compiler node to remove.
+   * @param options - How a source file's removal is reported to the compiler.
    */
-  #removeCompilerNodeFromCache(compilerNode: ts.Node) {
+  #removeCompilerNodeFromCache(compilerNode: ts.Node, options?: RemoveSourceFileOptions) {
     this.#nodeCache.removeByKey(compilerNode);
 
     if (compilerNode.kind === SyntaxKind.SourceFile) {
@@ -732,7 +737,7 @@ export class CompilerFactory {
       this.#directoryCache.removeSourceFile(standardizedFilePath);
       const wrappedSourceFile = this.#sourceFileCacheByFilePath.get(standardizedFilePath);
       this.#sourceFileCacheByFilePath.delete(standardizedFilePath);
-      this.documentRegistry.removeSourceFile(standardizedFilePath);
+      this.documentRegistry.removeSourceFile(standardizedFilePath, options);
       if (wrappedSourceFile != null)
         this.#sourceFileRemovedEventContainer.fire(wrappedSourceFile);
     }
