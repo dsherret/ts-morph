@@ -18,7 +18,7 @@
     // body as static blocks and read the alias before it exists; one target lower
     // they are emitted as assignments after the class, where the alias is set.
     // Type checking still runs at the workspace target — this is emit only.
-    "target": "es2021",
+    "target": "es2022",
     // The base config only type-checks, so it declares no emit layout. This one
     // emits, and every file it emits is under `src`.
     "noEmit": false,

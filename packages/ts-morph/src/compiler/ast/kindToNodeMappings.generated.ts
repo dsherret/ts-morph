@@ -95,6 +95,7 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.JSDocSatisfiesTag]: compiler.JSDocSatisfiesTag;
   [SyntaxKind.JSDocSeeTag]: compiler.JSDocSeeTag;
   [SyntaxKind.JSDocSignature]: compiler.JSDocSignature;
+  [SyntaxKind.JSDocUnknownTag]: compiler.JSDocUnknownTag;
   [SyntaxKind.JSDocTemplateTag]: compiler.JSDocTemplateTag;
   [SyntaxKind.JSDocText]: compiler.JSDocText;
   [SyntaxKind.JSDocThisTag]: compiler.JSDocThisTag;

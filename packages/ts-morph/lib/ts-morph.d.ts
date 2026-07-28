@@ -3361,6 +3361,8 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   static readonly isJSDocDeprecatedTag: (node: Node | undefined) => node is JSDocDeprecatedTag;
   /** Gets if the node is a JSDocImplementsTag. */
   static readonly isJSDocImplementsTag: (node: Node | undefined) => node is JSDocImplementsTag;
+  /** Gets if the node is a JSDocImportTag. */
+  static readonly isJSDocImportTag: (node: Node | undefined) => node is JSDocImportTag;
   /** Gets if the node is a JSDocLink. */
   static readonly isJSDocLink: (node: Node | undefined) => node is JSDocLink;
   /** Gets if the node is a JSDocLinkCode. */
@@ -4291,8 +4293,6 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   static isIterationStatement(node: Node | undefined): node is IterationStatement;
   /** Gets if the node is a JSDocableNode. */
   static isJSDocable<T extends Node>(node: T | undefined): node is JSDocableNode & JSDocableNodeExtensionType & T;
-  /** Gets if the node is a JSDocImportTag. */
-  static isJSDocImportTag(node: Node | undefined): node is JSDocImportTag;
   /** Gets if the node is a JSDocPropertyLikeTag. */
   static isJSDocPropertyLikeTag<T extends Node>(node: T | undefined): node is JSDocPropertyLikeTag & JSDocPropertyLikeTagExtensionType & T;
   /** Gets if the node is a JSDocTag. */
@@ -6546,6 +6546,7 @@ export interface ImplementedKindToNodeMappings {
   [SyntaxKind.JSDocSatisfiesTag]: JSDocSatisfiesTag;
   [SyntaxKind.JSDocSeeTag]: JSDocSeeTag;
   [SyntaxKind.JSDocSignature]: JSDocSignature;
+  [SyntaxKind.JSDocUnknownTag]: JSDocUnknownTag;
   [SyntaxKind.JSDocTemplateTag]: JSDocTemplateTag;
   [SyntaxKind.JSDocText]: JSDocText;
   [SyntaxKind.JSDocThisTag]: JSDocThisTag;

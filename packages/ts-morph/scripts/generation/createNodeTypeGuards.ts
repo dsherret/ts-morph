@@ -53,7 +53,7 @@ export function createNodeTypeGuards(inspector: TsMorphInspector, tsInspector: T
         ...common,
         kind: tsMorph.StructureKind.Property,
         docs: [{ description }],
-        initializer: `Node.is(SyntaxKind.${method.name})`,
+        initializer: `createKindGuard(SyntaxKind.${method.name})`,
         type: `(node: compiler.Node | undefined) => node is ${getNodeType(method)}`,
         isReadonly: true,
       };
