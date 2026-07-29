@@ -2,10 +2,10 @@
  * Asynchronous acquisition of the tsgo WebAssembly compiler, for hosts that
  * cannot read it from disk.
  *
- * Node and Deno need none of this: the loader reads `typescript.wasm.gz` from
+ * Node and Deno need none of this: the loader reads `typescript.wasm` from
  * beside the bundle on first use, synchronously, which is what lets
  * `new Project()` stay synchronous. A browser has no synchronous way to reach a
- * 9.5 MB asset, so it fetches, gunzips and compiles the module once through
+ * 43 MiB asset, so it fetches and compiles the module once through
  * {@link initializeWasm} and hands it to the loader; every call after that is
  * synchronous exactly as it is elsewhere.
  */
@@ -30,29 +30,17 @@ declare const WebAssembly: {
   compileStreaming(source: Response | Promise<Response>): Promise<WebAssembly.Module>;
 };
 
-/**
- * Declared locally for the same reason, and narrowed to what is used here: a
- * gzip decoder every browser has and every host this runs on with it.
- */
-declare const DecompressionStream: new(format: "gzip") => {
-  readable: ReadableStream<Uint8Array>;
-  writable: WritableStream<Uint8Array>;
-};
-
 export interface InitializeWasmOptions {
   /**
-   * Where the compiler comes from. Defaults to `typescript.wasm.gz` beside this
+   * Where the compiler comes from. Defaults to `typescript.wasm` beside this
    * bundle, fetched from the same place the bundle was served from.
    *
    * A `Response` is accepted so that a cached copy costs the caller nothing to
-   * use: the answer from `caches.match("/typescript.wasm.gz")` or from a service
+   * use: the answer from `caches.match("/typescript.wasm")` or from a service
    * worker goes straight in and is compiled off the stream. A compiled module is
    * accepted for the other way round: a module survives `postMessage`, so one
    * thread can compile the reactor once and hand it to every worker that needs
    * it.
-   *
-   * Bytes and responses may be gzipped or not — which they are is read off the
-   * bytes, so the shipped asset and an unwrapped copy of it are equally good.
    */
   wasm?: Response | Promise<Response> | URL | Uint8Array | ArrayBuffer | CompiledWasmModule;
 }
@@ -115,7 +103,7 @@ async function compileSource(wasm: unknown): Promise<WebAssembly.Module> {
   if (wasm instanceof URL)
     return compileResponse(fetch(wasm));
   if (wasm instanceof Uint8Array || wasm instanceof ArrayBuffer)
-    return compileBytes(wasm);
+    return WebAssembly.compile(wasm);
   // already compiled: the caller did the work, or another thread did and posted
   // the result over
   if (isCompiledModule(wasm))
@@ -155,139 +143,35 @@ function isResponse(wasm: unknown): wasm is Response {
   return typeof (wasm as { arrayBuffer?: unknown } | null | undefined)?.arrayBuffer === "function";
 }
 
-/**
- * Compiles the compiler off a response, gunzipping it on the way past.
- *
- * The asset ships gzipped, so the body goes through a `DecompressionStream` and
- * is re-wrapped as `application/wasm` — which lets `compileStreaming` compile
- * the reactor while it is still arriving, instead of after 43 MB has been
- * buffered. A response that is already the raw module is passed straight
- * through, since a caller's `Response` may be a decompressed copy, or one a host
- * unwrapped itself on the way in.
- */
 async function compileResponse(source: Response | Promise<Response>): Promise<WebAssembly.Module> {
   const response = await source;
   if (!response.ok)
     throw new Error(`Fetching the TypeScript compiler from ${response.url} failed with status ${response.status}.`);
-  const body = response.body;
-  // A hand-built or polyfilled `Response` need not have a body stream; there is
-  // then nothing to stream, so the bytes are read whole and decided on after.
-  if (body == null)
-    return compileBytes(await response.arrayBuffer(), response.url);
   try {
-    return await WebAssembly.compileStreaming(wasmResponse(body));
+    // `compileStreaming` rejects anything not served as `application/wasm` — both
+    // Chrome and Node enforce that — so the content type is checked here rather
+    // than after a failed attempt has consumed the body. Streaming is worth
+    // reaching for: it compiles the reactor while it is still arriving, instead
+    // of after 43 MiB has been buffered.
+    return isWasmContentType(response)
+      ? await WebAssembly.compileStreaming(response)
+      : await WebAssembly.compile(await response.arrayBuffer());
   } catch (error) {
     throw compilationFailed(error, response.url);
   }
 }
 
-/** Compiles bytes that are either the module or the gzipped asset it ships as. */
-async function compileBytes(bytes: Uint8Array | ArrayBuffer, url = ""): Promise<WebAssembly.Module> {
-  try {
-    return await WebAssembly.compile(await gunzipIfCompressed(bytes));
-  } catch (error) {
-    throw compilationFailed(error, url);
-  }
-}
-
-/**
- * The bytes of a response body as something `compileStreaming` will take:
- * gunzipped if they are gzipped, and typed `application/wasm` either way —
- * `compileStreaming` rejects anything else, in Chrome and in Node alike.
- *
- * The first two bytes decide, rather than the content type or the file name,
- * because neither is dependable: a static host may label the asset by
- * extension, or serve it with a `content-encoding` the fetch already undid.
- */
-async function wasmResponse(body: ReadableStream<Uint8Array>): Promise<Response> {
-  const [magic, whole] = await peek(body, 2);
-  return new Response(isGzip(magic) ? gunzip(whole) : whole, { headers: { "content-type": "application/wasm" } });
-}
-
-/**
- * The first `count` bytes of a stream, and a stream that still starts with them.
- *
- * A stream cannot be read from twice and there is no peeking at one, so the
- * front is pulled off and a replacement built that hands it back before going on
- * with the rest. The read loop is a loop because a chunk boundary can fall
- * anywhere, including inside the two bytes being looked at.
- */
-async function peek(stream: ReadableStream<Uint8Array>, count: number): Promise<[Uint8Array, ReadableStream<Uint8Array>]> {
-  const reader = stream.getReader();
-  const head: Uint8Array[] = [];
-  let length = 0;
-  while (length < count) {
-    const { value, done } = await reader.read();
-    if (done)
-      break;
-    head.push(value);
-    length += value.length;
-  }
-  const restored = new ReadableStream<Uint8Array>({
-    start(controller) {
-      for (const chunk of head)
-        controller.enqueue(chunk);
-    },
-    async pull(controller) {
-      const { value, done } = await reader.read();
-      if (done)
-        controller.close();
-      else
-        controller.enqueue(value);
-    },
-    cancel(reason) {
-      return reader.cancel(reason);
-    },
-  });
-  return [concat(head, count), restored];
-}
-
-/** The bytes of the compiler, gunzipped if that is what was handed over. */
-async function gunzipIfCompressed(bytes: Uint8Array | ArrayBuffer): Promise<Uint8Array | ArrayBuffer> {
-  if (!isGzip(bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes)))
-    return bytes;
-  return new Response(gunzip(new Response(bytes).body!)).arrayBuffer();
-}
-
-/**
- * The stream, decompressed.
- *
- * Every host that can run this has `DecompressionStream` — it is what the
- * compressed asset is shipped against — but a host old enough to be missing it
- * would otherwise fail on the name alone, which says nothing about what to do.
- */
-function gunzip(stream: ReadableStream<Uint8Array>): ReadableStream<Uint8Array> {
-  if (typeof DecompressionStream !== "function") {
-    throw new Error(
-      "The TypeScript compiler is served gzipped and this host has no DecompressionStream to unwrap it with. "
-        + "Decompress it yourself and pass the bytes to `initializeWasm`.",
-    );
-  }
-  return stream.pipeThrough(new DecompressionStream("gzip"));
-}
-
-function isGzip(bytes: Uint8Array): boolean {
-  return bytes[0] === 0x1f && bytes[1] === 0x8b;
-}
-
-function concat(chunks: Uint8Array[], count: number): Uint8Array {
-  const result = new Uint8Array(count);
-  let offset = 0;
-  for (const chunk of chunks) {
-    const taken = chunk.subarray(0, count - offset);
-    result.set(taken, offset);
-    offset += taken.length;
-  }
-  return result.subarray(0, offset);
+function isWasmContentType(response: Response): boolean {
+  return (response.headers.get("content-type") ?? "").split(";")[0].trim().toLowerCase() === "application/wasm";
 }
 
 /**
  * A failed compile, said out loud.
  *
  * An incomplete download is the likeliest way this goes wrong and the worst at
- * explaining itself: the decompression stream rejects with a `TypeError` whose
- * own message is empty and whose text is on its `cause`. So the reason is dug
- * out of whichever of the two has one, and what it was reading is named.
+ * explaining itself, because the reason can sit on the error's `cause` rather
+ * than on the error itself. So it is dug out of whichever of the two has one,
+ * and what was being read is named.
  */
 function compilationFailed(error: unknown, url: string): Error {
   const reason = messageOf(error) || messageOf((error as { cause?: unknown } | null | undefined)?.cause) || String(error);
@@ -311,5 +195,5 @@ function messageOf(error: unknown): string {
  * makes the default work without the caller naming a path.
  */
 function defaultWasmUrl(): URL {
-  return new URL("./typescript.wasm.gz", import.meta.url);
+  return new URL("./typescript.wasm", import.meta.url);
 }

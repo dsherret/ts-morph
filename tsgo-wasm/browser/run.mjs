@@ -2,7 +2,7 @@
 //
 //   node tsgo-wasm/browser/run.mjs
 //
-// Bundles ./worker.ts for the browser, serves it beside `typescript.wasm.gz`,
+// Bundles ./worker.ts for the browser, serves it beside `typescript.wasm`,
 // drives a headless browser at it and reports what the worker found. Exits 0
 // only on `RESULT: OK`.
 //
@@ -21,7 +21,7 @@ const commonDist = join(repoRoot, "packages/common/dist");
 const port = Number(process.env.PORT ?? 8792);
 const serveOnly = process.argv.includes("--serve");
 
-const wasmAsset = join(commonDist, "typescript.wasm.gz");
+const wasmAsset = join(commonDist, "typescript.wasm");
 const required = [
   join(commonDist, "ts-morph-common.browser.mjs"),
   wasmAsset,
@@ -32,12 +32,12 @@ for (const file of required) {
     fail(`${file} is missing. Run \`npm run build\` at the repository root first.`);
 }
 
-assertGzipped(wasmAsset);
-// Nothing uncompressed is anywhere near the page: not in what is served, and not
-// in the directory it is served from. A loader that quietly fell back to a raw
-// `typescript.wasm` would have nothing to fall back to.
-if (existsSync(join(commonDist, "typescript.wasm")))
-  fail(`${join(commonDist, "typescript.wasm")} exists, so this run could pass without decompressing anything. Rebuild @ts-morph/common.`);
+assertRawWasm(wasmAsset);
+// The package ships one artifact, so a leftover compressed copy in the directory
+// this serves from means the build is stale and the page could be served the
+// wrong file.
+if (existsSync(`${wasmAsset}.gz`))
+  fail(`${wasmAsset}.gz exists, so the build is stale: the compiler is no longer shipped compressed. Rebuild @ts-morph/common.`);
 
 // The shipped artifact has to be loadable as it stands, and `deno bundle` would
 // hide it not being: it inlines whatever the bundle imports, so a bare specifier
@@ -57,10 +57,9 @@ const finished = new Promise(resolve => settle = resolve);
 const files = {
   "/": [join(here, "index.html"), "text/html"],
   "/worker.js": [workerBundle, "text/javascript"],
-  // `application/gzip`, and deliberately no `content-encoding: gzip`: the
-  // browser must hand the compressed bytes to the loader rather than unwrap them
-  // on the way in, because unwrapping them is the thing being tested.
-  "/typescript.wasm.gz": [wasmAsset, "application/gzip"],
+  // Served as application/wasm on purpose: `WebAssembly.compileStreaming`
+  // rejects anything else, in Chrome and in Node alike.
+  "/typescript.wasm": [wasmAsset, "application/wasm"],
 };
 
 const server = createServer((request, response) => {
@@ -145,11 +144,11 @@ function assertImportsNothing(bundlePath, what) {
   console.log(`${what} imports nothing: no node built-ins, no bare specifiers`);
 }
 
-/** That the asset really is gzipped, so a green run means the browser gunzipped it. */
-function assertGzipped(filePath) {
-  const header = readFileSync(filePath).subarray(0, 2);
-  if (header[0] !== 0x1f || header[1] !== 0x8b)
-    fail(`${filePath} is not gzipped, so this run would not exercise the decompression path.`);
+/** That the asset really is the module itself, and not wrapped in anything. */
+function assertRawWasm(filePath) {
+  const header = readFileSync(filePath).subarray(0, 4);
+  if (header[0] !== 0x00 || header[1] !== 0x61 || header[2] !== 0x73 || header[3] !== 0x6d)
+    fail(`${filePath} does not start with the WebAssembly magic word, so it is not the module a browser can compile.`);
 }
 
 /**

@@ -502,31 +502,30 @@ and that is counted in manipulations, not in how often you ask the compiler anyt
 - **Requires WebAssembly.** Node, Deno and browsers are all supported. The
   compiler is a Wasm reactor with a `wasi_snapshot_preview1` shim written against
   the web platform only — `node:wasi` is not imported by any shipped artifact.
-- **A 9.50 MiB `typescript.wasm.gz` ships beside the bundle.** The module is
-  43.02 MiB and ships gzipped; the loader gunzips it on first use, which costs
-  **about 60 ms once per process** — measured 30 ms to read and compile the raw
-  file against 83 ms to read, gunzip and compile the compressed one, so **+53 ms**
-  net on Node 24, and the same order in Chrome. `WebAssembly.compile` is only
-  ~20 ms of either, because V8 compiles Wasm functions lazily, so the gunzip is
-  genuinely the dominant cost on the load path rather than noise on an already
-  slow step. What those 60 ms buy is 33.5 MiB off everything that stores the file
-  unpacked: **`@ts-morph/common` installs at 18.3 MB rather than ~53 MB**, and so
-  do the Docker layers, CI caches and bundled lambdas carrying it, while a browser
-  downloads 9.5 MiB instead of 43. The npm tarball itself is ~11 MB either way —
-  npm always gzipped it in transit, so this is what it costs once unpacked.
-  `ts-morph`'s own tarball is ~0.2 MB.
-- **Bytes and responses handed to `initializeWasm` may be gzipped or not** — which
-  they are is read off the gzip magic number, so the shipped asset, a decompressed
-  copy, and a response a host already unwrapped all work. Node and Deno also
-  accept an unwrapped `typescript.wasm` sitting beside the `.gz`, for a build that
-  cannot carry the compressed file through.
+- **A 43.17 MiB `typescript.wasm` ships beside the bundle,** uncompressed. One
+  artifact, and the loader reads it as it stands. **`@ts-morph/common` installs at
+  53.6 MB unpacked**, and so do the Docker layers, CI caches and bundled lambdas
+  carrying it; a browser served the file without transport compression downloads
+  all 43 MiB of it. The npm tarball is 11.3 MB, because npm gzips it in transit
+  regardless — the size is what it costs once unpacked. `ts-morph`'s own tarball is
+  ~0.2 MB.
+
+  Shipping it compressed was tried and taken back out. It worked, and it cost
+  **about 60 ms once per process** to gunzip — `new Project()` measured 137 ms
+  against 78 ms now, on Node 24 — but the deciding point is that it bought nothing
+  on the wire that a server does not already do better: `content-encoding` takes
+  the same bytes to 9.54 MiB (gzip) or 8.10 MiB (brotli) with no decompression on
+  the load path at all, because the browser unwraps it before the loader sees
+  anything. What it did buy was disk, at the price of a second codec in the loader
+  and a `.gz` every bundler had to be taught about. See
+  [browser/README.md](./browser/README.md) for what to serve.
 - **Single-threaded:** one compiler request runs to completion at a time.
 - **The compiler is no longer a plain-JS dependency,** so setups that bundled
   `typescript` from source are affected.
-- **JSR publishing is still unsolved.** Compression takes the package from ~48 MB
-  to 13.7 MiB, under JSR's 20 MiB limit, and `deno publish --dry-run` is green —
-  but the wasm still cannot be loaded over `https:`, which is the other half of
-  the problem and untouched. See [TODO.md](./TODO.md) §3.
+- **JSR publishing is unsolved, on both halves.** `deno/common` is 47.34 MiB
+  against JSR's 20 MiB limit, and the wasm cannot be loaded over `https:` either.
+  `deno publish --dry-run` exits 0 regardless — it does not check the limit. See
+  [TODO.md](./TODO.md) §3.
 
 ### Browsers
 
@@ -538,9 +537,9 @@ ts-morph runs in a browser, with two requirements that are not optional:
    synchronous below the surface. In a worker the browser behaves as Node does:
    ~27 ms to compile, ~4 ms to instantiate.
 2. **`await initializeWasm()` before the first `Project`.** Node and Deno read
-   `typescript.wasm.gz` from beside the bundle synchronously; a browser has no
-   synchronous way to reach an asset that size, so it fetches, gunzips and
-   compiles it once, up front.
+   `typescript.wasm` from beside the bundle synchronously; a browser has no
+   synchronous way to reach an asset that size, so it fetches and compiles it once,
+   up front.
 
 ```js
 import { initializeWasm, Project } from "ts-morph";
@@ -1136,7 +1135,7 @@ wrapper identity for the rest of the project. `getSourceFileVersion` returns
 `"0"`, so an unknown one must not report one — and every method throws after
 `dispose()`.
 
-The bundle ships `dist/typescript.wasm.gz` beside `dist/ts-morph-common.js` and
+The bundle ships `dist/typescript.wasm` beside `dist/ts-morph-common.js` and
 `dist/ts-morph-common.browser.mjs`. The browser build is an ES module reached
 through the `browser` field and imports nothing at all.
 

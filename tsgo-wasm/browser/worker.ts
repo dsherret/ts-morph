@@ -18,20 +18,13 @@ function log(line: string) {
 async function main() {
   const start = performance.now();
 
-  await assertServedGzipped();
+  await assertServedRaw();
 
-  // No argument, so this is the documented default: fetch `typescript.wasm.gz`
-  // from beside the bundle, gunzip it and compile it once. Everything after it
-  // is synchronous.
+  // No argument, so this is the documented default: fetch `typescript.wasm` from
+  // beside the bundle and compile it once. Everything after it is synchronous.
   const fetched = performance.now();
   await initializeWasm();
   log(`initializeWasm: ${(performance.now() - fetched).toFixed(0)}ms`);
-
-  // The other half of the compressed path: a `Response` the caller fetched,
-  // which is what the browser guide tells a page with its own cache to pass.
-  const supplied = performance.now();
-  await initializeWasm({ wasm: fetch("/typescript.wasm.gz") });
-  log(`initializeWasm({ wasm: fetch(…) }): ${(performance.now() - supplied).toFixed(0)}ms`);
 
   const created = performance.now();
   const project = new Project({ useInMemoryFileSystem: true });
@@ -77,20 +70,22 @@ async function main() {
 }
 
 /**
- * That what arrives over the wire really is gzip, and arrives still gzipped.
+ * That what arrives over the wire is the module itself, and says how much of it
+ * a page has to download.
  *
- * Otherwise a green run would prove nothing about decompression: a server that
- * sent `content-encoding: gzip` would have the browser unwrap the body before
- * the loader ever saw it, and the loader would compile raw bytes and pass.
- * Only the first chunk is read; the rest of the body is dropped.
+ * Only the first chunk is read, for the WebAssembly magic word; the rest of the
+ * body is dropped.
  */
-async function assertServedGzipped() {
-  const response = await fetch("/typescript.wasm.gz");
+async function assertServedRaw() {
+  const response = await fetch("/typescript.wasm");
   const reader = response.body!.getReader();
   const { value } = await reader.read();
   void reader.cancel();
-  assert(value?.[0] === 0x1f && value?.[1] === 0x8b, `expected gzipped bytes, got ${value?.[0]} ${value?.[1]}`);
-  log(`typescript.wasm.gz: gzipped, ${response.headers.get("content-length")} bytes`);
+  assert(
+    value?.[0] === 0x00 && value?.[1] === 0x61 && value?.[2] === 0x73 && value?.[3] === 0x6d,
+    `expected the WebAssembly magic word, got ${value?.[0]} ${value?.[1]} ${value?.[2]} ${value?.[3]}`,
+  );
+  log(`typescript.wasm: ${response.headers.get("content-length")} bytes`);
 }
 
 function assert(condition: boolean, message: string): asserts condition {

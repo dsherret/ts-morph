@@ -1090,27 +1090,24 @@ export declare function initializeWasm(options?: InitializeWasmOptions): Promise
  * Asynchronous acquisition of the tsgo WebAssembly compiler, for hosts that
  * cannot read it from disk.
  *
- * Node and Deno need none of this: the loader reads `typescript.wasm.gz` from
+ * Node and Deno need none of this: the loader reads `typescript.wasm` from
  * beside the bundle on first use, synchronously, which is what lets
  * `new Project()` stay synchronous. A browser has no synchronous way to reach a
- * 9.5 MB asset, so it fetches, gunzips and compiles the module once through
+ * 43 MiB asset, so it fetches and compiles the module once through
  * {@link initializeWasm} and hands it to the loader; every call after that is
  * synchronous exactly as it is elsewhere.
  */
 export interface InitializeWasmOptions {
     /**
-     * Where the compiler comes from. Defaults to `typescript.wasm.gz` beside this
+     * Where the compiler comes from. Defaults to `typescript.wasm` beside this
      * bundle, fetched from the same place the bundle was served from.
      *
      * A `Response` is accepted so that a cached copy costs the caller nothing to
-     * use: the answer from `caches.match("/typescript.wasm.gz")` or from a service
+     * use: the answer from `caches.match("/typescript.wasm")` or from a service
      * worker goes straight in and is compiled off the stream. A compiled module is
      * accepted for the other way round: a module survives `postMessage`, so one
      * thread can compile the reactor once and hand it to every worker that needs
      * it.
-     *
-     * Bytes and responses may be gzipped or not — which they are is read off the
-     * bytes, so the shipped asset and an unwrapped copy of it are equally good.
      */
     wasm?: Response | Promise<Response> | URL | Uint8Array | ArrayBuffer | CompiledWasmModule;
 }

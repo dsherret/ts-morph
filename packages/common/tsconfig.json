@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.common.json",
   "compilerOptions": {
     "lib": ["es2022", "esnext.disposable"],
-    // The sources locate `typescript.wasm.gz` with `import.meta.url`, which the
+    // The sources locate `typescript.wasm` with `import.meta.url`, which the
     // CommonJS module target this used to inherit rejects outright. This is the
     // same pair `tsconfig.rollup.json` sets, so what the type check sees is now
     // what the bundle is actually built with.

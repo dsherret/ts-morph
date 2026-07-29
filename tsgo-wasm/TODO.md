@@ -9,9 +9,9 @@ Finished work is not kept here. What a user needs to know from it is in
 [BREAKING-CHANGES.md](./BREAKING-CHANGES.md); what it measured and how it was done is
 in [MIGRATION-REPORT.md](./MIGRATION-REPORT.md) §8.
 
-Measured state: `ts-morph` 4516 passing / 2 pending, `common` 463 / 0, `bootstrap`
+Measured state: `ts-morph` 4516 passing / 2 pending, `common` 461 / 0, `bootstrap`
 85 / 4, both verification gates clean, 16/16 end-to-end scripts, `go test ./...`
-clean, all four `typescript.wasm.gz` copies identical.
+clean, all four `typescript.wasm` copies identical.
 
 ---
 
@@ -132,13 +132,15 @@ Worth doing when something makes snapshots frequent again, or for §2.2 — not 
 
 ## 3. Packaging and publishing
 
-- **JSR — half solved.** The size half is done: the reactor ships gzipped, so
-  `deno/common` is 13.7 MiB against the 20 MiB limit rather than ~48 MB, and
-  `deno publish --dry-run` is green. What remains is that the Wasm cannot be loaded
-  over `https:` — a JSR consumer has no file to read beside the module. The likely
-  answer is `initializeWasm` with a fetched `Response`, which already handles the
-  compressed asset, made to work for an `https:` default rather than only a `file:`
-  one.
+- **JSR — unsolved, on both halves.** _Size_: `deno/common` is 47.34 MiB against
+  JSR's 20 MiB limit. Shipping the reactor gzipped did fit it — 13.7 MiB — and was
+  taken back out, so this is open again and no longer has a known answer that the
+  package is willing to pay for. Note that `deno publish --dry-run` exits 0 either
+  way: it does not check the limit, so it never was evidence about size. _Loading_:
+  the Wasm cannot be loaded over `https:` — a JSR consumer has no file to read
+  beside the module. The likely answer is `initializeWasm` with a fetched
+  `Response`, which already works, made to serve an `https:` default rather than
+  only a `file:` one.
 - **Fork maintenance.** The fork is well ahead of upstream. Split the mislabelled
   commit (`15ff4accb` says "expose getAmbientModules" and carries six unrelated
   changes) before proposing anything upstream, and decide which changes to send there

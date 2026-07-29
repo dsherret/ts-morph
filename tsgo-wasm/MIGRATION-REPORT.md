@@ -19,8 +19,8 @@ Everything else is marked. Line citations were re-anchored against the working t
 > batched and linear; a `createSourceFile` loop is not), reference resolution by containment (§7.1 a–c
 > — back to touching-token), the brace-spacing formatter no-op (§2.7), and the indenter's worst
 > divergences (§2.6). Since then: symbols on anonymous declarations and definition container
-> names (§7.2, §7.4), definition kinds following TypeScript's own `getSymbolKind`, and the
-> reactor shipping gzipped — `@ts-morph/common` unpacks at 18.3 MB rather than ~53 MB.
+> names (§7.2, §7.4), and definition kinds following TypeScript's own `getSymbolKind`. The
+> reactor was also shipped gzipped and then un-shipped: it ships uncompressed again.
 > Suite counts as of `433e2485`: `ts-morph` 4500/2, `common` 435/0,
 > `bootstrap` 85/4. See [TODO.md](./TODO.md) for what is actually left, and
 > [BREAKING-CHANGES.md](./BREAKING-CHANGES.md) for the user-facing state, which is re-measured.
@@ -937,10 +937,12 @@ recorded here so the TODO can hold only open work. Each was measured against pub
   only, so `node:wasi` appears in no shipped artifact and one artifact serves Node, Deno and the
   browser. A browser must load it in a Web Worker — V8 refuses a `WebAssembly.Module` this large on
   the main thread — and `await initializeWasm()` before the first `Project`.
-- **The reactor ships gzipped**, 43.02 MiB to 9.50 MiB, so `@ts-morph/common` unpacks at 18.3 MB
-  rather than ~53 MB. gzip and not brotli because `DecompressionStream` has no brotli decoder, nor
-  zstd because it needs Node >=22.15 and has no dependable browser support; gzip is the only codec
-  a synchronous Node read and a browser can both do. It costs ~54 ms once per process.
+- **The reactor ships uncompressed**, one 43.17 MiB `typescript.wasm`, so `@ts-morph/common`
+  unpacks at 53.6 MB. It was shipped gzipped for a while — 9.54 MiB, unpacking at 18.3 MB — and
+  that was reverted: it cost ~60 ms of gunzip once per process and a second codec in the loader,
+  to save bytes on the wire that a server's `content-encoding` saves for free and further
+  (8.10 MiB under brotli), since the browser unwraps that before the loader sees it. The disk
+  saving was real; it was judged not worth the artifact. See BREAKING-CHANGES.md §7.
 
 **Performance, in the order it was done**
 

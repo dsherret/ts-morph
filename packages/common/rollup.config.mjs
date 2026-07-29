@@ -10,7 +10,7 @@ const isDeno = process.env.BUILD === "deno";
 const isBrowser = process.env.BUILD === "browser";
 const outputFolder = isDeno ? "./dist-deno" : "./dist";
 // The browser build lands beside the node one rather than in a directory of its
-// own, so that the two share the single 9.5 MB `typescript.wasm.gz` the package
+// own, so that the two share the single 43 MiB `typescript.wasm` the package
 // ships. `.mjs` because the package is CommonJS by default and this output is
 // not.
 const outputFile = isBrowser ? "/ts-morph-common.browser.mjs" : "/ts-morph-common.js";
@@ -69,11 +69,8 @@ function tsgoInternalImports() {
  * Ships the tsgo reactor beside the bundle.
  *
  * The wasm loader is inlined here, so its in-package relative path to
- * `typescript.wasm.gz` no longer points anywhere; it falls back to a copy sitting
+ * `typescript.wasm` no longer points anywhere; it falls back to a copy sitting
  * next to the module that loads it, which is what this emits.
- *
- * Copied rather than compressed here, so that this and `_scripts/build-wasm.mjs`
- * cannot disagree about how: the compiler is gzipped once, where it is built.
  */
 function tsgoWasmAsset() {
   return {
@@ -81,8 +78,8 @@ function tsgoWasmAsset() {
     generateBundle() {
       this.emitFile({
         type: "asset",
-        fileName: "typescript.wasm.gz",
-        source: readFileSync(fileURLToPath(new URL("dist/typescript.wasm.gz", tsgoPackage))),
+        fileName: "typescript.wasm",
+        source: readFileSync(fileURLToPath(new URL("dist/typescript.wasm", tsgoPackage))),
       });
     },
   };
