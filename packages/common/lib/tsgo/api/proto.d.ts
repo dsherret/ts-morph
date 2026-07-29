@@ -124,14 +124,21 @@ export interface ProjectReference {
     /** True if it is intended that this reference form a circularity */
     circular?: boolean;
 }
-export interface ParsedCommandLine {
+/**
+ * A config as a project reports it: everything a `ParsedCommandLine` holds except
+ * the root file list, which a project's description leaves off — see
+ * `ProjectResponse`.
+ */
+export interface ProjectConfig {
     options: CompilerOptions;
-    fileNames: string[];
     projectReferences?: ProjectReference[];
     typeAcquisition?: TypeAcquisition;
     compileOnSave?: boolean;
     /** Diagnostics produced while parsing the config file. */
     errors?: ProtoDiagnostic[];
+}
+export interface ParsedCommandLine extends ProjectConfig {
+    fileNames: string[];
 }
 /**
  * A diagnostic as it appears on the wire. Structurally the same as the
@@ -249,11 +256,15 @@ export interface UpdateSnapshotResponse {
 export interface ProjectResponse {
     id: Path;
     configFileName: string;
-    parsedCommandLine: ParsedCommandLine;
+    /**
+     * The project's config, without its root file list: the list is as long as the
+     * project and a snapshot describes every project it holds, so carrying it here
+     * would make every edit cost time proportional to the size of the project. It
+     * is fetched with `getProjectRootFiles` when something asks for it.
+     */
+    parsedCommandLine: ProjectConfig;
     /** @deprecated Use `parsedCommandLine.options`. */
     compilerOptions: CompilerOptions;
-    /** @deprecated Use `parsedCommandLine.fileNames`. */
-    rootFiles: string[];
 }
 export interface SourceFileResponse {
     /** Base64-encoded binary AST data */

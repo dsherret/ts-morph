@@ -15,14 +15,14 @@ import { TypeFlags } from "../../enums/typeFlags.enum";
 import { TypePredicateKind } from "../../enums/typePredicateKind.enum";
 import { type __String, type Expression, type Identifier, ModifierFlags, type Node, type Path, type SourceFile, type SyntaxKind, type TypeNode } from "../../ast/index";
 import type { APIOptions, LSPConnectionOptions } from "../options";
-import type { CodeFixAction, CombinedCodeActions, CompilerOptions, DocumentIdentifier, DocumentPosition, FileSpan, FileTextEdits, FormattingOptions, LSPUpdateSnapshotParams, OrganizeImportsMode, ParsedCommandLine, ProjectReference, ProjectResponse, QuotePreference, SignatureResponse, SourceFileMetadata, SymbolResponse, TextEdit, TypeAcquisition, TypeResponse, UpdateSnapshotParams, UpdateSnapshotResponse } from "../proto";
+import type { CodeFixAction, CombinedCodeActions, CompilerOptions, DocumentIdentifier, DocumentPosition, FileSpan, FileTextEdits, FormattingOptions, LSPUpdateSnapshotParams, OrganizeImportsMode, ParsedCommandLine, ProjectConfig, ProjectReference, ProjectResponse, QuotePreference, SignatureResponse, SourceFileMetadata, SymbolResponse, TextEdit, TypeAcquisition, TypeResponse, UpdateSnapshotParams, UpdateSnapshotResponse } from "../proto";
 import { SourceFileCache } from "../sourceFileCache";
 import type { RequestTiming, TimingAccumulators, TimingInfo } from "../timing";
 import { Client, type ClientSocketOptions, type ClientSpawnOptions } from "./client";
 import type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, EmitOutput, EmitOutputFile, EmitResult, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, NumberLiteralType, ObjectType, RenameOptions, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType } from "./types";
 export { documentURIToFileName, fileNameToDocumentURI } from "../path";
 export { CheckFlags, CompletionItemKind, DiagnosticCategory, ElementFlags, EmitOnly, ModifierFlags, ModuleKind, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
-export type { APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, DocumentIdentifier, DocumentPosition, EmitOutput, EmitOutputFile, EmitResult, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, ParsedCommandLine, ProjectReference, RenameOptions, RequestTiming, SourceFileMetadata, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, TextEdit, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, Type, TypeAcquisition, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
+export type { APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, DocumentIdentifier, DocumentPosition, EmitOutput, EmitOutputFile, EmitResult, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, ParsedCommandLine, ProjectConfig, ProjectReference, RenameOptions, RequestTiming, SourceFileMetadata, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, TextEdit, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, Type, TypeAcquisition, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
 export declare class API<FromLSP extends boolean = false> {
     private client;
     private sourceFileCache;
@@ -133,17 +133,27 @@ declare class ProjectObjectRegistry {
 export declare class Project {
     readonly id: Path;
     readonly configFileName: string;
-    readonly parsedCommandLine: ParsedCommandLine;
+    /** The project's config, without its root file list — see `getRootFileNames`. */
+    readonly parsedCommandLine: ProjectConfig;
     /** @deprecated Use `parsedCommandLine.options`. */
     readonly compilerOptions: CompilerOptions;
-    /** @deprecated Use `parsedCommandLine.fileNames`. */
-    readonly rootFiles: readonly string[];
     readonly program: Program;
     readonly checker: Checker;
     readonly emitter: Emitter;
     private client;
     private snapshotId;
+    private rootFileNames;
     constructor(data: ProjectResponse, snapshotId: number, client: Client, sourceFileCache: SourceFileCache, toPath: (fileName: string) => Path, snapshotRegistry: SnapshotObjectRegistry);
+    /**
+     * The project's root file names, as its config resolved them.
+     *
+     * These are fetched the first time they are asked for rather than sent with
+     * the project, because the list is as long as the project and a snapshot
+     * describes every project it holds: carrying it would make every edit cost
+     * time proportional to the size of the project, for a list most callers never
+     * read.
+     */
+    getRootFileNames(): readonly string[];
     getImportAdderEdits(file: DocumentIdentifier, actions: readonly ImportAdderAction[]): readonly TextEdit[];
     getImportEditsForSymbols(file: DocumentIdentifier, symbols: readonly Symbol[], options?: GetImportEditsForSymbolsOptions): readonly TextEdit[];
     /** Returns the edits that format an entire file. */

@@ -63,6 +63,8 @@ export declare class SourceFileCache {
      */
     releaseSnapshot(snapshotId: number): void;
     private trackPath;
+    /** The set of paths a (snapshot, project) pair has fetched, created if new. */
+    private pathsFor;
     /**
      * Clear all entries from the cache.
      */

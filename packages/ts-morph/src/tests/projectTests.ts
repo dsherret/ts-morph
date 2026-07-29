@@ -965,6 +965,75 @@ const test = new Test();`,
         return perFile;
       }
     });
+
+    // Editing a file reopens the project too, and what the reopen costs used to grow
+    // with how many files the project held: the compiler counted a reference on every
+    // file in the new program and released one on every file in the old, once each per
+    // edit, and described every project's whole root file list back to the client
+    // along with it. None of that is about the file being edited, and none of it is
+    // done per file any more.
+    //
+    // A project eight times the size costs an edit 1.45 to 2.2 times as much across
+    // runs — what is left is mostly the reopen's own fixed cost — so the threshold
+    // leaves some room over the worst of that. It is a guard against a return to
+    // counting per file, which would put the ratio near 8, and not a guard against
+    // the smaller regression it was written alongside: the behaviour this replaced
+    // measured 1.9 to 2.0 and would still pass.
+    it("should cost about the same to edit a file however many files the project holds", function() {
+      this.timeout(120_000); // enough that a regression is reported rather than timing out
+      editFiles(50, 10); // the first project pays for warming the compiler up
+
+      const small = editFiles(200, 100);
+      const large = editFiles(1600, 100);
+      expect(large).to.be.lessThan(small * 3);
+
+      function editFiles(count: number, edits: number) {
+        const project = new Project({ useInMemoryFileSystem: true });
+        const sourceFiles: SourceFile[] = [];
+        for (let i = 0; i < count; i++)
+          sourceFiles.push(project.createSourceFile(`/file${i}.ts`, `export const value${i} = ${i};`));
+        project.getSourceFiles(); // opens the project, so only the edits are measured
+        const start = performance.now();
+        for (let i = 0; i < edits; i++)
+          sourceFiles[i % count].addClass({ name: `Class${i}` });
+        const perEdit = (performance.now() - start) / edits;
+        expect(sourceFiles[0].getClasses().length).to.be.greaterThan(0);
+        return perEdit;
+      }
+    });
+
+    // The commonest codegen loop: create a file, then manipulate it before creating
+    // the next. Reading the new file's tree is what forces the project open, so the
+    // deferral the create-only loop above relies on has nothing to collect here and
+    // every file costs a reopen.
+    //
+    // A reopen is still proportional to the project — adding a root rebuilds the
+    // program, which is the ceiling documented in tsgo-wasm/TODO.md §3.4 — so this
+    // does not claim a constant cost per file, and it is not a regression test for
+    // anything that has been fixed. It is a tripwire for the loop going fully
+    // quadratic, which would put the ratio below at 4: four times the files measures
+    // 1.2 to 1.5 times the cost per file across runs, on an idle machine and a loaded
+    // one alike, and measured 1.6 before the snapshot costs were cut.
+    it("should not cost four times as much per file for four times the files when each is manipulated as it is created", function() {
+      this.timeout(120_000);
+      createAndManipulate(50); // the first project pays for warming the compiler up
+
+      const small = createAndManipulate(100);
+      const large = createAndManipulate(400);
+      expect(large).to.be.lessThan(small * 2.5);
+
+      function createAndManipulate(count: number) {
+        const project = new Project({ useInMemoryFileSystem: true });
+        const start = performance.now();
+        for (let i = 0; i < count; i++) {
+          const sourceFile = project.createSourceFile(`/file${i}.ts`, `export const value${i} = ${i};`);
+          sourceFile.addClass({ name: `Class${i}` });
+        }
+        const perFile = (performance.now() - start) / count;
+        expect(project.getSourceFiles().length).to.equal(count);
+        return perFile;
+      }
+    });
   });
 
   describe("mixing real files with in-memory files", () => {

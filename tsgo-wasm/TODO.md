@@ -250,6 +250,102 @@ between manipulations, and `#retire` only keeps a snapshot the checker was used 
 limit. Asking the checker once per generation separates 0, 1, 2 and 3 exactly.
 Cost: not measurable, ~199MB rss either way over 500 files edited 24 times.
 
+### 3.4 A snapshot's cost grew with the project — mostly fixed, with a named ceiling
+
+**tsgo fork.** Every read after a write opens a new snapshot, and four separate
+pieces of that were proportional to the number of files in the project rather
+than to the number that changed. Three are gone and one is halved:
+
+- **The parse cache was counted per file, by identity.** A cloned program took a
+  reference on every file it held and a disposed snapshot released one on every
+  file it had held — once each per snapshot — and each of those was a `sync.Map`
+  lookup keyed by `ParseCacheKey`, a struct of two file names plus a hash. Boxing
+  that key into the map's `any` allocated, and hashing it walked the strings. The
+  entry is now handed to the file that holds it (`ast.SourceFile.hostCacheEntry`)
+  and carries the key it is filed under, so `RefValue`/`DerefValue` are a lock and
+  an increment with nothing built and nothing hashed. Both sweeps removed entirely
+  — leaking, to measure the ceiling — took 26% off an 800-file edit loop; keeping
+  the refcounting honest costs a little of that back.
+- **Every snapshot described every project's whole root file list.** The response
+  to `updateSnapshot` carried `rootFiles` and `parsedCommandLine.fileNames` — the
+  same list twice — for each project, encoded to JSON in Go and parsed in JS, on
+  every edit. A project's description now leaves the list off and the client asks
+  for it with `getProjectRootFiles` when something reads it; nothing in ts-morph
+  ever does. Worth another 13%. `ProjectResponse.parsedCommandLine` is a
+  `ProjectConfig` rather than a `ParsedCommandLine` for it, and `Project.rootFiles`
+  — already deprecated — is now `Project.getRootFileNames()`. Two things that were
+  plain data are now a request, and the difference shows: the list is only readable
+  while the snapshot the project came from is alive, where the field answered
+  forever; and it is fetched from the project's command line, so a project whose
+  program the typings installer added files to reports what its config named rather
+  than what its program holds. Nothing in ts-morph reads either, and the second is
+  what `rootFiles` reported anyway.
+- **Module resolution looked for a `package.json` once per file.** Every file in
+  every program build walked its ancestor directories asking for the package scope,
+  and each step built a `<dir>/package.json` path to look up: 22% of the cost of
+  adding a root, for an answer that is the same for every file in a directory. The
+  resolver memoizes it per directory now (a traced resolution still does the
+  lookups, because reporting them is what it is for).
+- **The client re-fetched its per-snapshot bookkeeping map per file.** It still
+  walks every path the previous snapshot referenced, but the destination it copies
+  into is looked up once rather than three times per file.
+
+Measured on the built bundle — this branch's compiler against the same branch with
+these four changes stashed, both rebuilt — in-memory FS, one process per size.
+Cost of one edit against a project of n files, in ms:
+
+| n      | 200  | 400  | 800  | 1600 | 3200 |
+| ------ | ---- | ---- | ---- | ---- | ---- |
+| before | 1.70 | 2.14 | 2.59 | 3.79 | 6.68 |
+| after  | 1.48 | 1.68 | 1.86 | 2.64 | 3.61 |
+
+The part that grows with the project fell by 2.3x (0.00166 to 0.00072 ms per file
+held), leaving ~1.3 ms that is the snapshot's own fixed cost. The same edit on 28.0.0 is
+0.055 to 0.079 ms and gets cheaper as the project grows, because it opens no
+snapshot at all.
+
+Whole loops, in ms, against a real `ts-morph@28.0.0` install:
+
+| files                                   | 200  | 800   | 1600  |
+| --------------------------------------- | ---- | ----- | ----- |
+| create, then manipulate — 28.0.0        | 8    | 38    | 79    |
+| create, then manipulate — before        | 355  | 1566  | 4738  |
+| create, then manipulate — after         | 304  | 1023  | 2350  |
+| create and manipulate together — 28.0.0 | 27   | 48    | 84    |
+| create and manipulate together — before | 1135 | 11236 | 40161 |
+| create and manipulate together — after  | 1010 | 8629  | 30954 |
+
+The first is the edit path and is now within a constant factor of itself: doubling
+the project no longer doubles the work. The second is not — it pays a program
+rebuild per file, which is the ceiling below.
+
+**What is left, and what it would take.** Adding a file to the project is still
+proportional to the project, and that is one thing: a root-set change rebuilds the
+program. `Project.CreateProgram` only reuses the old program when exactly one file
+is dirty _and_ the command line is unchanged (`project.go`), and ts-morph's config
+names every file, so a create fails both tests. The rebuild re-parses the config
+(14% of it), re-acquires every file from the parse cache by identity (15%), makes a
+parse task per file, and recomputes the common source directory over every file in
+`verifyCompilerOptions` (4%). Nothing in it is waste — it is a whole program build
+that happens to reuse the parsed trees.
+
+Closing it means an incremental root addition in the compiler: a `Program` that can
+take a file whose own imports resolve to files already present and append it, the
+way `UpdateProgram` replaces one. That is ten `map[tspath.Path]…` fields in
+`processedFiles` to extend rather than rebuild, plus include reasons, redirects and
+lib ordering. It is a real piece of compiler work, not a tuning change, and it is
+the only thing that would make a create-and-manipulate loop linear.
+
+Two smaller O(files) terms remain in an edit, ~4% each at 800 files and growing:
+`computeSnapshotChanges` diffs the whole `FilesByPath` map of every changed project,
+where a cloned program knows the one file that differs; and the client's
+`SourceFileCache.retainForSnapshot` copies a ref onto every entry the previous
+snapshot held. The first needs the compiler to say what a clone changed; the second
+needs the client's refs to be carried by a shared generation rather than copied,
+which is a redesign of that cache.
+
+---
+
 ---
 
 ## 4. Packaging and publishing
