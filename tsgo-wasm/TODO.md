@@ -615,14 +615,118 @@ call. It is bounded at 32 files by `scratchFileLimit`, so it is not a measured
 item, and converting it would put the one path that has no project of its own
 through a protocol it does not otherwise need.
 
-#### c. Make deletion incremental
+#### c. Make deletion incremental — done, with the same named ceiling
 
-**fork.** The last genuinely quadratic path: creating while deleting measures
-5.6 / 9.0 / **18.6** ms per file at 200 / 400 / 800, still doubling. Deletion
-falls back to a full rebuild (§3.5). The machinery is the one `AddRootFiles`
-already established — the hard part is that removing a file can move what other
-files resolve to, so the refusal conditions need at least as much care as the
-addition's did.
+**fork.** Deleting a file fell back to a full program rebuild, which was the last
+genuinely quadratic path. `Program.AddRootFiles` is now
+`Program.UpdateRootFiles`: it reads the new config's root file list as the old one
+with names dropped from it and names appended to the end, and does both in one
+walk. A removal is only made when it is purely subtractive, and everything else is
+a fallback to `NewProgram`.
+
+**Why a removal is harder than an addition.** An addition appended at the end can
+only reach files that are already in the program or are new, so nothing already
+there moves and nothing already resolved resolves differently. A removal has no
+such guarantee: a file that resolved to the one leaving has to resolve again, and
+may land on a copy under `node_modules`, on a file sharing its stem, or on
+nothing. It can also **move files that are staying**, because where a file sits in
+the program is decided by the first thing that reached it, and a removed file may
+have been that — `b.ts` importing `dep.ts` puts `dep.ts` before `c.ts`, where a
+rebuild without `b.ts` would put it after.
+
+Both are the same condition, and `canRemoveRoots` checks it rather than reasoning
+about it: **nothing that stays may owe anything to something that is going.**
+Concretely,
+
+- every reason a removed root is in the program is a root file reason for one of
+  the roots being removed. Nothing resolved to it, referenced it, or named it as a
+  type library — and since a removal cannot make a lookup that _failed_ succeed,
+  nothing else has to resolve again; and
+- no file that stays has a removed file as the **first** of its include reasons,
+  which is the reason that placed it. A removed root's walk therefore brought
+  nothing into the program but itself, and every other file keeps the place a
+  rebuild would give it. This is one pass over the include reasons, which also
+  builds the reason lists the derived program gets — the reasons a removed file
+  gave the files it merely referenced are dropped from them.
+
+**Where it refuses**, each a fallback to a full build: a **lib file**, which is
+sorted ahead of everything else; a file the base only found by **searching
+node_modules**; a file the program **does not hold at all** (an unsupported
+extension names a root that was never parsed); a file it holds under a **name none
+of the removed roots gave it**; a **casing** the lower-case index does not name,
+since that index holds the first path of each casing and the second one leaving
+would take the first one's entry; a program with **duplicates**, whose parse cache
+accounting is worked out over the whole walk; a **diagnostic the parse produced**
+about a file that is going; an **added root whose walk reaches one** that is going,
+which is the case where the file is dropped from the roots but left on the file
+system and the arriving import still finds it; **more than eight roots at once**;
+and **the last root in the project**, since the first build is where the lib files
+and the automatic type directives are settled and a program with no roots holds
+neither. The common source directory is carried over only when `rootDir` or
+`configFilePath` names it _and_ the parse said nothing about where the files sit;
+otherwise the derived program works it out over its own files.
+
+Two things outside the compiler. `Project` now keeps `deletedFiles` beside
+`dirtyFiles` rather than giving `dirtyFilesKnown` up the moment a deletion
+arrives, and **a file the program holds may only go away by being dropped as a
+root in the same update** — one that vanished from the file system while the
+project still names it is a program that has to be built again, since what its
+name means now is a question about the file system rather than about the program.
+And `Program.FilesChangedFrom` reports what was taken away as well as what
+changed, so the client goes on invalidating exactly what moved; without that, a
+file removed and written again at the same path keeps its old text, which is what
+the sabotage below produced.
+
+**A root file's include reason now carries the name the config's file list gave
+it rather than its index in that list.** An index stops meaning what it meant as
+soon as a root before it is dropped, and renumbering every remaining file's reason
+per removal would have put back the O(n) this removes. The name is what the two
+places that read it wanted anyway — both did `config.FileNames()[index]` to get
+one — so `ExplainFiles` and every diagnostic about a root are unchanged.
+
+Measured on the built bundle, in-memory FS, one process per size, ms per file. The
+loop is a project of n files that stays that size: on every step a file is created
+and read back and an older one is dropped, each forcing its own snapshot. Before is
+one run of each, after the range over two.
+
+| files                      | 200       | 400       | 800       | 1600      |
+| -------------------------- | --------- | --------- | --------- | --------- |
+| create and delete, before  | 5.52      | 9.72      | 18.17     | —         |
+| create and delete, after   | 2.41–2.43 | 2.96–2.99 | 4.29–4.87 | 7.51–9.14 |
+| delete only, before        | 3.43      | 4.66      | 8.85      | —         |
+| delete only, after         | 1.12–1.13 | 1.22–1.31 | 1.45–1.53 | 2.39–2.56 |
+| create only, for the floor | 1.82      | 1.47      | 1.57      | 2.14      |
+
+A delete-only loop is 3.0x/3.6x/5.8x faster and is now within a constant factor of
+itself — 1.13 to 2.56 ms while the project grows eightfold — where before it
+doubled with the project. Create-and-delete is 2.3x/3.3x/3.8x faster and now costs
+about what a create and a delete cost separately; **it still grows**, and what is
+left of the growth is the same ceiling §3.5 named and the deferred item below:
+cloning the ten `map[tspath.Path]…` fields per snapshot, twice per step here.
+Nothing else moved: `addSourceFilesAtPaths` 217–223 / 312–333 ms and
+`createSourceFiles` 6–7 / 11–12 ms at 800/1600 over three runs, and an edit
+against a project of 800/1600 files 1.24/1.72 ms best of five.
+
+Equivalence is tested rather than argued, and the tests were checked for teeth by
+sabotage. `internal/compiler/removerootfiles_test.go` builds a project both ways
+over thirty-four shapes and compares explained files, every include reason's own
+data, every resolution, file metadata, the missing/lib/redirect maps, the
+lower-case index, the common source directory, every program, semantic and
+parse-time diagnostic, and what the derived program says it changed and removed —
+plus the base program's fingerprint before and after, since a removal that wrote
+into a map the program it came from still holds would corrupt every snapshot
+behind it. `internal/project/addrootsproject_test.go` and
+`internal/api/apirootfiles_test.go` drive the rolling loop through the session,
+with the parse cache reference ledger checked after every step, and assert which
+cases refuse. `tsgo-wasm/deletion.mts` does the same through ts-morph's own API
+over fifteen shapes plus the loop itself, which is the only place the client's cache
+is in the way.
+
+Three sabotages, each of which the suites caught: dropping the first-reason rule
+made a removed file's imports stay in the program with no reason to be there;
+dropping the reason filter left a file explaining itself by an import from a file
+that had gone; and dropping the removed-file report to the client left a file
+recreated at its old path answering with its old text.
 
 #### d. A public batch create entry point — done
 
