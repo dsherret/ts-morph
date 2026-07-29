@@ -10,8 +10,8 @@ export interface CachedSourceFile {
     contentHash: string;
     /** The parse options key that was used to create this file */
     parseOptionsKey: string;
-    /** Set of (snapshot, project) ref keys that reference this entry */
-    refs: Set<string>;
+    /** How many (snapshot, project) pairs resolved a path to this entry */
+    refCount: number;
 }
 /**
  * Client-side cache for source files keyed by (path, parseOptionsKey, contentHash).
@@ -20,27 +20,28 @@ export interface CachedSourceFile {
  * different snapshots with different file contents). Each version is identified
  * by its content hash and parse options key.
  *
- * Entries are ref-counted by (snapshot, project) pairs. When a snapshot is
- * disposed, all refs for that snapshot across all projects are released,
- * and entries with no remaining references are evicted.
+ * What each (snapshot, project) pair resolved a path to is held in a scope of its
+ * own, and an entry lives as long as some scope points at it. When a snapshot is
+ * disposed, its scopes are dropped and entries nothing else points at are evicted.
  *
- * When a new snapshot is created, unchanged cache entries from the previous
- * snapshot are retained per-project. Only files within changed or removed
- * projects are invalidated.
+ * A new snapshot inherits the scopes of the one before it, minus the files the
+ * server reported changed. That inheritance is recorded rather than carried out —
+ * see {@link retainForSnapshot} — because the usual next thing to happen is that the
+ * previous snapshot is released, and then the scope can be handed over whole rather
+ * than copied a file at a time.
  */
 export declare class SourceFileCache {
     /** Map from path to all cached versions of that file */
     private cache;
-    /** Map from snapshotId to (projectId → Set of paths fetched through that project) */
-    private snapshotProjectPaths;
+    /** Map from snapshotId to (projectId → what that pair resolved each path to) */
+    private scopes;
+    /** The one retain whose scopes have not been settled yet, if any */
+    private pending;
     /**
      * Get a cached source file already retained for the given (snapshot, project) pair.
      * This does not require a content hash or parse options key — it returns the entry
-     * if one exists with a matching ref. Used to skip the server request entirely when
-     * retainForSnapshot has already carried over the ref.
-     *
-     * A given (snapshot, project) pair always parses a file the same way, so there is
-     * at most one matching entry per ref.
+     * if the pair resolved this path to one. Used to skip the server request entirely
+     * when retainForSnapshot has already carried the entry over.
      */
     getRetained(path: Path, snapshotId: number, projectId: string): SourceFile | undefined;
     /**
@@ -51,20 +52,20 @@ export declare class SourceFileCache {
     /**
      * Retain cache entries from a previous snapshot for a new snapshot.
      * For each project in the previous snapshot:
-     *   - Removed projects: skip (don't retain any refs).
-     *   - Changed projects: retain refs for files not listed in changedFiles/deletedFiles.
-     *   - Unchanged projects: retain all refs.
+     *   - Removed projects: retain nothing.
+     *   - Changed projects: retain everything but the files in changedFiles/deletedFiles.
+     *   - Unchanged projects: retain everything.
+     *
+     * Only the changes are read here. Which of the two ways that inheritance is
+     * settled — handed over or copied — depends on what becomes of the previous
+     * snapshot next, so this records it and {@link releaseSnapshot} settles it.
      */
     retainForSnapshot(newSnapshotId: number, previousSnapshotId: number, changes: SnapshotChanges | undefined): void;
     /**
-     * Release all entries retained by the given snapshot across all projects.
-     * Only visits paths that the snapshot actually referenced.
-     * Entries with no remaining refs are evicted.
+     * Release everything the given snapshot retained across all projects.
+     * Entries with no remaining references are evicted.
      */
     releaseSnapshot(snapshotId: number): void;
-    private trackPath;
-    /** The set of paths a (snapshot, project) pair has fetched, created if new. */
-    private pathsFor;
     /**
      * Clear all entries from the cache.
      */
@@ -77,4 +78,19 @@ export declare class SourceFileCache {
      * Check if a path is in the cache.
      */
     has(path: Path): boolean;
+    /**
+     * Gives the previous snapshot's scopes to the new one outright, which is what the
+     * inheritance comes to when nothing else can read them: the new snapshot is the
+     * only one left that answers from them, and the paths it may not answer from are
+     * exactly the ones the server reported changed.
+     */
+    private handOverPending;
+    /**
+     * Copies what the new snapshot stood to inherit, which is what the inheritance
+     * comes to when both snapshots are going to go on being read.
+     */
+    private flushPending;
+    private releaseEntry;
+    /** What a (snapshot, project) pair resolved each path it asked for to, created if new. */
+    private scopeFor;
 }

@@ -563,11 +563,84 @@ a file in the project, in ms per file:
 Without such a file both are linear and identical — 0.015 ms per file at
 100/400/1600 either way — which is what §3.1 predicted.
 
-#### e. Two per-file loops that a clone already knows the answer to
+#### e. Two per-file loops that a clone already knows the answer to — done
 
-**fork and client.** `computeSnapshotChanges` diffs the whole `FilesByPath` map
-when a clone knows the one file that differs, and `retainForSnapshot` copies a
-reference onto every entry. ~4% each at 800 files.
+**fork and client.** Both are gone, and both turned out to be what the note said.
+Profiled at 1600 files on the built bundle: `computeSnapshotChanges` 5.9% of an
+edit-and-read loop, `SourceFileCache.retainForSnapshot` 3.7%, and the release that
+undoes it another 0.7%. On a native harness with no wasm in the way,
+`computeSnapshotChanges` was 190 ms of the 1090 ms `handleUpdateSnapshot` spent
+over 1600 edits — 17% of the whole server side of an edit.
+
+**A program now says what it changed.** `Program.FilesChangedFrom(base)` returns
+the paths at which the two hold a different file, and whether it could say. It
+answers only for the program it was built from directly, which it names by an id
+rather than a pointer so that a program does not keep every program before it
+alive. `UpdateProgram` records the one file it replaced — and only if the host did
+not answer with the file it already held — and `AddRootFiles` records the
+replacements that differ. Neither takes a file away, so a true return also says
+the deleted set is empty; anything else, including every build from scratch, falls
+back to comparing the two file maps as before.
+
+Equivalence is tested rather than argued, because what this reports is what the
+client invalidates and getting it wrong is a stale answer rather than a slow one.
+`internal/api/snapshotchanges_test.go` drives the session through eleven shapes —
+a file changed, several changed, created, created beside an edit, created where an
+import was waiting, deleted, deleted while another imports it, a deletion and a
+creation and a change at once, a compiler option changed alone and alongside both,
+and a second project opened and closed — and after **every** update compares what
+`handleUpdateSnapshot` reported against the full diff of the two snapshots, plus
+the temporary-snapshot path, which diffs against a base the caller names. Each
+case also states which of the two ways it means to be answered, so a case that
+stopped exercising the program's answer fails rather than passing vacuously.
+`assertChangedPathsAreTheDiff` adds the same check to the thirty-nine shapes of
+`internal/compiler/addrootfilesprobe_test.go`, where it also asserts the derived
+program holds every file the base did.
+
+**The client's scopes are handed over rather than copied.** What a
+(snapshot, project) pair resolved each path to is now a map of its own and an entry
+carries a count rather than a set of keys, so a new snapshot inheriting the
+previous one's answers is one map moving rather than a reference written onto every
+entry. The inheritance is recorded by `retainForSnapshot` and settled by
+`releaseSnapshot`: when the snapshot inherited from is released next — which is
+what ts-morph's `#openProject` does, and what a whole edit loop is — the scope is
+handed over whole, and only the paths the server reported changed are dropped from
+it. When both snapshots go on being read, it is copied, which is what it always
+was. Both O(files) passes disappear from an edit rather than one.
+`_packages/native-preview/test/sourceFileCache.test.ts` drives the cache and a
+model written the way the old one worked side by side, over hand-over, copy,
+removed projects, deletions, a snapshot released before the one it inherits from,
+and a randomized run, checking every answer either could give and the cache's own
+reference count after every step.
+
+Measured on the built bundle, this branch against the same branch with these
+changes stashed, both rebuilt, six alternating pairs, in-memory FS, ms per edit of
+an already-read project:
+
+| files          | 800  | 1600 |
+| -------------- | ---- | ---- |
+| before, best   | 1.94 | 2.62 |
+| before, median | 2.01 | 2.80 |
+| after, best    | 1.86 | 2.50 |
+| after, median  | 1.97 | 2.61 |
+
+And on the whole loops, in ms:
+
+| files                                   | 800  | 1600  |
+| --------------------------------------- | ---- | ----- |
+| create and manipulate together — before | 3211 | 11202 |
+| create and manipulate together — after  | 2943 | 10242 |
+| create, then manipulate — before        | 1104 | 2312  |
+| create, then manipulate — after         | 923  | 2033  |
+
+7% off an edit at 1600 and 16–19% off the two-loop manipulate, which is the shape
+where the client's copy was the larger of the two. Bulk paths are unchanged:
+`addSourceFilesAtPaths` 220–227 / 284–295 ms and `createSourceFiles` 6–7 / 11 ms at
+800/1600 either way.
+
+What is left of the per-file terms is `Snapshot.Clone` — the ten `map[tspath.Path]…`
+fields below — which is now 20% of an edit and the largest single item after (a)
+and (b).
 
 #### Deferred: layered `processedFiles` maps
 
