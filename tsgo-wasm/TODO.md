@@ -1,1028 +1,163 @@
 # Remaining work
 
-Everything still open on the tsgo migration, in the order I would do it. Items are
-marked **compiler** when the fix belongs in `submodules/typescript-go` (and so needs
-a wasm rebuild), **upstream** when it belongs in microsoft/typescript-go rather than
-our fork, and **ts-morph** when it does not.
+What is still open on the tsgo migration, in the order I would do it. Items are
+marked **compiler** when the fix belongs in `submodules/typescript-go` (and so needs a
+Wasm rebuild), **upstream** when it belongs in microsoft/typescript-go rather than our
+fork, and **ts-morph** when it does not.
 
-Measured state: `ts-morph` 4512 passing / 2 pending, `bootstrap` 85 / 4,
-`common` 435 / 0, both verification gates clean, 15/15 end-to-end scripts.
+Finished work is not kept here. What a user needs to know from it is in
+[BREAKING-CHANGES.md](./BREAKING-CHANGES.md); what it measured and how it was done is
+in [MIGRATION-REPORT.md](./MIGRATION-REPORT.md) §8.
 
----
-
-## 1. Browser support — done
-
-Shipped in `feat: run in the browser` (14845d9e) and finished in b6670dac. The
-compiler now runs against a `wasi_snapshot_preview1` shim written in the fork
-against the web platform only, so `node:wasi` appears in no shipped artifact and
-one artifact serves Node, Deno and the browser. A browser must load it in a Web
-Worker (V8 refuses a >8 MB `WebAssembly.Module` on the main thread) and must
-`await initializeWasm()` before the first `Project`. See
-[browser/README.md](./browser/README.md).
-
-What is still open is **delivery**, not support. The asset now ships gzipped —
-9.50 MiB over the wire for a 43.02 MiB module, gunzipped through a
-`DecompressionStream` into `compileStreaming`, at a cost of ~60 ms once per page —
-which puts it under the size Chrome's HTTP cache refuses to keep. A compiled
-`WebAssembly.Module` still cannot be stored in IndexedDB, so the documented answer
-for a page loading it repeatedly is an explicit `Cache` entry plus `postMessage`
-of the compiled module. Related: JSR publishing (§4).
+Measured state: `ts-morph` 4516 passing / 2 pending, `common` 463 / 0, `bootstrap`
+85 / 4, both verification gates clean, 16/16 end-to-end scripts, `go test ./...`
+clean, all four `typescript.wasm.gz` copies identical.
 
 ---
 
-## 2. Behaviour still diverging from 28.0.0
+## 1. Behaviour still diverging from 28.0.0
 
-### 2.1 `findReferencesAtPosition` — done
+### 1.1 `ImplementationLocation#getDisplayParts()`
 
-**ts-morph.** Resolves to the token a position touches again, as 28.0.0 did.
-Sweeping every offset of `class C { m(a: string) { return a; } }` now agrees at
-every position; the wider corpus went from 558 differing positions of 2423 to 90,
-and each of the 90 is a tsgo-side gap unrelated to position resolution (recorded
-in BREAKING-CHANGES.md §8.5). The stray `class` entry on
-`ConstructorDeclaration#findReferencesAsNodes()` went with it.
-
-### 2.2 `getContainerName()` for a file-held declaration — done
-
-**compiler.** `symbolToString` is exposed on the API's checker
-(`MethodSymbolToString`), and a definition whose container is its own file's
-module symbol is named with it. Measured over 11 definition lookups: 10 now match
-28.0.0 exactly — `"../mod"`, `"./sub"`, `"pkg"` for a package under
-`node_modules`, `"Cls"` for a member, `""` for a local. The eleventh is the one
-28.0.0 got wrong: the same symbol read `"../mod"` at an import specifier and
-`"./mod"` at a call site, and `"./mod"` does not resolve from the asking file.
-It reads `"../mod"` at both now, so the divergence that remains is a fix.
-
-### 2.3 `ImplementationLocation#getDisplayParts()`
-
-**compiler.** `getKind()` is fixed; display parts need a protocol change:
+**compiler.** `getKind()` is fixed; display parts need a protocol change.
 `handleGetImplementations` returns `[]*FileSpan` and would have to return a new
-struct, touching `internal/api/proto.go`, `session_ls.go`, both client `api.ts`
-files and the copy `packages/common` re-vendors. Recipe and cost are in
-BREAKING-CHANGES.md.
+struct, touching `internal/api/proto.go`, `session_ls.go`, both client `api.ts` files
+and the copy `packages/common` re-vendors.
 
-### 2.4 `Node#getSymbol()` on an anonymous declaration — done
+### 1.2 `getIndentationLevel` — the per-kind indent table
 
-**compiler.** `getSymbolOfDeclaration` is exposed on the API's checker
-(`MethodGetSymbolOfDeclaration`) and asked as the last fallback in
-`Node#getSymbol()`, so a declaration with no name to ask the checker with is
-answered by asking the declaration itself. Sweeping every node of a source file
-covering the affected kinds went from 370 of 388 agreeing with 28.0.0 to 384: the
-14 that moved are arrow functions, anonymous function expressions, object
-literals, type literals, mapped types, function and constructor types, export
-declarations, call/construct/index signatures and constructors, each now reading
-the same `__function` / `__object` / `__type` / `__call` / `__new` / `__index` /
-`__constructor` the binder gave. Nothing that already answered changed. The four
-still differing are unrelated — two are the `__@iterator@N` id a computed
-property name carries, two are AST shape.
+**ts-morph, or compiler.** Over 112 snippets under three indentation settings, **287
+of 8217 probed positions differ**, down from 2771. No manipulation output is affected —
+this is the query, not the emitted text.
 
-### 2.5 `typeof` in nested positions
+What is left is mostly `SmartIndenter.nodeWillIndentChild`: the compiler's per-kind
+table of which parents indent which children, which the text gives no hint of.
+Routing `format.GetIndentation` (MIGRATION-REPORT §5.2) deletes the hand-rolled
+indenter and closes this properly, and is the better fix than modelling more rules.
+
+### 1.3 `typeof` in nested positions
 
 **upstream.** `const t = [f]` prints `(typeof f)[]` where 28.0.0 printed
 `((a: number) => number)[]`. typescript-go widened `shouldWriteTypeOfFunctionSymbol`
 deliberately (PR #4507) for declaration emit. ts-morph clears the flag for the
-top-level case; the flag is all-or-nothing per print, so nested occurrences cannot
-be reached from this side. Reverting belongs upstream, if anywhere.
+top-level case; the flag is all-or-nothing per print, so nested occurrences cannot be
+reached from this side. Reverting belongs upstream, if anywhere.
 
-### 2.6 `getIndentationLevel` — the per-kind indent table
+### 1.4 Two small ones with no owner
 
-**ts-morph.** Four more of the smart indenter's rules are modelled (b6670dac), so
-over 112 snippets under three indentation settings **287 of 8217 probed positions
-differ**, down from 2771; list continuation, `ImportSpecifier` and `Parameter` on
-their brace's line are among the fixed ones. No manipulation output regressed.
+- A constructor definition reports `name: "constructor(a: number);"` / `kind: "class"`
+  where 28.0.0 said `"__constructor"` / `"constructor"`. The symbol the checker
+  answers with at a constructor's span is the class's, which has no `Constructor`
+  flag to read, so this is not the flag ordering that fixed the other definition
+  kinds.
+- `JSDocSignature#getTypeNode()` is declared `TypeNode` but holds a `JSDocReturnTag`.
+  The declaration is wrong, not the value. **compiler**
 
-What is left is mostly `SmartIndenter.nodeWillIndentChild` — the compiler's
-per-kind table of which parents indent which children, which the text gives no
-hint of. Routing `format.GetIndentation` (§5.2 of the migration report) deletes
-the whole indenter and closes this.
+### 1.5 Capabilities that are missing rather than removed
 
-### 2.7 `insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces` — done
+BREAKING-CHANGES.md §9 lists these as unfinished rather than chosen, and says they are
+tracked here — so here they are. Each is a compiler route or a provider, not a design
+decision, and each would restore something 28.0.0 had:
 
-**ts-morph.** Reaches the formatter's edits as of b6670dac; `formatText` output
-matches 28.0.0. Three things it still does not reach, all recorded in
-BREAKING-CHANGES.md §8.4: braces inside a string, template, comment or JSX text;
-a comment sitting between the two tokens; and the edits tsgo writes itself
-(`fixMissingImports`, `organizeImports`).
-
-### 2.8 `fixMissingFunctionDeclaration` is absent
-
-**upstream, not our fork.** `getCodeFixesAtPosition` with `[2304]` returns one fix
-where 28.0.0 returned two — "Add missing function declaration" has no provider.
-
-Established: it is **unimplemented**, not unrouted. `internal/ls/codeactions.go:86`
-registers exactly three providers — `ImportFixProvider`,
-`IsolatedDeclarationsFixProvider`, `FixClassIncorrectlyImplementsInterfaceProvider`
-— under a literal `// Add more code fix providers here as they are implemented`.
-The `codeFixAddMissingFunctionDeclaration*` fourslash tests that name the fix assert
-`VerifyCodeFixNotAvailable`, i.e. upstream currently expects it to be absent.
-
-So this is a port of a whole code-fix provider from TypeScript into
-microsoft/typescript-go, not something to route from here. Nothing to do in
-ts-morph beyond documenting which fixes exist.
-
-### 2.9 Diagnostic spans and codes
-
-**upstream.** Unused-import 6133 covers just the identifier where TypeScript covered
-the statement; an unused type parameter is 6196 where TypeScript said 6133, so a
-caller filtering on 6133 silently stops seeing it. Checker behaviour, no correctness
-consequence. Document rather than diverge the fork.
-
-### 2.10 Smaller reported divergences, unowned
-
-- A constructor definition reports `name: "constructor(a: number);"` / `kind:
-  "class"` where 28.0.0 said `"__constructor"` / `"constructor"`. The kind is not
-  the flag order the next bullet fixed: the symbol the checker answers with at a
-  constructor's span is the class's, which has no `Constructor` flag to read.
-- `getScriptElementKind` now orders the flags the way `getSymbolKind` did and
-  reads `const`/`let`/`var`/`parameter` off the declaration rather than off the
-  symbol, which cannot tell them apart. That fixed 20 measured rows — among them
-  `const x = 1` reading `var`, `let x = 1` reading `var`, `var x = 1` reading
-  `parameter`, and a function merged with a namespace reading `module`. Seven rows
-  still differ, all in BREAKING-CHANGES.md §8.5: `using`/`await using`, a variable
-  or function local to a function body and a named class expression, whose kinds
-  did not survive into `ts.ScriptElementKind`; `this`, which TypeScript classified
-  by the position rather than by the symbol; and a namespace import, an
-  `import x = require(…)` and a call through a variable holding a function, where
-  the definition tsgo answers with is a different node than the one 28.0.0
-  classified. Two more are the checker rather than the classification: a `.js`
-  `exports.f = function () {}` and a property that only exists on a union.
-- `JSDocSignature#getTypeNode()` is declared `TypeNode` but holds a
-  `JSDocReturnTag`; the declaration is wrong, not the value. **compiler**
+- `TypeFormatFlags` as a real enum rather than a `NodeBuilderFlags` alias. Today the
+  two are the same nominal type, and five of the members that no longer exist have
+  values that are live in `NodeBuilderFlags` under other meanings — so a persisted
+  bitmask silently changes behaviour. **compiler**
+- The rest of `FormatCodeSettings`: the `insertSpace…` family, `semicolons`,
+  `baseIndentSize`, `placeOpenBraceOnNewLineFor…`. The formatter accepts tab size,
+  spaces-versus-tabs and trailing-whitespace trimming and nothing else. **compiler**
+- `CodeFixAction#getFixId()` / `getFixAllDescription()`. The compiler does not group
+  fixes into fix-alls, so there is no id to report or to feed back in. **compiler**
+- `formatDiagnosticsWithColorAndContext` with real colour and context. ts-morph
+  formats diagnostics itself now, without the source line, the caret or the ANSI
+  colouring. **compiler**
+- `readDirectory` / `matchFiles`. **compiler**
+- `SourceFile#fixUnusedIdentifiers()`. This one needs a new provider rather than a
+  route — the compiler implements three, and removing unused declarations is not among
+  them. **upstream**
+- `@types` packages added to the file system _after_ the project was created, for
+  `getAmbientModules`. **compiler**
 
 ---
 
-## 3. Performance
+## 2. Performance
 
-### 3.1 Adding files one at a time — done, and the earlier reading was wrong
+The size-dependent costs are gone: an edit no longer grows with the project, and no
+loop is quadratic. What is left is constant factors, and one of them is a regression.
 
-**ts-morph.** Bulk paths are linear and within a constant factor of 28.0.0.
-Re-measured side by side at 800 files, in-memory FS: `new Project({
-tsConfigFilePath })` 90 ms → 367 ms, `addSourceFilesAtPaths` 21 ms → 218 ms
-(0.27 ms/file), first `getPreEmitDiagnostics()` 370 ms → 605 ms, one edit
-0.18 ms → 0.94 ms.
+### 2.1 An edit followed by a semantic question is parsed twice
 
-A `createSourceFile` loop is linear now too: 800 files, 11374 ms → **8 ms** for
-the loop, 199 ms including the read that opens the project. Per file at
-100/400/1600 the two together come to 1.31/0.41/0.18 ms against 4.69/7.86/25.85
-before, and 3200 files — which the old build would have spent about four minutes
-on — comes to 0.14 ms. The cost per file falls as the project grows, because what
-is left is one project build with the fixed cost of standing one up spread over
-more files.
+**ts-morph and compiler.** Holding the write back until something needs a program
+made an edit on its own several times cheaper, but made the edit-then-ask shape
+**dearer than it was before that change**: the file is parsed once on the client for
+the tree the manipulation returns, and again when the flush opens a snapshot.
 
-**Two things this note used to say were wrong.**
+Measured at 400 files: an edit alone 0.53 ms (28.0.0: 0.20), an edit followed by a
+`getType()` **5.13 ms** (28.0.0: 3.02) against ~4.4 ms before the write was held
+back. So an editing loop that asks the compiler something every time round is the one
+shape the change made worse. The `offer` path already hands the compiler the object
+identity at no protocol cost; what it does not do is stop the compiler re-parsing.
+Removing that second parse is the fix, and it closes the only perf regression in the
+migration.
 
-The first was where the time went. It was not the O(n) rewrite of the synthetic
-tsconfig — serializing it 800 times costs **11 ms of 11040**. Every millisecond
-is inside `updateSnapshot`, and specifically inside a root-set change: measured
-against a project of 800 files, an edit costs 1.0 ms and a snapshot with no
-changes at all 0.2 ms, while adding one root costs 19.5 ms, growing about
-0.025 ms for each file already there. **Switching the config to a wildcard does
-not help** — measured at 5.26/4.63/7.64/13.15 ms per file for 100/200/400/800,
-which is the explicit list to within noise, because the new file joins the root
-set either way and that is what reloads the project. The `files` list stays
-explicit, so the stem-collision contract `#configText` documents is untouched.
+### 2.2 Delete-heavy loops still grow with the project
 
-The second was that the reopen could not be deferred past the call because
-`createOrUpdateSourceFile` returns the parsed file. What the caller needs from
-that return is the file's _path_, and not until something asks for the tree does
-it need the tree. So `DocumentRegistry#setSourceFileText` writes without parsing
-and holds the change, `#flush` applies whatever is waiting the next time anything
-reads the project, and `CompilerFactory` wraps a source file created from text
-around a function that asks the registry for the node the first time one is
-wanted. A run of creates is one reopen, and a caller that never reads the files
-back pays for none.
+**compiler.** A create-and-delete step now costs about what a create and a delete cost
+separately — 5.6 / 9.0 / 18.6 ms per step at 200 / 400 / 800 files before, 0.36 / 0.34 /
+0.36 after. But it has not stopped growing, only stopped growing early. Measured on the
+current build:
 
-Note that this makes batching an optimization rather than a complexity fix:
-`addSourceFilesAtPaths` and `createSourceFile` in a loop are both linear now, and
-the batch is faster only by the bookkeeping it skips.
+| project | ms per create-and-delete step |
+| ------- | ----------------------------- |
+| 800     | 0.362                         |
+| 1600    | 0.678                         |
+| 3200    | 1.391                         |
 
-**Three loops are still quadratic**, all because something asks for a tree while
-the next file is still to come, which is the reopen the deferral exists to
-collect. None is a regression — every one of them cost this before — and none is
-worth chasing before someone reports it, but they are what "linear" above does
-not cover:
+Flat to ~800 files and then doubling with each doubling of the project, which is still
+quadratic over the run — it is just no longer visible at the sizes the earlier
+measurements used. The cause is `Snapshot.Clone` copying ten `map[tspath.Path]…` fields,
+which a step of this shape does twice. Delete-only and create-only loops stay within a
+constant factor of themselves. Same ceiling as §2.3, and delete-heavy work is the only
+workload that still binds on it.
 
-- Reading each file back inside the loop. 4.7/4.8/7.4/13.9 ms per file at
-  100/200/400/800, which is what the whole loop cost before. Measured against a
-  loop of `DocumentRegistry#createOrUpdateSourceFile`, which is what the eager
-  path did: identical within noise, so this case did not get worse, it just did
-  not get better.
-- Forgetting or deleting the files as you go: 458/927/3509 ms to delete
-  100/200/400 files that were never read, because each removal resolves the next
-  file's node. Closing it means `Node#_forgetOnlyThis` not asking for a parent
-  a source file cannot have, and `CompilerFactory#removeNodeFromCache` dropping
-  an unresolved file by its path rather than by its node.
-- Creating files alongside one with an unresolved import whose references have
-  been asked for. `SourceFileReferenceContainer` subscribes to `onSourceFileAdded`
-  while a literal is unresolved (`SourceFileReferenceContainer.ts:41`), and its
-  handler runs a checker query, so every create reopens: 551/1173/4247 ms at
-  100/200/400 against 2/3/4 ms without the seed file.
+### 2.3 Deferred: layered `processedFiles` maps
 
-### 3.2 `TsConfigResolver` builds a throwaway wasm instance per call
-
-**ts-morph.** `getCompilerOptionsFromTsConfig` measures ~32 ms warm against 1.3 ms
-on 28.0.0. The cost is instantiating the reactor, not compiling it: the compiled
-module is cached process-wide (84 ms on the first call, 0 ms after), so this is the
-inherent price of standing up a fresh 43 MiB linear memory and Go runtime.
-
-**Merging the two `#withApi` calls does not pay, for the reason first recorded here
-rather than the one it looks like.** Nothing technical prevents sharing — the
-session re-parses on every `parseConfigFile` with a nil `extendedConfigCache`, and
-`callbackFS` delegates each call to the client without caching, so one instance
-could serve both parses. What defeats it is call ordering:
-`addSourceFilesForTsConfigResolver(project, resolver, resolver.getCompilerOptions())`
-evaluates `getCompilerOptions()` as an argument, so the first instance is created
-and closed before `getPaths()` runs. Making both parses share one instance would
-mean parsing eagerly, which charges the probe parse to every caller that only wants
-the options — the common case, and the one `getCompilerOptionsFromTsConfig` is.
-
-What is left is instance pooling, and it is **not worth it**: ~30 ms against a
-~1000 ms cold start, in exchange for holding a reactor instance and its linear
-memory alive indefinitely, with no dispose hook on `TsConfigResolver` to release it.
-Closing this unless a caller turns up that resolves configs in a loop.
-
-### 3.3 `retiredSnapshotLimit` — done, and the earlier reading was wrong
-
-**ts-morph.** Re-measured: the limit is exactly how many edits a `Type`, `Symbol`
-or `Signature` taken before them keeps answering across, so it is observable and
-stays at 2. The earlier reading missed it because its probe never asked the checker
-between manipulations, and `#retire` only keeps a snapshot the checker was used on
-— every other one was disposed on the spot, leaving one retained snapshot at any
-limit. Asking the checker once per generation separates 0, 1, 2 and 3 exactly.
-Cost: not measurable, ~199MB rss either way over 500 files edited 24 times.
-
-### 3.4 A snapshot's cost grew with the project — mostly fixed, with a named ceiling
-
-**tsgo fork.** Every read after a write opens a new snapshot, and four separate
-pieces of that were proportional to the number of files in the project rather
-than to the number that changed. Three are gone and one is halved:
-
-- **The parse cache was counted per file, by identity.** A cloned program took a
-  reference on every file it held and a disposed snapshot released one on every
-  file it had held — once each per snapshot — and each of those was a `sync.Map`
-  lookup keyed by `ParseCacheKey`, a struct of two file names plus a hash. Boxing
-  that key into the map's `any` allocated, and hashing it walked the strings. The
-  entry is now handed to the file that holds it (`ast.SourceFile.hostCacheEntry`)
-  and carries the key it is filed under, so `RefValue`/`DerefValue` are a lock and
-  an increment with nothing built and nothing hashed. Both sweeps removed entirely
-  — leaking, to measure the ceiling — took 26% off an 800-file edit loop; keeping
-  the refcounting honest costs a little of that back.
-- **Every snapshot described every project's whole root file list.** The response
-  to `updateSnapshot` carried `rootFiles` and `parsedCommandLine.fileNames` — the
-  same list twice — for each project, encoded to JSON in Go and parsed in JS, on
-  every edit. A project's description now leaves the list off and the client asks
-  for it with `getProjectRootFiles` when something reads it; nothing in ts-morph
-  ever does. Worth another 13%. `ProjectResponse.parsedCommandLine` is a
-  `ProjectConfig` rather than a `ParsedCommandLine` for it, and `Project.rootFiles`
-  — already deprecated — is now `Project.getRootFileNames()`. Two things that were
-  plain data are now a request, and the difference shows: the list is only readable
-  while the snapshot the project came from is alive, where the field answered
-  forever; and it is fetched from the project's command line, so a project whose
-  program the typings installer added files to reports what its config named rather
-  than what its program holds. Nothing in ts-morph reads either, and the second is
-  what `rootFiles` reported anyway.
-- **Module resolution looked for a `package.json` once per file.** Every file in
-  every program build walked its ancestor directories asking for the package scope,
-  and each step built a `<dir>/package.json` path to look up: 22% of the cost of
-  adding a root, for an answer that is the same for every file in a directory. The
-  resolver memoizes it per directory now (a traced resolution still does the
-  lookups, because reporting them is what it is for).
-- **The client re-fetched its per-snapshot bookkeeping map per file.** It still
-  walks every path the previous snapshot referenced, but the destination it copies
-  into is looked up once rather than three times per file.
-
-Measured on the built bundle — this branch's compiler against the same branch with
-these four changes stashed, both rebuilt — in-memory FS, one process per size.
-Cost of one edit against a project of n files, in ms:
-
-| n      | 200  | 400  | 800  | 1600 | 3200 |
-| ------ | ---- | ---- | ---- | ---- | ---- |
-| before | 1.70 | 2.14 | 2.59 | 3.79 | 6.68 |
-| after  | 1.48 | 1.68 | 1.86 | 2.64 | 3.61 |
-
-The part that grows with the project fell by 2.3x (0.00166 to 0.00072 ms per file
-held), leaving ~1.3 ms that is the snapshot's own fixed cost. The same edit on 28.0.0 is
-0.055 to 0.079 ms and gets cheaper as the project grows, because it opens no
-snapshot at all.
-
-Whole loops, in ms, against a real `ts-morph@28.0.0` install:
-
-| files                                   | 200  | 800   | 1600  |
-| --------------------------------------- | ---- | ----- | ----- |
-| create, then manipulate — 28.0.0        | 8    | 38    | 79    |
-| create, then manipulate — before        | 355  | 1566  | 4738  |
-| create, then manipulate — after         | 304  | 1023  | 2350  |
-| create and manipulate together — 28.0.0 | 27   | 48    | 84    |
-| create and manipulate together — before | 1135 | 11236 | 40161 |
-| create and manipulate together — after  | 1010 | 8629  | 30954 |
-
-The first is the edit path and is now within a constant factor of itself: doubling
-the project no longer doubles the work. The second is not — it pays a program
-rebuild per file, which is the ceiling below.
-
-**What was left** was that a root-set change rebuilt the program, which §3.5 closes.
-
-Two smaller O(files) terms remain in an edit, ~4% each at 800 files and growing:
-`computeSnapshotChanges` diffs the whole `FilesByPath` map of every changed project,
-where a cloned program knows the one file that differs; and the client's
-`SourceFileCache.retainForSnapshot` copies a ref onto every entry the previous
-snapshot held. The first needs the compiler to say what a clone changed; the second
-needs the client's refs to be carried by a shared generation rather than copied,
-which is a redesign of that cache.
-
-### 3.5 Adding a root rebuilt the program — done, with a named ceiling
-
-**tsgo fork.** Creating a file and manipulating it in the same breath is the
-commonest codegen loop there is, and it was the one thing still quadratic: a
-created file joins the root set, a changed root set changes the command line, and
-a changed command line failed `CreateProgram`'s reuse test, so **every create
-rebuilt the whole program**. Profiled on a native harness that replays ts-morph's
-request sequence (`internal/api/addrootsperf_test.go`, `TSPERF=1`), at 1600 files
-that rebuild was 65% of a create, the config reload 12%, and the garbage it made
-another 15%.
-
-A program can now be **added to** rather than built again.
-`Program.AddRootFiles` takes a command line that differs from the one the program
-was built with in nothing but root files appended to the end of its list, and
-returns the program a build from scratch would have produced. What makes that
-sound is that a root appended at the end can only reach files that are already in
-the program or are new, so nothing already there moves and nothing already
-resolved resolves differently. The walk is the same `filesParser`, given the old
-`processedFiles` as a base: it stops at every file the base already holds,
-recording only the added root's reason for wanting it, and the ten
-`map[tspath.Path]…` fields are cloned and extended rather than rebuilt. Files the
-added roots bring in are spliced in at `rootFilesEnd` — after everything the roots
-before them reached, before whatever an automatic type directive brought in —
-which is where a rebuild would have put them.
-
-The same call replaces files whose text changed in the same snapshot, because
-that is what the loop actually does: manipulating file _n_ and creating file
-_n+1_ arrive together. It uses the same `canReplaceFileInProgram` test the
-single-file `UpdateProgram` path does, so `Project.dirtyFilePath` became
-`dirtyFiles []tspath.Path` plus a `dirtyFilesKnown` flag — a list of what changed
-rather than "one file, or give up" — and a config change no longer discards it.
-
-**Where it refuses**, because these are the ways an addition would not be the
-program a rebuild gives, each a fallback to `NewProgram`:
-
-- a compiler option that differs, a project reference, roots that moved rather
-  than arrived, or a program with none yet (the first build is where the lib
-  files and the automatic type directives are settled);
-- a file the added roots reach that is a **lib file**, new or already present:
-  libs are sorted and put ahead of every other file, so one arriving or changing
-  hands moves everything;
-- a file an **automatic type directive** brought in that an added root reaches.
-  Those sit past `rootFilesEnd`, and a rebuild would place one an added root
-  reaches among that root's own files instead — the premise that nothing already
-  there moves holds for the files earlier roots reached, and only for those;
-- a file the base only found by **searching node_modules** that the walk reaches
-  without searching. How deep a file was found is the lowest depth over the whole
-  walk, and it decides whether the program counts the file as coming from a
-  library, so reaching one at depth 0 would drop it from a set the base put it in;
-- a **package installed twice** under `node_modules`: which instance wins is
-  decided over the whole walk, and the base does not record the decision;
-- a file the base holds under a **different casing**, a new file that collides
-  with one under `ToFileNameLowerCase` (which is why `processedFiles` now keeps
-  `filesByLowerCasePath` on a case-sensitive file system), or a new file reached
-  under two casings at once, which the walk acquires and the caller would then
-  reference a second time as a duplicate;
-- a program that already has redirects;
-- anything arriving with a **deletion**, a **package.json**, or more changes than
-  `maxDirtyFilesTracked` files, which clears `dirtyFilesKnown`;
-- and the one the compiler cannot see, checked in `Project.addRootFilesToProgram`:
-  an added path the previous program's host had already **looked for and not
-  found**. A rebuild would resolve that lookup to the new file and the file that
-  made it would mean something different. The host records every path it read or
-  probed, so this is `sourceFS.SeenFileOrMissingParentDirectory`, asked of every
-  added root before the walk and of every file the walk acquired after it.
-
-`verifyCompilerOptions` is deliberately **re-run in full** on the added-to
-program rather than made incremental. It reads only the file set and the options,
-both of which the new program has right, so running it is a proof rather than an
-argument; it costs ~6% of what a create now costs. The common source directory is
-carried over when `rootDir` or `configFilePath` names it — the only cases where
-it does not depend on the file set. Both of those produce diagnostics after the
-parse and over whatever files the program holds by then, so `includeProcessor`
-keeps three buckets rather than one: the parse's own, which are carried;
-`rootDirDiagnostics`; and `optionsDiagnostics`. Carrying either of the last two
-would report them twice, since the program that carried them computes them again.
-
-Equivalence is tested rather than argued.
-`internal/compiler/addrootfiles_test.go` and
-`internal/compiler/addrootfilesprobe_test.go` build a project both ways over
-thirty-nine shapes and compare `ExplainFiles` (every file, in order, with every
-reason it is in the program), every include reason's own data — a root file's is
-its index in the config's file list, which `ExplainFiles` does not render — every
-module and type resolution, every file's metadata, the missing files, the lib
-files, the redirect maps, the lower-case index, the common source directory, the
-program diagnostics, the emit-blocking set and every semantic diagnostic. The
-probe suite additionally fingerprints the **base** program before and after, since
-an addition that wrote into a map the program it came from still holds would
-corrupt every snapshot behind it. `internal/api/addroots_test.go` and
-`internal/project/addrootsproject_test.go` do the same through the session,
-driving it the way ts-morph's document registry does, assert which cases refuse,
-and check the parse cache's reference ledger after every step: one reference per
-file the program holds and one per duplicate it reports, and nothing else left
-behind. That ledger is what catches an addition that acquires a file the caller
-then references again.
-
-Measured on the built bundle — this branch against the same branch with these
-changes stashed, both rebuilt — in-memory FS, one process per size, in ms:
-
-| files                                       | 200  | 800  | 1600  |
-| ------------------------------------------- | ---- | ---- | ----- |
-| create and manipulate together — 28.0.0     | 26   | 45   | 86    |
-| create and manipulate together — before     | 1240 | 9210 | 30794 |
-| create and manipulate together — after      | 686  | 3219 | 10201 |
-| create, then read each file back — before   | 903  | 7994 | 28967 |
-| create, then read each file back — after    | 408  | 2006 | 6337  |
-| create, then manipulate (two loops) — after | 269  | 1070 | 2386  |
-
-A create-and-manipulate loop is 3.0x faster at 1600 files, and the loop that only
-creates and reads — the addition on its own, with no edit in it — is 4.6x. Neither
-is linear yet: at 1600 the loop is 4.3x what the same work costs in two loops,
-where the two-loop cost is the floor, being one config write and one program build
-for the whole run. Bulk paths are unchanged: `addSourceFilesAtPaths` measures
-133–149 / 198–215 / 266–279 ms at 200/800/1600 over three runs, and a create loop
-that reads nothing back is 1–11 ms.
-
-**What was left was the config, and it was ts-morph's shape rather than the
-compiler's.** The registry's tsconfig named every file it held, so a create
-rewrote a file that grew with the project and the session parsed it again: at
-1600 files that round trip was ~28% of what a create cost — ~22% parsing it in
-Go, the rest building the text in JS, of which `getCommonDirectory` over every
-file name was the larger half. §3.6(b) closes it. Cloning the ten maps is another
-~21%, which is the price of a snapshot the previous one keeps answering from, and
-closing that means the per-file maps becoming layered rather than copied — a
-change to every reader of `processedFiles`.
-
-One thing came out of the profile that was not the compiler's: computing the
-watch globs for a config walks every root file, and the API session does not
-watch. `configFileRegistryBuilder.updateRootFilesWatch` now returns early when
-`SessionOptions.WatchEnabled` is false, which is the only condition under which
-`Session.updateWatches` ever reads them.
-
-**Two things to know before building on this.** The first is that a project with
-`types` in its config gives up the fast path whenever a created file reaches one
-of those packages — a new file importing `"fs"` in a project with
-`types: ["node"]`, say — because of the automatic type directive rule above.
-Correct, and slower than it needs to be: the way to fix it is to move such a file
-out of the directive region and reorder its include reasons, rather than refuse.
-Nothing ts-morph does with an in-memory file system meets it, since there are no
-`@types` there to bring anything in. The second is that
-`includeProcessor.getDiagnostics` reads `rootDirDiagnostics` under a `sync.Once`
-while `CommonSourceDirectory` can be appending to it from another goroutine. The
-race predates this — the same append went to `processingDiagnostics` before — but
-splitting the field made it easier to see, and it is worth closing.
+**compiler.** Cloning those ten maps is ~20% of an edit, and making them layered
+rather than copied touches every reader in the compiler. Deliberately deferred, and
+the case for it got weaker rather than stronger: a snapshot is now opened once per run
+of edits rather than once per edit, so a share of one is a share of something rare.
+Worth doing when something makes snapshots frequent again, or for §2.2 — not before.
 
 ---
 
-### 3.6 What is left, and the order to do it in
+## 3. Packaging and publishing
 
-The shape of the cost has changed, so the priorities have too. Measured per edit
-and read on an already-built project:
-
-| project    | per edit + read | 28.0.0   |
-| ---------- | --------------- | -------- |
-| 100 files  | 1.00 ms         | ~0.06 ms |
-| 400 files  | 1.65 ms         |          |
-| 1600 files | 1.93 ms         |          |
-| 3200 files | 2.02 ms         |          |
-
-A 32x increase in project size now costs 2x per edit, so **the size-dependent term
-is largely dealt with** and roughly 90% of what remains is a fixed ~1 ms paid on
-every read-after-write. Chasing per-file terms has hit diminishing returns; the
-question is why an edit opens a snapshot at all.
-
-**That question is answered in (a), and the table above is out of date.** An edit
-opens no snapshot now, so it costs 0.76–0.87 ms whatever the project size — the
-size-dependent term is gone rather than small — and what is left of it is the AST
-encode and the wire rather than anything the compiler does per file. The remaining
-per-snapshot items below are correspondingly less valuable than they were: a snapshot
-is now opened once per run of edits rather than once per edit, so the deferred
-`processedFiles` clone is 20% of something that happens far less often.
-
-#### a. Stop opening a semantic snapshot for a syntactic operation — done
-
-**ts-morph and fork.** `addClass`, `addStatements` and `rename` are a text edit
-followed by a re-parse of **one file**, and nothing about that is semantic. Every one
-of them opened a compiler snapshot: a program clone, a Wasm round trip, an AST
-re-encode. 28.0.0 did none of that — it re-parsed the changed file with
-`ts.createSourceFile` and left the program alone until something asked a semantic
-question.
-
-**The fork has a parse-only endpoint.** `parseSourceFile` takes a file name and text
-and returns the encoded AST: no snapshot, no program, no binding. It is a session
-method beside `parseConfigFile` rather than a snapshot method, because it opens no
-snapshot — it only _names_ one, and only to take the file's parse options from it,
-which decide the file's module-ness and nothing else. The encoder is reused unchanged;
-the parser leaves `SourceFile.Hash` zero, so the endpoint fills it in with the same
-`xxh3` a file handle carries, which is what lets the client's source file cache match
-it. `DocumentRegistry#parseSourceFileText` writes the text and parses it in one call so
-the two cannot drift, and `CompilerFactory` uses it for the tree a manipulation hands
-back and for the tree a created file resolves to.
-
-**What makes it sound is that a node handle is a pure function of the AST shape.** A
-handle is an index into the table `encoder.BuildNodeIndexTable` walks, and that walk
-reads nothing but the tree. `TestParseSourceFileNodeIdentityMatchesTheProgram` builds a
-project, takes the program's own parse of a file, parses the identical text standalone
-under all four combinations of `ExternalModuleIndicatorOptions`, and compares the index
-tables and the encoded bytes: same node count, same kind and same `Pos`/`End` at every
-index, and byte-identical apart from the header's parse options field. Parse options
-cannot move a node, because `SetExternalModuleIndicator` runs after the parse and only
-points at a node that is already there.
-
-**The one thing that does differ is the flags the binder writes.**
-`NodeFlagsExportContext`, `HasImplicitReturn`, `HasExplicitReturn`, `ContainsThis`,
-`HasAsyncFunctions`, `Unreachable` and the lazily aggregated
-`ThisNodeOrAnySubNodesHasError` are put on the program's tree after it is parsed, and a
-tree nothing has bound does not carry them. They are not part of a node's identity,
-nothing in ts-morph reads them, and which of the two a client saw was already a question
-of whether anything had bound the file before it first asked for it —
-`TestParseSourceFileMatchesGetSourceFile` compares the two encodings over ten shapes and
-names exactly this set as the difference.
-
-**Two objects for one path is a correctness problem rather than a memory one, and that
-is the part the design got wrong.** A semantic answer carries node handles the client
-resolves through `program.getSourceFile(path)`, so a manipulated file would have had the
-wrapper holding the parse-only tree and a symbol's declaration coming from the program's
-— structurally identical, different objects. ts-morph then wraps that declaration under
-the wrapper for the _other_ tree, and its `_wrappedChildCount` bookkeeping counts
-children that are not its own, which surfaces as "the children of the old and new trees
-were expected to have the same count" on the next manipulation. Four tests in the suite
-caught it. The fix is `SourceFileCache#offer`: a parse-only tree goes into the cache
-_unretained_, and the ordinary fetch that follows a flush hands it back when the
-server's own content hash and parse options key match what came over the wire, and
-ignores it when they do not. So the two are one object, the check is the compiler's
-rather than the client's, a wrong offer costs nothing but the entry, and at most one
-un-retained offer is kept per path.
-
-**`#flushPending` had to learn to coalesce, or the change buys nothing.** Every write
-applied whatever was waiting for the same path, which never fired while every write was
-followed by a read that emptied the pending sets. Once edits stop flushing, editing one
-file twice in a row flushes on the second. Three of the four ways two reports for a path
-can meet say the same thing as one — changed then changed, created then changed (stays
-created), created then deleted (both dropped) and changed then deleted (the deletion
-replaces it) — and only a path going the other way, deleted then written or created over
-a file the compiler already holds, still applies what is waiting first. Measured before
-this, a parse-only edit was **0.89–1.15x** of the flush it replaced; after it, 2.0–10x.
-
-**`isFromExternalLibrary` was the last snapshot per edit, and it was not the compiler's
-fault.** ts-morph memoizes it on every file the moment it is first modified, and
-`Program#_isCompilerProgramCreated` — 28.0.0's guard against creating a program just to
-answer it — was hard-coded to `true` in the port, so the question opened the project. It
-is now `DocumentRegistry#isSourceFileFromExternalLibrary`, which answers from whatever
-snapshot is already open and says `false` when there is none: how a file got into a
-program is settled when it arrives there and no edit moves it, so a new snapshot answers
-no better than the current one, and a file no snapshot holds was found by nothing.
-Without this a create-and-manipulate loop still paid one snapshot per file and measured
-960 ms at 800 files against 170.
-
-**`retiredSnapshotLimit` counts edits now, and had to.** It is documented as exactly how
-many edits a `Type`, `Symbol` or `Signature` keeps answering across, and it was enforced
-by retiring one snapshot per reopen — the same thing only while edits and snapshots were
-1:1. They no longer are, and left alone the contract would quietly have become "how many
-_semantic reads_". The registry counts edits (`#generation`), stamps a retired snapshot
-with the edit that superseded it, and drops it once `retiredSnapshotLimit` edits have
-gone by — trimming at edit time as well as at reopen, because a `Type` reads from the
-snapshot that produced it and never touches the current one. The count stays on as a
-bound, for the reopens that are not edits. **The limit is unchanged at 2 and its comment
-is still true verbatim**, in both directions: the four existing tests still pass, and two
-new ones make the edits the only countable thing by asking nothing in between — two edits
-then a read still answers, three then a read throws.
-
-Measured on the built bundle — this branch against the same branch with these changes
-stashed, both rebuilt — in-memory FS, one process per size, alongside a real
-`ts-morph@28.0.0` install driven through the identical benchmark. Cost of one edit and a
-read of the file back, against a project of n files, in ms:
-
-| n      | 100   | 400   | 1600  | 3200  |
-| ------ | ----- | ----- | ----- | ----- |
-| before | 1.556 | 1.879 | 2.292 | 2.560 |
-| after  | 0.774 | 0.786 | 0.868 | 0.764 |
-| 28.0.0 | 0.364 | 0.382 | 0.346 | 0.317 |
-
-and the same for an edit that does not grow the file (`setBodyText` on a method):
-
-| n      | 100   | 400   | 1600  | 3200  |
-| ------ | ----- | ----- | ----- | ----- |
-| before | 1.062 | 1.402 | 1.537 | 2.129 |
-| after  | 0.507 | 0.507 | 0.622 | 0.533 |
-| 28.0.0 | 0.255 | 0.302 | 0.232 | 0.226 |
-
-**An edit is 2.0–3.4x faster and no longer grows with the project at all** — 0.76 ms at
-3200 files against 0.77 at 100, where before it grew by 65% over that range. It is within
-**2.0–2.7x** of 28.0.0, from 4.3–9.4x. What is left is the binary AST encode, the wire
-and the JS decode, which 28.0.0 never paid because its tree was JS objects in the same
-heap. Parity is not reachable through this change; going further means not shipping the
-whole tree per edit.
-
-Whole loops, in ms:
-
-| files                                   | 200 | 800  | 1600 |
-| --------------------------------------- | --- | ---- | ---- |
-| create and manipulate together — before | 657 | 2514 | 8789 |
-| create and manipulate together — after  | 103 | 210  | 306  |
-| create and manipulate together — 28.0.0 | 37  | 81   | 129  |
-| create, then manipulate — before        | 379 | 960  | 1821 |
-| create, then manipulate — after         | 85  | 170  | 243  |
-| create, then manipulate — 28.0.0        | 19  | 42   | 73   |
-
-**The create-and-manipulate loop is 6.4x/12.0x/28.7x faster and is linear at last.** It
-is the shape §3.5 and §3.6(c) each took a bite out of and neither could finish, because
-what was left was ts-morph asking the compiler a question per file rather than anything
-the compiler did. It is now 2.4–2.8x of 28.0.0. Bulk paths are unchanged:
-`addSourceFilesAtPaths` 265/334/431 ms before against 264/327/438 after at 200/800/1600,
-and `createSourceFiles` 9.4/21.6/27.2 against 9.8/18.0/26.6.
-
-Equivalence is tested rather than argued, because getting the boundary wrong is a stale
-answer rather than a slow one. `internal/api/parsesourcefile_test.go` covers node
-identity, the encoding against `getSourceFile` over ten shapes, the header hash, the
-absent and the stale snapshot, and parse options taken from a `"type": "module"` package
-scope for a file the program does not hold yet.
-`packages/common/src/tests/tsgo/documentRegistrySnapshotTests.ts` counts the snapshots a
-run of operations opens — a run of edits opens one, at the next read; a run of creates
-that are then edited opens none — and **enumerates the registry's whole surface**,
-asserting which members apply what is waiting and which do not, with a test that fails
-when a member is added and classified as neither. That is the code-level enforcement of
-the boundary: `project`, `checker`, `program`, `getSourceFile`/`getSourceFileOrThrow` and
-the two `createOrUpdate` methods are the doors, and nothing else may become one by
-accident.
-
-**What is not done.** The fetch after a flush still happens — `offer` makes it hand back
-the tree the client already has, but the round trip and the server-side encode are still
-paid. Reporting each changed file's content hash and parse options key in the
-`updateSnapshot` response would let the client skip it, which is worth about what a
-`getSourceFile` costs on the first read of each edited file. Routing the endpoint's parse
-through `project.ParseCache`, so the later program build finds the file already parsed,
-is the other half and is the risky one: the cache is ref-counted and §3.5's ledger tests
-assert it exactly, and this change has already made the flush rare.
-
-#### b. Send root files to the API directly, not through a synthetic tsconfig — done
-
-**ts-morph and fork.** The registry wrote a `/tsconfig.json` naming every file it
-held, and the compiler re-parsed it on every reopen. A client can now name root
-files for a project directly: `updateSnapshot` takes `rootFileChanges`, a per
-project list of names to append and names to drop, and the project appends them
-to whatever its config resolved. The config stays — it is where the compiler
-options live and, more to the point, where they are _validated_ — but its `files`
-list is permanently `[]`, and a create writes nothing at all.
-
-**The list is a delta rather than a whole list** because sending the whole list
-per create is the same O(n) encode and decode the config round trip was. It rides
-on `updateSnapshot` rather than being a request of its own so that a file's
-contents and its membership land in the same snapshot, which is what lets
-`AddRootFiles` extend the program instead of rebuilding it.
-
-`tsoptions.ParsedCommandLine.WithAdditionalRootFiles` is what joins the two:
-it builds a fresh command line — field by field, since the type holds five
-`sync.Once` memos — carrying the config source file, the raw object and the parse
-diagnostics, with the names appended to `FileNames` and the **same**
-`CompilerOptions` pointer, so `canAddRootFiles`' `reflect.DeepEqual` is trivially
-true. `Project` memoizes `config ++ typings ++ api` in that order, because
-appending at the end is the only shape `AddRootFiles` can extend. The one trap is
-that `SetCommandLine` must keep the API roots while dropping everything derived
-from the config: `setCompilerOptions` rewrites the config, and a project that
-dropped its roots there would silently empty out.
-`TestAPIRootsAreKeptWhenTheConfigIsRewritten` is that trap.
-
-**The stem-collision contract now holds by construction.** A root named this way
-is taken verbatim — no include glob, no extension priority — so `a.ts`, `a.d.ts`
-and `a.js` are all in the project, which is what the explicit `files` list was
-for. `files` still has to be _present_ in the config, though: with neither `files`
-nor `include` the parser installs a default `**/*` and globs the whole in-memory
-file system, which is the bug the old comment described.
-
-**One diagnostic had to be dealt with, and it is why this is not a two-line
-change.** A present-but-empty `files` list makes the config parser report 18002,
-"The 'files' list in config file is empty" — which under the old scheme only
-happened when the registry held nothing. Left alone it would be reported for
-every project, and worse: `noEmitOnError` reports whatever the config parse
-produced, so a project with that option set would **never emit again**.
-`WithAdditionalRootFiles` therefore drops that one diagnostic, which is not a
-special case but a fact about the command line it returns — its file list is not
-empty. Nothing else moves: 18002 is still reported when the registry genuinely
-holds no files (`ts.ts` has always filtered it out of `getPreEmitDiagnostics`
-there), and the option validation the config exists for — 6046 for an unknown
-`lib`, and the rest — is reported exactly as before, since the derived command
-line carries `ConfigFile` and `Errors`.
-
-**`rootDir` is the one thing left that depends on the file set.** The registry
-writes `rootDir = <common directory of the non-declaration files>` so that emit
-lands where 28.0.0 put it with no config at all, and that is tested. It is now
-folded forward as files arrive (`#commonDirectoryParts`) rather than recomputed
-over the whole list, and the config is rewritten only when it moves — which,
-since the common directory only ever shortens, is at most once per directory
-level of the first file over a whole run, and exactly once in the usual shape.
-A removal recomputes it over the files still held, which is what a removal costs
-anyway.
-
-Measured on the built bundle — this branch against the same branch with these
-changes stashed, both rebuilt, in-memory FS, one process per size, two
-alternating passes, in ms:
-
-| files                                     | 200 | 800  | 1600  | 3200  |
-| ----------------------------------------- | --- | ---- | ----- | ----- |
-| create and manipulate together — before   | 602 | 2905 | 10119 | 37764 |
-| create and manipulate together — after    | 510 | 2205 | 6974  | 26155 |
-| create, then read each file back — before | 435 | 1845 | 6138  | 21692 |
-| create, then read each file back — after  | 371 | 1219 | 3216  | 11429 |
-
-24–31% off a create-and-manipulate loop and 34–48% off create-and-read, the
-saving growing with the project because the term removed was O(n) per create.
-Files in nested directories — the shape the common directory has to be got right
-for — move the same way: 1955 → 1231 ms at 800 and 5438 → 3118 at 1600.
-
-Nothing else moved. `addSourceFilesAtPaths` 245–259 / 307–323 ms before against
-241–245 / 326–332 after at 800/1600, `createSourceFiles` 16–17 / 28–29 against
-17–19 / 28–29, an edit against a project of 800/1600 files 1.78–1.85 / 2.48–2.60
-ms against 1.76–1.80 / 2.54–2.57, and the two-loop create-then-manipulate
-862–886 / 1720–1834 against 859–886 / 1726–1817 — that last one unchanged by
-construction, since it wrote the config once for the whole run either way.
-
-Equivalence is tested rather than argued.
-`internal/api/apirootfiles_test.go` runs every shape
-`TestAddedRootsMatchAProjectOpenedWithThem` does with the roots named over the
-API instead of in the config, and asserts the addition is made — or refused — in
-exactly the same places; plus that the two ways of naming roots hold the same
-files with the same diagnostics, that a root can be dropped and re-added, that
-the config's own option diagnostics survive, and that files sharing a stem across
-`.ts/.d.ts/.js`, `.tsx/.jsx`, `.mts/.mjs` and `.cts/.cjs` are all in the project.
-`internal/project/apirootsproject_test.go` adds the parse cache reference ledger
-to the repeated-addition loop, and `internal/tsoptions/withadditionalrootfiles_test.go`
-checks that a derived command line reports what its base did and leaves the base
-alone.
-
-**Not done, deliberately:** the scratch project behind the standalone
-`createSourceFile` (`ts.ts`) still names its files in a config it rewrites per
-call. It is bounded at 32 files by `scratchFileLimit`, so it is not a measured
-item, and converting it would put the one path that has no project of its own
-through a protocol it does not otherwise need.
-
-#### c. Make deletion incremental — done, with the same named ceiling
-
-**fork.** Deleting a file fell back to a full program rebuild, which was the last
-genuinely quadratic path. `Program.AddRootFiles` is now
-`Program.UpdateRootFiles`: it reads the new config's root file list as the old one
-with names dropped from it and names appended to the end, and does both in one
-walk. A removal is only made when it is purely subtractive, and everything else is
-a fallback to `NewProgram`.
-
-**Why a removal is harder than an addition.** An addition appended at the end can
-only reach files that are already in the program or are new, so nothing already
-there moves and nothing already resolved resolves differently. A removal has no
-such guarantee: a file that resolved to the one leaving has to resolve again, and
-may land on a copy under `node_modules`, on a file sharing its stem, or on
-nothing. It can also **move files that are staying**, because where a file sits in
-the program is decided by the first thing that reached it, and a removed file may
-have been that — `b.ts` importing `dep.ts` puts `dep.ts` before `c.ts`, where a
-rebuild without `b.ts` would put it after.
-
-Both are the same condition, and `canRemoveRoots` checks it rather than reasoning
-about it: **nothing that stays may owe anything to something that is going.**
-Concretely,
-
-- every reason a removed root is in the program is a root file reason for one of
-  the roots being removed. Nothing resolved to it, referenced it, or named it as a
-  type library — and since a removal cannot make a lookup that _failed_ succeed,
-  nothing else has to resolve again; and
-- no file that stays has a removed file as the **first** of its include reasons,
-  which is the reason that placed it. A removed root's walk therefore brought
-  nothing into the program but itself, and every other file keeps the place a
-  rebuild would give it. This is one pass over the include reasons, which also
-  builds the reason lists the derived program gets — the reasons a removed file
-  gave the files it merely referenced are dropped from them.
-
-**Where it refuses**, each a fallback to a full build: a **lib file**, which is
-sorted ahead of everything else; a file the base only found by **searching
-node_modules**; a file the program **does not hold at all** (an unsupported
-extension names a root that was never parsed); a file it holds under a **name none
-of the removed roots gave it**; a **casing** the lower-case index does not name,
-since that index holds the first path of each casing and the second one leaving
-would take the first one's entry; a program with **duplicates**, whose parse cache
-accounting is worked out over the whole walk; a **diagnostic the parse produced**
-about a file that is going; an **added root whose walk reaches one** that is going,
-which is the case where the file is dropped from the roots but left on the file
-system and the arriving import still finds it; a name the new list **still holds**,
-which is a root list that named a file twice and dropped one of the two — the file
-is not leaving, only one of its reasons for being there is; **more than eight roots
-at once**; and **the last root in the project**, since the first build is where the lib files
-and the automatic type directives are settled and a program with no roots holds
-neither. The common source directory is carried over only when `rootDir` or
-`configFilePath` names it _and_ the parse said nothing about where the files sit;
-otherwise the derived program works it out over its own files.
-
-Two things outside the compiler. `Project` now keeps `deletedFiles` beside
-`dirtyFiles` rather than giving `dirtyFilesKnown` up the moment a deletion
-arrives, and **a file the program holds may only go away by being dropped as a
-root in the same update** — one that vanished from the file system while the
-project still names it is a program that has to be built again, since what its
-name means now is a question about the file system rather than about the program.
-And `Program.FilesChangedFrom` reports what was taken away as well as what
-changed, so the client goes on invalidating exactly what moved; without that, a
-file removed and written again at the same path keeps its old text, which is what
-the sabotage below produced.
-
-**A root file's include reason now carries the name the config's file list gave
-it rather than its index in that list.** An index stops meaning what it meant as
-soon as a root before it is dropped, and renumbering every remaining file's reason
-per removal would have put back the O(n) this removes. The name is what the two
-places that read it wanted anyway — both did `config.FileNames()[index]` to get
-one — so `ExplainFiles` and every diagnostic about a root are unchanged.
-
-Measured on the built bundle, in-memory FS, one process per size, ms per file. The
-loop is a project of n files that stays that size: on every step a file is created
-and read back and an older one is dropped, each forcing its own snapshot. Before is
-one run of each, after the range over two.
-
-| files                      | 200       | 400       | 800       | 1600      |
-| -------------------------- | --------- | --------- | --------- | --------- |
-| create and delete, before  | 5.52      | 9.72      | 18.17     | —         |
-| create and delete, after   | 2.41–2.43 | 2.96–2.99 | 4.29–4.87 | 7.51–9.14 |
-| delete only, before        | 3.43      | 4.66      | 8.85      | —         |
-| delete only, after         | 1.12–1.13 | 1.22–1.31 | 1.45–1.53 | 2.39–2.56 |
-| create only, for the floor | 1.82      | 1.47      | 1.57      | 2.14      |
-
-A delete-only loop is 3.0x/3.6x/5.8x faster and is now within a constant factor of
-itself — 1.13 to 2.56 ms while the project grows eightfold — where before it
-doubled with the project. Create-and-delete is 2.3x/3.3x/3.8x faster and now costs
-about what a create and a delete cost separately; **it still grows**, and what is
-left of the growth is the same ceiling §3.5 named and the deferred item below:
-cloning the ten `map[tspath.Path]…` fields per snapshot, twice per step here.
-Nothing else moved: `addSourceFilesAtPaths` 217–223 / 312–333 ms and
-`createSourceFiles` 6–7 / 11–12 ms at 800/1600 over three runs, and an edit
-against a project of 800/1600 files 1.24/1.72 ms best of five.
-
-Equivalence is tested rather than argued, and the tests were checked for teeth by
-sabotage. `internal/compiler/removerootfiles_test.go` builds a project both ways
-over thirty-four shapes and compares explained files, every include reason's own
-data, every resolution, file metadata, the missing/lib/redirect maps, the
-lower-case index, the common source directory, every program, semantic and
-parse-time diagnostic, and what the derived program says it changed and removed —
-plus the base program's fingerprint before and after, since a removal that wrote
-into a map the program it came from still holds would corrupt every snapshot
-behind it. `internal/project/addrootsproject_test.go` and
-`internal/api/apirootfiles_test.go` drive the rolling loop through the session,
-with the parse cache reference ledger checked after every step, and assert which
-cases refuse. `tsgo-wasm/deletion.mts` does the same through ts-morph's own API
-over fifteen shapes plus the loop itself, which is the only place the client's cache
-is in the way.
-
-Three sabotages, each of which the suites caught: dropping the first-reason rule
-made a removed file's imports stay in the program with no reason to be there;
-dropping the reason filter left a file explaining itself by an import from a file
-that had gone; and dropping the removed-file report to the client left a file
-recreated at its old path answering with its old text.
-
-#### d. A public batch create entry point — done
-
-**ts-morph.** `Project#createSourceFiles(entries, options)` takes an array of
-`{ filePath, text? }` — the same text, structure or writer function
-`createSourceFile` takes, the same `SourceFileCreateOptions` for the whole batch —
-and returns the files in the order they were given. BREAKING-CHANGES.md §6 points
-at it rather than describing the loop to hand-write.
-
-It is not a wrapper around `DocumentRegistry#createOrUpdateSourceFiles`: that
-parses, and creation has not parsed since §3.1. What the batch adds is that every
-file's text is written before **any** of them is reported as added, so a handler for
-`onSourceFileAdded` that asks the compiler a question asks it once for the run. That
-handler is the third of the quadratic loops named in §3.1 — an unresolved import
-re-resolving on every file added — and it is the one case where the batch is a
-complexity fix rather than saved bookkeeping. Measured on the built bundle with such
-a file in the project, in ms per file:
-
-| files               | 100  | 200  | 400  | 800  | 1600 |
-| ------------------- | ---- | ---- | ---- | ---- | ---- |
-| `createSourceFile`  | 2.54 | 2.59 | 2.77 | 3.45 | 5.19 |
-| `createSourceFiles` | 0.24 | 0.19 | 0.16 | 0.11 | 0.10 |
-
-Without such a file both are linear and identical — 0.015 ms per file at
-100/400/1600 either way — which is what §3.1 predicted.
-
-#### e. Two per-file loops that a clone already knows the answer to — done
-
-**fork and client.** Both are gone, and both turned out to be what the note said.
-Profiled at 1600 files on the built bundle: `computeSnapshotChanges` 5.9% of an
-edit-and-read loop, `SourceFileCache.retainForSnapshot` 3.7%, and the release that
-undoes it another 0.7%. On a native harness with no wasm in the way,
-`computeSnapshotChanges` was 190 ms of the 1090 ms `handleUpdateSnapshot` spent
-over 1600 edits — 17% of the whole server side of an edit.
-
-**A program now says what it changed.** `Program.FilesChangedFrom(base)` returns
-the paths at which the two hold a different file, and whether it could say. It
-answers only for the program it was built from directly, which it names by an id
-rather than a pointer so that a program does not keep every program before it
-alive. `UpdateProgram` records the one file it replaced — and only if the host did
-not answer with the file it already held — and `AddRootFiles` records the
-replacements that differ. Neither takes a file away, so a true return also says
-the deleted set is empty; anything else, including every build from scratch, falls
-back to comparing the two file maps as before.
-
-Equivalence is tested rather than argued, because what this reports is what the
-client invalidates and getting it wrong is a stale answer rather than a slow one.
-`internal/api/snapshotchanges_test.go` drives the session through eleven shapes —
-a file changed, several changed, created, created beside an edit, created where an
-import was waiting, deleted, deleted while another imports it, a deletion and a
-creation and a change at once, a compiler option changed alone and alongside both,
-and a second project opened and closed — and after **every** update compares what
-`handleUpdateSnapshot` reported against the full diff of the two snapshots, plus
-the temporary-snapshot path, which diffs against a base the caller names. Each
-case also states which of the two ways it means to be answered, so a case that
-stopped exercising the program's answer fails rather than passing vacuously.
-`assertChangedPathsAreTheDiff` adds the same check to the thirty-nine shapes of
-`internal/compiler/addrootfilesprobe_test.go`, where it also asserts the derived
-program holds every file the base did.
-
-**The client's scopes are handed over rather than copied.** What a
-(snapshot, project) pair resolved each path to is now a map of its own and an entry
-carries a count rather than a set of keys, so a new snapshot inheriting the
-previous one's answers is one map moving rather than a reference written onto every
-entry. The inheritance is recorded by `retainForSnapshot` and settled by
-`releaseSnapshot`: when the snapshot inherited from is released next — which is
-what ts-morph's `#openProject` does, and what a whole edit loop is — the scope is
-handed over whole, and only the paths the server reported changed are dropped from
-it. When both snapshots go on being read, it is copied, which is what it always
-was. Both O(files) passes disappear from an edit rather than one.
-`_packages/native-preview/test/sourceFileCache.test.ts` drives the cache and a
-model written the way the old one worked side by side, over hand-over, copy,
-removed projects, deletions, a snapshot released before the one it inherits from,
-and a randomized run, checking every answer either could give and the cache's own
-reference count after every step.
-
-Measured on the built bundle, this branch against the same branch with these
-changes stashed, both rebuilt, six alternating pairs, in-memory FS, ms per edit of
-an already-read project:
-
-| files          | 800  | 1600 |
-| -------------- | ---- | ---- |
-| before, best   | 1.94 | 2.62 |
-| before, median | 2.01 | 2.80 |
-| after, best    | 1.86 | 2.50 |
-| after, median  | 1.97 | 2.61 |
-
-And on the whole loops, in ms:
-
-| files                                   | 800  | 1600  |
-| --------------------------------------- | ---- | ----- |
-| create and manipulate together — before | 3211 | 11202 |
-| create and manipulate together — after  | 2943 | 10242 |
-| create, then manipulate — before        | 1104 | 2312  |
-| create, then manipulate — after         | 923  | 2033  |
-
-7% off an edit at 1600 and 16–19% off the two-loop manipulate, which is the shape
-where the client's copy was the larger of the two. Bulk paths are unchanged:
-`addSourceFilesAtPaths` 220–227 / 284–295 ms and `createSourceFiles` 6–7 / 11 ms at
-800/1600 either way.
-
-What is left of the per-file terms is `Snapshot.Clone` — the ten `map[tspath.Path]…`
-fields below — which is now 20% of an edit and the largest single item after (a),
-now that (b) has landed.
-
-#### Deferred: layered `processedFiles` maps
-
-Cloning ten `map[tspath.Path]…` fields per snapshot is ~21% of a snapshot, but making
-them layered rather than copied touches every reader in the compiler. Deliberately
-left until the above had landed and been measured — and now that (a) has, **the answer
-is that it stopped mattering**: a snapshot is opened once per run of edits rather than
-once per edit, so a share of one is a share of something that happens rarely. Closing
-this is worth doing when something makes snapshots frequent again, not before.
-
----
-
-## 4. Packaging and publishing
-
-- **JSR** — half solved. The size half is: the reactor ships gzipped, so
+- **JSR — half solved.** The size half is done: the reactor ships gzipped, so
   `deno/common` is 13.7 MiB against the 20 MiB limit rather than ~48 MB, and
-  `deno publish --dry-run` is green. What remains is that the wasm cannot be
-  loaded over `https:` — a JSR consumer has no file to read beside the module —
-  so publishing is still not solved. The answer is likely `initializeWasm` with a
-  fetched `Response`, which now handles the compressed asset, made to work for a
-  `https:` default rather than only a `file:` one.
-- **Fork maintenance** — the fork is 17 commits ahead of upstream. Split the
-  mislabelled commit (`15ff4accb` says "expose getAmbientModules" and carries six
-  unrelated changes) before proposing anything upstream, and decide which changes to
-  send there rather than carry.
-- **Restatements to retire** — `TupleTypeNode.elements`, `JSDocTemplateTag.constraint`
-  and `NoSubstitutionTemplateLiteral` are restated in `packages/common/src/tsgo/ts.ts`
-  only because the fork's generated AST is wrong. Fixing them there deletes the
-  restatements. **compiler**
+  `deno publish --dry-run` is green. What remains is that the Wasm cannot be loaded
+  over `https:` — a JSR consumer has no file to read beside the module. The likely
+  answer is `initializeWasm` with a fetched `Response`, which already handles the
+  compressed asset, made to work for an `https:` default rather than only a `file:`
+  one.
+- **Fork maintenance.** The fork is well ahead of upstream. Split the mislabelled
+  commit (`15ff4accb` says "expose getAmbientModules" and carries six unrelated
+  changes) before proposing anything upstream, and decide which changes to send there
+  rather than carry. MIGRATION-REPORT §5.1 lists the candidates.
+- **Restatements to retire.** `TupleTypeNode.elements`,
+  `JSDocTemplateTag.constraint` and `NoSubstitutionTemplateLiteral` are restated in
+  `packages/common/src/tsgo/ts.ts` only because the fork's generated AST is wrong.
+  Fixing them there deletes the restatements. **compiler**
 
 ---
 
-## 5. Documentation
+## 4. A standing caution
 
-- **The comment sweep**, deliberately deferred: shipped source still carries
-  `Breaking change:` comments and notes about what tsgo no longer has — including
-  in the generated `.d.ts` files consumers read. Those belong in
-  BREAKING-CHANGES.md, not in the API's doc comments, and they will read as noise
-  to anyone who never used 28.0.0.
-- **`docs/emitting.md`** documents `project.emit({ customTransformers })`, which is
-  removed and now fails silently — the transformer is never called. Rewrite that
-  section.
-- **BREAKING-CHANGES.md** was rewritten as a migration guide and every load-bearing
-  claim in it re-measured against published 28.0.0. Three claims in it are still
-  stated from source rather than measured and are marked as such in its Appendix B.
-  It has been found stale or inverted repeatedly in the past; keep treating a claim
-  nobody has re-run as a hypothesis.
-- **`docs/setup/index.md`** — done in b6670dac; the resolution example is current.
-- **`removed-capabilities/`** — done in b6670dac; the README and `.mocharc.yml` now
-  agree on three files.
+BREAKING-CHANGES.md has been found stale or inverted repeatedly, and twice more while
+being rebuilt: a claim that browsers were unsupported, and a `getConstraint` entry
+whose fixture used a resolved instantiation and so reported "unchanged" for
+differences that were real. Three of its claims are still stated from source rather
+than measured and are marked as such in its Appendix B.
+
+Treat any claim in it that nobody has re-run as a hypothesis, and measure against a
+genuinely deferred type — or a genuinely merged declaration, or whatever the case
+needs — rather than against a fixture that has already collapsed.

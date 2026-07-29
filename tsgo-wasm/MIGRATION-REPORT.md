@@ -899,3 +899,91 @@ after nothing read it.
 `SourceFile#move` with `overwrite` onto a path that exists only on the file system used to keep the
 stale text when the compiler had already resolved that path. The registry now asks the base file
 system, and a path it already has is reported as `changed` rather than `created`, which fixes it.
+
+### 8.7 What was closed after this report was written, and what it measured
+
+Everything below was open in TODO.md when this report was current and has since landed. It is
+recorded here so the TODO can hold only open work. Each was measured against published
+`ts-morph@28.0.0` side by side in one process.
+
+**Behaviour brought back to parity**
+
+- **`findReferencesAtPosition` resolves by touching token again**, as 28.0.0 did, rather than by
+  containment. Every offset of `class C { m(a: string) { return a; } }` agrees; the wider corpus
+  went from 558 differing positions of 2423 to 90, each of the 90 a tsgo-side gap unrelated to
+  position resolution. The stray `class` entry on
+  `ConstructorDeclaration#findReferencesAsNodes()` went with it.
+- **`Node#getSymbol()` answers on anonymous declarations.** `getSymbolOfDeclaration` is exposed on
+  the API checker (`MethodGetSymbolOfDeclaration`) and asked as the last fallback, so a declaration
+  with no name to ask the checker with is answered by asking the declaration itself. A sweep of
+  every node of a file covering the affected kinds went from 370 of 388 agreeing to 384 — arrow
+  functions, anonymous function expressions, object and type literals, mapped types, function and
+  constructor types, export declarations, call/construct/index signatures and constructors, each
+  reading the `__function` / `__object` / `__type` / `__call` / `__new` / `__index` /
+  `__constructor` the binder gave. Nothing that already answered changed.
+- **`DefinitionInfo#getContainerName()`** names the module specifier through `symbolToString`
+  (`MethodSymbolToString`) instead of reading `""`. Ten of eleven probed lookups match 28.0.0
+  exactly; the eleventh is one 28.0.0 got wrong — it read `"../mod"` at an import specifier and
+  `"./mod"` at a call site for the same symbol, and `"./mod"` does not resolve from the asking file.
+- **Definition kinds follow TypeScript's own `getSymbolKind`.** The flag order tested the type and
+  namespace flags before the value flags, and `SymbolFlags.Variable` is
+  `FunctionScopedVariable | BlockScopedVariable` with the narrower flag tested first — so every
+  `var` reported `parameter`, and `const` and `let` both reported `var`, while `constElement` and
+  `letElement` existed in the enum and were never returned. Reordering it and reading the keyword
+  off the declaration fixed 20 measured rows. Seven remain, in BREAKING-CHANGES.md §8.5.
+- **`insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces` reaches the formatter's edits**, so
+  `formatText` output matches 28.0.0. Three things it still does not reach are in §8.4 of the guide.
+- **Browser support shipped.** A `wasi_snapshot_preview1` shim written against the web platform
+  only, so `node:wasi` appears in no shipped artifact and one artifact serves Node, Deno and the
+  browser. A browser must load it in a Web Worker — V8 refuses a `WebAssembly.Module` this large on
+  the main thread — and `await initializeWasm()` before the first `Project`.
+- **The reactor ships gzipped**, 43.02 MiB to 9.50 MiB, so `@ts-morph/common` unpacks at 18.3 MB
+  rather than ~53 MB. gzip and not brotli because `DecompressionStream` has no brotli decoder, nor
+  zstd because it needs Node >=22.15 and has no dependable browser support; gzip is the only codec
+  a synchronous Node read and a browser can both do. It costs ~54 ms once per process.
+
+**Performance, in the order it was done**
+
+| 1600 files, ms                 | 28.0.0 | before    | after     |
+| ------------------------------ | ------ | --------- | --------- |
+| create, then manipulate        | 158    | 4341      | 240       |
+| create and manipulate together | 158    | 43973     | 306       |
+| create only, read back after   | —      | quadratic | 0.24/file |
+| one edit and a read            | 0.22   | 1.98      | 0.79      |
+
+Six changes, each measured: the project reopen deferred until something reads a parsed tree; three
+per-file costs removed from every snapshot (the parse cache refcounted by identity, a `package.json`
+scope lookup per file, the root file list sent twice per response); a program **extended** rather
+than rebuilt when roots are only appended, and later when they are only removed, each with an
+explicit set of refusal conditions documented on `UpdateRootFiles`; root files sent to the API as
+root files instead of written into a synthetic tsconfig; `Project#createSourceFiles`; and an edit
+stopped from opening a semantic snapshot at all.
+
+Equivalence was tested rather than argued at every step — a program built incrementally and outright
+over 34 shapes for removal and 39 for addition, comparing explained files, every include reason,
+every resolution, metadata, the missing/lib/redirect maps, the common source directory and every
+diagnostic — and the harnesses were checked for teeth by sabotage.
+
+**Decisions closed without a change**
+
+- **`retiredSnapshotLimit` stays at 2.** An earlier reading concluded it bought nothing; that probe
+  never asked the checker between manipulations, and `#retire` only keeps a snapshot the checker was
+  used on, so exactly one was ever retained at any limit. Asking once per generation separates 0, 1,
+  2 and 3 exactly. Cost: not measurable, ~199 MB rss either way over 500 files edited 24 times.
+  Note the window counts snapshots, so once an edit stopped opening one it counts _semantic reads_ —
+  a run of edits that asks nothing supersedes nothing and the handle survives it.
+- **`TsConfigResolver` instance pooling is not worth it.** Nothing technical prevents sharing an
+  instance between its two parses, but `getCompilerOptions()` is evaluated as a call argument before
+  `getPaths()` runs, so the first is closed by then; parsing eagerly instead would charge the probe
+  parse to every caller that only wants the options. Pooling would buy ~30 ms of a ~1000 ms cold
+  start in exchange for holding a reactor alive with no dispose hook.
+- **`fixMissingFunctionDeclaration` is unimplemented upstream, not unrouted here.**
+  `internal/ls/codeactions.go` registers exactly three providers under a literal
+  `// Add more code fix providers here as they are implemented`, and the fourslash tests that name
+  the fix assert `VerifyCodeFixNotAvailable`.
+- **Runtime stubs for removed `ts` members were considered and rejected.** None of
+  `createProgram`, `createPrinter`, `resolveModuleName`, `sys`, `version` or `transform` is
+  declared, and the namespace has no index signature, so a TypeScript user already gets a compile
+  error. A runtime stub can only exist if it is also declared, which would delete that compile error
+  and downgrade the failure to run time — worse for the majority to help the minority reaching these
+  from plain JavaScript.

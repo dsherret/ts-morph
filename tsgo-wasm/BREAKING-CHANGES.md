@@ -149,7 +149,7 @@ Two is counted in snapshots, and a manipulation no longer opens one of its own, 
 practice it counts **semantic reads** rather than edits. Measured: with a semantic
 question after each manipulation a handle answers across two and fails on the third;
 with nothing asked in between, no snapshot is superseded and the handle goes on
-answering for as long as that run lasts. So the window is *wider* than two whenever
+answering for as long as that run lasts. So the window is _wider_ than two whenever
 you are only editing — which is precisely why it is not a contract. Do not build on
 it. `Type#getText` goes the other way: it resolves against whichever checker is
 current, so it can fail at the first read that flushes a pending edit.
@@ -443,12 +443,12 @@ At 400 files, an edit alone measures 0.53 ms and an edit followed by a `getType(
 5.13 ms — against 0.20 and 3.02 on 28.0.0.
 
 **Be aware of the trade in that pair.** Holding the write back made an edit on its own
-several times cheaper, but it made the edit-then-ask shape *more* expensive than it was
+several times cheaper, but it made the edit-then-ask shape _more_ expensive than it was
 before the write was held back — the file is parsed once on this side for the tree the
 manipulation returns, and again when the flush opens a snapshot. So the advice above is
 not a nicety: on this build an editing loop that asks the compiler something every time
 round is the one shape that got worse. Removing the second parse is
-[TODO.md](./TODO.md) §3.6(a).
+[TODO.md](./TODO.md) §2.1.
 
 **Creating files in a loop is fine, and so is reading them back.** Both are linear:
 1600 files created and each one's statements read comes to 127 ms, 0.08 ms per file and
@@ -526,7 +526,7 @@ and that is counted in manipulations, not in how often you ask the compiler anyt
 - **JSR publishing is still unsolved.** Compression takes the package from ~48 MB
   to 13.7 MiB, under JSR's 20 MiB limit, and `deno publish --dry-run` is green —
   but the wasm still cannot be loaded over `https:`, which is the other half of
-  the problem and untouched. See [TODO.md](./TODO.md) §4.
+  the problem and untouched. See [TODO.md](./TODO.md) §3.
 
 ### Browsers
 
