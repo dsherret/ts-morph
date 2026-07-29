@@ -1003,17 +1003,14 @@ const test = new Test();`,
     });
 
     // The commonest codegen loop: create a file, then manipulate it before creating
-    // the next. Reading the new file's tree is what forces the project open, so the
-    // deferral the create-only loop above relies on has nothing to collect here and
-    // every file costs a reopen.
+    // the next. Neither half opens a snapshot any more — a manipulation is a text
+    // edit and a re-parse of one file, and the write is held until something asks a
+    // question that needs a program — so this loop opens none at all.
     //
-    // A reopen is still proportional to the project — adding a root rebuilds the
-    // program, which is the ceiling documented in tsgo-wasm/TODO.md §3.4 — so this
-    // does not claim a constant cost per file, and it is not a regression test for
-    // anything that has been fixed. It is a tripwire for the loop going fully
-    // quadratic, which would put the ratio below at 4: four times the files measures
-    // 1.2 to 1.5 times the cost per file across runs, on an idle machine and a loaded
-    // one alike, and measured 1.6 before the snapshot costs were cut.
+    // It is a tripwire rather than a regression test for any one change: going
+    // quadratic again would put the ratio below at 4, and four times the files
+    // measures 1.2 to 1.5 times the cost per file across runs, on an idle machine
+    // and a loaded one alike. It measured 1.6 before the snapshot costs were cut.
     it("should not cost four times as much per file for four times the files when each is manipulated as it is created", function() {
       this.timeout(120_000);
       createAndManipulate(50); // the first project pays for warming the compiler up
@@ -1059,6 +1056,25 @@ const test = new Test();`,
       const [sourceFile] = project.createSourceFiles([{ filePath: "file.ts" }]);
       expect(sourceFile.getFullText()).to.equal("");
       expect(sourceFile.isSaved()).to.be.false;
+    });
+
+    it("should report every added file when a writer function creates files of its own", () => {
+      const project = new Project({ useInMemoryFileSystem: true });
+      const added: string[] = [];
+      project._context.compilerFactory.onSourceFileAdded(sourceFile => added.push(sourceFile.getBaseName()));
+      const created = project.createSourceFiles([
+        { filePath: "outer1.ts", text: "export const o1 = 1;" },
+        {
+          filePath: "outer2.ts",
+          text: writer => {
+            project.createSourceFiles([{ filePath: "inner.ts", text: "export const i = 1;" }]);
+            writer.writeLine("export const o2 = 2;");
+          },
+        },
+        { filePath: "outer3.ts", text: "export const o3 = 3;" },
+      ]);
+      expect(created.map(f => f.getBaseName())).to.deep.equal(["outer1.ts", "outer2.ts", "outer3.ts"]);
+      expect(added.sort()).to.deep.equal(["inner.ts", "outer1.ts", "outer2.ts", "outer3.ts"]);
     });
 
     it("should create files from writer functions and structures", () => {

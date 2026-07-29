@@ -206,6 +206,12 @@ export class CompilerFactory {
     files: readonly { filePath: StandardizedFilePath; sourceFileText: string | OptionalKind<SourceFileStructure> | WriterFunction }[],
     options: SourceFileCreateOptions & { markInProject: boolean },
   ): SourceFile[] {
+    // a nested call — a writer function that creates files of its own — joins the
+    // batch already collecting rather than starting one, which would take the outer
+    // batch's events with it when it finished
+    if (this.#deferredSourceFilesAdded != null)
+      return files.map(file => this.createSourceFile(file.filePath, file.sourceFileText, options));
+
     const created: SourceFile[] = [];
     this.#deferredSourceFilesAdded = [];
     try {

@@ -31,22 +31,24 @@ const configFilePath = "/tsconfig.json";
  * How many superseded snapshots the checker handed objects out from are kept
  * alive — see DocumentRegistry#retire.
  *
- * This is exactly how many edits a `Type`, `Symbol` or `Signature` taken before
- * them keeps working across — edits, not reads: an edit no longer opens a snapshot
- * of its own (see DocumentRegistry#parseSourceFileText), so what is retired is
- * stamped with the edit that superseded it and dropped once that many have gone by,
- * whether or not anything asked the compiler in between. Retiring per snapshot would
- * have quietly turned this into "how many *semantic reads*", which is a contract
- * nobody can state. It is observable and not a tuning knob: at 0 the
- * first edit costs the caller `getProperties`, `getMembers`, `getExports`,
- * `getDeclarations`, `getFlags`, `getSymbol`, `getCallSignatures` and a signature's
- * `getParameters` and `getDeclaration`, and the failure stops even being a stale
- * handle the compiler can name. (Only the requests that route back through the
- * current checker — `getText`, `getApparentType`, `getNonNullableType`,
- * `getBaseTypes`, `Symbol#getDeclaredType` — fail on the first edit whatever this
- * is.) Against that, two retained programs were not measurable over run-to-run
- * variance: 500 files edited 24 times, asking the checker each time, sat at
- * ~199MB rss either way.
+ * This bounds how long a `Type`, `Symbol` or `Signature` goes on working after the
+ * file it came from is manipulated. The window is counted in snapshots, and an edit
+ * no longer opens one of its own (see DocumentRegistry#parseSourceFileText), so in
+ * practice it is counted in *semantic reads* rather than in edits. Measured: a
+ * handle answers across two manipulations that each ask the checker something and
+ * fails on the third, and a run of manipulations that asks nothing in between
+ * supersedes no snapshot at all, so the handle goes on answering for as long as
+ * that run lasts. `Type#getText` is the exception in the other direction — it
+ * resolves against whichever checker is current, so it can fail at the first read
+ * that flushes a pending edit.
+ *
+ * It is observable and not a tuning knob: at 0 the first read after an edit costs
+ * the caller `getProperties`, `getMembers`, `getExports`, `getDeclarations`,
+ * `getFlags`, `getSymbol`, `getCallSignatures` and a signature's `getParameters`
+ * and `getDeclaration`, and the failure stops even being a stale handle the
+ * compiler can name. Against that, two retained programs were not measurable over
+ * run-to-run variance: 500 files edited 24 times, asking the checker each time, sat
+ * at ~199MB rss either way.
  */
 const retiredSnapshotLimit = 2;
 

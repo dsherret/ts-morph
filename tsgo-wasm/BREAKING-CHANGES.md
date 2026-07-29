@@ -145,13 +145,14 @@ snapshot pins a program and a checker inside the Wasm module. It is observable b
 a contract. **Treat a `Type`, `Symbol` or `Signature` as invalid the moment you
 manipulate anything.**
 
-Two is now counted in manipulations rather than in how often you asked the compiler
-anything, and that is a **tightening**: while a manipulation opened a snapshot of its
-own, a run of edits with no semantic query between them retired nothing, and a handle
-taken before them went on answering however many there were. It no longer does — it
-fails at the third, the same as it always did when the compiler was asked in between.
-The window that a `Type` reliably survived was never wider than two; it was only
-accidentally wider when nothing was asked.
+Two is counted in snapshots, and a manipulation no longer opens one of its own, so in
+practice it counts **semantic reads** rather than edits. Measured: with a semantic
+question after each manipulation a handle answers across two and fails on the third;
+with nothing asked in between, no snapshot is superseded and the handle goes on
+answering for as long as that run lasts. So the window is *wider* than two whenever
+you are only editing — which is precisely why it is not a contract. Do not build on
+it. `Type#getText` goes the other way: it resolves against whichever checker is
+current, so it can fail at the first read that flushes a pending edit.
 
 ### The pattern
 
@@ -438,8 +439,16 @@ for (const [declaration, description] of described)
   declaration.addJsDoc({ description });
 ```
 
-At 400 files, an edit alone measures 1.23 ms and an edit followed by a `getType()` 4.39 ms
-— against 0.38 and 2.04 on 28.0.0. The advice is the same on both; it costs more here.
+At 400 files, an edit alone measures 0.53 ms and an edit followed by a `getType()`
+5.13 ms — against 0.20 and 3.02 on 28.0.0.
+
+**Be aware of the trade in that pair.** Holding the write back made an edit on its own
+several times cheaper, but it made the edit-then-ask shape *more* expensive than it was
+before the write was held back — the file is parsed once on this side for the tree the
+manipulation returns, and again when the flush opens a snapshot. So the advice above is
+not a nicety: on this build an editing loop that asks the compiler something every time
+round is the one shape that got worse. Removing the second parse is
+[TODO.md](./TODO.md) §3.6(a).
 
 **Creating files in a loop is fine, and so is reading them back.** Both are linear:
 1600 files created and each one's statements read comes to 127 ms, 0.08 ms per file and
