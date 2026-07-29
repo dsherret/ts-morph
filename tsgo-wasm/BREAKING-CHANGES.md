@@ -586,11 +586,19 @@ probe.)_
   `getLiteralValue() === undefined` is no longer a reliable "not a literal type"
   test. `ts.PseudoBigInt` is gone.
 - **`Type#getConstraint()` is narrower.** tsgo resolves a constraint only for
-  type parameters and substitution types. Measured: a **conditional** type
-  (`T extends string ? 1 : 2`) returned `1 | 2` and now returns `undefined`; an
-  **index** type (`keyof { a: 1, b: 2 }`) returned `"a" | "b"` and now returns
-  `undefined`. An **indexed access** type returned `undefined` on both — that
-  case is unchanged. `Type#getDefault()` resolves only for type parameters.
+  type parameters and substitution types. Measured against 28.0.0 on
+  `declare function g<T extends keyof Obj>(ia: Obj[T], idx: keyof Obj, cond: T extends string ? 1 : 2)`:
+  the **indexed access** returned `string | number`, the **index** type returned
+  `keyof Obj` and the **conditional** returned `1`; all three now return
+  `undefined`. A type parameter still resolves (`keyof Obj`).
+
+  Measure this with a type that is genuinely deferred, as above. Written against
+  a resolved instantiation instead — `type Cond<T> = T extends string ? 1 : 2`
+  queried as `Cond<string>` — every case reads `undefined` on _both_ builds,
+  because the type has already collapsed to its result and is no longer
+  conditional. That fixture reports "unchanged" for differences that are real.
+
+  `Type#getDefault()` resolves only for type parameters.
 - **`Type#getTargetType()` returns a plain `Type`.** It was `Type<ts.GenericType>`;
   `Type#getBaseTypes()` was `Type<ts.BaseType>[]` and is now `Type<ts.Type>[]`.
   Declaration-only — measured identical runtime values.

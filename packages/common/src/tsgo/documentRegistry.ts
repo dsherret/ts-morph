@@ -7,9 +7,9 @@
  * written into an in-memory file system, the session is told what changed, and
  * the parsed file is read back off the project's program.
  *
- * Breaking change: files are supplied as strings rather than `IScriptSnapshot`,
- * and compiler options are set for the registry as a whole rather than per call,
- * because tsgo resolves them per project.
+ * Files are supplied as strings, and compiler options are set for the registry
+ * as a whole rather than per call, because the compiler resolves them per
+ * project.
  */
 import type { CompilerOptions } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/compilerOptions.js";
 import { createVirtualFileSystem, type FileSystem } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/fs.js";

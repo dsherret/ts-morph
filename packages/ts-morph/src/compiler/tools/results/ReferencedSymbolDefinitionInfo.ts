@@ -14,8 +14,7 @@ export class ReferencedSymbolDefinitionInfo extends DefinitionInfo<ts.Referenced
   /**
    * Gets the display parts.
    *
-   * Breaking change: a part's `getKind()` is an LSP classification name rather
-   * than one of the `typescript` package's `SymbolDisplayPartKind` names.
+   * A part's `getKind()` is an LSP classification name.
    */
   getDisplayParts() {
     return this.compilerObject.displayParts.map(p => new SymbolDisplayPart(p));

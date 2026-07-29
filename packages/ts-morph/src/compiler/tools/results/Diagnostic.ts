@@ -31,11 +31,11 @@ export class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagnostic> {
   /**
    * Gets the source file.
    *
-   * Breaking change: tsgo reports the file by name rather than handing back the
-   * parsed file, so this resolves the name against the files the project has
-   * wrapped. A diagnostic reported on a file the program pulled in but the
-   * project never added (a lib file, an implicit dependency) has no wrapper to
-   * return, and yields undefined where the `typescript` package returned one.
+   * The compiler reports the file by name rather than handing back the parsed
+   * file, so this resolves the name against the files the project has wrapped.
+   * A diagnostic reported on a file the program pulled in but the project never
+   * added — a lib file, an implicit dependency — has no wrapper to return and
+   * yields undefined.
    */
   @Memoize
   getSourceFile(): SourceFile | undefined {
@@ -50,9 +50,9 @@ export class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagnostic> {
   /**
    * Gets the message text.
    *
-   * Breaking change: this is always a string. tsgo puts the message on `text`
-   * and nests any chained messages under `messageChain`, so a chain no longer
-   * arrives in place of the text � see {@link getMessageChain}.
+   * Always a string. The compiler puts the message on `text` and nests any
+   * chained messages under `messageChain`, so a chain never arrives in place of
+   * the text — see {@link getMessageChain}.
    */
   getMessageText(): string {
     return this._compilerObject.text;

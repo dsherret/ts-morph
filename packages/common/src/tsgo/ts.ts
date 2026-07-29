@@ -277,10 +277,9 @@ export interface CompilerOptions extends TsgoCompilerOptions {
  * hint parameter, so this exists to keep the shape ts-morph exposes; the values
  * are inert.
  *
- * Breaking change: this is a const object rather than an enum, so it is not a
- * nominal type — `EmitHint` is the union `0 | 1 | … | 7`, and any numeric
- * literal in range is assignable where the `typescript` package required a
- * member reference. The member names and values are otherwise unchanged.
+ * A const object rather than an enum, so it is not a nominal type: `EmitHint`
+ * is the union `0 | 1 | … | 7`, and any numeric literal in range is assignable
+ * rather than only a member reference.
  */
 export const EmitHint = {
   SourceFile: 0,
@@ -312,8 +311,8 @@ export type IndentStyle = typeof IndentStyle[keyof typeof IndentStyle];
  * the wire form of `convertTabsToSpaces` is tsgo's `insertSpaces` — the two mean
  * the same thing.
  *
- * Breaking change: `baseIndentSize` is not accepted. tsgo's formatter has the
- * field but the API does not carry it, as nothing in ts-morph set it.
+ * `baseIndentSize` is not accepted: the compiler's formatter has the field but
+ * the API does not carry it, and nothing in ts-morph set it.
  */
 export interface EditorSettings {
   tabSize?: number;
@@ -327,11 +326,10 @@ export interface EditorSettings {
 /**
  * Flags controlling how a type is rendered as text.
  *
- * Breaking change: tsgo's `typeToString` takes NodeBuilderFlags, so that is what
- * this is. The `typescript` package's separate TypeFormatFlags enum has no
- * counterpart, and the alias is not a faithful stand-in:
+ * `typeToString` takes NodeBuilderFlags, so `TypeFormatFlags` is an alias of it
+ * rather than an enum of its own. Two consequences are worth knowing:
  *
- *   - Six members are gone: `AddUndefined`, `WriteArrowStyleSignature`,
+ *   - Six members do not exist: `AddUndefined`, `WriteArrowStyleSignature`,
  *     `InArrayType`, `InElementType`, `InFirstTypeArgument`,
  *     `NodeBuilderFlagsMask`.
  *   - Five of their values are live in NodeBuilderFlags under other meanings, so
@@ -526,9 +524,9 @@ export function printNode(node: Node, options: PrintNodeOptions = {}): string {
  * This is the Go compiler's own version, read from the session rather than from a
  * `package.json`, so it says what is actually doing the compiling.
  *
- * Breaking change: this is a function where the `typescript` package had a
- * `version` constant. The version comes from the compiler, and reaching it means
- * having a session to ask — which is not something to do at module load.
+ * A function rather than a constant: the version comes from the compiler, and
+ * reaching it means having a session to ask, which is not something to do at
+ * module load.
  */
 export function getVersion(): string {
   scratchFileSystem();
@@ -677,8 +675,8 @@ export interface ModuleResolutionHost {
 /**
  * A run of text in a rendered documentation comment or JSDoc tag.
  *
- * Breaking change: tsgo renders documentation as a single plain string rather
- * than a classified part list, so every part produced from it has kind `"text"`.
+ * The compiler renders documentation as a single plain string rather than a
+ * classified part list, so every part produced from it has kind `"text"`.
  * The shape is kept because it is ts-morph's public contract for
  * `Signature#getDocumentationComments()` and `JSDocTagInfo#getText()`.
  */
@@ -698,10 +696,8 @@ import type { Program as TsgoProgram } from "../../../../submodules/typescript-g
  * because the categories overlap — see {@link getCheckerGlobalDiagnostics} for
  * how.
  *
- * Breaking change: the result is in category order rather than sorted by file
- * and position. The `typescript` package sorted as part of deduplicating; there
- * is nothing to gain by reproducing that here, and a caller reading a diagnostic
- * out by index would see it move.
+ * The result is in category order rather than sorted by file and position, so a
+ * caller should read a diagnostic out by matching it rather than by index.
  */
 export function getPreEmitDiagnostics(program: TsgoProgram, sourceFile?: { readonly fileName: string }): TsgoDiagnostic[] {
   const fileName = sourceFile?.fileName;
@@ -801,10 +797,10 @@ export type { Checker as TypeChecker } from "../../../../submodules/typescript-g
 /**
  * The compiler object the language service operations hang off.
  *
- * Breaking change: tsgo has no `LanguageService`. Formatting, organize-imports,
- * rename, definitions, implementations and code fixes are methods on the
- * session's project, and the program and checker hang off it too, so the tsgo
- * `Project` is what `LanguageService#compilerObject` now returns.
+ * The compiler has no language service of its own. Formatting,
+ * organize-imports, rename, definitions, implementations and code fixes are
+ * methods on the session's project, and the program and checker hang off it
+ * too, so that project is what `LanguageService#compilerObject` returns.
  */
 export type { Project as LanguageService } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/sync/api.js";
 
@@ -1207,8 +1203,8 @@ export interface DefinitionInfo extends DocumentSpan {
 }
 
 /**
- * Breaking change: `kind` and `displayParts` are gone. tsgo reports an
- * implementation as a file span and nothing else.
+ * Where an implementation is. The compiler reports one as a file span and
+ * nothing else, so there is no kind or display text on it.
  */
 export interface ImplementationLocation extends DocumentSpan {
 }
@@ -1262,9 +1258,8 @@ export interface ReferencedSymbolDefinitionInfo extends DefinitionInfo {
 /**
  * One classified piece of the text that labels a symbol.
  *
- * Breaking change: `kind` is a plain string. tsgo classifies a run with an LSP
- * classification name rather than the `typescript` package's `SymbolDisplayPartKind`,
- * and the two vocabularies do not line up member for member.
+ * `kind` is a plain string, holding the LSP classification name the compiler
+ * gives the run.
  */
 export interface SymbolDisplayPart {
   text: string;
@@ -1287,9 +1282,9 @@ export interface CodeAction {
 }
 
 /**
- * Breaking change: `fixName`, `fixId` and `fixAllDescription` are gone. tsgo
- * returns a description and the edits, and does not group fixes into fix-alls,
- * so there is no id to report or to feed back in.
+ * A fix is a description and the edits that apply it. The compiler does not
+ * group fixes into fix-alls, so there is no fix name, fix id or fix-all
+ * description to report or to feed back in.
  */
 export interface CodeFixAction extends CodeAction {
 }
@@ -1297,7 +1292,7 @@ export interface CodeFixAction extends CodeAction {
 /**
  * The result of applying one fix id across a whole file.
  *
- * Breaking change: `commands` is gone. tsgo's combined fixes are edits only.
+ * Edits only — there are no commands to run alongside them.
  */
 export interface CombinedCodeActions {
   changes: FileTextChanges[];
@@ -1314,8 +1309,8 @@ export type { EmitOutput, EmitOutputFile as OutputFile } from "../../../../submo
 /**
  * Called for each output file in place of writing it.
  *
- * Breaking change: `sourceFiles` holds at most one file. tsgo names a single
- * originating source file per output rather than the whole set that fed it.
+ * `sourceFiles` holds at most one file: the compiler names a single originating
+ * source file per output rather than the whole set that fed it.
  */
 export type WriteFileCallback = (
   fileName: string,
@@ -1334,9 +1329,9 @@ export type WriteFileCallback = (
 /**
  * Editor and user preferences accepted by the language service operations.
  *
- * Breaking change: these list what tsgo actually reads. An index signature would
- * accept every option the `typescript` package used to define, none of which
- * tsgo can honour, turning a loud breaking change into a silent no-op.
+ * These are declared one by one, and deliberately: an index signature would
+ * accept any option at all, and one the compiler cannot honour would then be a
+ * silent no-op rather than a compile error.
  */
 export interface UserPreferences {
   readonly quotePreference?: "auto" | "double" | "single";
@@ -1346,9 +1341,9 @@ export interface UserPreferences {
 /**
  * Formatting settings, as accepted by the formatter.
  *
- * Breaking change: the API carries only what {@link EditorSettings} declares, so
- * this adds nothing. The `typescript` package's several dozen `insertSpace…` /
- * `placeOpenBraceOnNewLine…` / `semicolons` options are gone.
+ * The API carries only what {@link EditorSettings} declares, so this adds
+ * nothing of its own — there are no `insertSpace…`, `placeOpenBraceOnNewLine…`
+ * or `semicolons` options.
  */
 export interface FormatCodeSettings extends EditorSettings {
 }

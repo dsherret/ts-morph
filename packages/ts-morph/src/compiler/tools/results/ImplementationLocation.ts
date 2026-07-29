@@ -5,9 +5,9 @@ import { DocumentSpan } from "./DocumentSpan";
 /**
  * Location of an implementation.
  *
- * Breaking change: `getDisplayParts()` is gone. tsgo reports an implementation
- * as a file span, so the text that labels one — "(method) A.m(): void" — has
- * nowhere to come from.
+ * There is no `getDisplayParts()`: the compiler reports an implementation as a
+ * file span, so the text that labels one — "(method) A.m(): void" — has nowhere
+ * to come from.
  */
 export class ImplementationLocation extends DocumentSpan<ts.ImplementationLocation> {
   // resolving the kind means finding the node and asking the checker, which is

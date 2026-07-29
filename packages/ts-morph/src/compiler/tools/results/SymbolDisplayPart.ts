@@ -27,8 +27,8 @@ export class SymbolDisplayPart {
   /**
    * Gets the kind.
    *
-   * Breaking change: tsgo renders documentation as plain text rather than a
-   * classified part list, so this is always `"text"`.
+   * Always `"text"`: the compiler renders documentation as plain text rather
+   * than a classified part list.
    */
   getKind() {
     return this.compilerObject.kind;

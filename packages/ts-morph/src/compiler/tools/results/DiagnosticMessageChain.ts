@@ -3,9 +3,9 @@ import { DiagnosticCategory, ts } from "@ts-morph/common";
 /**
  * A link in a diagnostic's message chain.
  *
- * Breaking change: tsgo has no separate message chain type — a chain element is
+ * There is no separate message chain type in the compiler: a chain element is
  * itself a `Diagnostic`, nested under the parent's `messageChain`. So this wraps
- * a `ts.Diagnostic`, and `getNext()` reads `messageChain` rather than `next`.
+ * a `ts.Diagnostic`, and `getNext()` reads `messageChain`.
  */
 export class DiagnosticMessageChain {
   /** @internal */

@@ -692,9 +692,9 @@ export class Project {
   /**
    * Formats an array of diagnostics with their color and context into a string.
    *
-   * Breaking change: the output is plain text. tsgo has no
-   * `formatDiagnosticsWithColorAndContext`, so ts-morph formats the diagnostics
-   * itself; the source line, the caret and the ANSI colouring are gone.
+   * Despite the name the output is plain text: the compiler has no such
+   * formatter, so ts-morph formats the diagnostics itself, without the source
+   * line, the caret or the ANSI colouring.
    * @param diagnostics - Diagnostics to get a string of.
    * @param options - Collection of options. For example, the new line character to use (defaults to the OS' new line character).
    */

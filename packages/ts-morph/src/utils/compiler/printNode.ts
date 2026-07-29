@@ -3,8 +3,8 @@ import { NewLineKind, ScriptKind, SyntaxKind, ts } from "@ts-morph/common";
 /**
  * Options for printing a node.
  *
- * Breaking change: `emitHint` is gone. tsgo's printer has no hint parameter — it
- * dispatches on the node's kind — so there is nothing to pass one to.
+ * There is no `emitHint`: the compiler's printer dispatches on the node's kind
+ * and has no hint parameter to pass one to.
  */
 export interface PrintNodeOptions {
   /** Whether to remove comments or not. */

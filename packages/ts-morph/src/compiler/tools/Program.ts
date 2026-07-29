@@ -11,9 +11,9 @@ export interface ProgramEmitOptions extends EmitOptions {
   /**
    * Called for each output file instead of writing it to the file system.
    *
-   * Breaking change: `sourceFiles` holds at most the one source file the output
-   * came from. tsgo reports a single originating file per output, so a bundled
-   * output cannot list every file that fed it.
+   * `sourceFiles` holds at most the one file the output came from: the compiler
+   * reports a single originating file per output, so a bundled output cannot
+   * list every file that fed it.
    */
   writeFile?: ts.WriteFileCallback;
 }
@@ -29,7 +29,9 @@ export interface EmitOptions extends EmitOptionsBase {
 }
 
 /**
- * Breaking change: `customTransformers` is gone. tsgo's emitter runs in the
+ * Options common to every emit.
+ *
+ * There is no hook for custom transformers: the emitter runs inside the
  * compiler and does not accept JavaScript transforms.
  */
 export interface EmitOptionsBase {
@@ -246,8 +248,8 @@ export class Program {
   /**
    * Gets the syntactic diagnostics.
    *
-   * Breaking change: these are `Diagnostic`s. tsgo has no separate
-   * `DiagnosticWithLocation` type — see {@link Diagnostic#getSourceFile}.
+   * These are `Diagnostic`s — there is no separate `DiagnosticWithLocation`
+   * type; see {@link Diagnostic#getSourceFile}.
    * @param sourceFile - Optional source file to filter by.
    */
   getSyntacticDiagnostics(sourceFile?: SourceFile): Diagnostic[] {

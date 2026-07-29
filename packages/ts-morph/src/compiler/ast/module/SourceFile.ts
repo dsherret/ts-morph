@@ -897,8 +897,8 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    *
    * WARNING! This will forget all the nodes in the file! It's best to do this after you're all done with the file.
    *
-   * Breaking change: the format settings and user preferences parameters are
-   * gone. tsgo's organize-imports takes neither.
+   * Takes no format settings or user preferences: the compiler's
+   * organize-imports accepts neither.
    */
   organizeImports() {
     this._context.languageService.organizeImports(this).forEach(fileTextChanges => fileTextChanges.applyChanges());
@@ -909,8 +909,8 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    * Code fix to add import declarations for identifiers that are referenced, but not imported in the source file.
    * @param formatSettings - Format code settings.
    *
-   * Breaking change: the user preferences parameter is gone. tsgo's code fixes
-   * do not take one.
+   * There is no user preferences parameter — the compiler's code fixes do not
+   * take one.
    */
   fixMissingImports(formatSettings: FormatCodeSettings = {}) {
     const combinedCodeFix = this._context.languageService.getCombinedCodeFix(this, "fixMissingImport", formatSettings);

@@ -478,8 +478,8 @@ export class CompilerFactory {
   /**
    * Parses text as a source file.
    *
-   * Breaking change: there is no script kind parameter. tsgo derives the script
-   * kind from the file extension and has no way to be told otherwise.
+   * There is no script kind parameter: the compiler derives the script kind
+   * from the file extension and has no way to be told otherwise.
    */
   createCompilerSourceFileFromText(filePath: StandardizedFilePath, text: string): ts.SourceFile {
     return this.documentRegistry.createOrUpdateSourceFile(filePath, text);

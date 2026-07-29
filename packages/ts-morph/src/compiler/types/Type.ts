@@ -133,9 +133,8 @@ export class Type<TType extends ts.Type = ts.Type> {
   /**
    * Gets the constraint or returns undefined if it doesn't exist.
    *
-   * Breaking change: tsgo only resolves a constraint for type parameters and
-   * substitution types, so an indexed access, index or conditional type now
-   * returns undefined where the `typescript` package returned a type.
+   * A constraint is resolved only for type parameters and substitution types.
+   * An indexed access, index or conditional type has none and reads undefined.
    */
   getConstraint() {
     const compilerType = this.compilerType;
@@ -155,8 +154,8 @@ export class Type<TType extends ts.Type = ts.Type> {
   /**
    * Gets the default type or returns undefined if it doesn't exist.
    *
-   * Breaking change: tsgo only resolves a default for type parameters, which is
-   * the only place the `typescript` package ever found one in practice.
+   * A default is resolved only for type parameters, which in practice is the
+   * only place one is ever declared.
    */
   getDefault() {
     const compilerType = this.compilerType;

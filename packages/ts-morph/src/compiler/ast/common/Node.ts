@@ -1312,8 +1312,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   /**
    * Gets the indentation level of the current node.
    *
-   * Breaking change: tsgo has no smart-indentation service, so this is worked
-   * out from the text. A node is indented relative to the innermost construct
+   * The compiler has no smart-indentation service, so this is worked out from
+   * the text. A node is indented relative to the innermost construct
    * that opened before it: a level past the line that construct starts on, or
    * that construct's own indentation when the two share a line. The level is
    * therefore the one the node *would* be written at rather than the one it has,

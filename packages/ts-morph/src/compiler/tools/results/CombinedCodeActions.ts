@@ -5,8 +5,8 @@ import { ApplyFileTextChangesOptions, FileTextChanges } from "./FileTextChanges"
 /**
  * Represents file changes.
  *
- * Breaking change: `commands` is gone. tsgo's combined code fixes are edits
- * only, so there is nothing to run alongside them.
+ * There are no `commands`: the compiler's combined code fixes are edits only,
+ * so there is nothing to run alongside them.
  */
 export class CombinedCodeActions {
   /** @internal */

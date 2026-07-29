@@ -24,9 +24,8 @@ export interface SourceFileCacheOptions {
 /**
  * Holds the source files the project knows about.
  *
- * Breaking change: files are stored as text rather than as an `IScriptSnapshot`,
- * and there is no per-file script kind — tsgo owns parsing and derives the script
- * kind from the file extension.
+ * Files are stored as text, and there is no per-file script kind: the compiler
+ * owns parsing and derives the script kind from the file extension.
  */
 export class SourceFileCache {
   readonly #sourceFilesByFilePath = new Map<StandardizedFilePath, ts.SourceFile>();

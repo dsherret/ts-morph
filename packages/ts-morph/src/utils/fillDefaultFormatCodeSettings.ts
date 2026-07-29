@@ -4,16 +4,16 @@ import { fillDefaultEditorSettings } from "./fillDefaultEditorSettings";
 import { setValueIfUndefined } from "./setValueIfUndefined";
 
 /**
- * Fills in the format settings tsgo understands.
+ * Fills in the format settings the compiler understands.
  *
- * Breaking change: most of the `insertSpace…` and `placeOpenBraceOnNewLine…`
- * options are gone. tsgo's formatter accepts only tab size, spaces-versus-tabs
- * and trailing whitespace trimming, so the defaults that used to be set here had
- * no effect to set.
+ * Only two are worth defaulting. The compiler's formatter accepts tab size,
+ * spaces-versus-tabs and trailing whitespace trimming and nothing else, so a
+ * default for any of the `insertSpace…` or `placeOpenBraceOnNewLine…` options
+ * would have nothing to act on.
  *
  * `ensureNewLineAtEndOfFile` and `insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces`
- * are kept because ts-morph's own structure printers implement them, rather than
- * handing them to the formatter.
+ * are the exceptions: ts-morph implements both itself, in its structure printers
+ * and by post-processing the formatter's edits.
  */
 export function fillDefaultFormatCodeSettings(settings: FormatCodeSettings, manipulationSettings: ManipulationSettingsContainer) {
   fillDefaultEditorSettings(settings, manipulationSettings);
