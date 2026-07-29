@@ -50,6 +50,28 @@ export declare class SourceFileCache {
      */
     set(path: Path, file: SourceFile, parseOptionsKey: string, contentHash: string, snapshotId: number, projectId: string): SourceFile;
     /**
+     * Offers a source file the client parsed itself as the cache's copy for a path,
+     * without retaining it for any (snapshot, project) pair.
+     *
+     * This is how a tree from `API#parseSourceFile` becomes the *same object* the
+     * program later answers with. It has to be the same object: a caller that holds a
+     * node from one tree and a node from another for the same path holds two nodes that
+     * are equal in every way except identity, and identity is what a client keying its
+     * own bookkeeping off nodes has to rely on.
+     *
+     * Offered rather than retained because nothing here knows the program took the file
+     * at that text — the client wrote it, the compiler has not been asked yet, and its
+     * parse options are the ones the *previous* snapshot would have given it. So the
+     * fetch still happens, and it is the server's own hash and parse options key that
+     * decide: {@link set} hands back this entry when they match what came over the wire,
+     * and ignores it when they do not. A wrong offer costs nothing but the entry.
+     *
+     * At most one un-retained offer is kept per path — a later one replaces it — so an
+     * editing loop that never reads a file back through a program does not accumulate a
+     * version per edit.
+     */
+    offer(path: Path, file: SourceFile, parseOptionsKey: string, contentHash: string): void;
+    /**
      * Retain cache entries from a previous snapshot for a new snapshot.
      * For each project in the previous snapshot:
      *   - Removed projects: retain nothing.

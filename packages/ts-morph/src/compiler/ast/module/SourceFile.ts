@@ -676,13 +676,10 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     // So the compiler node will become out of date after a manipulation occurs and
     // this will return false.
 
-    // do not create the program if not created before... if the program is
-    // not created then we know this source file wasn't discovered by the program
-    if (!this._context.program._isCompilerProgramCreated())
-      return false;
-
-    const compilerProgram = this._context.program.compilerObject;
-    return compilerProgram.isSourceFileFromExternalLibrary(this.compilerNode);
+    // asked of the registry rather than of the program, so that the project is not
+    // opened to answer it: a file no open snapshot holds was discovered by nothing,
+    // and how a file that is held got there does not change when it is edited
+    return this._context.compilerFactory.documentRegistry.isSourceFileFromExternalLibrary(this.getFilePath());
   }
 
   /**

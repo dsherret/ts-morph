@@ -31,6 +31,8 @@ export declare class API<FromLSP extends boolean = false> {
     private activeSnapshots;
     private latestSnapshot;
     private compilerVersion;
+    /** Decodes what {@link parseSourceFile} returns; the cached trees have their own. */
+    private parseDecoder;
     readonly internal: InternalAPI;
     /** The compiler's own version, e.g. `7.1.0-dev`. */
     get version(): string;
@@ -42,6 +44,31 @@ export declare class API<FromLSP extends boolean = false> {
     static fromLSPConnection(options: LSPConnectionOptions): API<true>;
     private ensureInitialized;
     parseConfigFile(file: DocumentIdentifier): ParsedCommandLine;
+    /**
+     * Parses text as a source file, without opening a snapshot or building a program.
+     *
+     * This is what a purely syntactic edit costs: a caller that has just rewritten a
+     * file's text and wants the tree back needs a parse of that one file and nothing
+     * else, where `updateSnapshot` clones a program and rebuilds whatever depends on it.
+     *
+     * The nodes carry the same handles the program's own parse of the same text would,
+     * so a handle taken from this tree resolves against whatever program later holds
+     * that text. It resolves against nothing until one does: the caller is responsible
+     * for the text reaching the compiler — by writing it where the compiler reads and
+     * naming it in the next `updateSnapshot` — before it asks anything semantic about a
+     * node.
+     *
+     * @param file - The file the text belongs to. Its extension decides the script kind,
+     * exactly as it does for a file the compiler reads itself.
+     * @param text - The text to parse.
+     * @param context - The snapshot and project to take parse options from. They are
+     * read, never opened; with neither, or with a pair that has been released, the
+     * defaults stand — which can only misreport the file's module-ness, never move a node.
+     */
+    parseSourceFile(file: DocumentIdentifier, text: string, context?: {
+        snapshot: number;
+        project: Path;
+    }): SourceFile;
     updateSnapshot(params?: FromLSP extends true ? LSPUpdateSnapshotParams : UpdateSnapshotParams): Snapshot;
     close(): void;
     clearSourceFileCache(): void;

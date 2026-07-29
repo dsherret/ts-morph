@@ -493,26 +493,169 @@ is largely dealt with** and roughly 90% of what remains is a fixed ~1 ms paid on
 every read-after-write. Chasing per-file terms has hit diminishing returns; the
 question is why an edit opens a snapshot at all.
 
-#### a. Stop opening a semantic snapshot for a syntactic operation — the one that matters
+**That question is answered in (a), and the table above is out of date.** An edit
+opens no snapshot now, so it costs 0.76–0.87 ms whatever the project size — the
+size-dependent term is gone rather than small — and what is left of it is the AST
+encode and the wire rather than anything the compiler does per file. The remaining
+per-snapshot items below are correspondingly less valuable than they were: a snapshot
+is now opened once per run of edits rather than once per edit, so the deferred
+`processedFiles` clone is 20% of something that happens far less often.
+
+#### a. Stop opening a semantic snapshot for a syntactic operation — done
 
 **ts-morph and fork.** `addClass`, `addStatements` and `rename` are a text edit
-followed by a re-parse of **one file**. Nothing semantic is needed. Every one of
-them currently opens a compiler snapshot: a program clone, a Wasm round trip, an
-AST re-encode. 28.0.0 did none of that — it re-parsed the changed file with
+followed by a re-parse of **one file**, and nothing about that is semantic. Every one
+of them opened a compiler snapshot: a program clone, a Wasm round trip, an AST
+re-encode. 28.0.0 did none of that — it re-parsed the changed file with
 `ts.createSourceFile` and left the program alone until something asked a semantic
-question, which is the whole of its 0.06 ms.
+question.
 
-The change: a **parse-only endpoint** in the fork — text in, encoded AST out, no
-project, no snapshot, no binding — used for the tree a manipulation hands back,
-with the session update deferred to the next genuinely semantic query (types,
-diagnostics, references, symbols). The deferral machinery already exists from
-§3.1; this extends it from creation to editing.
+**The fork has a parse-only endpoint.** `parseSourceFile` takes a file name and text
+and returns the encoded AST: no snapshot, no program, no binding. It is a session
+method beside `parseConfigFile` rather than a snapshot method, because it opens no
+snapshot — it only _names_ one, and only to take the file's parse options from it,
+which decide the file's module-ness and nothing else. The encoder is reused unchanged;
+the parser leaves `SourceFile.Hash` zero, so the endpoint fills it in with the same
+`xxh3` a file handle carries, which is what lets the client's source file cache match
+it. `DocumentRegistry#parseSourceFileText` writes the text and parses it in one call so
+the two cannot drift, and `CompilerFactory` uses it for the tree a manipulation hands
+back and for the tree a created file resolves to.
 
-The risks, in order: node identity for a tree with no snapshot handle (though
-`RemoteNode` versus reconstructed nodes already draws that distinction, see
-`isReconstructedNode`); classifying every public method as syntactic or semantic,
-where getting one wrong yields a stale answer rather than a slow one; and keeping
-the stale-handle errors honest. This is a design change, not a patch.
+**What makes it sound is that a node handle is a pure function of the AST shape.** A
+handle is an index into the table `encoder.BuildNodeIndexTable` walks, and that walk
+reads nothing but the tree. `TestParseSourceFileNodeIdentityMatchesTheProgram` builds a
+project, takes the program's own parse of a file, parses the identical text standalone
+under all four combinations of `ExternalModuleIndicatorOptions`, and compares the index
+tables and the encoded bytes: same node count, same kind and same `Pos`/`End` at every
+index, and byte-identical apart from the header's parse options field. Parse options
+cannot move a node, because `SetExternalModuleIndicator` runs after the parse and only
+points at a node that is already there.
+
+**The one thing that does differ is the flags the binder writes.**
+`NodeFlagsExportContext`, `HasImplicitReturn`, `HasExplicitReturn`, `ContainsThis`,
+`HasAsyncFunctions`, `Unreachable` and the lazily aggregated
+`ThisNodeOrAnySubNodesHasError` are put on the program's tree after it is parsed, and a
+tree nothing has bound does not carry them. They are not part of a node's identity,
+nothing in ts-morph reads them, and which of the two a client saw was already a question
+of whether anything had bound the file before it first asked for it —
+`TestParseSourceFileMatchesGetSourceFile` compares the two encodings over ten shapes and
+names exactly this set as the difference.
+
+**Two objects for one path is a correctness problem rather than a memory one, and that
+is the part the design got wrong.** A semantic answer carries node handles the client
+resolves through `program.getSourceFile(path)`, so a manipulated file would have had the
+wrapper holding the parse-only tree and a symbol's declaration coming from the program's
+— structurally identical, different objects. ts-morph then wraps that declaration under
+the wrapper for the _other_ tree, and its `_wrappedChildCount` bookkeeping counts
+children that are not its own, which surfaces as "the children of the old and new trees
+were expected to have the same count" on the next manipulation. Four tests in the suite
+caught it. The fix is `SourceFileCache#offer`: a parse-only tree goes into the cache
+_unretained_, and the ordinary fetch that follows a flush hands it back when the
+server's own content hash and parse options key match what came over the wire, and
+ignores it when they do not. So the two are one object, the check is the compiler's
+rather than the client's, a wrong offer costs nothing but the entry, and at most one
+un-retained offer is kept per path.
+
+**`#flushPending` had to learn to coalesce, or the change buys nothing.** Every write
+applied whatever was waiting for the same path, which never fired while every write was
+followed by a read that emptied the pending sets. Once edits stop flushing, editing one
+file twice in a row flushes on the second. Three of the four ways two reports for a path
+can meet say the same thing as one — changed then changed, created then changed (stays
+created), created then deleted (both dropped) and changed then deleted (the deletion
+replaces it) — and only a path going the other way, deleted then written or created over
+a file the compiler already holds, still applies what is waiting first. Measured before
+this, a parse-only edit was **0.89–1.15x** of the flush it replaced; after it, 2.0–10x.
+
+**`isFromExternalLibrary` was the last snapshot per edit, and it was not the compiler's
+fault.** ts-morph memoizes it on every file the moment it is first modified, and
+`Program#_isCompilerProgramCreated` — 28.0.0's guard against creating a program just to
+answer it — was hard-coded to `true` in the port, so the question opened the project. It
+is now `DocumentRegistry#isSourceFileFromExternalLibrary`, which answers from whatever
+snapshot is already open and says `false` when there is none: how a file got into a
+program is settled when it arrives there and no edit moves it, so a new snapshot answers
+no better than the current one, and a file no snapshot holds was found by nothing.
+Without this a create-and-manipulate loop still paid one snapshot per file and measured
+960 ms at 800 files against 170.
+
+**`retiredSnapshotLimit` counts edits now, and had to.** It is documented as exactly how
+many edits a `Type`, `Symbol` or `Signature` keeps answering across, and it was enforced
+by retiring one snapshot per reopen — the same thing only while edits and snapshots were
+1:1. They no longer are, and left alone the contract would quietly have become "how many
+_semantic reads_". The registry counts edits (`#generation`), stamps a retired snapshot
+with the edit that superseded it, and drops it once `retiredSnapshotLimit` edits have
+gone by — trimming at edit time as well as at reopen, because a `Type` reads from the
+snapshot that produced it and never touches the current one. The count stays on as a
+bound, for the reopens that are not edits. **The limit is unchanged at 2 and its comment
+is still true verbatim**, in both directions: the four existing tests still pass, and two
+new ones make the edits the only countable thing by asking nothing in between — two edits
+then a read still answers, three then a read throws.
+
+Measured on the built bundle — this branch against the same branch with these changes
+stashed, both rebuilt — in-memory FS, one process per size, alongside a real
+`ts-morph@28.0.0` install driven through the identical benchmark. Cost of one edit and a
+read of the file back, against a project of n files, in ms:
+
+| n      | 100   | 400   | 1600  | 3200  |
+| ------ | ----- | ----- | ----- | ----- |
+| before | 1.556 | 1.879 | 2.292 | 2.560 |
+| after  | 0.774 | 0.786 | 0.868 | 0.764 |
+| 28.0.0 | 0.364 | 0.382 | 0.346 | 0.317 |
+
+and the same for an edit that does not grow the file (`setBodyText` on a method):
+
+| n      | 100   | 400   | 1600  | 3200  |
+| ------ | ----- | ----- | ----- | ----- |
+| before | 1.062 | 1.402 | 1.537 | 2.129 |
+| after  | 0.507 | 0.507 | 0.622 | 0.533 |
+| 28.0.0 | 0.255 | 0.302 | 0.232 | 0.226 |
+
+**An edit is 2.0–3.4x faster and no longer grows with the project at all** — 0.76 ms at
+3200 files against 0.77 at 100, where before it grew by 65% over that range. It is within
+**2.0–2.7x** of 28.0.0, from 4.3–9.4x. What is left is the binary AST encode, the wire
+and the JS decode, which 28.0.0 never paid because its tree was JS objects in the same
+heap. Parity is not reachable through this change; going further means not shipping the
+whole tree per edit.
+
+Whole loops, in ms:
+
+| files                                   | 200 | 800  | 1600 |
+| --------------------------------------- | --- | ---- | ---- |
+| create and manipulate together — before | 657 | 2514 | 8789 |
+| create and manipulate together — after  | 103 | 210  | 306  |
+| create and manipulate together — 28.0.0 | 37  | 81   | 129  |
+| create, then manipulate — before        | 379 | 960  | 1821 |
+| create, then manipulate — after         | 85  | 170  | 243  |
+| create, then manipulate — 28.0.0        | 19  | 42   | 73   |
+
+**The create-and-manipulate loop is 6.4x/12.0x/28.7x faster and is linear at last.** It
+is the shape §3.5 and §3.6(c) each took a bite out of and neither could finish, because
+what was left was ts-morph asking the compiler a question per file rather than anything
+the compiler did. It is now 2.4–2.8x of 28.0.0. Bulk paths are unchanged:
+`addSourceFilesAtPaths` 265/334/431 ms before against 264/327/438 after at 200/800/1600,
+and `createSourceFiles` 9.4/21.6/27.2 against 9.8/18.0/26.6.
+
+Equivalence is tested rather than argued, because getting the boundary wrong is a stale
+answer rather than a slow one. `internal/api/parsesourcefile_test.go` covers node
+identity, the encoding against `getSourceFile` over ten shapes, the header hash, the
+absent and the stale snapshot, and parse options taken from a `"type": "module"` package
+scope for a file the program does not hold yet.
+`packages/common/src/tests/tsgo/documentRegistrySnapshotTests.ts` counts the snapshots a
+run of operations opens — a run of edits opens one, at the next read; a run of creates
+that are then edited opens none — and **enumerates the registry's whole surface**,
+asserting which members apply what is waiting and which do not, with a test that fails
+when a member is added and classified as neither. That is the code-level enforcement of
+the boundary: `project`, `checker`, `program`, `getSourceFile`/`getSourceFileOrThrow` and
+the two `createOrUpdate` methods are the doors, and nothing else may become one by
+accident.
+
+**What is not done.** The fetch after a flush still happens — `offer` makes it hand back
+the tree the client already has, but the round trip and the server-side encode are still
+paid. Reporting each changed file's content hash and parse options key in the
+`updateSnapshot` response would let the client skip it, which is worth about what a
+`getSourceFile` costs on the first read of each edited file. Routing the endpoint's parse
+through `project.ParseCache`, so the later program build finds the file already parsed,
+is the other half and is the risky one: the cache is ref-counted and §3.5's ledger tests
+assert it exactly, and this change has already made the flush rare.
 
 #### b. Send root files to the API directly, not through a synthetic tsconfig — done
 
@@ -836,11 +979,12 @@ now that (b) has landed.
 
 #### Deferred: layered `processedFiles` maps
 
-Cloning ten `map[tspath.Path]…` fields per snapshot is ~21% — the largest single
-item now that (b) has landed — but making them layered rather than copied touches
-every reader in the compiler. Deliberately left until the above have landed and
-been measured, since (a) may make the snapshot rare enough that this stops
-mattering.
+Cloning ten `map[tspath.Path]…` fields per snapshot is ~21% of a snapshot, but making
+them layered rather than copied touches every reader in the compiler. Deliberately
+left until the above had landed and been measured — and now that (a) has, **the answer
+is that it stopped mattering**: a snapshot is opened once per run of edits rather than
+once per edit, so a share of one is a share of something that happens rarely. Closing
+this is worth doing when something makes snapshots frequent again, not before.
 
 ---
 

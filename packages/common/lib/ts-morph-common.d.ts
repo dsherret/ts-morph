@@ -832,6 +832,36 @@ export declare class DocumentRegistry {
      */
     setSourceFileText(fileName: string, text: string): void;
     /**
+     * Writes a file's text and returns the parsed file, without opening the project.
+     *
+     * This is the syntactic edit: a manipulation rewrites one file's text and wants its
+     * tree back, and nothing about that needs a program. {@link createOrUpdateSourceFile}
+     * would open a snapshot for it — a program clone, a round trip, and the client's
+     * per-file bookkeeping — which is ~85% of what an edit costs and does not shrink as
+     * the change does. The change waits with the others until the next semantic read, the
+     * same way {@link setSourceFileText}'s does.
+     *
+     * The write and the parse are one call rather than two so they cannot drift: a node
+     * handle taken from the returned tree is an index into the tree the compiler builds
+     * for *the text at that path*, so the text the registry holds and the text this parsed
+     * have to be the same string. Everything else about the handle already holds — the
+     * index is a pure function of the AST shape, and every route from a ts-morph node to
+     * the compiler goes through {@link project}, {@link checker}, {@link program} or
+     * {@link getSourceFile}, all of which flush first.
+     */
+    parseSourceFileText(fileName: string, text: string): SourceFile;
+    /**
+     * Parses the text the registry already holds for a file, without opening the project.
+     *
+     * This is what a file written by {@link setSourceFileText} costs to read back: the
+     * text is already where the compiler would read it, so the tree is a parse and
+     * nothing more. {@link getSourceFile} answers the same question by opening the
+     * project, which is the right thing when the caller wants the file the *program*
+     * holds — that one is bound, is the one every other file resolves against, and is
+     * what a semantic question is asked of.
+     */
+    parseSourceFileAt(fileName: string): SourceFile;
+    /**
      * Replaces the compiler options the registry's project is opened with.
      *
      * The options live in the synthetic tsconfig, so changing them rewrites it and
@@ -854,6 +884,22 @@ export declare class DocumentRegistry {
     getSourceFile(fileName: string): SourceFile | undefined;
     getSourceFileOrThrow(fileName: string): SourceFile;
     /**
+     * Whether the compiler found the file while searching `node_modules`, answered
+     * without opening the project.
+     *
+     * This is not one of the doors — see {@link project} — because it cannot go stale.
+     * How a file got into the program is settled when it arrives there and no edit moves
+     * it, so the snapshot that is already open answers as well as a new one would. A file
+     * no open snapshot holds — one the registry has only just been given, or any file at
+     * all before the first read — was found by nothing, which is the answer.
+     *
+     * That matters because the question is asked of every file the moment it is first
+     * manipulated, and the manipulation itself is syntactic: opening the project for it
+     * would put back the per-edit snapshot that {@link parseSourceFileText} exists to
+     * avoid.
+     */
+    isSourceFileFromExternalLibrary(fileName: string): boolean;
+    /**
      * The number of times a file's contents have been replaced, or `undefined`
      * when the registry does not know the file. A file that has never been edited
      * is version "0", so an unknown file must not report one.
@@ -871,6 +917,17 @@ export declare class DocumentRegistry {
     get checker(): ts.TypeChecker;
     /** The project's program, for diagnostics and file enumeration. */
     get program(): ts.Program;
+    /**
+     * How many snapshots the registry has opened.
+     *
+     * Every one of them is a program clone, a round trip and a pass over the client's
+     * per-file bookkeeping, and the whole of the deferral above is that a syntactic
+     * operation opens none. That is a property of the registry rather than of any one
+     * method — a member added later could quietly reach the compiler and nothing would
+     * look different — so it is counted here and asserted rather than argued. Tests read
+     * this; nothing else has a reason to.
+     */
+    get snapshotsOpened(): number;
     dispose(): void;
 }
 

@@ -498,13 +498,18 @@ export class CompilerFactory {
   /**
    * Wraps text as a source file, without parsing it.
    *
-   * Parsing is what makes the compiler reopen its project, and a reopen costs more
-   * the more files the project holds — so a loop that creates files one at a time
+   * Parsing is what used to make the compiler reopen its project, and a reopen costs
+   * more the more files the project holds — so a loop that creates files one at a time
    * would be quadratic in their number if each one parsed as it went. The text is
-   * handed to the document registry, which holds the change; the wrapper carries
-   * the path it was given and asks the registry for the parsed file only when
-   * something wants the tree, by which time a whole run of creates has been
-   * collected into one reopen.
+   * handed to the document registry, which holds the change; the wrapper carries the
+   * path it was given and asks the registry for the parsed file only when something
+   * wants the tree, by which time a whole run of creates has been collected into one
+   * reopen.
+   *
+   * The tree it then asks for is a parse of the text the registry holds rather than the
+   * file the program holds, so a create followed by a manipulation — the commonest
+   * codegen loop there is — never opens the project at all until something semantic is
+   * asked. See DocumentRegistry#parseSourceFileAt.
    */
   #createSourceFileFromTextInternal(
     filePath: StandardizedFilePath,
@@ -517,7 +522,7 @@ export class CompilerFactory {
     this.documentRegistry.setSourceFileText(filePath, text);
 
     const sourceFile: SourceFile = new SourceFile(this.#context, () => {
-      const compilerSourceFile = this.documentRegistry.getSourceFileOrThrow(filePath);
+      const compilerSourceFile = this.documentRegistry.parseSourceFileAt(filePath);
       // the node the wrapper is for is only known now, so this is where the node
       // cache learns of it — every other path to it goes through the file path
       // cache, which has had the wrapper since it was made
@@ -539,13 +544,20 @@ export class CompilerFactory {
   }
 
   /**
-   * Parses text as a source file.
+   * Writes text to a file and parses it as a source file.
+   *
+   * This is the tree a manipulation hands back, and nothing about it is semantic — the
+   * file's text changed and its tree is wanted again. It goes through the registry's
+   * parse-only path, so the compiler is not reopened: the change waits with the others
+   * until something asks a question that needs a program. The nodes are the compiler's
+   * own and their handles resolve into whatever program next holds this text, so a
+   * semantic question asked of one of them still answers about the edit.
    *
    * There is no script kind parameter: the compiler derives the script kind
    * from the file extension and has no way to be told otherwise.
    */
   createCompilerSourceFileFromText(filePath: StandardizedFilePath, text: string): ts.SourceFile {
-    return this.documentRegistry.createOrUpdateSourceFile(filePath, text);
+    return this.documentRegistry.parseSourceFileText(filePath, text);
   }
 
   /**

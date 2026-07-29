@@ -74,14 +74,6 @@ export class Program {
   }
 
   /**
-   * Gets if the internal compiler program is created.
-   * @internal
-   */
-  _isCompilerProgramCreated() {
-    return true;
-  }
-
-  /**
    * Resets the program.
    *
    * The tsgo session reopens the project for whatever has changed the next time

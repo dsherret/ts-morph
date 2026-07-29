@@ -389,64 +389,75 @@ diagnostics that mention them. `packages/common` no longer depends on
 
 ## 6. Performance
 
-Measured on this machine, in-memory file system, against published 28.0.0.
+Measured on this machine, in-memory file system, against a published 28.0.0 install
+driven through the identical benchmark.
 
-| Operation                                      | 28.0.0  | Now     |
-| ---------------------------------------------- | ------- | ------- |
-| `new Project({ tsConfigFilePath })`, 800 files | 90 ms   | 367 ms  |
-| `addSourceFilesAtPaths`, 800 files             | 21 ms   | 218 ms  |
-| First `getPreEmitDiagnostics()`, 800 files     | 370 ms  | 605 ms  |
-| One `SourceFile#addStatements` edit            | 0.18 ms | 0.94 ms |
-| `getCompilerOptionsFromTsConfig`, repeated     | 0.4 ms  | 10.3 ms |
-| `createSourceFile` in a loop, 800 files        | 10 ms   | 199 ms  |
+| Operation                                          | 28.0.0  | Now     |
+| -------------------------------------------------- | ------- | ------- |
+| `new Project({ tsConfigFilePath })`, 800 files     | 167 ms  | 512 ms  |
+| `addSourceFilesAtPaths`, 800 files                 | 38 ms   | 309 ms  |
+| First `getPreEmitDiagnostics()`, 800 files         | 547 ms  | 1003 ms |
+| One edit, and reading the edited file back         | 0.38 ms | 0.79 ms |
+| `createSourceFile` in a loop, 800 files            | 27 ms   | 20 ms   |
+| `createSourceFile` and read each back, 1600 files  | 45 ms   | 127 ms  |
+| `createSourceFile` and manipulate each, 1600 files | 129 ms  | 306 ms  |
+| `getCompilerOptionsFromTsConfig`, repeated         | 0.4 ms  | 10.3 ms |
 
-Every row is a constant-factor slowdown of roughly 2–26×.
+Every row is a constant factor, and everything on the editing side is **independent of
+how many files the project holds**: one edit and a read costs 0.77/0.79/0.87/0.76 ms at
+100/400/1600/3200 files.
 
-The last row is the one to know something about. Parsing a file is what makes the
-compiler reopen its project, and a reopen costs time proportional to how many
-files the project already holds — so a `createSourceFile` that parsed as it went
-would be quadratic, which is what an earlier build of this port was. It does not
-parse as it goes: the file's text is written and the tree is fetched the first
-time something asks for it, by which time a whole run of creates has been
-collected into one reopen. The 199 ms above is 8 ms for the loop and 191 ms for
-reading every file back afterwards; per file, at 100/400/1600/3200 files, the two
-together come to 1.31/0.41/0.18/0.14 ms — falling, because the fixed cost of
-standing a project up is spread over more files.
+**Why an edit costs what it costs.** ts-morph no longer owns the parser: the tree comes
+from the compiler, over a wire, as a binary encoding that has to be decoded on this side.
+28.0.0 re-parsed the file into JavaScript objects in the same heap, which is the whole of
+the difference. What an edit does **not** do any more is open a compiler snapshot — a
+manipulation is a text edit and a re-parse of one file, so the write is held and the
+compiler is not told about it until something asks a question that needs a program.
 
-**Reading a file back inside the loop still costs much more**, because that is the
-reopen the deferral exists to collect. It is no longer quadratic — the compiler
-extends an existing program when roots are only appended, rather than rebuilding
-it — but it measures at 3.6/2.6/2.3/2.5/3.9 ms per file for 100/200/400/800/1600,
-against 0.24 ms per file for the same work with the reads moved after the loop. So
-name the whole batch in one call — `Project#createSourceFiles`, which takes the
-same text, structure or writer function `createSourceFile` does and hands the files
-back in the order they were given — and read them afterwards:
+**That is the one thing worth designing around: keep the semantic questions out of the
+editing loop.** Types, symbols, diagnostics, references, rename, formatting, organize
+imports and emit all need a program, and asking for one applies everything waiting.
+Asking after every edit costs a snapshot per edit; asking once at the end costs one:
 
 ```ts
-// slow: each file's tree is asked for while the next is still to come
-for (const [path, text] of files)
-  doSomethingWith(project.createSourceFile(path, text).getStatements());
+// slow: every edit is followed by a question that needs a program
+for (const declaration of declarations)
+  declaration.addJsDoc({ description: describe(declaration.getType()) });
 
-// linear: one reopen between them, whatever is read afterwards
+// fast: read the types first, then edit
+const described = declarations.map(d => [d, describe(d.getType())] as const);
+for (const [declaration, description] of described)
+  declaration.addJsDoc({ description });
+```
+
+At 400 files, an edit alone measures 1.23 ms and an edit followed by a `getType()` 4.39 ms
+— against 0.38 and 2.04 on 28.0.0. The advice is the same on both; it costs more here.
+
+**Creating files in a loop is fine, and so is reading them back.** Both are linear:
+1600 files created and each one's statements read comes to 127 ms, 0.08 ms per file and
+falling as the project grows. Creating and manipulating each file in the same breath —
+the commonest codegen loop there is — is 306 ms at 1600 files, 0.19 ms per file.
+
+**One shape still costs a reopen per file**, and it is worth knowing because nothing
+about it looks expensive: creating files alongside a file with an _unresolved_ import
+whose references have been asked for. `SourceFile#getReferencingSourceFiles` and friends
+re-resolve on every file added, and re-resolving needs the compiler. With such a file in
+the project a `createSourceFile` loop measures 2.9/2.6/4.0 ms per file at 100/400/1600 —
+rising — where 28.0.0 measures 3.0/3.0/6.0, so this one is not a regression so much as a
+trap both versions share. Name the whole batch in one call and it goes away:
+`Project#createSourceFiles` takes the same text, structure or writer function
+`createSourceFile` does, hands the files back in the order they were given, and writes
+every file's text before the first of them is reported as added — so the re-resolve costs
+one reopen for the run rather than one per file:
+
+```ts
 const created = project.createSourceFiles(files.map(([filePath, text]) => ({ filePath, text })));
 for (const sourceFile of created)
   doSomethingWith(sourceFile.getStatements());
 ```
 
-Two things other than an explicit read force a reopen mid-loop. One is forgetting
-or deleting the files as you go, which nothing here helps with. The other is
-creating them alongside a file with an unresolved import whose references have been
-asked for (`SourceFile#getReferencingSourceFiles` and friends re-resolve on every
-file added), and that is what the batch is for beyond tidiness: it writes every
-file's text before the first of them is reported as added, so the re-resolve costs
-one reopen for the whole run rather than one per file. With such a file in the
-project, at 100/400/1600 files a `createSourceFile` loop measures 2.54/2.77/5.19 ms
-per file — rising — against 0.24/0.16/0.10 for `createSourceFiles`, which is 53×
-cheaper at 1600 and falling. With nothing reacting the two cost the same, 0.015 ms
-per file either way, so the batch is worth reaching for rather than worrying about.
-
-Files that are already on the file system are better added in one call still, which
-skips the create bookkeeping too:
+Files that are already on the file system are better added in one call still, which skips
+the create bookkeeping too:
 
 ```ts
 const project = new Project({ useInMemoryFileSystem: true });
@@ -458,11 +469,14 @@ project.addSourceFilesAtPaths("/**/*.ts");
 
 Two smaller regressions worth knowing:
 
-- `getCompilerOptionsFromTsConfig` builds a throwaway Wasm instance per call, so
-  it does not get cheaper when repeated: ~8× slower on the first call and ~26×
-  slower on subsequent ones. Do not call it in a loop.
-- `ts.createSourceFile` went from ~0.03 ms to ~0.9 ms, because every parse now
-  goes to the server.
+- `getCompilerOptionsFromTsConfig` builds a throwaway Wasm instance per call, so it does
+  not get cheaper when repeated: ~8× slower on the first call and ~26× slower on
+  subsequent ones. Do not call it in a loop.
+- `ts.createSourceFile` went from ~0.03 ms to ~0.9 ms, because every parse now goes to
+  the server.
+
+**A `Type`, `Symbol` or `Signature` still survives exactly two manipulations** — see §2 —
+and that is counted in manipulations, not in how often you ask the compiler anything.
 
 ---
 

@@ -1139,5 +1139,49 @@ let stringWithPromiseType: Promise<string>;
       expect(() => type.getProperties())
         .to.throw(errors.InvalidOperationError, "This type, symbol or signature came from a program that a manipulation has since replaced.");
     });
+
+    // An edit is syntactic and opens no program of its own, so the two tests above —
+    // which ask the checker once per edit — cannot tell "how many edits" from "how many
+    // times the checker was asked". These can: nothing is asked between the edits, so
+    // the only thing left to count is the edits, and the answer has to come out at the
+    // same number.
+    function editWithoutAskingAnything(sourceFile: SourceFile, count: number) {
+      for (let i = 0; i < count; i++)
+        sourceFile.addStatements(`let extra${i}: number;`);
+      // the read that makes the edits reach the compiler, which is what replaces the
+      // program the type came from
+      sourceFile.getVariableDeclarationOrThrow("other").getType().getText();
+    }
+
+    it("should still describe its own shape after two edits nothing was asked about", () => {
+      const { sourceFile } = getInfoFromTextWithTypeChecking(withProperties);
+      const type = sourceFile.getInterfaceOrThrow("Thing").getType();
+
+      editWithoutAskingAnything(sourceFile, 2);
+
+      expect(type.getProperties().map(p => p.getName())).to.deep.equal(["a", "b"]);
+    });
+
+    it("should say the program has been replaced after three edits nothing was asked about", () => {
+      const { sourceFile } = getInfoFromTextWithTypeChecking(withProperties);
+      const type = sourceFile.getInterfaceOrThrow("Thing").getType();
+
+      editWithoutAskingAnything(sourceFile, 3);
+
+      expect(() => type.getProperties())
+        .to.throw(errors.InvalidOperationError, "This type, symbol or signature came from a program that a manipulation has since replaced.");
+    });
+
+    it("should go on answering while the program it came from is still the current one", () => {
+      const { sourceFile } = getInfoFromTextWithTypeChecking(withProperties);
+      const type = sourceFile.getInterfaceOrThrow("Thing").getType();
+
+      // no read, so nothing has replaced anything: the edits are waiting to be applied
+      // and the program the type came from is still the one the project is open on
+      for (let i = 0; i < 10; i++)
+        sourceFile.addStatements(`let extra${i}: number;`);
+
+      expect(type.getProperties().map(p => p.getName())).to.deep.equal(["a", "b"]);
+    });
   });
 });

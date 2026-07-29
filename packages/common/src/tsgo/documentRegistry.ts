@@ -32,7 +32,12 @@ const configFilePath = "/tsconfig.json";
  * alive — see DocumentRegistry#retire.
  *
  * This is exactly how many edits a `Type`, `Symbol` or `Signature` taken before
- * them keeps working across, so it is observable and not a tuning knob: at 0 the
+ * them keeps working across — edits, not reads: an edit no longer opens a snapshot
+ * of its own (see DocumentRegistry#parseSourceFileText), so what is retired is
+ * stamped with the edit that superseded it and dropped once that many have gone by,
+ * whether or not anything asked the compiler in between. Retiring per snapshot would
+ * have quietly turned this into "how many *semantic reads*", which is a contract
+ * nobody can state. It is observable and not a tuning knob: at 0 the
  * first edit costs the caller `getProperties`, `getMembers`, `getExports`,
  * `getDeclarations`, `getFlags`, `getSymbol`, `getCallSignatures` and a signature's
  * `getParameters` and `getDeclaration`, and the failure stops even being a stale
@@ -89,7 +94,7 @@ export class DocumentRegistry {
   readonly #baseFs: FileSystem | undefined;
   readonly #api: API;
   readonly #versions = new Map<string, number>();
-  readonly #retiredSnapshots: Snapshot[] = [];
+  readonly #retiredSnapshots: { snapshot: Snapshot; retiredAtGeneration: number }[] = [];
   readonly #pendingChanged = new Set<string>();
   readonly #pendingCreated = new Set<string>();
   readonly #pendingDeleted = new Set<string>();
@@ -107,6 +112,11 @@ export class DocumentRegistry {
   #configStale = false;
   #checkerUsed = false;
   #disposed = false;
+  /** How many edits the registry has been given — see retiredSnapshotLimit. */
+  #generation = 0;
+  /** The generation of the first edit the current snapshot does not have, if any. */
+  #supersededAtGeneration: number | undefined;
+  #snapshotsOpened = 0;
 
   constructor(options: DocumentRegistryOptions = {}) {
     this.#compilerOptions = options.compilerOptions ?? {};
@@ -173,6 +183,48 @@ export class DocumentRegistry {
   }
 
   /**
+   * Writes a file's text and returns the parsed file, without opening the project.
+   *
+   * This is the syntactic edit: a manipulation rewrites one file's text and wants its
+   * tree back, and nothing about that needs a program. {@link createOrUpdateSourceFile}
+   * would open a snapshot for it — a program clone, a round trip, and the client's
+   * per-file bookkeeping — which is ~85% of what an edit costs and does not shrink as
+   * the change does. The change waits with the others until the next semantic read, the
+   * same way {@link setSourceFileText}'s does.
+   *
+   * The write and the parse are one call rather than two so they cannot drift: a node
+   * handle taken from the returned tree is an index into the tree the compiler builds
+   * for *the text at that path*, so the text the registry holds and the text this parsed
+   * have to be the same string. Everything else about the handle already holds — the
+   * index is a pure function of the AST shape, and every route from a ts-morph node to
+   * the compiler goes through {@link project}, {@link checker}, {@link program} or
+   * {@link getSourceFile}, all of which flush first.
+   */
+  parseSourceFileText(fileName: string, text: string): SourceFile {
+    this.#assertNotDisposed();
+    this.#write([{ fileName, text }]);
+    return this.#parse(fileName, text);
+  }
+
+  /**
+   * Parses the text the registry already holds for a file, without opening the project.
+   *
+   * This is what a file written by {@link setSourceFileText} costs to read back: the
+   * text is already where the compiler would read it, so the tree is a parse and
+   * nothing more. {@link getSourceFile} answers the same question by opening the
+   * project, which is the right thing when the caller wants the file the *program*
+   * holds — that one is bound, is the one every other file resolves against, and is
+   * what a semantic question is asked of.
+   */
+  parseSourceFileAt(fileName: string): SourceFile {
+    this.#assertNotDisposed();
+    const text = this.#fs.readFile!(fileName);
+    if (text == null)
+      throw new Error(`Could not find source file: ${fileName}`);
+    return this.#parse(fileName, text);
+  }
+
+  /**
    * Replaces the compiler options the registry's project is opened with.
    *
    * The options live in the synthetic tsconfig, so changing them rewrites it and
@@ -183,6 +235,7 @@ export class DocumentRegistry {
     this.#assertNotDisposed();
     this.#compilerOptions = compilerOptions;
     this.#configStale = true;
+    this.#recordEdit();
   }
 
   /**
@@ -199,9 +252,7 @@ export class DocumentRegistry {
     this.#assertNotDisposed();
     if (!this.#versions.has(fileName))
       return;
-    // before the file goes, so a change still waiting for it is applied while it is
-    // still there to be applied to — see #flushPending
-    this.#flushPending([fileName]);
+    this.#recordEdit();
     this.#versions.delete(fileName);
     this.#fs.removeFile!(fileName);
     // a file the project was never told about leaves without being dropped from it: the
@@ -209,6 +260,12 @@ export class DocumentRegistry {
     if (!this.#pendingRootsAdded.delete(fileName))
       this.#pendingRootsRemoved.add(fileName);
     this.#recomputeCommonDirectory();
+    // a file created and taken away again before either report reached the compiler never
+    // existed as far as it is concerned, whichever way it is leaving: a path reported as
+    // created is one nothing outside the registry had, so removing the registry's copy
+    // leaves it as empty as the compiler already believes it to be
+    if (this.#pendingCreated.delete(fileName))
+      return;
     this.#queueChange(options.discardContents ? { deleted: [fileName] } : { changed: [fileName] });
   }
 
@@ -222,6 +279,26 @@ export class DocumentRegistry {
     if (sourceFile == null)
       throw new Error(`Could not find source file: ${fileName}`);
     return sourceFile;
+  }
+
+  /**
+   * Whether the compiler found the file while searching `node_modules`, answered
+   * without opening the project.
+   *
+   * This is not one of the doors — see {@link project} — because it cannot go stale.
+   * How a file got into the program is settled when it arrives there and no edit moves
+   * it, so the snapshot that is already open answers as well as a new one would. A file
+   * no open snapshot holds — one the registry has only just been given, or any file at
+   * all before the first read — was found by nothing, which is the answer.
+   *
+   * That matters because the question is asked of every file the moment it is first
+   * manipulated, and the manipulation itself is syntactic: opening the project for it
+   * would put back the per-edit snapshot that {@link parseSourceFileText} exists to
+   * avoid.
+   */
+  isSourceFileFromExternalLibrary(fileName: string): boolean {
+    this.#assertNotDisposed();
+    return this.#project?.program.getSourceFileMetadata(fileName)?.isFromExternalLibrary ?? false;
   }
 
   /**
@@ -261,6 +338,20 @@ export class DocumentRegistry {
     return this.#getProject().program;
   }
 
+  /**
+   * How many snapshots the registry has opened.
+   *
+   * Every one of them is a program clone, a round trip and a pass over the client's
+   * per-file bookkeeping, and the whole of the deferral above is that a syntactic
+   * operation opens none. That is a property of the registry rather than of any one
+   * method — a member added later could quietly reach the compiler and nothing would
+   * look different — so it is counted here and asserted rather than argued. Tests read
+   * this; nothing else has a reason to.
+   */
+  get snapshotsOpened(): number {
+    return this.#snapshotsOpened;
+  }
+
   dispose(): void {
     if (this.#disposed)
       return;
@@ -293,22 +384,27 @@ export class DocumentRegistry {
    * separately (see #flush).
    */
   #write(files: readonly { fileName: string; text: string }[]): void {
-    // before the text changes, so a change still waiting for one of these paths is
-    // applied against the text it was reported for — see #flushPending
-    this.#flushPending(files.map(file => file.fileName));
-
+    this.#recordEdit();
+    // classified before anything is written, because whether a change still waiting for
+    // one of these paths has to be applied first turns on which of the two this is — see
+    // #flushPending — and applying it means the compiler reading the file system as it
+    // was when that change was reported
     const created = new Set<string>();
     const changed = new Set<string>();
+    for (const { fileName } of files) {
+      if (created.has(fileName) || changed.has(fileName)) // classified by its first appearance in the batch
+        continue;
+      if (this.#versions.has(fileName) || (this.#baseFs?.fileExists?.(fileName) ?? false))
+        changed.add(fileName);
+      else
+        created.add(fileName);
+    }
+    this.#flushPending(created, changed);
+
     for (const { fileName, text } of files) {
       if (!this.#versions.has(fileName)) {
         this.#pendingRootsAdded.add(fileName);
         this.#addToCommonDirectory(fileName);
-        if (this.#baseFs?.fileExists?.(fileName) ?? false)
-          changed.add(fileName);
-        else
-          created.add(fileName);
-      } else if (!created.has(fileName)) { // a file the batch itself created is not also a change
-        changed.add(fileName);
       }
       this.#fs.writeFile!(fileName, text);
       this.#versions.set(fileName, (this.#versions.get(fileName) ?? -1) + 1);
@@ -329,12 +425,22 @@ export class DocumentRegistry {
    * without going through #getProject, so holding them is not visible beyond
    * costing less.
    *
-   * Callers apply what is waiting for a path before changing it again — see
-   * #flushPending — so each set holds a path at most once and the kinds stay
-   * disjoint. That matters because created-then-changed and deleted-then-created
-   * are neither of the two things they are made of, and coalescing them would have
-   * to decide which. It never comes up in a run of adds, which is the case this is
-   * for.
+   * The kinds stay disjoint, and a second change to a path folds into the one already
+   * waiting rather than joining it. Three of the four ways that can happen say the same
+   * thing as one report:
+   *
+   * - changed then changed — the report is already right;
+   * - created then changed — it stays created, since what the compiler reads when it
+   *   looks is the text written last either way;
+   * - created then deleted — both are dropped: a file that arrived and left between two
+   *   reads never existed as far as the compiler is concerned;
+   * - changed then deleted — the deletion replaces it.
+   *
+   * The one that cannot fold is a path going the other way: deleted then written, or
+   * written as created over a path the compiler already holds. Those are handled by
+   * applying what is waiting first — see #flushPending — because the two reports
+   * describe different file systems and only one of them is the one the compiler will
+   * read.
    *
    * Which files are roots of the project is held separately, in #pendingRootsAdded and
    * #pendingRootsRemoved: a file can join the registry reported as changed rather than
@@ -342,27 +448,45 @@ export class DocumentRegistry {
    * not have the same answer.
    */
   #queueChange(changes: { changed?: string[]; created?: string[]; deleted?: string[] }): void {
-    for (const path of changes.changed ?? [])
-      this.#pendingChanged.add(path);
     for (const path of changes.created ?? [])
       this.#pendingCreated.add(path);
-    for (const path of changes.deleted ?? [])
+    for (const path of changes.changed ?? []) {
+      if (!this.#pendingCreated.has(path))
+        this.#pendingChanged.add(path);
+    }
+    for (const path of changes.deleted ?? []) {
+      if (this.#pendingCreated.delete(path))
+        continue;
+      this.#pendingChanged.delete(path);
       this.#pendingDeleted.add(path);
+    }
   }
 
   /**
-   * Applies the waiting changes when any of `paths` is among them.
+   * Applies the waiting changes when one of them cannot be folded into what is about to
+   * be reported for the same path — see #queueChange for the four that can.
    *
-   * Called before a path a change is already waiting for is written or removed
-   * again, because what the compiler is told about a change has to describe what it
-   * finds when it looks: told a file was created and then handed a file system
-   * without it, or told one was deleted and handed a file system that still has it,
-   * it is being asked to believe two things at once. Applying the older change
-   * first is what keeps each report true of the moment it is made.
+   * What the compiler is told about a change has to describe what it finds when it
+   * looks: told a file was deleted and then handed a file system that has it, or told
+   * one was created when it already holds it, it is being asked to believe two things at
+   * once. Applying the older change first is what keeps each report true of the moment
+   * it is made. Both cases are a file leaving and arriving at the same path between two
+   * reads, which is not what an editing loop does — and it is that loop's every-second-
+   * edit that a coarser test would cost a snapshot.
    */
-  #flushPending(paths: readonly string[]): void {
-    if (paths.some(path => this.#pendingChanged.has(path) || this.#pendingCreated.has(path) || this.#pendingDeleted.has(path)))
-      this.#flush();
+  #flushPending(created: ReadonlySet<string>, changed: ReadonlySet<string>): void {
+    for (const path of created) {
+      if (this.#pendingChanged.has(path) || this.#pendingDeleted.has(path)) {
+        this.#flush();
+        return;
+      }
+    }
+    for (const path of changed) {
+      if (this.#pendingDeleted.has(path)) {
+        this.#flush();
+        return;
+      }
+    }
   }
 
   /**
@@ -488,6 +612,25 @@ export class DocumentRegistry {
       this.#configStale = true;
   }
 
+  /**
+   * Parses text into a tree, taking the file's parse options from the snapshot the
+   * registry last opened.
+   *
+   * That snapshot is read and never opened: what it is asked for is how the compiler
+   * would settle the file's module-ness, which depends on the compiler options and the
+   * file's package scope rather than on its text. With no snapshot yet there is no
+   * project either, and the defaults are what a file joining one would be parsed with.
+   */
+  #parse(fileName: string, text: string): SourceFile {
+    return this.#api.parseSourceFile(
+      fileName,
+      text,
+      this.#snapshot != null && this.#project != null
+        ? { snapshot: this.#snapshot.id, project: this.#project.id }
+        : undefined,
+    );
+  }
+
   #getProject(): Project {
     this.#assertNotDisposed();
     this.#flush();
@@ -503,11 +646,17 @@ export class DocumentRegistry {
   }): void {
     const previous = this.#snapshot;
     const previousHandedOutObjects = this.#checkerUsed;
+    // the edit that superseded the snapshot being replaced, which is what it is retired
+    // against — the current generation when nothing edited it, which is the case where a
+    // snapshot is being replaced for some other reason than a change to a file
+    const supersededAtGeneration = this.#supersededAtGeneration ?? this.#generation;
+    this.#supersededAtGeneration = undefined;
     this.#checkerUsed = false;
+    this.#snapshotsOpened++;
     const snapshot = this.#api.updateSnapshot(params);
     this.#snapshot = snapshot;
     if (previous != null)
-      this.#retire(previous, previousHandedOutObjects);
+      this.#retire(previous, previousHandedOutObjects, supersededAtGeneration);
     const project = snapshot.getProject(configFilePath);
     if (project == null)
       throw new Error(`Could not open the project at ${configFilePath}`);
@@ -522,19 +671,49 @@ export class DocumentRegistry {
    * different matter — a type, symbol or signature is a handle into the snapshot
    * that produced it, and the caller's `Type` object stays usable across an edit
    * in ts-morph, so the snapshot behind it has to stay too. Those are kept in
-   * order and the oldest is dropped once there are more than
-   * {@link retiredSnapshotLimit} of them, which bounds what an editing loop can
-   * pin: every snapshot holds a program and a checker on the server, and disposal
-   * is the only thing that ever releases them.
+   * order and the oldest is dropped once {@link retiredSnapshotLimit} edits have gone by
+   * since the one that superseded it, which bounds what an editing loop can pin: every
+   * snapshot holds a program and a checker on the server, and disposal is the only thing
+   * that ever releases them.
    */
-  #retire(snapshot: Snapshot, handedOutObjects: boolean): void {
+  #retire(snapshot: Snapshot, handedOutObjects: boolean, retiredAtGeneration: number): void {
     if (!handedOutObjects) {
       snapshot.dispose();
       return;
     }
-    this.#retiredSnapshots.push(snapshot);
-    while (this.#retiredSnapshots.length > retiredSnapshotLimit)
-      this.#retiredSnapshots.shift()!.dispose();
+    this.#retiredSnapshots.push({ snapshot, retiredAtGeneration });
+    this.#trimRetiredSnapshots();
+  }
+
+  /**
+   * Counts an edit, and lets go of whatever it has taken out of reach.
+   *
+   * The trim belongs here as well as in #retire because an edit no longer opens a
+   * snapshot of its own: a run of them with nothing semantic in between would otherwise
+   * leave a superseded snapshot answering long past the edit that was supposed to have
+   * retired it, since a `Type` reads from the snapshot that produced it rather than from
+   * the current one.
+   */
+  #recordEdit(): void {
+    this.#generation++;
+    this.#supersededAtGeneration ??= this.#generation;
+    this.#trimRetiredSnapshots();
+  }
+
+  /**
+   * Disposes the retired snapshots the caller can no longer reach an object through.
+   *
+   * The count is a bound rather than the rule: it is what stops a run of reopens with no
+   * edit between them — several `setCompilerOptions` calls, say — from keeping one each.
+   */
+  #trimRetiredSnapshots(): void {
+    while (
+      this.#retiredSnapshots.length > 0
+      && (this.#generation - this.#retiredSnapshots[0].retiredAtGeneration >= retiredSnapshotLimit
+        || this.#retiredSnapshots.length > retiredSnapshotLimit)
+    ) {
+      this.#retiredSnapshots.shift()!.snapshot.dispose();
+    }
   }
 
   #assertNotDisposed(): void {
