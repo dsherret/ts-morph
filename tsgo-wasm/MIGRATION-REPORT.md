@@ -18,7 +18,10 @@ Everything else is marked. Line citations were re-anchored against the working t
 > suppressed, `printNode` comments restored), the per-file config rewrite (§2.0 — the bulk path is
 > batched and linear; a `createSourceFile` loop is not), reference resolution by containment (§7.1 a–c
 > — back to touching-token), the brace-spacing formatter no-op (§2.7), and the indenter's worst
-> divergences (§2.6). Suite counts as of `b6670dac`: `ts-morph` 4480/2, `common` 431/0,
+> divergences (§2.6). Since then: symbols on anonymous declarations and definition container
+> names (§7.2, §7.4), definition kinds following TypeScript's own `getSymbolKind`, and the
+> reactor shipping gzipped — `@ts-morph/common` unpacks at 18.3 MB rather than ~53 MB.
+> Suite counts as of `433e2485`: `ts-morph` 4500/2, `common` 435/0,
 > `bootstrap` 85/4. See [TODO.md](./TODO.md) for what is actually left, and
 > [BREAKING-CHANGES.md](./BREAKING-CHANGES.md) for the user-facing state, which is re-measured.
 
