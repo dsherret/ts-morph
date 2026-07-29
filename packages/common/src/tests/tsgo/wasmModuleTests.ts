@@ -53,7 +53,7 @@ describe("initializeWasm", () => {
     expectCompilerWorks();
   });
 
-  it("should take a response, compiling it off the stream", async () => {
+  it("should take a response served as application/wasm", async () => {
     // The browser's path: what `fetch("/typescript.wasm")` answers, served the
     // only way `compileStreaming` accepts. This is the same code a page runs.
     const previous = getDefaultWasmModule();
@@ -75,8 +75,8 @@ describe("initializeWasm", () => {
 
   it("should say what went wrong when the download is incomplete", async () => {
     // The likeliest real failure, and the one worst at explaining itself: what
-    // the compiler rejects a half-arrived module with says nothing about where it
-    // came from, and can be carried on the error's `cause` rather than on itself.
+    // the compiler rejects a half-arrived module with names neither the file nor
+    // the reason to suspect the download.
     const unchanged = getDefaultWasmModule();
     const truncated = readFileSync(wasmPath()).subarray(0, 1024);
     let message = "";

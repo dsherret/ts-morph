@@ -168,10 +168,11 @@ function isWasmContentType(response: Response): boolean {
 /**
  * A failed compile, said out loud.
  *
- * An incomplete download is the likeliest way this goes wrong and the worst at
- * explaining itself, because the reason can sit on the error's `cause` rather
- * than on the error itself. So it is dug out of whichever of the two has one,
- * and what was being read is named.
+ * An incomplete download is the likeliest way this goes wrong, and what the
+ * compiler rejects a half-arrived module with names neither the file nor that
+ * likelihood — so both are added. The `cause` is read as well as the message
+ * because a rejection that carries its text there rather than on itself would
+ * otherwise reduce to nothing.
  */
 function compilationFailed(error: unknown, url: string): Error {
   const reason = messageOf(error) || messageOf((error as { cause?: unknown } | null | undefined)?.cause) || String(error);
