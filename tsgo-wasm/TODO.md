@@ -538,11 +538,30 @@ already established — the hard part is that removing a file can move what othe
 files resolve to, so the refusal conditions need at least as much care as the
 addition's did.
 
-#### d. A public batch create entry point
+#### d. A public batch create entry point — done
 
-**ts-morph.** The documented fast path is currently advice in
-BREAKING-CHANGES.md §6 rather than an API. `DocumentRegistry#createOrUpdateSourceFiles`
-already exists underneath; `Project` should expose the same shape.
+**ts-morph.** `Project#createSourceFiles(entries, options)` takes an array of
+`{ filePath, text? }` — the same text, structure or writer function
+`createSourceFile` takes, the same `SourceFileCreateOptions` for the whole batch —
+and returns the files in the order they were given. BREAKING-CHANGES.md §6 points
+at it rather than describing the loop to hand-write.
+
+It is not a wrapper around `DocumentRegistry#createOrUpdateSourceFiles`: that
+parses, and creation has not parsed since §3.1. What the batch adds is that every
+file's text is written before **any** of them is reported as added, so a handler for
+`onSourceFileAdded` that asks the compiler a question asks it once for the run. That
+handler is the third of the quadratic loops named in §3.1 — an unresolved import
+re-resolving on every file added — and it is the one case where the batch is a
+complexity fix rather than saved bookkeeping. Measured on the built bundle with such
+a file in the project, in ms per file:
+
+| files               | 100  | 200  | 400  | 800  | 1600 |
+| ------------------- | ---- | ---- | ---- | ---- | ---- |
+| `createSourceFile`  | 2.54 | 2.59 | 2.77 | 3.45 | 5.19 |
+| `createSourceFiles` | 0.24 | 0.19 | 0.16 | 0.11 | 0.10 |
+
+Without such a file both are linear and identical — 0.015 ms per file at
+100/400/1600 either way — which is what §3.1 predicted.
 
 #### e. Two per-file loops that a clone already knows the answer to
 

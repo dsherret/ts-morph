@@ -76,6 +76,8 @@ export class CompilerFactory {
   readonly #directoryCache: DirectoryCache;
   readonly #sourceFileAddedEventContainer = new EventContainer<SourceFile>();
   readonly #sourceFileRemovedEventContainer = new EventContainer<SourceFile>();
+  // set only while createSourceFiles is running — see there for why
+  #deferredSourceFilesAdded: SourceFile[] | undefined;
 
   readonly documentRegistry: DocumentRegistry;
 
@@ -187,6 +189,37 @@ export class CompilerFactory {
     structurePrinter.printText(writer, sourceFileText);
 
     return this.createSourceFileFromText(filePath, writer.toString(), options);
+  }
+
+  /**
+   * Adds many source files by structure or text, and returns them in the order they were given.
+   *
+   * Equivalent to calling {@link createSourceFile} for each, except that every file's
+   * text is written before any source file added event fires. A handler for that
+   * event that asks the compiler a question — an unresolved import re-resolving, say
+   * — is what forces the waiting writes open, and asking once for the whole batch is
+   * one reopen rather than one for each file.
+   * @param files - File paths and the structure or text for each.
+   * @param options - Options.
+   */
+  createSourceFiles(
+    files: readonly { filePath: StandardizedFilePath; sourceFileText: string | OptionalKind<SourceFileStructure> | WriterFunction }[],
+    options: SourceFileCreateOptions & { markInProject: boolean },
+  ): SourceFile[] {
+    const created: SourceFile[] = [];
+    this.#deferredSourceFilesAdded = [];
+    try {
+      for (const file of files)
+        created.push(this.createSourceFile(file.filePath, file.sourceFileText, options));
+    } finally {
+      // fired even when a file part way through threw, because the files before it
+      // were created and a loop would have reported them
+      const deferred = this.#deferredSourceFilesAdded;
+      this.#deferredSourceFilesAdded = undefined;
+      for (const sourceFile of deferred)
+        this.#sourceFileAddedEventContainer.fire(sourceFile);
+    }
+    return created;
   }
 
   /**
@@ -500,7 +533,7 @@ export class CompilerFactory {
 
     if (options.markInProject)
       sourceFile._markAsInProject();
-    this.#sourceFileAddedEventContainer.fire(sourceFile);
+    this.#fireSourceFileAdded(sourceFile);
 
     return sourceFile;
   }
@@ -538,9 +571,16 @@ export class CompilerFactory {
       sourceFile._markAsInProject();
 
     if (wasAdded)
-      this.#sourceFileAddedEventContainer.fire(sourceFile);
+      this.#fireSourceFileAdded(sourceFile);
 
     return sourceFile;
+  }
+
+  #fireSourceFileAdded(sourceFile: SourceFile) {
+    if (this.#deferredSourceFilesAdded != null)
+      this.#deferredSourceFilesAdded.push(sourceFile);
+    else
+      this.#sourceFileAddedEventContainer.fire(sourceFile);
   }
 
   #addSourceFileToCache(sourceFile: SourceFile) {
@@ -736,7 +776,7 @@ export class CompilerFactory {
       sourceFile._replaceCompilerNodeFromFactory(newNode as ts.SourceFile);
       this.#nodeCache.set(newNode, sourceFile);
       this.#addSourceFileToCache(sourceFile);
-      this.#sourceFileAddedEventContainer.fire(sourceFile);
+      this.#fireSourceFileAdded(sourceFile);
     } else {
       this.#nodeCache.replaceKey(nodeToReplace, newNode);
       if (node != null)

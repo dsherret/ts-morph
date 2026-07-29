@@ -79,6 +79,14 @@ export interface SourceFileCreateOptions {
   scriptKind?: ScriptKind;
 }
 
+/** One of the source files to create in a call to `createSourceFiles`. */
+export interface SourceFileCreateEntry {
+  /** File path of the source file. */
+  filePath: string;
+  /** Text, structure, or writer function for the source file text. Defaults to an empty file. */
+  text?: string | OptionalKind<SourceFileStructure> | WriterFunction;
+}
+
 /**
  * Project that holds source files.
  */
@@ -406,6 +414,28 @@ export class Project {
     return this._context.compilerFactory.createSourceFile(
       this._context.fileSystemWrapper.getStandardizedAbsolutePath(filePath),
       sourceFileText ?? "",
+      { ...(options ?? {}), markInProject: true },
+    );
+  }
+
+  /**
+   * Creates many source files at once and returns them in the order they were given.
+   *
+   * Note: The files will not be created and saved to the file system until .save() is called on them.
+   * @param sourceFiles - File paths and the text, structure, or writer function for each.
+   * @param options - Options that apply to every file in the batch.
+   * @throws - InvalidOperationError if a source file already exists at one of the provided file paths.
+   * @remarks Creating the same files one at a time produces the same files. Prefer this when
+   * generating many of them: every file's text is written before any of them is reported as added,
+   * so anything that reacts to a file being added — an unresolved import re-resolving, say — asks
+   * the compiler its question once for the whole batch rather than once for each file.
+   */
+  createSourceFiles(sourceFiles: ReadonlyArray<SourceFileCreateEntry>, options?: SourceFileCreateOptions): SourceFile[] {
+    return this._context.compilerFactory.createSourceFiles(
+      sourceFiles.map(entry => ({
+        filePath: this._context.fileSystemWrapper.getStandardizedAbsolutePath(entry.filePath),
+        sourceFileText: entry.text ?? "",
+      })),
       { ...(options ?? {}), markInProject: true },
     );
   }

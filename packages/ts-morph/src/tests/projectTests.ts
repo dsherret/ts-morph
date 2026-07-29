@@ -1036,6 +1036,133 @@ const test = new Test();`,
     });
   });
 
+  describe(nameof<Project>("createSourceFiles"), () => {
+    it("should create the files and return them in the order they were given", () => {
+      const project = new Project({ useInMemoryFileSystem: true });
+      const sourceFiles = project.createSourceFiles([
+        { filePath: "b.ts", text: "export const b = 2;" },
+        { filePath: "a.ts", text: "export const a = 1;" },
+      ]);
+      expect(sourceFiles.map(f => f.getFilePath())).to.deep.equal(["/b.ts", "/a.ts"]);
+      expect(sourceFiles.map(f => f.getFullText())).to.deep.equal(["export const b = 2;", "export const a = 1;"]);
+      expect(project.getSourceFiles().map(f => f.getFilePath()).sort()).to.deep.equal(["/a.ts", "/b.ts"]);
+    });
+
+    it("should return an empty array when given no files", () => {
+      const project = new Project({ useInMemoryFileSystem: true });
+      expect(project.createSourceFiles([])).to.deep.equal([]);
+      expect(project.getSourceFiles().length).to.equal(0);
+    });
+
+    it("should create an empty file when given no text", () => {
+      const project = new Project({ useInMemoryFileSystem: true });
+      const [sourceFile] = project.createSourceFiles([{ filePath: "file.ts" }]);
+      expect(sourceFile.getFullText()).to.equal("");
+      expect(sourceFile.isSaved()).to.be.false;
+    });
+
+    it("should create files from writer functions and structures", () => {
+      const project = new Project({ useInMemoryFileSystem: true });
+      const [fromWriter, fromStructure] = project.createSourceFiles([
+        { filePath: "writer.ts", text: writer => writer.writeLine("enum MyEnum {}") },
+        { filePath: "structure.ts", text: { statements: [{ kind: StructureKind.Enum, name: "MyEnum" }] } },
+      ]);
+      expect(fromWriter.getFullText()).to.equal("enum MyEnum {}\n");
+      expect(fromStructure.getFullText()).to.equal("enum MyEnum {\n}\n");
+    });
+
+    it("should throw when a file already exists and stop there", () => {
+      const project = new Project({ useInMemoryFileSystem: true });
+      project.createSourceFile("existing.ts", "");
+      expect(() => {
+        project.createSourceFiles([
+          { filePath: "before.ts", text: "" },
+          { filePath: "existing.ts", text: "" },
+          { filePath: "after.ts", text: "" },
+        ]);
+      }).to.throw(
+        errors.InvalidOperationError,
+        `Did you mean to provide the overwrite option? A source file already exists at the provided file path: /existing.ts`,
+      );
+      // the files before the one that threw were created, as a loop would have left them
+      expect(project.getSourceFiles().map(f => f.getFilePath()).sort()).to.deep.equal(["/before.ts", "/existing.ts"]);
+    });
+
+    it("should overwrite existing files when given the overwrite option", () => {
+      const project = new Project({ useInMemoryFileSystem: true });
+      const existing = project.createSourceFile("file.ts", "export const a = 1;");
+      const [overwritten] = project.createSourceFiles([{ filePath: "file.ts", text: "class Identifier {}" }], { overwrite: true });
+      expect(overwritten).to.equal(existing);
+      expect(existing.getFullText()).to.equal("class Identifier {}");
+    });
+
+    it("should be able to specify a script kind", () => {
+      const project = new Project({ useInMemoryFileSystem: true });
+      const [sourceFile] = project.createSourceFiles([{ filePath: "MyFile.json", text: "{}" }], { scriptKind: ScriptKind.JSON });
+      expect(sourceFile.getScriptKind()).to.equal(ScriptKind.JSON);
+    });
+
+    it("should report every file as added", () => {
+      const project = new Project({ useInMemoryFileSystem: true });
+      // an unresolved import subscribes its file to the source file added event and
+      // re-resolves on every one, so this sees the events rather than the files
+      const seed = project.createSourceFile("/seed.ts", `import { a } from "./a";\nimport { b } from "./b";`);
+      expect(seed.getLiteralsReferencingOtherSourceFiles().length).to.equal(0);
+
+      const created = project.createSourceFiles([
+        { filePath: "/a.ts", text: "export const a = 1;" },
+        { filePath: "/b.ts", text: "export const b = 2;" },
+      ]);
+      expect(seed.getLiteralsReferencingOtherSourceFiles().map(l => l.getLiteralValue()).sort()).to.deep.equal(["./a", "./b"]);
+      expect(created.map(f => f.getReferencingSourceFiles().map(r => r.getFilePath()))).to.deep.equal([["/seed.ts"], ["/seed.ts"]]);
+    });
+
+    // The batch is what the documented fast path for generating many files is, so the
+    // thing to hold onto is that it stays linear where a create loop does not.
+    //
+    // What makes the loop quadratic here is the seed file: an unresolved import keeps
+    // its file subscribed to the source file added event, and the handler asks the
+    // compiler to resolve the specifier again, so every single create reopens the
+    // project — which costs time proportional to how many files it already holds.
+    // The batch writes every file's text before the first event fires, so the first
+    // handler's question opens the project once for the whole run.
+    //
+    // Measured on the built bundle at 100/200/400/800/1600 files, the loop costs
+    // 2.54/2.59/2.77/3.45/5.19 ms per file — rising — and the batch
+    // 0.236/0.190/0.162/0.113/0.097 — falling, because the fixed cost of standing a
+    // project up is spread over more files. So four times the files is about 0.7
+    // times the cost per file for the batch and about 1.1 for the loop, and the batch
+    // is 17x cheaper per file at 400. The thresholds leave a loaded machine room while
+    // still failing if the batch starts reopening per file, which would put it back
+    // with the loop.
+    it("should cost about the same per file however many files the project holds, where a createSourceFile loop does not", function() {
+      this.timeout(120_000); // enough that a regression is reported rather than timing out
+      createFiles(50, true); // the first project pays for warming the compiler up
+
+      const smallBatch = createFiles(100, true);
+      const largeBatch = createFiles(400, true);
+      expect(largeBatch).to.be.lessThan(smallBatch * 2);
+
+      const largeLoop = createFiles(400, false);
+      expect(largeBatch).to.be.lessThan(largeLoop / 5);
+
+      function createFiles(count: number, batch: boolean) {
+        const project = new Project({ useInMemoryFileSystem: true });
+        // the file that keeps every create asking the compiler a question
+        const seed = project.createSourceFile("/seed.ts", `import { value0 } from "./missing";`);
+        seed.getReferencingSourceFiles();
+
+        const files = Array.from({ length: count }, (_, i) => ({ filePath: `/file${i}.ts`, text: `export const value${i} = ${i};` }));
+
+        const start = performance.now();
+        const created = batch ? project.createSourceFiles(files) : files.map(f => project.createSourceFile(f.filePath, f.text));
+        const perFile = (performance.now() - start) / count;
+        expect(created.length).to.equal(count);
+        return perFile;
+      }
+    });
+  });
+
   describe("mixing real files with in-memory files", () => {
     function createProject() {
       // @ts-ignore

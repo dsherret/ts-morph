@@ -66,6 +66,17 @@ Write this instead:
 sourceFile.addClasses(classStructures);
 ```
 
+The same goes for creating files. Instead of a `createSourceFile` loop, name the
+whole batch in one call and read the files back afterwards:
+
+```ts setup: const project: Project; const files: { filePath: string; text: string }[];
+const sourceFiles = project.createSourceFiles(files);
+```
+
+`createSourceFiles` takes the same text, structure, or writer function
+`createSourceFile` takes, and the same options for the whole batch. It returns the
+files in the order they were given.
+
 ### Performance Tip: Analyze then Manipulate
 
 If the code analysis is using types, symbols type checker, or program, then a large performance improvement can be gained by doing an initial analysis of the code first, then afterwards carrying out the manipulations.

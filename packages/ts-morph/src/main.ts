@@ -64,7 +64,7 @@ export {
 export { Directory, type DirectoryAddOptions, type DirectoryCopyOptions, DirectoryEmitResult, type DirectoryMoveOptions } from "./fileSystem";
 export { ManipulationError } from "./manipulation";
 export * from "./options";
-export { Project, type ProjectOptions, type SourceFileCreateOptions } from "./Project";
+export { Project, type ProjectOptions, type SourceFileCreateEntry, type SourceFileCreateOptions } from "./Project";
 export * from "./structures";
 export { type Constructor, type InstanceOf as Instance, type WriterFunction } from "./types";
 export { createWrappedNode, type CreateWrappedNodeOptions } from "./utils/compiler/createWrappedNode";

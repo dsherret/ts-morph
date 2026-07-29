@@ -418,7 +418,9 @@ reopen the deferral exists to collect. It is no longer quadratic — the compile
 extends an existing program when roots are only appended, rather than rebuilding
 it — but it measures at 3.6/2.6/2.3/2.5/3.9 ms per file for 100/200/400/800/1600,
 against 0.24 ms per file for the same work with the reads moved after the loop. So
-prefer:
+name the whole batch in one call — `Project#createSourceFiles`, which takes the
+same text, structure or writer function `createSourceFile` does and hands the files
+back in the order they were given — and read them afterwards:
 
 ```ts
 // slow: each file's tree is asked for while the next is still to come
@@ -426,17 +428,25 @@ for (const [path, text] of files)
   doSomethingWith(project.createSourceFile(path, text).getStatements());
 
 // linear: one reopen between them, whatever is read afterwards
-const created = files.map(([path, text]) => project.createSourceFile(path, text));
+const created = project.createSourceFiles(files.map(([filePath, text]) => ({ filePath, text })));
 for (const sourceFile of created)
   doSomethingWith(sourceFile.getStatements());
 ```
 
-Two things other than an explicit read force one, and both make a create loop
-quadratic again: forgetting or deleting the files as you go, and creating them
-alongside a file with an unresolved import whose references have been asked for
-(`SourceFile#getReferencingSourceFiles` and friends re-resolve on every file
-added). Adding files that are already on the file system in one call avoids all
-of it, and skips some bookkeeping besides:
+Two things other than an explicit read force a reopen mid-loop. One is forgetting
+or deleting the files as you go, which nothing here helps with. The other is
+creating them alongside a file with an unresolved import whose references have been
+asked for (`SourceFile#getReferencingSourceFiles` and friends re-resolve on every
+file added), and that is what the batch is for beyond tidiness: it writes every
+file's text before the first of them is reported as added, so the re-resolve costs
+one reopen for the whole run rather than one per file. With such a file in the
+project, at 100/400/1600 files a `createSourceFile` loop measures 2.54/2.77/5.19 ms
+per file — rising — against 0.24/0.16/0.10 for `createSourceFiles`, which is 53×
+cheaper at 1600 and falling. With nothing reacting the two cost the same, 0.015 ms
+per file either way, so the batch is worth reaching for rather than worrying about.
+
+Files that are already on the file system are better added in one call still, which
+skips the create bookkeeping too:
 
 ```ts
 const project = new Project({ useInMemoryFileSystem: true });

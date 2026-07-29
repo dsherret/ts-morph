@@ -690,6 +690,19 @@ export declare class Project {
    */
   createSourceFile(filePath: string, sourceFileText?: string | OptionalKind<SourceFileStructure> | WriterFunction, options?: SourceFileCreateOptions): SourceFile;
   /**
+   * Creates many source files at once and returns them in the order they were given.
+   *
+   * Note: The files will not be created and saved to the file system until .save() is called on them.
+   * @param sourceFiles - File paths and the text, structure, or writer function for each.
+   * @param options - Options that apply to every file in the batch.
+   * @throws - InvalidOperationError if a source file already exists at one of the provided file paths.
+   * @remarks Creating the same files one at a time produces the same files. Prefer this when
+   * generating many of them: every file's text is written before any of them is reported as added,
+   * so anything that reacts to a file being added — an unresolved import re-resolving, say — asks
+   * the compiler its question once for the whole batch rather than once for each file.
+   */
+  createSourceFiles(sourceFiles: ReadonlyArray<SourceFileCreateEntry>, options?: SourceFileCreateOptions): SourceFile[];
+  /**
    * Removes a source file from the project.
    * @param sourceFile - Source file to remove.
    * @returns True if removed.
@@ -867,6 +880,14 @@ export interface ProjectOptions {
    * @remarks Consider using `useInMemoryFileSystem` instead.
    */
   fileSystem?: FileSystemHost;
+}
+
+/** One of the source files to create in a call to `createSourceFiles`. */
+export interface SourceFileCreateEntry {
+  /** File path of the source file. */
+  filePath: string;
+  /** Text, structure, or writer function for the source file text. Defaults to an empty file. */
+  text?: string | OptionalKind<SourceFileStructure> | WriterFunction;
 }
 
 /** Options for creating a source file. */
