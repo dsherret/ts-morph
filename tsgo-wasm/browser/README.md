@@ -9,14 +9,15 @@ ts-morph runs in a browser. Two things have to be true, and neither is optional:
    way Node does: a synchronous compile takes ~27 ms and a synchronous
    instantiation ~4 ms, so every existing synchronous call site works unchanged.
 2. **`await initializeWasm()` before the first `Project`.** Node and Deno read
-   `typescript.wasm` from beside the bundle synchronously; a browser has no
-   synchronous way to reach a 43 MB asset, so it fetches and compiles it once, up
-   front. Everything after that is synchronous exactly as it is elsewhere.
+   `typescript.wasm.gz` from beside the bundle synchronously; a browser has no
+   synchronous way to reach an asset that size, so it fetches, gunzips and
+   compiles it once, up front. Everything after that is synchronous exactly as it
+   is elsewhere.
 
 ```js
 import { initializeWasm, Project } from "ts-morph";
 
-// once, at worker startup; the default is `typescript.wasm` beside the bundle
+// once, at worker startup; the default is `typescript.wasm.gz` beside the bundle
 await initializeWasm();
 
 const project = new Project({ useInMemoryFileSystem: true });
@@ -27,8 +28,8 @@ console.log(file.getVariableDeclarationOrThrow("x").getType().getText());
 `initializeWasm` also takes the module from wherever you already have it:
 
 ```js
-await initializeWasm({ wasm: fetch("/assets/typescript.wasm") });
-await initializeWasm({ wasm: await caches.match("/assets/typescript.wasm") });
+await initializeWasm({ wasm: fetch("/assets/typescript.wasm.gz") });
+await initializeWasm({ wasm: await caches.match("/assets/typescript.wasm.gz") });
 await initializeWasm({ wasm: bytesTransferredFromTheMainThread });
 // already compiled, on this thread or on another one — see the module note below
 await initializeWasm({ wasm: await WebAssembly.compile(bytes) });
@@ -44,24 +45,32 @@ built-in is stubbed out of the browser build, and touching one — through a rea
 
 ## Serving the compiler
 
-- **Serve `typescript.wasm` as `application/wasm`.** `WebAssembly.compileStreaming`
-  rejects anything else, in Chrome and in Node alike. `initializeWasm` falls back
-  to buffering the response when the content type is wrong, which works but
-  throws away the point of streaming.
-- **Sizes**: 43.0 MB raw, 9.6 MB gzip, 8.1 MB brotli (quality 5). Serve it
-  compressed.
-- **The HTTP cache will not keep it.** Chrome caps a single cache entry at about
-  1/8 of the disk cache; the cut-off measured on one machine sat between 27 MB
-  and 33 MB, well under this. Without an explicit `Cache` entry every page load
-  re-downloads the whole thing. A `caches.match` hit into `compileStreaming` is
-  ~91 ms with no network at all, so it is worth doing:
+- **The asset ships gzipped**, 9.50 MiB where the module itself is 43.02 MiB.
+  `initializeWasm` reads the gzip magic number off the first two bytes and pipes
+  the body through a `DecompressionStream` into `compileStreaming`, so the reactor
+  compiles while it is still arriving. Bytes that are already the raw module are
+  passed straight through, so a decompressed copy works just as well.
+- **Serve it as it is.** `application/gzip` (or anything else) is fine — the
+  content type is not consulted. What matters is that the bytes arrive
+  **compressed**: a server that sends `content-encoding: gzip` has the browser
+  unwrap them first, which costs a decompression either way and re-inflates the
+  download only if the file is served raw as well.
+- **The gunzip costs about 60 ms**, once per page. Measured in Chrome and in
+  Node; `WebAssembly.compile` of the 43 MiB module is only ~20 ms next to it,
+  because V8 compiles Wasm functions lazily. The trade is 33.5 MiB of download
+  for those 60 ms.
+- **The HTTP cache will not keep the raw file.** Chrome caps a single cache entry
+  at about 1/8 of the disk cache; the cut-off measured on one machine sat between
+  27 MB and 33 MB. At 9.5 MiB the compressed asset is comfortably under that, but
+  an explicit `Cache` entry is still the dependable answer, and a `caches.match`
+  hit into `compileStreaming` needs no network at all:
 
   ```js
   const cache = await caches.open("ts-morph");
-  let response = await cache.match("/assets/typescript.wasm");
+  let response = await cache.match("/assets/typescript.wasm.gz");
   if (response == null) {
-    await cache.add("/assets/typescript.wasm");
-    response = await cache.match("/assets/typescript.wasm");
+    await cache.add("/assets/typescript.wasm.gz");
+    response = await cache.match("/assets/typescript.wasm.gz");
   }
   await initializeWasm({ wasm: response });
   ```
@@ -90,13 +99,20 @@ acceptance test asserts on every run that no bare specifier has crept back in.
 (`dist/ts-morph.js`), so reaching the full library from a browser still goes
 through a bundler, which is what the acceptance test does with `deno bundle`.
 
-The compiler is located with a literal `new URL("./typescript.wasm", import.meta.url)`.
+The compiler is located with a literal `new URL("./typescript.wasm.gz", import.meta.url)`.
 
 - **Vite** copies the asset and rewrites the URL. Nothing to do.
 - **esbuild** emits the `new URL(...)` verbatim and copies nothing, so the URL
-  dangles with no error. Pass `--loader:.wasm=file`, or call
+  dangles with no error. Pass `--loader:.gz=file`, or call
   `initializeWasm({ wasm: fetch(yourOwnUrl) })` and place the file yourself.
 - **Any bundler**: `initializeWasm({ wasm: … })` sidesteps asset handling entirely.
+
+A `.gz` rather than a `.wasm` holding gzipped bytes, because the extension is what
+tools go by: a bundler's Wasm loader, or anything that reads the file, would take
+a `.wasm` at its word and fail on the first byte. Nothing outside a browser needs
+the file to keep that name either — Node and Deno gunzip it as they read it, and
+both accept an unwrapped `typescript.wasm` beside it if a build cannot carry a
+`.gz` through.
 
 ## The acceptance test
 
@@ -108,11 +124,17 @@ node tsgo-wasm/browser/run.mjs
 `run.mjs` asserts that the shipped browser build imports nothing at all — no Node
 built-ins, no bare specifiers, which is what a browser can actually load — then
 bundles [`worker.ts`](./worker.ts) for the browser with `deno bundle`, asserts
-the same of the result, serves it beside `typescript.wasm`, and drives headless
+the same of the result, serves it beside `typescript.wasm.gz`, and drives headless
 Chrome at it. The shipped artifact is checked separately because `deno bundle`
 would inline anything it still imported, and so hide it. The worker parses, queries
 the checker, reads diagnostics, manipulates, emits, and then adds fifty more
 files and re-checks. It exits 0 only on `RESULT: OK`.
+
+It also pins down that the compressed path is the one being exercised: the driver
+refuses to run unless the asset it serves is gzipped and no raw `typescript.wasm`
+sits beside it, and the worker reads the first bytes off the wire and asserts they
+are gzip before loading the compiler both ways — from the default URL, and from a
+`Response` it fetched itself.
 
 `--serve` leaves the server up instead, for looking at the page by hand.
 `CHROME_PATH` overrides browser discovery.

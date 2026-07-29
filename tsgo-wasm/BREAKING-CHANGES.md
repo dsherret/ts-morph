@@ -445,14 +445,31 @@ Two smaller regressions worth knowing:
 - **Requires WebAssembly.** Node, Deno and browsers are all supported. The
   compiler is a Wasm reactor with a `wasi_snapshot_preview1` shim written against
   the web platform only — `node:wasi` is not imported by any shipped artifact.
-- **A ~43 MiB `typescript.wasm` ships beside the bundle** — measured 43.0 MiB raw,
-  9.6 MiB gzip, 8.1 MiB brotli at quality 5. It lives in **`@ts-morph/common`**,
-  whose published tarball is ~11 MB (~53 MB unpacked), almost entirely this file;
-  `ts-morph`'s own tarball is ~0.2 MB. Serve it compressed.
+- **A 9.50 MiB `typescript.wasm.gz` ships beside the bundle.** The module is
+  43.02 MiB and ships gzipped; the loader gunzips it on first use, which costs
+  **about 60 ms once per process** — measured 30 ms to read and compile the raw
+  file against 83 ms to read, gunzip and compile the compressed one, so **+53 ms**
+  net on Node 24, and the same order in Chrome. `WebAssembly.compile` is only
+  ~20 ms of either, because V8 compiles Wasm functions lazily, so the gunzip is
+  genuinely the dominant cost on the load path rather than noise on an already
+  slow step. What those 60 ms buy is 33.5 MiB off everything that stores the file
+  unpacked: **`@ts-morph/common` installs at 18.3 MB rather than ~53 MB**, and so
+  do the Docker layers, CI caches and bundled lambdas carrying it, while a browser
+  downloads 9.5 MiB instead of 43. The npm tarball itself is ~11 MB either way —
+  npm always gzipped it in transit, so this is what it costs once unpacked.
+  `ts-morph`'s own tarball is ~0.2 MB.
+- **Bytes and responses handed to `initializeWasm` may be gzipped or not** — which
+  they are is read off the gzip magic number, so the shipped asset, a decompressed
+  copy, and a response a host already unwrapped all work. Node and Deno also
+  accept an unwrapped `typescript.wasm` sitting beside the `.gz`, for a build that
+  cannot carry the compressed file through.
 - **Single-threaded:** one compiler request runs to completion at a time.
 - **The compiler is no longer a plain-JS dependency,** so setups that bundled
   `typescript` from source are affected.
-- **JSR publishing is unsolved** — the package is ~48 MB against a 20 MiB limit.
+- **JSR publishing is still unsolved.** Compression takes the package from ~48 MB
+  to 13.7 MiB, under JSR's 20 MiB limit, and `deno publish --dry-run` is green —
+  but the wasm still cannot be loaded over `https:`, which is the other half of
+  the problem and untouched. See [TODO.md](./TODO.md) §4.
 
 ### Browsers
 
@@ -464,9 +481,9 @@ ts-morph runs in a browser, with two requirements that are not optional:
    synchronous below the surface. In a worker the browser behaves as Node does:
    ~27 ms to compile, ~4 ms to instantiate.
 2. **`await initializeWasm()` before the first `Project`.** Node and Deno read
-   `typescript.wasm` from beside the bundle synchronously; a browser has no
-   synchronous way to reach an asset that size, so it fetches and compiles it
-   once, up front.
+   `typescript.wasm.gz` from beside the bundle synchronously; a browser has no
+   synchronous way to reach an asset that size, so it fetches, gunzips and
+   compiles it once, up front.
 
 ```js
 import { initializeWasm, Project } from "ts-morph";
@@ -821,8 +838,43 @@ reports `true` for 12 and `false` for 32. `findReferencesAsNodes()` filters
 definitions out, so it returns `[32]` where 28.0.0 returned `[12, 32]`. If you
 filter on `isDefinition()`, re-check what you get.
 
-`isWriteAccess()` works, from the same classification TypeScript uses. A
-definition's `getKind()` is derived from the definition symbol's flags.
+`isWriteAccess()` works, from the same classification TypeScript uses.
+
+**A definition's `getKind()` is derived from the definition symbol,** because
+tsgo does not classify a definition at all. It is derived the way
+`getSymbolKind` derived it — what the symbol is as a value first, then what it is
+as a type — so a merged declaration reads as it did (a function merged with a
+namespace is a `function`, a namespace merged with a `const` is a `const`, and a
+namespace reads `module` only when it is nothing else), and `const`, `let`, `var`
+and `parameter` are told apart by the declaration, as TypeScript told them apart.
+Seven rows read differently from 28.0.0:
+
+| Written                                              | 28.0.0                      | Now             |
+| ---------------------------------------------------- | --------------------------- | --------------- |
+| `using x = …` / `await using x = …`                  | `using` / `await using`     | `var`           |
+| a variable in a function body                        | `local var`                 | `var`           |
+| a function in a function body                        | `local function`            | `function`      |
+| a named class expression, from its own name          | `local class`               | `class`         |
+| `this`                                               | `parameter`                 | `class`         |
+| `import * as ns from "…"`, `import x = require("…")` | `alias` / `module`          | `""`            |
+| a call through a variable holding a function         | `function`/`local function` | `const` / `let` |
+
+The first four are kinds `ts.ScriptElementKind` no longer declares — a kind that
+did not survive reads as the kind it is a special case of. `this` differs because
+the kind is derived from the symbol alone, and TypeScript classified `this` by the
+position rather than by the symbol it resolves to. The last two are not about the
+kind but about the definition tsgo answers with: a namespace import is answered
+with the imported file itself, which the checker has no symbol at, and
+`const f = () => {}` called as `f()` is answered with the variable declaration
+where 28.0.0 answered with the arrow function. A constructor definition reads
+`class` for the same reason — the symbol at its span is the class's.
+
+Two more, both the checker rather than the classification. In a `.js` file
+`exports.f = function () {}` reads `var` where 28.0.0 read `property`, because
+tsgo's binder gives that symbol `FunctionScopedVariable` where TypeScript gave it
+`Property`. A property that only exists on a union — `{ m(): void } | { m: number }`
+— is classified per definition, so `u.m` reads `["method", "property"]` where
+28.0.0 read `["property", "property"]` from the one synthetic symbol.
 
 Five residues remain, all of them tsgo not storing a node to ask about:
 
@@ -1025,7 +1077,7 @@ wrapper identity for the rest of the project. `getSourceFileVersion` returns
 `"0"`, so an unknown one must not report one — and every method throws after
 `dispose()`.
 
-The bundle ships `dist/typescript.wasm` beside `dist/ts-morph-common.js` and
+The bundle ships `dist/typescript.wasm.gz` beside `dist/ts-morph-common.js` and
 `dist/ts-morph-common.browser.mjs`. The browser build is an ES module reached
 through the `browser` field and imports nothing at all.
 
@@ -1148,8 +1200,8 @@ Suite state on the tree this document describes:
 
 |                      | passing | pending | failing |
 | -------------------- | ------- | ------- | ------- |
-| `packages/common`    | 431     | 0       | 0       |
-| `packages/ts-morph`  | 4495    | 2       | 0       |
+| `packages/common`    | 435     | 0       | 0       |
+| `packages/ts-morph`  | 4500    | 2       | 0       |
 | `packages/bootstrap` | 85      | 4       | 0       |
 
 `packages/ts-morph`'s two pending tests are the `elementAccessExpressionTests`

@@ -1338,43 +1338,120 @@ function isStringLike(node: Node): boolean {
 }
 
 /**
- * What kind of element a symbol declares. tsgo does not classify definitions,
- * so this is derived from the symbol's flags; see `ts.ScriptElementKind` for the
- * members that survived.
+ * What kind of element a symbol declares.
+ *
+ * tsgo does not classify definitions, so this is derived from the symbol the way
+ * `getSymbolKind` in the `typescript` package derived it. What a symbol is as a
+ * value — a variable, function, accessor, method, constructor or property — is
+ * decided first, and only a symbol that is none of those reads as a class, enum,
+ * type, interface, alias or namespace. That order is what a merged declaration
+ * turns on: a function merged with a namespace is a `function`, and a namespace
+ * reads `module` only when it is nothing else. See `ts.ScriptElementKind` for the
+ * members that survived; a kind that has no member here keeps the kind it is a
+ * special case of, so `using` reads `var` and a function-local variable reads
+ * `var` rather than `local var`.
  */
 function getScriptElementKind(symbol: ts.Symbol | undefined): ts.ScriptElementKind {
   if (symbol == null)
     return ts.ScriptElementKind.unknown;
   const flags = symbol.flags;
-  if (flags & SymbolFlags.Alias)
-    return ts.ScriptElementKind.alias;
-  if (flags & SymbolFlags.Class)
-    return ts.ScriptElementKind.class;
-  if (flags & SymbolFlags.Interface)
-    return ts.ScriptElementKind.interfaceElement;
-  if (flags & SymbolFlags.RegularEnum || flags & SymbolFlags.ConstEnum)
-    return ts.ScriptElementKind.enumElement;
-  if (flags & SymbolFlags.EnumMember)
-    return ts.ScriptElementKind.enumMemberElement;
-  if (flags & SymbolFlags.TypeAlias)
-    return ts.ScriptElementKind.typeElement;
-  if (flags & SymbolFlags.TypeParameter)
-    return ts.ScriptElementKind.typeParameterElement;
-  if (flags & SymbolFlags.Module)
-    return ts.ScriptElementKind.moduleElement;
+  if (flags & SymbolFlags.Variable)
+    return getVariableScriptElementKind(symbol);
+  if (flags & SymbolFlags.Function)
+    return ts.ScriptElementKind.functionElement;
   if (flags & SymbolFlags.GetAccessor)
     return ts.ScriptElementKind.memberGetAccessorElement;
   if (flags & SymbolFlags.SetAccessor)
     return ts.ScriptElementKind.memberSetAccessorElement;
   if (flags & SymbolFlags.Method)
     return ts.ScriptElementKind.memberFunctionElement;
+  if (flags & SymbolFlags.Constructor)
+    return ts.ScriptElementKind.constructorImplementationElement;
   if (flags & SymbolFlags.Property)
     return ts.ScriptElementKind.memberVariableElement;
-  if (flags & SymbolFlags.Function)
-    return ts.ScriptElementKind.functionElement;
-  if (flags & SymbolFlags.FunctionScopedVariable)
-    return ts.ScriptElementKind.parameterElement;
-  if (flags & SymbolFlags.Variable)
-    return ts.ScriptElementKind.variableElement;
+  if (flags & SymbolFlags.Class)
+    return ts.ScriptElementKind.class;
+  if (flags & SymbolFlags.RegularEnum || flags & SymbolFlags.ConstEnum)
+    return ts.ScriptElementKind.enumElement;
+  if (flags & SymbolFlags.TypeAlias)
+    return ts.ScriptElementKind.typeElement;
+  if (flags & SymbolFlags.Interface)
+    return ts.ScriptElementKind.interfaceElement;
+  if (flags & SymbolFlags.TypeParameter)
+    return ts.ScriptElementKind.typeParameterElement;
+  if (flags & SymbolFlags.EnumMember)
+    return ts.ScriptElementKind.enumMemberElement;
+  if (flags & SymbolFlags.Alias)
+    return ts.ScriptElementKind.alias;
+  if (flags & SymbolFlags.Module)
+    return ts.ScriptElementKind.moduleElement;
   return ts.ScriptElementKind.unknown;
+}
+
+/**
+ * Whether a variable reads as a parameter, a `const`, a `let` or a `var`.
+ *
+ * The symbol cannot say: its flags only separate block scope from function scope,
+ * which puts a parameter and a `var` together and says nothing about the keyword.
+ * Both distinctions are written on the declaration, so this asks it — the same
+ * `isFirstDeclarationOfSymbolParameter`, `isVarConst` and `isLet` the `typescript`
+ * package asked.
+ */
+function getVariableScriptElementKind(symbol: ts.Symbol): ts.ScriptElementKind {
+  if (isFirstDeclarationOfSymbolParameter(symbol))
+    return ts.ScriptElementKind.parameterElement;
+  if (getBlockScope(symbol.valueDeclaration) === ts.NodeFlags.Const)
+    return ts.ScriptElementKind.constElement;
+  if (symbol.declarations.some(declaration => getBlockScope(declaration) === ts.NodeFlags.Let))
+    return ts.ScriptElementKind.letElement;
+  return ts.ScriptElementKind.variableElement;
+}
+
+/** Whether a symbol is first declared as a parameter, counting a name destructured out of one. */
+function isFirstDeclarationOfSymbolParameter(symbol: ts.Symbol): boolean {
+  const declaration = symbol.declarations[0];
+  if (declaration == null)
+    return false;
+  // a handle knows its own kind without being resolved, so only a destructured
+  // name — which is a binding element wherever it is written — costs a lookup
+  if (declaration.kind !== SyntaxKind.BindingElement)
+    return declaration.kind === SyntaxKind.Parameter;
+  for (let node = declaration.resolve()?.parent; node != null; node = node.parent) {
+    if (node.kind === SyntaxKind.Parameter)
+      return true;
+    if (!isBindingElementOrPattern(node.kind))
+      return false;
+  }
+  return false;
+}
+
+/**
+ * Which of `let`, `const`, `using` and `await using` a declaration is written
+ * with, as `ts.NodeFlags`, or `None` for a `var` and for anything that is not a
+ * variable at all.
+ *
+ * The keyword belongs to the declaration list rather than to the name it
+ * declares, and a destructured name is further down inside a binding pattern, so
+ * the flags are collected on the way up — what `getCombinedNodeFlags` did.
+ */
+function getBlockScope(declaration: ts.NodeHandle | undefined): ts.NodeFlags {
+  let node = declaration?.resolve();
+  while (node != null && isBindingElementOrPattern(node.kind))
+    node = node.parent;
+  if (node == null)
+    return ts.NodeFlags.None;
+  let flags = node.flags;
+  if (node.kind === SyntaxKind.VariableDeclaration)
+    node = node.parent;
+  if (node?.kind === SyntaxKind.VariableDeclarationList) {
+    flags |= node.flags;
+    node = node.parent;
+  }
+  if (node?.kind === SyntaxKind.VariableStatement)
+    flags |= node.flags;
+  return flags & ts.NodeFlags.BlockScoped;
+}
+
+function isBindingElementOrPattern(kind: SyntaxKind): boolean {
+  return kind === SyntaxKind.BindingElement || kind === SyntaxKind.ObjectBindingPattern || kind === SyntaxKind.ArrayBindingPattern;
 }

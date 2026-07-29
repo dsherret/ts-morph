@@ -51,7 +51,7 @@ fileSystem.copySync(`${folderPath}/DenoRuntime.ts`, `${copyDirPath}/DenoRuntime.
 // declarations that describe it. This used to copy TypeScript's own
 // `typescript.js` and `typescript.d.ts` out of node_modules, which nothing has
 // read since the compiler stopped being an npm package.
-fileSystem.copySync(`${folderPath}/typescript.wasm`, `${copyDirPath}/typescript.wasm`);
+fileSystem.copySync(`${folderPath}/typescript.wasm.gz`, `${copyDirPath}/typescript.wasm.gz`);
 copyDeclarationsForDeno("./lib/tsNamespace.d.ts", `${copyDirPath}/tsNamespace.d.ts`);
 for (const filePath of declarationFilesUnder("./lib/tsgo"))
   copyDeclarationsForDeno(filePath, `${copyDirPath}/tsgo/${path.relative(path.join(folders.common, "lib/tsgo"), filePath).replace(/\\/g, "/")}`);
@@ -164,7 +164,7 @@ function dropLibReferences(text: string) {
  * them: `../enums/scriptKind.enum` is extensionless despite appearances.
  */
 function addExtensions(text: string) {
-  const alreadyExtensioned = /\.(d\.ts|[cm]?js|json|wasm)$/i;
+  const alreadyExtensioned = /\.(d\.ts|[cm]?js|json|wasm|gz)$/i;
   return text.replace(
     /(\b(?:from|import)\s*\(?\s*["'])(\.{1,2}\/[^"']+?)(["'])/g,
     (match, before, specifier: string, after) => alreadyExtensioned.test(specifier) ? match : `${before}${specifier}.d.ts${after}`,

@@ -233,9 +233,9 @@ export declare function createProjectSync(options?: ProjectOptions): Project;
 /**
  * Options for adding or creating a source file.
  *
- * Breaking change: `scriptKind` no longer has an effect. tsgo owns parsing and
- * derives the script kind from the file extension, with no way to be told
- * otherwise, so the option is kept only so existing calls still compile.
+ * The compiler owns parsing and derives the script kind from the file
+ * extension, with no way to be told otherwise, so the one option here has no
+ * effect and is kept only so existing calls still compile.
  */
 export interface SourceFileOptions {
     /** @deprecated Has no effect — the script kind comes from the file extension. */
@@ -276,8 +276,8 @@ export interface ProjectOptions {
      * can resolve by rules the compiler does not implement. See
      * `ResolutionHosts.deno` for the ready-made one.
      *
-     * Breaking change: type reference directives are not covered — they resolve
-     * down a separate path in the compiler that has no hook.
+     * Type reference directives are not covered — they resolve down a separate
+     * path in the compiler that has no hook.
      */
     resolutionHost?: ResolutionHostFactory;
 }
@@ -375,9 +375,9 @@ export declare class Project {
     /**
      * Updates the source file stored in the project. The `fileName` of the source file object is used to tell which file to update.
      *
-     * Breaking change: the file is re-created from the provided file's text rather
-     * than stored as-is, so the returned file is a new object. tsgo owns parsing,
-     * and a tree it did not produce cannot be put into a project.
+     * The file is re-created from the provided file's text rather than stored
+     * as-is, so the returned file is a new object: the compiler owns parsing, and
+     * a tree it did not produce cannot be put into a project.
      * @param newSourceFile - The new source file.
      */
     updateSourceFile(newSourceFile: ts.SourceFile): ts.SourceFile;
@@ -403,10 +403,10 @@ export declare class Project {
     /**
      * Gets the program.
      *
-     * Breaking change: this no longer creates a program. tsgo keeps one program per
-     * project and updates it as files change, so the same program is returned for
-     * the project's current state and there are no `CreateProgramOptions` to
-     * override it with.
+     * Despite the name this does not create one. The compiler keeps a single
+     * program per project and updates it as files change, so this returns that
+     * program for the project's current state, and there is nothing to override
+     * it with.
      */
     createProgram(): ts.Program;
     /** Gets the diagnostics from parsing the project's tsconfig, if it had one. */
@@ -414,9 +414,9 @@ export declare class Project {
     /**
      * Gets the language service.
      *
-     * Breaking change: tsgo has no `LanguageService`. Formatting, organize-imports,
-     * rename, definitions, implementations and code fixes are methods on the
-     * compiler's project, so that is what this returns.
+     * The compiler has no language service of its own: formatting,
+     * organize-imports, rename, definitions, implementations and code fixes are
+     * methods on its project, so that is what this returns.
      *
      * The object handed back stands in for that project rather than being it. A
      * project belongs to one snapshot, and a new snapshot is taken every time a
@@ -450,9 +450,9 @@ export declare class Project {
     /**
      * Formats an array of diagnostics with their color and context into a string.
      *
-     * Breaking change: tsgo has no `formatDiagnosticsWithColorAndContext`, so the
-     * diagnostics are formatted here; the source line, the caret and the ANSI
-     * colouring are gone.
+     * Despite the name there is neither colour nor context: the compiler has no
+     * such formatter, so the diagnostics are formatted here, without the source
+     * line, the caret or the ANSI colouring.
      * @param diagnostics - Diagnostics to get a string of.
      * @param options - Collection of options. For example, the new line character to use (defaults to the OS' new line character).
      */

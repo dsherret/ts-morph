@@ -35,7 +35,7 @@ declare const WebAssembly: {
 export type WasmSource = WebAssembly.Module | Uint8Array | ArrayBuffer;
 export interface WasmApiOptions {
     /**
-     * The reactor module. Defaults to `typescript.wasm` beside this module, or
+     * The reactor module. Defaults to `typescript.wasm.gz` beside this module, or
      * to whatever {@link setDefaultWasmModule} was last given.
      */
     wasm?: WasmSource;

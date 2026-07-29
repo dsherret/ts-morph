@@ -100,24 +100,27 @@ export declare function initializeWasm(options?: InitializeWasmOptions): Promise
  * Asynchronous acquisition of the tsgo WebAssembly compiler, for hosts that
  * cannot read it from disk.
  *
- * Node and Deno need none of this: the loader reads `typescript.wasm` from
+ * Node and Deno need none of this: the loader reads `typescript.wasm.gz` from
  * beside the bundle on first use, synchronously, which is what lets
  * `new Project()` stay synchronous. A browser has no synchronous way to reach a
- * 45 MB asset, so it fetches and compiles the module once through
+ * 9.5 MB asset, so it fetches, gunzips and compiles the module once through
  * {@link initializeWasm} and hands it to the loader; every call after that is
  * synchronous exactly as it is elsewhere.
  */
 export interface InitializeWasmOptions {
   /**
-   * Where the compiler comes from. Defaults to `typescript.wasm` beside this
+   * Where the compiler comes from. Defaults to `typescript.wasm.gz` beside this
    * bundle, fetched from the same place the bundle was served from.
    *
    * A `Response` is accepted so that a cached copy costs the caller nothing to
-   * use: the answer from `caches.match("/typescript.wasm")` or from a service
+   * use: the answer from `caches.match("/typescript.wasm.gz")` or from a service
    * worker goes straight in and is compiled off the stream. A compiled module is
    * accepted for the other way round: a module survives `postMessage`, so one
    * thread can compile the reactor once and hand it to every worker that needs
    * it.
+   *
+   * Bytes and responses may be gzipped or not — which they are is read off the
+   * bytes, so the shipped asset and an unwrapped copy of it are equally good.
    */
   wasm?: Response | Promise<Response> | URL | Uint8Array | ArrayBuffer | CompiledWasmModule;
 }
@@ -788,9 +791,9 @@ export declare class Project {
   /**
    * Formats an array of diagnostics with their color and context into a string.
    *
-   * Breaking change: the output is plain text. tsgo has no
-   * `formatDiagnosticsWithColorAndContext`, so ts-morph formats the diagnostics
-   * itself; the source line, the caret and the ANSI colouring are gone.
+   * Despite the name the output is plain text: the compiler has no such
+   * formatter, so ts-morph formats the diagnostics itself, without the source
+   * line, the caret or the ANSI colouring.
    * @param diagnostics - Diagnostics to get a string of.
    * @param options - Collection of options. For example, the new line character to use (defaults to the OS' new line character).
    */
@@ -916,8 +919,8 @@ export declare function printNode(node: ts.Node, sourceFile: ts.SourceFile, opti
 /**
  * Options for printing a node.
  *
- * Breaking change: `emitHint` is gone. tsgo's printer has no hint parameter — it
- * dispatches on the node's kind — so there is nothing to pass one to.
+ * There is no `emitHint`: the compiler's printer dispatches on the node's kind
+ * and has no hint parameter to pass one to.
  */
 export interface PrintNodeOptions {
   /** Whether to remove comments or not. */
@@ -3944,8 +3947,8 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
   /**
    * Gets the indentation level of the current node.
    *
-   * Breaking change: tsgo has no smart-indentation service, so this is worked
-   * out from the text. A node is indented relative to the innermost construct
+   * The compiler has no smart-indentation service, so this is worked out from
+   * the text. A node is indented relative to the innermost construct
    * that opened before it: a level past the line that construct starts on, or
    * that construct's own indentation when the two share a line. The level is
    * therefore the one the node *would* be written at rather than the one it has,
@@ -7831,16 +7834,16 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
    *
    * WARNING! This will forget all the nodes in the file! It's best to do this after you're all done with the file.
    *
-   * Breaking change: the format settings and user preferences parameters are
-   * gone. tsgo's organize-imports takes neither.
+   * Takes no format settings or user preferences: the compiler's
+   * organize-imports accepts neither.
    */
   organizeImports(): this;
   /**
    * Code fix to add import declarations for identifiers that are referenced, but not imported in the source file.
    * @param formatSettings - Format code settings.
    *
-   * Breaking change: the user preferences parameter is gone. tsgo's code fixes
-   * do not take one.
+   * There is no user preferences parameter — the compiler's code fixes do not
+   * take one.
    */
   fixMissingImports(formatSettings?: FormatCodeSettings): this;
   /**
@@ -9466,9 +9469,9 @@ export interface ProgramEmitOptions extends EmitOptions {
   /**
    * Called for each output file instead of writing it to the file system.
    *
-   * Breaking change: `sourceFiles` holds at most the one source file the output
-   * came from. tsgo reports a single originating file per output, so a bundled
-   * output cannot list every file that fed it.
+   * `sourceFiles` holds at most the one file the output came from: the compiler
+   * reports a single originating file per output, so a bundled output cannot
+   * list every file that fed it.
    */
   writeFile?: ts.WriteFileCallback;
 }
@@ -9480,7 +9483,9 @@ export interface EmitOptions extends EmitOptionsBase {
 }
 
 /**
- * Breaking change: `customTransformers` is gone. tsgo's emitter runs in the
+ * Options common to every emit.
+ *
+ * There is no hook for custom transformers: the emitter runs inside the
  * compiler and does not accept JavaScript transforms.
  */
 export interface EmitOptionsBase {
@@ -9515,8 +9520,8 @@ export declare class Program {
   /**
    * Gets the syntactic diagnostics.
    *
-   * Breaking change: these are `Diagnostic`s. tsgo has no separate
-   * `DiagnosticWithLocation` type — see {@link Diagnostic#getSourceFile}.
+   * These are `Diagnostic`s — there is no separate `DiagnosticWithLocation`
+   * type; see {@link Diagnostic#getSourceFile}.
    * @param sourceFile - Optional source file to filter by.
    */
   getSyntacticDiagnostics(sourceFile?: SourceFile): Diagnostic[];
@@ -9571,9 +9576,9 @@ export declare class CodeAction<TCompilerObject extends ts.CodeAction = ts.CodeA
 /**
  * Represents a code fix action.
  *
- * Breaking change: `getFixName()`, `getFixId()` and `getFixAllDescription()` are
- * gone. tsgo returns a description and the edits, and does not group fixes into
- * fix-alls, so there is no id to report or to feed back in.
+ * A fix is a description and the edits that apply it. There is no fix name, fix
+ * id or fix-all description: the compiler does not group fixes into fix-alls,
+ * so there is no id to report or to feed back in.
  */
 export declare class CodeFixAction extends CodeAction<ts.CodeFixAction> {
 }
@@ -9581,8 +9586,8 @@ export declare class CodeFixAction extends CodeAction<ts.CodeFixAction> {
 /**
  * Represents file changes.
  *
- * Breaking change: `commands` is gone. tsgo's combined code fixes are edits
- * only, so there is nothing to run alongside them.
+ * There are no `commands`: the compiler's combined code fixes are edits only,
+ * so there is nothing to run alongside them.
  */
 export declare class CombinedCodeActions {
   #private;
@@ -9624,19 +9629,19 @@ export declare class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagn
   /**
    * Gets the source file.
    *
-   * Breaking change: tsgo reports the file by name rather than handing back the
-   * parsed file, so this resolves the name against the files the project has
-   * wrapped. A diagnostic reported on a file the program pulled in but the
-   * project never added (a lib file, an implicit dependency) has no wrapper to
-   * return, and yields undefined where the `typescript` package returned one.
+   * The compiler reports the file by name rather than handing back the parsed
+   * file, so this resolves the name against the files the project has wrapped.
+   * A diagnostic reported on a file the program pulled in but the project never
+   * added — a lib file, an implicit dependency — has no wrapper to return and
+   * yields undefined.
    */
   getSourceFile(): SourceFile | undefined;
   /**
    * Gets the message text.
    *
-   * Breaking change: this is always a string. tsgo puts the message on `text`
-   * and nests any chained messages under `messageChain`, so a chain no longer
-   * arrives in place of the text � see {@link getMessageChain}.
+   * Always a string. The compiler puts the message on `text` and nests any
+   * chained messages under `messageChain`, so a chain never arrives in place of
+   * the text — see {@link getMessageChain}.
    */
   getMessageText(): string;
   /** Gets the chained messages that elaborate on this diagnostic, if any. */
@@ -9663,9 +9668,9 @@ export declare class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagn
 /**
  * A link in a diagnostic's message chain.
  *
- * Breaking change: tsgo has no separate message chain type — a chain element is
+ * There is no separate message chain type in the compiler: a chain element is
  * itself a `Diagnostic`, nested under the parent's `messageChain`. So this wraps
- * a `ts.Diagnostic`, and `getNext()` reads `messageChain` rather than `next`.
+ * a `ts.Diagnostic`, and `getNext()` reads `messageChain`.
  */
 export declare class DiagnosticMessageChain {
   private constructor();
@@ -9768,9 +9773,9 @@ export declare class FileTextChanges {
 /**
  * Location of an implementation.
  *
- * Breaking change: `getDisplayParts()` is gone. tsgo reports an implementation
- * as a file span, so the text that labels one — "(method) A.m(): void" — has
- * nowhere to come from.
+ * There is no `getDisplayParts()`: the compiler reports an implementation as a
+ * file span, so the text that labels one — "(method) A.m(): void" — has nowhere
+ * to come from.
  */
 export declare class ImplementationLocation extends DocumentSpan<ts.ImplementationLocation> {
   #private;
@@ -9847,8 +9852,7 @@ export declare class ReferencedSymbolDefinitionInfo extends DefinitionInfo<ts.Re
   /**
    * Gets the display parts.
    *
-   * Breaking change: a part's `getKind()` is an LSP classification name rather
-   * than one of the `typescript` package's `SymbolDisplayPartKind` names.
+   * A part's `getKind()` is an LSP classification name.
    */
   getDisplayParts(): SymbolDisplayPart[];
 }
@@ -9884,8 +9888,8 @@ export declare class SymbolDisplayPart {
   /**
    * Gets the kind.
    *
-   * Breaking change: tsgo renders documentation as plain text rather than a
-   * classified part list, so this is always `"text"`.
+   * Always `"text"`: the compiler renders documentation as plain text rather
+   * than a classified part list.
    */
   getKind(): string;
 }
@@ -10114,9 +10118,8 @@ export declare class Type<TType extends ts.Type = ts.Type> {
   /**
    * Gets the constraint or returns undefined if it doesn't exist.
    *
-   * Breaking change: tsgo only resolves a constraint for type parameters and
-   * substitution types, so an indexed access, index or conditional type now
-   * returns undefined where the `typescript` package returned a type.
+   * A constraint is resolved only for type parameters and substitution types.
+   * An indexed access, index or conditional type has none and reads undefined.
    */
   getConstraint(): Type<ts.Type> | undefined;
   /** Gets the default type or throws if it doesn't exist. */
@@ -10124,8 +10127,8 @@ export declare class Type<TType extends ts.Type = ts.Type> {
   /**
    * Gets the default type or returns undefined if it doesn't exist.
    *
-   * Breaking change: tsgo only resolves a default for type parameters, which is
-   * the only place the `typescript` package ever found one in practice.
+   * A default is resolved only for type parameters, which in practice is the
+   * only place one is ever declared.
    */
   getDefault(): Type<ts.Type> | undefined;
   /** Gets the properties of the type. */

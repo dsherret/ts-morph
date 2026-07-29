@@ -242,6 +242,113 @@ describe("Identifier", () => {
       // namespaces merge across files, so being inside `Outer` in another file counts
       expect(containerNamesOf(otherFile, "iv")).to.deep.equal(["Outer.Inner", "Inner"]);
     });
+
+    // every expectation below was measured against ts-morph 28.0.0
+    function getDefinitionKindsOf(sourceFile: SourceFile, name: string) {
+      const identifiers = sourceFile.getDescendantsOfKind(SyntaxKind.Identifier).filter(identifier => identifier.getText() === name);
+      return identifiers[identifiers.length - 1].getDefinitions().map(definition => definition.getKind());
+    }
+
+    it("should say which keyword declares a variable definition", () => {
+      const { sourceFile } = getInfoFromText(
+        "const cv = 1;\ncv;\nlet lv = 1;\nlv;\nvar vv = 1;\nvv;\n"
+          + "export const ecv = 1;\necv;\nexport let elv = 1;\nelv;\nexport var evv = 1;\nevv;\n"
+          + "declare const dcv: number;\ndcv;\ndeclare var dvv: number;\ndvv;\n"
+          + "const { dp } = { dp: 1 };\ndp;\nfor (const fc of [1]) { fc; }\ntry {} catch (ce) { ce; }\n"
+          + "const CE = class {};\nconst ceRef = CE;\nfunction body() { const bc = 1; var bv = 1; return bc + bv; }\n",
+      );
+
+      expect(getDefinitionKindsOf(sourceFile, "cv")).to.deep.equal([ts.ScriptElementKind.constElement]);
+      expect(getDefinitionKindsOf(sourceFile, "lv")).to.deep.equal([ts.ScriptElementKind.letElement]);
+      expect(getDefinitionKindsOf(sourceFile, "vv")).to.deep.equal([ts.ScriptElementKind.variableElement]);
+      expect(getDefinitionKindsOf(sourceFile, "ecv")).to.deep.equal([ts.ScriptElementKind.constElement]);
+      expect(getDefinitionKindsOf(sourceFile, "elv")).to.deep.equal([ts.ScriptElementKind.letElement]);
+      expect(getDefinitionKindsOf(sourceFile, "evv")).to.deep.equal([ts.ScriptElementKind.variableElement]);
+      expect(getDefinitionKindsOf(sourceFile, "dcv")).to.deep.equal([ts.ScriptElementKind.constElement]);
+      expect(getDefinitionKindsOf(sourceFile, "dvv")).to.deep.equal([ts.ScriptElementKind.variableElement]);
+      // the keyword belongs to the declaration list, so a destructured name and a
+      // name bound by a `for` both read it from further up
+      expect(getDefinitionKindsOf(sourceFile, "dp")).to.deep.equal([ts.ScriptElementKind.constElement]);
+      expect(getDefinitionKindsOf(sourceFile, "fc")).to.deep.equal([ts.ScriptElementKind.constElement]);
+      // a catch clause variable has no keyword of its own
+      expect(getDefinitionKindsOf(sourceFile, "ce")).to.deep.equal([ts.ScriptElementKind.variableElement]);
+      expect(getDefinitionKindsOf(sourceFile, "CE")).to.deep.equal([ts.ScriptElementKind.constElement]);
+      // 28.0.0 said "local var" for a variable written in a function body, which
+      // is not a kind that survived; see tsgo-wasm/BREAKING-CHANGES.md
+      expect(getDefinitionKindsOf(sourceFile, "bc")).to.deep.equal([ts.ScriptElementKind.constElement]);
+      expect(getDefinitionKindsOf(sourceFile, "bv")).to.deep.equal([ts.ScriptElementKind.variableElement]);
+    });
+
+    it("should say a definition is a parameter rather than a variable", () => {
+      const { sourceFile } = getInfoFromText(
+        "function f(p: number) { return p; }\n"
+          + "function g({ op }: { op: number }) { return op; }\nfunction h([ap]: number[]) { return ap; }\n",
+      );
+
+      expect(getDefinitionKindsOf(sourceFile, "p")).to.deep.equal([ts.ScriptElementKind.parameterElement]);
+      // a name destructured out of a parameter is still a parameter
+      expect(getDefinitionKindsOf(sourceFile, "op")).to.deep.equal([ts.ScriptElementKind.parameterElement]);
+      expect(getDefinitionKindsOf(sourceFile, "ap")).to.deep.equal([ts.ScriptElementKind.parameterElement]);
+    });
+
+    it("should say what a merged declaration is as a value before what it is as a type", () => {
+      const { sourceFile } = getInfoFromText(
+        "function fn() {}\nnamespace fn { export const a = 1; }\nconst fnRef = fn;\n"
+          + "namespace nf { export const a = 1; }\nfunction nf() {}\nconst nfRef = nf;\n"
+          + "interface I { x: number }\nfunction I() {}\nconst iRef = I;\n"
+          + "class C {}\nnamespace C { export const a = 1; }\nconst cRef = C;\n"
+          + "enum E { A }\nnamespace E { export const a = 1; }\nconst eRef = E;\n"
+          + "namespace ns { export const a = 1; }\nconst nsRef = ns;\n",
+      );
+
+      // a function merged with a namespace is a function whichever is written first
+      expect(getDefinitionKindsOf(sourceFile, "fn")).to.deep.equal([ts.ScriptElementKind.functionElement, ts.ScriptElementKind.functionElement]);
+      expect(getDefinitionKindsOf(sourceFile, "nf")).to.deep.equal([ts.ScriptElementKind.functionElement, ts.ScriptElementKind.functionElement]);
+      expect(getDefinitionKindsOf(sourceFile, "I")).to.deep.equal([ts.ScriptElementKind.functionElement, ts.ScriptElementKind.functionElement]);
+      expect(getDefinitionKindsOf(sourceFile, "C")).to.deep.equal([ts.ScriptElementKind.class, ts.ScriptElementKind.class]);
+      expect(getDefinitionKindsOf(sourceFile, "E")).to.deep.equal([ts.ScriptElementKind.enumElement, ts.ScriptElementKind.enumElement]);
+      // and a namespace that is nothing else is still a module
+      expect(getDefinitionKindsOf(sourceFile, "ns")).to.deep.equal([ts.ScriptElementKind.moduleElement]);
+    });
+
+    it("should say what kind of element every other definition is", () => {
+      const { sourceFile } = getInfoFromText(
+        "type T = number;\nlet t: T;\ninterface I { ip: number }\nlet i: I;\ni.ip;\n"
+          + "enum E { A }\nE.A;\nclass C { m() {} p = 1; get g() { return 1; } set s(v: number) {} }\n"
+          + "declare const c: C;\nc.m();\nc.p;\nc.g;\nc.s = 1;\n"
+          + "function tp<TP>(a: TP) { return a; }\nfunction fn() {}\nconst fnRef = fn;\nconst obj = { op: 1 };\nobj.op;\n",
+      );
+
+      expect(getDefinitionKindsOf(sourceFile, "T")).to.deep.equal([ts.ScriptElementKind.typeElement]);
+      expect(getDefinitionKindsOf(sourceFile, "I")).to.deep.equal([ts.ScriptElementKind.interfaceElement]);
+      expect(getDefinitionKindsOf(sourceFile, "E")).to.deep.equal([ts.ScriptElementKind.enumElement]);
+      expect(getDefinitionKindsOf(sourceFile, "A")).to.deep.equal([ts.ScriptElementKind.enumMemberElement]);
+      expect(getDefinitionKindsOf(sourceFile, "C")).to.deep.equal([ts.ScriptElementKind.class]);
+      expect(getDefinitionKindsOf(sourceFile, "m")).to.deep.equal([ts.ScriptElementKind.memberFunctionElement]);
+      expect(getDefinitionKindsOf(sourceFile, "p")).to.deep.equal([ts.ScriptElementKind.memberVariableElement]);
+      expect(getDefinitionKindsOf(sourceFile, "ip")).to.deep.equal([ts.ScriptElementKind.memberVariableElement]);
+      expect(getDefinitionKindsOf(sourceFile, "op")).to.deep.equal([ts.ScriptElementKind.memberVariableElement]);
+      expect(getDefinitionKindsOf(sourceFile, "g")).to.deep.equal([ts.ScriptElementKind.memberGetAccessorElement]);
+      expect(getDefinitionKindsOf(sourceFile, "s")).to.deep.equal([ts.ScriptElementKind.memberSetAccessorElement]);
+      expect(getDefinitionKindsOf(sourceFile, "TP")).to.deep.equal([ts.ScriptElementKind.typeParameterElement]);
+      expect(getDefinitionKindsOf(sourceFile, "fn")).to.deep.equal([ts.ScriptElementKind.functionElement]);
+    });
+
+    it("should say what kind of element a definition reached through an import is", () => {
+      const project = new Project({ useInMemoryFileSystem: true });
+      project.createSourceFile("/kinds.ts", "export const ec = 1;\nexport function ef() {}\nexport class EC {}\n");
+      project.createSourceFile("/reexport.ts", `export { ec } from "./kinds";\n`);
+      const sourceFile = project.createSourceFile(
+        "/importer.ts",
+        `import { ec, ef, EC } from "./kinds";\nimport { ec as rc } from "./reexport";\nec;\nef;\nEC;\nrc;\n`,
+      );
+
+      // a definition is what the import resolves to, so it is never an alias
+      expect(getDefinitionKindsOf(sourceFile, "ec")).to.deep.equal([ts.ScriptElementKind.constElement]);
+      expect(getDefinitionKindsOf(sourceFile, "ef")).to.deep.equal([ts.ScriptElementKind.functionElement]);
+      expect(getDefinitionKindsOf(sourceFile, "EC")).to.deep.equal([ts.ScriptElementKind.class]);
+      expect(getDefinitionKindsOf(sourceFile, "rc")).to.deep.equal([ts.ScriptElementKind.constElement]);
+    });
   });
 
   describe(nameof<Identifier>("getImplementations"), () => {

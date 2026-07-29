@@ -8,13 +8,17 @@
 //   node --experimental-strip-types --no-warnings --conditions @typescript/source tsgo-wasm/custom-resolution.mts
 import assert from "node:assert";
 import { readFileSync } from "node:fs";
+import { gunzipSync } from "node:zlib";
 import { createVirtualFileSystem } from "../submodules/typescript-go/_packages/native-preview/dist/api/fs.js";
 import { createWasmAPI } from "../submodules/typescript-go/_packages/native-preview/dist/api/wasm/api.js";
 
 // The loader no longer reads the module: where it comes from is the host's
 // decision, which is what lets the same loader run in a browser. Compile once
-// and instantiate it per API, the way `@ts-morph/common` does.
-const wasm = new WebAssembly.Module(readFileSync(new URL("../submodules/typescript-go/_packages/native-preview/dist/typescript.wasm", import.meta.url)));
+// and instantiate it per API, the way `@ts-morph/common` does. The shipped
+// reactor is gzipped, so unwrap it first.
+const wasm = new WebAssembly.Module(
+  gunzipSync(readFileSync(new URL("../submodules/typescript-go/_packages/native-preview/dist/typescript.wasm.gz", import.meta.url))),
+);
 
 const files = {
   "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true, noLib: true } }),

@@ -5,8 +5,8 @@ marked **compiler** when the fix belongs in `submodules/typescript-go` (and so n
 a wasm rebuild), **upstream** when it belongs in microsoft/typescript-go rather than
 our fork, and **ts-morph** when it does not.
 
-Measured state: `ts-morph` 4495 passing / 2 pending, `bootstrap` 85 / 4,
-`common` 431 / 0, both verification gates clean, 15/15 end-to-end scripts.
+Measured state: `ts-morph` 4500 passing / 2 pending, `bootstrap` 85 / 4,
+`common` 435 / 0, both verification gates clean, 15/15 end-to-end scripts.
 
 ---
 
@@ -20,11 +20,13 @@ Worker (V8 refuses a >8 MB `WebAssembly.Module` on the main thread) and must
 `await initializeWasm()` before the first `Project`. See
 [browser/README.md](./browser/README.md).
 
-What is still open is **delivery**, not support: the wasm is 43 MiB raw / 9.6 MB
-gzip, Chrome's HTTP cache will not keep an entry that size, and a compiled
-`WebAssembly.Module` cannot be stored in IndexedDB. The documented answer is an
-explicit `Cache` entry plus `postMessage` of the compiled module. Related: JSR
-publishing (§4).
+What is still open is **delivery**, not support. The asset now ships gzipped —
+9.50 MiB over the wire for a 43.02 MiB module, gunzipped through a
+`DecompressionStream` into `compileStreaming`, at a cost of ~60 ms once per page —
+which puts it under the size Chrome's HTTP cache refuses to keep. A compiled
+`WebAssembly.Module` still cannot be stored in IndexedDB, so the documented answer
+for a page loading it repeatedly is an explicit `Cache` entry plus `postMessage`
+of the compiled module. Related: JSR publishing (§4).
 
 ---
 
@@ -117,9 +119,22 @@ consequence. Document rather than diverge the fork.
 ### 2.10 Smaller reported divergences, unowned
 
 - A constructor definition reports `name: "constructor(a: number);"` / `kind:
-  "class"` where 28.0.0 said `"__constructor"` / `"constructor"`.
-- `getScriptElementKind` tests `Module` before `Function`, so a function merged with
-  a namespace reads `module`.
+  "class"` where 28.0.0 said `"__constructor"` / `"constructor"`. The kind is not
+  the flag order the next bullet fixed: the symbol the checker answers with at a
+  constructor's span is the class's, which has no `Constructor` flag to read.
+- `getScriptElementKind` now orders the flags the way `getSymbolKind` did and
+  reads `const`/`let`/`var`/`parameter` off the declaration rather than off the
+  symbol, which cannot tell them apart. That fixed 20 measured rows — among them
+  `const x = 1` reading `var`, `let x = 1` reading `var`, `var x = 1` reading
+  `parameter`, and a function merged with a namespace reading `module`. Seven rows
+  still differ, all in BREAKING-CHANGES.md §8.5: `using`/`await using`, a variable
+  or function local to a function body and a named class expression, whose kinds
+  did not survive into `ts.ScriptElementKind`; `this`, which TypeScript classified
+  by the position rather than by the symbol; and a namespace import, an
+  `import x = require(…)` and a call through a variable holding a function, where
+  the definition tsgo answers with is a different node than the one 28.0.0
+  classified. Two more are the checker rather than the classification: a `.js`
+  `exports.f = function () {}` and a property that only exists on a union.
 - `JSDocSignature#getTypeNode()` is declared `TypeNode` but holds a
   `JSDocReturnTag`; the declaration is wrong, not the value. **compiler**
 
@@ -166,9 +181,13 @@ Cost: not measurable, ~199MB rss either way over 500 files edited 24 times.
 
 ## 4. Packaging and publishing
 
-- **JSR** — the package is ~48 MB against a 20 MiB limit, and the wasm cannot be
-  loaded over `https:`. `deno publish --dry-run` is green; actually publishing is
-  not solved.
+- **JSR** — half solved. The size half is: the reactor ships gzipped, so
+  `deno/common` is 13.7 MiB against the 20 MiB limit rather than ~48 MB, and
+  `deno publish --dry-run` is green. What remains is that the wasm cannot be
+  loaded over `https:` — a JSR consumer has no file to read beside the module —
+  so publishing is still not solved. The answer is likely `initializeWasm` with a
+  fetched `Response`, which now handles the compressed asset, made to work for a
+  `https:` default rather than only a `file:` one.
 - **Fork maintenance** — the fork is 17 commits ahead of upstream. Split the
   mislabelled commit (`15ff4accb` says "expose getAmbientModules" and carries six
   unrelated changes) before proposing anything upstream, and decide which changes to
