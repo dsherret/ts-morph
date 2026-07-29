@@ -659,8 +659,10 @@ would take the first one's entry; a program with **duplicates**, whose parse cac
 accounting is worked out over the whole walk; a **diagnostic the parse produced**
 about a file that is going; an **added root whose walk reaches one** that is going,
 which is the case where the file is dropped from the roots but left on the file
-system and the arriving import still finds it; **more than eight roots at once**;
-and **the last root in the project**, since the first build is where the lib files
+system and the arriving import still finds it; a name the new list **still holds**,
+which is a root list that named a file twice and dropped one of the two — the file
+is not leaving, only one of its reasons for being there is; **more than eight roots
+at once**; and **the last root in the project**, since the first build is where the lib files
 and the automatic type directives are settled and a program with no roots holds
 neither. The common source directory is carried over only when `rootDir` or
 `configFilePath` names it _and_ the parse said nothing about where the files sit;
