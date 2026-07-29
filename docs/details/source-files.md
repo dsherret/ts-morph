@@ -281,12 +281,10 @@ sourceFile.fixMissingImports();
 
 ### Fix Unused Identifiers
 
-To remove all unused declarations (ex. variables, classes, etc..) from a source file, use the following method:
+There is no `fixUnusedIdentifiers()`. The compiler implements three code fix
+providers — adding missing imports, adding missing type annotations on exports,
+and implementing an interface a class declares — and removing unused declarations
+is not among them.
 
-```ts
-sourceFile.fixUnusedIdentifiers();
-```
-
-Tip: For optimal results, sometimes this method needs to be called more than once. There could be nodes that are only referenced in unused declarations and in this case another call would remove them.
-
-Note: This will forget all the previously navigated nodes so it's recommended to make this either the first or last action you do to a source file.
+Unused declarations are still reported as diagnostics, so they can be found with
+`getPreEmitDiagnostics()` and removed with `Node#remove()`.

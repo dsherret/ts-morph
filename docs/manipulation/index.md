@@ -127,10 +127,9 @@ classDeclaration = sourceFile.getClass("MyClass")!;
 
 ## Code Fixes
 
-There are a variety of useful code fixes and refactors such as:
+The compiler implements a few code fixes, which are exposed as:
 
 - `SourceFile#organizeImports()`
 - `SourceFile#fixMissingImports()`
-- `SourceFile#fixUnusedIdentifiers()`
 
 Check more details on the [source files details page](../details/source-files).

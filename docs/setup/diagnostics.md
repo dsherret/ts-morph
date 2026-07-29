@@ -17,7 +17,9 @@ The pre-emit diagnostics are the syntactic, semantic, global, options, config fi
 
 ### Formatting for Output
 
-To nicely output the diagnostics, use `project.formatDiagnosticsWithColorAndContext`:
+To output the diagnostics as text, use `project.formatDiagnosticsWithColorAndContext`. Despite
+the name the result is plain text: the compiler has no such formatter, so ts-morph formats them
+itself, without the source line, the caret or the ANSI colouring.
 
 ```ts
 const diagnostics = project.getPreEmitDiagnostics();
@@ -29,10 +31,16 @@ console.log(project.formatDiagnosticsWithColorAndContext(diagnostics));
 
 #### Message text
 
-Returned message text could be a `string` or a `DiagnosticMessageChain`:
+The message text is always a `string`:
 
 ```ts
 const message = diagnostic.getMessageText();
+```
+
+A diagnostic that explains itself in several steps carries those separately, as a chain:
+
+```ts
+const chain = diagnostic.getMessageChain(); // returns: DiagnosticMessageChain[] | undefined
 ```
 
 #### Source file

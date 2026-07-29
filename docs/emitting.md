@@ -71,42 +71,14 @@ for (const diagnostic of emitResult.getDiagnostics())
 
 These are good to always check when emitting to ensure everything went smoothly. They will explain why files aren't being emitted.
 
-### Emitting with custom transformations
+### Custom transformations
 
-You can emit using the compiler API's custom transformations by specifying them on the `customTransformers` option.
+There is no `customTransformers` option. The emitter runs inside the compiler and
+does not accept JavaScript transforms, so there is nothing for one to hook into.
 
-The following example will emit the code with all numeric literals change to string literals:
-
-```ts
-project.emit({
-  customTransformers: {
-    // optional transformers to evaluate before built in .js transformations
-    before: [context => sourceFile => visitSourceFile(sourceFile, context, numericLiteralToStringLiteral)],
-    // optional transformers to evaluate after built in .js transformations
-    after: [],
-    // optional transformers to evaluate after built in .d.ts transformations
-    afterDeclarations: [],
-  },
-});
-
-function visitSourceFile(
-  sourceFile: ts.SourceFile,
-  context: ts.TransformationContext,
-  visitNode: (node: ts.Node, context: ts.TransformationContext) => ts.Node,
-) {
-  return visitNodeAndChildren(sourceFile) as ts.SourceFile;
-
-  function visitNodeAndChildren(node: ts.Node): ts.Node {
-    return ts.visitEachChild(visitNode(node, context), visitNodeAndChildren, context);
-  }
-}
-
-function numericLiteralToStringLiteral(node: ts.Node, context: ts.TransformationContext) {
-  if (ts.isNumericLiteral(node))
-    return context.factory.createStringLiteral(node.text);
-  return node;
-}
-```
+To change what is emitted, change the source instead: manipulate the AST with
+ts-morph, emit, and undo the manipulation if the in-memory tree should not keep
+it.
 
 ## Emitting to Memory
 
