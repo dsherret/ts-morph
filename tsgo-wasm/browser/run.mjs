@@ -31,11 +31,17 @@ for (const file of required) {
     fail(`${file} is missing. Run \`npm run build\` at the repository root first.`);
 }
 
+// The shipped artifact has to be loadable as it stands, and `deno bundle` would
+// hide it not being: it inlines whatever the bundle imports, so a bare specifier
+// left in `ts-morph-common.browser.mjs` would never reach the browser as one.
+assertImportsNothing(join(commonDist, "ts-morph-common.browser.mjs"), "the browser build of @ts-morph/common");
+
+assertDenoBundle();
 const workDir = mkdtempSync(join(tmpdir(), "ts-morph-browser-"));
 const workerBundle = join(workDir, "worker.js");
 console.log("bundling worker.ts for the browser…");
 run("deno", ["bundle", "--quiet", "--platform", "browser", "--output", workerBundle, join(here, "worker.ts")]);
-assertNoNodeBuiltinImports(workerBundle);
+assertImportsNothing(workerBundle, "the bundle");
 
 let settle;
 const finished = new Promise(resolve => settle = resolve);
@@ -108,15 +114,40 @@ server.listen(port, async () => {
 
 /**
  * The point of the exercise: a browser cannot resolve a bare specifier, so a
- * single one left in the bundle would be a page that never loads.
+ * single one left in a module would be a page that never loads.
  */
-function assertNoNodeBuiltinImports(bundlePath) {
+function assertImportsNothing(bundlePath, what) {
   const source = readFileSync(bundlePath, "utf8");
-  const specifiers = [...source.matchAll(/(?:^|[\s;}])(?:import|export)[^;'"]*?from\s*["']([^"']+)["']/g)].map(match => match[1]);
+  const patterns = [
+    // `import x from "y"`, `export * from "y"`
+    /(?:^|[\s;}])(?:import|export)[^;'"]*?from\s*["']([^"']+)["']/g,
+    // `import "y"`, which imports for the side effects alone
+    /(?:^|[\s;}])import\s*["']([^"']+)["']/g,
+    // `import("y")`
+    /\bimport\(\s*["']([^"']+)["']\s*\)/g,
+  ];
+  const specifiers = patterns.flatMap(pattern => [...source.matchAll(pattern)].map(match => match[1]));
   const bare = specifiers.filter(specifier => !specifier.startsWith(".") && !specifier.startsWith("/"));
   if (bare.length > 0)
-    fail(`the bundle still imports ${bare.join(", ")}, which a browser cannot resolve`);
-  console.log("the bundle imports nothing: no node built-ins, no bare specifiers");
+    fail(`${what} still imports ${[...new Set(bare)].join(", ")}, which a browser cannot resolve`);
+  console.log(`${what} imports nothing: no node built-ins, no bare specifiers`);
+}
+
+/**
+ * `deno bundle` is a young subcommand that this test is the only user of, so
+ * say what is missing rather than leave an "unrecognized subcommand" to
+ * interpret the day it is renamed or dropped.
+ */
+function assertDenoBundle() {
+  const result = spawnSync("deno", ["bundle", "--help"], { stdio: "ignore" });
+  if (result.error != null)
+    fail(`deno could not be run (${result.error.code ?? result.error.message}). Install Deno: https://deno.com`);
+  if (result.status !== 0) {
+    fail(
+      "`deno bundle` is unavailable in this Deno. Run `deno upgrade`, or bundle "
+        + "tsgo-wasm/browser/worker.ts with another bundler and serve the result as worker.js.",
+    );
+  }
 }
 
 function findBrowser() {

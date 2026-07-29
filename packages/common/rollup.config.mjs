@@ -1,3 +1,5 @@
+import commonjs from "@rollup/plugin-commonjs";
+import nodeResolve from "@rollup/plugin-node-resolve";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { tsgo } from "../rollupPluginTsgo.mjs";
@@ -22,9 +24,6 @@ const moduleKind = isDeno || isBrowser ? "es" : "cjs";
 export default [{
   input: [emitDir + "/index.js"],
   external: [],
-  // Only the browser build has stubs standing in for modules it cannot have, and
-  // only those stubs are missing exports. Elsewhere a missing export is a bug.
-  shimMissingExports: isBrowser,
   output: {
     file: outputFolder + outputFile,
     format: moduleKind,
@@ -35,6 +34,9 @@ export default [{
     tsgoWasmAsset(),
     ...(isBrowser ? [browserStubs()] : []),
     tsgo({ tsconfig: "tsconfig.rollup.json", emitDir }),
+    // The browser build inlines its two remaining dependencies, so the artifact
+    // is loadable as it stands; see `browserDependencies`.
+    ...(isBrowser ? browserDependencies() : []),
   ],
 }];
 
@@ -118,10 +120,86 @@ function browserStubs() {
       const specifier = id.slice(prefix.length);
       const message = `"${specifier}" is not available in a browser. `
         + "Use an in-memory file system (`useInMemoryFileSystem: true`), and see tsgo-wasm/browser/README.md.";
-      // A proxy for the default import, since the shape asked of it varies; the
-      // named ones rollup fills in itself (see `shimMissingExports`).
-      return `function unavailable() { throw new Error(${JSON.stringify(message)}); }\n`
-        + `export default new Proxy({}, { get: () => unavailable });\n`;
+      // A proxy for the default import, since the shape asked of it varies. The
+      // named ones come off the same proxy: `syntheticNamedExports` says so for
+      // these modules alone, where `shimMissingExports` would have turned
+      // rollup's missing-export error off for the whole build — and a real
+      // export going missing has to stay an error.
+      return {
+        code: `function unavailable() { throw new Error(${JSON.stringify(message)}); }\n`
+          + `export default new Proxy({}, { get: () => unavailable });\n`,
+        syntheticNamedExports: "default",
+      };
     },
   };
+}
+
+/**
+ * Inlines the two packages the browser build still depends on.
+ *
+ * `minimatch` and `path-browserify` are the only bare specifiers left in the
+ * output once the Node built-ins are stubbed, and a browser resolves neither —
+ * so without this the artifact loads only through a bundler, and a plain
+ * `<script type="module">` fails on its first line. Node and Deno keep them as
+ * ordinary dependencies, resolved at load, which is why this is browser-only.
+ *
+ * `path-browserify` is CommonJS, which is what the second plugin is for.
+ */
+function browserDependencies() {
+  return [nodeResolve({ browser: true }), commonjs(), inlinedLicenses()];
+}
+
+/**
+ * Carries the inlined packages' licence notices into the bundle.
+ *
+ * ISC and MIT both ask that the notice travel with the code, and inlining is
+ * what turns a reference to these packages into a copy of them. The list is
+ * collected from what actually ended up in the bundle rather than written out,
+ * so a new dependency cannot be inlined without its notice.
+ */
+function inlinedLicenses() {
+  const roots = new Set();
+  return {
+    name: "inlined-licenses",
+    transform(_code, id) {
+      const root = packageRootOf(id);
+      if (root != null)
+        roots.add(root);
+      return null;
+    },
+    banner() {
+      const notices = [...roots].sort().map(readNotice).filter(notice => notice != null);
+      return notices.length === 0 ? "" : `/*!\n${notices.join("\n\n")}\n*/\n`;
+    },
+  };
+}
+
+/** The directory of the npm package a module came from, or undefined for anything else. */
+function packageRootOf(id) {
+  const normalized = id.replace(/\\/g, "/");
+  const index = normalized.lastIndexOf("/node_modules/");
+  if (index === -1)
+    return undefined;
+  const rest = normalized.slice(index + "/node_modules/".length).split("/");
+  const segments = rest[0].startsWith("@") ? rest.slice(0, 2) : rest.slice(0, 1);
+  return normalized.slice(0, index) + "/node_modules/" + segments.join("/");
+}
+
+/** `name@version` and the licence text, for a package directory that has one. */
+function readNotice(root) {
+  const text = ["LICENSE", "LICENSE.md", "LICENCE", "LICENSE.txt"]
+    .map(name => tryReadFile(`${root}/${name}`))
+    .find(contents => contents != null);
+  if (text == null)
+    return undefined;
+  const { name, version } = JSON.parse(readFileSync(`${root}/package.json`, "utf8"));
+  return `${name}@${version}\n\n${text.trim()}`;
+}
+
+function tryReadFile(filePath) {
+  try {
+    return readFileSync(filePath, "utf8");
+  } catch {
+    return undefined;
+  }
 }

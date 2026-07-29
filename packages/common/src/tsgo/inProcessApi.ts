@@ -9,6 +9,7 @@
 import { createVirtualFileSystem, type FileSystem } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/fs.js";
 import type { API } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/sync/api.js";
 import { createWasmAPI } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/wasm/api.js";
+import type { CompiledWasmModule } from "./wasmModule";
 
 export type { API, FileSystem };
 
@@ -27,10 +28,16 @@ export interface InProcessApiOptions {
   /** Whether the file system distinguishes case. Defaults to true. */
   useCaseSensitiveFileNames?: boolean;
   /**
-   * The reactor module's bytes. Defaults to the module shipped beside this
-   * bundle, or to whatever `initializeWasm` compiled.
+   * The reactor module: already compiled, or the bytes to compile it from.
+   * Defaults to the module shipped beside this bundle, or to whatever
+   * `initializeWasm` compiled.
+   *
+   * A file path is deliberately not accepted, though it once was. One loader now
+   * serves Node, Deno and the browser, and only two of those have a file system;
+   * a path would be an option that exists everywhere and works in some places.
+   * Read the file and pass the bytes, or hand over a compiled module.
    */
-  wasm?: Uint8Array | ArrayBuffer;
+  wasm?: Uint8Array | ArrayBuffer | CompiledWasmModule;
 }
 
 /** Creates a fully synchronous {@link API} backed by the in-process tsgo build. */

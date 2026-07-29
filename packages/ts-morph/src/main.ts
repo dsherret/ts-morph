@@ -1,5 +1,6 @@
 import { errors } from "@ts-morph/common";
 export {
+  type CompiledWasmModule,
   type CompilerOptions,
   CompilerOptionsContainer,
   DiagnosticCategory,

@@ -26,6 +26,7 @@ import {
   VariableStatement,
 } from "../../../../compiler";
 import { ExtendedParser } from "../../../../compiler/ast/utils";
+import { IndentationText } from "../../../../options";
 import { Project } from "../../../../Project";
 import { WriterFunction } from "../../../../types";
 import { createWrappedNode } from "../../../../utils/compiler/createWrappedNode";
@@ -2049,6 +2050,88 @@ class MyClass {
         sourceFile => sourceFile.getClassOrThrow("C").getMethodOrThrow("m").getJsDocs()[0].getTags()[0],
         1,
       );
+    });
+
+    it("should indent a node written between a list's brackets a level past the line they opened on", () => {
+      // the entries of a list are a level in even when they share the line their bracket is on
+      doTest(`import { a } from "./b";`, sourceFile => sourceFile.getImportDeclarations()[0].getNamedImports()[0], 1);
+      doTest(`import { a } from "./b";`, sourceFile => sourceFile.getDescendantsOfKind(SyntaxKind.CloseBraceToken)[0], 1);
+      doTest("function f(a: string) {}", sourceFile => sourceFile.getFunctionOrThrow("f").getParameters()[0], 1);
+      doTest("function f() {}", sourceFile => sourceFile.getDescendantsOfKind(SyntaxKind.CloseParenToken)[0], 1);
+      doTest("foo(a);", sourceFile => sourceFile.getDescendantsOfKind(SyntaxKind.CloseParenToken)[0], 1);
+      doTest("const x = 1;", sourceFile => sourceFile.getVariableDeclarationOrThrow("x"), 1);
+      // ... but only where an entry could begin, so the rest of an entry is not
+      doTest("const x = 1;", sourceFile => sourceFile.getVariableDeclarationOrThrow("x").getInitializerOrThrow(), 0);
+    });
+
+    it("should keep a function written as a list entry at the list's own level", () => {
+      // so that `run(() => {` opens its block at the level `run` is at
+      doTest("run(() => {\n    a();\n});\n", sourceFile => sourceFile.getDescendantsOfKind(SyntaxKind.ArrowFunction)[0], 0);
+      doTest("const f = () => {\n    a();\n};\n", sourceFile => sourceFile.getDescendantsOfKind(SyntaxKind.CloseParenToken)[0], 0);
+    });
+
+    it("should line a wrapped list's separators and closing bracket up under its entries", () => {
+      const wrapped = "foo(\n    a,\n    b,\n);\n";
+      doTest(wrapped, sourceFile => sourceFile.getDescendantsOfKind(SyntaxKind.CommaToken)[1], 1);
+      doTest(wrapped, sourceFile => sourceFile.getDescendantsOfKind(SyntaxKind.CloseParenToken)[0], 1);
+      doTest("enum E {\n    A,\n    B,\n}\n", sourceFile => getCloseBraces(sourceFile)[0], 1);
+    });
+
+    it("should indent a node trailing a construct that wrapped a level past that construct", () => {
+      doTest("const x = {\n    a: 1,\n};\n", sourceFile => sourceFile.getDescendantsOfKind(SyntaxKind.SemicolonToken)[0], 1);
+      doTest(`import {\n    a,\n} from "./b";\n`, sourceFile => sourceFile.getImportDeclarations()[0].getModuleSpecifier(), 1);
+    });
+
+    it("should keep a keyword that resumes a construct after its brace at that construct's level", () => {
+      doTest("if (a) {\n    b();\n} else {\n    c();\n}\n", sourceFile => sourceFile.getDescendantsOfKind(SyntaxKind.ElseKeyword)[0], 0);
+      doTest("try {\n    a();\n} catch (e) {\n    b();\n}\n", sourceFile => sourceFile.getDescendantsOfKind(SyntaxKind.CatchClause)[0], 0);
+      doTest("do {\n    a();\n} while (b);\n", sourceFile => sourceFile.getDescendantsOfKind(SyntaxKind.WhileKeyword)[0], 0);
+      // the brace is what it resumes from, wherever that brace was written
+      doTest("if (a)\n{\n    b();\n}\nelse\n{\n    c();\n}\n", sourceFile => sourceFile.getDescendantsOfKind(SyntaxKind.ElseKeyword)[0], 0);
+      doTest("if (a) {\n    b();\n} /* x */ else {\n    c();\n}\n", sourceFile => sourceFile.getDescendantsOfKind(SyntaxKind.ElseKeyword)[0], 0);
+      // ... and without one there is nothing to resume from, so it indents
+      doTest("if (a)\n    b();\nelse\n    c();\n", sourceFile => sourceFile.getDescendantsOfKind(SyntaxKind.ElseKeyword)[0], 1);
+      // a member is not resuming anything, whichever line the brace before it is on
+      doTest("class C {\n    m() {}\n    static x = 1;\n}\n", sourceFile => sourceFile.getClassOrThrow("C").getPropertyOrThrow("x"), 1);
+      doTest("class C {\n    m() {} static x = 1;\n}\n", sourceFile => sourceFile.getClassOrThrow("C").getPropertyOrThrow("x"), 1);
+    });
+
+    it("should not let a type argument list stand in for the parameters or arguments it precedes", () => {
+      doTest("function f<T>(a: string) {}", sourceFile => sourceFile.getFunctionOrThrow("f").getParameters()[0], 1);
+      doTest("function f<T>(a: string) {}", sourceFile => sourceFile.getFunctionOrThrow("f").getTypeParameters()[0], 1);
+      doTest("class C {\n    m<T>(a: T) {}\n}\n", sourceFile => sourceFile.getClassOrThrow("C").getMethodOrThrow("m").getParameters()[0], 2);
+      doTest("foo<number>(a, b);", sourceFile => sourceFile.getDescendantsOfKind(SyntaxKind.CallExpression)[0].getArguments()[0], 1);
+    });
+
+    it("should handle a file with nothing in it", () => {
+      doTest("", sourceFile => sourceFile, 0);
+      doTest("", sourceFile => sourceFile.getLastChildByKindOrThrow(SyntaxKind.EndOfFile), 0);
+      doTest("// just a comment\n", sourceFile => sourceFile.getLastChildByKindOrThrow(SyntaxKind.EndOfFile), 0);
+    });
+
+    it("should take an object literal's brace from its own line", () => {
+      // the brace is written wherever the expression holding it already is
+      doTest("foo({\n    a: 1,\n});\n", sourceFile => sourceFile.getDescendantsOfKind(SyntaxKind.ObjectLiteralExpression)[0], 0);
+      doTest(
+        "const x = {\n    a: 1,\n    b: {\n        c: 2,\n    },\n};\n",
+        sourceFile => sourceFile.getDescendantsOfKind(SyntaxKind.ObjectLiteralExpression)[1],
+        1,
+      );
+    });
+
+    it("should report the level a node would be written at rather than the one it has", () => {
+      doTest("class C {\n        m() {\n            a();\n        }\n}\n", sourceFile => sourceFile.getClassOrThrow("C").getMethodOrThrow("m"), 1);
+      doTest("class C {\nm() {\na();\n}\n}\n", sourceFile => sourceFile.getClassOrThrow("C").getMethodOrThrow("m"), 1);
+    });
+
+    it("should count one level per tab when the indentation text is a tab", () => {
+      const project = new Project({ useInMemoryFileSystem: true, manipulationSettings: { indentationText: IndentationText.Tab } });
+      const sourceFile = project.createSourceFile("/a.ts", "class C {\n\tm() {\n\t\ta();\n\t}\n}\n");
+      const method = sourceFile.getClassOrThrow("C").getMethodOrThrow("m");
+      expect(method.getBodyOrThrow().getIndentationLevel()).to.equal(1);
+      expect(method.getStatements()[0].getIndentationLevel()).to.equal(2);
+      method.setBodyText("b();");
+      expect(sourceFile.getFullText()).to.equal("class C {\n\tm() {\n\t\tb();\n\t}\n}\n");
     });
   });
 

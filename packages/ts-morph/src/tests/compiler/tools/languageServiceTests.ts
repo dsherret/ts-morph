@@ -166,6 +166,55 @@ describe("LanguageService", () => {
     });
   });
 
+  describe(nameof<LanguageService>("findReferencesAtPosition"), () => {
+    // a position belongs to the token it touches, the way the `typescript`
+    // package resolved one, rather than to whatever node happens to enclose it
+    const text = "class C { m(a: string) { return a; } }";
+
+    function doTest(pos: number, expected: [string, number][]) {
+      const { sourceFile, project } = getInfoFromText(text);
+      const nodes = project.getLanguageService().findReferencesAtPosition(sourceFile, pos)
+        .flatMap(symbol => symbol.getReferences().map(reference => [reference.getNode().getKindName(), reference.getNode().getStart()]));
+      expect(nodes).to.deep.equal(expected);
+    }
+
+    it("should resolve a keyword to what it opens", () => {
+      // the `class` keyword stands for the name of the class it opens
+      doTest(0, [["Identifier", 6]]);
+      doTest(4, [["Identifier", 6]]);
+    });
+
+    it("should resolve a position at a name's end to that name", () => {
+      doTest(7, [["Identifier", 6]]); // just after `C`
+      doTest(11, [["Identifier", 10]]); // just after `m`
+      doTest(33, [["Identifier", 12], ["Identifier", 32]]); // just after the `a` being returned
+    });
+
+    it("should resolve a position inside a token to that token", () => {
+      doTest(32, [["Identifier", 12], ["Identifier", 32]]);
+    });
+
+    it("should find nothing at a position that touches no token that names anything", () => {
+      doTest(9, []); // the space before `m`, which belongs to no token
+      doTest(31, []); // the space after `return`, so the `return` keyword
+      doTest(23, []); // the `{` that opens the method body
+    });
+  });
+
+  describe(nameof<LanguageService>("findReferencesAsNodes"), () => {
+    it("should find only the call sites of a constructor", () => {
+      // a constructor's own `constructor` keyword is a token tsgo scans into
+      // being rather than parses, so the reference it reports for the declaration
+      // has no handle to resolve and is dropped; what is left is the call sites
+      const { sourceFile, project } = getInfoFromText(
+        "class C {\n  constructor(p: string) {}\n}\nconst c = new C(\"a\");\nconst d = new C(\"b\");\n",
+      );
+      const ctor = sourceFile.getClassOrThrow("C").getConstructors()[0];
+      const nodes = project.getLanguageService().findReferencesAsNodes(ctor);
+      expect(nodes.map(node => [node.getKindName(), node.getStart()])).to.deep.equal([["Identifier", 54], ["Identifier", 76]]);
+    });
+  });
+
   describe(nameof<LanguageService>("getSuggestionDiagnostics"), () => {
     // this used to assert 80005, "'require' call may be converted to an import".
     // tsgo's suggestions come from the checker only — deprecated declarations and

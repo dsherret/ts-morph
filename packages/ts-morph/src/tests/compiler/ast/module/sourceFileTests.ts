@@ -923,6 +923,43 @@ describe("SourceFile", () => {
       doTest("import {name, name2} from 'test';", "import { name, name2 } from 'test';\n");
     });
 
+    it("should remove the spaces immediately within braces when told not to insert them", () => {
+      doTest(
+        "import { name } from 'test';\nconst o = { a: 1 };\ninterface I { a: number; }\nclass C { m() { return 1; } }\n",
+        // the space before the class's brace stays: a `}` that closed a block is
+        // followed by one whatever this setting says
+        "import {name} from 'test';\nconst o = {a: 1};\ninterface I {a: number;}\nclass C {m() {return 1;} }\n",
+        {},
+        { insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false },
+      );
+    });
+
+    it("should leave braces written in a string, a template or a comment alone when told not to insert spaces", () => {
+      doTest(
+        "const s = \"{ a }\";\nconst t = `{ b }`;\n// { c }\nconst o = { d: 1 };\n",
+        "const s = \"{ a }\";\nconst t = `{ b }`;\n// { c }\nconst o = {d: 1};\n",
+        {},
+        { insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false },
+      );
+    });
+
+    it("should leave the braces of a jsdoc type expression alone when told not to insert spaces", () => {
+      doTest(
+        "const x = 1;\n/** @type { { a: number } } */\nconst o = { a: 1 };\n",
+        "const x = 1;\n/** @type { { a: number } } */\nconst o = {a: 1};\n",
+        {},
+        { insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false },
+      );
+    });
+
+    it("should take the brace spacing from the manipulation settings", () => {
+      doTest(
+        "import { name } from 'test';",
+        "import {name} from 'test';\n",
+        { insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false },
+      );
+    });
+
     it("should format the text with eight spaces", () => {
       doTest(
         "class MyClass {\n    myMethod() {\n    }\n}",

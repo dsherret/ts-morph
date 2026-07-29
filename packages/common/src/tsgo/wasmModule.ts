@@ -25,6 +25,7 @@ declare namespace WebAssembly {
   interface Module {}
 }
 declare const WebAssembly: {
+  Module: new(bytes: Uint8Array | ArrayBuffer) => WebAssembly.Module;
   compile(bytes: Uint8Array | ArrayBuffer): Promise<WebAssembly.Module>;
   compileStreaming(source: Response | Promise<Response>): Promise<WebAssembly.Module>;
 };
@@ -36,10 +37,24 @@ export interface InitializeWasmOptions {
    *
    * A `Response` is accepted so that a cached copy costs the caller nothing to
    * use: the answer from `caches.match("/typescript.wasm")` or from a service
-   * worker goes straight in and is compiled off the stream.
+   * worker goes straight in and is compiled off the stream. A compiled module is
+   * accepted for the other way round: a module survives `postMessage`, so one
+   * thread can compile the reactor once and hand it to every worker that needs
+   * it.
    */
-  wasm?: Response | Promise<Response> | URL | Uint8Array | ArrayBuffer;
+  wasm?: Response | Promise<Response> | URL | Uint8Array | ArrayBuffer | CompiledWasmModule;
 }
+
+/**
+ * A compiled `WebAssembly.Module`, ready to instantiate.
+ *
+ * Named here rather than written as `WebAssembly.Module` because that name is
+ * declared by the DOM and web worker libraries and by nothing else: spelling it
+ * would make these declarations, which every consumer type checks against,
+ * require a `lib` that a Node project does not have. The shape is the standard
+ * one, which carries no members of its own.
+ */
+export interface CompiledWasmModule {}
 
 /**
  * Compiles the TypeScript compiler, so that everything after it can be
@@ -70,12 +85,62 @@ export async function initializeWasm(options: InitializeWasmOptions = {}): Promi
   setDefaultWasmModule(await compileResponse(fetch(url)));
 }
 
-function compileSource(wasm: NonNullable<InitializeWasmOptions["wasm"]>): Promise<WebAssembly.Module> {
+/**
+ * The compiled module behind whatever the caller supplied.
+ *
+ * Takes `unknown` rather than the option's type because that type cannot say
+ * much: a compiled module has no members — the standard one is an empty
+ * interface — so any object satisfies the option, and a file path satisfies it
+ * too. What is actually supported is decided here, and anything else is said
+ * out loud rather than left to fail further down.
+ */
+async function compileSource(wasm: unknown): Promise<WebAssembly.Module> {
+  // a promise of any of the rest, since `{ wasm: fetch(url) }` is the documented
+  // shape and a missing `await` on one of the others should not be a stranger
+  // kind of failure
+  if (isThenable(wasm))
+    return compileSource(await wasm);
   if (wasm instanceof URL)
     return compileResponse(fetch(wasm));
   if (wasm instanceof Uint8Array || wasm instanceof ArrayBuffer)
     return WebAssembly.compile(wasm);
-  return compileResponse(wasm);
+  // already compiled: the caller did the work, or another thread did and posted
+  // the result over
+  if (isCompiledModule(wasm))
+    return wasm;
+  if (isResponse(wasm))
+    return compileResponse(wasm);
+  throw new Error(
+    `The \`wasm\` option was given a value of type ${typeof wasm}, which is not a source the compiler can be loaded from. `
+      + "Pass a Response or a promise of one, a URL, the module's bytes, or an already compiled WebAssembly.Module. "
+      + "A file path is not one of them: read the file and pass the bytes.",
+  );
+}
+
+/** Whether this is a promise of one of the other things the option takes. */
+function isThenable(wasm: unknown): wasm is Promise<unknown> {
+  return typeof (wasm as { then?: unknown } | null | undefined)?.then === "function";
+}
+
+/**
+ * Whether the caller handed over a module rather than something to make one
+ * from. Written as a guard because `CompiledWasmModule` has no members to
+ * narrow on, being the shape of a `WebAssembly.Module`.
+ */
+function isCompiledModule(wasm: unknown): wasm is WebAssembly.Module {
+  return wasm instanceof WebAssembly.Module;
+}
+
+/**
+ * Whether this is a `Response`.
+ *
+ * Duck-typed rather than `instanceof Response`, because the point of taking a
+ * `Response` is that it comes from wherever the caller already had one — a
+ * service worker, a `Cache`, a polyfilled fetch — and those do not have to share
+ * a constructor with this realm's.
+ */
+function isResponse(wasm: unknown): wasm is Response {
+  return typeof (wasm as { arrayBuffer?: unknown } | null | undefined)?.arrayBuffer === "function";
 }
 
 async function compileResponse(source: Response | Promise<Response>): Promise<WebAssembly.Module> {

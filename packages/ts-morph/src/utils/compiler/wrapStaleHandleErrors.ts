@@ -35,16 +35,22 @@ function wrapMethod<T extends (...args: any[]) => any>(method: T): T {
   } as T;
 }
 
-// the compiler names which kind of handle it failed to resolve, and the message
-// reads better saying the same word back than guessing from the class asked
-const staleHandleRegExp = /\b(type|symbol|signature) handle \d+ not found/;
+// Two failures mean the same thing to the caller. While the program a handle
+// came from is still around the compiler names the kind it could not resolve,
+// and the message reads better saying that word back than guessing from the
+// class asked; once the registry has let that program go the request cannot be
+// routed at all and the compiler names only the snapshot, leaving nothing to say
+// which kind it was. The second form is what any request carrying a dead snapshot
+// gets, not only a handle lookup — but only these classes hold onto one, so
+// reaching it means the caller kept a type, symbol or signature too long.
+const staleHandleRegExp = /\b(?:(type|symbol|signature) handle|snapshot) \d+ not found/;
 
 function toStaleHandleError(err: unknown): errors.InvalidOperationError | undefined {
   const message = (err as { message?: unknown } | undefined)?.message;
   const match = typeof message === "string" ? staleHandleRegExp.exec(message) : undefined;
   if (match == null)
     return undefined;
-  const kind = match[1];
+  const kind = match[1] ?? "type, symbol or signature";
   const error = new errors.InvalidOperationError(
     `This ${kind} came from a program that a manipulation has since replaced. Types, symbols, and signatures are snapshots of the `
       + `program that created them, so they cannot be used once a source file has been manipulated — get the ${kind} again from the `

@@ -1,5 +1,17 @@
 import { errors, ts } from "@ts-morph/common";
 
+/**
+ * A compiled `WebAssembly.Module`, ready to instantiate.
+ *
+ * Named here rather than written as `WebAssembly.Module` because that name is
+ * declared by the DOM and web worker libraries and by nothing else: spelling it
+ * would make these declarations, which every consumer type checks against,
+ * require a `lib` that a Node project does not have. The shape is the standard
+ * one, which carries no members of its own.
+ */
+export interface CompiledWasmModule {
+}
+
 /** Holds the compiler options. */
 export declare class CompilerOptionsContainer extends SettingsContainer<ts.CompilerOptions> {
   constructor(defaultSettings?: ts.CompilerOptions);
@@ -102,9 +114,12 @@ export interface InitializeWasmOptions {
    *
    * A `Response` is accepted so that a cached copy costs the caller nothing to
    * use: the answer from `caches.match("/typescript.wasm")` or from a service
-   * worker goes straight in and is compiled off the stream.
+   * worker goes straight in and is compiled off the stream. A compiled module is
+   * accepted for the other way round: a module survives `postMessage`, so one
+   * thread can compile the reactor once and hand it to every worker that needs
+   * it.
    */
-  wasm?: Response | Promise<Response> | URL | Uint8Array | ArrayBuffer;
+  wasm?: Response | Promise<Response> | URL | Uint8Array | ArrayBuffer | CompiledWasmModule;
 }
 
 /** An implementation of a file system that exists in memory only. */
@@ -3930,17 +3945,28 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
    * Gets the indentation level of the current node.
    *
    * Breaking change: tsgo has no smart-indentation service, so this is worked
-   * out from the text. A node that begins its own line reports the deeper of the
-   * indentation that line actually has and one level past the ancestor that
-   * opened it — taking the deeper of the two is what keeps a node whose own line
-   * is under-indented, a class member written flush against a two-space margin,
-   * reading as a member of its class, while code that is deliberately indented
-   * further keeps its own depth. A node that starts partway through a line has no
-   * indentation of its own, so it reports whatever that line already has.
+   * out from the text. A node is indented relative to the innermost construct
+   * that opened before it: a level past the line that construct starts on, or
+   * that construct's own indentation when the two share a line. The level is
+   * therefore the one the node *would* be written at rather than the one it has,
+   * so a class member written flush against the margin still reads as a member of
+   * its class, and one indented further than its siblings still reads at its
+   * class's depth. A node with no such construct around it — anything at the top
+   * of its file — is indented only by whatever its own line has.
    *
    * A brace lines up with the construct it opens or closes rather than with that
    * construct's contents, so a node starting with `{` or `}` reports its
-   * container's indentation instead of a level past it.
+   * container's indentation instead of a level past it. An object literal is the
+   * exception: its opening brace is written wherever the expression holding it
+   * already is, so it takes its own line's indentation.
+   *
+   * At either bracket of a list the indenter knows about — parameters, arguments,
+   * type arguments, import and export specifiers, object and array literals,
+   * binding patterns and variable declaration lists — and at the start of each of
+   * its entries and separators, the level is one past the line that list opened
+   * on, no matter where the text actually sits. That is why the specifier in
+   * `import { a } from "./b";` is at level 1 in a file with no indentation.
+   * Anywhere else between those brackets is ordinary text, indented by its line.
    *
    * The level may be fractional when the file's indentation is not a whole
    * multiple of `manipulationSettings.indentationText` — a two-space file read

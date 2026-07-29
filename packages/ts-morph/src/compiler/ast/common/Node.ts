@@ -1307,17 +1307,28 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    * Gets the indentation level of the current node.
    *
    * Breaking change: tsgo has no smart-indentation service, so this is worked
-   * out from the text. A node that begins its own line reports the deeper of the
-   * indentation that line actually has and one level past the ancestor that
-   * opened it — taking the deeper of the two is what keeps a node whose own line
-   * is under-indented, a class member written flush against a two-space margin,
-   * reading as a member of its class, while code that is deliberately indented
-   * further keeps its own depth. A node that starts partway through a line has no
-   * indentation of its own, so it reports whatever that line already has.
+   * out from the text. A node is indented relative to the innermost construct
+   * that opened before it: a level past the line that construct starts on, or
+   * that construct's own indentation when the two share a line. The level is
+   * therefore the one the node *would* be written at rather than the one it has,
+   * so a class member written flush against the margin still reads as a member of
+   * its class, and one indented further than its siblings still reads at its
+   * class's depth. A node with no such construct around it — anything at the top
+   * of its file — is indented only by whatever its own line has.
    *
    * A brace lines up with the construct it opens or closes rather than with that
    * construct's contents, so a node starting with `{` or `}` reports its
-   * container's indentation instead of a level past it.
+   * container's indentation instead of a level past it. An object literal is the
+   * exception: its opening brace is written wherever the expression holding it
+   * already is, so it takes its own line's indentation.
+   *
+   * At either bracket of a list the indenter knows about — parameters, arguments,
+   * type arguments, import and export specifiers, object and array literals,
+   * binding patterns and variable declaration lists — and at the start of each of
+   * its entries and separators, the level is one past the line that list opened
+   * on, no matter where the text actually sits. That is why the specifier in
+   * `import { a } from "./b";` is at level 1 in a file with no indentation.
+   * Anywhere else between those brackets is ordinary text, indented by its line.
    *
    * The level may be fractional when the file's indentation is not a whole
    * multiple of `manipulationSettings.indentationText` — a two-space file read
@@ -1332,26 +1343,30 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     if (jsDoc != null)
       return this.#getJsDocIndentationLevel(fullText, jsDoc, start);
 
-    const ownLevel = this.#getLineIndentationLevel(fullText, start);
-    const container = this.#getIndentationContainer();
-    if (container == null || !isStartOfLine())
-      return ownLevel;
+    const startToken = this.#getTokenAtPos(start);
+    // an object literal's opening brace is written where the expression holding
+    // it already is, so it takes its line's indentation and nothing more
+    if (fullText[start] === "{" && startToken?.getParent()?.getKind() === SyntaxKind.ObjectLiteralExpression)
+      return this.#getLineIndentationLevel(fullText, start);
 
-    const containerLevel = this.#getLineIndentationLevel(fullText, container.getStart());
-    if (startsWithBrace())
+    const entryLevel = this.#getWrappedEntryLevel(fullText, start);
+    if (entryLevel != null)
+      return entryLevel;
+
+    const listLevel = this.#getListContinuationLevel(fullText, start, startToken);
+    if (listLevel != null)
+      return listLevel;
+
+    // a node sharing its container's line is at that container's own indentation,
+    // which is the line's, so there is nothing to look up
+    const containerStart = this.#getIndentationContainer()?.getStart();
+    if (containerStart == null || !hasNewLineInRange(fullText, [containerStart, start]))
+      return this.#getLineIndentationLevel(fullText, start);
+
+    const containerLevel = this.#getLineIndentationLevel(fullText, containerStart);
+    if (startsWithBrace() || resumesAfterBrace(fullText, startToken))
       return containerLevel;
-    return Math.max(ownLevel, containerLevel + 1);
-
-    function isStartOfLine() {
-      for (let i = start - 1; i >= 0; i--) {
-        const charCode = fullText.charCodeAt(i);
-        if (charCode === CharCodes.NEWLINE)
-          return true;
-        if (!StringUtils.isWhitespaceCharCode(charCode))
-          return false;
-      }
-      return true;
-    }
+    return containerLevel + 1;
 
     function startsWithBrace() {
       const char = fullText[start];
@@ -1393,17 +1408,120 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   }
 
   /**
-   * The nearest ancestor that starts on an earlier line, which is the node whose
-   * indentation this one is written relative to. `undefined` when there is none
-   * — a node at the top of its file is indented only by whatever its own line
-   * already has.
+   * The level a position immediately following a list that has wrapped gets: the
+   * indentation of the entry it follows, which is how a `,` or a closing bracket
+   * comes to line up under the entries rather than under the opening bracket.
+   * `undefined` when every entry so far shares one line, because then there is
+   * nothing wrapped to line up with.
+   * @internal
+   */
+  #getWrappedEntryLevel(fullText: string, start: number): number | undefined {
+    const previousPos = getPreviousNonWhitespacePos(fullText, start) - 1;
+    if (previousPos < 0)
+      return undefined;
+
+    // the entry the text before this position belongs to, if it ended there
+    let previous = this.#getTokenAtPos(previousPos);
+    let list: compiler.SyntaxList | undefined;
+    while (previous != null && previous.getEnd() <= start) {
+      list = previous.getParentSyntaxList();
+      if (list != null)
+        break;
+      previous = previous.getParent();
+    }
+    if (list == null || previous == null)
+      return undefined;
+
+    const sourceFile = this._sourceFile.compilerNode;
+    const entries = ExtendedParser.getCompilerChildren(list.compilerNode, sourceFile);
+    let index = entries.indexOf(previous.compilerNode);
+    if (index < 0)
+      return undefined;
+    if (entries[index].kind === SyntaxKind.CommaToken)
+      index--;
+    else if (!getBracketedLists(list.getParentOrThrow(), sourceFile).some(candidate => candidate.node === list!.compilerNode))
+      // a separator lines up under any list, but an entry only under one the
+      // indenter tracks — statements and class members are not among them
+      return undefined;
+    if (index <= 0)
+      return undefined;
+
+    const entryStart = entries[index].getStart(sourceFile);
+    if (!hasNewLineInRange(fullText, [entries[0].end, entryStart]))
+      return undefined;
+    return this.#getLineIndentationLevel(fullText, entryStart);
+  }
+
+  /**
+   * The level a position between the brackets of a list gets, or `undefined`
+   * when the position is not on one of that list's boundaries.
+   *
+   * The indenter reads a level off the innermost list containing the position,
+   * but only where a list entry could begin: at either bracket and at the start
+   * of each entry and separator. Everywhere else inside — the `1` of
+   * `const x = 1` — is ordinary text that takes its indentation from the line.
+   * The level is one past the line the list opened on rather than anything the
+   * text itself has, so an entry sharing that line still reads as a level in,
+   * an entry indented past its siblings still reads at theirs, and the closing
+   * bracket lines up with the entries rather than with the opener.
+   * @internal
+   */
+  #getListContinuationLevel(fullText: string, start: number, startToken: Node | undefined): number | undefined {
+    const sourceFile = this._sourceFile.compilerNode;
+    let ancestor: Node | undefined = this.getParent();
+    while (ancestor != null) {
+      const lists = getBracketedLists(ancestor, sourceFile);
+      ancestor = ancestor.getParent();
+      const list = lists.find(candidate => start >= candidate.start && start <= candidate.end);
+      if (list == null)
+        continue;
+
+      const entries = ExtendedParser.getCompilerChildren(list.node, sourceFile);
+      const isEntryStart = entries.some(entry => entry.getStart(sourceFile) === start);
+      if (!isEntryStart && start !== list.start && start !== list.end)
+        return undefined;
+
+      const listLevel = this.#getLineIndentationLevel(fullText, list.node.pos);
+      // a function written as an entry keeps the list's own level, so that its
+      // body is indented from where the call starts rather than from the entry —
+      // the token here is that function's parenthesis or its `function` keyword
+      const parentKind = startToken?.getParent()?.getKind();
+      const startsFunction = parentKind === SyntaxKind.ArrowFunction || parentKind === SyntaxKind.FunctionExpression;
+      return startsFunction ? listLevel : listLevel + 1;
+    }
+    return undefined;
+  }
+
+  /**
+   * The token covering `pos`, which is inside this node or just before it.
+   *
+   * The search starts from the nearest node here that covers the position rather
+   * than from the top of the file, because `SourceFile#getDescendantAtPos` walks
+   * every statement ahead of this one on the way down and this runs on the path
+   * manipulation takes to decide what indentation to write.
+   * @internal
+   */
+  #getTokenAtPos(pos: number): Node | undefined {
+    let scope: Node | undefined = this;
+    while (scope != null && scope.getPos() > pos)
+      scope = scope.getParent();
+    return scope?.getDescendantAtPos(pos) ?? scope;
+  }
+
+  /**
+   * The nearest ancestor that opened before this node did, which is the node
+   * whose indentation this one is written relative to. Ancestors beginning at the
+   * same position are passed over because they are the same piece of text — the
+   * `{` of a method body is written relative to the method, not to the block it
+   * opens. `undefined` when there is none: a node at the top of its file is
+   * indented only by whatever its own line already has.
    * @internal
    */
   #getIndentationContainer(): Node | undefined {
-    const startLinePos = this.getStartLinePos();
+    const start = this.getStart();
     let ancestor = this.getParent();
     while (ancestor != null && !Node.isSourceFile(ancestor)) {
-      if (ancestor.getStartLinePos() < startLinePos)
+      if (ancestor.getStart() < start)
         return ancestor;
       ancestor = ancestor.getParent();
     }
@@ -1459,6 +1577,11 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    * The indentation of the line `pos` is on, measured in levels of the configured
    * indentation text. Fractional when the line's indentation is not a whole number
    * of levels.
+   *
+   * A tab advances to the next multiple of the indentation text's own length, so
+   * a file indented with tabs read with tab settings counts one level per tab —
+   * the same tab size the formatter is handed in
+   * {@link fillDefaultEditorSettings}.
    * @internal
    */
   #getLineIndentationLevel(fullText: string, pos: number) {
@@ -1466,7 +1589,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     while (lineStart > 0 && fullText.charCodeAt(lineStart - 1) !== CharCodes.NEWLINE)
       lineStart--;
 
-    const tabSize = this._context.manipulationSettings._getIndentSizeInSpaces();
+    const tabSize = this._context.manipulationSettings.getIndentationText().length;
     let column = 0;
     for (let i = lineStart; i < fullText.length; i++) {
       const charCode = fullText.charCodeAt(i);
@@ -4514,6 +4637,121 @@ function createKindGuard<TKind extends keyof KindToNodeMappings>(
   return (node: compiler.Node | undefined): node is KindToNodeMappings[TKind] => {
     return node?.getKind() == kind;
   };
+}
+
+/** The bracket pairs {@link getBracketedLists} looks for, hoisted so it allocates none. */
+const angleBrackets = [[SyntaxKind.LessThanToken, SyntaxKind.GreaterThanToken]] as const;
+const parens = [[SyntaxKind.OpenParenToken, SyntaxKind.CloseParenToken]] as const;
+const braces = [[SyntaxKind.OpenBraceToken, SyntaxKind.CloseBraceToken]] as const;
+const squareBrackets = [[SyntaxKind.OpenBracketToken, SyntaxKind.CloseBracketToken]] as const;
+const angleBracketsThenParens = [...angleBrackets, ...parens] as const;
+const noBrackets = [] as const;
+
+/**
+ * The lists `node` holds that the smart indenter reads an indentation level off,
+ * each with the span between its brackets — the span the level applies to.
+ *
+ * Which lists those are is the compiler's own table (`SmartIndenter.getListByRange`)
+ * and it is narrower than it looks: a class's members and a block's statements
+ * are not on it, so only the type parameters of a class and the parameters of a
+ * function-like are found here. A function-like has two of them and they do not
+ * nest, which is why the caller picks by position rather than taking the first.
+ * A variable declaration list has no brackets, so its span is the list itself,
+ * running from the declaration keyword.
+ */
+function getBracketedLists(node: Node, sourceFile: ts.SourceFile) {
+  const kind = node.getKind();
+  const bracketKinds = getBracketKinds(kind);
+  if (bracketKinds.length === 0 && kind !== SyntaxKind.VariableDeclarationList)
+    return noBrackets;
+
+  const children = node._getCompilerChildren();
+  if (kind === SyntaxKind.VariableDeclarationList) {
+    const list = children.find(child => child.kind === SyntaxKind.SyntaxList);
+    return list == null ? noBrackets : [{ node: list, start: list.pos, end: list.end }];
+  }
+
+  const lists: { node: ts.Node; start: number; end: number }[] = [];
+  for (const [open, close] of bracketKinds) {
+    for (let i = 1; i < children.length - 1; i++) {
+      if (children[i].kind !== SyntaxKind.SyntaxList || children[i - 1].kind !== open || children[i + 1].kind !== close)
+        continue;
+      lists.push({ node: children[i], start: children[i - 1].end, end: children[i + 1].getStart(sourceFile) });
+      break;
+    }
+  }
+  return lists;
+}
+
+function getBracketKinds(kind: SyntaxKind) {
+  switch (kind) {
+    case SyntaxKind.ObjectLiteralExpression:
+    case SyntaxKind.TypeLiteral:
+    case SyntaxKind.NamedImports:
+    case SyntaxKind.NamedExports:
+    case SyntaxKind.ObjectBindingPattern:
+      return braces;
+    case SyntaxKind.ArrayLiteralExpression:
+    case SyntaxKind.ArrayBindingPattern:
+      return squareBrackets;
+    case SyntaxKind.TypeReference:
+    case SyntaxKind.ClassDeclaration:
+    case SyntaxKind.ClassExpression:
+    case SyntaxKind.InterfaceDeclaration:
+    case SyntaxKind.TypeAliasDeclaration:
+      return angleBrackets;
+    case SyntaxKind.ArrowFunction:
+    case SyntaxKind.CallExpression:
+    case SyntaxKind.CallSignature:
+    case SyntaxKind.Constructor:
+    case SyntaxKind.ConstructorType:
+    case SyntaxKind.ConstructSignature:
+    case SyntaxKind.FunctionDeclaration:
+    case SyntaxKind.FunctionExpression:
+    case SyntaxKind.MethodDeclaration:
+    case SyntaxKind.MethodSignature:
+    case SyntaxKind.NewExpression:
+      return angleBracketsThenParens;
+    // only the getter — the compiler's table leaves out the setter
+    case SyntaxKind.GetAccessor:
+      return parens;
+    default:
+      return noBrackets;
+  }
+}
+
+/**
+ * Whether `token` picks its construct back up where that construct's braces left
+ * off — the `else` of an `if`, the `catch` and `finally` of a `try`, the `while`
+ * of a `do`, the `from` of an `import` or `export`. Those continue the construct
+ * rather than sit inside it, so they are written level with it, and only once the
+ * part before them closed with a brace: an `else` after an unbraced branch is
+ * indented into the `if` like any other continuation.
+ */
+function resumesAfterBrace(fullText: string, token: Node | undefined) {
+  const precedingPart = getPartBeingResumed(token);
+  return precedingPart != null && fullText[precedingPart.getEnd() - 1] === "}";
+}
+
+function getPartBeingResumed(token: Node | undefined) {
+  const parent = token?.getParent();
+  switch (token?.getKind()) {
+    case SyntaxKind.ElseKeyword:
+      return parent?.getKind() === SyntaxKind.IfStatement ? token.getPreviousSibling() : undefined;
+    // the keyword opens the clause, so what it resumes is what came before the clause
+    case SyntaxKind.CatchKeyword:
+      return parent?.getKind() === SyntaxKind.CatchClause ? parent.getPreviousSibling() : undefined;
+    case SyntaxKind.FinallyKeyword:
+      return parent?.getKind() === SyntaxKind.TryStatement ? token.getPreviousSibling() : undefined;
+    case SyntaxKind.WhileKeyword:
+      return parent?.getKind() === SyntaxKind.DoStatement ? token.getPreviousSibling() : undefined;
+    case SyntaxKind.FromKeyword:
+      return parent?.getKind() === SyntaxKind.ImportDeclaration || parent?.getKind() === SyntaxKind.ExportDeclaration
+        ? token.getPreviousSibling()
+        : undefined;
+    default:
+      return undefined;
+  }
 }
 
 function* getCompilerDescendantsIterator(node: ts.Node, sourceFile: ts.SourceFile): IterableIterator<ts.Node> {

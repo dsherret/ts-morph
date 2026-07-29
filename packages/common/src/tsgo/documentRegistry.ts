@@ -27,7 +27,22 @@ import { ScriptTarget } from "../../../../submodules/typescript-go/_packages/nat
 /** The tsconfig every file in the registry belongs to. */
 const configFilePath = "/tsconfig.json";
 
-/** How many superseded snapshots the checker handed objects out from are kept alive — see DocumentRegistry#retire. */
+/**
+ * How many superseded snapshots the checker handed objects out from are kept
+ * alive — see DocumentRegistry#retire.
+ *
+ * This is exactly how many edits a `Type`, `Symbol` or `Signature` taken before
+ * them keeps working across, so it is observable and not a tuning knob: at 0 the
+ * first edit costs the caller `getProperties`, `getMembers`, `getExports`,
+ * `getDeclarations`, `getFlags`, `getSymbol`, `getCallSignatures` and a signature's
+ * `getParameters` and `getDeclaration`, and the failure stops even being a stale
+ * handle the compiler can name. (Only the requests that route back through the
+ * current checker — `getText`, `getApparentType`, `getNonNullableType`,
+ * `getBaseTypes`, `Symbol#getDeclaredType` — fail on the first edit whatever this
+ * is.) Against that, two retained programs were not measurable over run-to-run
+ * variance: 500 files edited 24 times, asking the checker each time, sat at
+ * ~199MB rss either way.
+ */
 const retiredSnapshotLimit = 2;
 
 export interface DocumentRegistryOptions {

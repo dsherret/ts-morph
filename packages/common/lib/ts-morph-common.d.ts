@@ -926,10 +926,16 @@ export interface InProcessApiOptions {
     /** Whether the file system distinguishes case. Defaults to true. */
     useCaseSensitiveFileNames?: boolean;
     /**
-     * The reactor module's bytes. Defaults to the module shipped beside this
-     * bundle, or to whatever `initializeWasm` compiled.
+     * The reactor module: already compiled, or the bytes to compile it from.
+     * Defaults to the module shipped beside this bundle, or to whatever
+     * `initializeWasm` compiled.
+     *
+     * A file path is deliberately not accepted, though it once was. One loader now
+     * serves Node, Deno and the browser, and only two of those have a file system;
+     * a path would be an option that exists everywhere and works in some places.
+     * Read the file and pass the bytes, or hand over a compiled module.
      */
-    wasm?: Uint8Array | ArrayBuffer;
+    wasm?: Uint8Array | ArrayBuffer | CompiledWasmModule;
 }
 
 /**
@@ -987,6 +993,18 @@ export declare function getStoredNode(node: Node): Node | undefined;
 export declare function isReconstructedNode(node: Node): boolean;
 
 /**
+ * A compiled `WebAssembly.Module`, ready to instantiate.
+ *
+ * Named here rather than written as `WebAssembly.Module` because that name is
+ * declared by the DOM and web worker libraries and by nothing else: spelling it
+ * would make these declarations, which every consumer type checks against,
+ * require a `lib` that a Node project does not have. The shape is the standard
+ * one, which carries no members of its own.
+ */
+export interface CompiledWasmModule {
+}
+
+/**
  * Compiles the TypeScript compiler, so that everything after it can be
  * synchronous.
  *
@@ -1016,9 +1034,12 @@ export interface InitializeWasmOptions {
      *
      * A `Response` is accepted so that a cached copy costs the caller nothing to
      * use: the answer from `caches.match("/typescript.wasm")` or from a service
-     * worker goes straight in and is compiled off the stream.
+     * worker goes straight in and is compiled off the stream. A compiled module is
+     * accepted for the other way round: a module survives `postMessage`, so one
+     * thread can compile the reactor once and hand it to every worker that needs
+     * it.
      */
-    wasm?: Response | Promise<Response> | URL | Uint8Array | ArrayBuffer;
+    wasm?: Response | Promise<Response> | URL | Uint8Array | ArrayBuffer | CompiledWasmModule;
 }
 
 /**

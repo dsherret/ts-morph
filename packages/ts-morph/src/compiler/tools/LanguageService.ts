@@ -1,11 +1,12 @@
-import { errors, getStoredNode, SymbolFlags, SyntaxKind, ts } from "@ts-morph/common";
+import { errors, isReconstructedNode, SymbolFlags, SyntaxKind, ts } from "@ts-morph/common";
 import { getTextFromTextChanges } from "../../manipulation";
 import { ProjectContext } from "../../ProjectContext";
 import { fillDefaultFormatCodeSettings } from "../../utils";
 import { ClassDeclaration, ClassExpression } from "../ast/class";
 import { Node } from "../ast/common";
+import { BinaryExpression } from "../ast/expression";
 import { QuoteKind } from "../ast/literal";
-import { ModuleDeclaration, ModuleDeclarationKind, SourceFile } from "../ast/module";
+import { ExportDeclaration, ExportSpecifier, ImportDeclaration, ImportSpecifier, ModuleDeclaration, ModuleDeclarationKind, SourceFile } from "../ast/module";
 import { FormatCodeSettings, RenameOptions } from "./inputs";
 import { Program } from "./Program";
 import {
@@ -173,14 +174,10 @@ export class LanguageService {
    * @param pos - Position to find the reference at.
    */
   findReferencesAtPosition(sourceFile: SourceFile, pos: number) {
-    // tsgo resolves references from a node rather than from a bare position, and
-    // the node under a position is often a rebuilt one — punctuation, a keyword,
-    // a syntax list — which the compiler has no handle for. References are a
-    // question about a position, so ask about the node that encloses it.
-    const node = sourceFile.getDescendantAtPos(pos);
-    if (node == null)
-      return [];
-    const location = getStoredNode(node.compilerNode);
+    // tsgo resolves references from a node rather than from a bare position, so
+    // the position is resolved to a node here on the terms the `typescript`
+    // package used.
+    const location = getReferenceLocationAtPosition(sourceFile, pos);
     if (location == null)
       return [];
     const entries = this.#context.compilerFactory.documentRegistry.checker.getReferencedSymbolsForNode(location, pos);
@@ -238,8 +235,9 @@ export class LanguageService {
    * @param formatSettings - Format code settings.
    */
   getFormattingEditsForRange(filePath: string, range: [number, number], formatSettings: FormatCodeSettings) {
-    const edits = this.compilerObject.formatDocumentRange(filePath, range[0], range[1], this.#getFilledSettings(formatSettings));
-    return edits.map(e => new TextChange(toTextChange(e)));
+    const filled = this.#fillSettings(formatSettings);
+    const edits = this.compilerObject.formatDocumentRange(filePath, range[0], range[1], toFormattingOptions(filled));
+    return this.#withBraceSpacing(filePath, edits, filled, range).map(e => new TextChange(toTextChange(e)));
   }
 
   /**
@@ -249,8 +247,9 @@ export class LanguageService {
    */
   getFormattingEditsForDocument(filePath: string, formatSettings: FormatCodeSettings) {
     const standardizedFilePath = this.#context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
-    const edits = this.compilerObject.formatDocument(standardizedFilePath, this.#getFilledSettings(formatSettings));
-    return edits.map(e => new TextChange(toTextChange(e)));
+    const filled = this.#fillSettings(formatSettings);
+    const edits = this.compilerObject.formatDocument(standardizedFilePath, toFormattingOptions(filled));
+    return this.#withBraceSpacing(standardizedFilePath, edits, filled).map(e => new TextChange(toTextChange(e)));
   }
 
   /**
@@ -333,7 +332,8 @@ export class LanguageService {
    */
   getCombinedCodeFix(filePathOrSourceFile: string | SourceFile, fixId: string, formatSettings: FormatCodeSettings = {}): CombinedCodeActions {
     const fileName = this.#getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
-    const result = this.compilerObject.getCombinedCodeFix(fileName, fixId, this.#getFilledSettings(formatSettings), this.#getQuotePreference());
+    const settings = toFormattingOptions(this.#fillSettings(formatSettings));
+    const result = this.compilerObject.getCombinedCodeFix(fileName, fixId, settings, this.#getQuotePreference());
     return new CombinedCodeActions(this.#context, { changes: result.changes.map(toFileTextChanges) });
   }
 
@@ -469,14 +469,23 @@ export class LanguageService {
         containerKind: ts.ScriptElementKind.unknown,
         containerName: "",
       },
-      references: entry.references.map((handle, i) => {
-        const node = handle.resolve();
-        return {
-          ...toNodeSpan(handle.path, node),
-          isWriteAccess: entry.writeAccess[i] ?? false,
-          isDefinition: handle.path === entry.definition.path && node != null && isDefinitionNode(node),
-        };
-      }),
+      references: entry.references
+        // a handle names a node by its index in the file tsgo parsed, and index
+        // zero is the "no such node" sentinel. A reference tsgo scans into being
+        // rather than parses — the `constructor` keyword a constructor search
+        // reports for the declaration it started from — has no index of its own,
+        // so it arrives as zero and would resolve to whatever the sentinel slot
+        // happens to hold. See the breaking changes list.
+        .map((handle, i) => ({ handle, isWriteAccess: entry.writeAccess[i] ?? false }))
+        .filter(({ handle }) => handle.index !== 0)
+        .map(({ handle, isWriteAccess }) => {
+          const node = handle.resolve();
+          return {
+            ...toNodeSpan(handle.path, node),
+            isWriteAccess,
+            isDefinition: handle.path === entry.definition.path && node != null && isDefinitionNode(node),
+          };
+        }),
     };
   }
 
@@ -543,18 +552,36 @@ export class LanguageService {
     return this.#context.manipulationSettings.getQuoteKind() === QuoteKind.Single ? "single" : "double";
   }
 
+  /**
+   * The formatter's edits, with the one brace setting tsgo's formatter does not
+   * take applied to them.
+   *
+   * tsgo always writes `{ a }`, so
+   * `insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false` closes the gap
+   * on the inside of each brace here instead. Only the space between two tokens is
+   * ever rewritten, so a brace written inside a string, a template, a comment or
+   * JSX text — none of which are brace tokens — cannot be reached.
+   * @internal
+   */
+  #withBraceSpacing(
+    filePath: string,
+    edits: readonly ts.TextEdit[],
+    settings: FormatCodeSettings,
+    range?: [number, number],
+  ): readonly ts.TextEdit[] {
+    if (settings.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces !== false)
+      return edits;
+    const sourceFile = this.#context.compilerFactory.getSourceFileFromCacheFromFilePath(
+      this.#context.fileSystemWrapper.getStandardizedAbsolutePath(filePath),
+    );
+    return sourceFile == null ? edits : closeUpSpacesInsideBraces(sourceFile, edits, range);
+  }
+
   /** @internal */
-  #getFilledSettings(settings: FormatCodeSettings): ts.FormattingOptions {
+  #fillSettings(settings: FormatCodeSettings): FormatCodeSettings {
     const filled = Object.assign(this.#context.getFormatCodeSettings(), settings);
     fillDefaultFormatCodeSettings(filled, this.#context.manipulationSettings);
-    return {
-      tabSize: filled.tabSize,
-      indentSize: filled.indentSize,
-      insertSpaces: filled.convertTabsToSpaces,
-      indentStyle: filled.indentStyle,
-      newLineCharacter: filled.newLineCharacter,
-      trimTrailingWhitespace: filled.trimTrailingWhitespace,
-    };
+    return filled;
   }
 }
 
@@ -583,6 +610,358 @@ function toFileTextChanges(fileEdits: ts.FileTextEdits): ts.FileTextChanges {
 }
 
 /**
+ * The node find-references answers a position with, or `undefined` when the
+ * position has no answer.
+ *
+ * The `typescript` package resolved a position to the token it touches and then
+ * to what that token stands for — the `class` keyword stands for the name of the
+ * class it opens — and looked the symbol up there. tsgo makes the same second
+ * step on any node it is handed, so a token the compiler stores is passed
+ * straight through. A rebuilt token has no compiler handle, so what it stands
+ * for is worked out here and that is asked about instead; when it stands for
+ * nothing there is no symbol to find and the position simply has no references,
+ * which is what the `typescript` package answered too.
+ */
+function getReferenceLocationAtPosition(sourceFile: SourceFile, pos: number): ts.Node | undefined {
+  const token = getTouchingPropertyName(sourceFile, pos);
+  if (token == null)
+    return undefined;
+  if (!isReconstructedNode(token.compilerNode))
+    return token.compilerNode;
+  const adjusted = getAdjustedReferenceLocation(token);
+  return adjusted != null && !isReconstructedNode(adjusted.compilerNode) ? adjusted.compilerNode : undefined;
+}
+
+/**
+ * The token a position touches, which is where find-references starts.
+ *
+ * A position belongs to the token whose text covers it. It also belongs to a
+ * token that ends exactly there, when that token is a name, a keyword or a
+ * private identifier — `class C|` is still asking about `C` — and that reading
+ * wins over the token starting there. Leading trivia belongs to no token, so a
+ * position inside it resolves to the node enclosing it rather than to the token
+ * that follows. This is the `typescript` package's `getTouchingPropertyName`.
+ */
+function getTouchingPropertyName(sourceFile: SourceFile, pos: number): Node | undefined {
+  if (pos < 0 || pos > sourceFile.getEnd())
+    return undefined;
+  let current: Node = sourceFile;
+  while (true) {
+    let containing: Node | undefined;
+    let endingHere: Node | undefined;
+    for (const child of current.getChildren()) {
+      const end = child.getEnd();
+      if (end < pos)
+        continue;
+      if (getStartIncludingJsDoc(child) > pos)
+        break;
+      if (pos < end || child.getKind() === SyntaxKind.EndOfFile) {
+        containing = child;
+        break;
+      }
+      // a zero width child — an empty syntax list — is not something a position
+      // can be at the end of
+      if (end > child.getPos())
+        endingHere = child;
+    }
+    if (endingHere != null) {
+      const preceding = getLastToken(endingHere);
+      if (isTouchedByPositionAtEnd(preceding))
+        return preceding;
+    }
+    if (containing == null)
+      return current;
+    current = containing;
+  }
+}
+
+/**
+ * Where a node's text begins, counting the jsdoc that documents it.
+ *
+ * jsdoc is part of what it documents, so a position inside it belongs to the
+ * documented node rather than to the trivia before it. A syntax list has no
+ * jsdoc of its own and takes its start from its first child, which is how a
+ * position in the jsdoc of a file's first statement reaches that statement.
+ */
+function getStartIncludingJsDoc(node: Node): number {
+  if (node.getKind() !== SyntaxKind.SyntaxList)
+    return node.getStart(true);
+  const first = node.getChildren()[0];
+  return first == null ? node.getStart(true) : getStartIncludingJsDoc(first);
+}
+
+/** The last token of a node's text, which is the node itself when it has no children. */
+function getLastToken(node: Node): Node {
+  let current = node;
+  while (true) {
+    const children = current.getChildren();
+    let last: Node | undefined;
+    for (let i = children.length - 1; i >= 0; i--) {
+      if (children[i].getEnd() > children[i].getPos()) {
+        last = children[i];
+        break;
+      }
+    }
+    if (last == null)
+      return current;
+    current = last;
+  }
+}
+
+/** The tokens a position at their end still asks about: names, keywords and private identifiers. */
+function isTouchedByPositionAtEnd(node: Node): boolean {
+  const kind = node.getKind();
+  if (kind >= SyntaxKind.FirstKeyword && kind <= SyntaxKind.LastKeyword)
+    return true;
+  switch (kind) {
+    case SyntaxKind.Identifier:
+    case SyntaxKind.NoSubstitutionTemplateLiteral:
+    case SyntaxKind.NumericLiteral:
+    case SyntaxKind.PrivateIdentifier:
+    case SyntaxKind.StringLiteral:
+      return true;
+    default:
+      return false;
+  }
+}
+
+/**
+ * What a token stands for when references are asked at it.
+ *
+ * This is the `typescript` package's `getAdjustedReferenceLocation`, narrowed to
+ * the tokens tsgo does not store — the keywords that open a declaration or apply
+ * to an expression. tsgo ports the same function and runs it on whatever it is
+ * handed, so the cases for nodes it does store are left to it; only a rebuilt
+ * token, which it can never be handed, is resolved here.
+ */
+function getAdjustedReferenceLocation(token: Node): Node | undefined {
+  const parent = token.getParent();
+  if (parent == null)
+    return undefined;
+  switch (token.getKind()) {
+    // the expression forms are not adjusted by the `typescript` package's
+    // adjustment at all — its checker answers a `class` or `function` keyword with
+    // the symbol of what the keyword opens, which is the same answer by another
+    // road, and asking about the name is how to reach it from here
+    case SyntaxKind.ClassKeyword:
+      return Node.isClassDeclaration(parent) || Node.isClassExpression(parent) ? getAdjustedLocationForDeclaration(parent) : undefined;
+    case SyntaxKind.FunctionKeyword:
+      return Node.isFunctionDeclaration(parent) || Node.isFunctionExpression(parent) ? getAdjustedLocationForDeclaration(parent) : undefined;
+    case SyntaxKind.InterfaceKeyword:
+      return Node.isInterfaceDeclaration(parent) ? getAdjustedLocationForDeclaration(parent) : undefined;
+    case SyntaxKind.EnumKeyword:
+      return Node.isEnumDeclaration(parent) ? getAdjustedLocationForDeclaration(parent) : undefined;
+    case SyntaxKind.ModuleKeyword:
+    case SyntaxKind.NamespaceKeyword:
+      return Node.isModuleDeclaration(parent) ? getAdjustedLocationForDeclaration(parent) : undefined;
+    case SyntaxKind.GetKeyword:
+      return Node.isGetAccessorDeclaration(parent) ? getAdjustedLocationForDeclaration(parent) : undefined;
+    case SyntaxKind.SetKeyword:
+      return Node.isSetAccessorDeclaration(parent) ? getAdjustedLocationForDeclaration(parent) : undefined;
+    // the `typescript` package read the class's symbol off the keyword and then
+    // searched for constructors; tsgo reads the same symbol off the declaration
+    // and makes the same search, so the declaration is what it is asked about
+    case SyntaxKind.ConstructorKeyword:
+      return Node.isConstructorDeclaration(parent) ? parent : undefined;
+    case SyntaxKind.TypeKeyword:
+      return getAdjustedLocationForTypeKeyword(parent);
+    // `var x`, `let x` and `const x` are the one name they declare
+    case SyntaxKind.ConstKeyword:
+    case SyntaxKind.LetKeyword:
+    case SyntaxKind.VarKeyword:
+      return getAdjustedLocationForVariableKeyword(parent);
+    case SyntaxKind.ImportKeyword:
+      if (Node.isImportEqualsDeclaration(parent))
+        return getAdjustedLocationForDeclaration(parent);
+      return Node.isImportDeclaration(parent) ? getAdjustedLocationForImportDeclaration(parent) : undefined;
+    case SyntaxKind.ExportKeyword:
+      if (Node.isExportDeclaration(parent))
+        return getAdjustedLocationForExportDeclaration(parent);
+      // `export default x` and `export = x` are the expression they export
+      return Node.isExportAssignment(parent) ? skipOuterExpressions(parent.getExpression()) : undefined;
+    case SyntaxKind.AsKeyword:
+      return getAdjustedLocationForAsKeyword(parent);
+    case SyntaxKind.RequireKeyword:
+      return Node.isExternalModuleReference(parent) ? parent.getExpression() : undefined;
+    case SyntaxKind.FromKeyword:
+      return Node.isImportDeclaration(parent) || Node.isExportDeclaration(parent) ? parent.getModuleSpecifier() : undefined;
+    case SyntaxKind.ExtendsKeyword:
+    case SyntaxKind.ImplementsKeyword:
+      return getAdjustedLocationForExtendsOrImplements(token, parent);
+    case SyntaxKind.InferKeyword:
+      return Node.isInferTypeNode(parent) ? parent.getTypeParameter().getNameNode() : undefined;
+    // `keyof T` and `readonly T[]` are the type they operate on
+    case SyntaxKind.KeyOfKeyword:
+    case SyntaxKind.ReadonlyKeyword:
+      return getAdjustedLocationForTypeOperator(token, parent);
+    case SyntaxKind.InKeyword:
+      return getAdjustedLocationForInKeyword(token, parent);
+    // a unary keyword is the expression it applies to
+    case SyntaxKind.AwaitKeyword:
+      return Node.isAwaitExpression(parent) ? skipOuterExpressions(parent.getExpression()) : undefined;
+    case SyntaxKind.DeleteKeyword:
+      return Node.isDeleteExpression(parent) ? skipOuterExpressions(parent.getExpression()) : undefined;
+    case SyntaxKind.NewKeyword:
+      return Node.isNewExpression(parent) ? skipOuterExpressions(parent.getExpression()) : undefined;
+    case SyntaxKind.TypeOfKeyword:
+      return Node.isTypeOfExpression(parent) ? skipOuterExpressions(parent.getExpression()) : undefined;
+    case SyntaxKind.VoidKeyword:
+      return Node.isVoidExpression(parent) ? skipOuterExpressions(parent.getExpression()) : undefined;
+    case SyntaxKind.YieldKeyword:
+      return Node.isYieldExpression(parent) ? skipOuterExpressions(parent.getExpression()) : undefined;
+    case SyntaxKind.InstanceOfKeyword:
+      return isOperatorOfBinaryExpression(token, parent) ? skipOuterExpressions(parent.getRight()) : undefined;
+    case SyntaxKind.OfKeyword:
+      return Node.isForOfStatement(parent) ? skipOuterExpressions(parent.getExpression()) : undefined;
+    default:
+      return undefined;
+  }
+}
+
+/** The name a declaration declares, or what names it when it has no name of its own. */
+function getAdjustedLocationForDeclaration(declaration: Node): Node | undefined {
+  if (Node.hasName(declaration))
+    return declaration.getNameNode();
+  // an unnamed `export default class {}` is named by its `default` modifier
+  if (Node.isClassDeclaration(declaration) || Node.isFunctionDeclaration(declaration))
+    return declaration.getFirstModifierByKind(SyntaxKind.DefaultKeyword);
+  return undefined;
+}
+
+/** What the `type` of a type alias, a type only import, or a type only export stands for. */
+function getAdjustedLocationForTypeKeyword(parent: Node): Node | undefined {
+  if (Node.isTypeAliasDeclaration(parent))
+    return parent.getNameNode();
+  if (Node.isImportClause(parent) && parent.isTypeOnly()) {
+    const declaration = parent.getParent();
+    return Node.isImportDeclaration(declaration) ? getAdjustedLocationForImportDeclaration(declaration) : undefined;
+  }
+  return Node.isExportDeclaration(parent) && parent.isTypeOnly() ? getAdjustedLocationForExportDeclaration(parent) : undefined;
+}
+
+/** The name a `var`, `let` or `const` declares, when it declares exactly one. */
+function getAdjustedLocationForVariableKeyword(parent: Node): Node | undefined {
+  if (!Node.isVariableDeclarationList(parent))
+    return undefined;
+  const declarations = parent.getDeclarations();
+  if (declarations.length !== 1)
+    return undefined;
+  const name = declarations[0].getNameNode();
+  return Node.isIdentifier(name) ? name : undefined;
+}
+
+/**
+ * What an import declaration stands for: the one name it brings in, or the
+ * module it names when it brings in more than one name or none.
+ */
+function getAdjustedLocationForImportDeclaration(declaration: ImportDeclaration): Node | undefined {
+  const importClause = declaration.getImportClause();
+  if (importClause != null) {
+    const namedBindings = importClause.getNamedBindings();
+    const defaultImport = importClause.getDefaultImport();
+    if (defaultImport != null) {
+      // a default import alongside named bindings names two things, so neither
+      return namedBindings == null ? defaultImport : undefined;
+    }
+    if (Node.isNamedImports(namedBindings)) {
+      const elements = namedBindings.getElements();
+      return elements.length === 1 ? getSpecifierLocalName(elements[0]) : undefined;
+    }
+    if (Node.isNamespaceImport(namedBindings))
+      return namedBindings.getNameNode();
+  }
+  return declaration.getModuleSpecifier();
+}
+
+/** The same for an export declaration. */
+function getAdjustedLocationForExportDeclaration(declaration: ExportDeclaration): Node | undefined {
+  const namespaceExport = declaration.getNamespaceExport();
+  if (namespaceExport != null)
+    return namespaceExport.getNameNode();
+  const namedExports = declaration.getFirstChildByKind(SyntaxKind.NamedExports);
+  if (namedExports != null) {
+    const elements = namedExports.getElements();
+    return elements.length === 1 ? getSpecifierLocalName(elements[0]) : undefined;
+  }
+  return declaration.getModuleSpecifier();
+}
+
+/**
+ * The name a specifier binds locally: the alias when it renames, and the name
+ * itself otherwise. `import { a as b }` binds `b`, which is what the `typescript`
+ * package called the specifier's name and ts-morph calls its alias.
+ */
+function getSpecifierLocalName(specifier: ExportSpecifier | ImportSpecifier): Node {
+  return specifier.getAliasNode() ?? specifier.getNameNode();
+}
+
+/** What the `as` of a renaming import or export, or of an `as` expression, stands for. */
+function getAdjustedLocationForAsKeyword(parent: Node): Node | undefined {
+  if (Node.isExportSpecifier(parent) || Node.isImportSpecifier(parent))
+    return parent.getAliasNode();
+  if (Node.isNamespaceExport(parent) || Node.isNamespaceImport(parent))
+    return parent.getNameNode();
+  if (Node.isExportDeclaration(parent))
+    return parent.getNamespaceExport()?.getNameNode();
+  return Node.isAsExpression(parent) ? getTypeReferenceName(parent.getTypeNode()) : undefined;
+}
+
+/** The type `keyof` reads the keys of, or the element type `readonly` applies to. */
+function getAdjustedLocationForTypeOperator(token: Node, parent: Node): Node | undefined {
+  if (!Node.isTypeOperatorTypeNode(parent) || parent.getOperator() !== token.getKind())
+    return undefined;
+  const operand = parent.getTypeNode();
+  if (token.getKind() === SyntaxKind.KeyOfKeyword)
+    return getTypeReferenceName(operand);
+  return Node.isArrayTypeNode(operand) ? getTypeReferenceName(operand.getElementTypeNode()) : undefined;
+}
+
+/** The one type a heritage clause names, or the type a type parameter or conditional type is constrained by. */
+function getAdjustedLocationForExtendsOrImplements(token: Node, parent: Node): Node | undefined {
+  if (Node.isHeritageClause(parent) && parent.getToken() === token.getKind()) {
+    const types = parent.getTypeNodes();
+    // more than one type named is ambiguous, so nothing is adjusted to
+    if (types.length === 1)
+      return types[0].getExpression();
+    return undefined;
+  }
+  if (token.getKind() !== SyntaxKind.ExtendsKeyword)
+    return undefined;
+  if (Node.isTypeParameterDeclaration(parent))
+    return getTypeReferenceName(parent.getConstraint());
+  return Node.isConditionalTypeNode(parent) ? getTypeReferenceName(parent.getExtendsType()) : undefined;
+}
+
+/** What `in` stands for: a mapped type's parameter, or the thing on its right. */
+function getAdjustedLocationForInKeyword(token: Node, parent: Node): Node | undefined {
+  if (Node.isTypeParameterDeclaration(parent) && Node.isMappedTypeNode(parent.getParent()))
+    return parent.getNameNode();
+  if (isOperatorOfBinaryExpression(token, parent))
+    return skipOuterExpressions(parent.getRight());
+  return Node.isForInStatement(parent) ? skipOuterExpressions(parent.getExpression()) : undefined;
+}
+
+function isOperatorOfBinaryExpression(token: Node, parent: Node): parent is BinaryExpression {
+  return Node.isBinaryExpression(parent) && parent.getOperatorToken().compilerNode === token.compilerNode;
+}
+
+function getTypeReferenceName(typeNode: Node | undefined): Node | undefined {
+  return Node.isTypeReference(typeNode) ? typeNode.getTypeName() : undefined;
+}
+
+/** Looks through the expressions that only wrap another one — parentheses, assertions, `!`. */
+function skipOuterExpressions(node: Node | undefined): Node | undefined {
+  let current = node;
+  while (
+    Node.isAsExpression(current) || Node.isNonNullExpression(current) || Node.isParenthesizedExpression(current)
+    || Node.isPartiallyEmittedExpression(current) || Node.isSatisfiesExpression(current) || Node.isTypeAssertion(current)
+  ) {
+    current = current.getExpression();
+  }
+  return current;
+}
+
+/**
  * The text a rename edit adds around the new name, which the `typescript`
  * package reported separately (`{ a }` renamed to `b` becomes `{ a: b }`).
  */
@@ -596,6 +975,136 @@ function splitAroundName(newText: string, newName: string): { prefixText?: strin
     prefixText: prefixText.length === 0 ? undefined : prefixText,
     suffixText: suffixText.length === 0 ? undefined : suffixText,
   };
+}
+
+/** The parts of the format settings tsgo's formatter reads. */
+function toFormattingOptions(filled: FormatCodeSettings): ts.FormattingOptions {
+  return {
+    tabSize: filled.tabSize,
+    indentSize: filled.indentSize,
+    insertSpaces: filled.convertTabsToSpaces,
+    indentStyle: filled.indentStyle,
+    newLineCharacter: filled.newLineCharacter,
+    trimTrailingWhitespace: filled.trimTrailingWhitespace,
+  };
+}
+
+/**
+ * The formatter's edits, rewritten so that no space is left just inside a brace.
+ *
+ * Every pair of neighbouring tokens where the first is `{` or the second is `}`
+ * has the space between them closed up, and whatever the formatter meant to do in
+ * that space is dropped. A pair is left alone when there is a comment or a line
+ * break between the two tokens, or when the formatter is breaking the line there,
+ * because none of those is a space this setting is about.
+ */
+function closeUpSpacesInsideBraces(
+  sourceFile: SourceFile,
+  edits: readonly ts.TextEdit[],
+  range: [number, number] | undefined,
+): readonly ts.TextEdit[] {
+  const text = sourceFile.getFullText();
+  // the gaps come out in source order, so the edits are read with a cursor that
+  // only moves forward rather than scanned again for each one
+  const sorted = [...edits].sort(byPosition);
+  const kept = new Set(edits);
+  const added: ts.TextEdit[] = [];
+  let cursor = 0;
+  for (const gap of getSpacesInsideBraces(sourceFile)) {
+    while (cursor < sorted.length && sorted[cursor].end < gap.pos)
+      cursor++;
+    let last = cursor;
+    while (last < sorted.length && sorted[last].pos <= gap.end)
+      last++;
+    const overlapping = sorted.slice(cursor, last);
+    if (range != null && (gap.pos < range[0] || gap.end > range[1]))
+      continue;
+    if (!/^[ \t]*$/.test(text.substring(gap.pos, gap.end)))
+      continue;
+    // the formatter is doing more there than spacing two tokens apart, so it wins
+    if (overlapping.some(edit => edit.pos < gap.pos || edit.end > gap.end || /[\r\n]/.test(edit.newText)))
+      continue;
+    for (const edit of overlapping)
+      kept.delete(edit);
+    if (gap.end > gap.pos)
+      added.push({ pos: gap.pos, end: gap.end, newText: "" });
+  }
+  if (added.length === 0 && kept.size === edits.length)
+    return edits;
+  return [...kept, ...added].sort(byPosition);
+}
+
+function byPosition(a: ts.TextEdit, b: ts.TextEdit): number {
+  return a.pos - b.pos || a.end - b.end;
+}
+
+/** Where a space would sit just inside a brace, whether or not one is written there. */
+function* getSpacesInsideBraces(sourceFile: SourceFile): Generator<{ pos: number; end: number }> {
+  let previous: Node | undefined;
+  for (const token of getTokensInOrder(sourceFile)) {
+    if (previous != null && isSpaceInsideBraces(previous, token))
+      yield { pos: previous.getEnd(), end: token.getStart() };
+    previous = token;
+  }
+}
+
+function isSpaceInsideBraces(previous: Node, token: Node): boolean {
+  if (previous.getKind() === SyntaxKind.OpenBraceToken)
+    return true;
+  if (token.getKind() !== SyntaxKind.CloseBraceToken)
+    return false;
+  // a `}` that closed a code block is followed by a space whatever this setting
+  // says — `class C {m() {} }` — so that pair belongs to the formatter
+  return !isCloseBraceOfCodeBlock(previous);
+}
+
+/**
+ * Whether a token is the `}` of something with statements in it rather than of a
+ * literal, which is the `typescript` package's `isAfterCodeBlockContext`. The body
+ * of an arrow or function expression is left out of it, since it reads as an
+ * argument or a value rather than as a block.
+ */
+function isCloseBraceOfCodeBlock(token: Node): boolean {
+  if (token.getKind() !== SyntaxKind.CloseBraceToken)
+    return false;
+  const parent = token.getParent();
+  switch (parent?.getKind()) {
+    case SyntaxKind.CatchClause:
+    case SyntaxKind.ClassDeclaration:
+    case SyntaxKind.EnumDeclaration:
+    case SyntaxKind.ModuleBlock:
+    case SyntaxKind.ModuleDeclaration:
+    case SyntaxKind.SwitchStatement:
+      return true;
+    case SyntaxKind.Block: {
+      const blockParent = parent!.getParent();
+      return blockParent == null
+        || blockParent.getKind() !== SyntaxKind.ArrowFunction && blockParent.getKind() !== SyntaxKind.FunctionExpression;
+    }
+    default:
+      return false;
+  }
+}
+
+/**
+ * Every token of a node's code, in source order.
+ *
+ * jsdoc is skipped whole. A `{@link}` or a `{number}` type expression inside one
+ * is parsed into real brace tokens, and rewriting the space around those would be
+ * editing a comment.
+ */
+function* getTokensInOrder(node: Node): Generator<Node> {
+  const children = node.getChildren();
+  if (children.length === 0) {
+    // an empty syntax list occupies no text and so sits between no two tokens
+    if (node.getEnd() > node.getStart())
+      yield node;
+    return;
+  }
+  for (const child of children) {
+    if (child.getKind() !== SyntaxKind.JSDoc)
+      yield* getTokensInOrder(child);
+  }
 }
 
 /** A definition's span covers either the declaration or the name that declares it; this is always the declaration. */

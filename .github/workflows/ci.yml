@@ -47,7 +47,21 @@ jobs:
         run: |
           deno task -r code-verification
       - name: Browser
+        # Two things this step needs come from the runner rather than from this
+        # repository: the ubuntu image preinstalls Chrome, and the Deno installed
+        # above provides `deno bundle`. Both are asserted here so that the day
+        # either changes reads as that rather than as a browser test failure.
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
         run: |
+          if [ ! -x "$CHROME_PATH" ]; then
+            echo "::error::$CHROME_PATH is missing: the runner image no longer preinstalls Chrome. Install it in this step, or point CHROME_PATH at another Chromium."
+            exit 1
+          fi
+          if ! deno bundle --help >/dev/null 2>&1; then
+            echo "::error::\`deno bundle\` is unavailable in this Deno. Install one that has it, or bundle tsgo-wasm/browser/worker.ts another way."
+            exit 1
+          fi
           node tsgo-wasm/browser/run.mjs
 
   jsr:

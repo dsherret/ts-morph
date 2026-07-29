@@ -429,8 +429,30 @@ rather than a silent no-op.
 
 Two options survive as ts-morph's own, applied by ts-morph rather than by the
 formatter: `ensureNewLineAtEndOfFile` and
-`insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces` (which drives ts-morph's
-structure printers). Line endings are normalized by ts-morph after formatting,
+`insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces`. The brace option drives
+ts-morph's structure printers, and — since tsgo's formatter always writes
+`{ a }` — is applied to the formatter's edits too, by closing up the space
+between a `{` and the token after it and between a token and the `}` after it.
+Only the gap between two tokens is rewritten, so a brace written inside a string,
+a template, a comment or JSX text is out of reach — including the braces of a
+jsdoc `{@link}` or `{number}`, which really are parsed into brace tokens and are
+skipped along with the rest of the jsdoc. A `}` that closed a code block keeps
+the space after it (`class C {m() {} }`), which is what the `typescript`
+package's higher-priority `SpaceAfterCloseBrace` rule did. It reaches everything
+that formats: `SourceFile#formatText`, `Node#formatText`,
+`LanguageService#getFormattedDocumentText` and the two `getFormattingEdits…`
+methods.
+
+One pair is left alone that the `typescript` package closed up: a comment
+between the two tokens, as in `const o = { a: 1 /* c */ };`. What sits between
+them is then not a space, and rather than work out which side of a comment the
+rule falls on, the formatter's own spacing stands.
+
+It does **not** reach the edits tsgo writes itself, so an import added by
+`SourceFile#fixMissingImports` or rewritten by `organizeImports` is written
+`import { a } from "./b"` whatever the option says — those are code-fix edits
+rather than formatter output, and their text is tsgo's, not a span of the file
+ts-morph can point at. Line endings are normalized by ts-morph after formatting,
 from its manipulation settings.
 
 ### `EmitHint` — **absent**
@@ -681,26 +703,44 @@ Split by cause. The "not exposed" ones are TODOs, not breaking changes.
   `format.GetIndentation(position, sourceFile, options, assumeNewLineBeforeCloseBrace)`
   at `internal/format/indent.go:24`, with `GetIndentationForNode` at `:17`. It
   needs a handler and a protocol method, nothing more. In the meantime
-  `Node#getIndentationLevel()` is worked out from the text instead. A node that
-  begins its own line reports the deeper of the indentation that line has and one
-  level past the ancestor that opened it; a node that starts partway through a
-  line reports whatever indentation that line already has; and a node starting
-  with `{` or `}` reports its container's indentation rather than a level past it,
-  so a brace lines up with the construct it delimits. The level is fractional when
-  the file's indentation is not a whole multiple of
+  `Node#getIndentationLevel()` is worked out from the text instead, modelling the
+  four rules the smart indenter spends most of its time on. A node is a level past
+  the line the innermost construct that opened before it starts on, or level with
+  that construct when the two share a line — so the level is the one the node
+  _would_ be written at rather than the one it has, and a member indented past its
+  siblings still reads at its class's depth. A node starting with `{` or `}` lines
+  up with the construct it delimits rather than a level in, except for an object
+  literal's opening brace, which takes its own line's indentation. At either bracket
+  of a list the indenter tracks — parameters, arguments, type arguments, import and
+  export specifiers, object and array literals, binding patterns, variable
+  declaration lists — and at the start of each of its entries and separators, the
+  level is one past the line that list opened on, which is why the specifier in
+  `import { a } from "./b";` is at level 1 in a file with no indentation at all;
+  anywhere else between those brackets is ordinary text that takes its line's
+  indentation. A `,` or bracket following a list that wrapped lines up under the
+  entry before it, and a keyword resuming a construct after its brace — `else`,
+  `catch`, `finally`, the `while` of a `do`, the `from` of an `import` — stays
+  level with the construct.
+  The level is fractional when the file's indentation is not a whole multiple of
   `manipulationSettings.indentationText` — a two-space file read with the default
   four-space setting puts a method body at level `0.5` — and the writers reproduce
   that fraction literally. This is not only a query: the level is what
   `setBodyText`, `addStatements`, `insertStatements` and `set({ statements })`
   indent inserted code to, so a wrong level shows up in emitted text.
 
-  What still differs from the smart indenter is list-continuation positions. Where
-  the formatter reports the level a wrapped list item would be written at, the
-  text-based version reports the line's own indentation, one level less: an
-  `ImportSpecifier` or `Parameter` written on the same line as its braces or
-  parens, the empty `SyntaxList`/`CloseParenToken` of an argument or parameter
-  list, and the `;` or `}` trailing a construct whose contents were wrapped over
-  several lines.
+  What is left is mostly the compiler's per-kind table of which parents indent
+  which children (`SmartIndenter.nodeWillIndentChild`), which the text gives no
+  hint of. Over 112 snippets read under three indentation settings — brace styles,
+  2/3/4-space and tab indents, generics, wrapped lists, JSDoc, JSX — 8217 probed
+  positions leave 287 that differ from 28.0.0, against 2771 before this was
+  modelled. Ten of the 287 are positions the old rules happened to get right. The
+  kinds that do not indent what follows them account for most of the rest: the `;`
+  closing an `export { … };`, a `default:` clause holding a block, the branches of
+  a wrapped union type, the statement of a `LabeledStatement`, and the mid-line
+  tokens of constructs like `switch` and `PropertySignature` whose contents the
+  formatter indents from the enclosing statement rather than from the construct
+  itself. The remainder are the tokens of a JSX closing tag, the `EndOfFile` token
+  after a trailing statement, and the second `else` of an `else if` chain.
 - **`CodeFixAction#getFixId` / `getFixAllDescription`** — `ls.CodeAction` carries
   both (`internal/ls/codeactions.go:55-60`: `FixID`, `FixAllDescription`), and
   `GetCombinedCodeFix` already matches on the fix id. The API's `CodeFixAction`
@@ -756,14 +796,63 @@ Split by cause. The "not exposed" ones are TODOs, not breaking changes.
   is now required, because tsgo computes a rename as the edits that perform it.
   The `prefixText`/`suffixText` a `RenameLocation` reports are recovered from
   the edit's replacement text.
-- **`LanguageService#findReferencesAtPosition`** resolves from the node at the
-  position, because that is what tsgo's `getReferencedSymbolsForNode` takes; a
-  position with no node under it yields no references. A reference's
-  `isDefinition()` is now "this reference is the entry's definition node".
-  `isWriteAccess()` works — `api.ReferencedSymbolEntry` carries the flag, from
-  `ast.IsWriteAccessForReference`, the same classification TypeScript uses.
-  A definition's `getKind()` is derived from the definition symbol's flags; see
+- **`LanguageService#findReferencesAtPosition`** resolves a position to a node,
+  because that is what tsgo's `getReferencedSymbolsForNode` takes, and it does so
+  on the `typescript` package's terms: the position is resolved to the token it
+  touches and then to what that token stands for. A position at the end of a
+  name, a keyword or a private identifier still belongs to that token, so
+  `class C|` still asks about `C`; a position in leading trivia belongs to no
+  token and yields no references. tsgo ports the same adjustment and runs it on
+  whatever node it is handed, so a token it stores is passed straight through,
+  and the keywords it does not store — `class`, `extends`, `import`, `from`,
+  `new`, `typeof` and the rest — are adjusted in ts-morph instead, to the node
+  tsgo would have been handed. A reference's `isDefinition()` is now "this
+  reference is the entry's definition node". `isWriteAccess()` works —
+  `api.ReferencedSymbolEntry` carries the flag, from
+  `ast.IsWriteAccessForReference`, the same classification TypeScript uses. A
+  definition's `getKind()` is derived from the definition symbol's flags; see
   `ts.ScriptElementKind` for the members that survive.
+
+  Two of the adjustment's cases are written from what the `typescript` package
+  answers rather than from what its adjustment does. The `class` of a named class
+  expression and the `function` of a named function expression are adjusted here
+  to the name — the `typescript` package leaves them alone (its adjustment tests
+  the keyword where it means to test the parent, and tsgo ports the same test)
+  and its checker answers the keyword with the symbol of what the keyword opens,
+  which is the same answer by another road.
+
+  Five residues are left, all of them tsgo's rather than the resolution's:
+
+  - A search that starts at a `constructor` keyword reports the declaration's own
+    keyword as a reference, and tsgo scans that token into being rather than
+    parsing it, so it is not in the file's node index table and its handle
+    resolves to nothing. Those entries are dropped, so the entry for a
+    constructor holds its call sites and not its declaration.
+    `ConstructorDeclaration#findReferencesAsNodes()` is unaffected — it dropped
+    the declaration anyway.
+  - A type keyword tsgo does not store as a node of its own — `keyof`,
+    `readonly` as a type operator, `typeof` in a type query, `unique` — cannot be
+    asked about. Where the adjustment reaches through it, the answer is the same:
+    `keyof U` and `readonly U[]` answer with `U`'s references. Where it does not
+    — `keyof { a: 1 }`, `readonly string[]`, and `typeof` and `unique` always —
+    the position yields nothing, where the `typescript` package answered with
+    every other occurrence of that keyword. The type keywords that are nodes
+    (`string`, `number`, `void`, …) answer as before, except that the `void` of a
+    `void 0` expression is left out of the answer.
+  - The `default` of `export default someValue` yields nothing, where the
+    `typescript` package answered with the keyword itself. It is not a modifier
+    of the export assignment, so tsgo does not store it, and its adjustment
+    stands for nothing to ask about — the `typescript` package's checker answered
+    the keyword directly.
+  - An unnamed `export default class {}` or `export default function () {}`
+    answers nothing where the `typescript` package answered with the `default`
+    keyword: tsgo's port of the adjustment looks for that modifier by testing the
+    declaration's kind rather than the modifier's
+    (`internal/ls/utilities.go`, `getAdjustedLocationForDeclaration`), so it never
+    finds one.
+  - The `static` of a class static block, an `export =` reached through
+    `require("…")`, and the path of a `/// <reference path="…" />` are outside
+    tsgo's reference search.
 - **`DefinitionInfo#getContainerName()`** names the declaration the definition is
   written in rather than the definition symbol's parent, because tsgo reports a
   definition as a span alone and its checker has no `symbolToString`. A class,

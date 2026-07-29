@@ -1,8 +1,9 @@
 # Tests for capabilities that are not there
 
-These two cover capabilities the Go compiler does not have, so they import exports
+These three cover capabilities that are not reachable today, so they import exports
 that no longer exist. Left in the tree deliberately: they are the record of what
-the migration dropped.
+the migration dropped. Two are genuine removals; the third is a TODO, marked as
+such below.
 
 They are excluded in `.mocharc.yml` because an import of a missing export throws
 at module load, which aborts the entire mocha run rather than failing one test.

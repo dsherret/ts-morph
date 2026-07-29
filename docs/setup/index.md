@@ -47,39 +47,43 @@ const project = new Project({
 
 ### Custom Module Resolution
 
-Custom module resolution can be specified by providing a resolution host factory function. This also supports providing custom type reference directive resolution.
+Custom module resolution can be specified by providing a resolution host factory function. Type
+reference directives are not covered — they resolve down a separate path in the compiler that has no
+hook.
 
-For example:
+The compiler asks the host where a specifier points before resolving it itself. A host answers one
+specifier at a time, and may answer with a file, with nothing, or with a _different specifier_ for the
+compiler to resolve instead:
 
 ```ts
-import { Project, ts } from "ts-morph";
+import { Project, ResolutionHosts } from "ts-morph";
 
-// this is deno style module resolution (ex. `import { MyClass } from "./MyClass.ts"`)
+// deno style module resolution (ex. `import { MyClass } from "./MyClass.ts"`)
+const project = new Project({ resolutionHost: ResolutionHosts.deno });
+```
+
+That ready-made host rewrites rather than resolves: dropping the `.ts` says where to look, and the
+compiler still decides how. A host of your own looks like this:
+
+```ts
+import { Project } from "ts-morph";
+
 const project = new Project({
-  resolutionHost: (moduleResolutionHost, getCompilerOptions) => {
-    return {
-      resolveModuleNames: (moduleNames, containingFile) => {
-        const compilerOptions = getCompilerOptions();
-        const resolvedModules: ts.ResolvedModule[] = [];
-
-        for (const moduleName of moduleNames.map(removeTsExtension)) {
-          const result = ts.resolveModuleName(moduleName, containingFile, compilerOptions, moduleResolutionHost);
-          if (result.resolvedModule)
-            resolvedModules.push(result.resolvedModule);
-        }
-
-        return resolvedModules;
-      },
-    };
-
-    function removeTsExtension(moduleName: string) {
-      if (moduleName.slice(-3).toLowerCase() === ".ts")
-        return moduleName.slice(0, -3);
-      return moduleName;
-    }
-  },
+  resolutionHost: getCompilerOptions => ({
+    resolveModuleName: ({ moduleName, containingFile, resolutionMode }) => {
+      if (moduleName === "alias")
+        return { resolvedFileName: "/Test.ts" }; // resolve it yourself
+      if (moduleName.endsWith(".ts"))
+        return { moduleName: moduleName.slice(0, -3) }; // resolve this instead
+      return undefined; // leave it to the compiler
+    },
+  }),
 });
 ```
+
+`resolutionMode` is `ModuleKind.CommonJS` or `ModuleKind.ESNext` when the compiler has an opinion
+about how the containing file imports, so a host can answer differently for an ESM and a CommonJS
+importer.
 
 ### `libFolderPath`
 

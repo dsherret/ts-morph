@@ -1,6 +1,6 @@
 import { errors, InMemoryFileSystemHost, nameof, ObjectFlags, SymbolFlags, TypeFlags, TypeFormatFlags } from "@ts-morph/common";
 import { expect } from "chai";
-import { FunctionDeclaration, Node, Symbol, Type, TypeAliasDeclaration, VariableStatement } from "../../../compiler";
+import { FunctionDeclaration, Node, SourceFile, Symbol, Type, TypeAliasDeclaration, VariableStatement } from "../../../compiler";
 import { getInfoFromText } from "../testHelpers";
 
 describe("Type", () => {
@@ -1103,6 +1103,41 @@ let stringWithPromiseType: Promise<string>;
 
       expect(() => project.getTypeChecker().getTypeText(type))
         .to.throw(errors.InvalidOperationError, "This type came from a program that a manipulation has since replaced.");
+    });
+
+    // the registry keeps the programs the checker answered from alive for a
+    // bounded number of edits (DocumentRegistry's retiredSnapshotLimit), which is
+    // what lets a type still describe its own shape after one — only the requests
+    // that go back through the current checker, like getText above, fail at once
+    function editUsingTheChecker(sourceFile: SourceFile, count: number) {
+      for (let i = 0; i < count; i++) {
+        // asking the checker is what makes an edit retire a program rather than dispose it
+        sourceFile.getVariableDeclarationOrThrow("other").getType().getText();
+        sourceFile.addStatements(`let extra${i}: number;`);
+      }
+    }
+
+    const withProperties = "interface Thing { a: number; b: string; }\nlet other: Thing;";
+
+    it("should still describe its own shape while the registry holds the program it came from", () => {
+      const { sourceFile } = getInfoFromTextWithTypeChecking(withProperties);
+      const type = sourceFile.getInterfaceOrThrow("Thing").getType();
+
+      editUsingTheChecker(sourceFile, 2);
+
+      expect(type.getProperties().map(p => p.getName())).to.deep.equal(["a", "b"]);
+    });
+
+    it("should say the program has been replaced once the registry has let it go", () => {
+      const { sourceFile } = getInfoFromTextWithTypeChecking(withProperties);
+      const type = sourceFile.getInterfaceOrThrow("Thing").getType();
+
+      editUsingTheChecker(sourceFile, 3);
+
+      // the compiler cannot name a handle whose whole program is gone, so this is
+      // the message it reaches without one
+      expect(() => type.getProperties())
+        .to.throw(errors.InvalidOperationError, "This type, symbol or signature came from a program that a manipulation has since replaced.");
     });
   });
 });

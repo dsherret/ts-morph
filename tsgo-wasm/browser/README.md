@@ -30,6 +30,9 @@ console.log(file.getVariableDeclarationOrThrow("x").getType().getText());
 await initializeWasm({ wasm: fetch("/assets/typescript.wasm") });
 await initializeWasm({ wasm: await caches.match("/assets/typescript.wasm") });
 await initializeWasm({ wasm: bytesTransferredFromTheMainThread });
+// already compiled, on this thread or on another one — see the module note below
+await initializeWasm({ wasm: await WebAssembly.compile(bytes) });
+await initializeWasm({ wasm: modulePostedFromAnotherWorker });
 ```
 
 There is **no file system**: use `useInMemoryFileSystem: true`. Every Node
@@ -65,14 +68,27 @@ built-in is stubbed out of the browser build, and touching one — through a rea
 
 - **IndexedDB cannot store a compiled `WebAssembly.Module`** — it fails with
   `DOMException: … can not be serialized for storage`. `postMessage` transfer to a
-  worker does work, so compile once on one thread and hand the module over, or
-  cache the _bytes_ rather than the module.
+  worker does work, so compile once and hand the module to every worker that
+  needs it — `initializeWasm({ wasm: theModule })` takes a compiled module — or
+  cache the _bytes_ rather than the module. Whoever creates the `Project` still
+  has to be a worker: that is where the synchronous instantiation happens.
 
 ## Bundlers
 
 The browser build is an ES module: `packages/common/dist/ts-morph-common.browser.mjs`,
 reached through the `browser` field in `@ts-morph/common`'s `package.json`. Vite,
 webpack and esbuild all pick it up on their own.
+
+**That artifact needs no bundler of its own.** It imports nothing at all: the two
+packages it uses in a browser, `minimatch` and `path-browserify`, are inlined
+into it, and everything it does not use there — every Node built-in, plus
+`tinyglobby`, which reads the disk — is replaced by a stub that throws with the
+name of what was wanted. So a plain `<script type="module">` loads it, and the
+acceptance test asserts on every run that no bare specifier has crept back in.
+
+`ts-morph` itself is a different matter: its own build is CommonJS
+(`dist/ts-morph.js`), so reaching the full library from a browser still goes
+through a bundler, which is what the acceptance test does with `deno bundle`.
 
 The compiler is located with a literal `new URL("./typescript.wasm", import.meta.url)`.
 
@@ -89,10 +105,12 @@ npm run build          # at the repository root
 node tsgo-wasm/browser/run.mjs
 ```
 
-`run.mjs` bundles [`worker.ts`](./worker.ts) for the browser with `deno bundle`,
-asserts the result imports nothing at all — no Node built-ins, no bare
-specifiers, which is what a browser can actually load — serves it beside
-`typescript.wasm`, and drives headless Chrome at it. The worker parses, queries
+`run.mjs` asserts that the shipped browser build imports nothing at all — no Node
+built-ins, no bare specifiers, which is what a browser can actually load — then
+bundles [`worker.ts`](./worker.ts) for the browser with `deno bundle`, asserts
+the same of the result, serves it beside `typescript.wasm`, and drives headless
+Chrome at it. The shipped artifact is checked separately because `deno bundle`
+would inline anything it still imported, and so hide it. The worker parses, queries
 the checker, reads diagnostics, manipulates, emits, and then adds fifty more
 files and re-checks. It exits 0 only on `RESULT: OK`.
 

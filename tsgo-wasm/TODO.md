@@ -158,13 +158,15 @@ on 28.0.0. Merging the two `#withApi` calls does not pay — `getCompilerOptions
 necessarily precedes `getPaths()`. Wants instance pooling or a persistent session,
 and `TsConfigResolver` has no dispose hook to hold one safely.
 
-### 3.3 `retiredSnapshotLimit`
+### 3.3 `retiredSnapshotLimit` — done, and the earlier reading was wrong
 
-**ts-morph.** Measured to buy nothing: `Type#getText()` routes through the current
-checker, and across 0/1/2/3/5 manipulations no operation distinguishes n=1 from
-n=3, so it pins up to two Go-side programs and checkers per editing loop. Deferred
-once because stale-handle work was in flight; that has landed, so re-measure and
-set it to 0 or delete `#retire`.
+**ts-morph.** Re-measured: the limit is exactly how many edits a `Type`, `Symbol`
+or `Signature` taken before them keeps answering across, so it is observable and
+stays at 2. The earlier reading missed it because its probe never asked the checker
+between manipulations, and `#retire` only keeps a snapshot the checker was used on
+— every other one was disposed on the spot, leaving one retained snapshot at any
+limit. Asking the checker once per generation separates 0, 1, 2 and 3 exactly.
+Cost: not measurable, ~199MB rss either way over 500 files edited 24 times.
 
 ---
 
