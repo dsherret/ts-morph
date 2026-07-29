@@ -563,12 +563,12 @@ export interface ReferencedSymbolEntry extends ReferenceEntry {
 /**
  * What kind of program element a definition names.
  *
- * Breaking change: this is a const object rather than a string enum, and only
- * the members ts-morph can still produce are declared. tsgo does not classify
- * definitions at all, so the kind is derived from the definition symbol's flags;
- * the `typescript` package's remaining members (`primitiveType`, `jsxAttribute`,
- * `label`, `directory`, `string`, `keyword`, …) have no source of truth here.
- * The declared values are unchanged from the `typescript` package.
+ * A const object rather than a string enum, declaring only the members
+ * ts-morph can produce. The compiler does not classify definitions, so the kind
+ * is worked out from the definition symbol's flags and its declaration; kinds
+ * that would need something else to go on — `primitiveType`, `jsxAttribute`,
+ * `label`, `directory`, `string`, `keyword`, `local class`, `local function` —
+ * have no source of truth and are not declared.
  */
 export declare const ScriptElementKind: {
     readonly unknown: "";

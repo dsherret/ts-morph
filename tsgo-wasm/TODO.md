@@ -152,22 +152,70 @@ consequence. Document rather than diverge the fork.
 
 ## 3. Performance
 
-### 3.1 Adding files one at a time is still quadratic
+### 3.1 Adding files one at a time — done, and the earlier reading was wrong
 
-**ts-morph.** Bulk paths are linear now and within a constant factor of 28.0.0.
+**ts-morph.** Bulk paths are linear and within a constant factor of 28.0.0.
 Re-measured side by side at 800 files, in-memory FS: `new Project({
 tsConfigFilePath })` 90 ms → 367 ms, `addSourceFilesAtPaths` 21 ms → 218 ms
 (0.27 ms/file), first `getPreEmitDiagnostics()` 370 ms → 605 ms, one edit
 0.18 ms → 0.94 ms.
 
-A `createSourceFile` loop is still quadratic — 800 files, 10 ms → **8254 ms**
-(5.3 ms/file at 200, 10.3 at 800) — and cannot be fixed the same way:
-`createOrUpdateSourceFile` returns the parsed file, so the reopen cannot be
-deferred past the call. The registry already has the batched
-`createOrUpdateSourceFiles(entries)` that makes the bulk path linear; what is
-missing is a public entry point on `Project` that can use it. Either add one or
-accept it. BREAKING-CHANGES.md §6 documents the write-then-`addSourceFilesAtPaths`
-workaround in the meantime.
+A `createSourceFile` loop is linear now too: 800 files, 11374 ms → **8 ms** for
+the loop, 199 ms including the read that opens the project. Per file at
+100/400/1600 the two together come to 1.31/0.41/0.18 ms against 4.69/7.86/25.85
+before, and 3200 files — which the old build would have spent about four minutes
+on — comes to 0.14 ms. The cost per file falls as the project grows, because what
+is left is one project build with the fixed cost of standing one up spread over
+more files.
+
+**Two things this note used to say were wrong.**
+
+The first was where the time went. It was not the O(n) rewrite of the synthetic
+tsconfig — serializing it 800 times costs **11 ms of 11040**. Every millisecond
+is inside `updateSnapshot`, and specifically inside a root-set change: measured
+against a project of 800 files, an edit costs 1.0 ms and a snapshot with no
+changes at all 0.2 ms, while adding one root costs 19.5 ms, growing about
+0.025 ms for each file already there. **Switching the config to a wildcard does
+not help** — measured at 5.26/4.63/7.64/13.15 ms per file for 100/200/400/800,
+which is the explicit list to within noise, because the new file joins the root
+set either way and that is what reloads the project. The `files` list stays
+explicit, so the stem-collision contract `#configText` documents is untouched.
+
+The second was that the reopen could not be deferred past the call because
+`createOrUpdateSourceFile` returns the parsed file. What the caller needs from
+that return is the file's _path_, and not until something asks for the tree does
+it need the tree. So `DocumentRegistry#setSourceFileText` writes without parsing
+and holds the change, `#flush` applies whatever is waiting the next time anything
+reads the project, and `CompilerFactory` wraps a source file created from text
+around a function that asks the registry for the node the first time one is
+wanted. A run of creates is one reopen, and a caller that never reads the files
+back pays for none.
+
+Note that this makes batching an optimization rather than a complexity fix:
+`addSourceFilesAtPaths` and `createSourceFile` in a loop are both linear now, and
+the batch is faster only by the bookkeeping it skips.
+
+**Three loops are still quadratic**, all because something asks for a tree while
+the next file is still to come, which is the reopen the deferral exists to
+collect. None is a regression — every one of them cost this before — and none is
+worth chasing before someone reports it, but they are what "linear" above does
+not cover:
+
+- Reading each file back inside the loop. 4.7/4.8/7.4/13.9 ms per file at
+  100/200/400/800, which is what the whole loop cost before. Measured against a
+  loop of `DocumentRegistry#createOrUpdateSourceFile`, which is what the eager
+  path did: identical within noise, so this case did not get worse, it just did
+  not get better.
+- Forgetting or deleting the files as you go: 458/927/3509 ms to delete
+  100/200/400 files that were never read, because each removal resolves the next
+  file's node. Closing it means `Node#_forgetOnlyThis` not asking for a parent
+  a source file cannot have, and `CompilerFactory#removeNodeFromCache` dropping
+  an unresolved file by its path rather than by its node.
+- Creating files alongside one with an unresolved import whose references have
+  been asked for. `SourceFileReferenceContainer` subscribes to `onSourceFileAdded`
+  while a literal is unresolved (`SourceFileReferenceContainer.ts:41`), and its
+  handler runs a checker query, so every create reopens: 551/1173/4247 ms at
+  100/200/400 against 2/3/4 ms without the seed file.
 
 ### 3.2 `TsConfigResolver` builds a throwaway wasm instance per call
 

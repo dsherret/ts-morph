@@ -90,9 +90,13 @@ export class DocumentRegistry {
   readonly #api: API;
   readonly #versions = new Map<string, number>();
   readonly #retiredSnapshots: Snapshot[] = [];
+  readonly #pendingChanged = new Set<string>();
+  readonly #pendingCreated = new Set<string>();
+  readonly #pendingDeleted = new Set<string>();
   #compilerOptions: CompilerOptions;
   #snapshot: Snapshot | undefined;
   #project: Project | undefined;
+  #configStale = false;
   #checkerUsed = false;
   #disposed = false;
 
@@ -126,64 +130,46 @@ export class DocumentRegistry {
    * Adds or replaces many files at once, and returns the parsed files in the order
    * they were given.
    *
-   * Adding a file rewrites the synthetic tsconfig and reopens the project, and both
-   * cost time proportional to how many files the registry already holds — so adding
-   * files one at a time is quadratic in their number. Everything the batch touches
-   * is reported as a single change, which is what makes a bulk add linear.
+   * Everything the batch touches is reported as a single change, so it costs one
+   * reopen however many files it names — see {@link setSourceFileText} for why that
+   * is what matters.
    */
   createOrUpdateSourceFiles(files: readonly { fileName: string; text: string }[]): SourceFile[] {
     this.#assertNotDisposed();
     if (files.length === 0)
       return [];
-
-    const created = new Set<string>();
-    const changed = new Set<string>();
-    let rootsChanged = false;
-    for (const { fileName, text } of files) {
-      if (!this.#versions.has(fileName)) {
-        rootsChanged = true;
-        // A path the wider file system already has is reported as changed rather
-        // than created, because the compiler may have read that copy already —
-        // resolving an import of it, say. Told the file was created it would keep
-        // the tree it parsed, and the file system's stale text would go on
-        // speaking for the contents just written. #versions cannot answer this on
-        // its own: it tracks only the files the registry itself holds.
-        //
-        // The two are not otherwise interchangeable — a created path also
-        // invalidates the failed lookups that named it, where a changed one does
-        // not — but the roots change either way, so the config is rewritten and
-        // the project reloads regardless.
-        if (this.#baseFs?.fileExists?.(fileName) ?? false)
-          changed.add(fileName);
-        else
-          created.add(fileName);
-      } else if (!created.has(fileName)) { // a file the batch itself created is not also a change
-        changed.add(fileName);
-      }
-      this.#fs.writeFile!(fileName, text);
-      this.#versions.set(fileName, (this.#versions.get(fileName) ?? -1) + 1);
-    }
-
-    // the keys have to be left off when empty: #applyChange rewrites the config
-    // for a `created` it can see, however few files are in it
-    this.#applyChange({
-      ...created.size > 0 ? { created: [...created] } : {},
-      ...changed.size > 0 ? { changed: [...changed] } : {},
-    }, rootsChanged);
+    this.#write(files);
     return files.map(file => this.getSourceFileOrThrow(file.fileName));
+  }
+
+  /**
+   * Adds a file or replaces its contents without parsing it.
+   *
+   * Asking for the parsed file is what forces the project open, and a reopen costs
+   * time proportional to how many files the project holds — so adding files one at
+   * a time through {@link createOrUpdateSourceFile} is quadratic in their number.
+   * Nothing here reopens anything: the change waits with the others until the next
+   * read of {@link project}, {@link program}, {@link checker} or
+   * {@link getSourceFile}, so a run of these costs one reopen between them rather
+   * than one each. The file is in the project from that read onwards, and a caller
+   * that never takes one pays for no reopen at all.
+   */
+  setSourceFileText(fileName: string, text: string): void {
+    this.#assertNotDisposed();
+    this.#write([{ fileName, text }]);
   }
 
   /**
    * Replaces the compiler options the registry's project is opened with.
    *
    * The options live in the synthetic tsconfig, so changing them rewrites it and
-   * reopens the project — every file is reparsed against the new options.
+   * reopens the project — every file is reparsed against the new options — from the
+   * next read of the project.
    */
   setCompilerOptions(compilerOptions: CompilerOptions): void {
     this.#assertNotDisposed();
     this.#compilerOptions = compilerOptions;
-    this.#fs.writeFile!(configFilePath, this.#configText());
-    this.#openProject({ fileChanges: { changed: [configFilePath] }, openProject: configFilePath });
+    this.#queueChange({}, true);
   }
 
   /**
@@ -198,11 +184,15 @@ export class DocumentRegistry {
    */
   removeSourceFile(fileName: string, options: RemoveSourceFileOptions = {}): void {
     this.#assertNotDisposed();
-    if (!this.#versions.delete(fileName))
+    if (!this.#versions.has(fileName))
       return;
+    // before the file goes, so a change still waiting for it is applied while it is
+    // still there to be applied to — see #flushPending
+    this.#flushPending([fileName]);
+    this.#versions.delete(fileName);
     this.#fs.removeFile!(fileName);
     // the file stops being a root either way, so the config is rewritten without it
-    this.#applyChange(options.discardContents ? { deleted: [fileName] } : { changed: [fileName] }, true);
+    this.#queueChange(options.discardContents ? { deleted: [fileName] } : { changed: [fileName] }, true);
   }
 
   /** Returns the parsed file, or `undefined` when it is not in the project. */
@@ -262,32 +252,142 @@ export class DocumentRegistry {
     this.#retiredSnapshots.length = 0;
     this.#project = undefined;
     this.#versions.clear();
+    this.#pendingChanged.clear();
+    this.#pendingCreated.clear();
+    this.#pendingDeleted.clear();
     this.#api.close();
   }
 
   /**
-   * Reports a file change and reopens the project on the resulting snapshot.
+   * Writes files into the registry's file system and reports what changed.
    *
-   * The change and the reopen are one call so an edit costs one snapshot rather
-   * than two, and the snapshot it replaces is let go of — see #retire for when
-   * that means disposing it. Letting go happens after the new snapshot exists so
-   * the source file cache can first carry unchanged files' entries across; that
-   * is what preserves node identity for every file the edit did not touch.
+   * A file the wider file system already has is reported as changed rather than
+   * created, because the compiler may have read that copy already — resolving an
+   * import of it, say. Told the file was created it would keep the tree it parsed,
+   * and the file system's stale text would go on speaking for the contents just
+   * written. #versions cannot answer this on its own: it tracks only the files the
+   * registry itself holds.
+   *
+   * The two are not otherwise interchangeable — a created path also invalidates the
+   * failed lookups that named it, where a changed one does not — but the roots
+   * change either way, so the config is rewritten and the project reloads
+   * regardless.
+   */
+  #write(files: readonly { fileName: string; text: string }[]): void {
+    // before the text changes, so a change still waiting for one of these paths is
+    // applied against the text it was reported for — see #flushPending
+    this.#flushPending(files.map(file => file.fileName));
+
+    const created = new Set<string>();
+    const changed = new Set<string>();
+    let rootsChanged = false;
+    for (const { fileName, text } of files) {
+      if (!this.#versions.has(fileName)) {
+        rootsChanged = true;
+        if (this.#baseFs?.fileExists?.(fileName) ?? false)
+          changed.add(fileName);
+        else
+          created.add(fileName);
+      } else if (!created.has(fileName)) { // a file the batch itself created is not also a change
+        changed.add(fileName);
+      }
+      this.#fs.writeFile!(fileName, text);
+      this.#versions.set(fileName, (this.#versions.get(fileName) ?? -1) + 1);
+    }
+
+    // the keys have to be left off when empty: #queueChange rewrites the config for
+    // a `created` it can see, however few files are in it
+    this.#queueChange({
+      ...created.size > 0 ? { created: [...created] } : {},
+      ...changed.size > 0 ? { changed: [...changed] } : {},
+    }, rootsChanged);
+  }
+
+  /**
+   * Records a file change for the next time the project is opened.
+   *
+   * Changes are held rather than applied because opening the project is the whole
+   * cost of a change — see setSourceFileText — and a caller that makes several
+   * before reading anything should only pay it once. Nothing observes the registry
+   * without going through #getProject, so holding them is not visible beyond
+   * costing less.
+   *
+   * Callers apply what is waiting for a path before changing it again — see
+   * #flushPending — so each set holds a path at most once and the kinds stay
+   * disjoint. That matters because created-then-changed and deleted-then-created
+   * are neither of the two things they are made of, and coalescing them would have
+   * to decide which. It never comes up in a run of adds, which is the case this is
+   * for.
    *
    * `rootsChanged` is for the cases the change itself does not imply it, of which
-   * there are two: a file that left the registry without being reported as deleted
-   * (see removeSourceFile), and one that joined it reported as changed rather than
-   * created (see createOrUpdateSourceFiles).
+   * there are three: a file that left the registry without being reported as
+   * deleted (see removeSourceFile), one that joined it reported as changed rather
+   * than created (see #write), and compiler options that are not about files at all
+   * but live in the same config (see setCompilerOptions).
    */
-  #applyChange(changes: { changed?: string[]; created?: string[]; deleted?: string[] }, rootsChanged = false): void {
+  #queueChange(changes: { changed?: string[]; created?: string[]; deleted?: string[] }, rootsChanged = false): void {
+    for (const path of changes.changed ?? [])
+      this.#pendingChanged.add(path);
+    for (const path of changes.created ?? [])
+      this.#pendingCreated.add(path);
+    for (const path of changes.deleted ?? [])
+      this.#pendingDeleted.add(path);
     // adding or removing a file changes the root file list, which lives in the
-    // config, so that has to be rewritten too — see #configText for why the list
-    // is explicit
-    if (rootsChanged || changes.created != null || changes.deleted != null) {
+    // config, so that has to be rewritten too — see #configText for why the list is
+    // explicit
+    this.#configStale ||= rootsChanged || this.#pendingCreated.size > 0 || this.#pendingDeleted.size > 0;
+  }
+
+  /**
+   * Applies the waiting changes when any of `paths` is among them.
+   *
+   * Called before a path a change is already waiting for is written or removed
+   * again, because what the compiler is told about a change has to describe what it
+   * finds when it looks: told a file was created and then handed a file system
+   * without it, or told one was deleted and handed a file system that still has it,
+   * it is being asked to believe two things at once. Applying the older change
+   * first is what keeps each report true of the moment it is made.
+   */
+  #flushPending(paths: readonly string[]): void {
+    if (paths.some(path => this.#pendingChanged.has(path) || this.#pendingCreated.has(path) || this.#pendingDeleted.has(path)))
+      this.#flush();
+  }
+
+  /**
+   * Applies the waiting changes and reopens the project on the resulting snapshot.
+   *
+   * The changes and the reopen are one call so they cost one snapshot rather than
+   * two, and the snapshot they replace is let go of — see #retire for when that
+   * means disposing it. Letting go happens after the new snapshot exists so the
+   * source file cache can first carry unchanged files' entries across; that is what
+   * preserves node identity for every file the changes did not touch.
+   */
+  #flush(): void {
+    if (this.#pendingChanged.size === 0 && this.#pendingCreated.size === 0 && this.#pendingDeleted.size === 0 && !this.#configStale)
+      return;
+    const changed = [...this.#pendingChanged];
+    const created = [...this.#pendingCreated];
+    const deleted = [...this.#pendingDeleted];
+    const configStale = this.#configStale;
+    // emptied before the project opens, because opening it is what reads the
+    // registry back and a change applied twice is not the same change
+    this.#pendingChanged.clear();
+    this.#pendingCreated.clear();
+    this.#pendingDeleted.clear();
+    this.#configStale = false;
+
+    if (configStale) {
       this.#fs.writeFile!(configFilePath, this.#configText());
-      changes = { ...changes, changed: [...changes.changed ?? [], configFilePath] };
+      changed.push(configFilePath);
     }
-    this.#openProject({ fileChanges: changes, openProject: configFilePath });
+    this.#openProject({
+      fileChanges: {
+        ...changed.length > 0 ? { changed } : {},
+        ...created.length > 0 ? { created } : {},
+        ...deleted.length > 0 ? { deleted } : {},
+      },
+      openProject: configFilePath,
+    });
   }
 
   /**
@@ -311,6 +411,7 @@ export class DocumentRegistry {
 
   #getProject(): Project {
     this.#assertNotDisposed();
+    this.#flush();
     if (this.#project == null)
       this.#openProject({ openProject: configFilePath });
     return this.#project!;

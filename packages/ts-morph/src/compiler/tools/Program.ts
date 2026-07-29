@@ -84,9 +84,10 @@ export class Program {
   /**
    * Resets the program.
    *
-   * The tsgo session reopens the project on every file change, so the program
-   * and the checker are always the current snapshot's; there is nothing to
-   * recreate here beyond pointing the checker back at them.
+   * The tsgo session reopens the project for whatever has changed the next time
+   * anything reads it, so the program and the checker are always the current
+   * snapshot's; there is nothing to recreate here beyond pointing the checker
+   * back at them.
    * @internal
    */
   _reset() {

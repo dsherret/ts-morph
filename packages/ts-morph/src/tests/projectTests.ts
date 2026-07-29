@@ -929,6 +929,42 @@ const test = new Test();`,
       expect(sourceFile.getFullText())
         .to.equal("enum NewName {\n    myNewMemberName\n}\nlet myEnum: NewName;\nlet myOtherEnum: MyOtherNewName;\n\nenum MyOtherNewName {\n}\n");
     });
+
+    // Parsing a file makes the compiler reopen its project, and a reopen costs time
+    // proportional to how many files the project already holds — so a create that
+    // parsed as it went would make this loop quadratic in the number of files, which
+    // it was. A project eight times the size should cost about eight times as much,
+    // no more.
+    //
+    // Per file the bigger project is the *cheaper* of the two, because the fixed
+    // cost of standing a project up is spread over more files: the ratio measured
+    // here is 0.24, steady to ±0.01 across runs, so the threshold leaves a loaded
+    // machine six times the room it needs. The quadratic behaviour this replaced put
+    // the ratio at 5.3.
+    it("should cost about the same per file however many files the project holds", function() {
+      this.timeout(90_000); // enough that a regression is reported rather than timing out
+      createFiles(50); // the first project pays for warming the compiler up
+
+      const small = createFiles(200);
+      const large = createFiles(1600);
+      expect(large).to.be.lessThan(small * 1.5);
+
+      function createFiles(count: number) {
+        const project = new Project({ useInMemoryFileSystem: true });
+        const start = performance.now();
+        const sourceFiles: SourceFile[] = [];
+        for (let i = 0; i < count; i++)
+          sourceFiles.push(project.createSourceFile(`/file${i}.ts`, `export const value${i} = ${i};`));
+        // reading the files back is what opens the project, so what that costs
+        // belongs in the measurement
+        let declarationCount = 0;
+        for (const sourceFile of sourceFiles)
+          declarationCount += sourceFile.getVariableDeclarations().length;
+        const perFile = (performance.now() - start) / count;
+        expect(declarationCount).to.equal(count);
+        return perFile;
+      }
+    });
   });
 
   describe("mixing real files with in-memory files", () => {

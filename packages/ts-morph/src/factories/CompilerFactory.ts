@@ -273,10 +273,11 @@ export class CompilerFactory {
    * `undefined` where the file system has no such file.
    *
    * Equivalent to calling {@link addOrGetSourceFileFromFilePath} for each path,
-   * except that everything read off the file system is parsed as a single batch.
-   * The document registry reopens its project once per batch instead of once per
-   * file, and reopening costs more the more files the project holds, so this is
-   * what keeps adding many files from being quadratic in their number.
+   * except that everything read off the file system is parsed as a single batch —
+   * the document registry is told about the whole batch at once and hands back the
+   * parsed files, where one at a time each file is wrapped around a parse that has
+   * not happened yet. Both cost one reopen; this one does less bookkeeping to get
+   * there, and is the shape the callers that have all the paths already want.
    */
   addOrGetSourceFilesFromFilePaths(
     filePaths: readonly StandardizedFilePath[],
@@ -461,6 +462,17 @@ export class CompilerFactory {
     }
   }
 
+  /**
+   * Wraps text as a source file, without parsing it.
+   *
+   * Parsing is what makes the compiler reopen its project, and a reopen costs more
+   * the more files the project holds — so a loop that creates files one at a time
+   * would be quadratic in their number if each one parsed as it went. The text is
+   * handed to the document registry, which holds the change; the wrapper carries
+   * the path it was given and asks the registry for the parsed file only when
+   * something wants the tree, by which time a whole run of creates has been
+   * collected into one reopen.
+   */
   #createSourceFileFromTextInternal(
     filePath: StandardizedFilePath,
     text: string,
@@ -469,9 +481,27 @@ export class CompilerFactory {
     const hasBom = StringUtils.hasBom(text);
     if (hasBom)
       text = StringUtils.stripBom(text);
-    const sourceFile = this.getSourceFile(this.createCompilerSourceFileFromText(filePath, text), options);
+    this.documentRegistry.setSourceFileText(filePath, text);
+
+    const sourceFile: SourceFile = new SourceFile(this.#context, () => {
+      const compilerSourceFile = this.documentRegistry.getSourceFileOrThrow(filePath);
+      // the node the wrapper is for is only known now, so this is where the node
+      // cache learns of it — every other path to it goes through the file path
+      // cache, which has had the wrapper since it was made
+      this.#nodeCache.set(compilerSourceFile, sourceFile);
+      return compilerSourceFile;
+    }, filePath);
+
+    if (!options.markInProject)
+      this.#context.inProjectCoordinator.setSourceFileNotInProject(sourceFile);
+    this.#addSourceFileToCache(sourceFile);
     if (hasBom)
       sourceFile._hasBom = true;
+
+    if (options.markInProject)
+      sourceFile._markAsInProject();
+    this.#sourceFileAddedEventContainer.fire(sourceFile);
+
     return sourceFile;
   }
 

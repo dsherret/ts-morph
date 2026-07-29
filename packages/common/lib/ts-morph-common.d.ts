@@ -810,20 +810,33 @@ export declare class DocumentRegistry {
      * Adds or replaces many files at once, and returns the parsed files in the order
      * they were given.
      *
-     * Adding a file rewrites the synthetic tsconfig and reopens the project, and both
-     * cost time proportional to how many files the registry already holds — so adding
-     * files one at a time is quadratic in their number. Everything the batch touches
-     * is reported as a single change, which is what makes a bulk add linear.
+     * Everything the batch touches is reported as a single change, so it costs one
+     * reopen however many files it names — see {@link setSourceFileText} for why that
+     * is what matters.
      */
     createOrUpdateSourceFiles(files: readonly {
         fileName: string;
         text: string;
     }[]): SourceFile[];
     /**
+     * Adds a file or replaces its contents without parsing it.
+     *
+     * Asking for the parsed file is what forces the project open, and a reopen costs
+     * time proportional to how many files the project holds — so adding files one at
+     * a time through {@link createOrUpdateSourceFile} is quadratic in their number.
+     * Nothing here reopens anything: the change waits with the others until the next
+     * read of {@link project}, {@link program}, {@link checker} or
+     * {@link getSourceFile}, so a run of these costs one reopen between them rather
+     * than one each. The file is in the project from that read onwards, and a caller
+     * that never takes one pays for no reopen at all.
+     */
+    setSourceFileText(fileName: string, text: string): void;
+    /**
      * Replaces the compiler options the registry's project is opened with.
      *
      * The options live in the synthetic tsconfig, so changing them rewrites it and
-     * reopens the project — every file is reparsed against the new options.
+     * reopens the project — every file is reparsed against the new options — from the
+     * next read of the project.
      */
     setCompilerOptions(compilerOptions: CompilerOptions): void;
     /**

@@ -32,7 +32,7 @@ behind these decisions are in [MIGRATION-REPORT.md](./MIGRATION-REPORT.md).
 3. [The `ts` namespace is much smaller](#3-the-ts-namespace-is-much-smaller)
 4. [Capabilities that are gone](#4-capabilities-that-are-gone)
 5. [Diagnostics moved](#5-diagnostics-moved)
-6. [Performance: add files in bulk](#6-performance-add-files-in-bulk)
+6. [Performance](#6-performance)
 7. [Runtime, packaging and the browser](#7-runtime-packaging-and-the-browser)
 8. [The rest, by area](#8-the-rest-by-area)
 9. [Known gaps](#9-known-gaps-not-design-decisions)
@@ -387,48 +387,61 @@ diagnostics that mention them. `packages/common` no longer depends on
 
 ---
 
-## 6. Performance: add files in bulk
+## 6. Performance
 
 Measured on this machine, in-memory file system, against published 28.0.0.
 
-| Operation                                      | 28.0.0    | Now         |
-| ---------------------------------------------- | --------- | ----------- |
-| `new Project({ tsConfigFilePath })`, 800 files | 90 ms     | 367 ms      |
-| `addSourceFilesAtPaths`, 800 files             | 21 ms     | 218 ms      |
-| First `getPreEmitDiagnostics()`, 800 files     | 370 ms    | 605 ms      |
-| One `SourceFile#addStatements` edit            | 0.18 ms   | 0.94 ms     |
-| `getCompilerOptionsFromTsConfig`, repeated     | 0.4 ms    | 10.3 ms     |
-| **`createSourceFile` in a loop, 800 files**    | **10 ms** | **8254 ms** |
+| Operation                                      | 28.0.0  | Now     |
+| ---------------------------------------------- | ------- | ------- |
+| `new Project({ tsConfigFilePath })`, 800 files | 90 ms   | 367 ms  |
+| `addSourceFilesAtPaths`, 800 files             | 21 ms   | 218 ms  |
+| First `getPreEmitDiagnostics()`, 800 files     | 370 ms  | 605 ms  |
+| One `SourceFile#addStatements` edit            | 0.18 ms | 0.94 ms |
+| `getCompilerOptionsFromTsConfig`, repeated     | 0.4 ms  | 10.3 ms |
+| `createSourceFile` in a loop, 800 files        | 10 ms   | 199 ms  |
 
-Everything except the last row is a constant-factor slowdown of roughly 2–10×,
-and the bulk paths are linear in file count.
+Every row is a constant-factor slowdown of roughly 2–26×.
 
-**The last row is not.** Adding files one at a time is quadratic: the document
-registry rewrites its synthetic `tsconfig.json` and reopens the project on every
-add, and both cost time proportional to how many files it already holds. Measured
-per file: 5.3 ms at 200 files, 10.3 ms at 800.
+The last row is the one to know something about. Parsing a file is what makes the
+compiler reopen its project, and a reopen costs time proportional to how many
+files the project already holds — so a `createSourceFile` that parsed as it went
+would be quadratic, which is what an earlier build of this port was. It does not
+parse as it goes: the file's text is written and the tree is fetched the first
+time something asks for it, by which time a whole run of creates has been
+collected into one reopen. The 199 ms above is 8 ms for the loop and 191 ms for
+reading every file back afterwards; per file, at 100/400/1600/3200 files, the two
+together come to 1.31/0.41/0.18/0.14 ms — falling, because the fixed cost of
+standing a project up is spread over more files.
 
-If you build a project by calling `Project#createSourceFile` in a loop, **write
-the files to the file system and let the project read them in bulk instead**:
+**Reading a file back inside the loop keeps the old quadratic cost**, because
+that is the reopen the deferral exists to collect. It measures at 4.7/4.8/7.4/13.9
+ms per file for 100/200/400/800, which is the cost before any of this. So:
 
 ```ts
-// slow: quadratic in the number of files
-const project = new Project({ useInMemoryFileSystem: true });
+// quadratic: each file's tree is asked for while the next is still to come
 for (const [path, text] of files)
-  project.createSourceFile(path, text);
+  doSomethingWith(project.createSourceFile(path, text).getStatements());
 
-// fast: one batched add
+// linear: one reopen between them, whatever is read afterwards
+const created = files.map(([path, text]) => project.createSourceFile(path, text));
+for (const sourceFile of created)
+  doSomethingWith(sourceFile.getStatements());
+```
+
+Two things other than an explicit read force one, and both make a create loop
+quadratic again: forgetting or deleting the files as you go, and creating them
+alongside a file with an unresolved import whose references have been asked for
+(`SourceFile#getReferencingSourceFiles` and friends re-resolve on every file
+added). Adding files that are already on the file system in one call avoids all
+of it, and skips some bookkeeping besides:
+
+```ts
 const project = new Project({ useInMemoryFileSystem: true });
 const fs = project.getFileSystem();
 for (const [path, text] of files)
   fs.writeFileSync(path, text);
 project.addSourceFilesAtPaths("/**/*.ts");
 ```
-
-The registry has a batched `createOrUpdateSourceFiles(entries)` underneath, which
-is what makes the bulk path linear; ts-morph's public `createSourceFile` cannot
-use it, because it has to return the parsed file. Whether to expose a batching
-entry point on `Project` is open — [TODO.md](./TODO.md).
 
 Two smaller regressions worth knowing:
 
@@ -1068,7 +1081,9 @@ Runtime exports: 53 → 62. **Removed:** `createDocumentCache`, `createHosts`,
 
 `ts.IScriptSnapshot`, `ts.ScriptSnapshot` and `ts.DocumentRegistryBucketKey` no
 longer exist. New: `createOrUpdateSourceFiles(entries)` (the batched add — §6),
-`dispose()`, `setCompilerOptions()`, `getSourceFileVersion()`.
+`setSourceFileText(fileName, text)` (adds without parsing, so the project is only
+reopened when something reads it), `dispose()`, `setCompilerOptions()`,
+`getSourceFileVersion()`.
 
 A returned tree for an _edited_ file is only valid until the next change to that
 file. Files the edit did not touch keep their nodes, which is what preserves
@@ -1133,7 +1148,6 @@ several are one routing change in the compiler fork away:
 - `SourceFile#fixUnusedIdentifiers` (needs a new provider, not a route).
 - `@types` packages added to the file system after the project was created, for
   `getAmbientModules`.
-- The `createSourceFile`-in-a-loop cost (§6).
 
 ---
 

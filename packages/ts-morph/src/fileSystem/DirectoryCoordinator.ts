@@ -58,9 +58,8 @@ export class DirectoryCoordinator {
   /**
    * Adds the files at the given paths, throwing when one of them is not there.
    *
-   * The files are added in one batch, which the document registry is much faster
-   * at than the same paths added one at a time — see
-   * `CompilerFactory#addOrGetSourceFilesFromFilePaths`.
+   * The files are added in one batch, which does less work than the same paths
+   * added one at a time — see `CompilerFactory#addOrGetSourceFilesFromFilePaths`.
    */
   addSourceFilesAtFilePaths(filePaths: readonly StandardizedFilePath[], options: { markInProject: boolean }): SourceFile[] {
     const sourceFiles = this.#compilerFactory.addOrGetSourceFilesFromFilePaths(filePaths, {

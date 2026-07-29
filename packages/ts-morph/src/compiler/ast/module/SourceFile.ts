@@ -62,6 +62,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
   #referencedFiles: FileReference[] | undefined;
   #libReferenceDirectives: FileReference[] | undefined;
   #typeReferenceDirectives: FileReference[] | undefined;
+  #filePath: StandardizedFilePath | undefined;
 
   /** @internal */
   _hasBom: true | undefined;
@@ -70,13 +71,19 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    * Initializes a new instance.
    * @private
    * @param context - Project context.
-   * @param node - Underlying node.
+   * @param node - Underlying node, or a function producing it the first time it is
+   * asked for — see the Node constructor.
+   * @param filePath - Where the file is, for a file whose node has not been parsed
+   * yet. The path is the one thing about a source file that is known before it is
+   * parsed, and the one thing the caches it goes into ask for.
    */
   constructor(
     context: ProjectContext,
-    node: ts.SourceFile,
+    node: ts.SourceFile | (() => ts.SourceFile),
+    filePath?: StandardizedFilePath,
   ) {
     super(context, node, undefined);
+    this.#filePath = filePath;
     // typescript doesn't allow calling `super` with `this`, so set this after
     this.__sourceFile = this;
 
@@ -95,6 +102,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    */
   _replaceCompilerNodeFromFactory(compilerNode: ts.SourceFile) {
     super._replaceCompilerNodeFromFactory(compilerNode);
+    this.#filePath = compilerNode.fileName as StandardizedFilePath; // a file that moved is a new node at a new path
     this._context.resetProgram(); // make sure the program has the latest source file
     this.#isSaved = false;
     this.#modifiedEventContainer.fire(this);
@@ -103,6 +111,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
   /** @internal */
   protected _clearInternals() {
     super._clearInternals();
+    // a forgotten file has no path either, so asking for one says so rather than
+    // answering from what was cached before it was forgotten
+    this.#filePath = undefined;
     clearTextRanges(this.#referencedFiles);
     clearTextRanges(this.#typeReferenceDirectives);
     clearTextRanges(this.#libReferenceDirectives);
@@ -119,7 +130,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    * Gets the file path.
    */
   getFilePath() {
-    return this.compilerNode.fileName as StandardizedFilePath;
+    return this.#filePath ??= this.compilerNode.fileName as StandardizedFilePath;
   }
 
   /**
@@ -156,7 +167,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    * Gets the directory path that the source file is contained in.
    */
   getDirectoryPath(): StandardizedFilePath {
-    return this._context.fileSystemWrapper.getStandardizedAbsolutePath(FileUtils.getDirPath(this.compilerNode.fileName));
+    return this._context.fileSystemWrapper.getStandardizedAbsolutePath(FileUtils.getDirPath(this.getFilePath()));
   }
 
   /**

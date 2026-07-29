@@ -56,6 +56,7 @@ export type NodeParentType<NodeType extends ts.Node> = NodeType extends ts.Sourc
 
 export class Node<NodeType extends ts.Node = ts.Node> {
   #compilerNode: NodeType | undefined;
+  #resolveCompilerNode: (() => NodeType) | undefined;
   #forgottenText: string | undefined;
   #childStringRanges: [number, number][] | undefined;
   #leadingCommentRanges: CommentRange[] | undefined;
@@ -79,6 +80,19 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    * Gets the underlying compiler node.
    */
   get compilerNode(): NodeType {
+    if (this.#compilerNode == null && this.#resolveCompilerNode != null) {
+      const resolve = this.#resolveCompilerNode;
+      this.#resolveCompilerNode = undefined; // cleared first, so a resolve that comes back here does not recurse
+      try {
+        this.#compilerNode = resolve();
+      } catch (err) {
+        // put back, because a node with one still to come is not a forgotten one:
+        // dropped, this would report every later access as a node that was removed
+        // and lose whatever actually went wrong here
+        this.#resolveCompilerNode = resolve;
+        throw err;
+      }
+    }
     if (this.#compilerNode == null) {
       let message = "Attempted to get information from a node that was removed or forgotten.";
       if (this.#forgottenText != null)
@@ -92,12 +106,15 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    * Initializes a new instance.
    * @private
    * @param context - Project context.
-   * @param node - Underlying node.
+   * @param node - Underlying node, or a function producing it the first time it is
+   * asked for. Parsing a file is what forces the compiler to open the project, and
+   * a file the caller has only just written may never be read at all, so a source
+   * file created from text is wrapped around the second (see CompilerFactory).
    * @param sourceFile - Source file for the node.
    */
   constructor(
     context: ProjectContext,
-    node: NodeType,
+    node: NodeType | (() => NodeType),
     sourceFile: SourceFile | undefined,
   ) {
     if (context == null || context.compilerFactory == null) {
@@ -108,7 +125,10 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     this._context = context;
-    this.#compilerNode = node;
+    if (typeof node === "function")
+      this.#resolveCompilerNode = node;
+    else
+      this.#compilerNode = node;
     this.__sourceFile = sourceFile;
   }
 
@@ -156,7 +176,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    * This will be true when the compiler node was forgotten or removed.
    */
   wasForgotten() {
-    return this.#compilerNode == null;
+    // a node that has not been asked for its compiler node yet still has one waiting
+    return this.#compilerNode == null && this.#resolveCompilerNode == null;
   }
 
   /**
@@ -183,11 +204,15 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
   /** @internal */
   #storeTextForForgetting() {
+    // this node's own is asked for first, because reading the source file's resolves
+    // it, and a node with none of its own has nothing to describe either way
+    const compilerNode = this.#compilerNode;
+    if (compilerNode == null)
+      return;
+
     // check for undefined here just in case
     const sourceFileCompilerNode = this._sourceFile && this._sourceFile.compilerNode;
-    const compilerNode = this.#compilerNode;
-
-    if (sourceFileCompilerNode == null || compilerNode == null)
+    if (sourceFileCompilerNode == null)
       return;
 
     this.#forgottenText = getText();
@@ -204,6 +229,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   /** @internal */
   protected _clearInternals() {
     this.#compilerNode = undefined;
+    this.#resolveCompilerNode = undefined;
     this.#childStringRanges = undefined;
     clearTextRanges(this.#leadingCommentRanges);
     clearTextRanges(this.#trailingCommentRanges);
