@@ -482,6 +482,81 @@ splitting the field made it easier to see, and it is worth closing.
 
 ---
 
+### 3.6 What is left, and the order to do it in
+
+The shape of the cost has changed, so the priorities have too. Measured per edit
+and read on an already-built project:
+
+| project    | per edit + read | 28.0.0   |
+| ---------- | --------------- | -------- |
+| 100 files  | 1.00 ms         | ~0.06 ms |
+| 400 files  | 1.65 ms         |          |
+| 1600 files | 1.93 ms         |          |
+| 3200 files | 2.02 ms         |          |
+
+A 32x increase in project size now costs 2x per edit, so **the size-dependent term
+is largely dealt with** and roughly 90% of what remains is a fixed ~1 ms paid on
+every read-after-write. Chasing per-file terms has hit diminishing returns; the
+question is why an edit opens a snapshot at all.
+
+#### a. Stop opening a semantic snapshot for a syntactic operation — the one that matters
+
+**ts-morph and fork.** `addClass`, `addStatements` and `rename` are a text edit
+followed by a re-parse of **one file**. Nothing semantic is needed. Every one of
+them currently opens a compiler snapshot: a program clone, a Wasm round trip, an
+AST re-encode. 28.0.0 did none of that — it re-parsed the changed file with
+`ts.createSourceFile` and left the program alone until something asked a semantic
+question, which is the whole of its 0.06 ms.
+
+The change: a **parse-only endpoint** in the fork — text in, encoded AST out, no
+project, no snapshot, no binding — used for the tree a manipulation hands back,
+with the session update deferred to the next genuinely semantic query (types,
+diagnostics, references, symbols). The deferral machinery already exists from
+§3.1; this extends it from creation to editing.
+
+The risks, in order: node identity for a tree with no snapshot handle (though
+`RemoteNode` versus reconstructed nodes already draws that distinction, see
+`isReconstructedNode`); classifying every public method as syntactic or semantic,
+where getting one wrong yields a stale answer rather than a slow one; and keeping
+the stale-handle errors honest. This is a design change, not a patch.
+
+#### b. Send root files to the API directly, not through a synthetic tsconfig
+
+**ts-morph and fork.** The registry writes a `/tsconfig.json` naming every file,
+which the compiler re-parses on every reopen — the largest measured item left
+(~28% of a create at 1600 files, counting `getCommonDirectory` on the JS side).
+Taking root files as root files removes it, and deletes the stem-collision
+workaround `#configText` documents as a side effect. Needs the protocol and the
+registry's project lifetime to change together.
+
+#### c. Make deletion incremental
+
+**fork.** The last genuinely quadratic path: creating while deleting measures
+5.6 / 9.0 / **18.6** ms per file at 200 / 400 / 800, still doubling. Deletion
+falls back to a full rebuild (§3.5). The machinery is the one `AddRootFiles`
+already established — the hard part is that removing a file can move what other
+files resolve to, so the refusal conditions need at least as much care as the
+addition's did.
+
+#### d. A public batch create entry point
+
+**ts-morph.** The documented fast path is currently advice in
+BREAKING-CHANGES.md §6 rather than an API. `DocumentRegistry#createOrUpdateSourceFiles`
+already exists underneath; `Project` should expose the same shape.
+
+#### e. Two per-file loops that a clone already knows the answer to
+
+**fork and client.** `computeSnapshotChanges` diffs the whole `FilesByPath` map
+when a clone knows the one file that differs, and `retainForSnapshot` copies a
+reference onto every entry. ~4% each at 800 files.
+
+#### Deferred: layered `processedFiles` maps
+
+Cloning ten `map[tspath.Path]…` fields per snapshot is ~21% — the largest single
+item after (b) — but making them layered rather than copied touches every reader
+in the compiler. Deliberately left until the above have landed and been measured,
+since (a) may make the snapshot rare enough that this stops mattering.
+
 ---
 
 ## 4. Packaging and publishing
