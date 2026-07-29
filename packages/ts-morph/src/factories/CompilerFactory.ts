@@ -206,26 +206,7 @@ export class CompilerFactory {
     files: readonly { filePath: StandardizedFilePath; sourceFileText: string | OptionalKind<SourceFileStructure> | WriterFunction }[],
     options: SourceFileCreateOptions & { markInProject: boolean },
   ): SourceFile[] {
-    // a nested call — a writer function that creates files of its own — joins the
-    // batch already collecting rather than starting one, which would take the outer
-    // batch's events with it when it finished
-    if (this.#deferredSourceFilesAdded != null)
-      return files.map(file => this.createSourceFile(file.filePath, file.sourceFileText, options));
-
-    const created: SourceFile[] = [];
-    this.#deferredSourceFilesAdded = [];
-    try {
-      for (const file of files)
-        created.push(this.createSourceFile(file.filePath, file.sourceFileText, options));
-    } finally {
-      // fired even when a file part way through threw, because the files before it
-      // were created and a loop would have reported them
-      const deferred = this.#deferredSourceFilesAdded;
-      this.#deferredSourceFilesAdded = undefined;
-      for (const sourceFile of deferred)
-        this.#sourceFileAddedEventContainer.fire(sourceFile);
-    }
-    return created;
+    return this.#withDeferredAddedEvents(() => files.map(file => this.createSourceFile(file.filePath, file.sourceFileText, options)));
   }
 
   /**
@@ -323,12 +304,12 @@ export class CompilerFactory {
     options: { markInProject: boolean; scriptKind: ScriptKind | undefined },
   ): (SourceFile | undefined)[] {
     const standardizedFilePaths = filePaths.map(filePath => this.#context.fileSystemWrapper.getStandardizedAbsolutePath(filePath));
-    const toParse: { filePath: StandardizedFilePath; text: string; hasBom: boolean }[] = [];
+    const toAdd: { filePath: StandardizedFilePath; text: string }[] = [];
     const queued = new Set<StandardizedFilePath>();
 
-    // a path given twice is read and parsed once, the way the same path asked for
-    // twice one at a time would be — the second ask found the first in the cache,
-    // and nothing reaches the cache until the whole batch has been parsed
+    // a path given twice is read once, the way the same path asked for twice one at a
+    // time would be — the second ask found the first in the cache, and nothing reaches
+    // the cache until the whole batch has been written
     for (const filePath of standardizedFilePaths) {
       if (this.#sourceFileCacheByFilePath.has(filePath) || queued.has(filePath))
         continue;
@@ -337,28 +318,55 @@ export class CompilerFactory {
       if (fileText == null)
         continue;
       this.#context.logger.log(`Loaded file: ${filePath}`);
-      const hasBom = StringUtils.hasBom(fileText);
-      toParse.push({ filePath, text: hasBom ? StringUtils.stripBom(fileText) : fileText, hasBom });
+      toAdd.push({ filePath, text: fileText });
     }
 
-    // kept by the path that was asked for, because the file path cache keys on the
-    // name the compiler reports, which a case-insensitive project can spell otherwise
-    const parsed = new Map<StandardizedFilePath, SourceFile>();
-    const compilerSourceFiles = this.documentRegistry.createOrUpdateSourceFiles(toParse.map(f => ({ fileName: f.filePath, text: f.text })));
-    for (let i = 0; i < compilerSourceFiles.length; i++) {
-      const sourceFile = this.getSourceFile(compilerSourceFiles[i], options);
-      if (toParse[i].hasBom)
-        sourceFile._hasBom = true;
-      sourceFile._setIsSaved(true); // source files loaded from the disk are saved to start with
-      parsed.set(toParse[i].filePath, sourceFile);
-    }
+    // each file's text is written now and its tree fetched when something wants it, the
+    // same as a create. Asking the program for all of them here instead is what a batch
+    // add used to do, and it dominated everything else: 307 ms for 300 files against
+    // 3 ms to write them, because a file is fetched and decoded one at a time.
+    const added = new Map<StandardizedFilePath, SourceFile>();
+    this.#withDeferredAddedEvents(() => {
+      for (const file of toAdd) {
+        const sourceFile = this.#createSourceFileFromTextInternal(file.filePath, file.text, options);
+        sourceFile._setIsSaved(true); // source files loaded from the disk are saved to start with
+        added.set(file.filePath, sourceFile);
+      }
+    });
 
     return standardizedFilePaths.map(filePath => {
-      const sourceFile = parsed.get(filePath) ?? this.#sourceFileCacheByFilePath.get(filePath);
+      const sourceFile = added.get(filePath) ?? this.#sourceFileCacheByFilePath.get(filePath);
       if (sourceFile != null && options.markInProject)
         sourceFile._markAsInProject();
       return sourceFile;
     });
+  }
+
+  /**
+   * Runs `action` with every source file added event held until it finishes.
+   *
+   * A handler for that event that asks the compiler a question — an unresolved import
+   * re-resolving, say — is what forces the waiting writes open, so asking once for a
+   * whole batch is one reopen rather than one for each file.
+   *
+   * A nested call joins the batch already collecting rather than starting one, which
+   * would take the outer batch's events with it when it finished.
+   */
+  #withDeferredAddedEvents<T>(action: () => T): T {
+    if (this.#deferredSourceFilesAdded != null)
+      return action();
+
+    this.#deferredSourceFilesAdded = [];
+    try {
+      return action();
+    } finally {
+      // fired even when the action threw part way through, because the files before
+      // that point were created and a loop would have reported them
+      const deferred = this.#deferredSourceFilesAdded;
+      this.#deferredSourceFilesAdded = undefined;
+      for (const sourceFile of deferred)
+        this.#sourceFileAddedEventContainer.fire(sourceFile);
+    }
   }
 
   /**
