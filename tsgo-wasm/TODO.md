@@ -5,7 +5,7 @@ marked **compiler** when the fix belongs in `submodules/typescript-go` (and so n
 a wasm rebuild), **upstream** when it belongs in microsoft/typescript-go rather than
 our fork, and **ts-morph** when it does not.
 
-Measured state: `ts-morph` 4500 passing / 2 pending, `bootstrap` 85 / 4,
+Measured state: `ts-morph` 4503 passing / 2 pending, `bootstrap` 85 / 4,
 `common` 435 / 0, both verification gates clean, 15/15 end-to-end scripts.
 
 ---
@@ -319,22 +319,7 @@ The first is the edit path and is now within a constant factor of itself: doubli
 the project no longer doubles the work. The second is not — it pays a program
 rebuild per file, which is the ceiling below.
 
-**What is left, and what it would take.** Adding a file to the project is still
-proportional to the project, and that is one thing: a root-set change rebuilds the
-program. `Project.CreateProgram` only reuses the old program when exactly one file
-is dirty _and_ the command line is unchanged (`project.go`), and ts-morph's config
-names every file, so a create fails both tests. The rebuild re-parses the config
-(14% of it), re-acquires every file from the parse cache by identity (15%), makes a
-parse task per file, and recomputes the common source directory over every file in
-`verifyCompilerOptions` (4%). Nothing in it is waste — it is a whole program build
-that happens to reuse the parsed trees.
-
-Closing it means an incremental root addition in the compiler: a `Program` that can
-take a file whose own imports resolve to files already present and append it, the
-way `UpdateProgram` replaces one. That is ten `map[tspath.Path]…` fields in
-`processedFiles` to extend rather than rebuild, plus include reasons, redirects and
-lib ordering. It is a real piece of compiler work, not a tuning change, and it is
-the only thing that would make a create-and-manipulate loop linear.
+**What was left** was that a root-set change rebuilt the program, which §3.5 closes.
 
 Two smaller O(files) terms remain in an edit, ~4% each at 800 files and growing:
 `computeSnapshotChanges` diffs the whole `FilesByPath` map of every changed project,
@@ -343,6 +328,157 @@ where a cloned program knows the one file that differs; and the client's
 snapshot held. The first needs the compiler to say what a clone changed; the second
 needs the client's refs to be carried by a shared generation rather than copied,
 which is a redesign of that cache.
+
+### 3.5 Adding a root rebuilt the program — done, with a named ceiling
+
+**tsgo fork.** Creating a file and manipulating it in the same breath is the
+commonest codegen loop there is, and it was the one thing still quadratic: a
+created file joins the root set, a changed root set changes the command line, and
+a changed command line failed `CreateProgram`'s reuse test, so **every create
+rebuilt the whole program**. Profiled on a native harness that replays ts-morph's
+request sequence (`internal/api/addrootsperf_test.go`, `TSPERF=1`), at 1600 files
+that rebuild was 65% of a create, the config reload 12%, and the garbage it made
+another 15%.
+
+A program can now be **added to** rather than built again.
+`Program.AddRootFiles` takes a command line that differs from the one the program
+was built with in nothing but root files appended to the end of its list, and
+returns the program a build from scratch would have produced. What makes that
+sound is that a root appended at the end can only reach files that are already in
+the program or are new, so nothing already there moves and nothing already
+resolved resolves differently. The walk is the same `filesParser`, given the old
+`processedFiles` as a base: it stops at every file the base already holds,
+recording only the added root's reason for wanting it, and the ten
+`map[tspath.Path]…` fields are cloned and extended rather than rebuilt. Files the
+added roots bring in are spliced in at `rootFilesEnd` — after everything the roots
+before them reached, before whatever an automatic type directive brought in —
+which is where a rebuild would have put them.
+
+The same call replaces files whose text changed in the same snapshot, because
+that is what the loop actually does: manipulating file _n_ and creating file
+_n+1_ arrive together. It uses the same `canReplaceFileInProgram` test the
+single-file `UpdateProgram` path does, so `Project.dirtyFilePath` became
+`dirtyFiles []tspath.Path` plus a `dirtyFilesKnown` flag — a list of what changed
+rather than "one file, or give up" — and a config change no longer discards it.
+
+**Where it refuses**, because these are the ways an addition would not be the
+program a rebuild gives, each a fallback to `NewProgram`:
+
+- a compiler option that differs, a project reference, roots that moved rather
+  than arrived, or a program with none yet (the first build is where the lib
+  files and the automatic type directives are settled);
+- a file the added roots reach that is a **lib file**, new or already present:
+  libs are sorted and put ahead of every other file, so one arriving or changing
+  hands moves everything;
+- a file an **automatic type directive** brought in that an added root reaches.
+  Those sit past `rootFilesEnd`, and a rebuild would place one an added root
+  reaches among that root's own files instead — the premise that nothing already
+  there moves holds for the files earlier roots reached, and only for those;
+- a file the base only found by **searching node_modules** that the walk reaches
+  without searching. How deep a file was found is the lowest depth over the whole
+  walk, and it decides whether the program counts the file as coming from a
+  library, so reaching one at depth 0 would drop it from a set the base put it in;
+- a **package installed twice** under `node_modules`: which instance wins is
+  decided over the whole walk, and the base does not record the decision;
+- a file the base holds under a **different casing**, a new file that collides
+  with one under `ToFileNameLowerCase` (which is why `processedFiles` now keeps
+  `filesByLowerCasePath` on a case-sensitive file system), or a new file reached
+  under two casings at once, which the walk acquires and the caller would then
+  reference a second time as a duplicate;
+- a program that already has redirects;
+- anything arriving with a **deletion**, a **package.json**, or more changes than
+  `maxDirtyFilesTracked` files, which clears `dirtyFilesKnown`;
+- and the one the compiler cannot see, checked in `Project.addRootFilesToProgram`:
+  an added path the previous program's host had already **looked for and not
+  found**. A rebuild would resolve that lookup to the new file and the file that
+  made it would mean something different. The host records every path it read or
+  probed, so this is `sourceFS.SeenFileOrMissingParentDirectory`, asked of every
+  added root before the walk and of every file the walk acquired after it.
+
+`verifyCompilerOptions` is deliberately **re-run in full** on the added-to
+program rather than made incremental. It reads only the file set and the options,
+both of which the new program has right, so running it is a proof rather than an
+argument; it costs ~6% of what a create now costs. The common source directory is
+carried over when `rootDir` or `configFilePath` names it — the only cases where
+it does not depend on the file set. Both of those produce diagnostics after the
+parse and over whatever files the program holds by then, so `includeProcessor`
+keeps three buckets rather than one: the parse's own, which are carried;
+`rootDirDiagnostics`; and `optionsDiagnostics`. Carrying either of the last two
+would report them twice, since the program that carried them computes them again.
+
+Equivalence is tested rather than argued.
+`internal/compiler/addrootfiles_test.go` and
+`internal/compiler/addrootfilesprobe_test.go` build a project both ways over
+thirty-nine shapes and compare `ExplainFiles` (every file, in order, with every
+reason it is in the program), every include reason's own data — a root file's is
+its index in the config's file list, which `ExplainFiles` does not render — every
+module and type resolution, every file's metadata, the missing files, the lib
+files, the redirect maps, the lower-case index, the common source directory, the
+program diagnostics, the emit-blocking set and every semantic diagnostic. The
+probe suite additionally fingerprints the **base** program before and after, since
+an addition that wrote into a map the program it came from still holds would
+corrupt every snapshot behind it. `internal/api/addroots_test.go` and
+`internal/project/addrootsproject_test.go` do the same through the session,
+driving it the way ts-morph's document registry does, assert which cases refuse,
+and check the parse cache's reference ledger after every step: one reference per
+file the program holds and one per duplicate it reports, and nothing else left
+behind. That ledger is what catches an addition that acquires a file the caller
+then references again.
+
+Measured on the built bundle — this branch against the same branch with these
+changes stashed, both rebuilt — in-memory FS, one process per size, in ms:
+
+| files                                       | 200  | 800  | 1600  |
+| ------------------------------------------- | ---- | ---- | ----- |
+| create and manipulate together — 28.0.0     | 26   | 45   | 86    |
+| create and manipulate together — before     | 1240 | 9210 | 30794 |
+| create and manipulate together — after      | 686  | 3219 | 10201 |
+| create, then read each file back — before   | 903  | 7994 | 28967 |
+| create, then read each file back — after    | 408  | 2006 | 6337  |
+| create, then manipulate (two loops) — after | 269  | 1070 | 2386  |
+
+A create-and-manipulate loop is 3.0x faster at 1600 files, and the loop that only
+creates and reads — the addition on its own, with no edit in it — is 4.6x. Neither
+is linear yet: at 1600 the loop is 4.3x what the same work costs in two loops,
+where the two-loop cost is the floor, being one config write and one program build
+for the whole run. Bulk paths are unchanged: `addSourceFilesAtPaths` measures
+133–149 / 198–215 / 266–279 ms at 200/800/1600 over three runs, and a create loop
+that reads nothing back is 1–11 ms.
+
+**What is left is the config, and it is ts-morph's shape rather than the
+compiler's.** The registry's tsconfig names every file it holds (see
+`#configText` for why the list has to be explicit), so a create rewrites a file
+that grows with the project and the session parses it again: at 1600 files that
+round trip is ~28% of what a create still costs — ~22% parsing it in Go, the rest
+building the text in JS, of which `getCommonDirectory` over every file name is the
+larger half. Cloning the ten maps is another ~21%, which is the price of a
+snapshot the previous one keeps answering from. Closing the first means letting a
+client name root files for a project through the API rather than through the
+config — `Project.getCommandLineWithTypingsFiles` already augments a command line
+with files that are not in it — and then keeping the config honest for the times
+it _is_ re-read (a compiler option changing, a file being removed). That is a
+protocol and lifetime change in the document registry, not a compiler one.
+Closing the second means the per-file maps becoming layered rather than copied,
+which is a change to every reader of `processedFiles`.
+
+One thing came out of the profile that was not the compiler's: computing the
+watch globs for a config walks every root file, and the API session does not
+watch. `configFileRegistryBuilder.updateRootFilesWatch` now returns early when
+`SessionOptions.WatchEnabled` is false, which is the only condition under which
+`Session.updateWatches` ever reads them.
+
+**Two things to know before building on this.** The first is that a project with
+`types` in its config gives up the fast path whenever a created file reaches one
+of those packages — a new file importing `"fs"` in a project with
+`types: ["node"]`, say — because of the automatic type directive rule above.
+Correct, and slower than it needs to be: the way to fix it is to move such a file
+out of the directive region and reorder its include reasons, rather than refuse.
+Nothing ts-morph does with an in-memory file system meets it, since there are no
+`@types` there to bring anything in. The second is that
+`includeProcessor.getDiagnostics` reads `rootDirDiagnostics` under a `sync.Once`
+while `CommonSourceDirectory` can be appending to it from another goroutine. The
+race predates this — the same append went to `processingDiagnostics` before — but
+splitting the field made it easier to see, and it is worth closing.
 
 ---
 
