@@ -413,12 +413,15 @@ reading every file back afterwards; per file, at 100/400/1600/3200 files, the tw
 together come to 1.31/0.41/0.18/0.14 ms — falling, because the fixed cost of
 standing a project up is spread over more files.
 
-**Reading a file back inside the loop keeps the old quadratic cost**, because
-that is the reopen the deferral exists to collect. It measures at 4.7/4.8/7.4/13.9
-ms per file for 100/200/400/800, which is the cost before any of this. So:
+**Reading a file back inside the loop still costs much more**, because that is the
+reopen the deferral exists to collect. It is no longer quadratic — the compiler
+extends an existing program when roots are only appended, rather than rebuilding
+it — but it measures at 3.6/2.6/2.3/2.5/3.9 ms per file for 100/200/400/800/1600,
+against 0.24 ms per file for the same work with the reads moved after the loop. So
+prefer:
 
 ```ts
-// quadratic: each file's tree is asked for while the next is still to come
+// slow: each file's tree is asked for while the next is still to come
 for (const [path, text] of files)
   doSomethingWith(project.createSourceFile(path, text).getStatements());
 
