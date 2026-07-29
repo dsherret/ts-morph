@@ -190,6 +190,34 @@ describe("Identifier", () => {
       expect(containerNameOf("GCl")).to.deep.equal(["global"]);
     });
 
+    it("should name the module container of a definition its own file declares", () => {
+      const project = new Project({ useInMemoryFileSystem: true });
+      project.createSourceFile("/mod.ts", "export function fn() {}\nexport class Cls { m() {} }\n");
+      project.createSourceFile("/dir/sub.ts", "export function deep() {}\n");
+      project.createSourceFile("/node_modules/pkg/package.json", `{ "name": "pkg", "types": "index.d.ts" }`);
+      project.createSourceFile("/node_modules/pkg/index.d.ts", "export declare function pkgFn(): void;\n");
+      const sourceFile = project.createSourceFile(
+        "/dir/main.ts",
+        `import { fn, Cls } from "../mod";\nimport { deep } from "./sub";\nimport { pkgFn } from "pkg";\n`
+          + "fn();\nnew Cls().m();\ndeep();\npkgFn();\nfunction local() {}\nlocal();\n",
+      );
+      const containerNameOf = (name: string) => {
+        const identifiers = sourceFile.getDescendantsOfKind(SyntaxKind.Identifier).filter(i => i.getText() === name);
+        return identifiers[identifiers.length - 1].getDefinitions().map(d => d.getContainerName());
+      };
+
+      // a declaration a file holds directly is contained by that file's module,
+      // which is named as the asking file would import it
+      expect(containerNameOf("fn")).to.deep.equal([`"../mod"`]);
+      expect(containerNameOf("deep")).to.deep.equal([`"./sub"`]);
+      // a package under node_modules is named rather than pathed
+      expect(containerNameOf("pkgFn")).to.deep.equal([`"pkg"`]);
+      // a member is still contained by what declares it, not by the file
+      expect(containerNameOf("m")).to.deep.equal(["Cls"]);
+      // and a local declaration has no container at all
+      expect(containerNameOf("local")).to.deep.equal([""]);
+    });
+
     it("should qualify a namespace container only as far as the asking position needs", () => {
       const { sourceFile, project } = getInfoFromText(
         "namespace Outer {\n"

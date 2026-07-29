@@ -8,6 +8,20 @@ of `tsgo-wasm` (`packages/*/dist`, rebuilt after every `src` file — not stale)
 "Measured" means run side-by-side in one process against both builds through the differential harness.
 Everything else is marked. Line citations were re-anchored against the working tree while writing this.
 
+> **Superseded in part.** This report was written before `f70c5c00`…`b6670dac`. The following
+> recommendations have since landed and their findings below are historical: browser support (§2.2 —
+> shipped, `node:wasi` is in no artifact), tsgo's lib files (§2.3 — adopted, and the `lib` form
+> inversion is fixed in the other direction: file names work, short names now work too), the free-wins
+> list (§2.1 a–e, g–j — `esModuleInterop` and friends restored as `boolean`, `JsxEmit`/
+> `ModuleDetectionKind` exported, `forget()` fixed, stale handles wrapped in `InvalidOperationError`,
+> diagnostics deduplicated, 5074 and the caller's own tsconfig diagnostics restored, TS18002
+> suppressed, `printNode` comments restored), the per-file config rewrite (§2.0 — the bulk path is
+> batched and linear; a `createSourceFile` loop is not), reference resolution by containment (§7.1 a–c
+> — back to touching-token), the brace-spacing formatter no-op (§2.7), and the indenter's worst
+> divergences (§2.6). Suite counts as of `b6670dac`: `ts-morph` 4480/2, `common` 431/0,
+> `bootstrap` 85/4. See [TODO.md](./TODO.md) for what is actually left, and
+> [BREAKING-CHANGES.md](./BREAKING-CHANGES.md) for the user-facing state, which is re-measured.
+
 ---
 
 ## 1. Summary
@@ -732,8 +746,16 @@ One TODO in shipped source: `compiler/tools/results/CodeAction.ts:35` — pre-ex
 
 ### 7.3 Documentation to correct before publishing
 
-BREAKING-CHANGES.md has repeatedly been found stale or inverted. These specific claims are contradicted
-by measurement:
+> **Done for BREAKING-CHANGES.md.** It has since been rewritten as a migration guide and every
+> load-bearing claim re-measured against published 28.0.0; all six items below are fixed, and the
+> "undocumented entirely" list is covered. The list is kept as the record of what a re-read missed
+> and a measurement caught. Two further inversions were found in the same pass and are not in the
+> list: `matchFiles`/`getFileMatcherPatterns` were described as already broken on 28.0.0 and are
+> measured **working** there, and "browsers are not supported" survived three commits after browser
+> support shipped.
+
+BREAKING-CHANGES.md has repeatedly been found stale or inverted. These specific claims were
+contradicted by measurement:
 
 1. "A type obtained before a manipulation still answers questions after it… the two most recent snapshots
    are kept" — **false**; it fails at one (T1), and the retention buys nothing (§2.1 f).
@@ -776,3 +798,101 @@ Outside BREAKING-CHANGES.md:
 | Whether the fork breaks upstream fourslash/LSP baselines                                            | No `testdata` regenerated; the Go suite has not been run on `ts-go` (running it would be a build) |
 | Whether `resolutionMode` is populated end-to-end by the compiler                                    | Read the type and the test title; did not drive a host                                            |
 | Watch/incremental behaviour, project-reference builds beyond a `composite` smoke check, concurrency | Not probed                                                                                        |
+
+---
+
+## 8. Implementation history, moved out of BREAKING-CHANGES.md
+
+BREAKING-CHANGES.md was rewritten as a migration guide for users of 28.0.0. What follows was in it
+and is archaeology rather than migration advice, so it lives here instead.
+
+### 8.1 What the last 29 test failures turned out to be
+
+Worth recording, because the split was not what the first breaking-changes list predicted. Only a
+handful were genuinely absent; most were exposure gaps or expectations carried over from TypeScript 5.
+
+- **Restored by exposing what Go already had — 10.** A definition's display parts and each
+  reference's write access (`getDefinitionKindAndDisplayParts` and `ast.IsWriteAccessForReference`
+  were both already written), synthetic comments through `printNode`
+  (`EmitContext.AddSyntheticLeadingComment`), `getChildCount` and the rest of the `Node` surface, and
+  `ts.version` from `core.Version()`.
+- **Expectations that were TypeScript 5's — 12.** `target: ES5` and downlevel `var` emit,
+  `moduleResolution: classic`/`node10`, `ModuleResolutionKind.NodeJs`, the `JSDocTag` kind name, a
+  lib-file diagnostic count, and `setParentNodes: false`. The authority for the first three is the
+  "Removed in TS7" block in `internal/compiler/program.go`, which errors on each of them by name.
+- **Genuinely absent — 5.** `getEditsForRefactor` (tsgo has no refactor providers at all),
+  `fixUnusedIdentifiers` (its two fix-all ids are not among tsgo's three code fix providers,
+  `internal/ls/codeactions.go`), `convertToEsModule` and the 80005 suggestion (both from TypeScript's
+  services-layer `suggestionDiagnostics.ts`, not ported — tsgo's suggestions come from the checker
+  only), `Diagnostic#getSource` (`ast.Diagnostic` has no such field; the LSP layer stamps a constant
+  `"ts"`), and `customTransformers` (a JavaScript transform cannot join a Go emit pipeline).
+- **Deferred — 2.** The `custom type reference directive resolution` describes. Those resolve down a
+  separate path in the compiler with no hook; module resolution itself was since restored.
+
+### 8.2 Divergences found while closing them
+
+- **`visitEachChild` visits token children.** The `typescript` package reserved tokens for a separate
+  `tokenVisitor`; tsgo's generated visitor hands them to the same visitor as every other child.
+- **Display parts are coarser.** A keyword run carries the space that follows it rather than the
+  space being a run of its own.
+- **Organize-imports coalesces.** Two adjacent import deletions come back as one text change spanning
+  both.
+- **A raw file-system write after the first read is not seen.** tsgo builds the program when the
+  first file is added, where TypeScript built its program lazily.
+- **`getRelativePathAsModuleSpecifierTo` no longer depends on the resolution mode.** `node10` was the
+  only mode that wanted an implicit index, and it is removed, so the switch on `moduleResolution` is
+  gone from `Directory`.
+
+### 8.3 The `forget()` diagnosis, and what is left of it
+
+`forget()` reported the file to the compiler as deleted, which made that path missing for the
+snapshot, so an import of it failed even though the file was still on the file system. Diagnosed
+rather than guessed: it was not about custom resolution (it happened with no resolution host); it was
+not the file being invisible (a new session over the same file system resolved it, and so did a new
+importer in a later snapshot); it was the `deleted` signal itself, and the next snapshot recovered.
+
+`deleted` is nonetheless right wherever the caller is _vacating_ the path rather than handing it
+back: `move` with `overwrite` removes a destination whose stale on-disk content has to be dropped
+rather than re-read, every `move` leaves an old path, and `delete` forgets before the file system is
+told. All of those reach `DocumentRegistry#removeSourceFile` through
+`CompilerFactory#removeCompilerNodeFromCache`, so it takes the signal from its caller: a
+`discardContents` option, off by default, carried down through `Node#_forgetOnlyThis` and reached by
+the vacating callers through `SourceFile#`/`Directory#_forgetDiscardingContents` or, for the path a
+move leaves behind, `CompilerFactory#replaceCompilerNode`.
+
+### 8.4 Working on the seam means rebuilding twice
+
+The tests run against `packages/common/dist/`, and that directory holds its own copy of the reactor.
+A change in the fork therefore needs `_scripts/build-wasm.mjs` **and** then `deno task build:node` in
+`packages/common`, or the suite keeps exercising the previous wasm and the change looks like it did
+nothing.
+
+`packages/common`'s rollup config also resolves the tsgo client's package-internal `#enums/*`,
+`#getExePath` and `#vscode-jsonrpc/node` specifiers. Without it the bundle loads and immediately
+throws `Cannot find module '#enums/modifierFlags'`, because those are only resolvable through the
+tsgo package's own `imports` map, which no longer applies once its modules are inlined here.
+
+The tsgo client's declarations are vendored into `packages/common/lib/tsgo` by
+`scripts/vendorTsgoTypes.ts`, with `#enums/*` rewritten to relative paths. `lib/typescript.d.ts` is
+now generated and is four lines re-exporting the `ts` namespace from `lib/tsNamespace.d.ts`; it used
+to be a copy of TypeScript's own 588 KB `typescript.d.ts`, which `bundleLocalTs.ts` kept copying long
+after nothing read it.
+
+### 8.5 Restatements carried only because the fork's generated AST is wrong
+
+- **`NoSubstitutionTemplateLiteral`** sits on `ExpressionBase` rather than on the primary-expression
+  chain, which would leave ts-morph's `LiteralExpression` unable to describe it. Restated in
+  `packages/common/src/tsgo/ts.ts` along with the four unions that name it. The real fix is for it to
+  embed `LiteralExpressionBase` like every other literal.
+- **`TupleTypeNode.elements`** is typed `NodeArray<TypeNode>` where the `typescript` package had
+  `NodeArray<TypeNode | NamedTupleMember>`. A named member is one at runtime and is returned as one.
+- **`JSDocSignature#getTypeNode()`** is declared `TypeNode | undefined` where the `typescript` package
+  had `JSDocReturnTag | undefined`. The runtime value really is a `JSDocReturnTag`, so the
+  declaration is wrong rather than the value. Not restated, because overriding the member means
+  reshaping `JSDocSignature` around `FunctionLikeBase`, which declares `type?: TypeNode`.
+
+### 8.6 The `move` with `overwrite` defect, since fixed
+
+`SourceFile#move` with `overwrite` onto a path that exists only on the file system used to keep the
+stale text when the compiler had already resolved that path. The registry now asks the base file
+system, and a path it already has is reported as `changed` rather than `created`, which fixes it.

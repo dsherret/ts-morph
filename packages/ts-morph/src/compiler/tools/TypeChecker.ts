@@ -112,6 +112,23 @@ export class TypeChecker {
   }
 
   /**
+   * Gets the symbol a declaration node declares, or undefined when the node is not a declaration.
+   *
+   * `getSymbolAtLocation` answers for the *name* of a declaration, so an anonymous
+   * one — an arrow function, an object literal, a call signature — has nothing to
+   * ask it with. This asks the declaration itself, which is how the binder's
+   * internal symbol (`__object`, `__call`, `__type`) is reached.
+   * @internal
+   */
+  _getSymbolOfDeclaration(node: Node): Symbol | undefined {
+    // a rebuilt node declares nothing, and has no handle to ask with either
+    if (isReconstructedNode(node.compilerNode))
+      return undefined;
+    const compilerSymbol = this.compilerObject.getSymbolOfDeclaration(node.compilerNode);
+    return compilerSymbol == null ? undefined : this.#context.compilerFactory.getSymbol(compilerSymbol);
+  }
+
+  /**
    * Gets the aliased symbol of a symbol.
    * @param symbol - Symbol to get the alias symbol of.
    */

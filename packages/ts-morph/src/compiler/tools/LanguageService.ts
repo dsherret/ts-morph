@@ -436,13 +436,33 @@ export class LanguageService {
     const node = sourceFile?.getDescendantAtStartWithWidth(span.pos, span.end - span.pos);
     const nameSpan = getDeclarationNameSpan(node) ?? span;
     const name = sourceFile?.getFullText().substring(nameSpan.pos, nameSpan.end) ?? "";
+    const symbol = this.#context.compilerFactory.documentRegistry.checker.getSymbolAtPosition(span.fileName, span.pos);
     return {
       ...toDocumentSpan({ ...span, ...nameSpan }),
-      kind: getScriptElementKind(this.#context.compilerFactory.documentRegistry.checker.getSymbolAtPosition(span.fileName, span.pos)),
+      kind: getScriptElementKind(symbol),
       name,
       containerKind: ts.ScriptElementKind.unknown,
-      containerName: getDefinitionContainerName(node, askingNode),
+      containerName: getDefinitionContainerName(node, askingNode) || this.#getModuleContainerName(symbol, askingNode),
     };
+  }
+
+  /**
+   * The module holding a definition its file declares directly, named the way the
+   * asking file would import it.
+   *
+   * Such a definition's container is the file's own module symbol, which nothing
+   * in the text names — TypeScript wrote the module specifier there instead, and
+   * only the checker knows which specifier reaches that file from here. A package
+   * under `node_modules` reads as its package name rather than as a path.
+   * @internal
+   */
+  #getModuleContainerName(symbol: ts.Symbol | undefined, askingNode: Node | undefined): string {
+    const container = symbol?.getParent();
+    if (container == null || (container.flags & SymbolFlags.Module) === 0)
+      return "";
+    // a rebuilt node has no handle to name the asking file with, so the file itself asks
+    const location = askingNode == null || isReconstructedNode(askingNode.compilerNode) ? askingNode?._sourceFile.compilerNode : askingNode.compilerNode;
+    return this.#context.compilerFactory.documentRegistry.checker.symbolToString(container, location);
   }
 
   /** @internal */

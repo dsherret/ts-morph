@@ -15,7 +15,7 @@ import { TypeFlags } from "../../enums/typeFlags.enum";
 import { TypePredicateKind } from "../../enums/typePredicateKind.enum";
 import { type __String, type Expression, type Identifier, ModifierFlags, type Node, type Path, type SourceFile, type SyntaxKind, type TypeNode } from "../../ast/index";
 import type { APIOptions, LSPConnectionOptions } from "../options";
-import type { CompilerOptions, DocumentIdentifier, DocumentPosition, CodeFixAction, CombinedCodeActions, FileSpan, FileTextEdits, FormattingOptions, OrganizeImportsMode, LSPUpdateSnapshotParams, ParsedCommandLine, ProjectReference, ProjectResponse, QuotePreference, SignatureResponse, SourceFileMetadata, SymbolResponse, TextEdit, TypeAcquisition, TypeResponse, UpdateSnapshotParams, UpdateSnapshotResponse } from "../proto";
+import type { CodeFixAction, CombinedCodeActions, CompilerOptions, DocumentIdentifier, DocumentPosition, FileSpan, FileTextEdits, FormattingOptions, LSPUpdateSnapshotParams, OrganizeImportsMode, ParsedCommandLine, ProjectReference, ProjectResponse, QuotePreference, SignatureResponse, SourceFileMetadata, SymbolResponse, TextEdit, TypeAcquisition, TypeResponse, UpdateSnapshotParams, UpdateSnapshotResponse } from "../proto";
 import { SourceFileCache } from "../sourceFileCache";
 import type { RequestTiming, TimingAccumulators, TimingInfo } from "../timing";
 import { Client, type ClientSocketOptions, type ClientSpawnOptions } from "./client";
@@ -302,6 +302,15 @@ export declare class Checker {
     dispose(): void;
     getSymbolAtLocation(node: Node): Promise<Symbol | undefined>;
     getSymbolAtLocation(nodes: readonly Node[]): Promise<(Symbol | undefined)[]>;
+    /**
+     * Gets the symbol a declaration node declares, or `undefined` if the node is
+     * not a declaration.
+     *
+     * `getSymbolAtLocation` answers for the *name* of a declaration, so an
+     * anonymous one — an arrow function, an object literal, a call signature —
+     * has nothing to ask it with. This asks the declaration itself.
+     */
+    getSymbolOfDeclaration(node: Node): Promise<Symbol | undefined>;
     getSymbolAtPosition(file: DocumentIdentifier, position: number): Promise<Symbol | undefined>;
     getSymbolAtPosition(file: DocumentIdentifier, positions: readonly number[]): Promise<(Symbol | undefined)[]>;
     /**
@@ -381,6 +390,12 @@ export declare class Checker {
     typeToTypeNode(type: Type, enclosingDeclaration?: Node, flags?: number): Promise<TypeNode | undefined>;
     signatureToSignatureDeclaration(signature: Signature, kind: SyntaxKind, enclosingDeclaration?: Node, flags?: NodeBuilderFlags): Promise<Node | undefined>;
     typeToString(type: Type, enclosingDeclaration?: Node, flags?: number): Promise<string>;
+    /**
+     * Renders a symbol the way the checker names it at `enclosingDeclaration`. A
+     * module symbol reads as the specifier that declaration's file would import
+     * it by.
+     */
+    symbolToString(symbol: Symbol, enclosingDeclaration?: Node): Promise<string>;
     isContextSensitive(node: Node): Promise<boolean>;
     isArrayType(type: Type): Promise<boolean>;
     isTupleType(type: Type): Promise<boolean>;

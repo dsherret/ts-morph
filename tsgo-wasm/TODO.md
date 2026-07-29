@@ -5,76 +5,50 @@ marked **compiler** when the fix belongs in `submodules/typescript-go` (and so n
 a wasm rebuild), **upstream** when it belongs in microsoft/typescript-go rather than
 our fork, and **ts-morph** when it does not.
 
-Measured state at the time of writing: `ts-morph` 4459 passing / 2 pending,
-`bootstrap` 85 / 4, `common` 424 / 0, both verification gates clean, 15/15
-end-to-end scripts.
+Measured state: `ts-morph` 4495 passing / 2 pending, `bootstrap` 85 / 4,
+`common` 431 / 0, both verification gates clean, 15/15 end-to-end scripts.
 
 ---
 
-## 1. Browser support — wanted
+## 1. Browser support — done
 
-28.0.0 was plain JavaScript and ran wherever a bundler could reach. The compiler is
-now a wasm reactor instantiated with Node's WASI, so a browser build fails to
-resolve `node:wasi`, which both the node and deno bundles require at the top level.
+Shipped in `feat: run in the browser` (14845d9e) and finished in b6670dac. The
+compiler now runs against a `wasi_snapshot_preview1` shim written in the fork
+against the web platform only, so `node:wasi` appears in no shipped artifact and
+one artifact serves Node, Deno and the browser. A browser must load it in a Web
+Worker (V8 refuses a >8 MB `WebAssembly.Module` on the main thread) and must
+`await initializeWasm()` before the first `Project`. See
+[browser/README.md](./browser/README.md).
 
-**Why WASI is involved at all:** tsgo is Go, and `GOOS=wasip1 GOARCH=wasm` — what
-`_scripts/build-wasm.mjs` builds with — is Go's wasm target for non-browser hosts.
-It emits imports against the `wasi_snapshot_preview1` ABI, which Node implements in
-`node:wasi`. Nothing chose WASI for ts-morph's sake.
-
-**This is smaller than it sounds.** The module's import list is 25 WASI functions
-and exactly **two** host functions (`ts_host.callback`, `ts_host.read_result`),
-because the file system is already delegated to JavaScript through the callback
-bridge. The `fd_*` and `path_*` WASI imports are linked in by the Go runtime, not
-driven by the compiler. A browser host must _supply_ all 25 for instantiation to
-succeed, but most can be stubs that return `ENOSYS`; the ones needing real
-behaviour are `args_get`/`args_sizes_get`, `environ_get`/`environ_sizes_get`,
-`clock_time_get`, `random_get`, `fd_write` (stderr only), `proc_exit`,
-`sched_yield` and `poll_oneoff`.
-
-Work:
-
-- A minimal WASI shim, and a browser wasm loader beside the node one in the fork's
-  `api/wasm/`. **compiler** (the loader lives there; the shim could live either
-  side).
-- Route it through the `browser` field so bundlers pick it up, and stop
-  `getRuntime()` implying support that cannot load.
-- Confirm which of the 25 are genuinely reached — instrument the node host first,
-  rather than guessing from the import list.
-- Decide how the 45 MB wasm is delivered to a browser: bundled, fetched, or
-  streamed. This is the part with no obvious answer, and probably decides whether
-  the feature is worth it.
-- Alternative worth costing first: a `GOOS=js` build, which needs no shim but is a
-  second artifact and a different Go target. **upstream**
+What is still open is **delivery**, not support: the wasm is 43 MiB raw / 9.6 MB
+gzip, Chrome's HTTP cache will not keep an entry that size, and a compiled
+`WebAssembly.Module` cannot be stored in IndexedDB. The documented answer is an
+explicit `Cache` entry plus `postMessage` of the compiled module. Related: JSR
+publishing (§4).
 
 ---
 
 ## 2. Behaviour still diverging from 28.0.0
 
-### 2.1 `findReferencesAtPosition` resolves by containment, not by touching token
+### 2.1 `findReferencesAtPosition` — done
 
-**ts-morph.** Sweeping every offset of `class C { m(a: string) { return a; } }`:
-26 positions agree, **13 differ**, in both directions. Offsets 0–4, 7, 11, 13, 21,
-33 answer in 28.0.0 and return `[]` now; offsets 9, 14, 31 answer now and returned
-`[]` before. Re-measured after the reconstructed-node fix, so this is current.
+**ts-morph.** Resolves to the token a position touches again, as 28.0.0 did.
+Sweeping every offset of `class C { m(a: string) { return a; } }` now agrees at
+every position; the wider corpus went from 558 differing positions of 2423 to 90,
+and each of the 90 is a tsgo-side gap unrelated to position resolution (recorded
+in BREAKING-CHANGES.md §8.5). The stray `class` entry on
+`ConstructorDeclaration#findReferencesAsNodes()` went with it.
 
-The fallback added for rebuilt nodes resolves a position to the node that
-_contains_ it; TypeScript resolved to the token the position _touches_. Same root
-cause as the extra `class` keyword in
-`ConstructorDeclaration#findReferencesAsNodes()`, which reports
-`isDefinition() === false` and so cannot be dropped by the existing filter.
+### 2.2 `getContainerName()` for a file-held declaration — done
 
-Deciding question: is "touching token" reproducible from the stored-node fallback?
-If yes, match it. If not, document the containment rule and accept it.
-
-### 2.2 `getContainerName()` for a file-held declaration
-
-**compiler.** Reads `""` where TypeScript named the module specifier. The baseline
-value is whatever `getModuleSpecifiers` would write at the asking file — `"pkg"`
-for a package under `node_modules`, not a relative path — and it is cached per
-context file, so 28.0.0 is itself inconsistent (same symbol, `"../mod"` at an
-import specifier and `"./mod"` at a call site). Wants `symbolToString` on the API's
-checker. Low value given the baseline's own inconsistency.
+**compiler.** `symbolToString` is exposed on the API's checker
+(`MethodSymbolToString`), and a definition whose container is its own file's
+module symbol is named with it. Measured over 11 definition lookups: 10 now match
+28.0.0 exactly — `"../mod"`, `"./sub"`, `"pkg"` for a package under
+`node_modules`, `"Cls"` for a member, `""` for a local. The eleventh is the one
+28.0.0 got wrong: the same symbol read `"../mod"` at an import specifier and
+`"./mod"` at a call site, and `"./mod"` does not resolve from the asking file.
+It reads `"../mod"` at both now, so the divergence that remains is a fix.
 
 ### 2.3 `ImplementationLocation#getDisplayParts()`
 
@@ -84,15 +58,20 @@ struct, touching `internal/api/proto.go`, `session_ls.go`, both client `api.ts`
 files and the copy `packages/common` re-vendors. Recipe and cost are in
 BREAKING-CHANGES.md.
 
-### 2.4 `Node#getSymbol()` on an anonymous declaration
+### 2.4 `Node#getSymbol()` on an anonymous declaration — done
 
-**compiler.** Returns `undefined` for arrow functions, object literals, type
-literals, call/construct/index signatures, constructors and export assignments,
-where 28.0.0 gave the binder's internal symbol. tsgo's nodes carry no binder symbol
-and its checker exposes no accessor to ask instead. The only client-side workaround
-covers 6 of 11 kinds and invents new wrong answers in the other direction
-(`ArrayLiteralExpression` → `Array`). Wants `getSymbolOfDeclaration` on the API's
-checker.
+**compiler.** `getSymbolOfDeclaration` is exposed on the API's checker
+(`MethodGetSymbolOfDeclaration`) and asked as the last fallback in
+`Node#getSymbol()`, so a declaration with no name to ask the checker with is
+answered by asking the declaration itself. Sweeping every node of a source file
+covering the affected kinds went from 370 of 388 agreeing with 28.0.0 to 384: the
+14 that moved are arrow functions, anonymous function expressions, object
+literals, type literals, mapped types, function and constructor types, export
+declarations, call/construct/index signatures and constructors, each now reading
+the same `__function` / `__object` / `__type` / `__call` / `__new` / `__index` /
+`__constructor` the binder gave. Nothing that already answered changed. The four
+still differing are unrelated — two are the `__@iterator@N` id a computed
+property name carries, two are AST shape.
 
 ### 2.5 `typeof` in nested positions
 
@@ -102,19 +81,25 @@ deliberately (PR #4507) for declaration emit. ts-morph clears the flag for the
 top-level case; the flag is all-or-nothing per print, so nested occurrences cannot
 be reached from this side. Reverting belongs upstream, if anywhere.
 
-### 2.6 `getIndentationLevel` at list-continuation positions
+### 2.6 `getIndentationLevel` — the per-kind indent table
 
-**ts-morph.** 11 query positions report one level less than the smart indenter did
-— empty parameter and argument lists, `ImportSpecifier` and `Parameter` on their
-brace's line, and the punctuation trailing a wrapped list. No effect on emitted
-text: all 40 probed manipulation operations match 28.0.0 byte for byte.
+**ts-morph.** Four more of the smart indenter's rules are modelled (b6670dac), so
+over 112 snippets under three indentation settings **287 of 8217 probed positions
+differ**, down from 2771; list continuation, `ImportSpecifier` and `Parameter` on
+their brace's line are among the fixed ones. No manipulation output regressed.
 
-### 2.7 `insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces` is a formatter no-op
+What is left is mostly `SmartIndenter.nodeWillIndentChild` — the compiler's
+per-kind table of which parents indent which children, which the text gives no
+hint of. Routing `format.GetIndentation` (§5.2 of the migration report) deletes
+the whole indenter and closes this.
 
-**ts-morph.** Still honoured by the structure printers, silently ignored by
-`formatText` and `fixMissingImports`. Either post-process the formatter's output as
-the option's own doc comment promises, or remove it from `FormatCodeSettings`. It
-has 8 non-test call sites, so removal is not free.
+### 2.7 `insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces` — done
+
+**ts-morph.** Reaches the formatter's edits as of b6670dac; `formatText` output
+matches 28.0.0. Three things it still does not reach, all recorded in
+BREAKING-CHANGES.md §8.4: braces inside a string, template, comment or JSX text;
+a comment sitting between the two tokens; and the edits tsgo writes itself
+(`fixMissingImports`, `organizeImports`).
 
 ### 2.8 `fixMissingFunctionDeclaration` is absent
 
@@ -144,17 +129,26 @@ consequence. Document rather than diverge the fork.
 
 ### 3.1 Adding files one at a time is still quadratic
 
-**ts-morph.** Bulk paths are linear now (~0.11 ms/file, flat from 800 to 3200
-files). A `createSourceFile` loop is not, and cannot be fixed the same way:
+**ts-morph.** Bulk paths are linear now and within a constant factor of 28.0.0.
+Re-measured side by side at 800 files, in-memory FS: `new Project({
+tsConfigFilePath })` 90 ms → 367 ms, `addSourceFilesAtPaths` 21 ms → 218 ms
+(0.27 ms/file), first `getPreEmitDiagnostics()` 370 ms → 605 ms, one edit
+0.18 ms → 0.94 ms.
+
+A `createSourceFile` loop is still quadratic — 800 files, 10 ms → **8254 ms**
+(5.3 ms/file at 200, 10.3 at 800) — and cannot be fixed the same way:
 `createOrUpdateSourceFile` returns the parsed file, so the reopen cannot be
-deferred past the call. Either accept it, or offer a batching entry point in the
-public API and say so in the docs.
+deferred past the call. The registry already has the batched
+`createOrUpdateSourceFiles(entries)` that makes the bulk path linear; what is
+missing is a public entry point on `Project` that can use it. Either add one or
+accept it. BREAKING-CHANGES.md §6 documents the write-then-`addSourceFilesAtPaths`
+workaround in the meantime.
 
 ### 3.2 `TsConfigResolver` builds a throwaway wasm instance per call
 
 **ts-morph.** `createInProcessApi` + `close` measured at 11.7 ms against ~1.5 ms for
-the parse itself, so `getCompilerOptionsFromTsConfig` costs 13.2 ms against 1.3 ms
-on 28.0.0. Merging the two `#withApi` calls does not pay — `getCompilerOptions()`
+the parse itself, so `getCompilerOptionsFromTsConfig` costs 12.2 ms against 2.2 ms
+on 28.0.0 (re-measured side by side). Merging the two `#withApi` calls does not pay — `getCompilerOptions()`
 necessarily precedes `getPaths()`. Wants instance pooling or a persistent session,
 and `TsConfigResolver` has no dispose hook to hold one safely.
 
@@ -189,14 +183,18 @@ Cost: not measurable, ~199MB rss either way over 500 files edited 24 times.
 ## 5. Documentation
 
 - **The comment sweep**, deliberately deferred: shipped source still carries
-  `Breaking change:` comments and notes about what tsgo no longer has. Those belong
-  in BREAKING-CHANGES.md, not in the API's doc comments, and they will read as
-  noise to anyone who never used 28.0.0.
-- **`docs/setup/index.md`** is TypeScript 5 code — array-form `resolveModuleNames`,
-  `ts.ResolvedModule`, `ts.resolveModuleName` — and claims type-reference-directive
-  support, which is the one thing explicitly deferred.
-- **BREAKING-CHANGES.md has been found stale or inverted repeatedly.** Treat every
-  claim in it as a hypothesis until measured. The migration report lists the specific
-  claims known to be contradicted.
-- **`removed-capabilities/`** — its README says "these two" while listing three, and
-  `.mocharc.yml` says the same. One of the three is a TODO rather than a removal.
+  `Breaking change:` comments and notes about what tsgo no longer has — including
+  in the generated `.d.ts` files consumers read. Those belong in
+  BREAKING-CHANGES.md, not in the API's doc comments, and they will read as noise
+  to anyone who never used 28.0.0.
+- **`docs/emitting.md`** documents `project.emit({ customTransformers })`, which is
+  removed and now fails silently — the transformer is never called. Rewrite that
+  section.
+- **BREAKING-CHANGES.md** was rewritten as a migration guide and every load-bearing
+  claim in it re-measured against published 28.0.0. Three claims in it are still
+  stated from source rather than measured and are marked as such in its Appendix B.
+  It has been found stale or inverted repeatedly in the past; keep treating a claim
+  nobody has re-run as a hypothesis.
+- **`docs/setup/index.md`** — done in b6670dac; the resolution example is current.
+- **`removed-capabilities/`** — done in b6670dac; the README and `.mocharc.yml` now
+  agree on three files.

@@ -2420,6 +2420,72 @@ class MyClass {
     });
   });
 
+  describe(nameof<Node>("getSymbol"), () => {
+    function doTest(text: string, kind: SyntaxKind, expectedName: string | undefined) {
+      const { sourceFile } = getInfoFromText(text);
+      const node = sourceFile.getFirstDescendantByKindOrThrow(kind);
+      expect(node.getSymbol()?.getName()).to.equal(expectedName);
+    }
+
+    it("should get the symbol of a named declaration", () => {
+      doTest("class C {}", SyntaxKind.ClassDeclaration, "C");
+    });
+
+    it("should get the symbol of an identifier", () => {
+      doTest("const t = 5;", SyntaxKind.Identifier, "t");
+    });
+
+    it("should get the symbol of an import specifier", () => {
+      doTest(`import { a as b } from "./other";`, SyntaxKind.ImportSpecifier, "b");
+    });
+
+    // the anonymous declarations below have no name for the checker to be asked
+    // with, so they are answered by asking the declaration itself
+    it("should get the symbol of an arrow function", () => {
+      doTest("const t = (a: number) => a;", SyntaxKind.ArrowFunction, "__function");
+    });
+
+    it("should get the symbol of an anonymous function expression", () => {
+      doTest("const t = function (a: number) { return a; };", SyntaxKind.FunctionExpression, "__function");
+    });
+
+    it("should get the symbol of an object literal expression", () => {
+      doTest("const t = { p: 1 };", SyntaxKind.ObjectLiteralExpression, "__object");
+    });
+
+    it("should get the symbol of a type literal", () => {
+      doTest("type T = { p: number };", SyntaxKind.TypeLiteral, "__type");
+    });
+
+    it("should get the symbol of a mapped type", () => {
+      doTest(`type T = { [K in "a"]: number };`, SyntaxKind.MappedType, "__type");
+    });
+
+    it("should get the symbol of a call signature", () => {
+      doTest("interface I { (a: string): void; }", SyntaxKind.CallSignature, "__call");
+    });
+
+    it("should get the symbol of a construct signature", () => {
+      doTest("interface I { new (a: string): I; }", SyntaxKind.ConstructSignature, "__new");
+    });
+
+    it("should get the symbol of an index signature", () => {
+      doTest("interface I { [key: string]: any; }", SyntaxKind.IndexSignature, "__index");
+    });
+
+    it("should get the symbol of a constructor", () => {
+      doTest("class C { constructor() {} }", SyntaxKind.Constructor, "__constructor");
+    });
+
+    it("should get the symbol of an export assignment", () => {
+      doTest("class C {}\nexport = C;", SyntaxKind.ExportAssignment, "export=");
+    });
+
+    it("should return undefined for a node that declares nothing", () => {
+      doTest("const t = [1, 2, 3];", SyntaxKind.ArrayLiteralExpression, undefined);
+    });
+  });
+
   describe(nameof<Node>("getSymbolsInScope"), () => {
     function doTest(text: string, selectNode: (sourceFile: SourceFile) => Node, meaning: SymbolFlags, expectedSymbolNames: string[]) {
       const { sourceFile } = getInfoFromText(text);

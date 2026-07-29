@@ -278,10 +278,16 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       return typeCheckerSymbol;
 
     const nameNode = (this.compilerNode as any).name as ts.Node | undefined;
-    if (nameNode != null)
-      return this._getNodeFromCompilerNode(nameNode).getSymbol();
+    if (nameNode != null) {
+      const nameSymbol = this._getNodeFromCompilerNode(nameNode).getSymbol();
+      if (nameSymbol != null)
+        return nameSymbol;
+    }
 
-    return undefined;
+    // an anonymous declaration — an arrow function, an object literal, a call
+    // signature — has no name for the checker to be asked with, so the
+    // declaration itself is what has to be asked
+    return typeChecker._getSymbolOfDeclaration(this);
   }
 
   /**

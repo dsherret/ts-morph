@@ -1,6 +1,6 @@
 import type { CheckFlags } from "../enums/checkFlags.enum";
-import type { DiagnosticCategory } from "../enums/diagnosticCategory.enum";
 import type { CompletionItemKind } from "../enums/completionItemKind.enum";
+import type { DiagnosticCategory } from "../enums/diagnosticCategory.enum";
 import type { ModuleKind } from "../enums/moduleKind.enum";
 import type { __String, Path } from "../ast/index";
 import type { CompilerOptions } from "./compilerOptions";
