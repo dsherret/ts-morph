@@ -199,10 +199,31 @@ export type FileChanges = FileChangeSummary | {
     invalidateAll: true;
 };
 /**
+ * Root files a client names for a project itself, rather than through its config.
+ *
+ * They are appended to whatever the project's config resolved, in the order they are
+ * added, and persist across snapshots until the project is closed. Nothing about them
+ * passes through the config's include globs, so a file named here is in the project
+ * whatever else shares its stem.
+ */
+export interface ProjectRootFileChanges {
+    /** The project, named by the config file it was opened with. */
+    project: DocumentIdentifier;
+    /** Root files to append, in the order they should be appended. */
+    added?: string[];
+    /** Root files to drop. */
+    removed?: string[];
+}
+/**
  * Parameters for updateSnapshot.
  */
 export interface UpdateSnapshotParams extends LSPUpdateSnapshotParams {
     fileChanges?: FileChanges;
+    /**
+     * Root files to add to or drop from projects, applied in the same snapshot as
+     * {@link fileChanges} so a file's contents and its membership arrive together.
+     */
+    rootFileChanges?: ProjectRootFileChanges[];
 }
 /**
  * Parameters for updateTemporarySnapshot. Unlike {@link UpdateSnapshotParams}, this

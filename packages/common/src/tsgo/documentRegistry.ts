@@ -93,17 +93,30 @@ export class DocumentRegistry {
   readonly #pendingChanged = new Set<string>();
   readonly #pendingCreated = new Set<string>();
   readonly #pendingDeleted = new Set<string>();
+  readonly #pendingRootsAdded = new Set<string>();
+  readonly #pendingRootsRemoved = new Set<string>();
   #compilerOptions: CompilerOptions;
   #snapshot: Snapshot | undefined;
   #project: Project | undefined;
+  /**
+   * The deepest directory holding every non-declaration file the registry has, as path
+   * segments — the `rootDir` the config carries, kept as files arrive rather than
+   * recomputed from the whole list. See toConfigCompilerOptions for why it is written.
+   */
+  #commonDirectoryParts: string[] | undefined;
   #configStale = false;
   #checkerUsed = false;
   #disposed = false;
 
   constructor(options: DocumentRegistryOptions = {}) {
     this.#compilerOptions = options.compilerOptions ?? {};
-    for (const fileName of Object.keys(options.files ?? {}))
+    for (const fileName of Object.keys(options.files ?? {})) {
       this.#versions.set(fileName, 0);
+      this.#pendingRootsAdded.add(fileName);
+      this.#addToCommonDirectory(fileName);
+    }
+    // the config is written below rather than left for the first flush to write
+    this.#configStale = false;
     this.#fs = createVirtualFileSystem({
       [configFilePath]: this.#configText(),
       ...options.files,
@@ -169,7 +182,7 @@ export class DocumentRegistry {
   setCompilerOptions(compilerOptions: CompilerOptions): void {
     this.#assertNotDisposed();
     this.#compilerOptions = compilerOptions;
-    this.#queueChange({}, true);
+    this.#configStale = true;
   }
 
   /**
@@ -191,8 +204,12 @@ export class DocumentRegistry {
     this.#flushPending([fileName]);
     this.#versions.delete(fileName);
     this.#fs.removeFile!(fileName);
-    // the file stops being a root either way, so the config is rewritten without it
-    this.#queueChange(options.discardContents ? { deleted: [fileName] } : { changed: [fileName] }, true);
+    // a file the project was never told about leaves without being dropped from it: the
+    // only place it had reached is the pending list, which has not been drained yet
+    if (!this.#pendingRootsAdded.delete(fileName))
+      this.#pendingRootsRemoved.add(fileName);
+    this.#recomputeCommonDirectory();
+    this.#queueChange(options.discardContents ? { deleted: [fileName] } : { changed: [fileName] });
   }
 
   /** Returns the parsed file, or `undefined` when it is not in the project. */
@@ -255,6 +272,8 @@ export class DocumentRegistry {
     this.#pendingChanged.clear();
     this.#pendingCreated.clear();
     this.#pendingDeleted.clear();
+    this.#pendingRootsAdded.clear();
+    this.#pendingRootsRemoved.clear();
     this.#api.close();
   }
 
@@ -269,9 +288,9 @@ export class DocumentRegistry {
    * registry itself holds.
    *
    * The two are not otherwise interchangeable — a created path also invalidates the
-   * failed lookups that named it, where a changed one does not — but the roots
-   * change either way, so the config is rewritten and the project reloads
-   * regardless.
+   * failed lookups that named it, where a changed one does not — and neither says
+   * anything about whether the file is a root of the project, which is reported
+   * separately (see #flush).
    */
   #write(files: readonly { fileName: string; text: string }[]): void {
     // before the text changes, so a change still waiting for one of these paths is
@@ -280,10 +299,10 @@ export class DocumentRegistry {
 
     const created = new Set<string>();
     const changed = new Set<string>();
-    let rootsChanged = false;
     for (const { fileName, text } of files) {
       if (!this.#versions.has(fileName)) {
-        rootsChanged = true;
+        this.#pendingRootsAdded.add(fileName);
+        this.#addToCommonDirectory(fileName);
         if (this.#baseFs?.fileExists?.(fileName) ?? false)
           changed.add(fileName);
         else
@@ -295,12 +314,10 @@ export class DocumentRegistry {
       this.#versions.set(fileName, (this.#versions.get(fileName) ?? -1) + 1);
     }
 
-    // the keys have to be left off when empty: #queueChange rewrites the config for
-    // a `created` it can see, however few files are in it
     this.#queueChange({
       ...created.size > 0 ? { created: [...created] } : {},
       ...changed.size > 0 ? { changed: [...changed] } : {},
-    }, rootsChanged);
+    });
   }
 
   /**
@@ -319,23 +336,18 @@ export class DocumentRegistry {
    * to decide which. It never comes up in a run of adds, which is the case this is
    * for.
    *
-   * `rootsChanged` is for the cases the change itself does not imply it, of which
-   * there are three: a file that left the registry without being reported as
-   * deleted (see removeSourceFile), one that joined it reported as changed rather
-   * than created (see #write), and compiler options that are not about files at all
-   * but live in the same config (see setCompilerOptions).
+   * Which files are roots of the project is held separately, in #pendingRootsAdded and
+   * #pendingRootsRemoved: a file can join the registry reported as changed rather than
+   * created, and leave it without being reported as deleted, so the two questions do
+   * not have the same answer.
    */
-  #queueChange(changes: { changed?: string[]; created?: string[]; deleted?: string[] }, rootsChanged = false): void {
+  #queueChange(changes: { changed?: string[]; created?: string[]; deleted?: string[] }): void {
     for (const path of changes.changed ?? [])
       this.#pendingChanged.add(path);
     for (const path of changes.created ?? [])
       this.#pendingCreated.add(path);
     for (const path of changes.deleted ?? [])
       this.#pendingDeleted.add(path);
-    // adding or removing a file changes the root file list, which lives in the
-    // config, so that has to be rewritten too — see #configText for why the list is
-    // explicit
-    this.#configStale ||= rootsChanged || this.#pendingCreated.size > 0 || this.#pendingDeleted.size > 0;
   }
 
   /**
@@ -361,19 +373,32 @@ export class DocumentRegistry {
    * means disposing it. Letting go happens after the new snapshot exists so the
    * source file cache can first carry unchanged files' entries across; that is what
    * preserves node identity for every file the changes did not touch.
+   *
+   * Root files travel as a delta rather than through the config — see #configText —
+   * so a create writes nothing that grows with the project and the compiler keeps the
+   * command line it already parsed. The delta rides on the same call as the file
+   * changes so that a file's contents and its membership land in the same snapshot.
    */
   #flush(): void {
-    if (this.#pendingChanged.size === 0 && this.#pendingCreated.size === 0 && this.#pendingDeleted.size === 0 && !this.#configStale)
+    if (
+      this.#pendingChanged.size === 0 && this.#pendingCreated.size === 0 && this.#pendingDeleted.size === 0
+      && this.#pendingRootsAdded.size === 0 && this.#pendingRootsRemoved.size === 0 && !this.#configStale
+    ) {
       return;
+    }
     const changed = [...this.#pendingChanged];
     const created = [...this.#pendingCreated];
     const deleted = [...this.#pendingDeleted];
+    const rootsAdded = [...this.#pendingRootsAdded];
+    const rootsRemoved = [...this.#pendingRootsRemoved];
     const configStale = this.#configStale;
     // emptied before the project opens, because opening it is what reads the
     // registry back and a change applied twice is not the same change
     this.#pendingChanged.clear();
     this.#pendingCreated.clear();
     this.#pendingDeleted.clear();
+    this.#pendingRootsAdded.clear();
+    this.#pendingRootsRemoved.clear();
     this.#configStale = false;
 
     if (configStale) {
@@ -386,17 +411,31 @@ export class DocumentRegistry {
         ...created.length > 0 ? { created } : {},
         ...deleted.length > 0 ? { deleted } : {},
       },
+      ...rootsAdded.length > 0 || rootsRemoved.length > 0
+        ? {
+          rootFileChanges: [{
+            project: configFilePath,
+            ...rootsAdded.length > 0 ? { added: rootsAdded } : {},
+            ...rootsRemoved.length > 0 ? { removed: rootsRemoved } : {},
+          }],
+        }
+        : {},
       openProject: configFilePath,
     });
   }
 
   /**
-   * The registry's tsconfig, which names every file it holds.
+   * The registry's tsconfig, which holds the compiler options and no files.
    *
-   * The list has to be explicit. Left to a wildcard, the config picks up files by
-   * extension priority, which drops `a.d.ts` and `a.js` on the floor whenever
-   * `a.ts` is also present — and ts-morph's contract is that a file the caller
-   * added is in the project, whatever else shares its stem.
+   * The `files` list is empty and stays empty: root files are named for the project
+   * over the API instead, which is what keeps creating a file from rewriting a config
+   * that grows with the project. The key still has to be *present*, because a config
+   * with neither `files` nor `include` globs every file it can reach and picks them up
+   * by extension priority, which drops `a.d.ts` and `a.js` on the floor whenever `a.ts`
+   * is also present. ts-morph's contract is that a file the caller added is in the
+   * project whatever else shares its stem, and a root named over the API is taken
+   * verbatim — no glob, no extension priority — so the contract now holds by
+   * construction rather than by naming every file.
    *
    * Options are read out of a config file whether or not the caller wrote one,
    * which settles the few compiler options whose validity turns on that: an
@@ -405,8 +444,48 @@ export class DocumentRegistry {
    * where a bare options object would not.
    */
   #configText(): string {
-    const files = [...this.#versions.keys()];
-    return JSON.stringify({ compilerOptions: { allowJs: true, ...toConfigCompilerOptions(this.#compilerOptions, files) }, files });
+    const compilerOptions = toConfigCompilerOptions(this.#compilerOptions, commonDirectoryOf(this.#commonDirectoryParts));
+    return JSON.stringify({ compilerOptions: { allowJs: true, ...compilerOptions }, files: [] });
+  }
+
+  /**
+   * Folds a file the registry has just taken into the common directory, and marks the
+   * config stale when that moves it.
+   *
+   * The common directory only ever shortens as files arrive, so over a run of creates
+   * the config is rewritten at most once per directory level of the first file however
+   * many files there are — and in the usual shape, where everything sits under one
+   * directory, exactly once.
+   */
+  #addToCommonDirectory(fileName: string): void {
+    if (declarationFileNameRegex.test(fileName))
+      return;
+    const parts = narrowCommonDirectory(this.#commonDirectoryParts, fileName);
+    if (parts === this.#commonDirectoryParts)
+      return;
+    this.#commonDirectoryParts = parts;
+    // a rootDir the caller set is what the config carries, so nothing here moves it
+    if (this.#compilerOptions.rootDir == null)
+      this.#configStale = true;
+  }
+
+  /**
+   * Works the common directory out again over every file the registry still holds.
+   *
+   * Removing a file can only lengthen it, which no fold over the remaining files can
+   * do, so this is the one case that costs the whole list. That is what it cost before
+   * every change, and a removal takes the compiler's incremental path away regardless.
+   */
+  #recomputeCommonDirectory(): void {
+    const before = commonDirectoryOf(this.#commonDirectoryParts);
+    let parts: string[] | undefined;
+    for (const fileName of this.#versions.keys()) {
+      if (!declarationFileNameRegex.test(fileName))
+        parts = narrowCommonDirectory(parts, fileName);
+    }
+    this.#commonDirectoryParts = parts;
+    if (this.#compilerOptions.rootDir == null && commonDirectoryOf(parts) !== before)
+      this.#configStale = true;
   }
 
   #getProject(): Project {
@@ -417,7 +496,11 @@ export class DocumentRegistry {
     return this.#project!;
   }
 
-  #openProject(params: { fileChanges?: { changed?: string[]; created?: string[]; deleted?: string[] }; openProject: string }): void {
+  #openProject(params: {
+    fileChanges?: { changed?: string[]; created?: string[]; deleted?: string[] };
+    rootFileChanges?: { project: string; added?: string[]; removed?: string[] }[];
+    openProject: string;
+  }): void {
     const previous = this.#snapshot;
     const previousHandedOutObjects = this.#checkerUsed;
     this.#checkerUsed = false;
@@ -500,7 +583,7 @@ function overlay(registry: FileSystem, base: FileSystem): FileSystem {
  * enum" and drops the option. ts-morph's own bookkeeping keys are dropped too:
  * they are not compiler options and the parser rejects them as unknown.
  */
-function toConfigCompilerOptions(compilerOptions: CompilerOptions, files: readonly string[]): Record<string, unknown> {
+function toConfigCompilerOptions(compilerOptions: CompilerOptions, commonDirectory: string | undefined): Record<string, unknown> {
   const result: Record<string, unknown> = {};
   let configFilePath: string | undefined;
   for (const [name, value] of Object.entries(compilerOptions)) {
@@ -531,11 +614,8 @@ function toConfigCompilerOptions(compilerOptions: CompilerOptions, files: readon
   // The config's own directory is the compiler's common source directory unless a
   // rootDir says otherwise, and the registry's config always sits at the root. An
   // explicit rootDir keeps emit output where it would be without a config file.
-  if (result.rootDir == null) {
-    const rootDir = getCommonDirectory(files.filter(f => !/\.d\.[cm]?ts$/i.test(f)));
-    if (rootDir != null)
-      result.rootDir = rootDir;
-  }
+  if (result.rootDir == null && commonDirectory != null)
+    result.rootDir = commonDirectory;
   return result;
 }
 
@@ -574,24 +654,33 @@ function getDefaultTypeRoots(configFilePath: string): string[] {
   return typeRoots;
 }
 
-/** The deepest directory containing every path, or `undefined` when there is none. */
-function getCommonDirectory(filePaths: readonly string[]): string | undefined {
-  let common: string[] | undefined;
-  for (const filePath of filePaths) {
-    const parts = filePath.split("/").slice(0, -1);
-    if (common == null) {
-      common = parts;
-      continue;
-    }
-    let i = 0;
-    while (i < common.length && i < parts.length && common[i] === parts[i])
-      i++;
-    common = common.slice(0, i);
-  }
+/**
+ * Narrows the deepest directory containing everything so far to also contain
+ * `filePath`, returning `common` itself when it already did.
+ *
+ * Directories are carried as path segments rather than as a string so that adding a
+ * file costs a comparison per segment rather than a walk over every file held — see
+ * DocumentRegistry#addToCommonDirectory.
+ */
+function narrowCommonDirectory(common: string[] | undefined, filePath: string): string[] {
+  const parts = filePath.split("/").slice(0, -1);
+  if (common == null)
+    return parts;
+  let i = 0;
+  while (i < common.length && i < parts.length && common[i] === parts[i])
+    i++;
+  return i === common.length ? common : common.slice(0, i);
+}
+
+/** The directory the segments name, or `undefined` when they name none. */
+function commonDirectoryOf(common: string[] | undefined): string | undefined {
   if (common == null || common.length === 0)
     return undefined;
   return common.join("/") || "/";
 }
+
+/** Matches the file names the compiler treats as declaration files. */
+const declarationFileNameRegex = /\.d\.[cm]?ts$/i;
 
 const internalOptionNames = new Set(["configFilePath", "pathsBasePath"]);
 

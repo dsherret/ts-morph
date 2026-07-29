@@ -5,7 +5,7 @@ marked **compiler** when the fix belongs in `submodules/typescript-go` (and so n
 a wasm rebuild), **upstream** when it belongs in microsoft/typescript-go rather than
 our fork, and **ts-morph** when it does not.
 
-Measured state: `ts-morph` 4503 passing / 2 pending, `bootstrap` 85 / 4,
+Measured state: `ts-morph` 4512 passing / 2 pending, `bootstrap` 85 / 4,
 `common` 435 / 0, both verification gates clean, 15/15 end-to-end scripts.
 
 ---
@@ -445,21 +445,15 @@ for the whole run. Bulk paths are unchanged: `addSourceFilesAtPaths` measures
 133–149 / 198–215 / 266–279 ms at 200/800/1600 over three runs, and a create loop
 that reads nothing back is 1–11 ms.
 
-**What is left is the config, and it is ts-morph's shape rather than the
-compiler's.** The registry's tsconfig names every file it holds (see
-`#configText` for why the list has to be explicit), so a create rewrites a file
-that grows with the project and the session parses it again: at 1600 files that
-round trip is ~28% of what a create still costs — ~22% parsing it in Go, the rest
-building the text in JS, of which `getCommonDirectory` over every file name is the
-larger half. Cloning the ten maps is another ~21%, which is the price of a
-snapshot the previous one keeps answering from. Closing the first means letting a
-client name root files for a project through the API rather than through the
-config — `Project.getCommandLineWithTypingsFiles` already augments a command line
-with files that are not in it — and then keeping the config honest for the times
-it _is_ re-read (a compiler option changing, a file being removed). That is a
-protocol and lifetime change in the document registry, not a compiler one.
-Closing the second means the per-file maps becoming layered rather than copied,
-which is a change to every reader of `processedFiles`.
+**What was left was the config, and it was ts-morph's shape rather than the
+compiler's.** The registry's tsconfig named every file it held, so a create
+rewrote a file that grew with the project and the session parsed it again: at
+1600 files that round trip was ~28% of what a create cost — ~22% parsing it in
+Go, the rest building the text in JS, of which `getCommonDirectory` over every
+file name was the larger half. §3.6(b) closes it. Cloning the ten maps is another
+~21%, which is the price of a snapshot the previous one keeps answering from, and
+closing that means the per-file maps becoming layered rather than copied — a
+change to every reader of `processedFiles`.
 
 One thing came out of the profile that was not the compiler's: computing the
 watch globs for a config walks every root file, and the API session does not
@@ -520,14 +514,106 @@ The risks, in order: node identity for a tree with no snapshot handle (though
 where getting one wrong yields a stale answer rather than a slow one; and keeping
 the stale-handle errors honest. This is a design change, not a patch.
 
-#### b. Send root files to the API directly, not through a synthetic tsconfig
+#### b. Send root files to the API directly, not through a synthetic tsconfig — done
 
-**ts-morph and fork.** The registry writes a `/tsconfig.json` naming every file,
-which the compiler re-parses on every reopen — the largest measured item left
-(~28% of a create at 1600 files, counting `getCommonDirectory` on the JS side).
-Taking root files as root files removes it, and deletes the stem-collision
-workaround `#configText` documents as a side effect. Needs the protocol and the
-registry's project lifetime to change together.
+**ts-morph and fork.** The registry wrote a `/tsconfig.json` naming every file it
+held, and the compiler re-parsed it on every reopen. A client can now name root
+files for a project directly: `updateSnapshot` takes `rootFileChanges`, a per
+project list of names to append and names to drop, and the project appends them
+to whatever its config resolved. The config stays — it is where the compiler
+options live and, more to the point, where they are _validated_ — but its `files`
+list is permanently `[]`, and a create writes nothing at all.
+
+**The list is a delta rather than a whole list** because sending the whole list
+per create is the same O(n) encode and decode the config round trip was. It rides
+on `updateSnapshot` rather than being a request of its own so that a file's
+contents and its membership land in the same snapshot, which is what lets
+`AddRootFiles` extend the program instead of rebuilding it.
+
+`tsoptions.ParsedCommandLine.WithAdditionalRootFiles` is what joins the two:
+it builds a fresh command line — field by field, since the type holds five
+`sync.Once` memos — carrying the config source file, the raw object and the parse
+diagnostics, with the names appended to `FileNames` and the **same**
+`CompilerOptions` pointer, so `canAddRootFiles`' `reflect.DeepEqual` is trivially
+true. `Project` memoizes `config ++ typings ++ api` in that order, because
+appending at the end is the only shape `AddRootFiles` can extend. The one trap is
+that `SetCommandLine` must keep the API roots while dropping everything derived
+from the config: `setCompilerOptions` rewrites the config, and a project that
+dropped its roots there would silently empty out.
+`TestAPIRootsAreKeptWhenTheConfigIsRewritten` is that trap.
+
+**The stem-collision contract now holds by construction.** A root named this way
+is taken verbatim — no include glob, no extension priority — so `a.ts`, `a.d.ts`
+and `a.js` are all in the project, which is what the explicit `files` list was
+for. `files` still has to be _present_ in the config, though: with neither `files`
+nor `include` the parser installs a default `**/*` and globs the whole in-memory
+file system, which is the bug the old comment described.
+
+**One diagnostic had to be dealt with, and it is why this is not a two-line
+change.** A present-but-empty `files` list makes the config parser report 18002,
+"The 'files' list in config file is empty" — which under the old scheme only
+happened when the registry held nothing. Left alone it would be reported for
+every project, and worse: `noEmitOnError` reports whatever the config parse
+produced, so a project with that option set would **never emit again**.
+`WithAdditionalRootFiles` therefore drops that one diagnostic, which is not a
+special case but a fact about the command line it returns — its file list is not
+empty. Nothing else moves: 18002 is still reported when the registry genuinely
+holds no files (`ts.ts` has always filtered it out of `getPreEmitDiagnostics`
+there), and the option validation the config exists for — 6046 for an unknown
+`lib`, and the rest — is reported exactly as before, since the derived command
+line carries `ConfigFile` and `Errors`.
+
+**`rootDir` is the one thing left that depends on the file set.** The registry
+writes `rootDir = <common directory of the non-declaration files>` so that emit
+lands where 28.0.0 put it with no config at all, and that is tested. It is now
+folded forward as files arrive (`#commonDirectoryParts`) rather than recomputed
+over the whole list, and the config is rewritten only when it moves — which,
+since the common directory only ever shortens, is at most once per directory
+level of the first file over a whole run, and exactly once in the usual shape.
+A removal recomputes it over the files still held, which is what a removal costs
+anyway.
+
+Measured on the built bundle — this branch against the same branch with these
+changes stashed, both rebuilt, in-memory FS, one process per size, two
+alternating passes, in ms:
+
+| files                                     | 200 | 800  | 1600  | 3200  |
+| ----------------------------------------- | --- | ---- | ----- | ----- |
+| create and manipulate together — before   | 602 | 2905 | 10119 | 37764 |
+| create and manipulate together — after    | 510 | 2205 | 6974  | 26155 |
+| create, then read each file back — before | 435 | 1845 | 6138  | 21692 |
+| create, then read each file back — after  | 371 | 1219 | 3216  | 11429 |
+
+24–31% off a create-and-manipulate loop and 34–48% off create-and-read, the
+saving growing with the project because the term removed was O(n) per create.
+Files in nested directories — the shape the common directory has to be got right
+for — move the same way: 1955 → 1231 ms at 800 and 5438 → 3118 at 1600.
+
+Nothing else moved. `addSourceFilesAtPaths` 245–259 / 307–323 ms before against
+241–245 / 326–332 after at 800/1600, `createSourceFiles` 16–17 / 28–29 against
+17–19 / 28–29, an edit against a project of 800/1600 files 1.78–1.85 / 2.48–2.60
+ms against 1.76–1.80 / 2.54–2.57, and the two-loop create-then-manipulate
+862–886 / 1720–1834 against 859–886 / 1726–1817 — that last one unchanged by
+construction, since it wrote the config once for the whole run either way.
+
+Equivalence is tested rather than argued.
+`internal/api/apirootfiles_test.go` runs every shape
+`TestAddedRootsMatchAProjectOpenedWithThem` does with the roots named over the
+API instead of in the config, and asserts the addition is made — or refused — in
+exactly the same places; plus that the two ways of naming roots hold the same
+files with the same diagnostics, that a root can be dropped and re-added, that
+the config's own option diagnostics survive, and that files sharing a stem across
+`.ts/.d.ts/.js`, `.tsx/.jsx`, `.mts/.mjs` and `.cts/.cjs` are all in the project.
+`internal/project/apirootsproject_test.go` adds the parse cache reference ledger
+to the repeated-addition loop, and `internal/tsoptions/withadditionalrootfiles_test.go`
+checks that a derived command line reports what its base did and leaves the base
+alone.
+
+**Not done, deliberately:** the scratch project behind the standalone
+`createSourceFile` (`ts.ts`) still names its files in a config it rewrites per
+call. It is bounded at 32 files by `scratchFileLimit`, so it is not a measured
+item, and converting it would put the one path that has no project of its own
+through a protocol it does not otherwise need.
 
 #### c. Make deletion incremental
 
@@ -639,15 +725,16 @@ where the client's copy was the larger of the two. Bulk paths are unchanged:
 800/1600 either way.
 
 What is left of the per-file terms is `Snapshot.Clone` — the ten `map[tspath.Path]…`
-fields below — which is now 20% of an edit and the largest single item after (a)
-and (b).
+fields below — which is now 20% of an edit and the largest single item after (a),
+now that (b) has landed.
 
 #### Deferred: layered `processedFiles` maps
 
 Cloning ten `map[tspath.Path]…` fields per snapshot is ~21% — the largest single
-item after (b) — but making them layered rather than copied touches every reader
-in the compiler. Deliberately left until the above have landed and been measured,
-since (a) may make the snapshot rare enough that this stops mattering.
+item now that (b) has landed — but making them layered rather than copied touches
+every reader in the compiler. Deliberately left until the above have landed and
+been measured, since (a) may make the snapshot rare enough that this stops
+mattering.
 
 ---
 
