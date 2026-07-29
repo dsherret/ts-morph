@@ -25,10 +25,9 @@ export class ImplementationLocation extends DocumentSpan<ts.ImplementationLocati
   /**
    * Gets what kind of element the implementation is.
    *
-   * Breaking change: the kind is worked out from the symbol at the span rather
-   * than reported by the compiler, so the members are the ones
-   * `ts.ScriptElementKind` kept — a class expression reads `class` where the
-   * `typescript` package said `local class`.
+   * The kind is worked out from the symbol at the span rather than reported by
+   * the compiler, so it is limited to the members `ts.ScriptElementKind`
+   * declares: a class expression reads `class`, there being no `local class`.
    */
   @Memoize
   getKind(): ts.ScriptElementKind {

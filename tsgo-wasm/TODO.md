@@ -105,9 +105,19 @@ a comment sitting between the two tokens; and the edits tsgo writes itself
 
 ### 2.8 `fixMissingFunctionDeclaration` is absent
 
-**compiler.** `getCodeFixesAtPosition` with `[2304]` returns one fix where 28.0.0
-returned two — "Add missing function declaration" has no provider in tsgo. Establish
-whether it is unrouted or unimplemented before deciding.
+**upstream, not our fork.** `getCodeFixesAtPosition` with `[2304]` returns one fix
+where 28.0.0 returned two — "Add missing function declaration" has no provider.
+
+Established: it is **unimplemented**, not unrouted. `internal/ls/codeactions.go:86`
+registers exactly three providers — `ImportFixProvider`,
+`IsolatedDeclarationsFixProvider`, `FixClassIncorrectlyImplementsInterfaceProvider`
+— under a literal `// Add more code fix providers here as they are implemented`.
+The `codeFixAddMissingFunctionDeclaration*` fourslash tests that name the fix assert
+`VerifyCodeFixNotAvailable`, i.e. upstream currently expects it to be absent.
+
+So this is a port of a whole code-fix provider from TypeScript into
+microsoft/typescript-go, not something to route from here. Nothing to do in
+ts-morph beyond documenting which fixes exist.
 
 ### 2.9 Diagnostic spans and codes
 
@@ -161,11 +171,26 @@ workaround in the meantime.
 
 ### 3.2 `TsConfigResolver` builds a throwaway wasm instance per call
 
-**ts-morph.** `createInProcessApi` + `close` measured at 11.7 ms against ~1.5 ms for
-the parse itself, so `getCompilerOptionsFromTsConfig` costs 12.2 ms against 2.2 ms
-on 28.0.0 (re-measured side by side). Merging the two `#withApi` calls does not pay — `getCompilerOptions()`
-necessarily precedes `getPaths()`. Wants instance pooling or a persistent session,
-and `TsConfigResolver` has no dispose hook to hold one safely.
+**ts-morph.** `getCompilerOptionsFromTsConfig` measures ~32 ms warm against 1.3 ms
+on 28.0.0. The cost is instantiating the reactor, not compiling it: the compiled
+module is cached process-wide (84 ms on the first call, 0 ms after), so this is the
+inherent price of standing up a fresh 43 MiB linear memory and Go runtime.
+
+**Merging the two `#withApi` calls does not pay, for the reason first recorded here
+rather than the one it looks like.** Nothing technical prevents sharing — the
+session re-parses on every `parseConfigFile` with a nil `extendedConfigCache`, and
+`callbackFS` delegates each call to the client without caching, so one instance
+could serve both parses. What defeats it is call ordering:
+`addSourceFilesForTsConfigResolver(project, resolver, resolver.getCompilerOptions())`
+evaluates `getCompilerOptions()` as an argument, so the first instance is created
+and closed before `getPaths()` runs. Making both parses share one instance would
+mean parsing eagerly, which charges the probe parse to every caller that only wants
+the options — the common case, and the one `getCompilerOptionsFromTsConfig` is.
+
+What is left is instance pooling, and it is **not worth it**: ~30 ms against a
+~1000 ms cold start, in exchange for holding a reactor instance and its linear
+memory alive indefinitely, with no dispose hook on `TsConfigResolver` to release it.
+Closing this unless a caller turns up that resolves configs in a loop.
 
 ### 3.3 `retiredSnapshotLimit` — done, and the earlier reading was wrong
 

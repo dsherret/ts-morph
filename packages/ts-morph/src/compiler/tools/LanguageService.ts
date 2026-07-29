@@ -32,11 +32,10 @@ export interface LanguageServiceCreationParams {
 /**
  * Wrapper around the language service operations.
  *
- * Breaking change: tsgo has no `LanguageService` object. Every operation below
- * is a method on the session's project, which is what `compilerObject` returns,
- * and the operations tsgo does not implement are gone — see
- * `getEditsForRefactor` and `getIdentationAtPosition` in the breaking changes
- * list.
+ * The compiler has no language service object of its own: every operation below
+ * is a method on the session's project, which is what `compilerObject` returns.
+ * Operations the compiler does not implement, such as refactors, are absent —
+ * see BREAKING-CHANGES.md for the list.
  */
 export class LanguageService {
   /** @internal */
@@ -187,9 +186,9 @@ export class LanguageService {
   /**
    * Find the rename locations for the specified node.
    *
-   * Breaking change: `newName` is now required. tsgo computes a rename as the
-   * edits that perform it, so the locations cannot be found without knowing what
-   * the node is being renamed to.
+   * `newName` is required: the compiler computes a rename as the edits that
+   * perform it, so the locations cannot be found without knowing what the node
+   * is being renamed to.
    * @param node - Node to get the rename locations for.
    * @param newName - New name the node is being renamed to.
    * @param options - Options for renaming.
@@ -306,9 +305,9 @@ export class LanguageService {
   /**
    * Gets the file text changes for organizing the imports in a source file.
    *
-   * Breaking change: the format settings and user preferences parameters are
-   * gone. tsgo's organize-imports takes only a mode, which selects between
-   * sorting, combining and removing unused imports.
+   * Takes no format settings or user preferences: the compiler's
+   * organize-imports takes only a mode, which selects between sorting,
+   * combining and removing unused imports.
    * @param filePathOrSourceFile - File path or source file to organize.
    * @param mode - Which of sorting, combining and removing unused to do.
    */
@@ -326,9 +325,9 @@ export class LanguageService {
    * @param fixId - Identifier for the code fix (ex. "fixMissingImport").
    * @param formatSettings - Format code settings.
    *
-   * Breaking change: the user preferences parameter is gone, and the fix ids are
-   * tsgo's — `"fixMissingImport"`, `"fixMissingTypeAnnotationOnExports"` and
-   * `"fixClassIncorrectlyImplementsInterface"` are the only ones that exist.
+   * There is no user preferences parameter, and three fix ids exist:
+   * `"fixMissingImport"`, `"fixMissingTypeAnnotationOnExports"` and
+   * `"fixClassIncorrectlyImplementsInterface"`.
    */
   getCombinedCodeFix(filePathOrSourceFile: string | SourceFile, fixId: string, formatSettings: FormatCodeSettings = {}): CombinedCodeActions {
     const fileName = this.#getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
@@ -344,8 +343,8 @@ export class LanguageService {
    * @param end - End position of the text range to be fixed.
    * @param errorCodes - One or more error codes associated with the code fixes to retrieve.
    *
-   * Breaking change: the format settings and user preferences parameters are
-   * gone. tsgo's code fixes take neither.
+   * Takes no format settings or user preferences: the compiler's code fixes
+   * accept neither.
    */
   getCodeFixesAtPosition(
     filePathOrSourceFile: string | SourceFile,
