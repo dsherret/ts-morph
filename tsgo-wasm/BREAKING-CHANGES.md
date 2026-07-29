@@ -136,14 +136,22 @@ generation counts:
 | Call                                                                                                                                                                       | Survives                                                                                                                     |
 | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | `Type#getText()`, `#getApparentType()`, `#getNonNullableType()`, `Symbol#getDeclaredType()` — anything routed back through the **current** checker                         | **nothing you can rely on.** Throws from the first manipulation, and _which_ generations throw is not stable across fixtures |
-| `Type#getProperties()`, `#getSymbol()`, `#getBaseTypes()`, `#getCallSignatures()`, `Symbol#getDeclarations()` — anything that resolves the handle against its own snapshot | at most the **two** most recent checker generations, then throws                                                             |
+| `Type#getProperties()`, `#getSymbol()`, `#getBaseTypes()`, `#getCallSignatures()`, `Symbol#getDeclarations()` — anything that resolves the handle against its own snapshot | at most **two** manipulations, then throws                                                                                   |
 | `Type#getFlags()`, `Symbol#getName()`, `Symbol#getFlags()` — values already materialized on the client                                                                     | never throws                                                                                                                 |
 
-The two-generation window exists because the registry keeps a superseded snapshot
-alive when the checker answered from it (`retiredSnapshotLimit = 2`); every
-retained snapshot pins a program and a checker inside the Wasm module. It is
-observable but not a contract. **Treat a `Type`, `Symbol` or `Signature` as
-invalid the moment you manipulate anything.**
+The two-manipulation window exists because the registry keeps a superseded snapshot
+alive when the checker answered from it (`retiredSnapshotLimit = 2`); every retained
+snapshot pins a program and a checker inside the Wasm module. It is observable but not
+a contract. **Treat a `Type`, `Symbol` or `Signature` as invalid the moment you
+manipulate anything.**
+
+Two is now counted in manipulations rather than in how often you asked the compiler
+anything, and that is a **tightening**: while a manipulation opened a snapshot of its
+own, a run of edits with no semantic query between them retired nothing, and a handle
+taken before them went on answering however many there were. It no longer does — it
+fails at the third, the same as it always did when the compiler was asked in between.
+The window that a `Type` reliably survived was never wider than two; it was only
+accidentally wider when nothing was asked.
 
 ### The pattern
 
