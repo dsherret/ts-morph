@@ -6,6 +6,11 @@
 
 [TypeScript](https://github.com/Microsoft/TypeScript) Compiler API wrapper. Provides an easier way to programmatically navigate and manipulate TypeScript and JavaScript code.
 
+Version 29 upgrades to **TypeScript 7**: the compiler is now
+[tsgo](https://github.com/microsoft/typescript-go), compiled to WebAssembly and run in-process, and
+the npm `typescript` package is no longer a dependency. See
+[breaking changes](breaking-changes.md) before upgrading.
+
 Formerly `ts-simple-ast`.
 
 ## Overview
@@ -95,12 +100,12 @@ await project.save();
 const compilerNode = myClassFile.compilerNode;
 ```
 
-Or navigate existing compiler nodes created with the TypeScript compiler (the `ts` named export is the TypeScript compiler):
+Or wrap a compiler node you already hold (the `ts` named export is the compiler's own API):
 
 ```ts ignore-error: 1109
 import { createWrappedNode, ClassDeclaration, ts } from "ts-morph";
 
-// some code that creates a class declaration using the ts object
+// a class declaration from the compiler's AST, say someNode.compilerNode
 const classNode: ts.ClassDeclaration = ...;
 
 // create and use a wrapped node

@@ -2,6 +2,34 @@
 
 View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only a high level overview of breaking changes.
 
+## Version 29
+
+Upgraded to **TypeScript 7** — the compiler is now [tsgo](https://github.com/microsoft/typescript-go),
+written in Go and compiled to WebAssembly, running in-process. The npm `typescript` package is no
+longer a dependency. This is by far the largest breaking release of this library.
+
+**[Read the migration guide](https://github.com/dsherret/ts-morph/blob/latest/tsgo-wasm/BREAKING-CHANGES.md)**
+— the highlights:
+
+- **Enum values changed.** 202 of 380 `SyntaxKind` members have a different value, and `NodeFlags`,
+  `ObjectFlags`, `SymbolFlags`, `NewLineKind`, `JsxEmit` and `ModuleDetectionKind` all moved. Code
+  that names a member is fine; code that stores or hard-codes a _number_ breaks silently. This is
+  the one to check first.
+- **`Type`, `Symbol` and `Signature` cannot outlive a manipulation.** They are handles into a
+  compiler snapshot. Re-fetch them after an edit rather than holding them across one.
+- **The `ts` namespace is much smaller**, 2249 runtime keys down to 411. Most were internals that
+  only leaked because 28.0.0 bundled the whole `typescript` module, but some genuinely public
+  members are gone, among them `ts.createProgram`, `ts.createPrinter`, `ts.resolveModuleName`,
+  `ts.sys` and `ts.version`. 407 of 671 `ts.isX` guards went with them.
+- **Capabilities removed:** refactors, `fixUnusedIdentifiers`, `customTransformers`,
+  `createDocumentCache`, custom type-reference-directive resolution, and most code fix providers.
+- **Diagnostics moved.** Some spans are narrower and a few codes changed, so a filter on a specific
+  code may silently stop matching.
+- **Performance.** Adding files in bulk is the fast path; creating files one at a time and reading
+  each back as you go is much slower than it was. §6 of the guide shows the shape to write instead.
+- **The browser is supported**, but the compiler must be loaded in a Web Worker and
+  `initializeWasm()` awaited before the first `Project`.
+
 ## Version 22
 
 - Upgraded to TS 5.4
