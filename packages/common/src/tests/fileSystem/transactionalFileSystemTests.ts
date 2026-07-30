@@ -15,8 +15,6 @@ describe("TransactionalFileSystem", () => {
       fileSystem,
       wrapper: new TransactionalFileSystem({
         fileSystem,
-        libFolderPath: undefined,
-        skipLoadingLibFiles: false,
       }),
     };
   }
@@ -931,8 +929,6 @@ describe("TransactionalFileSystem", () => {
   function createTransactionalFileSystem(fileSystem: FileSystemHost) {
     return new TransactionalFileSystem({
       fileSystem,
-      skipLoadingLibFiles: true,
-      libFolderPath: undefined,
     });
   }
 

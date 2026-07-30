@@ -1,33 +1,7 @@
-import { CompilerOptions, FileSystemHost, InMemoryFileSystemHost, RealFileSystemHost, SyntaxKind, ts } from "@ts-morph/common";
+import { CompilerOptions, FileSystemHost, InMemoryFileSystemHost, SyntaxKind, ts } from "@ts-morph/common";
 import { IsAny } from "conditional-type-checks";
-import * as path from "path";
 import { Node, SourceFile } from "../../../compiler";
 import { Project } from "../../../Project";
-const fileSystem = new RealFileSystemHost();
-
-function getTextForLibFile(fileName: string) {
-  return {
-    filePath: path.join("node_modules/typescript/lib", fileName),
-    text: fileSystem.readFileSync(path.join(getCompilerLibFolder(ts.getVersion()), fileName)),
-  };
-}
-
-const versionLibFolder = new Map<string, string>();
-function getCompilerLibFolder(version: string) {
-  if (!versionLibFolder.has(version))
-    versionLibFolder.set(version, getFolder());
-
-  return versionLibFolder.get(version)!;
-
-  function getFolder() {
-    const basePath = path.join(__dirname, `../../../../../common/node_modules/`);
-    const versionPath = path.join(basePath, `typescript-${version}/lib`);
-    if (fileSystem.directoryExistsSync(versionPath))
-      return versionPath;
-    else
-      return path.join(basePath, `typescript/lib`);
-  }
-}
 
 export interface GetInfoFromTextOptions {
   isDefinitionFile?: boolean;

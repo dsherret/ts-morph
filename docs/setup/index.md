@@ -87,12 +87,19 @@ importer.
 
 ### `libFolderPath`
 
-By default, ts-morph uses a fake folder path at `/node_modules/typescript/lib` to serve the TypeScript lib.d.ts files from memory.
+By default, the TypeScript lib.d.ts files come from the compiler's own copies, which
+are embedded in the WebAssembly module. They are not on the project's file system, so
+they have no path there and `project.getSourceFile(...)` will not find one; the
+compiler names them `bundled:///libs/lib.es5.d.ts` and so on.
 
-If you do not want this behaviour, you may specify an actual folder to get the lib files from the file system from:
+If you want the lib files read from a real folder instead — to pin a different set,
+or to reach them as source files — name that folder:
 
 ```ts
 const project = new Project({
   libFolderPath: "./node_modules/typescript/lib",
 });
 ```
+
+The folder is read through the project's file system, so an `InMemoryFileSystemHost`
+works as well as the disk.

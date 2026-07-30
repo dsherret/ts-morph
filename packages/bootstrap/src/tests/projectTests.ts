@@ -1,6 +1,9 @@
-import { getLibFiles, InMemoryFileSystemHost, nameof, ResolutionHosts, ts } from "@ts-morph/common";
+import { FileSystemHost, InMemoryFileSystemHost, nameof, ResolutionHosts, ts } from "@ts-morph/common";
 import { expect } from "chai";
+import { readdirSync, readFileSync } from "node:fs";
 import { EOL } from "node:os";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { createProject, createProjectSync, Project, ProjectOptions } from "../Project";
 
 describe("Project", () => {
@@ -243,7 +246,9 @@ const test = new Test();`,
           // `declarations` are handles rather than nodes, so the file is read off the
           // handle's path instead of by walking up to the source file
           const stringDec = varDeclType.getSymbol()!.declarations[0];
-          expect(stringDec.path).to.equal("/node_modules/typescript/lib/lib.es5.d.ts");
+          // the compiler's own copy, which is inside the wasm module rather than on
+          // the project's file system
+          expect(stringDec.path).to.equal("bundled:///libs/lib.es5.d.ts");
         });
 
         it("should skip loading lib files when true", async () => {
@@ -272,8 +277,7 @@ const test = new Test();`,
       describe(nameof<ProjectOptions>("libFolderPath"), () => {
         it("should support specifying a different folder for the lib files", async () => {
           const fileSystem = new InMemoryFileSystemHost();
-          for (const file of getLibFiles())
-            fileSystem.writeFileSync(`/other/${file.fileName}`, file.text);
+          writeLibFiles(fileSystem, "/other");
           const project = await create({ fileSystem, libFolderPath: "/other" });
           const sourceFile = project.createSourceFile("test.ts", "const t: String = '';");
           const program = project.createProgram();
@@ -803,3 +807,16 @@ const test = new Test();`,
     expect(project.createProgram().getSourceFiles().map(s => s.fileName).sort()).to.deep.equal(sourceFilePaths.sort());
   }
 });
+
+/**
+ * Writes the compiler's own lib files into `folderPath`, so that a project can be
+ * pointed at them with `libFolderPath`. Read off disk because the package no
+ * longer carries copies of them — the compiler does.
+ */
+function writeLibFiles(fileSystem: FileSystemHost, folderPath: string) {
+  const libFolderPath = fileURLToPath(new URL("../../../../submodules/typescript-go/internal/bundled/libs", import.meta.url));
+  for (const name of readdirSync(libFolderPath)) {
+    if (name.startsWith("lib") && name.endsWith(".d.ts"))
+      fileSystem.writeFileSync(`${folderPath}/${name}`, readFileSync(join(libFolderPath, name), "utf-8"));
+  }
+}

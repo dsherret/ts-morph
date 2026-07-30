@@ -384,15 +384,76 @@ package attached: 5055 ("cannot write file … because it would overwrite input
 file") arrived there with a 5068 chain suggesting a `tsconfig.json`; tsgo reports
 the message alone.
 
-### The default library files come from tsgo
+### The default library files come from tsgo, and are no longer on the file system
 
-They are the compiler's own copies, taken from the fork's
-`internal/bundled/libs`, so the checker resolves globals against the library it
-was built against. Until this release they were embedded from
+They are the compiler's own copies, so the checker resolves globals against the
+library it was built against. Until this release they were embedded from
 `node_modules/typescript/lib` — a TypeScript 7 checker type-checking against
 TypeScript 6's declarations. Expect small differences in global types and in the
-diagnostics that mention them. `packages/common` no longer depends on
-`typescript` at all.
+diagnostics that mention them. `packages/common` no longer depends on `typescript`
+at all.
+
+**They are read straight out of the WebAssembly module.** 28.0.0 wrote its own copy
+of every lib file into a fake folder on the project's file system at
+`/node_modules/typescript/lib`, which made them ordinary files: reachable with
+`project.getSourceFile("/node_modules/typescript/lib/lib.es5.d.ts")`, and sitting
+in a real directory. The compiler already carries the same 108 files, so the copy
+is gone. The compiler names them under a `bundled:///` scheme instead:
+
+```ts
+const project = new Project({ useInMemoryFileSystem: true });
+const file = project.createSourceFile("/t.ts", "const d: Date = null as any;");
+const decl = file.getVariableDeclarationOrThrow("d").getType().getSymbolOrThrow().getDeclarations()[0];
+
+decl.getSourceFile().getFilePath();
+// 28.0.0: "/node_modules/typescript/lib/lib.es5.d.ts"
+// now:    "bundled:///libs/lib.es5.d.ts"
+```
+
+What breaks:
+
+- **`project.getSourceFile(path)` will not find a lib file** by any path. There is
+  no file on any file system to find. This is the change most likely to be noticed.
+- `bundled:///libs/lib.es5.d.ts` **is not a file system path.** Passing it to
+  anything that resolves paths — `getStandardizedAbsolutePath`, `path.join`, your
+  own code — yields the nonsense relative path `./bundled:/libs/lib.es5.d.ts`.
+  Treat a path that starts with `bundled:///` as opaque; `isCompilerOwnedPath` is
+  exported from `@ts-morph/common` to test for one.
+- **`SourceFile#getDirectory()` throws** on a lib file reached this way, where it
+  used to answer with the fake lib folder. So does every operation that would write
+  it — see §8.6.
+- The lib files are **not on the project's file system at all**, so nothing that
+  reads it sees them: `fileExistsSync`, `readDirSync`, globbing.
+
+What is unchanged: navigating _to_ a lib file still works, which is how the example
+above reaches one — `getType()`, `getSymbol()`, `getDeclarations()` and
+`getSourceFile()` behave as they did, and the file's text, nodes and positions are
+all there. Lib files were never in `project.getSourceFiles()` and still are not.
+
+**If you need them as files, name a folder.** `ProjectOptions#libFolderPath` reads
+the lib files off the project's file system, exactly as before, and files read that
+way have ordinary paths:
+
+```ts
+// the lib files are whatever this folder holds, read through the project's
+// file system — the disk, or an InMemoryFileSystemHost you seeded yourself
+const project = new Project({ libFolderPath: "./node_modules/typescript/lib" });
+```
+
+The set of lib files is then yours to get right: the compiler reads `lib.es5.d.ts`
+and whatever it references from that folder and nowhere else, so a folder missing
+one of them reports the missing globals as diagnostics.
+
+**`getLibFiles()` and `libFolderInMemoryPath` are gone** from
+`@ts-morph/common`. They existed to serve the copy. If you were using
+`getLibFiles()` to seed a folder for `libFolderPath`, read the files from a
+`typescript` install, or from the fork's `internal/bundled/libs`.
+
+**`skipLoadingLibFiles: true` means what it always meant** — no lib files in the
+program, and the compiler reporting every missing global type as a diagnostic. It
+is now implemented as `noLib`, since there is no longer a folder to leave empty.
+It is not "use the compiler's own copies": that is the default, and asking for it
+explicitly is asking for nothing.
 
 ---
 
@@ -1055,17 +1116,25 @@ resolution mode.** `node10` was the only mode that wanted an implicit index and 
 is removed, so every remaining mode spells the index out. Measured identical for
 the default project on both builds.
 
-**In-memory lib files are read-only,** which 28.0.0 also enforced. What changed is
-_which_ files count as one: it is now decided by asking the file system, which
-holds the map, rather than by testing whether a path starts with the lib folder.
-28.0.0 used the prefix with no trailing separator and no awareness of the options,
-so a user's own file at `/node_modules/typescript/libfoo.ts` — or any file under
-that folder when `skipLoadingLibFiles` or a custom `libFolderPath` meant there
-were no in-memory lib files at all — was mistaken for one and silently failed to
-save. The prohibition itself is unchanged: `SourceFile#copy`, `#move`, `#delete`,
-`#deleteImmediately` and `#deleteImmediatelySync` throw an
-`InvalidOperationError`, `#save`/`#saveSync` do nothing, `#isSaved()` is always
-`false`.
+**The lib files the compiler carries are read-only,** which 28.0.0 also enforced for
+the copies it kept on the file system. The prohibition is unchanged in shape:
+`SourceFile#copy`, `#move`, `#delete`, `#deleteImmediately` and
+`#deleteImmediatelySync` throw an `InvalidOperationError`, `#save`/`#saveSync` do
+nothing, and `#isSaved()` is always `false`. Two things changed:
+
+- The error message is now "This operation is not permitted on a lib file the
+  compiler carries."
+- `#getDirectory()` throws it too. A file inside the WebAssembly module is in no
+  directory, where 28.0.0's copy sat in the fake lib folder.
+
+Which files count as one is now decided by the path — it starts with
+`bundled:///` — and that is exact rather than approximate. 28.0.0 tested for the
+lib folder as a prefix with no trailing separator and no awareness of the options,
+so a user's own file at `/node_modules/typescript/libfoo.ts` was mistaken for a lib
+file and silently failed to save. Nothing on a file system can collide with
+`bundled:///`, and a file you put at `/node_modules/typescript/lib/lib.es5.d.ts`
+yourself is now an ordinary file of yours. See §5 for what else moved with the
+lib files.
 
 **A raw file-system write after the first read is not seen.** tsgo builds the
 program when the first file is added, where TypeScript built its program lazily,
@@ -1103,15 +1172,24 @@ reads the project.
 
 ### 8.8 `@ts-morph/common`
 
-Runtime exports: 53 → 62. **Removed:** `createDocumentCache`, `createHosts`,
-`getFileMatcherPatterns`, `matchFiles` (§4). Also gone as types:
+**Removed:** `createDocumentCache`, `createHosts`, `getFileMatcherPatterns`,
+`matchFiles` (§4), and `getLibFiles` and `libFolderInMemoryPath` — the package no
+longer carries its own copy of the lib files (§5). Also gone as types:
 `CreateHostsOptions`, `TsSourceFileContainer`, `FileMatcherPatterns`,
 `FileSystemEntries`.
 
 **Added:** `initializeWasm`, `createInProcessApi`, `createFileSystemAdapter`,
 `getChildren`, `getLastToken`, `getStoredNode`, `isReconstructedNode`,
-`setSourceFileProperty`, `toModuleNameResolver`, `getEmitScriptTarget`,
-`getParseScriptTarget`, `IndentStyle`, `TokenFlags`.
+`isCompilerOwnedPath`, `setSourceFileProperty`, `toModuleNameResolver`,
+`getEmitScriptTarget`, `getParseScriptTarget`, `IndentStyle`, `TokenFlags`.
+
+**`TransactionalFileSystem` no longer serves lib files.** Its constructor took
+`skipLoadingLibFiles` and `libFolderPath` in order to hold the in-memory copies;
+it now takes only `fileSystem`. `libFileExists()` is gone with them — there are no
+files it could answer for. `getLibFolderPath(options)` survives, and still throws
+when `skipLoadingLibFiles` and `libFolderPath` are both given, but it returns
+`undefined` rather than `/node_modules/typescript/lib` when no folder is named:
+that is the value the compiler reads as "use your own copies".
 
 **`DocumentRegistry` is not `ts.DocumentRegistry` any more:**
 

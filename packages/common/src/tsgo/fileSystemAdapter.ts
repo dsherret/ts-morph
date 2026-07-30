@@ -31,20 +31,20 @@ export function createFileSystemAdapter(
   const toPath = (path: string) => fileSystem.getStandardizedAbsolutePath(path);
 
   return {
-    fileExists: path => isCompilerOwned(path) ? undefined : tryDo(() => fileSystem.fileExistsSync(toPath(path)), false),
-    directoryExists: path => isCompilerOwned(path) ? undefined : tryDo(() => fileSystem.directoryExistsSync(toPath(path)), false),
+    fileExists: path => isCompilerOwnedPath(path) ? undefined : tryDo(() => fileSystem.fileExistsSync(toPath(path)), false),
+    directoryExists: path => isCompilerOwnedPath(path) ? undefined : tryDo(() => fileSystem.directoryExistsSync(toPath(path)), false),
     // Returning the path unchanged is the identity answer tsgo falls back to.
-    realpath: path => isCompilerOwned(path) ? path : tryDo(() => fileSystem.realpathSync(toPath(path)), path),
+    realpath: path => isCompilerOwnedPath(path) ? path : tryDo(() => fileSystem.realpathSync(toPath(path)), path),
     // `null` means "does not exist, do not look anywhere else". `undefined`
     // would tell tsgo to fall back to its own base file system, which for a file
     // ts-morph has deleted in memory would read the copy still on disk.
-    readFile: path => isCompilerOwned(path) ? undefined : (tryDo(() => fileSystem.readFileIfExistsSync(toPath(path), encoding), undefined) ?? null),
+    readFile: path => isCompilerOwnedPath(path) ? undefined : (tryDo(() => fileSystem.readFileIfExistsSync(toPath(path), encoding), undefined) ?? null),
     writeFile: (path, content) => {
-      if (!isCompilerOwned(path))
+      if (!isCompilerOwnedPath(path))
         tryDo(() => fileSystem.writeFileSync(toPath(path), content), undefined);
     },
     getAccessibleEntries: dirPath =>
-      isCompilerOwned(dirPath) ? undefined : tryDo(() => {
+      isCompilerOwnedPath(dirPath) ? undefined : tryDo(() => {
         const files: string[] = [];
         const directories: string[] = [];
         for (const entry of fileSystem.readDirSync(toPath(dirPath))) {
@@ -60,14 +60,18 @@ export function createFileSystemAdapter(
 }
 
 /**
- * Whether the path belongs to tsgo rather than to a file system.
+ * Whether the path names a file the compiler carries rather than one on a file system.
  *
- * The lib files are embedded in the wasm module under a `bundled:///` scheme.
- * Those paths are not file system paths — `getStandardizedAbsolutePath` turns
- * one into the nonsense relative path `./bundled:/libs/…` — so they have to be
- * handed straight back to tsgo's own file system by answering "don't know".
+ * The default lib files are embedded in the wasm module under a `bundled:///`
+ * scheme, and the compiler names them that way in everything it reports — the
+ * program's file list, and the declarations a type resolves to. Those are not file
+ * system paths: `getStandardizedAbsolutePath` turns one into the nonsense relative
+ * path `./bundled:/libs/…`, so nothing may be read, written or resolved for them.
+ *
+ * The compiler answers its own bundled paths and does not ask through these
+ * callbacks, so the guards below are what keeps that true if it ever does.
  */
-function isCompilerOwned(path: string) {
+export function isCompilerOwnedPath(path: string) {
   return path.startsWith("bundled:///");
 }
 

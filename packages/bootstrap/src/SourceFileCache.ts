@@ -3,7 +3,7 @@ import {
   createFileSystemAdapter,
   DocumentRegistry,
   FileUtils,
-  libFolderInMemoryPath,
+  getLibFolderPath,
   type ResolutionHost,
   StandardizedFilePath,
   StringUtils,
@@ -15,7 +15,7 @@ import {
 export interface SourceFileCacheOptions {
   /** Whether to leave the default lib files out of the project. */
   skipLoadingLibFiles?: boolean;
-  /** Folder the default lib files are read from. */
+  /** Folder the default lib files are read from, rather than the compiler's own copies. */
   libFolderPath?: string;
   /** Resolves module specifiers in place of the compiler. */
   resolutionHost?: ResolutionHost;
@@ -49,9 +49,9 @@ export class SourceFileCache {
       // so module resolution, `/// <reference>`s and typeRoots see everything the
       // project's file system holds, not only the files pushed into the registry
       fs: createFileSystemAdapter(fileSystemWrapper, { encoding: compilerOptions.getEncoding() }),
-      // the lib files live on the project's file system, so the compiler is
-      // pointed at them rather than at the copies bundled inside the wasm module
-      libFolderPath: options.skipLoadingLibFiles ? undefined : options.libFolderPath ?? libFolderInMemoryPath,
+      // undefined unless the project named a folder, which leaves the compiler
+      // reading the lib files it carries inside the wasm module
+      libFolderPath: getLibFolderPath(options),
       useCaseSensitiveFileNames: fileSystemWrapper.getFileSystem().isCaseSensitive(),
       resolveModuleName: toModuleNameResolver(options.resolutionHost),
     });
@@ -152,9 +152,9 @@ export class SourceFileCache {
 /**
  * The options the registry's project is opened with.
  *
- * `skipLoadingLibFiles` used to work by leaving the lib files off the file
- * system, but tsgo carries its own copies inside the wasm module and reads those
- * unless told not to, so the option becomes `noLib`.
+ * `skipLoadingLibFiles` used to work by leaving the lib files off the file system,
+ * but tsgo carries its own copies inside the wasm module and reads those by
+ * default, so the option becomes `noLib`.
  */
 function getRegistryCompilerOptions(compilerOptions: CompilerOptionsContainer, options: SourceFileCacheOptions): ts.CompilerOptions {
   const result = compilerOptions.get();

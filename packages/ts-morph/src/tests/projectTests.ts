@@ -1,7 +1,7 @@
 import {
   CompilerOptions,
   errors,
-  getLibFiles,
+  FileSystemHost,
   InMemoryFileSystemHost,
   ModuleKind,
   ModuleResolutionKind,
@@ -14,8 +14,10 @@ import {
 } from "@ts-morph/common";
 import { expect } from "chai";
 import { assert, IsExact } from "conditional-type-checks";
+import { readdirSync, readFileSync } from "node:fs";
 import { EOL } from "node:os";
 import * as path from "node:path";
+import { fileURLToPath } from "node:url";
 import { ClassDeclaration, EmitResult, Identifier, InterfaceDeclaration, MemoryEmitResult, ModuleDeclaration, Node, SourceFile } from "../compiler";
 import { IndentationText } from "../options";
 import { Project, ProjectOptions } from "../Project";
@@ -200,7 +202,9 @@ const test = new Test();`,
 
         const varDeclType = sourceFile.getVariableDeclarationOrThrow("t").getType();
         const stringDec = varDeclType.getSymbolOrThrow().getDeclarations()[0];
-        expect(stringDec.getSourceFile().getFilePath()).to.equal("/node_modules/typescript/lib/lib.es5.d.ts");
+        // the compiler's own copy, which is inside the wasm module rather than on
+        // the project's file system
+        expect(stringDec.getSourceFile().getFilePath()).to.equal("bundled:///libs/lib.es5.d.ts");
       });
 
       it("should skip loading lib files when true", () => {
@@ -221,8 +225,7 @@ const test = new Test();`,
     describe(nameof<ProjectOptions>("libFolderPath"), () => {
       it("should support specifying a different folder for the lib files", () => {
         const fileSystem = new InMemoryFileSystemHost();
-        for (const file of getLibFiles())
-          fileSystem.writeFileSync(`/other/${file.fileName}`, file.text);
+        writeLibFiles(fileSystem, "/other");
         const project = new Project({ fileSystem, libFolderPath: "/other" });
         const sourceFile = project.createSourceFile("test.ts", "const t: String = '';");
         expect(project.getPreEmitDiagnostics().length).to.equal(0);
@@ -1972,4 +1975,17 @@ function assertHasDirectories(project: Project, dirPaths: string[]) {
 
 function assertHasSourceFiles(project: Project, filePaths: string[]) {
   expect(project.getSourceFiles().map(d => d.getFilePath()).sort()).to.deep.equal(filePaths.sort());
+}
+
+/**
+ * Writes the compiler's own lib files into `folderPath`, so that a project can be
+ * pointed at them with `libFolderPath`. Read off disk because the package no
+ * longer carries copies of them — the compiler does.
+ */
+function writeLibFiles(fileSystem: FileSystemHost, folderPath: string) {
+  const libFolderPath = fileURLToPath(new URL("../../../../submodules/typescript-go/internal/bundled/libs", import.meta.url));
+  for (const name of readdirSync(libFolderPath)) {
+    if (name.startsWith("lib") && name.endsWith(".d.ts"))
+      fileSystem.writeFileSync(`${folderPath}/${name}`, readFileSync(path.join(libFolderPath, name), "utf-8"));
+  }
 }

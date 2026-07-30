@@ -8,8 +8,6 @@ describe("TsConfigResolver", () => {
   function getResolver(fileSystem: FileSystemHost) {
     const fileSystemWrapper = new TransactionalFileSystem({
       fileSystem,
-      libFolderPath: undefined,
-      skipLoadingLibFiles: false,
     });
     return new TsConfigResolver(
       fileSystemWrapper,

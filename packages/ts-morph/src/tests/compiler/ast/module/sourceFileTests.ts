@@ -649,11 +649,11 @@ describe("SourceFile", () => {
     });
   });
 
-  // the lib files are served from memory by the file system, which has no backing
-  // file to write to, so every operation that would modify one is refused. they are
-  // reachable by navigating to a declaration, not from getSourceFiles().
-  describe("in memory lib files", () => {
-    const message = "This operation is not permitted on an in memory lib folder file.";
+  // the lib files come from inside the wasm module, so they have no path on any
+  // file system and every operation that would read or write one is refused. they
+  // are reachable by navigating to a declaration, not from getSourceFiles().
+  describe("compiler owned lib files", () => {
+    const message = "This operation is not permitted on a lib file the compiler carries.";
 
     function getLibFile(project: Project) {
       const sourceFile = project.createSourceFile("/file.ts", "const a: Date = null as any;");
@@ -662,7 +662,7 @@ describe("SourceFile", () => {
 
     it("should refuse to copy, move or delete one", () => {
       const libFile = getLibFile(new Project({ useInMemoryFileSystem: true }));
-      expect(libFile.getFilePath()).to.equal("/node_modules/typescript/lib/lib.es5.d.ts");
+      expect(libFile.getFilePath()).to.equal("bundled:///libs/lib.es5.d.ts");
       expect(() => libFile.copy("/copy.d.ts")).to.throw(errors.InvalidOperationError, message);
       expect(() => libFile.move("/moved.d.ts")).to.throw(errors.InvalidOperationError, message);
       expect(() => libFile.delete()).to.throw(errors.InvalidOperationError, message);
@@ -676,22 +676,20 @@ describe("SourceFile", () => {
       expect(libFile.isSaved()).to.be.false;
     });
 
-    it("should save a user file that merely sits in the lib folder", () => {
+    it("should leave nothing behind when the project is saved", () => {
+      const project = new Project({ useInMemoryFileSystem: true });
+      getLibFile(project);
+      project.saveSync();
+      expect(project.getFileSystem().readDirSync("/").map(e => e.name)).to.deep.equal(["/file.ts"]);
+    });
+
+    it("should save a user file that sits where the lib files used to", () => {
       const project = new Project({ useInMemoryFileSystem: true });
       const fileSystem = project.getFileSystem();
-      // neither of these is a lib file: one is a sibling of the folder, the other
-      // is inside it under a name no lib file has
-      for (const filePath of ["/node_modules/typescript/libfoo.ts", "/node_modules/typescript/lib/mine.ts"]) {
+      for (const filePath of ["/node_modules/typescript/lib/lib.es5.d.ts", "/node_modules/typescript/lib/mine.ts"]) {
         project.createSourceFile(filePath, "export const b = 1;").saveSync();
         expect(fileSystem.fileExistsSync(filePath)).to.be.true;
       }
-    });
-
-    it("should save a file in the lib folder when the lib files are skipped", () => {
-      const project = new Project({ useInMemoryFileSystem: true, skipLoadingLibFiles: true });
-      const filePath = "/node_modules/typescript/lib/lib.es5.d.ts";
-      project.createSourceFile(filePath, "declare const b: number;").saveSync();
-      expect(project.getFileSystem().fileExistsSync(filePath)).to.be.true;
     });
   });
 

@@ -70,9 +70,8 @@ export interface DocumentRegistryOptions {
   fs?: FileSystem;
   /**
    * Directory the default lib files are read from, through {@link fs}. tsgo
-   * carries its own copies inside the wasm module and reads those unless a
-   * folder is named here, which is how ts-morph's `libFolderPath` — and its
-   * in-memory `/node_modules/typescript/lib` default — reach the compiler.
+   * carries its own copies inside the wasm module and reads those unless a folder
+   * is named here, which is how ts-morph's `libFolderPath` reaches the compiler.
    */
   libFolderPath?: string;
   /**

@@ -4,6 +4,7 @@ import {
   EventContainer,
   FileUtils,
   getParseScriptTarget,
+  isCompilerOwnedPath,
   LanguageVariant,
   Memoize,
   ScriptKind,
@@ -160,6 +161,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    * Gets the directory that the source file is contained in.
    */
   getDirectory(): Directory {
+    this.#throwIfCompilerOwned();
     return this._context.compilerFactory.getDirectoryFromCache(this.getDirectoryPath())!;
   }
 
@@ -219,7 +221,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    * @param options - Options for copying.
    */
   copy(filePath: string, options: SourceFileCopyOptions = {}): SourceFile {
-    this._throwIfIsInMemoryLibFile();
+    this.#throwIfCompilerOwned();
     const result = this._copyInternal(filePath, options);
     if (result === false)
       return this;
@@ -322,7 +324,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    * @param options - Options for moving.
    */
   move(filePath: string, options: SourceFileMoveOptions = {}): SourceFile {
-    this._throwIfIsInMemoryLibFile();
+    this.#throwIfCompilerOwned();
     const oldDirPath = this.getDirectoryPath();
     const sourceFileReferences = this._getReferencesForMoveInternal();
     const oldFilePath = this.getFilePath();
@@ -441,7 +443,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    * The file will be deleted when you call ast.save(). If you wish to immediately delete the file, then use deleteImmediately().
    */
   delete() {
-    this._throwIfIsInMemoryLibFile();
+    this.#throwIfCompilerOwned();
     const filePath = this.getFilePath();
     this._forgetDiscardingContents();
     this._context.fileSystemWrapper.queueFileDelete(filePath);
@@ -451,7 +453,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    * Asynchronously deletes the file from the file system.
    */
   async deleteImmediately() {
-    this._throwIfIsInMemoryLibFile();
+    this.#throwIfCompilerOwned();
     const filePath = this.getFilePath();
     this._forgetDiscardingContents();
     await this._context.fileSystemWrapper.deleteFileImmediately(filePath);
@@ -461,7 +463,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    * Synchronously deletes the file from the file system.
    */
   deleteImmediatelySync() {
-    this._throwIfIsInMemoryLibFile();
+    this.#throwIfCompilerOwned();
     const filePath = this.getFilePath();
     this._forgetDiscardingContents();
     this._context.fileSystemWrapper.deleteFileImmediatelySync(filePath);
@@ -489,7 +491,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    * Asynchronously saves this file with any changes.
    */
   async save() {
-    if (this._isLibFileInMemory())
+    if (this.#isCompilerOwned())
       return;
 
     await this._context.fileSystemWrapper.writeFile(this.getFilePath(), this.#getTextForSave());
@@ -500,11 +502,26 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    * Synchronously saves this file with any changes.
    */
   saveSync() {
-    if (this._isLibFileInMemory())
+    if (this.#isCompilerOwned())
       return;
 
     this._context.fileSystemWrapper.writeFileSync(this.getFilePath(), this.#getTextForSave());
     this.#isSaved = true;
+  }
+
+  /**
+   * Gets if this is a lib file the compiler carries inside the wasm module.
+   *
+   * Those have no path on any file system — see `isCompilerOwnedPath` — so every
+   * operation that would read or write one is refused.
+   */
+  #isCompilerOwned() {
+    return isCompilerOwnedPath(this.getFilePath());
+  }
+
+  #throwIfCompilerOwned() {
+    if (this.#isCompilerOwned())
+      throw new errors.InvalidOperationError(`This operation is not permitted on a lib file the compiler carries.`);
   }
 
   /** @internal */
@@ -692,11 +709,11 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
   /**
    * Gets if this source file has been saved or if the latest changes have been saved.
    *
-   * An in-memory lib file always reports `false`: `save()` cannot write it, so
-   * its changes are never persisted anywhere.
+   * A lib file the compiler carries always reports `false`: `save()` cannot write
+   * it, so its changes are never persisted anywhere.
    */
   isSaved() {
-    return this.#isSaved && !this._isLibFileInMemory();
+    return this.#isSaved && !this.#isCompilerOwned();
   }
 
   /**
@@ -1015,24 +1032,6 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     this.replaceText([0, this.getEnd()], fileText);
     this._setIsSaved(true); // saved when loaded from file system
     return FileSystemRefreshResult.Updated;
-  }
-
-  /**
-   * Gets if this is one of the lib files the file system serves from memory.
-   *
-   * The file system is asked rather than the path being tested, so that a user
-   * file that merely sits in the lib folder — or every file, when the lib files
-   * are skipped or read from a real folder — is not mistaken for one.
-   * @internal
-   */
-  _isLibFileInMemory() {
-    return this._context.fileSystemWrapper.libFileExists(this.getFilePath());
-  }
-
-  /** @internal */
-  _throwIfIsInMemoryLibFile() {
-    if (this._isLibFileInMemory())
-      throw new errors.InvalidOperationError(`This operation is not permitted on an in memory lib folder file.`);
   }
 
   /** @internal */

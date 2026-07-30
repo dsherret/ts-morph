@@ -10,7 +10,7 @@
  * `typescript`, and this is wired in per-piece as that migration proceeds.
  */
 export { DocumentRegistry, type DocumentRegistryOptions, type RemoveSourceFileOptions } from "./documentRegistry";
-export { createFileSystemAdapter, type FileSystemAdapterOptions } from "./fileSystemAdapter";
+export { createFileSystemAdapter, type FileSystemAdapterOptions, isCompilerOwnedPath } from "./fileSystemAdapter";
 export { getChildren, getLastToken } from "./getChildren";
 export { createInProcessApi, type InProcessApiOptions } from "./inProcessApi";
 export { createModuleResolutionHost, type CreateModuleResolutionHostOptions, type ModuleResolutionSourceFileContainer } from "./moduleResolutionHost";

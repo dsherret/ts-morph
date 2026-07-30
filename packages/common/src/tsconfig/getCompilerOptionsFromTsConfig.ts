@@ -21,8 +21,6 @@ export function getCompilerOptionsFromTsConfig(filePath: string, options: Compil
   // remember, this is a public function
   const fileSystemWrapper = new TransactionalFileSystem({
     fileSystem: options.fileSystem || new RealFileSystemHost(),
-    skipLoadingLibFiles: false,
-    libFolderPath: undefined,
   });
   const tsConfigResolver = new TsConfigResolver(fileSystemWrapper, fileSystemWrapper.getStandardizedAbsolutePath(filePath), options.encoding || "utf-8");
   return {

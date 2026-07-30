@@ -30,8 +30,6 @@ export function createWrappedNode<T extends ts.Node = ts.Node>(node: T, opts: Cr
     project: undefined,
     fileSystemWrapper: new TransactionalFileSystem({
       fileSystem: new RealFileSystemHost(),
-      skipLoadingLibFiles: true,
-      libFolderPath: undefined,
     }),
     compilerOptionsContainer,
     createLanguageService: false,

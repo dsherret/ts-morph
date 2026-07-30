@@ -4,8 +4,9 @@ import {
   errors,
   EventContainer,
   FileUtils,
+  getLibFolderPath,
+  isCompilerOwnedPath,
   KeyValueCache,
-  libFolderInMemoryPath,
   RemoveSourceFileOptions,
   ScriptKind,
   StandardizedFilePath,
@@ -96,9 +97,9 @@ export class CompilerFactory {
       // the compiler asks this before resolving a specifier itself; absent when
       // the project named no resolution host, which is when it costs nothing
       resolveModuleName: toModuleNameResolver(context.resolutionHost),
-      // ts-morph keeps the lib files on its own file system, so the compiler is
-      // pointed at them rather than at the copies bundled inside the wasm module
-      libFolderPath: context.skipLoadingLibFiles ? undefined : context.libFolderPath ?? libFolderInMemoryPath,
+      // undefined unless the project named a folder, which leaves the compiler
+      // reading the lib files it carries inside the wasm module
+      libFolderPath: getLibFolderPath(context),
       useCaseSensitiveFileNames: context.fileSystemWrapper.getFileSystem().isCaseSensitive(),
     });
     this.#directoryCache = new DirectoryCache(context);
@@ -651,6 +652,11 @@ export class CompilerFactory {
 
   #addSourceFileToCache(sourceFile: SourceFile) {
     this.#sourceFileCacheByFilePath.set(sourceFile.getFilePath(), sourceFile);
+    // a lib file the compiler carries is on no file system: its path names no
+    // directory to create and no queued deletion to undo, and standardizing it
+    // would produce the nonsense relative path `./bundled:/libs/…`
+    if (isCompilerOwnedPath(sourceFile.getFilePath()))
+      return;
     this.#context.fileSystemWrapper.removeFileDelete(sourceFile.getFilePath());
     this.#directoryCache.addSourceFile(sourceFile);
   }
@@ -944,10 +950,10 @@ export class CompilerFactory {
 /**
  * The compiler options the tsgo project is opened with.
  *
- * `skipLoadingLibFiles` works by not putting the lib files where the compiler
- * looks, which tsgo makes impossible — its lib files are embedded in the wasm
- * module and load whatever the file system holds. `noLib` is the option that has
- * the same effect, so the translation happens here rather than being exposed on
+ * `skipLoadingLibFiles` used to work by leaving the lib files off the file system,
+ * which no longer says anything: the compiler's copies are embedded in the wasm
+ * module and are what it reads by default. `noLib` is the option that keeps them
+ * out of the program, so the translation happens here rather than being exposed on
  * the project's own compiler options.
  */
 function getRegistryCompilerOptions(context: ProjectContext): ts.CompilerOptions {

@@ -5,6 +5,7 @@ import {
   FileSystemHost,
   FileUtils,
   InMemoryFileSystemHost,
+  isCompilerOwnedPath,
   RealFileSystemHost,
   type ResolutionHostFactory,
   runtime,
@@ -39,14 +40,18 @@ export interface ProjectOptions {
   /** Skip resolving file dependencies when providing a ts config file path and adding the files from tsconfig. @default false */
   skipFileDependencyResolution?: boolean;
   /**
-   * Skip loading the lib files. Unlike the compiler API, ts-morph does not load these
-   * from the node_modules folder, but instead loads them from some other JS code
-   * and uses a fake path for their existence. If you want to use a custom lib files
-   * folder path, then provide one using the libFolderPath options.
+   * Leave the lib files out of the project, so that nothing is in scope that a
+   * file did not declare or import. The compiler reports the missing global types
+   * as diagnostics, which is the point of the option rather than a side effect.
    * @default false
    */
   skipLoadingLibFiles?: boolean;
-  /** The folder to use for loading lib files. */
+  /**
+   * Folder to read the lib files from, through this project's file system.
+   *
+   * Defaults to the compiler's own copies, which are embedded in the WebAssembly
+   * module and so have no path on any file system.
+   */
   libFolderPath?: string;
   /** Whether to use an in-memory file system. */
   useInMemoryFileSystem?: boolean;
@@ -110,8 +115,6 @@ function createProjectCommon(options: ProjectOptions) {
   const fileSystem = getFileSystem();
   const fileSystemWrapper = new TransactionalFileSystem({
     fileSystem,
-    libFolderPath: options.libFolderPath,
-    skipLoadingLibFiles: options.skipLoadingLibFiles,
   });
 
   // get tsconfig info
@@ -406,14 +409,9 @@ export class Project {
       addedAny = false;
       for (const fileName of this.createProgram().getSourceFileNames()) {
         // the lib files live in the compiler's own bundle rather than on a file system
-        if (fileName.startsWith("bundled:///") || !seen.add(fileName))
+        if (isCompilerOwnedPath(fileName) || !seen.add(fileName))
           continue;
         const filePath = this.#fileSystemWrapper.getStandardizedAbsolutePath(fileName);
-        // this project serves the lib files from its own file system rather than
-        // from the wasm bundle, so the program names them as ordinary paths. They
-        // are not the user's files and do not belong in getSourceFiles().
-        if (this.#fileSystemWrapper.libFileExists(filePath))
-          continue;
         if (this.#sourceFileCache.containsSourceFileAtPath(filePath))
           continue;
         const sourceFile = this.addSourceFileAtPathIfExistsSync(filePath);

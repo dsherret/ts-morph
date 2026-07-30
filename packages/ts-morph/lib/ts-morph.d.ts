@@ -848,14 +848,18 @@ export interface ProjectOptions {
    */
   skipFileDependencyResolution?: boolean;
   /**
-   * Skip loading the lib files. Unlike the compiler API, ts-morph does not load these
-   * from the node_modules folder, but instead loads them from some other JS code
-   * and uses a fake path for their existence. If you want to use a custom lib files
-   * folder path, then provide one using the libFolderPath options.
+   * Leave the lib files out of the project, so that nothing is in scope that a
+   * file did not declare or import. The compiler reports the missing global types
+   * as diagnostics, which is the point of the option rather than a side effect.
    * @default false
    */
   skipLoadingLibFiles?: boolean;
-  /** The folder to use for loading lib files. */
+  /**
+   * Folder to read the lib files from, through this project's file system.
+   *
+   * Defaults to the compiler's own copies, which are embedded in the WebAssembly
+   * module and so have no path on any file system.
+   */
   libFolderPath?: string;
   /**
    * Resolves module specifiers in place of the compiler.
@@ -7750,8 +7754,8 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
   /**
    * Gets if this source file has been saved or if the latest changes have been saved.
    *
-   * An in-memory lib file always reports `false`: `save()` cannot write it, so
-   * its changes are never persisted anywhere.
+   * A lib file the compiler carries always reports `false`: `save()` cannot write
+   * it, so its changes are never persisted anywhere.
    */
   isSaved(): boolean;
   /** Gets the pre-emit diagnostics of the specified source file. */

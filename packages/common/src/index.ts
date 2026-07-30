@@ -3,7 +3,7 @@ export * from "./comparers";
 export * from "./decorators";
 export * from "./errors";
 export * from "./fileSystem";
-export * from "./getLibFiles";
+export * from "./getLibFolderPath";
 export * from "./helpers";
 export * from "./options";
 export * from "./runtimes";

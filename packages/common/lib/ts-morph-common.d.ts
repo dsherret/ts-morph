@@ -591,8 +591,6 @@ export interface DirEntry {
 
 export interface TransactionalFileSystemOptions {
     fileSystem: FileSystemHost;
-    skipLoadingLibFiles: boolean | undefined;
-    libFolderPath: string | undefined;
 }
 
 /**
@@ -605,14 +603,6 @@ export declare class TransactionalFileSystem {
      * @param fileSystem - File system host to commit the operations to.
      */
     constructor(options: TransactionalFileSystemOptions);
-    /**
-     * Gets if the path is one of the lib files this file system serves from memory.
-     *
-     * These have no backing file, so every write, move and delete onto one is
-     * rejected. There are none when the lib files are skipped or read from a real
-     * folder, so this is a lookup rather than a test of the path.
-     */
-    libFileExists(filePath: StandardizedFilePath): boolean;
     queueFileDelete(filePath: StandardizedFilePath): void;
     removeFileDelete(filePath: StandardizedFilePath): void;
     queueMkdir(dirPath: StandardizedFilePath): void;
@@ -637,7 +627,7 @@ export declare class TransactionalFileSystem {
     /** Recreates a directory on the underlying file system synchronously. */
     clearDirectoryImmediatelySync(dirPath: StandardizedFilePath): void;
     deleteDirectoryImmediatelySync(dirPath: StandardizedFilePath): void;
-    fileExists(filePath: StandardizedFilePath): boolean | Promise<boolean>;
+    fileExists(filePath: StandardizedFilePath): false | Promise<boolean>;
     fileExistsSync(filePath: StandardizedFilePath): boolean;
     directoryExistsSync(dirPath: StandardizedFilePath): boolean;
     readFileIfExistsSync(filePath: StandardizedFilePath, encoding: string | undefined): string | undefined;
@@ -658,19 +648,19 @@ export declare class TransactionalFileSystem {
     writeFileSync(filePath: StandardizedFilePath, fileText: string): void;
 }
 
-/** Gets the TypeScript lib files (.d.ts files). */
-export declare function getLibFiles(): {
-    fileName: string;
-    text: string;
-}[];
-
+/**
+ * Resolves the folder the compiler reads the default lib files from.
+ *
+ * Undefined means the compiler uses its own copies, which are embedded in the
+ * wasm module; naming a folder makes it read them off the project's file system
+ * instead. The two options are reconciled here because they contradict each
+ * other: skipping the lib files and naming a folder to read them from cannot
+ * both be meant.
+ */
 export declare function getLibFolderPath(options: {
     libFolderPath?: string;
     skipLoadingLibFiles?: boolean;
-}): string;
-
-/** The folder to use to "store" the in memory lib files. */
-export declare const libFolderInMemoryPath: StandardizedFilePath;
+}): string | undefined;
 
 /**
  * Gets the enum name for the specified syntax kind.
@@ -949,9 +939,8 @@ export interface DocumentRegistryOptions {
     fs?: FileSystem;
     /**
      * Directory the default lib files are read from, through {@link fs}. tsgo
-     * carries its own copies inside the wasm module and reads those unless a
-     * folder is named here, which is how ts-morph's `libFolderPath` — and its
-     * in-memory `/node_modules/typescript/lib` default — reach the compiler.
+     * carries its own copies inside the wasm module and reads those unless a folder
+     * is named here, which is how ts-morph's `libFolderPath` reaches the compiler.
      */
     libFolderPath?: string;
     /**
@@ -977,6 +966,20 @@ export interface FileSystemAdapterOptions {
     /** Encoding used to read files. Defaults to "utf-8". */
     encoding?: string;
 }
+
+/**
+ * Whether the path names a file the compiler carries rather than one on a file system.
+ *
+ * The default lib files are embedded in the wasm module under a `bundled:///`
+ * scheme, and the compiler names them that way in everything it reports — the
+ * program's file list, and the declarations a type resolves to. Those are not file
+ * system paths: `getStandardizedAbsolutePath` turns one into the nonsense relative
+ * path `./bundled:/libs/…`, so nothing may be read, written or resolved for them.
+ *
+ * The compiler answers its own bundled paths and does not ask through these
+ * callbacks, so the guards below are what keeps that true if it ever does.
+ */
+export declare function isCompilerOwnedPath(path: string): boolean;
 
 /** Creates a fully synchronous {@link API} backed by the in-process tsgo build. */
 export declare function createInProcessApi(options?: InProcessApiOptions): API;
