@@ -120,6 +120,44 @@ which a step of this shape does twice. Delete-only and create-only loops stay wi
 constant factor of themselves. Same ceiling as §2.3, and delete-heavy work is the only
 workload that still binds on it.
 
+### 2.2b What the remaining gap actually is, and the floor under it
+
+Measured against published 28.0.0, checking is **a flat ~2× slower**, and the ratio does
+not move with the amount of work:
+
+| workload                              | 28.0.0     | now        | ratio |
+| ------------------------------------- | ---------- | ---------- | ----- |
+| one file, `lib: ["lib.es2022.d.ts"]`  | 34–42 ms   | 72–78 ms   | ~2.0× |
+| one file, default libs (DOM included) | 326–484 ms | 804–846 ms | ~2.2× |
+| 300 files, first diagnostics          | 387 ms     | 711 ms     | ~1.8× |
+
+**That flatness is the finding.** If the cost were lost parallelism — tsgo parallelises
+parse, bind and check through `core.NewWorkGroup`, and Go's `wasip1` target runs on one
+thread, so those goroutines interleave with no CPU parallelism — the gap would widen as
+more files became available to work on concurrently. It does not. A constant factor
+across one file and three hundred is the signature of uniform per-unit execution
+overhead, which is what running Go in Wasm costs.
+
+So **this ~2× is a floor, not a defect**, and no amount of work in ts-morph or in the
+fork's API layer will move it. The only route past it is a different backend: the
+in-process API is deliberately the `@typescript/native-preview` sync API so the Wasm
+reactor could be swapped for a subprocess or native build without changing callers (see
+`inProcessApi.ts`). That trades away the single artifact, the browser, and synchronous
+construction — so it is a product decision, not an optimisation.
+
+Two things still worth doing, both bounded:
+
+- **Test `SingleThreaded: true`.** Goroutine scheduling in Wasm costs something and buys
+  nothing, so the parallel work groups may be a net loss here. The option exists in
+  `core.CompilerOptions` but is not exposed through the API, so measuring it needs a
+  small fork change. Expect single digits, not a step change — and if it does not
+  measure, leave it alone.
+- **Nothing about lib count.** Chasing it looked promising and is a dead end: default
+  libs cost ~10× the explicit `lib: ["lib.es2022.d.ts"]` case, but 28.0.0 pays the same
+  penalty (326 ms against 35 ms), because pulling in DOM is what TypeScript does when
+  `lib` is unset. It is a real lever _for users_ — worth documenting as advice — but
+  there is nothing here to fix.
+
 ### 2.3 Deferred: layered `processedFiles` maps
 
 **compiler.** Cloning those ten maps is ~20% of an edit, and making them layered
