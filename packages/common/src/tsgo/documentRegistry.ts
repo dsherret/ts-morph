@@ -111,6 +111,8 @@ export class DocumentRegistry {
    */
   #commonDirectoryParts: string[] | undefined;
   #configStale = false;
+  /** Whether a removal has left the common directory needing to be worked out again. */
+  #commonDirectoryStale = false;
   #checkerUsed = false;
   #disposed = false;
   /** How many edits the registry has been given — see retiredSnapshotLimit. */
@@ -260,7 +262,7 @@ export class DocumentRegistry {
     // only place it had reached is the pending list, which has not been drained yet
     if (!this.#pendingRootsAdded.delete(fileName))
       this.#pendingRootsRemoved.add(fileName);
-    this.#recomputeCommonDirectory();
+    this.#commonDirectoryStale = true;
     // a file created and taken away again before either report reached the compiler never
     // existed as far as it is concerned, whichever way it is leaving: a path reported as
     // created is one nothing outside the registry had, so removing the registry's copy
@@ -505,6 +507,11 @@ export class DocumentRegistry {
    * changes so that a file's contents and its membership land in the same snapshot.
    */
   #flush(): void {
+    // before anything reads it, and before the test below asks whether the config is
+    // stale — a removal only marks the common directory stale, so this is where the
+    // fold over every remaining file happens, once for however many removals there were
+    if (this.#commonDirectoryStale)
+      this.#recomputeCommonDirectory();
     if (
       this.#pendingChanged.size === 0 && this.#pendingCreated.size === 0 && this.#pendingDeleted.size === 0
       && this.#pendingRootsAdded.size === 0 && this.#pendingRootsRemoved.size === 0 && !this.#configStale
@@ -597,11 +604,15 @@ export class DocumentRegistry {
   /**
    * Works the common directory out again over every file the registry still holds.
    *
-   * Removing a file can only lengthen it, which no fold over the remaining files can
-   * do, so this is the one case that costs the whole list. That is what it cost before
-   * every change, and a removal takes the compiler's incremental path away regardless.
+   * Removing a file can only lengthen the common directory, which no fold over the
+   * remaining files can do, so this is the one case that costs the whole list. It is
+   * therefore not run per removal — a removal only marks it stale, and this runs once
+   * per flush, which is the only time the answer is read (see {@link #configText}).
+   * Calling it per removal made a delete loop quadratic: 0.36 / 0.68 / 1.39 ms per step
+   * at 800 / 1600 / 3200 files.
    */
   #recomputeCommonDirectory(): void {
+    this.#commonDirectoryStale = false;
     const before = commonDirectoryOf(this.#commonDirectoryParts);
     let parts: string[] | undefined;
     for (const fileName of this.#versions.keys()) {
