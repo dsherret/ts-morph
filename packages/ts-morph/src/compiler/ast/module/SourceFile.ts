@@ -509,21 +509,6 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     this.#isSaved = true;
   }
 
-  /**
-   * Gets if this is a lib file the compiler carries inside the wasm module.
-   *
-   * Those have no path on any file system — see `isCompilerOwnedPath` — so every
-   * operation that would read or write one is refused.
-   */
-  #isCompilerOwned() {
-    return isCompilerOwnedPath(this.getFilePath());
-  }
-
-  #throwIfCompilerOwned() {
-    if (this.#isCompilerOwned())
-      throw new errors.InvalidOperationError(`This operation is not permitted on a lib file the compiler carries.`);
-  }
-
   /** @internal */
   #getTextForSave() {
     const text = this.getFullText();
@@ -1032,6 +1017,21 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     this.replaceText([0, this.getEnd()], fileText);
     this._setIsSaved(true); // saved when loaded from file system
     return FileSystemRefreshResult.Updated;
+  }
+
+  /**
+   * Gets if this is a lib file the compiler carries inside the wasm module.
+   *
+   * Those have no path on any file system — see `isCompilerOwnedPath` — so every
+   * operation that would read or write one is refused.
+   */
+  #isCompilerOwned() {
+    return isCompilerOwnedPath(this.getFilePath());
+  }
+
+  #throwIfCompilerOwned() {
+    if (this.#isCompilerOwned())
+      throw new errors.InvalidOperationError(`This operation is not permitted on a lib file the compiler carries.`);
   }
 
   /** @internal */
