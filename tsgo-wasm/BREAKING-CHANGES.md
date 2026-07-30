@@ -395,10 +395,10 @@ at all.
 
 **They are read straight out of the WebAssembly module.** 28.0.0 wrote its own copy
 of every lib file into a fake folder on the project's file system at
-`/node_modules/typescript/lib`, which made them ordinary files: reachable with
-`project.getSourceFile("/node_modules/typescript/lib/lib.es5.d.ts")`, and sitting
-in a real directory. The compiler already carries the same 108 files, so the copy
-is gone. The compiler names them under a `bundled:///` scheme instead:
+`/node_modules/typescript/lib`, which made them ordinary files of the project:
+addressable by that path, and sitting in a directory. The compiler already carries
+the same 108 files, so the copy is gone. The compiler names them under a
+`bundled:///` scheme instead:
 
 ```ts
 const project = new Project({ useInMemoryFileSystem: true });
@@ -412,8 +412,10 @@ decl.getSourceFile().getFilePath();
 
 What breaks:
 
-- **`project.getSourceFile(path)` will not find a lib file** by any path. There is
-  no file on any file system to find. This is the change most likely to be noticed.
+- **`project.getSourceFile(path)` will not find a lib file** by any path, where
+  28.0.0 answered with the fake one once something had navigated to it. Neither
+  will `addSourceFileAtPath`, which used to open it. There is no file on any file
+  system to find. This is the change most likely to be noticed.
 - `bundled:///libs/lib.es5.d.ts` **is not a file system path.** Passing it to
   anything that resolves paths — `getStandardizedAbsolutePath`, `path.join`, your
   own code — yields the nonsense relative path `./bundled:/libs/lib.es5.d.ts`.
@@ -428,7 +430,8 @@ What breaks:
 What is unchanged: navigating _to_ a lib file still works, which is how the example
 above reaches one — `getType()`, `getSymbol()`, `getDeclarations()` and
 `getSourceFile()` behave as they did, and the file's text, nodes and positions are
-all there. Lib files were never in `project.getSourceFiles()` and still are not.
+all there. Lib files are not in `project.getSourceFiles()`, which is also what
+28.0.0 did.
 
 **If you need them as files, name a folder.** `ProjectOptions#libFolderPath` reads
 the lib files off the project's file system, exactly as before, and files read that
@@ -442,7 +445,9 @@ const project = new Project({ libFolderPath: "./node_modules/typescript/lib" });
 
 The set of lib files is then yours to get right: the compiler reads `lib.es5.d.ts`
 and whatever it references from that folder and nowhere else, so a folder missing
-one of them reports the missing globals as diagnostics.
+one of them reports the missing globals as diagnostics. Naming a folder also puts
+the lib files into `project.getSourceFiles()` — a 300-file project reports 363 —
+which 28.0.0 did too.
 
 **`getLibFiles()` and `libFolderInMemoryPath` are gone** from
 `@ts-morph/common`. They existed to serve the copy. If you were using
