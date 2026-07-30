@@ -220,40 +220,35 @@ overhead is not the problem.** The same 199 files asked one at a time cost 84 ms
 request time; asked in a single request, 72 ms. End to end the two are within noise
 (398 ms batched against 422 ms per-file). Do not spend more on coalescing requests.
 
-**Where the remaining 390 ms is: the same tree, fetched twice per file.** 260 ms of it,
-two thirds:
+**The same tree used to be fetched twice per file. It is now fetched once** — see §8.7 of
+MIGRATION-REPORT.md for what was built and how the reuse was shown to be sound. Counted
+rather than reasoned, which is what settled it: `parseSourceFile` and `getSourceFile` each
+made 200 crossings over the 200 files and each brought back exactly 5.90 MiB, and all 200
+`SourceFileCache#set` calls found the entry the first fetch had left, keeping none of the
+trees the second had just decoded.
 
-| per-file crossings, after   | n   | ms  | each   | bytes over the wire |
-| --------------------------- | --- | --- | ------ | ------------------- |
-| `parseSourceFile`           | 199 | 130 | 655 µs | 7.6 MiB             |
-| `getSourceFile`             | 199 | 108 | 544 µs | 7.6 MiB             |
-| `getExportedSymbolsOfFiles` | 199 | 84  | 422 µs | 0.4 MiB             |
+| per-file crossings          | before         | after         |
+| --------------------------- | -------------- | ------------- |
+| `parseSourceFile`           | 200, 5.90 MiB  | 200, 5.90 MiB |
+| `getSourceFile`             | 200, 5.90 MiB  | —             |
+| `getSourceFileIdentity`     | —              | 200, 14.1 KiB |
+| `getExportedSymbolsOfFiles` | 200, 0.44 MiB  | 200, 0.44 MiB |
+| **total**                   | 602, 12.24 MiB | 602, 6.35 MiB |
 
-The two tree fetches are the _same tree_: `documentRegistry#parseSourceFileAt` fetches
-it for the ts-morph `SourceFile`, and then resolving a declaration handle asks
-`program.getSourceFile` for it again. The client already knows they are the same — the
-`offer` in `SourceFileCache` makes the second call return the first call's object, and
-node identity holds (`getExportedDeclarations()` and `getClasses()` hand back the same
-object). So the second fetch's payload is encoded in Go, copied out, and discarded.
+The crossing count does not move — one small request replaces one large one — and the
+bytes coming back halve. Alternating the two modes run by run in one process, which is the
+only way to beat this machine's noise: 631 ms median to 525, of which request time 561 ms
+to 454. That 107 ms is what the paragraph this replaces predicted.
 
-So the tree materialisation of §2.2c is not only still paid, it is paid twice, and it is
-now the majority of what is left. Two things follow, in this order:
+**What is left in this workload** is the one remaining tree fetch and the checker. So:
 
-1. **Stop fetching the tree twice.** `Project#getSourceFile` cannot use an offered entry
-   because it does not know the program took the file at that text — only the server's
-   own content hash and parse options key settle it, and today the only way to get them
-   is to fetch the whole tree. A request answering _just those two_ would let the offer
-   be used: ~110 ms of the 390 here, and it applies to every semantic question asked of
-   a file the client has already parsed, not only this one. Read the doc comment on
-   `SourceFileCache#offer` before touching it — retaining the offer outright is unsafe
-   and it says why.
-2. **Then encode lazily** (§2.2c). Once the tree is fetched once, the remaining 130 ms
-   is the encode itself, and ~92% of these nodes are inside class bodies nobody reads.
+1. **Encode lazily** (§2.2c). The tree that is still fetched costs ~120 ms of the ~450,
+   and ~92% of these nodes are inside class bodies nobody reads.
 
 Measure against this workload rather than a single-file microbenchmark, and **count the
 crossings before attributing anything to them** — patching `WasmChannel#request` to tally
-method names and round-trip times takes ten minutes and would have prevented the
-paragraph above.
+method names, bytes and round-trip times takes ten minutes and would have prevented the
+wrong attribution above.
 
 ### 2.2c Bringing a file over from Go is all-or-nothing
 

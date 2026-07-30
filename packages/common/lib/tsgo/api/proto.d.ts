@@ -291,6 +291,19 @@ export interface SourceFileResponse {
     /** Base64-encoded binary AST data */
     data: string;
 }
+/**
+ * Which parse of a file a program is holding, without the file.
+ *
+ * The two fields a {@link SourceFileResponse} leads with, answered on their own. A
+ * client already holding a tree for the path asks for this instead of the file, and
+ * reuses its own copy when they match — see `SourceFileCache#retainMatching`.
+ */
+export interface SourceFileIdentity {
+    /** The 128-bit content hash as a hex string. */
+    contentHash: string;
+    /** The per-file parse options key, as a decimal string. */
+    parseOptionsKey: string;
+}
 export interface SourceFileMetadata {
     isDefaultLibrary: boolean;
     isFromExternalLibrary: boolean;

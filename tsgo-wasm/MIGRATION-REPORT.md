@@ -992,6 +992,65 @@ over 34 shapes for removal and 39 for addition, comparing explained files, every
 every resolution, metadata, the missing/lib/redirect maps, the common source directory and every
 diagnostic — and the harnesses were checked for teeth by sabotage.
 
+**A file the client has parsed is not fetched again to ask the program about it.** Having stopped the
+text being parsed twice, it was still being _sent_ twice: `DocumentRegistry#parseSourceFileAt` fetched
+the tree for the ts-morph `SourceFile`, and then resolving any node handle asked
+`program.getSourceFile` for the same tree again. The second payload was encoded in Go, copied out and
+thrown away — `SourceFileCache#set` already handed back the object the first had left. Counted over
+200 files of 40 exports: two requests each bringing back 5.90 MiB, and 200 of 200 `set` calls keeping
+the entry they found rather than the tree they had just decoded.
+
+`MethodGetSourceFileIdentity` answers a file's content hash and parse options key and nothing else,
+read off the very `*ast.SourceFile` `getSourceFile` would have encoded, through the same
+`encoder.SourceFileHash` and `encoder.ParseOptionsKey` the response header goes through.
+`Program#getSourceFile` asks for those first whenever its cache holds anything for the path, and
+`SourceFileCache#retainMatching` — `set` with the tree left out — applies the identical predicate to
+the identical two values. So it returns the object `set` would have returned, and returns nothing in
+exactly the cases where `set` would have kept the tree it was handed, which is when the fetch happens
+anyway. `offer`'s reasoning is untouched: the server still decides, it is just no longer asked for an
+AST to decide with.
+
+| 200 files × 40 exports, `getExportedDeclarations` | before    | after    |
+| ------------------------------------------------- | --------- | -------- |
+| crossings                                         | 602       | 602      |
+| bytes back                                        | 12.24 MiB | 6.35 MiB |
+| total, median of ten alternating in one process   | 631 ms    | 525 ms   |
+| of which request time                             | 561 ms    | 454 ms   |
+
+It applies wherever a node handle resolves against a file the client already parsed, not only to
+exports: `findReferences` over 100 such files went from 100 `getSourceFile` (650 KiB) to 100
+`getSourceFileIdentity` (7 KiB). `getType` and `getDefinitions` turn out to resolve no handle in that
+shape, so they were never paying it. A path whose cached hash or parse options key do not match the
+program's — text that reached the compiler after the client parsed something else — falls back to the
+fetch it would have made, one small request the worse; a path the cache has nothing for does not ask
+at all. Over the whole ts-morph suite that fallback fires on 27 of 306 identity requests, 8.8%, for a
+net +27 requests and −179 KB — the suite being dominated by first fetches the shortcut cannot help
+with, which is the honest shape of the trade.
+
+What makes the reuse sound is object identity in Go rather than an argument about equality.
+`TestGetSourceFileIdentityNamesTheTreeTheClientAlreadyHas` offers a parse, commits the same text,
+asserts `program.GetSourceFileByPath(...) == offered` on the pointer, and only then checks that the
+endpoint's two values are the ones that response carried.
+`TestGetSourceFileIdentityMatchesTheEncodedHeader` decodes them straight out of `getSourceFile`'s own
+response, the way the client does, across `.ts`, `.tsx`, `.mts`, `.cts`, `.d.ts`, `.js`, `.json`, an
+empty file, a file with syntax errors and a non-ASCII one.
+
+One invariant this leans on far harder than anything before it: a node handle resolves against
+whichever node index table was computed first, and a file the client reuses is now never encoded, so
+the standalone `encoder.BuildNodeIndexTable` walk is what handles land in rather than the encoder's
+own. Its doc comment promised the two agree and nothing checked it;
+`TestBuildNodeIndexTableMatchesTheEncoder` now compares them pointer for pointer over the shapes most
+likely to break a parallel walk — JSDoc, which is visited after a node's children rather than as one
+of them; modifier lists, which go through a hook of their own; and empty node lists, which take an
+index while being no node at all.
+
+On the client side the shortcut was A/B'd:
+the same harness over a file edited between the parse and the question, the same text at two paths,
+`impliedNodeFormat` decided by a nearby `package.json`, every extension including `.json`, a file the
+program pulled out of `node_modules` that ts-morph never parsed, a file removed and recreated,
+compiler options changed in between, and a five-step edit loop — recording each resolved node's file,
+kind, span and text with and without the shortcut, and getting byte-identical output.
+
 **Decisions closed without a change**
 
 - **`retiredSnapshotLimit` stays at 2.** An earlier reading concluded it bought nothing; that probe
