@@ -132,15 +132,17 @@ Worth doing when something makes snapshots frequent again, or for §2.2 — not 
 
 ## 3. Packaging and publishing
 
-- **JSR — unsolved, on both halves.** _Size_: `deno/common` is 47.34 MiB against
-  JSR's 20 MiB limit. Shipping the reactor gzipped did fit it — 13.7 MiB — and was
-  taken back out, so this is open again and no longer has a known answer that the
-  package is willing to pay for. Note that `deno publish --dry-run` exits 0 either
-  way: it does not check the limit, so it never was evidence about size. _Loading_:
-  the Wasm cannot be loaded over `https:` — a JSR consumer has no file to read
-  beside the module. The likely answer is `initializeWasm` with a fetched
-  `Response`, which already works, made to serve an `https:` default rather than
-  only a `file:` one.
+- **JSR — one half is not ours to solve.** _Size_: `deno/common` is 47.34 MiB against
+  JSR's default 20 MiB limit. **This is settled: the scope owner is requesting an
+  increased quota, so size is not a constraint to engineer around.** Do not propose
+  compressing, splitting or trimming the reactor to fit it — that was tried, and
+  shipping it gzipped was deliberately reverted because npm and any HTTP server
+  already compress in transit. (For the record, `deno publish --dry-run` exits 0 at
+  either size: it does not check the limit, so it is not evidence about size either
+  way.) _Loading_: the real remaining work is that the Wasm cannot be loaded over
+  `https:` — a JSR consumer has no file to read beside the module. The likely answer
+  is `initializeWasm` with a fetched `Response`, which already works, made to serve
+  an `https:` default rather than only a `file:` one.
 - **Fork maintenance.** The fork is well ahead of upstream. Split the mislabelled
   commit (`15ff4accb` says "expose getAmbientModules" and carries six unrelated
   changes) before proposing anything upstream, and decide which changes to send there

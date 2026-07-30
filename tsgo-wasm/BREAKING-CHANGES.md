@@ -522,10 +522,10 @@ and that is counted in manipulations, not in how often you ask the compiler anyt
 - **Single-threaded:** one compiler request runs to completion at a time.
 - **The compiler is no longer a plain-JS dependency,** so setups that bundled
   `typescript` from source are affected.
-- **JSR publishing is unsolved, on both halves.** `deno/common` is 47.34 MiB
-  against JSR's 20 MiB limit, and the wasm cannot be loaded over `https:` either.
-  `deno publish --dry-run` exits 0 regardless — it does not check the limit. See
-  [TODO.md](./TODO.md) §3.
+- **JSR publishing is not ready yet.** The package is 47.34 MiB, over JSR's default
+  20 MiB limit — an increased quota for the scope is being arranged, so this is a
+  matter of waiting rather than a design problem. The remaining technical piece is
+  that the Wasm cannot be loaded over `https:`. See [TODO.md](./TODO.md) §3.
 
 ### Browsers
 
