@@ -164,6 +164,42 @@ Two things not to spend more on:
   `lib` is unset. It is a real lever _for users_ — worth documenting as advice — but
   there is nothing here to fix.
 
+### 2.2a Chattiness, not execution speed, is the biggest lever left
+
+**compiler and ts-morph.** §2.2 says the gap is a flat ~2× floor. That holds for
+_checking_, and it is not the whole story: an operation that asks the compiler many
+small questions pays a multiple of it. Measured on the commonest codemod shape there is
+— 200 files, 40 exports each, ask each file what it exports:
+
+|                                                        | ms              |
+| ------------------------------------------------------ | --------------- |
+| 28.0.0                                                 | 277             |
+| now                                                    | **1272** (4.6×) |
+| — of which materialising every tree                    | 374             |
+| — the rest, per-symbol and per-declaration round trips | ~900            |
+
+**4.6× against a 2× floor means over half of it is ours**, and it is not execution
+speed. 8000 exported names cost ~159 µs each, where one Wasm round trip is ~7 µs — so
+it is tens of crossings per name. `getExportedDeclarations` already asks the checker for
+the symbols; what costs is then resolving every symbol's declarations into nodes one at
+a time, each one a crossing.
+
+**The direction this points.** Two changes compose, and the second is worth much less
+without the first:
+
+1. **Answer whole questions in Go.** The compiler already has
+   `MethodGetExportsOfModule`, and `getExportedDeclarations` is the obvious first
+   customer: one request per file returning names with their declarations, instead of a
+   crossing per symbol and per declaration. The same shape applies to imports, and to
+   anything else that today walks a result set node by node.
+2. **Then materialise nodes only when traversed** (§2.2c). Once a question is answered
+   in Go, the tree behind it is often never wanted at all — which is what makes deferring
+   it pay rather than merely moving the cost.
+
+Do them in that order, and measure against this workload rather than against a
+single-file microbenchmark: chatty operations are where the gap lives, and a
+microbenchmark of one file will not show it.
+
 ### 2.2c Bringing a file over from Go is all-or-nothing
 
 **compiler and ts-morph.** A file's whole tree is encoded, sent and decoded the first
