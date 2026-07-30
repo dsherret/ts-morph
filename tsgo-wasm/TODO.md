@@ -206,6 +206,15 @@ It removes two of the four crossings and every `Symbol` object that used to be b
 carry them. **It is worth ~12% of the workload** — 827 ms to 725 ms — against 28.0.0's
 140. The round trips did not collapse, because they were not what the time was.
 
+**On reproducing these numbers.** The structural claims replicate exactly and are the
+ones to trust: an independent count on 50 files × 20 exports saw 50 crossings for 1000
+names, so they scale with files and not with names. The _timings_ do not replicate
+closely — an independent run of the same workload measured 1156 ms median against
+28.0.0's 154 ms, where this table says 725 against 140. Both agree the workload sits far
+above the ~2× floor of §2.2, and neither run can resolve a 12% delta above the noise on
+this machine. Prefer counts and byte totals over wall-clock when judging a change here,
+and measure before and after back to back in one process.
+
 **Batching across files buys nothing, and this is the cleanest evidence that per-request
 overhead is not the problem.** The same 199 files asked one at a time cost 84 ms of
 request time; asked in a single request, 72 ms. End to end the two are within noise
