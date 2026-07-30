@@ -558,8 +558,41 @@ Two smaller regressions worth knowing:
 - `ts.createSourceFile` went from ~0.03 ms to ~0.9 ms, because every parse now goes to
   the server.
 
-**A `Type`, `Symbol` or `Signature` still survives exactly two manipulations** — see §2 —
-and that is counted in manipulations, not in how often you ask the compiler anything.
+**A `Type`, `Symbol` or `Signature` survives two manipulations that each ask the compiler
+something** — see §2, which describes the window exactly. It is counted in snapshots, so
+in practice it counts semantic reads rather than edits.
+
+### Walking declarations across many files is the worst case
+
+The rows above are roughly a constant factor. One shape is much worse, and it is a
+common one: asking many files a semantic question and then walking the result.
+
+`getExportedDeclarations()` over 200 files of 40 exported classes each — 8000 names —
+measures **1156 ms against 154 ms** on 28.0.0 in the same process. That is far above the
+~2× the rest of this section shows.
+
+It is not the number of calls: crossings scale with the number of _files_, not the number
+of names, and batching them into one request changes nothing. The cost is the work each
+call does, and in particular that a file's whole syntax tree is brought over the first
+time anything touches it — however little of it you wanted. Asking a 367 KB file for one
+class costs 69 ms, essentially what materialising all of it costs.
+
+**There is no workaround worth recommending today.** Dropping to
+`SourceFile#getExportSymbols()`, which does not ask for the declarations behind the
+names, measures 854 ms against 920 ms on the same run — 7%, because the file's tree is
+brought over either way. Work is ongoing to narrow this; see [TODO.md](./TODO.md) §2.2a.
+If this shape is on your critical path, the honest advice is to measure your own case
+rather than assume a smaller-looking API avoids the cost.
+
+### Set `lib` explicitly if you do not need the DOM
+
+Worth knowing because it dwarfs everything above, and it is **not** a change in this
+release — 28.0.0 behaves the same way. With no `lib` in your compiler options, TypeScript
+derives it from `target`, which pulls in `lib.dom.d.ts` and its siblings. Checking one
+file measured **804 ms with the default libs against 72 ms with `lib: ["lib.es2022.d.ts"]`**
+— and 326 ms against 35 ms on 28.0.0. Roughly a tenfold difference on both, so if your
+project is not for the browser, saying so is the single largest thing you can do for
+ts-morph's speed.
 
 ---
 
