@@ -845,10 +845,12 @@ export declare class DocumentRegistry {
      *
      * This is what a file written by {@link setSourceFileText} costs to read back: the
      * text is already where the compiler would read it, so the tree is a parse and
-     * nothing more. {@link getSourceFile} answers the same question by opening the
-     * project, which is the right thing when the caller wants the file the *program*
-     * holds — that one is bound, is the one every other file resolves against, and is
-     * what a semantic question is asked of.
+     * nothing more — and not even that when a program is holding the same text already,
+     * because the parse goes through that program's own cache (see {@link #parse}).
+     * {@link getSourceFile} answers the same question by opening the project, which is the
+     * right thing when the caller wants the file the *program* holds — that one is bound,
+     * is the one every other file resolves against, and is what a semantic question is
+     * asked of.
      */
     parseSourceFileAt(fileName: string): SourceFile;
     /**

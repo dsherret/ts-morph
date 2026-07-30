@@ -9,7 +9,7 @@ Finished work is not kept here. What a user needs to know from it is in
 [BREAKING-CHANGES.md](./BREAKING-CHANGES.md); what it measured and how it was done is
 in [MIGRATION-REPORT.md](./MIGRATION-REPORT.md) §8.
 
-Measured state: `ts-morph` 4516 passing / 2 pending, `common` 461 / 0, `bootstrap`
+Measured state: `ts-morph` 4520 passing / 2 pending, `common` 461 / 0, `bootstrap`
 85 / 4, both verification gates clean, 16/16 end-to-end scripts, `go test ./...`
 clean, all four `typescript.wasm` copies identical.
 
@@ -83,24 +83,9 @@ decision, and each would restore something 28.0.0 had:
 ## 2. Performance
 
 The size-dependent costs are gone: an edit no longer grows with the project, and no
-loop is quadratic. What is left is constant factors, and one of them is a regression.
+loop is quadratic. What is left is constant factors.
 
-### 2.1 An edit followed by a semantic question is parsed twice
-
-**ts-morph and compiler.** Holding the write back until something needs a program
-made an edit on its own several times cheaper, but made the edit-then-ask shape
-**dearer than it was before that change**: the file is parsed once on the client for
-the tree the manipulation returns, and again when the flush opens a snapshot.
-
-Measured at 400 files: an edit alone 0.53 ms (28.0.0: 0.20), an edit followed by a
-`getType()` **5.13 ms** (28.0.0: 3.02) against ~4.4 ms before the write was held
-back. So an editing loop that asks the compiler something every time round is the one
-shape the change made worse. The `offer` path already hands the compiler the object
-identity at no protocol cost; what it does not do is stop the compiler re-parsing.
-Removing that second parse is the fix, and it closes the only perf regression in the
-migration.
-
-### 2.2 Delete-heavy loops still grow with the project
+### 2.1 Delete-heavy loops still grow with the project
 
 **compiler.** A create-and-delete step now costs about what a create and a delete cost
 separately — 5.6 / 9.0 / 18.6 ms per step at 200 / 400 / 800 files before, 0.36 / 0.34 /
@@ -132,7 +117,7 @@ be correct between removals: mark it stale and work it out once, when the config
 actually written. A delete loop that reads nothing then recomputes once rather than
 once per file. **ts-morph.**
 
-### 2.2b What the remaining gap actually is, and the floor under it
+### 2.2 What the remaining gap actually is, and the floor under it
 
 Measured against published 28.0.0, checking is **a flat ~2× slower**, and the ratio does
 not move with the amount of work:
@@ -157,13 +142,18 @@ reactor could be swapped for a subprocess or native build without changing calle
 `inProcessApi.ts`). That trades away the single artifact, the browser, and synchronous
 construction — so it is a product decision, not an optimisation.
 
-Two things still worth doing, both bounded:
+Two things not to spend more on:
 
-- **Test `SingleThreaded: true`.** Goroutine scheduling in Wasm costs something and buys
-  nothing, so the parallel work groups may be a net loss here. The option exists in
-  `core.CompilerOptions` but is not exposed through the API, so measuring it needs a
-  small fork change. Expect single digits, not a step change — and if it does not
-  measure, leave it alone.
+- **`SingleThreaded: true` was tried and is worse.** It looked like a correctness-shaped
+  change with a free win attached — `wasip1` runs on one thread, so the work groups can
+  only interleave — and it measures the wrong way round. Declaring it cost ~15% on first
+  diagnostics over 300 files: 538/560 ms best-of-eight and ~710 ms median parallel,
+  against 642/645 ms best and ~800 ms median single-threaded, on the same build otherwise.
+  Reverted. `singleThreadedWorkGroup` collects every task and runs them at `RunAndWait`
+  in **reverse** order, where `parallelWorkGroup` starts each one as it is queued; for
+  `processAllProgramFiles`, where a task queues more tasks, that is a different traversal
+  and not just a different schedule. Anyone retrying this should fix the ordering first.
+  See MIGRATION-REPORT.md §8.7.
 - **Nothing about lib count.** Chasing it looked promising and is a dead end: default
   libs cost ~10× the explicit `lib: ["lib.es2022.d.ts"]` case, but 28.0.0 pays the same
   penalty (326 ms against 35 ms), because pulling in DOM is what TypeScript does when
@@ -176,7 +166,7 @@ Two things still worth doing, both bounded:
 rather than copied touches every reader in the compiler. Deliberately deferred, and
 the case for it got weaker rather than stronger: a snapshot is now opened once per run
 of edits rather than once per edit, so a share of one is a share of something rare.
-Worth doing when something makes snapshots frequent again, or for §2.2 — not before.
+Worth doing when something makes snapshots frequent again, or for §2.1 — not before.
 
 ---
 

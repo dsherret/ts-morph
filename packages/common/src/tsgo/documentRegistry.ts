@@ -214,10 +214,12 @@ export class DocumentRegistry {
    *
    * This is what a file written by {@link setSourceFileText} costs to read back: the
    * text is already where the compiler would read it, so the tree is a parse and
-   * nothing more. {@link getSourceFile} answers the same question by opening the
-   * project, which is the right thing when the caller wants the file the *program*
-   * holds — that one is bound, is the one every other file resolves against, and is
-   * what a semantic question is asked of.
+   * nothing more — and not even that when a program is holding the same text already,
+   * because the parse goes through that program's own cache (see {@link #parse}).
+   * {@link getSourceFile} answers the same question by opening the project, which is the
+   * right thing when the caller wants the file the *program* holds — that one is bound,
+   * is the one every other file resolves against, and is what a semantic question is
+   * asked of.
    */
   parseSourceFileAt(fileName: string): SourceFile {
     this.#assertNotDisposed();
@@ -632,6 +634,12 @@ export class DocumentRegistry {
    * would settle the file's module-ness, which depends on the compiler options and the
    * file's package scope rather than on its text. With no snapshot yet there is no
    * project either, and the defaults are what a file joining one would be parsed with.
+   *
+   * Naming the snapshot is also what makes this one parse rather than two. The compiler
+   * files the tree in the cache its own program build reads, keyed partly on those parse
+   * options — so with the right ones the next build finds this tree, and the text is
+   * never parsed a second time. Passing none is correct and costs a parse: the tree comes
+   * back, the build does not recognize it, and it parses the text itself.
    */
   #parse(fileName: string, text: string): SourceFile {
     return this.#api.parseSourceFile(

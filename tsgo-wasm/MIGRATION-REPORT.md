@@ -961,6 +961,32 @@ explicit set of refusal conditions documented on `UpdateRootFiles`; root files s
 root files instead of written into a synthetic tsconfig; `Project#createSourceFiles`; and an edit
 stopped from opening a semantic snapshot at all.
 
+**The edited file is parsed once, not twice.** Holding the write back until something needed a
+program left the text parsed twice — once by the client's parse-only request, once when the flush
+built a program over it. `project.Session.ParseSourceFile` now parses through the same refcounted
+parse cache `compilerHost.GetSourceFile` reads, under the key that host computes, so the build finds
+the tree instead of making its own. It is the same fix for the read-back path: the lazy first tree of
+a created file (`DocumentRegistry#parseSourceFileAt`) asks for text a program may already hold, and
+now gets that program's tree.
+
+| ~120-line files, ms per step | 28.0.0 | before | after |
+| ---------------------------- | ------ | ------ | ----- |
+| edit alone, 400 files        | 0.48   | 6.2    | 3.8   |
+| edit and a `getType()`, 400  | 2.74   | 11.9   | 8.8   |
+| edit alone, 100 files        | 0.50   | 3.8    | 3.0   |
+| edit and a `getType()`, 100  | 1.98   | 8.8    | 8.1   |
+
+On one-line files it measures nothing (3.12 → 3.07 ms for an edit and a `getType()` over 400 of
+them), which is the honest shape of it: what was removed is one parse of one file, so it is worth
+what that file costs to parse. First diagnostics and project construction do not move.
+
+What makes reuse safe is that nothing is reconstructed: the tree is produced by the cache's own
+parse function from the cache's own key, so a hit cannot be a tree built under other assumptions.
+Getting the key wrong is a miss and a wasted parse, never a wrong answer — the key is (file name,
+path, external module indicator options, script kind, content hash), and those five are the whole of
+what `parser.ParseSourceFile` reads. The reference taken is released at the session's next snapshot,
+one per path, so an editing loop retains one tree per file it touched and never one per edit.
+
 Equivalence was tested rather than argued at every step — a program built incrementally and outright
 over 34 shapes for removal and 39 for addition, comparing explained files, every include reason,
 every resolution, metadata, the missing/lib/redirect maps, the common source directory and every
@@ -974,6 +1000,16 @@ diagnostic — and the harnesses were checked for teeth by sabotage.
   2 and 3 exactly. Cost: not measurable, ~199 MB rss either way over 500 files edited 24 times.
   Note the window counts snapshots, so once an edit stopped opening one it counts _semantic reads_ —
   a run of edits that asks nothing supersedes nothing and the handle survives it.
+- **`SingleThreaded: true` for the Wasm reactor is a loss, not a free win.** `wasip1` runs on one
+  thread, so the work groups tsgo parses, binds and checks through cannot run concurrently whatever
+  they are told — which made declaring it look like a correctness-shaped change with a performance
+  side effect. Measured on one build with only that flag differing, first diagnostics over 300 files
+  went from 538/560 ms best-of-eight (~710 ms median) parallel to 642/645 ms (~800 ms median)
+  single-threaded, ~15% worse and well clear of the spread. Reverted. The likely reason is not
+  scheduling at all: `singleThreadedWorkGroup` queues every task and runs them at `RunAndWait` in
+  **reverse** order, where `parallelWorkGroup` starts each as it is queued, and
+  `processAllProgramFiles` queues tasks from inside tasks — so the two walk the file graph
+  differently rather than merely at different times.
 - **`TsConfigResolver` instance pooling is not worth it.** Nothing technical prevents sharing an
   instance between its two parses, but `getCompilerOptions()` is evaluated as a call argument before
   `getPaths()` runs, so the first is closed by then; parsing eagerly instead would charge the probe
