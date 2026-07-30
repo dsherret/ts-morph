@@ -164,6 +164,40 @@ Two things not to spend more on:
   `lib` is unset. It is a real lever _for users_ — worth documenting as advice — but
   there is nothing here to fix.
 
+### 2.2c Bringing a file over from Go is all-or-nothing
+
+**compiler and ts-morph.** A file's whole tree is encoded, sent and decoded the first
+time anything touches it, however little of it the caller wants. On a 367 KB file of
+5000 classes (65 002 nodes):
+
+|                                                | ms     |
+| ---------------------------------------------- | ------ |
+| first touch of the file                        | 83     |
+| — of which the Go-side parse                   | ~59    |
+| — of which encode + transfer + decode          | ~24    |
+| `getClassOrThrow("C0")`, which needs one class | **69** |
+| walking all 65 002 nodes afterwards            | 11     |
+
+Asking for one class costs what materialising the file costs. The nodes themselves are
+cheap once over — walking every one of them is 11 ms against 24 ms to bring them across
+— so the cost is in the crossing, not in the representation.
+
+**Two things it is not.** It is not the wire format: base64 plus JSON for an AST that
+size measures ~2 ms of the 24. And it is not extra work relative to 28.0.0 in the parse
+half — 28.0.0 parsed the file too, in JavaScript. The genuinely additional cost is the
+~24 ms of crossing, plus the Wasm tax on the parse (§2.2).
+
+**What would help:** encode lazily — the top level eagerly, bodies on demand. In this
+shape ~92% of the nodes are inside class bodies (65 002 for 5001 top-level nodes), so a
+caller that only reads exported declarations, which is a very common shape, would skip
+most of the crossing.
+
+**What to weigh before doing it:** it is a protocol change, and it is a _loss_ for a
+caller that walks everything, which is the other very common shape — subtree requests
+would be round trips where today there is one. Worth prototyping against both shapes
+before committing, and worth knowing that it caps out at 29% of a large file's first
+touch.
+
 ### 2.3 Deferred: layered `processedFiles` maps
 
 **compiler.** Cloning those ten maps is ~20% of an edit, and making them layered
