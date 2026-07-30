@@ -255,6 +255,36 @@ export class TypeChecker {
   }
 
   /**
+   * Gets what each of the given files exports, paired with the declarations of the
+   * symbol each name is exported on.
+   *
+   * This is `getExportsOfModule` for a batch of files, with the question of which
+   * symbol a file is and the resolution of each export's declarations answered by the
+   * same request. It exists because asking a whole project what it exports otherwise
+   * costs three requests a file for something the checker has in hand — see
+   * `ModuledNode#getExportedDeclarations`, its only caller.
+   *
+   * The declarations are the exported symbol's own, so an export specifier or an
+   * import comes back as itself rather than as what it names.
+   * @internal
+   */
+  _getExportedSymbolsOfFiles(filePaths: ReadonlyArray<string>): { name: string; declarations: Node[] }[][] {
+    const compilerFactory = this.#context.compilerFactory;
+    return this.compilerObject.getExportedSymbolsOfFiles(filePaths as string[]).map(exports =>
+      exports.map(exported => ({
+        name: exported.name,
+        // a handle resolves to undefined when the file it points at has left the
+        // program, which is not a declaration this project can hand back — the same
+        // rule Symbol#getDeclarations follows
+        declarations: exported.declarations
+          .map(handle => handle.resolve())
+          .filter((d): d is ts.Node => d != null)
+          .map(d => compilerFactory.getNodeFromCompilerNode(d, compilerFactory.getSourceFileForNode(d))),
+      }))
+    );
+  }
+
+  /**
    * Gets the local target symbol of the provided export specifier.
    * @param exportSpecifier - Export specifier.
    */

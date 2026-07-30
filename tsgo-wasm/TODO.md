@@ -164,41 +164,87 @@ Two things not to spend more on:
   `lib` is unset. It is a real lever _for users_ — worth documenting as advice — but
   there is nothing here to fix.
 
-### 2.2a Chattiness, not execution speed, is the biggest lever left
+### 2.2a A chatty operation costs a multiple of the floor — but not for the reason recorded here
 
 **compiler and ts-morph.** §2.2 says the gap is a flat ~2× floor. That holds for
 _checking_, and it is not the whole story: an operation that asks the compiler many
 small questions pays a multiple of it. Measured on the commonest codemod shape there is
-— 200 files, 40 exports each, ask each file what it exports:
+— 200 files, 40 exports each, ask each file what it exports, warm, median of eight in
+one process:
 
-|                                                        | ms              |
-| ------------------------------------------------------ | --------------- |
-| 28.0.0                                                 | 277             |
-| now                                                    | **1272** (4.6×) |
-| — of which materialising every tree                    | 374             |
-| — the rest, per-symbol and per-declaration round trips | ~900            |
+|                                   | total  | program setup | the other 199 files |
+| --------------------------------- | ------ | ------------- | ------------------- |
+| 28.0.0                            | 140 ms | ~123 ms       | 17 ms (0.09 /file)  |
+| before                            | 827 ms | ~360 ms       | 480 ms (2.4 /file)  |
+| after `getExportedSymbolsOfFiles` | 725 ms | ~360 ms       | 390 ms (1.95 /file) |
 
-**4.6× against a 2× floor means over half of it is ours**, and it is not execution
-speed. 8000 exported names cost ~159 µs each, where one Wasm round trip is ~7 µs — so
-it is tens of crossings per name. `getExportedDeclarations` already asks the checker for
-the symbols; what costs is then resolving every symbol's declarations into nodes one at
-a time, each one a crossing.
+Setup lands where §2.2 says it should — ~2.5×, and 28.0.0 parses the same files. The
+whole excess is in the second column: **28.0.0 answers 199 files in 17 ms and this
+answers them in 390**.
 
-**The direction this points.** Two changes compose, and the second is worth much less
-without the first:
+**The attribution that used to be here was wrong, and it is the third wrong attribution
+on this codebase, so it is written out.** It said 8000 exported names cost ~159 µs each
+against a ~7 µs round trip, so "tens of crossings per name". Counted rather than
+reasoned — by tallying every call into `WasmChannel#request` — the old code made **four
+crossings per file and none per name**: `parseSourceFile`, `getSourceFile`,
+`getSymbolAtLocation`, `getExportsOfModule`. 796 crossings for 8000 names. Round trips
+were never the cost. **80% of the time is spent _inside_ those four calls**, each of
+which costs 300–850 µs of Go-side work — so what a request costs is what it does, not
+that it happened.
 
-1. **Answer whole questions in Go.** The compiler already has
-   `MethodGetExportsOfModule`, and `getExportedDeclarations` is the obvious first
-   customer: one request per file returning names with their declarations, instead of a
-   crossing per symbol and per declaration. The same shape applies to imports, and to
-   anything else that today walks a result set node by node.
-2. **Then materialise nodes only when traversed** (§2.2c). Once a question is answered
-   in Go, the tree behind it is often never wanted at all — which is what makes deferring
-   it pay rather than merely moving the cost.
+**What was built.** `MethodGetExportedSymbolsOfFiles` /
+`Checker#getExportedSymbolsOfFiles`: one request naming any number of files, answering
+with each file's exported names and the node handles of the symbol each is declared on.
+`getExportedDeclarations` uses it for a source file; a namespace or ambient module still
+goes the symbol route, having no file to name. The resolution of re-export chains stays
+on the client untouched — Go reports each exported symbol's _own_ declarations, so an
+export specifier comes back as itself and the existing walk follows it exactly as
+before. That split is decided by the declaration's node kind, which is total and
+syntactic, not by hoping the awkward cases are rare.
 
-Do them in that order, and measure against this workload rather than against a
-single-file microbenchmark: chatty operations are where the gap lives, and a
-microbenchmark of one file will not show it.
+It removes two of the four crossings and every `Symbol` object that used to be built to
+carry them. **It is worth ~12% of the workload** — 827 ms to 725 ms — against 28.0.0's
+140. The round trips did not collapse, because they were not what the time was.
+
+**Batching across files buys nothing, and this is the cleanest evidence that per-request
+overhead is not the problem.** The same 199 files asked one at a time cost 84 ms of
+request time; asked in a single request, 72 ms. End to end the two are within noise
+(398 ms batched against 422 ms per-file). Do not spend more on coalescing requests.
+
+**Where the remaining 390 ms is: the same tree, fetched twice per file.** 260 ms of it,
+two thirds:
+
+| per-file crossings, after   | n   | ms  | each   | bytes over the wire |
+| --------------------------- | --- | --- | ------ | ------------------- |
+| `parseSourceFile`           | 199 | 130 | 655 µs | 7.6 MiB             |
+| `getSourceFile`             | 199 | 108 | 544 µs | 7.6 MiB             |
+| `getExportedSymbolsOfFiles` | 199 | 84  | 422 µs | 0.4 MiB             |
+
+The two tree fetches are the _same tree_: `documentRegistry#parseSourceFileAt` fetches
+it for the ts-morph `SourceFile`, and then resolving a declaration handle asks
+`program.getSourceFile` for it again. The client already knows they are the same — the
+`offer` in `SourceFileCache` makes the second call return the first call's object, and
+node identity holds (`getExportedDeclarations()` and `getClasses()` hand back the same
+object). So the second fetch's payload is encoded in Go, copied out, and discarded.
+
+So the tree materialisation of §2.2c is not only still paid, it is paid twice, and it is
+now the majority of what is left. Two things follow, in this order:
+
+1. **Stop fetching the tree twice.** `Project#getSourceFile` cannot use an offered entry
+   because it does not know the program took the file at that text — only the server's
+   own content hash and parse options key settle it, and today the only way to get them
+   is to fetch the whole tree. A request answering _just those two_ would let the offer
+   be used: ~110 ms of the 390 here, and it applies to every semantic question asked of
+   a file the client has already parsed, not only this one. Read the doc comment on
+   `SourceFileCache#offer` before touching it — retaining the offer outright is unsafe
+   and it says why.
+2. **Then encode lazily** (§2.2c). Once the tree is fetched once, the remaining 130 ms
+   is the encode itself, and ~92% of these nodes are inside class bodies nobody reads.
+
+Measure against this workload rather than a single-file microbenchmark, and **count the
+crossings before attributing anything to them** — patching `WasmChannel#request` to tally
+method names and round-trip times takes ten minutes and would have prevented the
+paragraph above.
 
 ### 2.2c Bringing a file over from Go is all-or-nothing
 

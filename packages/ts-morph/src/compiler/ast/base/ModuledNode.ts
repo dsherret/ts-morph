@@ -371,21 +371,35 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
 
     getExportedDeclarations(): ReadonlyMap<string, ExportedDeclarations[]> {
       const result = new Map<string, ExportedDeclarations[]>();
-      const exportSymbols = this.getExportSymbols();
 
-      for (const symbol of exportSymbols) {
-        for (const declaration of symbol.getDeclarations()) {
+      for (const { name, declarations: exportedDeclarations } of getExports(this)) {
+        for (const declaration of exportedDeclarations) {
           const declarations = Array.from(getDeclarationHandlingImportsAndExports(declaration)) as ExportedDeclarations[];
-          const name = symbol.getName();
           const existingArray = result.get(name);
           if (existingArray != null)
             existingArray.push(...declarations);
           else
-            result.set(symbol.getName(), declarations);
+            result.set(name, declarations);
         }
       }
 
       return result;
+
+      /**
+       * The exported names and where each one's symbol is declared.
+       *
+       * A file gets both in one request, because that is the shape a codemod sweeps a
+       * project in and asking per symbol costs a crossing each. Anything else — a
+       * namespace, an ambient module declaration — has no file to name, so it asks
+       * for the symbols and reads their declarations, which is the same answer by a
+       * longer route.
+       */
+      function getExports(node: ModuledNodeExtensionType & ModuledNode): { name: string; declarations: Node[] }[] {
+        if (Node.isSourceFile(node))
+          return node._context.typeChecker._getExportedSymbolsOfFiles([node.getFilePath()])[0];
+
+        return node.getExportSymbols().map(symbol => ({ name: symbol.getName(), declarations: symbol.getDeclarations() }));
+      }
 
       function* getDeclarationHandlingImportsAndExports(declaration: Node): IterableIterator<Node> {
         if (Node.isExportSpecifier(declaration)) {

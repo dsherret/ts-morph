@@ -516,6 +516,21 @@ export declare class Checker {
      */
     getAmbientModules(): readonly Symbol[];
     getExportsOfModule(symbol: Symbol): readonly Symbol[];
+    /**
+     * Returns what each of the named files exports, and where each exported name is
+     * declared.
+     *
+     * This is {@link getExportsOfModule} with the questions either side of it folded in
+     * — which symbol a file is, and where each export's declarations are — and with the
+     * files batched, so that sweeping a project costs one request rather than three per
+     * file. A file the program does not hold, or one that is not a module, answers with
+     * an empty list.
+     *
+     * The declarations reported are the exported symbol's own. An export specifier or an
+     * import comes back as itself, not as whatever it names: following those is the
+     * caller's, because only the caller knows what it wants from the far end.
+     */
+    getExportedSymbolsOfFiles(files: readonly DocumentIdentifier[]): readonly (readonly ExportedSymbol[])[];
     getMemberInModuleExports(symbol: Symbol, name: string): Symbol | undefined;
     getJsDocTagsOfSymbol(symbol: Symbol): readonly JSDocTagInfo[];
     getDocumentationCommentOfSymbol(symbol: Symbol): string;
@@ -568,6 +583,18 @@ export declare class Emitter {
     private client;
     constructor(client: Client);
     printNode(node: Node, options?: PrintNodeOptions): string;
+}
+/** One name a module exports, and the declarations of the symbol it is exported on. */
+export interface ExportedSymbol {
+    /** The display name (escaped underscores removed). */
+    readonly name: string;
+    /** The escaped (`__String`) name, which is the key in the module's export table. */
+    readonly escapedName: __String;
+    /**
+     * The exported symbol's own declarations. An export specifier or an import is
+     * reported as itself, not as whatever it names.
+     */
+    readonly declarations: readonly NodeHandle[];
 }
 export declare class NodeHandle {
     /**
