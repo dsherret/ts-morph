@@ -25,8 +25,6 @@ import {
 export interface LanguageServiceCreationParams {
   context: ProjectContext;
   configFileParsingDiagnostics: ts.Diagnostic[];
-  skipLoadingLibFiles: boolean | undefined;
-  libFolderPath: string | undefined;
 }
 
 /**
@@ -418,10 +416,7 @@ export class LanguageService {
 
   /** The file a span is in, pulled into the project's cache without joining the project. @internal */
   #getSpanSourceFile(span: ts.FileSpan): SourceFile | undefined {
-    return this.#context.compilerFactory.addOrGetSourceFileFromFilePath(
-      this.#context.fileSystemWrapper.getStandardizedAbsolutePath(span.fileName),
-      { markInProject: false, scriptKind: undefined },
-    );
+    return this.#context.compilerFactory.getSourceFileFromCompilerFileName(span.fileName);
   }
 
   /** @internal */

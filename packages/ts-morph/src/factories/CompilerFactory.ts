@@ -289,6 +289,24 @@ export class CompilerFactory {
   }
 
   /**
+   * Gets a source file by the name the compiler reported it under.
+   *
+   * A lib file the compiler carries is named `bundled:///libs/lib.es5.d.ts`, which
+   * no file system can answer for, so it is asked of the compiler. Every other name
+   * is an ordinary path and is read as one.
+   */
+  getSourceFileFromCompilerFileName(fileName: string): SourceFile | undefined {
+    if (isCompilerOwnedPath(fileName)) {
+      const compilerSourceFile = this.documentRegistry.getSourceFile(fileName);
+      return compilerSourceFile == null ? undefined : this.getSourceFile(compilerSourceFile, { markInProject: false });
+    }
+    return this.addOrGetSourceFileFromFilePath(
+      this.#context.fileSystemWrapper.getStandardizedAbsolutePath(fileName),
+      { markInProject: false, scriptKind: undefined },
+    );
+  }
+
+  /**
    * Gets many source files from their file paths in one go, using the file path
    * cache where it can, and returns them in the order the paths were given —
    * `undefined` where the file system has no such file.
@@ -875,6 +893,16 @@ export class CompilerFactory {
 
     if (compilerNode.kind === SyntaxKind.SourceFile) {
       const sourceFile = compilerNode as ts.SourceFile;
+      // a lib file the compiler carries is cached under the name the compiler gave
+      // it, and standardizing that would look for a different file — see
+      // #addSourceFileToCache, which keeps it out of the file system's caches
+      if (isCompilerOwnedPath(sourceFile.fileName)) {
+        const wrappedLibFile = this.#sourceFileCacheByFilePath.get(sourceFile.fileName as StandardizedFilePath);
+        this.#sourceFileCacheByFilePath.delete(sourceFile.fileName as StandardizedFilePath);
+        if (wrappedLibFile != null)
+          this.#sourceFileRemovedEventContainer.fire(wrappedLibFile);
+        return;
+      }
       const standardizedFilePath = this.#context.fileSystemWrapper.getStandardizedAbsolutePath(sourceFile.fileName);
       this.#directoryCache.removeSourceFile(standardizedFilePath);
       const wrappedSourceFile = this.#sourceFileCacheByFilePath.get(standardizedFilePath);

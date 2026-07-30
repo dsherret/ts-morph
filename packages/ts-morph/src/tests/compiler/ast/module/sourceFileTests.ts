@@ -669,6 +669,51 @@ describe("SourceFile", () => {
       expect(() => libFile.deleteImmediatelySync()).to.throw(errors.InvalidOperationError, message);
     });
 
+    it("should refuse the operations that would reach for the file", () => {
+      const libFile = getLibFile(new Project({ useInMemoryFileSystem: true }));
+      // it is in no directory, and there is nothing on disk to re-read, format,
+      // organize or emit
+      expect(() => libFile.getDirectory()).to.throw(errors.InvalidOperationError, message);
+      expect(() => libFile.refreshFromFileSystemSync()).to.throw(errors.InvalidOperationError, message);
+      expect(() => libFile.formatText()).to.throw(errors.InvalidOperationError, message);
+      expect(() => libFile.organizeImports()).to.throw(errors.InvalidOperationError, message);
+      expect(() => libFile.getEmitOutput()).to.throw(errors.InvalidOperationError, message);
+    });
+
+    it("should be reached again after being forgotten", () => {
+      const project = new Project({ useInMemoryFileSystem: true });
+      const sourceFile = project.createSourceFile("/file.ts", "const a: Date = null as any;");
+      function navigate() {
+        return sourceFile.getVariableDeclarationOrThrow("a").getType().getSymbolOrThrow().getDeclarations()[0].getSourceFile();
+      }
+      navigate().forget();
+      // the wrapper is cached under the name the compiler gave it, so forgetting one
+      // has to remove that key rather than the path it standardizes to
+      expect(navigate().getFilePath()).to.equal("bundled:///libs/lib.es5.d.ts");
+    });
+
+    it("should not stop the project from resolving its dependencies", () => {
+      const project = new Project({ useInMemoryFileSystem: true, skipFileDependencyResolution: true });
+      getLibFile(project);
+      // a lib file is not the user's file, so it is never marked as in the project —
+      // which would ask for the directory it does not have
+      expect(project.resolveSourceFileDependencies().map(s => s.getFilePath())).to.deep.equal([]);
+      expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal(["/file.ts"]);
+    });
+
+    it("should be where a definition in one is reported to be", () => {
+      const project = new Project({ useInMemoryFileSystem: true });
+      const sourceFile = project.createSourceFile("/file.ts", "const a: Date = null as any;");
+      const dateRef = sourceFile.getDescendantsOfKind(SyntaxKind.Identifier).find(n => n.getText() === "Date")!;
+      // the language service names the file the compiler carries, which no file
+      // system can answer for, so it is asked of the compiler instead
+      expect(dateRef.getDefinitionNodes().map(n => n.getSourceFile().getFilePath())).to.include("bundled:///libs/lib.es5.d.ts");
+      // every one names the declaration it found; before the file could be wrapped
+      // the name was read out of a file that was not there and came back empty
+      expect(dateRef.getDefinitions().map(d => d.getName())).to.deep.equal(["Date", "Date", "Date", "Date", "Date", "Date"]);
+      expect(dateRef.findReferencesAsNodes().map(n => n.getSourceFile().getFilePath())).to.include("/file.ts");
+    });
+
     it("should do nothing when saving one", () => {
       const project = new Project({ useInMemoryFileSystem: true });
       const libFile = getLibFile(project);

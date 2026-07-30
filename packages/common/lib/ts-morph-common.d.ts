@@ -627,7 +627,7 @@ export declare class TransactionalFileSystem {
     /** Recreates a directory on the underlying file system synchronously. */
     clearDirectoryImmediatelySync(dirPath: StandardizedFilePath): void;
     deleteDirectoryImmediatelySync(dirPath: StandardizedFilePath): void;
-    fileExists(filePath: StandardizedFilePath): false | Promise<boolean>;
+    fileExists(filePath: StandardizedFilePath): boolean | Promise<boolean>;
     fileExistsSync(filePath: StandardizedFilePath): boolean;
     directoryExistsSync(dirPath: StandardizedFilePath): boolean;
     readFileIfExistsSync(filePath: StandardizedFilePath, encoding: string | undefined): string | undefined;
@@ -976,8 +976,9 @@ export interface FileSystemAdapterOptions {
  * system paths: `getStandardizedAbsolutePath` turns one into the nonsense relative
  * path `./bundled:/libs/…`, so nothing may be read, written or resolved for them.
  *
- * The compiler answers its own bundled paths and does not ask through these
- * callbacks, so the guards below are what keeps that true if it ever does.
+ * The compiler answers its own bundled reads without asking, so the read guards
+ * below are a safety net. The one on `writeFile` is not: a write is still handed
+ * over, and a bundled path is not a place to put a file.
  */
 export declare function isCompilerOwnedPath(path: string): boolean;
 

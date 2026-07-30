@@ -81,8 +81,6 @@ export class ProjectContext {
       ? new LanguageService({
         context: this,
         configFileParsingDiagnostics: params.configFileParsingDiagnostics,
-        skipLoadingLibFiles: params.skipLoadingLibFiles,
-        libFolderPath: params.libFolderPath,
       })
       : undefined;
 

@@ -393,7 +393,7 @@ TypeScript 6's declarations. Expect small differences in global types and in the
 diagnostics that mention them. `packages/common` no longer depends on `typescript`
 at all.
 
-**They are read straight out of the WebAssembly module.** 28.0.0 wrote its own copy
+**They are read straight out of the Wasm module.** 28.0.0 wrote its own copy
 of every lib file into a fake folder on the project's file system at
 `/node_modules/typescript/lib`, which made them ordinary files of the project:
 addressable by that path, and sitting in a directory. The compiler already carries
@@ -1129,8 +1129,14 @@ nothing, and `#isSaved()` is always `false`. Two things changed:
 
 - The error message is now "This operation is not permitted on a lib file the
   compiler carries."
-- `#getDirectory()` throws it too. A file inside the WebAssembly module is in no
-  directory, where 28.0.0's copy sat in the fake lib folder.
+- Four more operations throw it, because there is no file for them to reach:
+  `#getDirectory()` and `#getRelativePathTo()` (a file inside the Wasm module is in
+  no directory, where 28.0.0's copy sat in the fake lib folder),
+  `#refreshFromFileSystem()`/`Sync()` (nothing to re-read), `#formatText()`,
+  `#organizeImports()` and `#getEmitOutput()`.
+- `#getDirectoryPath()` answers `./bundled:/libs` and
+  `#getRelativePathAsModuleSpecifierTo(libFile)` answers nonsense. Both come from
+  standardizing a path that is not one; neither is useful for a lib file.
 
 Which files count as one is now decided by the path — it starts with
 `bundled:///` — and that is exact rather than approximate. 28.0.0 tested for the
@@ -1177,7 +1183,7 @@ reads the project.
 
 ### 8.8 `@ts-morph/common`
 
-**Removed:** `createDocumentCache`, `createHosts`, `getFileMatcherPatterns`,
+Runtime exports: 53 → 61. **Removed:** `createDocumentCache`, `createHosts`, `getFileMatcherPatterns`,
 `matchFiles` (§4), and `getLibFiles` and `libFolderInMemoryPath` — the package no
 longer carries its own copy of the lib files (§5). Also gone as types:
 `CreateHostsOptions`, `TsSourceFileContainer`, `FileMatcherPatterns`,

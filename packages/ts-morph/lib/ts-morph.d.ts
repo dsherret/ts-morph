@@ -857,8 +857,8 @@ export interface ProjectOptions {
   /**
    * Folder to read the lib files from, through this project's file system.
    *
-   * Defaults to the compiler's own copies, which are embedded in the WebAssembly
-   * module and so have no path on any file system.
+   * Defaults to the compiler's own copies, which are embedded in the wasm module
+   * and so have no path on any file system.
    */
   libFolderPath?: string;
   /**

@@ -88,7 +88,7 @@ importer.
 ### `libFolderPath`
 
 By default, the TypeScript lib.d.ts files come from the compiler's own copies, which
-are embedded in the WebAssembly module. They are not on the project's file system, so
+are embedded in the Wasm module. They are not on the project's file system, so
 they have no path there and `project.getSourceFile(...)` will not find one; the
 compiler names them `bundled:///libs/lib.es5.d.ts` and so on.
 

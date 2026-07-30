@@ -68,8 +68,9 @@ export function createFileSystemAdapter(
  * system paths: `getStandardizedAbsolutePath` turns one into the nonsense relative
  * path `./bundled:/libs/…`, so nothing may be read, written or resolved for them.
  *
- * The compiler answers its own bundled paths and does not ask through these
- * callbacks, so the guards below are what keeps that true if it ever does.
+ * The compiler answers its own bundled reads without asking, so the read guards
+ * below are a safety net. The one on `writeFile` is not: a write is still handed
+ * over, and a bundled path is not a place to put a file.
  */
 export function isCompilerOwnedPath(path: string) {
   return path.startsWith("bundled:///");

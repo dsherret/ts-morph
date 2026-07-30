@@ -570,13 +570,13 @@ export class TransactionalFileSystem {
     }
   }
 
-  fileExists(filePath: StandardizedFilePath) {
+  fileExists(filePath: StandardizedFilePath): boolean | Promise<boolean> {
     if (this.#fileDeletedInMemory(filePath))
       return false;
     return this.#fileSystem.fileExists(filePath);
   }
 
-  fileExistsSync(filePath: StandardizedFilePath) {
+  fileExistsSync(filePath: StandardizedFilePath): boolean {
     if (this.#fileDeletedInMemory(filePath))
       return false;
     return this.#fileSystem.fileExistsSync(filePath);

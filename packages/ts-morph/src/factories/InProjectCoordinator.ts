@@ -1,4 +1,4 @@
-import { FileUtils, StandardizedFilePath } from "@ts-morph/common";
+import { FileUtils, isCompilerOwnedPath, StandardizedFilePath } from "@ts-morph/common";
 import { SourceFile } from "../compiler";
 import { Directory } from "../fileSystem";
 import { CompilerFactory } from "./CompilerFactory";
@@ -57,6 +57,11 @@ export class InProjectCoordinator {
     return { changedSourceFiles, unchangedSourceFiles };
 
     function shouldMarkInProject(sourceFile: SourceFile) {
+      // a lib file the compiler carries is not the user's file, and is in no
+      // directory to mark
+      if (isCompilerOwnedPath(sourceFile.getFilePath()))
+        return false;
+
       // check if there's a node_modules directory (use the closest one)
       const filePath = sourceFile.getFilePath();
       const index = filePath.toLowerCase().lastIndexOf(nodeModulesSearchName);

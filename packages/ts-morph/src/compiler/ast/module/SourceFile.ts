@@ -795,6 +795,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    * @param options - Emit options.
    */
   getEmitOutput(options: { emitOnlyDtsFiles?: boolean } = {}): EmitOutput {
+    this.#throwIfCompilerOwned();
     return this._context.languageService.getEmitOutput(this, options.emitOnlyDtsFiles || false);
   }
 
@@ -803,6 +804,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    * @param settings - Format code settings.
    */
   formatText(settings: FormatCodeSettings = {}) {
+    this.#throwIfCompilerOwned();
     replaceSourceFileTextForFormatting({
       sourceFile: this,
       newText: this._context.languageService.getFormattedDocumentText(this.getFilePath(), settings),
@@ -911,6 +913,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    * organize-imports accepts neither.
    */
   organizeImports() {
+    this.#throwIfCompilerOwned();
     this._context.languageService.organizeImports(this).forEach(fileTextChanges => fileTextChanges.applyChanges());
     return this;
   }
@@ -1005,6 +1008,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
   }
 
   #refreshFromFileSystemInternal(fileReadResult: string | false): FileSystemRefreshResult {
+    this.#throwIfCompilerOwned();
     if (fileReadResult === false) {
       this.forget();
       return FileSystemRefreshResult.Deleted;
