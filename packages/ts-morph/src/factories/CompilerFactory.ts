@@ -405,6 +405,46 @@ export class CompilerFactory {
   }
 
   /**
+   * Wraps a file the program is known to hold, without fetching its tree.
+   *
+   * Only for a caller reading the program's own list of file names, where the file
+   * being there is already established and must not be established again by fetching
+   * it. That fetch is not free at this scale: a 300-file project pulls in 63 lib files,
+   * and `lib.es5.d.ts` and its siblings are the largest trees anywhere, so fetching
+   * every one of them cost 128 ms of a construction that never looks at one. The tree
+   * and the byte-order-mark check that needs the file off disk both wait until
+   * something reads the file.
+   *
+   * Wrapped straight off the program rather than pushed back into the document
+   * registry, for the reason {@link addSourceFileFromProgramFromFilePath} gives.
+   */
+  addKnownProgramSourceFile(filePath: StandardizedFilePath): SourceFile {
+    filePath = this.#context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
+    const existingSourceFile = this.#sourceFileCacheByFilePath.get(filePath);
+    if (existingSourceFile != null)
+      return existingSourceFile;
+
+    const sourceFile: SourceFile = new SourceFile(this.#context, () => {
+      const compilerSourceFile = this.documentRegistry.getSourceFileOrThrow(filePath);
+      this.#nodeCache.set(compilerSourceFile, sourceFile);
+      // The compiler strips a byte order mark from the text it parses and does not
+      // report that it did, so the file system is asked instead. Without this the mark
+      // is lost the next time the file is saved — and a save reads the text, which is
+      // what brings it here, so asking now is soon enough.
+      const fileText = this.#context.fileSystemWrapper.readFileIfExistsSync(filePath, this.#context.getEncoding());
+      if (fileText != null && StringUtils.hasBom(fileText))
+        sourceFile._hasBom = true;
+      return compilerSourceFile;
+    }, filePath);
+
+    this.#context.inProjectCoordinator.setSourceFileNotInProject(sourceFile);
+    this.#addSourceFileToCache(sourceFile);
+    sourceFile._setIsSaved(true); // the compiler read it off the file system
+    this.#fireSourceFileAdded(sourceFile);
+    return sourceFile;
+  }
+
+  /**
    * Gets if the internal cache contains a source file at a specific file path.
    * @param filePath - File path to check.
    */

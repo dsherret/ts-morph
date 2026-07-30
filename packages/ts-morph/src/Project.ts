@@ -219,6 +219,10 @@ export class Project {
    * compiler, and there is no host callback to report a file it loaded, so the
    * program is asked what it ended up with instead. Adding a file can pull in
    * more, so this repeats until the program stops growing.
+   *
+   * The files are wrapped without their trees. Most of what turns up here is never
+   * looked at — a project of 300 files pulls in 63 lib files — and fetching a tree
+   * to wrap it made this cost more than the program build it follows.
    */
   #addProgramSourceFiles() {
     const { compilerFactory, fileSystemWrapper } = this._context;
@@ -227,14 +231,14 @@ export class Project {
     do {
       addedAny = false;
       for (const fileName of this.getProgram().compilerObject.getSourceFileNames()) {
-        // the lib files live in the compiler's own bundle rather than on a file system
+        // a lib file read from the compiler's own bundle has no path on any file system
         if (fileName.startsWith("bundled:///") || !seen.add(fileName))
           continue;
         const filePath = fileSystemWrapper.getStandardizedAbsolutePath(fileName);
         if (compilerFactory.containsSourceFileAtPath(filePath))
           continue;
-        if (compilerFactory.addSourceFileFromProgramFromFilePath(filePath) != null)
-          addedAny = true;
+        compilerFactory.addKnownProgramSourceFile(filePath);
+        addedAny = true;
       }
     } while (addedAny);
   }
