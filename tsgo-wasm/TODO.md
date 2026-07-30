@@ -115,10 +115,22 @@ current build:
 
 Flat to ~800 files and then doubling with each doubling of the project, which is still
 quadratic over the run — it is just no longer visible at the sizes the earlier
-measurements used. The cause is `Snapshot.Clone` copying ten `map[tspath.Path]…` fields,
-which a step of this shape does twice. Delete-only and create-only loops stay within a
-constant factor of themselves. Same ceiling as §2.3, and delete-heavy work is the only
-workload that still binds on it.
+measurements used.
+
+**The cause is in ts-morph, not the compiler.** It was recorded here as
+`Snapshot.Clone` copying ten `map[tspath.Path]…` fields; that is wrong, and measurement
+says so plainly — a 10-step create-and-delete loop opens **zero** snapshots (the
+registry's own `snapshotsOpened` counter), so `Snapshot.Clone` never runs in this shape.
+
+It is `DocumentRegistry#recomputeCommonDirectory`, which every removal calls and which
+folds over `#versions.keys()` — every file the registry holds — because removing a file
+is the one change that can _lengthen_ the common directory and so cannot be folded
+incrementally. That is O(files) per delete and O(files²) over a loop.
+
+The fix is that the value is only ever read by `#configText()`, so it does not need to
+be correct between removals: mark it stale and work it out once, when the config is
+actually written. A delete loop that reads nothing then recomputes once rather than
+once per file. **ts-morph.**
 
 ### 2.2b What the remaining gap actually is, and the floor under it
 
