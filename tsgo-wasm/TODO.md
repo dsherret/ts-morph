@@ -87,35 +87,31 @@ loop is quadratic. What is left is constant factors.
 
 ### 2.1 Delete-heavy loops still grow with the project
 
-**compiler.** A create-and-delete step now costs about what a create and a delete cost
-separately — 5.6 / 9.0 / 18.6 ms per step at 200 / 400 / 800 files before, 0.36 / 0.34 /
-0.36 after. But it has not stopped growing, only stopped growing early. Measured on the
-current build:
+**ts-morph.** Partly fixed, and the cause was twice attributed wrongly, so both dead
+ends are recorded here to save the next person repeating them.
 
-| project | ms per create-and-delete step |
-| ------- | ----------------------------- |
-| 800     | 0.362                         |
-| 1600    | 0.678                         |
-| 3200    | 1.391                         |
+| ms per create-and-delete step | 800   | 1600  | 3200  |
+| ----------------------------- | ----- | ----- | ----- |
+| originally                    | 18.6  | —     | —     |
+| after the incremental removal | 0.362 | 0.678 | 1.391 |
+| after the fix below           | 0.264 | 0.421 | 0.723 |
 
-Flat to ~800 files and then doubling with each doubling of the project, which is still
-quadratic over the run — it is just no longer visible at the sizes the earlier
-measurements used.
+**Two wrong attributions.** It was recorded as `Snapshot.Clone` copying ten
+`map[tspath.Path]…` fields in the compiler. Measurement says otherwise: a 10-step
+create-and-delete loop opens **zero** snapshots (the registry's own `snapshotsOpened`
+counter), so that clone never runs in this shape at all. Before that it was thought to
+be the synthetic tsconfig, which was 11 ms of 11 040.
 
-**The cause is in ts-morph, not the compiler.** It was recorded here as
-`Snapshot.Clone` copying ten `map[tspath.Path]…` fields; that is wrong, and measurement
-says so plainly — a 10-step create-and-delete loop opens **zero** snapshots (the
-registry's own `snapshotsOpened` counter), so `Snapshot.Clone` never runs in this shape.
+**What it actually was:** `DocumentRegistry#recomputeCommonDirectory`, called by every
+removal and folding over every file the registry holds, because a removal is the one
+change that can _lengthen_ the common directory and so cannot be folded incrementally.
+Fixed — the value is only read when the config is written, so a removal marks it stale
+and the fold happens once per flush.
 
-It is `DocumentRegistry#recomputeCommonDirectory`, which every removal calls and which
-folds over `#versions.keys()` — every file the registry holds — because removing a file
-is the one change that can _lengthen_ the common directory and so cannot be folded
-incrementally. That is O(files) per delete and O(files²) over a loop.
-
-The fix is that the value is only ever read by `#configText()`, so it does not need to
-be correct between removals: mark it stale and work it out once, when the config is
-actually written. A delete loop that reads nothing then recomputes once rather than
-once per file. **ts-morph.**
+**It still grows**, 2.7× for 4× the files, so a third thing in this loop is not constant
+either and has not been found. Whatever it is, it is not the two above and not the
+snapshot. Profile the loop rather than reasoning about it: that is what settled the last
+two.
 
 ### 2.2 What the remaining gap actually is, and the floor under it
 
@@ -127,6 +123,14 @@ not move with the amount of work:
 | one file, `lib: ["lib.es2022.d.ts"]`  | 34–42 ms   | 72–78 ms   | ~2.0× |
 | one file, default libs (DOM included) | 326–484 ms | 804–846 ms | ~2.2× |
 | 300 files, first diagnostics          | 387 ms     | 711 ms     | ~1.8× |
+| an edit then a `getType()`, 400 files | 2.80 ms    | 5.67 ms    | ~2.0× |
+
+That last row used to be recorded here as its own regression, on the grounds that the
+edited file was parsed twice. It genuinely was, and that is fixed — but fixing it moved
+the row rather than removing it. What is left in that shape is the snapshot the semantic
+question needs, and it lands on the same ~2× as everything else. Removing the second
+parse is worth what parsing that one file costs: on ~120-line files an edit-then-ask went
+11.9 ms to 8.8 ms, and on one-line files it measures nothing at all.
 
 **That flatness is the finding.** If the cost were lost parallelism — tsgo parallelises
 parse, bind and check through `core.NewWorkGroup`, and Go's `wasip1` target runs on one
