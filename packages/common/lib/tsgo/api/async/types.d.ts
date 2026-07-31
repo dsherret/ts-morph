@@ -356,3 +356,12 @@ export type ImportAdderAction = ImportSymbolAction;
 export interface GetImportEditsForSymbolsOptions {
     readonly isValidTypeOnlyUseSite?: boolean;
 }
+export interface RenameOptions {
+    /**
+     * Overrides the providePrefixAndSuffixTextForRename user preference. When
+     * false, a shorthand property assignment, binding element, or import/export
+     * specifier is renamed outright rather than being given the old name as an
+     * alias.
+     */
+    readonly useAliasesForRename?: boolean;
+}
