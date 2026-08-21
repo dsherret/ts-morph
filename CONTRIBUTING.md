@@ -8,9 +8,7 @@
 
 # Contributing Bug Fixes
 
-1. Follow the instructions above about logging a bug. In addition:
-   1. State that you are going to work on the bug.
-   2. Discuss major structural changes in the issue before doing the work to ensure it makes sense and work isn't wasted.
+1. Follow the instructions above about logging a bug.
 2. Start working on the fix in a branch of `latest` and submit a PR when done.
 
 # Contributing Features
