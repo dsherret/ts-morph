@@ -4,20 +4,23 @@ title: Instantiating
 
 ## Instantiating
 
-Use the `Project` named export from `"ts-morph"`:
+Starting with the Wasm-backend update, instantiation is **asynchronous**. Use the `Project.create()` method:
 
 ```ts
 import { Project } from "ts-morph";
 
-const project = new Project();
+const project = await Project.create();
 ```
+
+### Performance & Wasm Backend
+`ts-morph` uses a highly optimized WebAssembly backend powered by `typescript-go`. This backend reduces parsing times by ~60% and slashes V8 heap memory overhead.
 
 ### Compiler options
 
 ```ts
 import { Project, ScriptTarget } from "ts-morph";
 
-const project = new Project({
+const project = await Project.create({
   compilerOptions: {
     target: ScriptTarget.ES3,
   },

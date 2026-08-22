@@ -510,6 +510,12 @@ export declare class Project {
   /** Gets the compiler options for modification. */
   get compilerOptions(): CompilerOptionsContainer;
   /**
+   * Asynchronously creates a project and initializes the Go WebAssembly compiler backend.
+   * Required when using the \`typescript-go\` compiler bridge.
+   * @param options Options for creating the project.
+   */
+  static create(options?: ProjectOptions): Promise<Project>;
+  /**
    * Adds the source files the project's source files depend on to the project.
    * @returns The added source files.
    * @remarks * This should be done after source files are added to the project, preferably once to

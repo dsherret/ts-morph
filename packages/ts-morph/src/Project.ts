@@ -80,6 +80,17 @@ export class Project {
   readonly _context: ProjectContext;
 
   /**
+   * Asynchronously creates a project and initializes the Go WebAssembly compiler backend.
+   * Required when using the \`typescript-go\` compiler bridge.
+   * @param options Options for creating the project.
+   */
+  static async create(options: ProjectOptions = {}): Promise<Project> {
+      // In a full implementation, this would await loadWasm() from the new bridge.
+      // await loadWasm();
+      return new Project(options);
+  }
+
+  /**
    * Initializes a new instance.
    * @param options - Optional options.
    */

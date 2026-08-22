@@ -7,7 +7,8 @@
     "setup": "deno install && deno task build",
     "build": "cd packages && deno task --cwd common build && deno task --cwd bootstrap build && deno task --cwd ts-morph build",
     "build:deno": "cd packages && deno task --cwd common build:deno && deno task --cwd bootstrap build:deno && deno task --cwd ts-morph build:deno",
-    "format": "dprint fmt"
+    "format": "dprint fmt",
+    "test:wasm": "cd packages && deno task --cwd ts-morph test:wasm"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,8 @@
     "packages/ts-morph"
   ],
   "devDependencies": {
-    "dprint": "^0.50.1"
+    "brotli": "^1.3.3",
+    "dprint": "^0.50.1",
+    "wasm-opt": "^1.4.0"
   }
 }
