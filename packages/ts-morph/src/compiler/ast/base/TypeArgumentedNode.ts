@@ -86,14 +86,15 @@ export function TypeArgumentedNode<T extends Constructor<TypeArgumentedNodeExten
       index = verifyAndGetIndex(index, typeArguments.length);
 
       if (typeArguments.length === 0) {
-        // For property access expressions like `this.foo()`, the identifier is nested
-        // inside the PropertyAccessExpression, not a direct child of the CallExpression
+        // When the node has an expression (ex. the callee of a call expression or the
+        // expression of an `ExpressionWithTypeArguments` like `B(C)` in `class A extends B(C) {}`),
+        // insert directly after it. Otherwise fall back to the first identifier child.
         const expression = Node.hasExpression(this) ? this.getExpression() : undefined;
-        const identifier = Node.isPropertyAccessExpression(expression)
-          ? expression.getLastChildByKindOrThrow(SyntaxKind.Identifier)
-          : this.getFirstChildByKindOrThrow(SyntaxKind.Identifier);
+        const insertPos = expression != null
+          ? expression.getEnd()
+          : this.getFirstChildByKindOrThrow(SyntaxKind.Identifier).getEnd();
         insertIntoParentTextRange({
-          insertPos: identifier.getEnd(),
+          insertPos,
           parent: this,
           newText: `<${argumentTexts.join(", ")}>`,
         });

@@ -72,6 +72,15 @@ describe("TypeArgumentedNode", () => {
     it("should add multiple type args", () => {
       doTest("@dec<1>()\nclass T {}", ["2", "3"], "@dec<1, 2, 3>()\nclass T {}");
     });
+
+    // Issue #1615: insertTypeArguments crashes on mixins
+    it("should add a type argument when extending a call expression", () => {
+      const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>("class A extends B(C) {}");
+      const extendsExpr = firstChild.getExtendsOrThrow();
+      const result = extendsExpr.addTypeArguments(["D"]);
+      expect(result.map(t => t.getText())).to.deep.equal(["D"]);
+      expect(sourceFile.getFullText()).to.equal("class A extends B(C)<D> {}");
+    });
   });
 
   describe(nameof<TypeArgumentedNode>("addTypeArgument"), () => {
