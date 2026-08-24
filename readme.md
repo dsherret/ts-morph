@@ -12,3 +12,7 @@ Monorepo for [ts-morph](packages/ts-morph) and related projects.
 ## Resources
 
 - [TypeScript AST Viewer](https://ts-ast-viewer.com)
+
+## Demo talk
+
+https://www.youtube.com/watch?v=CTpKZgy0dpo
