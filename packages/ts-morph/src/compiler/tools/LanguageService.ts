@@ -91,6 +91,21 @@ export class LanguageService {
   }
 
   /**
+   * Disposes the language service, releasing the internal `ts.LanguageService`
+   * and the compiler caches (type resolution tables, symbol maps, parsed ASTs)
+   * it holds. These caches are not reclaimable by the JS garbage collector, so
+   * a `Project` that is dropped without disposing its language service leaks
+   * memory — visible in pools / batch processing / serverless handlers that
+   * create and discard many `Project` instances (#1666).
+   *
+   * Safe to call once; calling `dispose()` again or using the language service
+   * afterwards is undefined (the underlying compiler object has been disposed).
+   */
+  dispose() {
+    this.#compilerObject.dispose();
+  }
+
+  /**
    * Gets the language service's program.
    */
   getProgram() {

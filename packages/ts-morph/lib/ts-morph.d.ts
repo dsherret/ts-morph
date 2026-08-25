@@ -663,6 +663,19 @@ export declare class Project {
   getPreEmitDiagnostics(): Diagnostic[];
   /** Gets the language service. */
   getLanguageService(): LanguageService;
+  /**
+   * Disposes the project, releasing the internal `ts.LanguageService` and the
+   * compiler caches it holds. The TypeScript language service keeps type
+   * resolution tables, symbol maps, and parsed ASTs in internal data
+   * structures that the JS garbage collector cannot reclaim, so a `Project`
+   * that is simply dropped leaks memory — visible when many `Project` instances
+   * are created and discarded (pools, batch processing, serverless handlers).
+   * Call `dispose()` once a `Project` is no longer needed (#1666).
+   *
+   * Using the project (or its language service / source files / program) after
+   * disposal is undefined.
+   */
+  dispose(): void;
   /** Gets the program. */
   getProgram(): Program;
   /** Gets the type checker. */
@@ -9248,6 +9261,18 @@ export declare class LanguageService {
   private constructor();
   /** Gets the compiler language service. */
   get compilerObject(): ts.LanguageService;
+  /**
+   * Disposes the language service, releasing the internal `ts.LanguageService`
+   * and the compiler caches (type resolution tables, symbol maps, parsed ASTs)
+   * it holds. These caches are not reclaimable by the JS garbage collector, so
+   * a `Project` that is dropped without disposing its language service leaks
+   * memory — visible in pools / batch processing / serverless handlers that
+   * create and discard many `Project` instances (#1666).
+   *
+   * Safe to call once; calling `dispose()` again or using the language service
+   * afterwards is undefined (the underlying compiler object has been disposed).
+   */
+  dispose(): void;
   /** Gets the language service's program. */
   getProgram(): Program;
   /**
