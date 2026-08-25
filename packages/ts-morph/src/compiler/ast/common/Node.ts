@@ -1403,13 +1403,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    * This will forget the current node and return a new node that can be asserted or type guarded to the correct type.
    * @param textOrWriterFunction - Text or writer function to replace with.
    * @returns The new node.
-   * @remarks This will replace the text from the `Node#getStart(true)` position (start position with js docs) to `Node#getEnd()`.
+   * @remarks This will replace the text from the `Node#getStart(true)` (or `Node#getPos()` if `replaceFullText` is true) position (start position with js docs) to `Node#getEnd()`.
    * Use `Node#getText(true)` to get all the text that will be replaced.
    */
   replaceWithText(textOrWriterFunction: string | WriterFunction): Node;
   /** @internal */
   replaceWithText(textOrWriterFunction: string | WriterFunction, writer: CodeBlockWriter): Node;
-  replaceWithText(textOrWriterFunction: string | WriterFunction, writer?: CodeBlockWriter): Node {
+  replaceWithText(textOrWriterFunction: string | WriterFunction, writer: CodeBlockWriter, replaceFullText: boolean): Node;
+  replaceWithText(textOrWriterFunction: string | WriterFunction, writer?: CodeBlockWriter, replaceFullText?: boolean): Node {
     const newText = getTextFromStringOrWriter(writer || this._getWriterWithQueuedIndentation(), textOrWriterFunction);
     if (Node.isSourceFile(this)) {
       this.replaceText([this.getPos(), this.getEnd()], newText);
@@ -1419,7 +1420,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     const parent = this.getParentSyntaxList() || this.getParentOrThrow();
     const childIndex = this.getChildIndex();
 
-    const start = this.getStart(true);
+    const start = replaceFullText ? this.getPos() : this.getStart(true);
     insertIntoParentTextRange({
       parent,
       insertPos: start,
@@ -1553,7 +1554,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       if (oldNode === newNode && (newNode as any).emitNode == null)
         return;
 
-      const start = oldNode.getStart(compilerSourceFile, true);
+      const start = oldNode.kind === ts.SyntaxKind.JsxText ? oldNode.pos : oldNode.getStart(compilerSourceFile, true);
       const end = oldNode.end;
       let lastTransformation: Transformation | undefined;
 
