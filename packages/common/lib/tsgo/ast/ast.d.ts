@@ -1,9 +1,11 @@
+import type { DiagnosticDirectivePolicy } from "../enums/diagnosticDirectivePolicy.enum";
 import type { InternalSymbolName } from "../enums/internalSymbolName.enum";
 import type { LanguageVariant } from "../enums/languageVariant.enum";
 import type { NodeFlags } from "../enums/nodeFlags.enum";
 import type { ScriptKind } from "../enums/scriptKind.enum";
 import { SyntaxKind } from "../enums/syntaxKind.enum";
 import type { AssertionExpression, BindingElement, CaseClause, ComputedPropertyName, Decorator, DefaultClause, DoStatement, EndOfFile, EntityName, EnumMember, Expression, ExpressionStatement, ForInStatement, ForOfStatement, ForStatement, Identifier, IfStatement, JsxAttribute, JsxExpression, JsxSpreadAttribute, KeywordSyntaxKind, ModifierSyntaxKind, ParameterDeclaration, PropertyAccessExpression, PropertyAssignment, PropertyDeclaration, PropertySignatureDeclaration, PunctuationSyntaxKind, ReturnStatement, SatisfiesExpression, ShorthandPropertyAssignment, SpreadAssignment, Statement, SwitchStatement, TemplateSpan, ThisExpression, ThrowStatement, Token, VariableDeclaration, WhileStatement, WithStatement } from "./ast.generated";
+import type { SpanMap } from "./spanMap";
 export { SyntaxKind } from "../enums/syntaxKind.enum";
 export { TokenFlags } from "../enums/tokenFlags.enum";
 export * from "./ast.generated";
@@ -69,11 +71,29 @@ export interface LineAndCharacter {
     /** 0-based character offset, in UTF-16 code units, from the start of the line. */
     readonly character: number;
 }
+export interface MappedDiagnosticDirective {
+    readonly originalRange: ReadonlyTextRange;
+    readonly virtualRange: ReadonlyTextRange;
+    readonly policy: DiagnosticDirectivePolicy;
+    readonly unusedCode: number;
+}
 export interface SourceFile extends Node {
     readonly kind: SyntaxKind.SourceFile;
     readonly statements: NodeArray<Statement>;
     readonly endOfFileToken: EndOfFile;
     readonly text: string;
+    readonly originalText: string;
+    readonly spanMap: SpanMap | undefined;
+    /** Identity of the content mapper that produced this source file. */
+    readonly contentMapper?: string;
+    /** Filename used to determine the syntax and module semantics of the transformed content. */
+    readonly virtualFileName?: string;
+    /** Framework-specific diagnostic directives applied to the transformed content. */
+    readonly diagnosticDirectives?: readonly MappedDiagnosticDirective[];
+    /** Compiler-assigned filenames of supplemental outputs associated with this canonical source file. */
+    readonly supplementalSourceFileNames?: readonly string[];
+    /** Canonical source filename associated with this supplemental output, if this is supplemental. */
+    readonly canonicalSourceFileName?: string;
     readonly fileName: string;
     readonly path: Path;
     readonly languageVariant: LanguageVariant;

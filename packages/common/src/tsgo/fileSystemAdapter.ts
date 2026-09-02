@@ -12,7 +12,7 @@
  * error such as EACCES — so every entry point below converts a failure into the
  * "nothing there" answer tsgo expects.
  */
-import type { FileSystem } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/fs.js";
+import type { FileSystem } from "../../../../submodules/typescript-go/packages/typescript/dist/api/fs.js";
 import type { StandardizedFilePath, TransactionalFileSystem } from "../fileSystem";
 
 export interface FileSystemAdapterOptions {

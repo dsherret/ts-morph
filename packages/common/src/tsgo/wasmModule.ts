@@ -14,7 +14,7 @@ import {
   getDefaultWasmModule,
   hasDefaultWasmModule,
   setDefaultWasmModule,
-} from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/wasm/api.js";
+} from "../../../../submodules/typescript-go/packages/typescript/dist/api/wasm/api.js";
 
 /**
  * The WebAssembly globals used here, declared locally because this package's

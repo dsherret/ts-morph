@@ -15,7 +15,7 @@
       // the tsgo client’s declarations reach its enums through the package’s
       // `imports` map, which this config’s resolution mode cannot follow; see the
       // same mapping in ../common/tsconfig.json
-      "#enums/*": ["../../submodules/typescript-go/_packages/native-preview/dist/enums/*.enum.d.ts"]
+      "#enums/*": ["../../submodules/typescript-go/packages/typescript/dist/enums/*.enum.d.ts"]
     },
     // This config only type-checks; the shipped build is produced by rollup. It
     // therefore sets no `rootDir`/`outDir` and emits nothing, because `paths`

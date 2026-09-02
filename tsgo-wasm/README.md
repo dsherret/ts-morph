@@ -5,21 +5,21 @@ ts-morph via WebAssembly — no subprocess, no native addon, fully synchronous.
 
 ## Layout
 
-- `submodules/typescript-go` — fork ([dsherret/typescript-go](https://github.com/dsherret/typescript-go), branch `ts-go`) with:
-  - `cmd/tsgo-wasm` — a `GOOS=wasip1 -buildmode=c-shared` reactor exposing a
+- `submodules/typescript-go` — fork ([dsherret/TypeScript](https://github.com/dsherret/TypeScript), branch `migrate-tsmain`) with:
+  - `tsc/cmd/tsgo-wasm` — a `GOOS=wasip1 -buildmode=c-shared` reactor exposing a
     synchronous `handle_request` export over the API server. Filesystem access is
     delegated to the JS host via `//go:wasmimport` callbacks; `lib.*.d.ts` are
     embedded. Single-threaded: one request runs to completion per call.
-  - `internal/api/inprocess.go` — `InProcessServer`, a transport-less analogue of
+  - `tsc/internal/api/inprocess.go` — `InProcessServer`, a transport-less analogue of
     the STDIO server.
-  - `_packages/native-preview/src/api/wasmChannel.ts` — `WasmChannel`, an
+  - `packages/typescript/src/api/wasmChannel.ts` — `WasmChannel`, an
     in-process transport with the same `RpcChannel` surface as the subprocess
     `SyncRpcChannel`. `Client` accepts it via `ClientWasmOptions`, so the stock
     sync `API` runs over Wasm unchanged.
-  - `_packages/native-preview/src/api/wasm/api.ts` — `createWasmAPI`, instantiates
+  - `packages/typescript/src/api/wasm/api.ts` — `createWasmAPI`, instantiates
     the reactor. The module is either supplied by the host or read from beside
     this one, through whatever the host offers without an import.
-  - `_packages/native-preview/src/api/wasm/wasi.ts` — `createWasiImports`, a
+  - `packages/typescript/src/api/wasm/wasi.ts` — `createWasiImports`, a
     `wasi_snapshot_preview1` implementation written against the web platform
     only. `GOOS=wasip1` is why those imports exist at all; almost none of them
     are used, because the file system is delegated to JS through `ts_host`. This
@@ -64,7 +64,7 @@ migration coverage. `packages/common`'s own mocha suite runs today; the
 
 ```sh
 # build the wasm (needs the Go toolchain; see submodule go.mod)
-node submodules/typescript-go/_scripts/build-wasm.mjs
+node submodules/typescript-go/packages/typescript/scripts/build-wasm.mjs
 
 # prove it end-to-end
 node --experimental-strip-types --no-warnings --conditions @typescript/source tsgo-wasm/proof.mts

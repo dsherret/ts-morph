@@ -1,4 +1,4 @@
-import { type FileReference, type LineAndCharacter, type Node, type Path, SyntaxKind } from "../../ast/index";
+import { type FileReference, type LineAndCharacter, type MappedDiagnosticDirective, type Node, type Path, SpanMap, SyntaxKind } from "../../ast/index";
 import type { TimingCollector } from "../timing";
 import { RemoteNode, RemoteNodeList } from "./node.generated";
 import { type SourceFileInfo, type TextDecoder } from "./node.infrastructure";
@@ -21,6 +21,11 @@ export declare class RemoteSourceFile extends RemoteNode implements SourceFileIn
     private _cachedImports;
     private _cachedModuleAugmentations;
     private _cachedAmbientModuleNames;
+    private _cachedSpanMap;
+    private _spanMapRead;
+    private _cachedSupplementalSourceFileNames;
+    private _cachedDiagnosticDirectives;
+    private _diagnosticDirectivesRead;
     constructor(data: Uint8Array, decoder: TextDecoder, timing?: TimingCollector);
     readFileReferences(structuredDataOffset: number): readonly FileReference[];
     readNodeIndexArray(structuredDataOffset: number): readonly Node[];
@@ -39,6 +44,13 @@ export declare class RemoteSourceFile extends RemoteNode implements SourceFileIn
     get moduleAugmentations(): readonly Node[];
     get ambientModuleNames(): readonly string[];
     get externalModuleIndicator(): Node | true | undefined;
+    get originalText(): string;
+    get spanMap(): SpanMap | undefined;
+    get supplementalSourceFileNames(): readonly string[] | undefined;
+    get canonicalSourceFileName(): string | undefined;
+    get contentMapper(): string | undefined;
+    get virtualFileName(): string | undefined;
+    get diagnosticDirectives(): readonly MappedDiagnosticDirective[] | undefined;
     get isDeclarationFile(): boolean;
     get text(): string;
     getLineStarts(): readonly number[];

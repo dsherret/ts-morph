@@ -138,10 +138,14 @@ export class Symbol {
   getDeclarations(): Node[] {
     // A handle resolves to undefined when the file it points at has left the
     // program, which is not a declaration this project can hand back.
-    return (this.compilerSymbol.declarations ?? [])
-      .map(handle => handle.resolve())
-      .filter((d): d is ts.Node => d != null)
-      .map(d => this.#context.compilerFactory.getNodeFromCompilerNode(d, this.#context.compilerFactory.getSourceFileForNode(d)));
+    const factory = this.#context.compilerFactory;
+    const declarations: Node[] = [];
+    for (const handle of this.compilerSymbol.declarations ?? []) {
+      const declaration = handle.resolve();
+      if (declaration != null)
+        declarations.push(factory.getNodeFromCompilerNode(declaration, factory.getSourceFileForNode(declaration)));
+    }
+    return declarations;
   }
 
   /**

@@ -43,6 +43,8 @@ export declare enum ObjectFlags {
     ContainsIntersections = 33554432,
     IsUnknownLikeUnionComputed = 67108864,
     IsUnknownLikeUnion = 134217728,
+    IsUniformEnumComputed = 268435456,
+    IsUniformEnum = 536870912,
     IsNeverIntersectionComputed = 33554432,
     IsNeverIntersection = 67108864,
     IsConstrainedTypeVariable = 134217728

@@ -11,18 +11,18 @@
  * as a whole rather than per call, because the compiler resolves them per
  * project.
  */
-import type { CompilerOptions } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/compilerOptions.js";
-import { createVirtualFileSystem, type FileSystem } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/fs.js";
-import type { ModuleNameResolver } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/options.js";
-import type { API, Project, Snapshot } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/sync/api.js";
-import { createWasmAPI } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/wasm/api.js";
-import type { SourceFile } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/index.js";
-import { JsxEmit } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/jsxEmit.enum.js";
-import { ModuleDetectionKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/moduleDetectionKind.enum.js";
-import { ModuleKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/moduleKind.enum.js";
-import { ModuleResolutionKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/moduleResolutionKind.enum.js";
-import { NewLineKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/newLineKind.enum.js";
-import { ScriptTarget } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/scriptTarget.enum.js";
+import { createVirtualFileSystem, type FileSystem } from "../../../../submodules/typescript-go/packages/typescript/dist/api/fs.js";
+import type { ModuleNameResolver } from "../../../../submodules/typescript-go/packages/typescript/dist/api/options.js";
+import type { CompilerOptions } from "../../../../submodules/typescript-go/packages/typescript/dist/api/proto.generated.js";
+import type { API, Project, Snapshot } from "../../../../submodules/typescript-go/packages/typescript/dist/api/sync/api.js";
+import { createWasmAPI } from "../../../../submodules/typescript-go/packages/typescript/dist/api/wasm/api.js";
+import type { SourceFile } from "../../../../submodules/typescript-go/packages/typescript/dist/ast/index.js";
+import { JsxEmit } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/jsxEmit.enum.js";
+import { ModuleDetectionKind } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/moduleDetectionKind.enum.js";
+import { ModuleKind } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/moduleKind.enum.js";
+import { ModuleResolutionKind } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/moduleResolutionKind.enum.js";
+import { NewLineKind } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/newLineKind.enum.js";
+import { ScriptTarget } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/scriptTarget.enum.js";
 
 /** The tsconfig every file in the registry belongs to. */
 const configFilePath = "/tsconfig.json";

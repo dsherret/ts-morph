@@ -4,7 +4,5 @@ export declare enum ScriptKind {
     JSX = 2,
     TS = 3,
     TSX = 4,
-    External = 5,
-    JSON = 6,
-    Deferred = 7
+    JSON = 6
 }

@@ -60,6 +60,7 @@ export declare function normalizePath(path: string): string;
  * like `c:`, `c:\\` or `c:/`).
  */
 export declare function isRootedDiskPath(path: string): boolean;
+export declare function convertToRelativePath(absoluteOrRelativePath: string, basePath: string, getCanonicalFileName: (path: string) => string): string;
 /**
  * Converts a file name to a normalized path.
  *
@@ -94,7 +95,7 @@ export declare function splitVolumePath(path: string): [volume: string, rest: st
  * fileNameToDocumentURI("/path/to/file.ts") === "file:///path/to/file.ts"
  * fileNameToDocumentURI("c:/path/to/file.ts") === "file:///c%3A/path/to/file.ts"
  * fileNameToDocumentURI("^/untitled/ts-nul-authority/Untitled-1") === "untitled:Untitled-1"
- * fileNameToDocumentURI("^/vscode-vfs/github/microsoft/typescript-go/file.ts") === "vscode-vfs://github/microsoft/typescript-go/file.ts"
+ * fileNameToDocumentURI("^/vscode-vfs/github/microsoft/TypeScript/file.ts") === "vscode-vfs://github/microsoft/TypeScript/file.ts"
  */
 export declare function fileNameToDocumentURI(fileName: string): string;
 /**
@@ -104,6 +105,6 @@ export declare function fileNameToDocumentURI(fileName: string): string;
  * documentURIToFileName("file:///path/to/file.ts") === "/path/to/file.ts"
  * documentURIToFileName("file:///c%3A/path/to/file.ts") === "c:/path/to/file.ts"
  * documentURIToFileName("untitled:Untitled-1") === "^/untitled/ts-nul-authority/Untitled-1"
- * documentURIToFileName("vscode-vfs://github/microsoft/typescript-go/file.ts") === "^/vscode-vfs/github/microsoft/typescript-go/file.ts"
+ * documentURIToFileName("vscode-vfs://github/microsoft/TypeScript/file.ts") === "^/vscode-vfs/github/microsoft/TypeScript/file.ts"
  */
 export declare function documentURIToFileName(uri: string): string;

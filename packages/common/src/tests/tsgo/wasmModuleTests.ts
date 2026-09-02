@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { readFileSync } from "node:fs";
-import { createVirtualFileSystem } from "../../../../../submodules/typescript-go/_packages/native-preview/dist/api/fs.js";
-import { createWasmAPI, getDefaultWasmModule } from "../../../../../submodules/typescript-go/_packages/native-preview/dist/api/wasm/api.js";
+import { createVirtualFileSystem } from "../../../../../submodules/typescript-go/packages/typescript/dist/api/fs.js";
+import { createWasmAPI, getDefaultWasmModule } from "../../../../../submodules/typescript-go/packages/typescript/dist/api/wasm/api.js";
 import { initializeWasm } from "../../tsgo/wasmModule";
 
 /**
@@ -112,7 +112,7 @@ describe("initializeWasm", () => {
 
 /** Where the reactor sits in the tsgo client this package builds against. */
 function wasmPath() {
-  return new URL("../../../../../submodules/typescript-go/_packages/native-preview/dist/typescript.wasm", import.meta.url);
+  return new URL("../../../../../submodules/typescript-go/packages/typescript/dist/typescript.wasm", import.meta.url);
 }
 
 /** That whatever `initializeWasm` last supplied is what a new session runs on. */

@@ -1360,27 +1360,27 @@ export declare function ExtendsClauseableNode<T extends Constructor<ExtendsClaus
 
 export interface ExtendsClauseableNode {
   /** Gets the extends clauses. */
-  getExtends(): ExpressionWithTypeArguments[];
+  getExtends(): HeritageClauseTypeNode[];
   /**
    * Adds multiple extends clauses.
    * @param texts - Texts to add for the extends clause.
    */
-  addExtends(texts: ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[];
+  addExtends(texts: ReadonlyArray<string | WriterFunction> | WriterFunction): HeritageClauseTypeNode[];
   /**
    * Adds an extends clause.
    * @param text - Text to add for the extends clause.
    */
-  addExtends(text: string): ExpressionWithTypeArguments;
+  addExtends(text: string): HeritageClauseTypeNode;
   /**
    * Inserts multiple extends clauses.
    * @param texts - Texts to insert for the extends clause.
    */
-  insertExtends(index: number, texts: ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[];
+  insertExtends(index: number, texts: ReadonlyArray<string | WriterFunction> | WriterFunction): HeritageClauseTypeNode[];
   /**
    * Inserts an extends clause.
    * @param text - Text to insert for the extends clause.
    */
-  insertExtends(index: number, text: string): ExpressionWithTypeArguments;
+  insertExtends(index: number, text: string): HeritageClauseTypeNode;
   /**
    * Removes the extends at the specified index.
    * @param index - Index to remove.
@@ -1390,7 +1390,7 @@ export interface ExtendsClauseableNode {
    * Removes the specified extends.
    * @param extendsNode - Node of the extend to remove.
    */
-  removeExtends(extendsNode: ExpressionWithTypeArguments): this;
+  removeExtends(extendsNode: HeritageClauseTypeNode): this;
 }
 
 type ExtendsClauseableNodeExtensionType = Node & HeritageClauseableNode;
@@ -1437,27 +1437,27 @@ export declare function ImplementsClauseableNode<T extends Constructor<Implement
 
 export interface ImplementsClauseableNode {
   /** Gets the implements clauses. */
-  getImplements(): ExpressionWithTypeArguments[];
+  getImplements(): HeritageClauseTypeNode[];
   /**
    * Adds an implements clause.
    * @param text - Text to add for the implements clause.
    */
-  addImplements(text: string): ExpressionWithTypeArguments;
+  addImplements(text: string): HeritageClauseTypeNode;
   /**
    * Adds multiple implements clauses.
    * @param text - Texts to add for the implements clause.
    */
-  addImplements(text: ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[];
+  addImplements(text: ReadonlyArray<string | WriterFunction> | WriterFunction): HeritageClauseTypeNode[];
   /**
    * Inserts an implements clause.
    * @param text - Text to insert for the implements clause.
    */
-  insertImplements(index: number, texts: ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[];
+  insertImplements(index: number, texts: ReadonlyArray<string | WriterFunction> | WriterFunction): HeritageClauseTypeNode[];
   /**
    * Inserts multiple implements clauses.
    * @param text - Texts to insert for the implements clause.
    */
-  insertImplements(index: number, text: string): ExpressionWithTypeArguments;
+  insertImplements(index: number, text: string): HeritageClauseTypeNode;
   /**
    * Removes the implements at the specified index.
    * @param index - Index to remove.
@@ -1467,7 +1467,7 @@ export interface ImplementsClauseableNode {
    * Removes the specified implements.
    * @param implementsNode - Node of the implements to remove.
    */
-  removeImplements(implementsNode: ExpressionWithTypeArguments): this;
+  removeImplements(implementsNode: HeritageClauseTypeNode): this;
 }
 
 type ImplementsClauseableNodeExtensionType = Node & HeritageClauseableNode;
@@ -6124,9 +6124,15 @@ export declare class ParameterDeclaration extends ParameterDeclarationBase<ts.Pa
   getParentOrThrow(message?: string | (() => string)): NonNullable<NodeParentType<ts.ParameterDeclaration>>;
 }
 
+/**
+ * A node in a heritage clause. A class's `extends` names an expression; `implements`
+ * and an interface's `extends` name types, which the compiler parses as type references.
+ */
+export type HeritageClauseTypeNode = ExpressionWithTypeArguments | TypeReferenceNode;
+
 export declare class HeritageClause extends Node<ts.HeritageClause> {
   /** Gets all the type nodes for the heritage clause. */
-  getTypeNodes(): ExpressionWithTypeArguments[];
+  getTypeNodes(): HeritageClauseTypeNode[];
   /** Gets the heritage clause token. */
   getToken(): SyntaxKind.ExtendsKeyword | SyntaxKind.ImplementsKeyword;
   /**
@@ -6138,7 +6144,7 @@ export declare class HeritageClause extends Node<ts.HeritageClause> {
    * Removes the expression from the heritage clause.
    * @param expressionNode - Expression to remove.
    */
-  removeExpression(expressionNode: ExpressionWithTypeArguments): this;
+  removeExpression(expressionNode: HeritageClauseTypeNode): this;
   /** @inheritdoc **/
   getParent(): NodeParentType<ts.HeritageClause>;
   /** @inheritdoc **/

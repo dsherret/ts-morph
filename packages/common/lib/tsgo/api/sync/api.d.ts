@@ -1,5 +1,4 @@
 /// <reference lib="esnext.disposable" />
-/// <reference path="../node/node.d.ts" preserve="true" />
 import { CheckFlags } from "../../enums/checkFlags.enum";
 import { CompletionItemKind } from "../../enums/completionItemKind.enum";
 import { DiagnosticCategory } from "../../enums/diagnosticCategory.enum";
@@ -12,27 +11,42 @@ import { SignatureFlags } from "../../enums/signatureFlags.enum";
 import { SignatureKind } from "../../enums/signatureKind.enum";
 import { SymbolFlags } from "../../enums/symbolFlags.enum";
 import { TypeFlags } from "../../enums/typeFlags.enum";
+import { TypeFormatFlags } from "../../enums/typeFormatFlags.enum";
 import { TypePredicateKind } from "../../enums/typePredicateKind.enum";
-import { type __String, type Expression, type Identifier, ModifierFlags, type Node, type Path, type SourceFile, type SyntaxKind, type TypeNode } from "../../ast/index";
+import { type __String, type Declaration, type Expression, type Identifier, ModifierFlags, type Node, type Path, type SourceFile, type SyntaxKind, type TypeNode } from "../../ast/index";
 import type { APIOptions, LSPConnectionOptions } from "../options";
-import type { CodeFixAction, CombinedCodeActions, CompilerOptions, DocumentIdentifier, DocumentPosition, FileSpan, FileTextEdits, FormattingOptions, LSPUpdateSnapshotParams, OrganizeImportsMode, ParsedCommandLine, ProjectConfig, ProjectReference, ProjectResponse, QuotePreference, SignatureResponse, SourceFileMetadata, SymbolResponse, TextEdit, TypeAcquisition, TypeResponse, UpdateSnapshotParams, UpdateSnapshotResponse } from "../proto";
+import type { CompilerOptions, Diagnostic, DocumentIdentifier, DocumentPosition, LSPUpdateSnapshotParams, ParsedCommandLine, ProjectConfig, ProjectReference, ProjectResponse, ReadConfigFileResponse, SignaturePropertyMethod, SignatureResponse, SourceFileIdentity, SourceFileMetadata, SymbolPropertyMethod, SymbolResponse, SymbolsPropertyMethod, TextEdit, TypeAcquisition, TypePropertyMethod, TypeResponse, TypesPropertyMethod, UpdateSnapshotParams, UpdateSnapshotResponse } from "../proto";
+import type { CodeFixAction, CombinedCodeActions, FileSpan, FileTextEdits, FormattingOptions, OrganizeImportsMode, QuotePreference } from "../proto";
+import type { RenameOptions } from "./types";
 import { SourceFileCache } from "../sourceFileCache";
 import type { RequestTiming, TimingAccumulators, TimingInfo } from "../timing";
 import { Client, type ClientSocketOptions, type ClientSpawnOptions } from "./client";
-import type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, EmitOutput, EmitOutputFile, EmitResult, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, NumberLiteralType, ObjectType, RenameOptions, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType } from "./types";
+import type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, EmitOutput, EmitOutputFile, EmitResult, FormatDiagnosticsHost, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction as APIImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, NumberLiteralType, ObjectType, StringLiteralType, StringMappingType, StructuredType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType } from "./types";
+export { formatDiagnostics, formatDiagnosticsWithColorAndContext } from "../diagnosticFormatter";
 export { documentURIToFileName, fileNameToDocumentURI } from "../path";
-export { CheckFlags, CompletionItemKind, DiagnosticCategory, ElementFlags, EmitOnly, ModifierFlags, ModuleKind, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
-export type { APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, DocumentIdentifier, DocumentPosition, EmitOutput, EmitOutputFile, EmitResult, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, ParsedCommandLine, ProjectConfig, ProjectReference, RenameOptions, RequestTiming, SourceFileMetadata, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, TextEdit, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, Type, TypeAcquisition, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
-export declare class API<FromLSP extends boolean = false> {
+export { CheckFlags, CompletionItemKind, DiagnosticCategory, ElementFlags, EmitOnly, ModifierFlags, ModuleKind, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypeFormatFlags, TypePredicateKind };
+export type { APIImportAdderAction as ImportAdderAction, APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, DocumentIdentifier, DocumentPosition, EmitOutput, EmitOutputFile, EmitResult, FormatDiagnosticsHost, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, ParsedCommandLine, ProjectConfig, ProjectReference, ReadConfigFileResponse, RenameOptions, RequestTiming, SourceFileIdentity, SourceFileMetadata, StringLiteralType, StringMappingType, StructuredType, SubstitutionType, TemplateLiteralType, TextEdit, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, Type, TypeAcquisition, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType, };
+export interface TranspileOptions {
+    compilerOptions?: CompilerOptions;
+    fileName?: string;
+    reportDiagnostics?: boolean;
+}
+export interface TranspileOutput {
+    outputText: string;
+    diagnostics?: readonly Diagnostic[];
+    sourceMapText?: string;
+}
+export declare class API<FromLSP extends boolean = false> implements FormatDiagnosticsHost {
     private client;
     private sourceFileCache;
+    private parseDecoder;
     private toPath;
+    private currentDirectory;
+    private getCanonicalFileNameWorker;
     private initialized;
     private activeSnapshots;
     private latestSnapshot;
     private compilerVersion;
-    /** Decodes what {@link parseSourceFile} returns; the cached trees have their own. */
-    private parseDecoder;
     readonly internal: InternalAPI;
     /** The compiler's own version, e.g. `7.1.0-dev`. */
     get version(): string;
@@ -43,28 +57,23 @@ export declare class API<FromLSP extends boolean = false> {
      */
     static fromLSPConnection(options: LSPConnectionOptions): API<true>;
     private ensureInitialized;
+    getCurrentDirectory(): string;
+    getCanonicalFileName(fileName: string): string;
+    getNewLine(): string;
     parseConfigFile(file: DocumentIdentifier): ParsedCommandLine;
-    /**
-     * Parses text as a source file, without opening a snapshot or building a program.
-     *
-     * This is what a purely syntactic edit costs: a caller that has just rewritten a
-     * file's text and wants the tree back needs a parse of that one file and nothing
-     * else, where `updateSnapshot` clones a program and rebuilds whatever depends on it.
-     *
-     * The nodes carry the same handles the program's own parse of the same text would,
-     * so a handle taken from this tree resolves against whatever program later holds
-     * that text. It resolves against nothing until one does: the caller is responsible
-     * for the text reaching the compiler — by writing it where the compiler reads and
-     * naming it in the next `updateSnapshot` — before it asks anything semantic about a
-     * node.
-     *
-     * @param file - The file the text belongs to. Its extension decides the script kind,
-     * exactly as it does for a file the compiler reads itself.
-     * @param text - The text to parse.
-     * @param context - The snapshot and project to take parse options from. They are
-     * read, never opened; with neither, or with a pair that has been released, the
-     * defaults stand — which can only misreport the file's module-ness, never move a node.
-     */
+    parseCommandLine(commandLine: readonly string[]): ParsedCommandLine;
+    readConfigFile(file: DocumentIdentifier): ReadConfigFileResponse;
+    parseJsonConfigFileContent(json: any, options: {
+        configDirectory: string;
+        configFileName?: never;
+    } | {
+        configFileName: DocumentIdentifier;
+        configDirectory?: never;
+    }): ParsedCommandLine;
+    transpileModule(input: string, options?: TranspileOptions): TranspileOutput;
+    transpileModuleFromFile(fileName: string, options?: TranspileOptions): TranspileOutput;
+    transpileDeclaration(input: string, options?: TranspileOptions): TranspileOutput;
+    transpileDeclarationFromFile(fileName: string, options?: TranspileOptions): TranspileOutput;
     parseSourceFile(file: DocumentIdentifier, text: string, context?: {
         snapshot: number;
         project: Path;
@@ -105,7 +114,8 @@ export declare class Snapshot {
     private disposed;
     private onDispose;
     private snapshotRegistry;
-    constructor(data: UpdateSnapshotResponse, client: Client, sourceFileCache: SourceFileCache, toPath: (fileName: string) => Path, onDispose: () => void);
+    readonly internal: SnapshotInternalAPI;
+    constructor(data: UpdateSnapshotResponse, client: Client, sourceFileCache: SourceFileCache, toPath: (fileName: string) => Path, formatDiagnosticsHost: FormatDiagnosticsHost, onDispose: () => void);
     getProjects(): readonly Project[];
     getProject(configFileName: string): Project | undefined;
     getDefaultProjectForFile(file: DocumentIdentifier): Project | undefined;
@@ -125,8 +135,8 @@ declare class SnapshotObjectRegistry {
     getOrCreateSymbol(data: SymbolResponse): Symbol;
     getSymbol(id: number): Symbol | undefined;
     clear(): void;
-    fetchSymbol(source: Symbol | Signature | Type, method: string, handle: number | undefined, projectId?: Path): Symbol;
-    fetchSymbols(source: Symbol | Signature | Type, method: string, handles?: readonly number[], projectId?: Path): readonly Symbol[];
+    fetchSymbol(source: Symbol | Signature | Type, method: SymbolPropertyMethod, handle: number | undefined, projectId: Path): Symbol;
+    fetchSymbols(source: Symbol | Signature | Type, method: SymbolsPropertyMethod, handles: readonly number[] | undefined, projectId: Path): readonly Symbol[];
 }
 declare class ProjectObjectRegistry {
     private client;
@@ -143,12 +153,12 @@ declare class ProjectObjectRegistry {
     getOrCreateSignature(data: SignatureResponse): Signature;
     getSignature(id: number): Signature | undefined;
     clear(): void;
-    fetchOptionalType<T extends Type>(source: Symbol | Signature | Type, method: string, handle: number | false | undefined): T | undefined;
-    fetchType<T extends Type>(source: Symbol | Signature | Type, method: string, handle: number | false | undefined): T;
-    fetchSymbol(source: Symbol | Signature | Type, method: string, handle: number | undefined): Symbol;
-    fetchSignature(source: Symbol | Signature | Type, method: string, handle: number | undefined): Signature;
-    fetchTypes(source: Symbol | Signature | Type, method: string, handles?: readonly number[]): readonly Type[];
-    fetchSymbols(source: Symbol | Signature | Type, method: string, handles?: readonly number[]): readonly Symbol[];
+    fetchOptionalType<T extends Type>(source: Symbol | Signature | Type, method: TypePropertyMethod, handle: number | false | undefined): T | undefined;
+    fetchType<T extends Type>(source: Symbol | Signature | Type, method: TypePropertyMethod, handle: number | false | undefined): T;
+    fetchSymbol(source: Symbol | Signature | Type, method: SymbolPropertyMethod, handle: number | undefined): Symbol;
+    fetchSignature(source: Symbol | Signature | Type, method: SignaturePropertyMethod, handle: number | undefined): Signature;
+    fetchTypes(source: Symbol | Signature | Type, method: TypesPropertyMethod, handles?: readonly number[]): readonly Type[];
+    fetchSymbols(source: Symbol | Signature | Type, method: SymbolsPropertyMethod, handles?: readonly number[]): readonly Symbol[];
     fetchBaseTypes(source: Type): readonly Type[];
     fetchPropertiesOfType(source: Type): readonly Symbol[];
     fetchApparentPropertiesOfType(source: Type): readonly Symbol[];
@@ -160,6 +170,7 @@ declare class ProjectObjectRegistry {
 export declare class Project {
     readonly id: Path;
     readonly configFileName: string;
+    readonly currentDirectory: string;
     /** The project's config, without its root file list — see `getRootFileNames`. */
     readonly parsedCommandLine: ProjectConfig;
     /** @deprecated Use `parsedCommandLine.options`. */
@@ -167,10 +178,11 @@ export declare class Project {
     readonly program: Program;
     readonly checker: Checker;
     readonly emitter: Emitter;
+    readonly languageService: LanguageService;
     private client;
     private snapshotId;
     private rootFileNames;
-    constructor(data: ProjectResponse, snapshotId: number, client: Client, sourceFileCache: SourceFileCache, toPath: (fileName: string) => Path, snapshotRegistry: SnapshotObjectRegistry);
+    constructor(data: ProjectResponse, snapshotId: number, client: Client, sourceFileCache: SourceFileCache, toPath: (fileName: string) => Path, formatDiagnosticsHost: FormatDiagnosticsHost, snapshotRegistry: SnapshotObjectRegistry);
     /**
      * The project's root file names, as its config resolved them.
      *
@@ -181,7 +193,9 @@ export declare class Project {
      * read.
      */
     getRootFileNames(): readonly string[];
-    getImportAdderEdits(file: DocumentIdentifier, actions: readonly ImportAdderAction[]): readonly TextEdit[];
+    /** @deprecated Use `languageService.getImportAdderEdits`. */
+    getImportAdderEdits(file: DocumentIdentifier, actions: readonly APIImportAdderAction[]): readonly TextEdit[];
+    /** @deprecated Use `languageService.getImportEditsForSymbols`. */
     getImportEditsForSymbols(file: DocumentIdentifier, symbols: readonly Symbol[], options?: GetImportEditsForSymbolsOptions): readonly TextEdit[];
     /** Returns the edits that format an entire file. */
     formatDocument(file: DocumentIdentifier, options?: FormattingOptions): readonly TextEdit[];
@@ -220,15 +234,31 @@ export declare class Project {
     getCombinedCodeFix(file: DocumentIdentifier, fixId: string, options?: FormattingOptions, quotePreference?: QuotePreference): CombinedCodeActions;
     dispose(): void;
 }
-export declare class Program {
+export declare class LanguageService {
+    private snapshotId;
+    private project;
+    private client;
+    private objectRegistry;
+    constructor(snapshotId: number, project: Project, client: Client, objectRegistry: ProjectObjectRegistry);
+    getImportAdderEdits(file: DocumentIdentifier, actions: readonly APIImportAdderAction[]): readonly TextEdit[];
+    getImportEditsForSymbols(file: DocumentIdentifier, symbols: readonly Symbol[], options?: GetImportEditsForSymbolsOptions): readonly TextEdit[];
+    getReferencedSymbolsForNode(node: Node, position: number): ReferencedSymbolEntry[];
+    getSignatureUsage(signatureDecl: Node): SignatureUsage[];
+    getCompletionsAtPosition(document: string, position: number, options?: CompletionOptions): CompletionInfo | undefined;
+}
+export declare class Program implements FormatDiagnosticsHost {
     private snapshotId;
     private project;
     private client;
     private sourceFileCache;
     private toPath;
+    private formatDiagnosticsHost;
     private decoder;
     private sourceFileMetadataCache;
-    constructor(snapshotId: number, project: Project, client: Client, sourceFileCache: SourceFileCache, toPath: (fileName: string) => Path);
+    constructor(snapshotId: number, project: Project, client: Client, sourceFileCache: SourceFileCache, toPath: (fileName: string) => Path, formatDiagnosticsHost: FormatDiagnosticsHost);
+    getCurrentDirectory(): string;
+    getCanonicalFileName(fileName: string): string;
+    getNewLine(): string;
     getCompilerOptions(): CompilerOptions;
     getSourceFile(file: DocumentIdentifier): SourceFile | undefined;
     getSourceFileNames(): readonly string[];
@@ -278,30 +308,30 @@ export declare class Program {
      */
     getConfigSourceFile(file: DocumentIdentifier): SourceFile | undefined;
     /**
-     * Get syntactic (parse) diagnostics for a specific file or all files.
-     * @param file - Optional file to get diagnostics for. If omitted, returns diagnostics for all files.
+     * Get syntactic (parse) diagnostics for specific files or all files.
+     * @param file - Optional file(s) to get diagnostics for. If omitted, returns diagnostics for all files.
      */
-    getSyntacticDiagnostics(file?: DocumentIdentifier): readonly Diagnostic[];
+    getSyntacticDiagnostics(file?: DocumentIdentifier | readonly DocumentIdentifier[]): readonly Diagnostic[];
     /**
-     * Get binder diagnostics for a specific file or all files.
-     * @param file - Optional file to get diagnostics for. If omitted, returns diagnostics for all files.
+     * Get binder diagnostics for specific files or all files.
+     * @param file - Optional file(s) to get diagnostics for. If omitted, returns diagnostics for all files.
      */
-    getBindDiagnostics(file?: DocumentIdentifier): readonly Diagnostic[];
+    getBindDiagnostics(file?: DocumentIdentifier | readonly DocumentIdentifier[]): readonly Diagnostic[];
     /**
-     * Get semantic (type-check) diagnostics for a specific file or all files.
-     * @param file - Optional file to get diagnostics for. If omitted, returns diagnostics for all files.
+     * Get semantic (type-check) diagnostics for specific files or all files.
+     * @param file - Optional file(s) to get diagnostics for. If omitted, returns diagnostics for all files.
      */
-    getSemanticDiagnostics(file?: DocumentIdentifier): readonly Diagnostic[];
+    getSemanticDiagnostics(file?: DocumentIdentifier | readonly DocumentIdentifier[]): readonly Diagnostic[];
     /**
-     * Get suggestion diagnostics for a specific file or all files.
-     * @param file - Optional file to get diagnostics for. If omitted, returns diagnostics for all files.
+     * Get suggestion diagnostics for specific files or all files.
+     * @param file - Optional file(s) to get diagnostics for. If omitted, returns diagnostics for all files.
      */
-    getSuggestionDiagnostics(file?: DocumentIdentifier): readonly Diagnostic[];
+    getSuggestionDiagnostics(file?: DocumentIdentifier | readonly DocumentIdentifier[]): readonly Diagnostic[];
     /**
-     * Get declaration emit diagnostics for a specific file or all files.
-     * @param file - Optional file to get diagnostics for. If omitted, returns diagnostics for all files.
+     * Get declaration emit diagnostics for specific files or all files.
+     * @param file - Optional file(s) to get diagnostics for. If omitted, returns diagnostics for all files.
      */
-    getDeclarationDiagnostics(file?: DocumentIdentifier): readonly Diagnostic[];
+    getDeclarationDiagnostics(file?: DocumentIdentifier | readonly DocumentIdentifier[]): readonly Diagnostic[];
     /**
      * Get program-wide diagnostics for the project, including compiler options diagnostics.
      */
@@ -342,20 +372,17 @@ export declare class Checker {
     private wellKnownSymbols;
     private wellKnownSignatures;
     constructor(snapshotId: number, project: Project, client: Client, objectRegistry: ProjectObjectRegistry);
+    getSymbolOfDeclaration(node: Node): Symbol | undefined;
+    symbolToString(symbol: Symbol, enclosingDeclaration?: Node): string;
+    getAmbientModules(): readonly Symbol[];
+    getExportedSymbolsOfFiles(files: readonly DocumentIdentifier[]): readonly (readonly ExportedSymbol[])[];
     dispose(): void;
     getSymbolAtLocation(node: Node): Symbol | undefined;
     getSymbolAtLocation(nodes: readonly Node[]): (Symbol | undefined)[];
-    /**
-     * Gets the symbol a declaration node declares, or `undefined` if the node is
-     * not a declaration.
-     *
-     * `getSymbolAtLocation` answers for the *name* of a declaration, so an
-     * anonymous one — an arrow function, an object literal, a call signature —
-     * has nothing to ask it with. This asks the declaration itself.
-     */
-    getSymbolOfDeclaration(node: Node): Symbol | undefined;
     getSymbolAtPosition(file: DocumentIdentifier, position: number): Symbol | undefined;
     getSymbolAtPosition(file: DocumentIdentifier, positions: readonly number[]): (Symbol | undefined)[];
+    getSymbolOfSourceFile(file: DocumentIdentifier): Symbol | undefined;
+    getSymbolOfSourceFile(files: readonly DocumentIdentifier[]): (Symbol | undefined)[];
     /**
      * Get the type of a symbol. Always returns a type; for symbols whose type
      * cannot be determined the checker yields the error type (use
@@ -370,8 +397,11 @@ export declare class Checker {
      */
     getDeclaredTypeOfSymbol(symbol: Symbol): Type;
     getReferencesToSymbolInFile(file: DocumentIdentifier, symbol: Symbol): NodeHandle[];
+    /** @deprecated Use `project.languageService.getReferencedSymbolsForNode`. */
     getReferencedSymbolsForNode(node: Node, position: number): ReferencedSymbolEntry[];
+    /** @deprecated Use `project.languageService.getSignatureUsage`. */
     getSignatureUsage(signatureDecl: Node): SignatureUsage[];
+    /** @deprecated Use `project.languageService.getCompletionsAtPosition`. */
     getCompletionsAtPosition(document: string, position: number, options?: CompletionOptions): CompletionInfo | undefined;
     /**
      * Get the type at a node location. Always returns a type; for nodes whose
@@ -390,6 +420,10 @@ export declare class Checker {
     getTypeAtPosition(file: DocumentIdentifier, position: number): Type | undefined;
     getTypeAtPosition(file: DocumentIdentifier, positions: readonly number[]): (Type | undefined)[];
     resolveName(name: string, meaning: SymbolFlags, location?: Node | DocumentPosition, excludeGlobals?: boolean): Symbol | undefined;
+    /**
+     * Returns all symbols with the given meaning that are visible at `location`.
+     */
+    getSymbolsInScope(location: Node | DocumentPosition, meaning: SymbolFlags): readonly Symbol[];
     getResolvedSymbol(node: Identifier): Symbol | undefined;
     getContextualType(node: Expression): Type | undefined;
     /** Get the base type of a literal type (e.g. `number` for `42`). Always returns a type. */
@@ -430,15 +464,10 @@ export declare class Checker {
     getUnknownType(): Type;
     getBigIntType(): Type;
     getESSymbolType(): Type;
+    getNonPrimitiveType(): Type;
     typeToTypeNode(type: Type, enclosingDeclaration?: Node, flags?: number): TypeNode | undefined;
     signatureToSignatureDeclaration(signature: Signature, kind: SyntaxKind, enclosingDeclaration?: Node, flags?: NodeBuilderFlags): Node | undefined;
-    typeToString(type: Type, enclosingDeclaration?: Node, flags?: number): string;
-    /**
-     * Renders a symbol the way the checker names it at `enclosingDeclaration`. A
-     * module symbol reads as the specifier that declaration's file would import
-     * it by.
-     */
-    symbolToString(symbol: Symbol, enclosingDeclaration?: Node): string;
+    typeToString(type: Type, enclosingDeclaration?: Node, flags?: TypeFormatFlags): string;
     isContextSensitive(node: Node): boolean;
     isArrayType(type: Type): boolean;
     isTupleType(type: Type): boolean;
@@ -457,6 +486,8 @@ export declare class Checker {
     getBaseTypes(type: InterfaceType): readonly Type[];
     /** Get the apparent type of a type. Always returns a type. */
     getApparentType(type: Type): Type;
+    /** Get the reduced type of a type. Always returns a type. */
+    getReducedType(type: Type): Type;
     getPropertiesOfType(type: Type): readonly Symbol[];
     getIndexInfosOfType(type: Type): readonly IndexInfo[];
     /**
@@ -477,6 +508,11 @@ export declare class Checker {
      * {@link Checker.isUnknownSymbol} to detect it).
      */
     getAliasedSymbol(symbol: Symbol): Symbol;
+    /**
+     * Get the fully qualified name of a symbol, walking up its parent chain
+     * (e.g. `"/path/to/module".Namespace.Name`).
+     */
+    getFullyQualifiedName(symbol: Symbol): string;
     getImmediateAliasedSymbol(symbol: Symbol): Symbol | undefined;
     /**
      * Fetch (once, then cache) the handle ids of the per-checker singleton
@@ -510,37 +546,12 @@ export declare class Checker {
      * resolved).
      */
     isUnknownSignature(signature: Signature): boolean;
-    /**
-     * Returns the symbols of the project's ambient module declarations, that is
-     * every global whose name is a quoted module specifier.
-     */
-    getAmbientModules(): readonly Symbol[];
     getExportsOfModule(symbol: Symbol): readonly Symbol[];
-    /**
-     * Returns what each of the named files exports, and where each exported name is
-     * declared.
-     *
-     * This is {@link getExportsOfModule} with the questions either side of it folded in
-     * — which symbol a file is, and where each export's declarations are — and with the
-     * files batched, so that sweeping a project costs one request rather than three per
-     * file. A file the program does not hold, or one that is not a module, answers with
-     * an empty list.
-     *
-     * The declarations reported are the exported symbol's own. An export specifier or an
-     * import comes back as itself, not as whatever it names: following those is the
-     * caller's, because only the caller knows what it wants from the far end.
-     */
-    getExportedSymbolsOfFiles(files: readonly DocumentIdentifier[]): readonly (readonly ExportedSymbol[])[];
     getMemberInModuleExports(symbol: Symbol, name: string): Symbol | undefined;
     getJsDocTagsOfSymbol(symbol: Symbol): readonly JSDocTagInfo[];
     getDocumentationCommentOfSymbol(symbol: Symbol): string;
     getJsDocTagsOfSignature(signature: Signature): readonly JSDocTagInfo[];
     getDocumentationCommentOfSignature(signature: Signature): string;
-    /**
-     * Returns every symbol visible at the given location whose meaning matches the
-     * requested flags, walking outwards from the location to the globals.
-     */
-    getSymbolsInScope(location: Node, meaning: SymbolFlags): readonly Symbol[];
     /**
      * Returns the symbols the binder placed in the node's own local scope, in declaration
      * order. Nodes that do not hold locals return an empty array.
@@ -551,8 +562,6 @@ export declare class Checker {
      * when the type cannot be awaited.
      */
     getAwaitedType(type: Type): Type | undefined;
-    /** Returns the symbol's name qualified by each of its parents. */
-    getFullyQualifiedName(symbol: Symbol): string;
     /**
      * Get the type arguments of a type reference (e.g. the `string` in `Array<string>`).
      */
@@ -584,19 +593,22 @@ export declare class Emitter {
     constructor(client: Client);
     printNode(node: Node, options?: PrintNodeOptions): string;
 }
-/** One name a module exports, and the declarations of the symbol it is exported on. */
-export interface ExportedSymbol {
-    /** The display name (escaped underscores removed). */
-    readonly name: string;
-    /** The escaped (`__String`) name, which is the key in the module's export table. */
-    readonly escapedName: __String;
+export declare class SnapshotInternalAPI {
+    private snapshotId;
+    private client;
+    constructor(snapshotId: number, client: Client);
     /**
-     * The exported symbol's own declarations. An export specifier or an import is
-     * reported as itself, not as whatever it names.
+     * Format a synthesized node with the correct indentation for insertion at a
+     * specific position in an existing source file.
+     *
+     * @param node The synthesized AST node to format.
+     * @param file The target file where the node will be inserted.
+     * @param position The UTF-16 code-unit offset in the target file for insertion.
+     * @returns The formatted text of the node, indented for the insertion position.
      */
-    readonly declarations: readonly NodeHandle[];
+    formatNodeForInsertion(node: Node, file: DocumentIdentifier, position: number): string;
 }
-export declare class NodeHandle {
+export declare class NodeHandle<out T extends Node = Node> {
     /**
      * The project this handle was produced in, used as the default for {@link resolve}.
      * Node handles are only meaningful within a project's program, so the producing project
@@ -612,7 +624,7 @@ export declare class NodeHandle {
      * and looking up the node by index. If no project is passed, the project that produced
      * the handle is used.
      */
-    resolve(project?: Project): Node | undefined;
+    resolve(project?: Project): T | undefined;
 }
 /** A symbol definition paired with all of its reference nodes. */
 export interface ReferencedSymbolEntry {
@@ -661,8 +673,8 @@ export declare class Symbol {
     readonly name: string;
     readonly flags: SymbolFlags;
     readonly checkFlags: CheckFlags;
-    readonly declarations: readonly NodeHandle[];
-    readonly valueDeclaration: NodeHandle | undefined;
+    readonly declarations: readonly NodeHandle<Declaration>[];
+    readonly valueDeclaration: NodeHandle<Declaration> | undefined;
     private readonly parent;
     private readonly exportSymbol;
     private membersCache;
@@ -723,6 +735,7 @@ declare class TypeObject implements Type {
     private default;
     private nonNullableType;
     private apparentType;
+    private reducedType;
     private properties;
     private apparentProperties;
     private callSignatures;
@@ -744,6 +757,7 @@ declare class TypeObject implements Type {
     getNumberIndexType(): Type | undefined;
     private getNumberIndexTypeWorker;
     getApparentType(): Type;
+    getReducedType(): Type;
     getIndexInfos(): readonly IndexInfo[];
     getAliasSymbol(): Symbol | undefined;
     getTarget(): Type;
@@ -819,7 +833,7 @@ export declare class Signature {
     private flags;
     private objectRegistry;
     readonly id: number;
-    readonly declaration?: NodeHandle | undefined;
+    readonly declaration?: NodeHandle<Declaration> | undefined;
     readonly typeParameters?: readonly number[] | undefined;
     readonly parameters: readonly number[];
     readonly thisParameter?: number | undefined;
@@ -837,4 +851,9 @@ export declare class Signature {
     get isAbstract(): boolean;
     getJsDocTags(checker: Checker): readonly JSDocTagInfo[];
     getDocumentationComment(checker: Checker): string;
+}
+export interface ExportedSymbol {
+    readonly name: string;
+    readonly escapedName: __String;
+    readonly declarations: readonly NodeHandle[];
 }

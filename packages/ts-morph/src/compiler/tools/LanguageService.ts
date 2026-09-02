@@ -198,7 +198,7 @@ export class LanguageService {
     });
     const locations: RenameLocation[] = [];
     for (const fileEdits of fileTextEdits) {
-      for (const edit of fileEdits.edits) {
+      for (const edit of fileEdits.edits ?? []) {
         locations.push(
           new RenameLocation(this.#context, {
             fileName: fileEdits.fileName,
@@ -331,7 +331,7 @@ export class LanguageService {
     const fileName = this.#getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
     const settings = toFormattingOptions(this.#fillSettings(formatSettings));
     const result = this.compilerObject.getCombinedCodeFix(fileName, fixId, settings, this.#getQuotePreference());
-    return new CombinedCodeActions(this.#context, { changes: result.changes.map(toFileTextChanges) });
+    return new CombinedCodeActions(this.#context, { changes: (result.changes ?? []).map(toFileTextChanges) });
   }
 
   /**
@@ -359,7 +359,7 @@ export class LanguageService {
     return fixes.map(fix =>
       new CodeFixAction(this.#context, {
         description: fix.description,
-        changes: fix.changes.map(toFileTextChanges),
+        changes: (fix.changes ?? []).map(toFileTextChanges),
       })
     );
   }
@@ -620,7 +620,7 @@ function toTextChange(edit: ts.TextEdit): ts.TextChange {
 }
 
 function toFileTextChanges(fileEdits: ts.FileTextEdits): ts.FileTextChanges {
-  return { fileName: fileEdits.fileName, textChanges: fileEdits.edits.map(toTextChange) };
+  return { fileName: fileEdits.fileName, textChanges: (fileEdits.edits ?? []).map(toTextChange) };
 }
 
 /**
@@ -936,7 +936,7 @@ function getAdjustedLocationForExtendsOrImplements(token: Node, parent: Node): N
     const types = parent.getTypeNodes();
     // more than one type named is ambiguous, so nothing is adjusted to
     if (types.length === 1)
-      return types[0].getExpression();
+      return Node.isExpressionWithTypeArguments(types[0]) ? types[0].getExpression() : types[0].getTypeName();
     return undefined;
   }
   if (token.getKind() !== SyntaxKind.ExtendsKeyword)

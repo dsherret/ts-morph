@@ -14,8 +14,8 @@ in an existing clone), then build the tsgo compiler once:
 ```bash
 cd submodules/typescript-go
 npm ci
-node _scripts/build-wasm.mjs
-cd _packages/native-preview
+node packages/typescript/scripts/build-wasm.mjs
+cd packages/typescript
 npx tsc -b
 ```
 

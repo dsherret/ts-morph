@@ -7,8 +7,8 @@
  * on the Go side, so anything that asks the compiler about a node — the checker,
  * find-references — cannot be given one.
  */
-import { RemoteNode } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/node/node.js";
-import type { Node } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/ast.js";
+import { RemoteNode } from "../../../../submodules/typescript-go/packages/typescript/dist/api/node/node.js";
+import type { Node } from "../../../../submodules/typescript-go/packages/typescript/dist/ast/ast.js";
 
 /** Gets if the node was rebuilt on the client and so has no compiler handle. */
 export function isReconstructedNode(node: Node): boolean {

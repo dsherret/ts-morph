@@ -452,7 +452,7 @@ which 28.0.0 did too.
 **`getLibFiles()` and `libFolderInMemoryPath` are gone** from
 `@ts-morph/common`. They existed to serve the copy. If you were using
 `getLibFiles()` to seed a folder for `libFolderPath`, read the files from a
-`typescript` install, or from the fork's `internal/bundled/libs`.
+`typescript` install, or from the fork's `tsc/internal/bundled/libs`.
 
 **`skipLoadingLibFiles: true` means what it always meant** — no lib files in the
 program, and the compiler reporting every missing global type as a diagnostic. It
@@ -672,6 +672,20 @@ the wrappers could never be instantiated. `SyntaxKind.JSDocTag` — classic's
 catch-all — is now `SyntaxKind.JSDocUnknownTag`, and the `JSDocUnknownTag`
 wrapper is reachable under the new kind.
 
+**`implements` and an interface's `extends` name type references.** TypeScript
+7.1's parser produces a `TypeReference` for each type an `implements` clause or an
+interface's `extends` clause names, where every heritage clause element used to be
+an `ExpressionWithTypeArguments`. A class's `extends` still names an expression and
+is unchanged. So `HeritageClause#getTypeNodes()`, `getImplements()` and an
+interface's `getExtends()` return `HeritageClauseTypeNode[]` — the union of
+`ExpressionWithTypeArguments` and `TypeReferenceNode` — and at run time a valid
+`implements I<T>` is a `TypeReferenceNode`: read the name with `getTypeName()`
+rather than `getExpression()`, and narrow with `Node.isTypeReference` where both
+can occur. `ClassDeclaration#getExtends()` still returns `ExpressionWithTypeArguments`.
+`getText()`, the structures (`implements: string[]`), `addImplements`,
+`insertImplements` and `removeImplements` are unaffected. This comes from the
+compiler rather than from ts-morph, so it is not one this fork can revert.
+
 **Binder internals are not on nodes.** `.symbol`, `.locals` and `.emitNode` are
 not properties of a client-side node: the node is a lazy view over a binary
 buffer and the binder's tables live on the Go side.
@@ -789,17 +803,12 @@ probe.)_
   | `const w = { m: f }`         | `{ m: (a: number) => number; }` | `{ m: typeof f; }` |
 
   All three measured. Reverting the widening belongs upstream.
-- **`TypeFormatFlags` is an alias of `NodeBuilderFlags`, and the alias is
-  backwards.** tsgo's `typeToString` takes `NodeBuilderFlags`, so that is what
-  ts-morph declares under the name `TypeFormatFlags`. Measured: 18 members shared
-  with 28.0.0's `TypeFormatFlags`, 6 gone (`AddUndefined`,
-  `WriteArrowStyleSignature`, `InArrayType`, `InElementType`,
-  `InFirstTypeArgument`, `NodeBuilderFlagsMask`), 15 `NodeBuilderFlags`-only
-  members added. **Five of the six removed values are live under other meanings**,
-  so a persisted numeric mask silently changes behaviour. The Go compiler does
-  have a real `TypeFormatFlags` whose values match 28.0.0's and which the API
-  already casts the client's number to — the alias is a routing gap, not a
-  design decision ([TODO.md](./TODO.md)).
+- **`TypeFormatFlags` is a real enum again.** It was an alias of
+  `NodeBuilderFlags` for a while, which lost six members and reused five of their
+  values under other meanings. The compiler's `typeToString` now takes
+  `TypeFormatFlags` itself, and ts-morph exports that enum: every 28.0.0 member is
+  present with its 28.0.0 value, and `NodeBuilderFlags` is a distinct type once
+  more.
 - **Documentation comes back as one plain string.** tsgo renders a documentation
   comment or a JSDoc tag as one string rather than a classified
   `SymbolDisplayPart[]`, so the whole string arrives as a single part of kind
@@ -1302,7 +1311,6 @@ brunt of the compiler's own API changes.
 These are unfinished, not chosen. They are tracked in [TODO.md](./TODO.md) and
 several are one routing change in the compiler fork away:
 
-- `TypeFormatFlags` as a real enum rather than a `NodeBuilderFlags` alias.
 - `format.GetIndentation`, which would delete the text-based indenter.
 - The rest of `FormatCodeSettings` (`insertSpace…`, `semicolons`,
   `baseIndentSize`, `placeOpenBraceOnNewLineFor…`).

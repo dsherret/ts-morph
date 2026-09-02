@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { tsgo } from "../rollupPluginTsgo.mjs";
 
-const tsgoPackage = new URL("../../submodules/typescript-go/_packages/native-preview/", import.meta.url);
+const tsgoPackage = new URL("../../submodules/typescript-go/packages/typescript/", import.meta.url);
 const emitDir = "./dist-rollup";
 const isDeno = process.env.BUILD === "deno";
 const isBrowser = process.env.BUILD === "browser";
@@ -47,7 +47,9 @@ export default [{
  * style imports are only resolvable through that package's own `imports` map.
  * Left alone they stay external and the bundle throws
  * `Cannot find module '#enums/modifierFlags'` on load, so map them the same way
- * the package's `imports` field does.
+ * the package's `imports` field does. `#getExePath` and `#syncChannel` carry a
+ * `browser` condition there, which is what keeps `node:child_process` and
+ * `node:fs` out of the browser bundle, so the same choice is made here.
  */
 function tsgoInternalImports() {
   const resolve = path => fileURLToPath(new URL(path, tsgoPackage));
@@ -57,7 +59,9 @@ function tsgoInternalImports() {
       if (source.startsWith("#enums/"))
         return resolve(`dist/enums/${source.slice("#enums/".length)}.js`);
       if (source === "#getExePath")
-        return resolve("lib/getExePath.js");
+        return resolve(isBrowser ? "lib/getExePath.browser.js" : "lib/getExePath.js");
+      if (source === "#syncChannel")
+        return resolve(isBrowser ? "dist/api/syncChannel.browser.js" : "dist/api/syncChannel.js");
       if (source === "#vscode-jsonrpc/node")
         return resolve("vendor/vscode-jsonrpc/lib/node/main.js");
       return null;

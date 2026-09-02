@@ -30,8 +30,8 @@ jobs:
         run: |
           cd submodules/typescript-go
           npm ci
-          node _scripts/build-wasm.mjs
-          cd _packages/native-preview
+          node packages/typescript/scripts/build-wasm.mjs
+          cd packages/typescript
           npx tsc -b
       - name: Build
         run: |
@@ -86,8 +86,8 @@ jobs:
         run: |
           cd submodules/typescript-go
           npm ci
-          node _scripts/build-wasm.mjs
-          cd _packages/native-preview
+          node packages/typescript/scripts/build-wasm.mjs
+          cd packages/typescript
           npx tsc -b
       - run: deno install
       - name: Build

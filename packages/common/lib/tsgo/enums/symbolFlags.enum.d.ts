@@ -65,6 +65,5 @@ export declare enum SymbolFlags {
     ClassMember = 106500,
     ExportSupportsDefaultModifier = 112,
     ExportDoesNotSupportDefaultModifier = -113,
-    Classifiable = 2885600,
     LateBindingContainer = 6256
 }

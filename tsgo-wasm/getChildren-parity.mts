@@ -12,7 +12,7 @@ import assert from "node:assert";
 import { createRequire } from "node:module";
 const require = createRequire(new URL("../submodules/typescript-go/package.json", import.meta.url));
 const ts = require("typescript") as typeof import("typescript");
-import { formatSyntaxKind } from "../submodules/typescript-go/_packages/native-preview/src/ast/utils.ts";
+import { formatSyntaxKind } from "../submodules/typescript-go/packages/typescript/src/ast/utils.ts";
 import { getChildren, getLastToken } from "./getChildren.mts";
 import { createInProcessApi } from "./seam.mts";
 
@@ -126,15 +126,29 @@ function alignKnownAstDivergence(goKids: any[], tsKids: readonly ts.Node[]): { g
   return undefined;
 }
 
+/**
+ * The second difference that comes from the AST rather than from getChildren:
+ * TypeScript 7.1 parses the types an `implements` clause or an interface's
+ * `extends` clause names as `TypeReference` nodes, where classic parsed every
+ * heritage clause element as `ExpressionWithTypeArguments`. The child spans are
+ * the same — a name and optional type arguments — so only the kind differs, and
+ * the two kinds are treated as one when the mapping is checked.
+ */
+const heritageElementKinds = new Set(["TypeReference", "ExpressionWithTypeArguments"]);
+
+function sameKindOrHeritageElement(a: string, b: string): boolean {
+  return a === b || (heritageElementKinds.has(a) && heritageElementKinds.has(b));
+}
+
 function recordKindMapping(goKind: number, tsKind: ts.SyntaxKind, path: string): void {
   const tsName = tsKindName(tsKind);
   const seenTs = goToTs.get(goKind);
   if (seenTs === undefined) goToTs.set(goKind, tsName);
-  else if (seenTs !== tsName)
+  else if (!sameKindOrHeritageElement(seenTs, tsName))
     mismatches.push(`at ${path}: tsgo kind ${formatSyntaxKind(goKind)} maps to both ${seenTs} and ${tsName}`);
   const seenGo = tsToGo.get(tsName);
   if (seenGo === undefined) tsToGo.set(tsName, goKind);
-  else if (seenGo !== goKind) {
+  else if (!sameKindOrHeritageElement(formatSyntaxKind(seenGo), formatSyntaxKind(goKind))) {
     mismatches.push(
       `at ${path}: classic ${tsName} maps to both ${formatSyntaxKind(seenGo)} and ${formatSyntaxKind(goKind)}`,
     );
@@ -186,7 +200,7 @@ function compareFile(fileName: string, text: string, scriptKind: ts.ScriptKind):
         const goParent = formatSyntaxKind(goKid.parent.kind);
         const tsParent = tsKindName(tsKid.parent.kind);
         const mapped = goToTs.get(goKid.parent.kind);
-        if (mapped !== undefined && mapped !== tsParent) {
+        if (mapped !== undefined && !sameKindOrHeritageElement(mapped, tsParent)) {
           mismatches.push(
             `at ${fileName} ${path}: token ${span(goKid)} parent is ${goParent} (${mapped}), classic says ${tsParent}`,
           );

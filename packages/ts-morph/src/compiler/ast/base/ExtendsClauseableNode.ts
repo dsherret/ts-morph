@@ -6,7 +6,7 @@ import { Constructor, WriterFunction } from "../../../types";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
-import { ExpressionWithTypeArguments } from "../type/ExpressionWithTypeArguments";
+import { HeritageClauseTypeNode } from "../general/HeritageClause";
 import { HeritageClauseableNode } from "./HeritageClauseableNode";
 
 export type ExtendsClauseableNodeExtensionType = Node & HeritageClauseableNode;
@@ -15,27 +15,27 @@ export interface ExtendsClauseableNode {
   /**
    * Gets the extends clauses.
    */
-  getExtends(): ExpressionWithTypeArguments[];
+  getExtends(): HeritageClauseTypeNode[];
   /**
    * Adds multiple extends clauses.
    * @param texts - Texts to add for the extends clause.
    */
-  addExtends(texts: ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[];
+  addExtends(texts: ReadonlyArray<string | WriterFunction> | WriterFunction): HeritageClauseTypeNode[];
   /**
    * Adds an extends clause.
    * @param text - Text to add for the extends clause.
    */
-  addExtends(text: string): ExpressionWithTypeArguments;
+  addExtends(text: string): HeritageClauseTypeNode;
   /**
    * Inserts multiple extends clauses.
    * @param texts - Texts to insert for the extends clause.
    */
-  insertExtends(index: number, texts: ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[];
+  insertExtends(index: number, texts: ReadonlyArray<string | WriterFunction> | WriterFunction): HeritageClauseTypeNode[];
   /**
    * Inserts an extends clause.
    * @param text - Text to insert for the extends clause.
    */
-  insertExtends(index: number, text: string): ExpressionWithTypeArguments;
+  insertExtends(index: number, text: string): HeritageClauseTypeNode;
   /**
    * Removes the extends at the specified index.
    * @param index - Index to remove.
@@ -45,27 +45,27 @@ export interface ExtendsClauseableNode {
    * Removes the specified extends.
    * @param extendsNode - Node of the extend to remove.
    */
-  removeExtends(extendsNode: ExpressionWithTypeArguments): this;
+  removeExtends(extendsNode: HeritageClauseTypeNode): this;
 }
 
 export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNodeExtensionType>>(Base: T): Constructor<ExtendsClauseableNode> & T {
   return class extends Base implements ExtendsClauseableNode {
-    getExtends(): ExpressionWithTypeArguments[] {
+    getExtends(): HeritageClauseTypeNode[] {
       const extendsClause = this.getHeritageClauseByKind(SyntaxKind.ExtendsKeyword);
       return extendsClause?.getTypeNodes() ?? [];
     }
 
-    addExtends(texts: ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[];
-    addExtends(text: string): ExpressionWithTypeArguments;
-    addExtends(text: string | ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[] | ExpressionWithTypeArguments {
+    addExtends(texts: ReadonlyArray<string | WriterFunction> | WriterFunction): HeritageClauseTypeNode[];
+    addExtends(text: string): HeritageClauseTypeNode;
+    addExtends(text: string | ReadonlyArray<string | WriterFunction> | WriterFunction): HeritageClauseTypeNode[] | HeritageClauseTypeNode {
       return this.insertExtends(this.getExtends().length, text as any);
     }
 
-    insertExtends(index: number, texts: ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[];
-    insertExtends(index: number, text: string): ExpressionWithTypeArguments;
+    insertExtends(index: number, texts: ReadonlyArray<string | WriterFunction> | WriterFunction): HeritageClauseTypeNode[];
+    insertExtends(index: number, text: string): HeritageClauseTypeNode;
     insertExtends(index: number, texts: string | ReadonlyArray<string | WriterFunction> | WriterFunction):
-      | ExpressionWithTypeArguments[]
-      | ExpressionWithTypeArguments
+      | HeritageClauseTypeNode[]
+      | HeritageClauseTypeNode
     {
       const originalExtends = this.getExtends();
       const wasStringInput = typeof texts === "string";
@@ -113,8 +113,8 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
     }
 
     removeExtends(index: number): this;
-    removeExtends(implementsNode: ExpressionWithTypeArguments): this;
-    removeExtends(implementsNodeOrIndex: ExpressionWithTypeArguments | number) {
+    removeExtends(implementsNode: HeritageClauseTypeNode): this;
+    removeExtends(implementsNodeOrIndex: HeritageClauseTypeNode | number) {
       const extendsClause = this.getHeritageClauseByKind(SyntaxKind.ExtendsKeyword);
       if (extendsClause == null)
         throw new errors.InvalidOperationError("Cannot remove an extends when none exist.");

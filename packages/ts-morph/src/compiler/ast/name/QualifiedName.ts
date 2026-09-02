@@ -15,6 +15,8 @@ export class QualifiedName extends Node<ts.QualifiedName> {
    * Gets the right identifier of the qualified name.
    */
   getRight(): Identifier {
-    return this._getNodeFromCompilerNode(this.compilerNode.right);
+    // the compiler declares the right side as possibly a private identifier, which the
+    // parser never produces there
+    return this._getNodeFromCompilerNode(this.compilerNode.right as ts.Identifier);
   }
 }

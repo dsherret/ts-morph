@@ -650,8 +650,9 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
       if (extendsClause == null)
         return undefined;
 
+      // a class's `extends` names an expression, so the compiler parses it as one
       const types = extendsClause.getTypeNodes();
-      return types.length === 0 ? undefined : types[0];
+      return types.length === 0 ? undefined : types[0] as ExpressionWithTypeArguments;
     }
 
     addMembers(members: string | WriterFunction | ReadonlyArray<string | WriterFunction | ClassMemberStructures>) {

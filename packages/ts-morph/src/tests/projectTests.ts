@@ -1983,7 +1983,7 @@ function assertHasSourceFiles(project: Project, filePaths: string[]) {
  * longer carries copies of them — the compiler does.
  */
 function writeLibFiles(fileSystem: FileSystemHost, folderPath: string) {
-  const libFolderPath = fileURLToPath(new URL("../../../../submodules/typescript-go/internal/bundled/libs", import.meta.url));
+  const libFolderPath = fileURLToPath(new URL("../../../../submodules/typescript-go/tsc/internal/bundled/libs", import.meta.url));
   for (const name of readdirSync(libFolderPath)) {
     if (name.startsWith("lib") && name.endsWith(".d.ts"))
       fileSystem.writeFileSync(`${folderPath}/${name}`, readFileSync(path.join(libFolderPath, name), "utf-8"));

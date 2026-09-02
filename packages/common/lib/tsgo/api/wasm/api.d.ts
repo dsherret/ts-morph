@@ -51,6 +51,11 @@ export interface WasmApiOptions {
     /** Virtual filesystem callbacks. */
     fs?: FileSystem;
     /**
+     * Bytes of linear memory to reserve for the Go heap before the runtime starts.
+     * Defaults to 128 MiB; 0 reserves nothing. See {@link defaultInitialHeapSize}.
+     */
+    initialHeapSize?: number;
+    /**
      * Resolves a module specifier in place of the compiler. See the option of
      * the same name in ../options.ts for what an answer means.
      */
@@ -68,6 +73,26 @@ export interface WasmApiOptions {
  * Creates a synchronous {@link API} backed by the in-process WebAssembly reactor.
  */
 export declare function createWasmAPI(options?: WasmApiOptions): API;
+/**
+ * How much linear memory {@link createWasmAPI} reserves for the Go heap by default.
+ *
+ * Go's wasm runtime records the size of linear memory when it starts and hands
+ * that whole range to its allocator; only once the heap outgrows it does it call
+ * `memory.grow`, and it grows by exactly what the allocator asked for. Every one
+ * of those grows is dear in V8: the memory's `ArrayBuffer` is detached and
+ * replaced, and the growth counts against the external-memory budget that
+ * triggers JavaScript garbage collections. Encoding a syntax tree allocates
+ * heavily and briefly, which is the shape that suffers most — profiling a
+ * 300-file check put `memory.grow` and the collector it provoked at 13% of all
+ * samples, and fetching 200 files' trees cost six times what it costs with the
+ * heap reserved up front. Growing once, here, before the runtime measures the
+ * memory, makes every later allocation an ordinary one.
+ *
+ * Reserved pages are committed lazily by the host, so the reservation costs no
+ * resident memory until the heap actually reaches it; 128 MiB covers a few
+ * hundred files with room to spare, and a heap that needs more grows as before.
+ */
+export declare const defaultInitialHeapSize: number;
 /**
  * Supplies the module every later {@link createWasmAPI} call instantiates.
  *

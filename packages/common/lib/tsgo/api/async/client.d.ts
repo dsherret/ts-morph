@@ -1,4 +1,5 @@
 import { type ClientOptions, type ClientSocketOptions, type ClientSpawnOptions } from "../options";
+import type { APIMethodInfo, SourceFileResponseMethod } from "../proto";
 import { TimingCollector, type TimingInfo } from "../timing";
 export type { ClientOptions, ClientSocketOptions, ClientSpawnOptions };
 /**
@@ -17,8 +18,8 @@ export declare class Client {
     private connectViaSpawn;
     private connectViaSocket;
     private registerFSCallbacks;
-    apiRequest<T>(method: string, params?: unknown): Promise<T>;
-    apiRequestBinary(method: string, params?: unknown): Promise<Uint8Array | undefined>;
+    apiRequest<K extends keyof APIMethodInfo>(method: K, params: APIMethodInfo[K]["params"]): Promise<APIMethodInfo[K]["result"]>;
+    apiRequestBinary<K extends SourceFileResponseMethod>(method: K, params: APIMethodInfo[K]["params"]): Promise<Uint8Array | undefined>;
     /**
      * Returns the timing collector that per-node materialization is reported
      * into, or undefined when timing collection is disabled. The returned

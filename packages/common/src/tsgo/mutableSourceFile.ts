@@ -20,7 +20,7 @@
  * program that produced it. A caller that needs a different path needs a
  * different file.
  */
-import type { SourceFile } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/index.js";
+import type { SourceFile } from "../../../../submodules/typescript-go/packages/typescript/dist/ast/index.js";
 
 /**
  * Assigns `value` to `key` even when the prototype exposes it as a getter with

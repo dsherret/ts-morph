@@ -26,30 +26,30 @@
 // ts-morph uses members such as `SyntaxKind.ClassDeclaration` in type position,
 // which only a real `enum` declaration supports; and they cannot be renumbered
 // because the values are the wire format shared with the Go compiler.
-export { CheckFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/checkFlags.enum.js";
-export { CompletionItemKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/completionItemKind.enum.js";
-export { DiagnosticCategory } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/diagnosticCategory.enum.js";
-export { ElementFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/elementFlags.enum.js";
-export { InternalSymbolName } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/internalSymbolName.enum.js";
-export { JsxEmit } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/jsxEmit.enum.js";
-export { LanguageVariant } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/languageVariant.enum.js";
-export { ModifierFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/modifierFlags.enum.js";
-export { ModuleDetectionKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/moduleDetectionKind.enum.js";
-export { ModuleKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/moduleKind.enum.js";
-export { ModuleResolutionKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/moduleResolutionKind.enum.js";
-export { NodeFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/nodeFlags.enum.js";
-export { ObjectFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/objectFlags.enum.js";
-export { OuterExpressionKinds } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/outerExpressionKinds.enum.js";
-export { ScriptKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/scriptKind.enum.js";
-export { ScriptTarget } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/scriptTarget.enum.js";
-export { SignatureKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/signatureKind.enum.js";
-export { SymbolFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/symbolFlags.enum.js";
-export { SyntaxKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/syntaxKind.enum.js";
-export { TokenFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/tokenFlags.enum.js";
-export { TypeFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/typeFlags.enum.js";
-export { TypePredicateKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/typePredicateKind.enum.js";
+export { CheckFlags } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/checkFlags.enum.js";
+export { CompletionItemKind } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/completionItemKind.enum.js";
+export { DiagnosticCategory } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/diagnosticCategory.enum.js";
+export { ElementFlags } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/elementFlags.enum.js";
+export { InternalSymbolName } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/internalSymbolName.enum.js";
+export { JsxEmit } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/jsxEmit.enum.js";
+export { LanguageVariant } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/languageVariant.enum.js";
+export { ModifierFlags } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/modifierFlags.enum.js";
+export { ModuleDetectionKind } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/moduleDetectionKind.enum.js";
+export { ModuleKind } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/moduleKind.enum.js";
+export { ModuleResolutionKind } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/moduleResolutionKind.enum.js";
+export { NodeFlags } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/nodeFlags.enum.js";
+export { ObjectFlags } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/objectFlags.enum.js";
+export { OuterExpressionKinds } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/outerExpressionKinds.enum.js";
+export { ScriptKind } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/scriptKind.enum.js";
+export { ScriptTarget } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/scriptTarget.enum.js";
+export { SignatureKind } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/signatureKind.enum.js";
+export { SymbolFlags } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/symbolFlags.enum.js";
+export { SyntaxKind } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/syntaxKind.enum.js";
+export { TokenFlags } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/tokenFlags.enum.js";
+export { TypeFlags } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/typeFlags.enum.js";
+export { TypePredicateKind } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/typePredicateKind.enum.js";
 
-import { NewLineKind as TsgoNewLineKind } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/newLineKind.enum.js";
+import { NewLineKind as TsgoNewLineKind } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/newLineKind.enum.js";
 
 /**
  * Which characters end a line.
@@ -78,8 +78,8 @@ export const NewLineKind: typeof TsgoNewLineKind & {
 export type NewLineKind = TsgoNewLineKind;
 
 // Node types and the `isXxx` guards, which ts-morph uses for narrowing.
-export type * from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/ast.js";
-export * from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/is.js";
+export type * from "../../../../submodules/typescript-go/packages/typescript/dist/ast/ast.js";
+export * from "../../../../submodules/typescript-go/packages/typescript/dist/ast/is.js";
 
 // Trivia and token scanning. ts-morph uses these to find comments and to walk
 // tokens when appending to lists.
@@ -91,13 +91,13 @@ export {
   isIdentifierText,
   skipTrivia,
   tokenToString,
-} from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/scanner.js";
+} from "../../../../submodules/typescript-go/packages/typescript/dist/ast/scanner.js";
 
 export {
   escapeLeadingUnderscores,
   formatSyntaxKind,
   unescapeLeadingUnderscores,
-} from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/utils.js";
+} from "../../../../submodules/typescript-go/packages/typescript/dist/ast/utils.js";
 
 // Comments attached to a node rather than read from a file, which a transform
 // uses to annotate what it builds. They travel with the node when it is printed.
@@ -108,12 +108,12 @@ export {
   getSyntheticTrailingComments,
   setSyntheticLeadingComments,
   setSyntheticTrailingComments,
-} from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/comments.js";
-export type { SynthesizedComment } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/comments.js";
+} from "../../../../submodules/typescript-go/packages/typescript/dist/ast/comments.js";
+export type { SynthesizedComment } from "../../../../submodules/typescript-go/packages/typescript/dist/ast/comments.js";
 
 // Node construction and traversal, which `Node#transform` hands to its visitor.
-export { visitEachChild, visitNode, visitNodes } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/visitor.js";
-export type { Visitor } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/visitor.js";
+export { visitEachChild, visitNode, visitNodes } from "../../../../submodules/typescript-go/packages/typescript/dist/ast/visitor.js";
+export type { Visitor } from "../../../../submodules/typescript-go/packages/typescript/dist/ast/visitor.js";
 /**
  * The node factory, adapted to the shape ts-morph's callers expect.
  *
@@ -132,9 +132,9 @@ export type { Visitor } from "../../../../submodules/typescript-go/_packages/nat
  *     the printer reads out of the file. Each `updateX` therefore carries the
  *     original's range and parent over, which is what `factory.update()` did.
  */
-import type { Identifier as TsgoIdentifier } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/ast.js";
-import * as generatedFactory from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/factory.generated.js";
-import { TokenFlags as TsgoTokenFlags } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/tokenFlags.enum.js";
+import type { Identifier as TsgoIdentifier } from "../../../../submodules/typescript-go/packages/typescript/dist/ast/ast.js";
+import * as generatedFactory from "../../../../submodules/typescript-go/packages/typescript/dist/ast/factory.generated.js";
+import { TokenFlags as TsgoTokenFlags } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/tokenFlags.enum.js";
 
 type GeneratedFactory = typeof generatedFactory;
 
@@ -257,7 +257,7 @@ function toNameNode(value: unknown) {
   return typeof value === "string" ? generatedFactory.createIdentifier(value) : value;
 }
 
-import type { CompilerOptions as TsgoCompilerOptions } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/compilerOptions.js";
+import type { CompilerOptions as TsgoCompilerOptions } from "../../../../submodules/typescript-go/packages/typescript/dist/api/proto.generated.js";
 
 /**
  * Compiler options, as tsgo parses and reports them.
@@ -323,35 +323,17 @@ export interface EditorSettings {
   trimTrailingWhitespace?: boolean;
 }
 
-/**
- * Flags controlling how a type is rendered as text.
- *
- * `typeToString` takes NodeBuilderFlags, so `TypeFormatFlags` is an alias of it
- * rather than an enum of its own. Two consequences are worth knowing:
- *
- *   - Six members do not exist: `AddUndefined`, `WriteArrowStyleSignature`,
- *     `InArrayType`, `InElementType`, `InFirstTypeArgument`,
- *     `NodeBuilderFlagsMask`.
- *   - Five of their values are live in NodeBuilderFlags under other meanings, so
- *     a numeric literal or a persisted bitmask silently changes behaviour:
- *       131072  AddUndefined             -> AllowAnonymousIdentifier
- *       262144  WriteArrowStyleSignature -> AllowEmptyUnionOrIntersection
- *       524288  InArrayType              -> AllowEmptyTuple
- *       2097152 InElementType            -> AllowEmptyIndexInfoType
- *       4194304 InFirstTypeArgument      -> InObjectTypeLiteral
- *   - Being an alias rather than a distinct enum, TypeFormatFlags and
- *     NodeBuilderFlags are now the same nominal type and mutually assignable.
- *
- * The members ts-morph itself passes by default (`UseTypeOfFunction`,
- * `NoTruncation`, `UseFullyQualifiedType`, `WriteTypeArgumentsOfSignature`,
- * `InTypeAlias`) have identical values in both enums.
- */
-export {
-  NodeBuilderFlags,
-  NodeBuilderFlags as TypeFormatFlags,
-} from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/nodeBuilderFlags.enum.js";
+export { NodeBuilderFlags } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/nodeBuilderFlags.enum.js";
 
-import type { Node } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/ast.js";
+/**
+ * Flags controlling how a type is rendered as text. A real enum with the
+ * `typescript` package's members and values: `typeToString` takes it directly.
+ * It used to be an alias of NodeBuilderFlags, which lacked six of the members
+ * and reused five of their values under other meanings.
+ */
+export { TypeFormatFlags } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/typeFormatFlags.enum.js";
+
+import type { Node } from "../../../../submodules/typescript-go/packages/typescript/dist/ast/ast.js";
 
 /**
  * Visits each stored child of a node, mirroring the free `ts.forEachChild`.
@@ -363,10 +345,10 @@ export function forEachChild<T>(node: Node, cbNode: (node: Node) => T | undefine
 }
 
 /** Gets the text of a JS doc comment, flattening links to their text. */
-export { getTextOfJSDocComment } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/jsdoc.js";
+export { getTextOfJSDocComment } from "../../../../submodules/typescript-go/packages/typescript/dist/ast/jsdoc.js";
 
 /** tsgo names this after the declaration union it narrows to. */
-export { isClassLikeDeclaration as isClassLike } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/is.js";
+export { isClassLikeDeclaration as isClassLike } from "../../../../submodules/typescript-go/packages/typescript/dist/ast/is.js";
 
 /*
  * Small node helpers the `typescript` package exposes as free functions. tsgo
@@ -379,10 +361,10 @@ import type {
   ExclamationToken as ExclamationTokenType,
   ModifiersBase,
   QuestionToken as QuestionTokenType,
-} from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/ast.generated.js";
-import { isDecorator, isVariableDeclarationList, isVariableStatement } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/is.js";
-import { ModifierFlags as ModifierFlagsValue } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/modifierFlags.enum.js";
-import { SyntaxKind as SyntaxKindValue } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/syntaxKind.enum.js";
+} from "../../../../submodules/typescript-go/packages/typescript/dist/ast/ast.generated.js";
+import { isDecorator, isVariableDeclarationList, isVariableStatement } from "../../../../submodules/typescript-go/packages/typescript/dist/ast/is.js";
+import { ModifierFlags as ModifierFlagsValue } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/modifierFlags.enum.js";
+import { SyntaxKind as SyntaxKindValue } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/syntaxKind.enum.js";
 
 /** Whether the node is one that can carry decorators — i.e. one that has a modifier list. */
 export function canHaveDecorators(node: Node): node is ModifiersBase {
@@ -455,11 +437,11 @@ function getPostfixTokenOfKind(node: Node, kind: SyntaxKindValue) {
   return withTokens.postfixToken?.kind === kind ? withTokens.postfixToken : undefined;
 }
 
-import { createVirtualFileSystem } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/fs.js";
-import type { API, PrintNodeOptions, Project } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/sync/api.js";
-import { createWasmAPI } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/wasm/api.js";
-import type { SourceFile as TsgoSourceFile } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/index.js";
-import { ScriptKind as ScriptKindValue } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/scriptKind.enum.js";
+import { createVirtualFileSystem } from "../../../../submodules/typescript-go/packages/typescript/dist/api/fs.js";
+import type { API, PrintNodeOptions, Project } from "../../../../submodules/typescript-go/packages/typescript/dist/api/sync/api.js";
+import { createWasmAPI } from "../../../../submodules/typescript-go/packages/typescript/dist/api/wasm/api.js";
+import type { SourceFile as TsgoSourceFile } from "../../../../submodules/typescript-go/packages/typescript/dist/ast/index.js";
+import { ScriptKind as ScriptKindValue } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/scriptKind.enum.js";
 
 /**
  * Parses text into a source file that belongs to no project of the caller's.
@@ -627,7 +609,6 @@ function knownExtension(fileName: string): string | undefined {
  * - The emit transformation pipeline: `createPrinter` and `transform`. tsgo
  *   prints on the server (see `printNode` above) and builds its emit transformers
  *   in Go from the compiler options, with no injection point.
- * - `TypeFormatFlags`; tsgo's `typeToString` takes NodeBuilderFlags.
  * - Config parsing: `parseJsonConfigFileContent`, `parseConfigFileTextToJson`,
  *   and `resolveModuleName`. tsgo exposes `parseConfigFile` on the API instead,
  *   which reads the file system through the API's own FileSystem callbacks —
@@ -636,9 +617,9 @@ function knownExtension(fileName: string): string | undefined {
  *   `.emitNode`), which must be routed through the checker.
  */
 
-export type { Diagnostic } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/sync/types.js";
+export type { Diagnostic } from "../../../../submodules/typescript-go/packages/typescript/dist/api/sync/types.js";
 
-import type { Diagnostic as TsgoDiagnostic } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/sync/types.js";
+import type { Diagnostic as TsgoDiagnostic } from "../../../../submodules/typescript-go/packages/typescript/dist/api/sync/types.js";
 
 /**
  * A diagnostic that belongs to a file.
@@ -685,7 +666,7 @@ export interface SymbolDisplayPart {
   kind: string;
 }
 
-import type { Program as TsgoProgram } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/sync/api.js";
+import type { Program as TsgoProgram } from "../../../../submodules/typescript-go/packages/typescript/dist/api/sync/api.js";
 
 /**
  * Every diagnostic the compiler reports before an emit, optionally for one file.
@@ -789,10 +770,10 @@ export type {
   ReferencedSymbolEntry as CompilerReferencedSymbolEntry,
   Signature,
   Symbol,
-} from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/sync/api.js";
+} from "../../../../submodules/typescript-go/packages/typescript/dist/api/sync/api.js";
 
 /** tsgo names the type checker `Checker`. */
-export type { Checker as TypeChecker } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/sync/api.js";
+export type { Checker as TypeChecker } from "../../../../submodules/typescript-go/packages/typescript/dist/api/sync/api.js";
 
 /**
  * The compiler object the language service operations hang off.
@@ -802,13 +783,13 @@ export type { Checker as TypeChecker } from "../../../../submodules/typescript-g
  * methods on the session's project, and the program and checker hang off it
  * too, so that project is what `LanguageService#compilerObject` returns.
  */
-export type { Project as LanguageService } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/sync/api.js";
+export type { Project as LanguageService } from "../../../../submodules/typescript-go/packages/typescript/dist/api/sync/api.js";
 
 /**
  * Which files an emit is restricted to. Replaces the `typescript` package's
  * `emitOnlyDtsFiles` boolean, which had no way to say "JS only".
  */
-export { EmitOnly } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/emitOnly.enum.js";
+export { EmitOnly } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/emitOnly.enum.js";
 
 /*
  * Plain request/response shapes of the tsgo session. A `DocumentIdentifier` is
@@ -823,7 +804,7 @@ export type {
   OrganizeImportsMode,
   QuotePreference,
   TextEdit,
-} from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/proto.js";
+} from "../../../../submodules/typescript-go/packages/typescript/dist/api/proto.js";
 
 export type {
   EmitResult,
@@ -843,7 +824,7 @@ export type {
   TypeReference,
   UnionOrIntersectionType,
   UnionType,
-} from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/sync/types.js";
+} from "../../../../submodules/typescript-go/packages/typescript/dist/api/sync/types.js";
 
 export type {
   IterationStatementBase as IterationStatement,
@@ -855,9 +836,9 @@ export type {
   PropertySignatureDeclaration as PropertySignature,
   UnaryExpressionBase as UnaryExpression,
   UpdateExpressionBase as UpdateExpression,
-} from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/ast.generated.js";
+} from "../../../../submodules/typescript-go/packages/typescript/dist/ast/ast.generated.js";
 
-export type { CommentKind, CommentRange } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/scanner.js";
+export type { CommentKind, CommentRange } from "../../../../submodules/typescript-go/packages/typescript/dist/ast/scanner.js";
 
 /*
  * Narrowed node types the `typescript` package declares but tsgo does not.
@@ -879,12 +860,12 @@ import type {
   PropertyAccessExpression,
   StringLiteral,
   SuperExpression as TsgoSuperExpression,
-} from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/ast.generated.js";
+} from "../../../../submodules/typescript-go/packages/typescript/dist/ast/ast.generated.js";
 
 /*
  * Unions and narrowings tsgo spells with a different name, or does not name at all.
  */
-export type { ClassLikeDeclaration as ClassLikeDeclarationBase } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/ast.generated.js";
+export type { ClassLikeDeclaration as ClassLikeDeclarationBase } from "../../../../submodules/typescript-go/packages/typescript/dist/ast/ast.generated.js";
 
 import type {
   ConstructorTypeNode,
@@ -892,8 +873,8 @@ import type {
   JsxOpeningFragment,
   JsxOpeningLikeElement,
   Token,
-} from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/ast.generated.js";
-import type { SyntaxKind as SyntaxKindEnum } from "../../../../submodules/typescript-go/_packages/native-preview/dist/enums/syntaxKind.enum.js";
+} from "../../../../submodules/typescript-go/packages/typescript/dist/ast/ast.generated.js";
+import type { SyntaxKind as SyntaxKindEnum } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/syntaxKind.enum.js";
 
 export type FunctionOrConstructorTypeNode = FunctionTypeNode | ConstructorTypeNode;
 export type JsxCallLike = JsxOpeningLikeElement | JsxOpeningFragment;
@@ -936,8 +917,8 @@ import type {
   TemplateLiteralLikeNodeBase as TsgoTemplateLiteralLikeNodeBase,
   TypeNodeBase as TsgoTypeNodeBase,
   TypeParameterDeclaration,
-} from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/ast.generated.js";
-import type { NodeArray as TsgoNodeArray } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/ast.js";
+} from "../../../../submodules/typescript-go/packages/typescript/dist/ast/ast.generated.js";
+import type { NodeArray as TsgoNodeArray } from "../../../../submodules/typescript-go/packages/typescript/dist/ast/ast.js";
 
 /** tsgo parses the keyword expressions as one `KeywordExpression` off `ExpressionBase`. */
 export interface ThisExpression extends PrimaryExpressionBase {
@@ -1032,8 +1013,8 @@ import type {
   JsxAttributeName,
   JsxNamespacedName,
   NewExpression,
-} from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/ast.generated.js";
-import type { EntityNameExpression } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/ast.js";
+} from "../../../../submodules/typescript-go/packages/typescript/dist/ast/ast.generated.js";
+import type { EntityNameExpression } from "../../../../submodules/typescript-go/packages/typescript/dist/ast/ast.js";
 
 export type CallLikeExpression = CallExpression | NewExpression | TaggedTemplateExpression | Decorator | JsxCallLike | InstanceofExpression;
 
@@ -1072,8 +1053,8 @@ import type {
   UpdateExpressionBase,
   VariableDeclarationList as TsgoVariableDeclarationList,
   VariableStatement,
-} from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/ast.generated.js";
-import type { NodeArray } from "../../../../submodules/typescript-go/_packages/native-preview/dist/ast/ast.js";
+} from "../../../../submodules/typescript-go/packages/typescript/dist/ast/ast.generated.js";
+import type { NodeArray } from "../../../../submodules/typescript-go/packages/typescript/dist/ast/ast.js";
 
 export interface PrefixUnaryExpression extends UpdateExpressionBase {
   readonly kind: SyntaxKindEnum.PrefixUnaryExpression;
@@ -1304,7 +1285,7 @@ export interface CombinedCodeActions {
  * carries only its text and the source file it came from — tsgo does not model a
  * byte order mark at all.
  */
-export type { EmitOutput, EmitOutputFile as OutputFile } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/sync/types.js";
+export type { EmitOutput, EmitOutputFile as OutputFile } from "../../../../submodules/typescript-go/packages/typescript/dist/api/sync/types.js";
 
 /**
  * Called for each output file in place of writing it.

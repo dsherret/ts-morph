@@ -2,7 +2,7 @@
 // the seam. Run from the repo root:
 //   node --experimental-strip-types --no-warnings --conditions @typescript/source tsgo-wasm/proof.mts
 import assert from "node:assert";
-import { SyntaxKind } from "../submodules/typescript-go/_packages/native-preview/src/ast/index.ts";
+import { SyntaxKind } from "../submodules/typescript-go/packages/typescript/src/ast/index.ts";
 import { createInProcessApi } from "./seam.mts";
 
 const api = createInProcessApi({

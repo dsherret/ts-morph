@@ -3,7 +3,7 @@ import { createDeclarationProject, folders, makeConstructorsPrivate, path, tsMor
 /** Where the tsgo client's declarations are vendored to, relative to `lib`. */
 const vendoredTsgoDir = "./tsgo";
 /** The part of a submodule specifier that precedes the path within the client's `dist`. */
-const clientDistSpecifier = "submodules/typescript-go/_packages/native-preview/dist/";
+const clientDistSpecifier = "submodules/typescript-go/packages/typescript/dist/";
 
 /** Memoizes stripComments, which runs once per candidate name otherwise. */
 const strippedCache = new Map<string, string>();

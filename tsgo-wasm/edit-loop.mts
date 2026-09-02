@@ -4,7 +4,7 @@
 // and deletion. Run from the repo root:
 //   node --experimental-strip-types --no-warnings --conditions @typescript/source tsgo-wasm/edit-loop.mts
 import assert from "node:assert";
-import { createVirtualFileSystem } from "../submodules/typescript-go/_packages/native-preview/src/api/fs.ts";
+import { createVirtualFileSystem } from "../submodules/typescript-go/packages/typescript/src/api/fs.ts";
 import { createInProcessApi } from "./seam.mts";
 
 const files: Record<string, string> = {

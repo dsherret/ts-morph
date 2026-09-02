@@ -12,7 +12,7 @@
  * are not covered — they resolve down a separate path in the compiler that has
  * no hook yet.
  */
-import type { ModuleNameResolver, ResolvedModuleName } from "../../../../submodules/typescript-go/_packages/native-preview/dist/api/options.js";
+import type { ModuleNameResolver, ResolvedModuleName } from "../../../../submodules/typescript-go/packages/typescript/dist/api/options.js";
 import type * as ts from "./ts";
 
 export type { ResolvedModuleName };

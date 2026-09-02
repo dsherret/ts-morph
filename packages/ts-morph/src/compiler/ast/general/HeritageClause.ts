@@ -1,13 +1,19 @@
 import { ts } from "@ts-morph/common";
 import { removeChildren, removeCommaSeparatedChild, verifyAndGetIndex } from "../../../manipulation";
 import { Node } from "../common";
-import { ExpressionWithTypeArguments } from "../type";
+import { ExpressionWithTypeArguments, TypeReferenceNode } from "../type";
+
+/**
+ * A node in a heritage clause. A class's `extends` names an expression; `implements`
+ * and an interface's `extends` name types, which the compiler parses as type references.
+ */
+export type HeritageClauseTypeNode = ExpressionWithTypeArguments | TypeReferenceNode;
 
 export class HeritageClause extends Node<ts.HeritageClause> {
   /**
    * Gets all the type nodes for the heritage clause.
    */
-  getTypeNodes(): ExpressionWithTypeArguments[] {
+  getTypeNodes(): HeritageClauseTypeNode[] {
     return this.compilerNode.types?.map(t => this._getNodeFromCompilerNode(t)) ?? [];
   }
 
@@ -27,12 +33,12 @@ export class HeritageClause extends Node<ts.HeritageClause> {
    * Removes the expression from the heritage clause.
    * @param expressionNode - Expression to remove.
    */
-  removeExpression(expressionNode: ExpressionWithTypeArguments): this;
+  removeExpression(expressionNode: HeritageClauseTypeNode): this;
   /**
    * @internal
    */
-  removeExpression(expressionNodeOrIndex: ExpressionWithTypeArguments | number): this;
-  removeExpression(expressionNodeOrIndex: ExpressionWithTypeArguments | number) {
+  removeExpression(expressionNodeOrIndex: HeritageClauseTypeNode | number): this;
+  removeExpression(expressionNodeOrIndex: HeritageClauseTypeNode | number) {
     const expressions = this.getTypeNodes();
     const expressionNodeToRemove = typeof expressionNodeOrIndex === "number" ? getExpressionFromIndex(expressionNodeOrIndex) : expressionNodeOrIndex;
 

@@ -1,4 +1,4 @@
-export declare const PROTOCOL_VERSION = 5;
+export declare const PROTOCOL_VERSION = 7;
 export declare const HEADER_OFFSET_METADATA = 0;
 export declare const HEADER_OFFSET_HASH_LO0 = 4;
 export declare const HEADER_OFFSET_HASH_LO1 = 8;

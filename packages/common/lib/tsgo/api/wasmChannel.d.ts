@@ -47,6 +47,8 @@ export interface SessionOptions {
 }
 export interface WasmMemory {
     buffer: ArrayBuffer;
+    /** Grows the memory by `delta` 64 KiB pages, returning the previous size in pages, or -1. */
+    grow(delta: number): number;
 }
 /** The exports of the tsgo-wasm reactor module. */
 export interface WasmExports {

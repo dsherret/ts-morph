@@ -15,7 +15,7 @@
     // scripts, which read this config through a TypeScript of their own; the
     // rollup config does the same for the JS side.
     "paths": {
-      "#enums/*": ["../../submodules/typescript-go/_packages/native-preview/dist/enums/*.enum.d.ts"]
+      "#enums/*": ["../../submodules/typescript-go/packages/typescript/dist/enums/*.enum.d.ts"]
     },
     // NOTE: src/tsgo imports the tsgo client from the submodule, which is outside
     // this rootDir. That is a TS6059 on a real emit; it only passes today because

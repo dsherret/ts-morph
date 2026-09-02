@@ -1,4 +1,5 @@
 import { type ClientOptions, type ClientSocketOptions, type ClientSpawnOptions, type ClientWasmOptions } from "../options";
+import type { APIMethodInfo, SourceFileResponseMethod } from "../proto";
 import { TimingCollector, type TimingInfo } from "../timing";
 export type { ClientOptions, ClientSocketOptions, ClientSpawnOptions, ClientWasmOptions };
 export declare class Client {
@@ -6,20 +7,10 @@ export declare class Client {
     private encoder;
     private timing;
     constructor(options: ClientOptions);
-    /**
-     * Wires the module resolver onto the channel.
-     *
-     * An empty answer on the wire means the host declined, which the compiler
-     * reads as "resolve this one yourself".
-     */
     private registerModuleNameResolver;
-    /**
-     * Wires virtual filesystem callbacks onto the channel. The wire contract is
-     * transport-independent, so this is shared by the subprocess and Wasm paths.
-     */
     private registerFsCallbacks;
-    apiRequest<T>(method: string, params?: unknown): T;
-    apiRequestBinary(method: string, params?: unknown): Uint8Array | undefined;
+    apiRequest<K extends keyof APIMethodInfo>(method: K, params?: APIMethodInfo[K]["params"]): APIMethodInfo[K]["result"];
+    apiRequestBinary<K extends SourceFileResponseMethod>(method: K, params?: APIMethodInfo[K]["params"]): Uint8Array | undefined;
     echo(payload: string): string;
     echoBinary(payload: Uint8Array): Uint8Array;
     /**

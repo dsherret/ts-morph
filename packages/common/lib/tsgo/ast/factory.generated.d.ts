@@ -1,7 +1,7 @@
 import { NodeFlags } from "../enums/nodeFlags.enum";
 import { SyntaxKind } from "../enums/syntaxKind.enum";
 import { TokenFlags } from "../enums/tokenFlags.enum";
-import type { ArrayBindingPattern, ArrayLiteralExpression, ArrayTypeNode, ArrowFunction, AsExpression, AssertsKeyword, AsteriskToken, AwaitExpression, AwaitKeyword, BigIntLiteral, BinaryExpression, BinaryOperatorToken, BindingElement, BindingName, Block, BreakStatement, CallExpression, CallSignatureDeclaration, CaseBlock, CaseClause, CaseOrDefaultClause, CatchClause, ClassDeclaration, ClassElement, ClassExpression, ClassStaticBlockDeclaration, ColonToken, ComputedPropertyName, ConciseBody, ConditionalExpression, ConditionalTypeNode, ConstructorDeclaration, ConstructorTypeNode, ConstructSignatureDeclaration, ContinueStatement, DebuggerStatement, Decorator, DefaultClause, DeleteExpression, DoStatement, DotDotDotToken, ElementAccessExpression, EmptyStatement, EndOfFile, EntityName, EnumDeclaration, EnumMember, EqualsGreaterThanToken, EqualsToken, ExclamationToken, ExportAssignment, ExportDeclaration, ExportSpecifier, Expression, ExpressionStatement, ExpressionWithTypeArguments, ExternalModuleReference, ForInitializer, ForInStatement, ForOfStatement, ForStatement, FunctionBody, FunctionDeclaration, FunctionExpression, FunctionTypeNode, GetAccessorDeclaration, HeritageClause, Identifier, IfStatement, ImportAttribute, ImportAttributeName, ImportAttributes, ImportClause, ImportDeclaration, ImportEqualsDeclaration, ImportPhaseModifierSyntaxKind, ImportSpecifier, ImportTypeNode, IndexedAccessTypeNode, IndexSignatureDeclaration, InferTypeNode, InterfaceDeclaration, IntersectionTypeNode, JSDoc, JSDocAllType, JSDocAugmentsTag, JSDocCallbackTag, JSDocComment, JSDocDeprecatedTag, JSDocFullName, JSDocImplementsTag, JSDocImportTag, JSDocLink, JSDocLinkCode, JSDocLinkPlain, JSDocNameReference, JSDocNonNullableType, JSDocNullableType, JSDocOptionalType, JSDocOverloadTag, JSDocOverrideTag, JSDocParameterTag, JSDocPrivateTag, JSDocPropertyTag, JSDocProtectedTag, JSDocPublicTag, JSDocReadonlyTag, JSDocReturnTag, JSDocSatisfiesTag, JSDocSeeTag, JSDocSignature, JSDocTag, JSDocTemplateTag, JSDocText, JSDocThisTag, JSDocThrowsTag, JSDocTypedefTag, JSDocTypeExpression, JSDocTypeLiteral, JSDocTypeTag, JSDocUnknownTag, JSDocVariadicType, JsxAttribute, JsxAttributeLike, JsxAttributeName, JsxAttributes, JsxAttributeValue, JsxChild, JsxClosingElement, JsxClosingFragment, JsxElement, JsxExpression, JsxFragment, JsxNamespacedName, JsxOpeningElement, JsxOpeningFragment, JsxSelfClosingElement, JsxSpreadAttribute, JsxTagNameExpression, JsxText, KeywordExpression, KeywordExpressionSyntaxKind, KeywordTypeNode, KeywordTypeSyntaxKind, LabeledStatement, LeftHandSideExpression, LiteralTypeNode, MappedTypeNode, MemberName, MetaProperty, MethodDeclaration, MethodSignatureDeclaration, MinusToken, MissingDeclaration, ModifierLike, ModuleBlock, ModuleBody, ModuleDeclaration, ModuleExportName, ModuleName, ModuleReference, NamedExportBindings, NamedExports, NamedImportBindings, NamedImports, NamedTupleMember, NamespaceExport, NamespaceExportDeclaration, NamespaceImport, NewExpression, Node, NodeArray, NonNullExpression, NoSubstitutionTemplateLiteral, NotEmittedStatement, NotEmittedTypeElement, NumericLiteral, ObjectBindingPattern, ObjectLiteralElementLike, ObjectLiteralExpression, OmittedExpression, OptionalTypeNode, ParameterDeclaration, ParenthesizedExpression, ParenthesizedTypeNode, PartiallyEmittedExpression, Path, PlusToken, PostfixUnaryExpression, PrefixUnaryExpression, PrivateIdentifier, PropertyAccessExpression, PropertyAssignment, PropertyDeclaration, PropertyName, PropertySignatureDeclaration, QualifiedName, QuestionDotToken, QuestionToken, ReadonlyKeyword, RegularExpressionLiteral, RestTypeNode, ReturnStatement, SatisfiesExpression, SemicolonClassElement, SetAccessorDeclaration, ShorthandPropertyAssignment, SourceFile, SpreadAssignment, SpreadElement, Statement, StringLiteral, SwitchStatement, SyntaxList, SyntheticExpression, SyntheticReferenceExpression, TaggedTemplateExpression, TemplateExpression, TemplateHead, TemplateLiteral, TemplateLiteralTypeNode, TemplateLiteralTypeSpan, TemplateMiddle, TemplateMiddleOrTail, TemplateSpan, TemplateTail, ThisTypeNode, ThrowStatement, Token, TokenSyntaxKind, TryStatement, TupleTypeNode, TypeAliasDeclaration, TypeAssertion, TypeElement, TypeLiteralNode, TypeNode, TypeOfExpression, TypeOperatorNode, TypeParameterDeclaration, TypePredicateNode, TypePredicateParameterName, TypeQueryNode, TypeReferenceNode, UnionTypeNode, VariableDeclaration, VariableDeclarationList, VariableStatement, VoidExpression, WhileStatement, WithStatement, YieldExpression } from "./ast";
+import type { ArrayBindingPattern, ArrayLiteralExpression, ArrayTypeNode, ArrowFunction, AsExpression, AssertsKeyword, AsteriskToken, AwaitExpression, AwaitKeyword, BigIntLiteral, BinaryExpression, BinaryOperatorToken, BindingElement, BindingName, Block, BreakStatement, CallExpression, CallSignatureDeclaration, CaseBlock, CaseClause, CaseOrDefaultClause, CatchClause, ClassDeclaration, ClassElement, ClassExpression, ClassStaticBlockDeclaration, ColonToken, ComputedPropertyName, ConciseBody, ConditionalExpression, ConditionalTypeNode, ConstructorDeclaration, ConstructorTypeNode, ConstructSignatureDeclaration, ContinueStatement, DebuggerStatement, Decorator, DefaultClause, DeleteExpression, DoStatement, DotDotDotToken, ElementAccessExpression, EmptyStatement, EndOfFile, EntityName, EnumDeclaration, EnumMember, EqualsGreaterThanToken, EqualsToken, ExclamationToken, ExportAssignment, ExportDeclaration, ExportSpecifier, Expression, ExpressionStatement, ExpressionWithTypeArguments, ExternalModuleReference, ForInitializer, ForInStatement, ForOfStatement, ForStatement, FunctionBody, FunctionDeclaration, FunctionExpression, FunctionTypeNode, GetAccessorDeclaration, HeritageClause, HeritageClauseElement, Identifier, IfStatement, ImportAttribute, ImportAttributeName, ImportAttributes, ImportClause, ImportDeclaration, ImportEqualsDeclaration, ImportPhaseModifierSyntaxKind, ImportSpecifier, ImportTypeNode, IndexedAccessTypeNode, IndexSignatureDeclaration, InferTypeNode, InterfaceDeclaration, IntersectionTypeNode, JSDoc, JSDocAllType, JSDocAugmentsTag, JSDocCallbackTag, JSDocComment, JSDocDeprecatedTag, JSDocFullName, JSDocImplementsTag, JSDocImportTag, JSDocLink, JSDocLinkCode, JSDocLinkPlain, JSDocNameReference, JSDocNonNullableType, JSDocNullableType, JSDocOptionalType, JSDocOverloadTag, JSDocOverrideTag, JSDocParameterTag, JSDocPrivateTag, JSDocPropertyTag, JSDocProtectedTag, JSDocPublicTag, JSDocReadonlyTag, JSDocReturnTag, JSDocSatisfiesTag, JSDocSeeTag, JSDocSignature, JSDocTag, JSDocTemplateTag, JSDocText, JSDocThisTag, JSDocThrowsTag, JSDocTypedefTag, JSDocTypeExpression, JSDocTypeLiteral, JSDocTypeTag, JSDocUnknownTag, JSDocVariadicType, JsxAttribute, JsxAttributeLike, JsxAttributeName, JsxAttributes, JsxAttributeValue, JsxChild, JsxClosingElement, JsxClosingFragment, JsxElement, JsxExpression, JsxFragment, JsxNamespacedName, JsxOpeningElement, JsxOpeningFragment, JsxSelfClosingElement, JsxSpreadAttribute, JsxTagNameExpression, JsxText, KeywordExpression, KeywordExpressionSyntaxKind, KeywordTypeNode, KeywordTypeSyntaxKind, LabeledStatement, LeftHandSideExpression, LiteralTypeNode, MappedTypeNode, MemberName, MetaProperty, MethodDeclaration, MethodSignatureDeclaration, MinusToken, MissingDeclaration, ModifierLike, ModuleBlock, ModuleBody, ModuleDeclaration, ModuleExportName, ModuleName, ModuleReference, NamedExportBindings, NamedExports, NamedImportBindings, NamedImports, NamedTupleMember, NamespaceExport, NamespaceExportDeclaration, NamespaceImport, NewExpression, Node, NodeArray, NonNullExpression, NoSubstitutionTemplateLiteral, NotEmittedStatement, NotEmittedTypeElement, NumericLiteral, ObjectBindingPattern, ObjectLiteralElementLike, ObjectLiteralExpression, OmittedExpression, OptionalTypeNode, ParameterDeclaration, ParenthesizedExpression, ParenthesizedTypeNode, PartiallyEmittedExpression, Path, PlusToken, PostfixUnaryExpression, PrefixUnaryExpression, PrivateIdentifier, PropertyAccessExpression, PropertyAssignment, PropertyDeclaration, PropertyName, PropertySignatureDeclaration, QualifiedName, QuestionDotToken, QuestionToken, ReadonlyKeyword, RegularExpressionLiteral, RestTypeNode, ReturnStatement, SatisfiesExpression, SemicolonClassElement, SetAccessorDeclaration, ShorthandPropertyAssignment, SourceFile, SpreadAssignment, SpreadElement, Statement, StringLiteral, SwitchStatement, SyntaxList, SyntheticExpression, SyntheticReferenceExpression, TaggedTemplateExpression, TemplateExpression, TemplateHead, TemplateLiteral, TemplateLiteralTypeNode, TemplateLiteralTypeSpan, TemplateMiddle, TemplateMiddleOrTail, TemplateSpan, TemplateTail, ThisTypeNode, ThrowStatement, Token, TokenSyntaxKind, TryStatement, TupleTypeNode, TypeAliasDeclaration, TypeAssertion, TypeElement, TypeLiteralNode, TypeNode, TypeOfExpression, TypeOperatorNode, TypeParameterDeclaration, TypePredicateNode, TypePredicateParameterName, TypeQueryNode, TypeReferenceNode, UnionTypeNode, VariableDeclaration, VariableDeclarationList, VariableStatement, VoidExpression, WhileStatement, WithStatement, YieldExpression } from "./ast";
 export declare class NodeObject {
     readonly kind: SyntaxKind;
     flags: NodeFlags;
@@ -20,6 +20,7 @@ export declare class NodeObject {
     get awaitModifier(): any;
     get block(): any;
     get body(): any;
+    get canonicalSourceFileName(): any;
     get caseBlock(): any;
     get catchClause(): any;
     get checkType(): any;
@@ -33,9 +34,11 @@ export declare class NodeObject {
     get condition(): any;
     get constraint(): any;
     get containsOnlyTriviaWhiteSpaces(): any;
+    get contentMapper(): any;
     get declarationList(): any;
     get declarations(): any;
     get defaultType(): any;
+    get diagnosticDirectives(): any;
     get dotDotDotToken(): any;
     get elementType(): any;
     get elements(): any;
@@ -93,6 +96,7 @@ export declare class NodeObject {
     get operand(): any;
     get operator(): any;
     get operatorToken(): any;
+    get originalText(): any;
     get parameterName(): any;
     get parameters(): any;
     get path(): any;
@@ -108,8 +112,10 @@ export declare class NodeObject {
     get referencedFiles(): any;
     get right(): any;
     get scriptKind(): any;
+    get spanMap(): any;
     get statement(): any;
     get statements(): any;
+    get supplementalSourceFileNames(): any;
     get tag(): any;
     get tagName(): any;
     get tags(): any;
@@ -135,6 +141,7 @@ export declare class NodeObject {
     get types(): any;
     get value(): any;
     get variableDeclaration(): any;
+    get virtualFileName(): any;
     get whenFalse(): any;
     get whenTrue(): any;
     forEachChild<T>(visitor: (node: Node) => T, visitArray?: (nodes: NodeArray<Node>) => T): T | undefined;
@@ -158,7 +165,7 @@ export declare function cloneNode<T extends Node>(node: T): T;
 export declare function createToken<TKind extends TokenSyntaxKind>(kind: TKind): Token<TKind>;
 export declare function createIdentifier(text: string): Identifier;
 export declare function createPrivateIdentifier(text: string): PrivateIdentifier;
-export declare function createQualifiedName(left: EntityName, right: Identifier): QualifiedName;
+export declare function createQualifiedName(left: EntityName, right: MemberName): QualifiedName;
 export declare function createComputedPropertyName(expression: Expression): ComputedPropertyName;
 export declare function createDecorator(expression: LeftHandSideExpression): Decorator;
 export declare function createEmptyStatement(): EmptyStatement;
@@ -188,7 +195,7 @@ export declare function createMissingDeclaration(modifiers?: readonly ModifierLi
 export declare function createFunctionDeclaration(modifiers: readonly ModifierLike[] | undefined, asteriskToken: AsteriskToken | undefined, name: Identifier | undefined, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type?: TypeNode, body?: FunctionBody): FunctionDeclaration;
 export declare function createClassDeclaration(modifiers: readonly ModifierLike[] | undefined, name: Identifier | undefined, typeParameters: readonly TypeParameterDeclaration[] | undefined, heritageClauses: readonly HeritageClause[] | undefined, members: readonly ClassElement[]): ClassDeclaration;
 export declare function createClassExpression(modifiers: readonly ModifierLike[] | undefined, name: Identifier | undefined, typeParameters: readonly TypeParameterDeclaration[] | undefined, heritageClauses: readonly HeritageClause[] | undefined, members: readonly ClassElement[]): ClassExpression;
-export declare function createHeritageClause(token: SyntaxKind.ExtendsKeyword | SyntaxKind.ImplementsKeyword, types: readonly ExpressionWithTypeArguments[]): HeritageClause;
+export declare function createHeritageClause(token: SyntaxKind.ExtendsKeyword | SyntaxKind.ImplementsKeyword, types: readonly HeritageClauseElement[]): HeritageClause;
 export declare function createInterfaceDeclaration(modifiers: readonly ModifierLike[] | undefined, name: Identifier, typeParameters: readonly TypeParameterDeclaration[] | undefined, heritageClauses: readonly HeritageClause[] | undefined, members: readonly TypeElement[]): InterfaceDeclaration;
 export declare function createTypeAliasDeclaration(modifiers: readonly ModifierLike[] | undefined, name: Identifier, typeParameters: readonly TypeParameterDeclaration[] | undefined, type: TypeNode): TypeAliasDeclaration;
 export declare function createEnumMember(name: PropertyName, initializer?: Expression): EnumMember;
@@ -350,7 +357,7 @@ export declare function createObjectBindingPattern(elements: readonly BindingEle
 export declare function createArrayBindingPattern(elements: readonly BindingElement[]): ArrayBindingPattern;
 export declare function createJSDocParameterTag(tagName: Identifier, name: EntityName, isBracketed: boolean, typeExpression: TypeNode | undefined, isNameFirst: boolean, comment: readonly JSDocComment[] | undefined): JSDocParameterTag;
 export declare function createJSDocPropertyTag(tagName: Identifier, name: EntityName, isBracketed: boolean, typeExpression: TypeNode | undefined, isNameFirst: boolean, comment: readonly JSDocComment[] | undefined): JSDocPropertyTag;
-export declare function updateQualifiedName(node: QualifiedName, left: EntityName, right: Identifier): QualifiedName;
+export declare function updateQualifiedName(node: QualifiedName, left: EntityName, right: MemberName): QualifiedName;
 export declare function updateComputedPropertyName(node: ComputedPropertyName, expression: Expression): ComputedPropertyName;
 export declare function updateDecorator(node: Decorator, expression: LeftHandSideExpression): Decorator;
 export declare function updateIfStatement(node: IfStatement, expression: Expression, thenStatement: Statement, elseStatement?: Statement): IfStatement;
@@ -378,7 +385,7 @@ export declare function updateMissingDeclaration(node: MissingDeclaration, modif
 export declare function updateFunctionDeclaration(node: FunctionDeclaration, modifiers: readonly ModifierLike[] | undefined, asteriskToken: AsteriskToken | undefined, name: Identifier | undefined, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type?: TypeNode, body?: FunctionBody): FunctionDeclaration;
 export declare function updateClassDeclaration(node: ClassDeclaration, modifiers: readonly ModifierLike[] | undefined, name: Identifier | undefined, typeParameters: readonly TypeParameterDeclaration[] | undefined, heritageClauses: readonly HeritageClause[] | undefined, members: readonly ClassElement[]): ClassDeclaration;
 export declare function updateClassExpression(node: ClassExpression, modifiers: readonly ModifierLike[] | undefined, name: Identifier | undefined, typeParameters: readonly TypeParameterDeclaration[] | undefined, heritageClauses: readonly HeritageClause[] | undefined, members: readonly ClassElement[]): ClassExpression;
-export declare function updateHeritageClause(node: HeritageClause, types: readonly ExpressionWithTypeArguments[]): HeritageClause;
+export declare function updateHeritageClause(node: HeritageClause, types: readonly HeritageClauseElement[]): HeritageClause;
 export declare function updateInterfaceDeclaration(node: InterfaceDeclaration, modifiers: readonly ModifierLike[] | undefined, name: Identifier, typeParameters: readonly TypeParameterDeclaration[] | undefined, heritageClauses: readonly HeritageClause[] | undefined, members: readonly TypeElement[]): InterfaceDeclaration;
 export declare function updateTypeAliasDeclaration(node: TypeAliasDeclaration, modifiers: readonly ModifierLike[] | undefined, name: Identifier, typeParameters: readonly TypeParameterDeclaration[] | undefined, type: TypeNode): TypeAliasDeclaration;
 export declare function updateEnumMember(node: EnumMember, name: PropertyName, initializer?: Expression): EnumMember;

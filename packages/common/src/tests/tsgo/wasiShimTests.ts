@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { createVirtualFileSystem } from "../../../../../submodules/typescript-go/_packages/native-preview/dist/api/fs.js";
-import { createWasmAPI } from "../../../../../submodules/typescript-go/_packages/native-preview/dist/api/wasm/api.js";
+import { createVirtualFileSystem } from "../../../../../submodules/typescript-go/packages/typescript/dist/api/fs.js";
+import { createWasmAPI } from "../../../../../submodules/typescript-go/packages/typescript/dist/api/wasm/api.js";
 
 /**
  * The safety argument for replacing `node:wasi` with a hand-written shim is that

@@ -17,7 +17,7 @@
  */
 import { folders, path } from "./deps.ts";
 
-const clientDist = path.join(folders.root, "submodules/typescript-go/_packages/native-preview/dist");
+const clientDist = path.join(folders.root, "submodules/typescript-go/packages/typescript/dist");
 const vendorDir = path.join(folders.common, "lib/tsgo");
 
 if (!(await exists(clientDist)))

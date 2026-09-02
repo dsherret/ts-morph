@@ -6,7 +6,7 @@ import { Constructor, WriterFunction } from "../../../types";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
-import { ExpressionWithTypeArguments } from "../type/ExpressionWithTypeArguments";
+import { HeritageClauseTypeNode } from "../general/HeritageClause";
 import { HeritageClauseableNode } from "./HeritageClauseableNode";
 
 export type ImplementsClauseableNodeExtensionType = Node & HeritageClauseableNode;
@@ -15,27 +15,27 @@ export interface ImplementsClauseableNode {
   /**
    * Gets the implements clauses.
    */
-  getImplements(): ExpressionWithTypeArguments[];
+  getImplements(): HeritageClauseTypeNode[];
   /**
    * Adds an implements clause.
    * @param text - Text to add for the implements clause.
    */
-  addImplements(text: string): ExpressionWithTypeArguments;
+  addImplements(text: string): HeritageClauseTypeNode;
   /**
    * Adds multiple implements clauses.
    * @param text - Texts to add for the implements clause.
    */
-  addImplements(text: ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[];
+  addImplements(text: ReadonlyArray<string | WriterFunction> | WriterFunction): HeritageClauseTypeNode[];
   /**
    * Inserts an implements clause.
    * @param text - Text to insert for the implements clause.
    */
-  insertImplements(index: number, texts: ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[];
+  insertImplements(index: number, texts: ReadonlyArray<string | WriterFunction> | WriterFunction): HeritageClauseTypeNode[];
   /**
    * Inserts multiple implements clauses.
    * @param text - Texts to insert for the implements clause.
    */
-  insertImplements(index: number, text: string): ExpressionWithTypeArguments;
+  insertImplements(index: number, text: string): HeritageClauseTypeNode;
   /**
    * Removes the implements at the specified index.
    * @param index - Index to remove.
@@ -45,27 +45,27 @@ export interface ImplementsClauseableNode {
    * Removes the specified implements.
    * @param implementsNode - Node of the implements to remove.
    */
-  removeImplements(implementsNode: ExpressionWithTypeArguments): this;
+  removeImplements(implementsNode: HeritageClauseTypeNode): this;
 }
 
 export function ImplementsClauseableNode<T extends Constructor<ImplementsClauseableNodeExtensionType>>(Base: T): Constructor<ImplementsClauseableNode> & T {
   return class extends Base implements ImplementsClauseableNode {
-    getImplements(): ExpressionWithTypeArguments[] {
+    getImplements(): HeritageClauseTypeNode[] {
       const implementsClause = this.getHeritageClauseByKind(SyntaxKind.ImplementsKeyword);
       return implementsClause?.getTypeNodes() ?? [];
     }
 
-    addImplements(text: ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[];
-    addImplements(text: string): ExpressionWithTypeArguments;
-    addImplements(text: string | ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments | ExpressionWithTypeArguments[] {
+    addImplements(text: ReadonlyArray<string | WriterFunction> | WriterFunction): HeritageClauseTypeNode[];
+    addImplements(text: string): HeritageClauseTypeNode;
+    addImplements(text: string | ReadonlyArray<string | WriterFunction> | WriterFunction): HeritageClauseTypeNode | HeritageClauseTypeNode[] {
       return this.insertImplements(this.getImplements().length, text as any);
     }
 
-    insertImplements(index: number, text: ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[];
-    insertImplements(index: number, text: string): ExpressionWithTypeArguments;
+    insertImplements(index: number, text: ReadonlyArray<string | WriterFunction> | WriterFunction): HeritageClauseTypeNode[];
+    insertImplements(index: number, text: string): HeritageClauseTypeNode;
     insertImplements(index: number, texts: string | ReadonlyArray<string | WriterFunction> | WriterFunction):
-      | ExpressionWithTypeArguments
-      | ExpressionWithTypeArguments[]
+      | HeritageClauseTypeNode
+      | HeritageClauseTypeNode[]
     {
       const originalImplements = this.getImplements();
       const wasStringInput = typeof texts === "string";
@@ -115,8 +115,8 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
     }
 
     removeImplements(index: number): this;
-    removeImplements(implementsNode: ExpressionWithTypeArguments): this;
-    removeImplements(implementsNodeOrIndex: ExpressionWithTypeArguments | number) {
+    removeImplements(implementsNode: HeritageClauseTypeNode): this;
+    removeImplements(implementsNodeOrIndex: HeritageClauseTypeNode | number) {
       const implementsClause = this.getHeritageClauseByKind(SyntaxKind.ImplementsKeyword);
       if (implementsClause == null)
         throw new errors.InvalidOperationError("Cannot remove an implements when none exist.");

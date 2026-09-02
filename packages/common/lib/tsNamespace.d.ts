@@ -107,7 +107,7 @@ export type NodeFactory = {
 } & OptionalTokenFlags;
 /** The factory a transform hands to its visitor. */
 export declare const factory: NodeFactory;
-import type { CompilerOptions as TsgoCompilerOptions } from "./tsgo/api/compilerOptions";
+import type { CompilerOptions as TsgoCompilerOptions } from "./tsgo/api/proto.generated";
 /**
  * Compiler options, as tsgo parses and reports them.
  *
@@ -165,30 +165,14 @@ export interface EditorSettings {
     newLineCharacter?: string;
     trimTrailingWhitespace?: boolean;
 }
+export { NodeBuilderFlags } from "./tsgo/enums/nodeBuilderFlags.enum";
 /**
- * Flags controlling how a type is rendered as text.
- *
- * `typeToString` takes NodeBuilderFlags, so `TypeFormatFlags` is an alias of it
- * rather than an enum of its own. Two consequences are worth knowing:
- *
- *   - Six members do not exist: `AddUndefined`, `WriteArrowStyleSignature`,
- *     `InArrayType`, `InElementType`, `InFirstTypeArgument`,
- *     `NodeBuilderFlagsMask`.
- *   - Five of their values are live in NodeBuilderFlags under other meanings, so
- *     a numeric literal or a persisted bitmask silently changes behaviour:
- *       131072  AddUndefined             -> AllowAnonymousIdentifier
- *       262144  WriteArrowStyleSignature -> AllowEmptyUnionOrIntersection
- *       524288  InArrayType              -> AllowEmptyTuple
- *       2097152 InElementType            -> AllowEmptyIndexInfoType
- *       4194304 InFirstTypeArgument      -> InObjectTypeLiteral
- *   - Being an alias rather than a distinct enum, TypeFormatFlags and
- *     NodeBuilderFlags are now the same nominal type and mutually assignable.
- *
- * The members ts-morph itself passes by default (`UseTypeOfFunction`,
- * `NoTruncation`, `UseFullyQualifiedType`, `WriteTypeArgumentsOfSignature`,
- * `InTypeAlias`) have identical values in both enums.
+ * Flags controlling how a type is rendered as text. A real enum with the
+ * `typescript` package's members and values: `typeToString` takes it directly.
+ * It used to be an alias of NodeBuilderFlags, which lacked six of the members
+ * and reused five of their values under other meanings.
  */
-export { NodeBuilderFlags, NodeBuilderFlags as TypeFormatFlags, } from "./tsgo/enums/nodeBuilderFlags.enum";
+export { TypeFormatFlags } from "./tsgo/enums/typeFormatFlags.enum";
 import type { Node } from "./tsgo/ast/ast";
 /**
  * Visits each stored child of a node, mirroring the free `ts.forEachChild`.

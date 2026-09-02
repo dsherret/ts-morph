@@ -64,7 +64,7 @@ export function tsgo({ tsconfig, emitDir }) {
  * separate setup step.
  */
 function buildTsgo() {
-  run("go", ["build", "-o", tsgoExePath, "./cmd/tsgo"], submoduleDir);
+  run("go", ["build", "-o", tsgoExePath, "./tsc/cmd/tsc"], submoduleDir);
 }
 
 function run(command, args, cwd) {
