@@ -80,6 +80,16 @@ export interface DocumentRegistryOptions {
    * module specifier the way that disk does.
    */
   useCaseSensitiveFileNames?: boolean;
+  /**
+   * Bytes of linear memory reserved for the compiler's heap before it starts.
+   *
+   * Go's runtime grows the reactor's memory by exactly what it needs, and every
+   * growth is dear on the host: encoding a tree for the client is the shape that
+   * suffers most, and reserving the heap once up front made fetching 200 files'
+   * trees six times cheaper. Defaults to 128 MiB, which costs no resident memory
+   * until the heap reaches it; see `defaultInitialHeapSize` in the tsgo client.
+   */
+  initialHeapSize?: number;
 }
 
 export interface RemoveSourceFileOptions {
@@ -141,6 +151,7 @@ export class DocumentRegistry {
       resolveModuleName: options.resolveModuleName,
       defaultLibraryPath: options.libFolderPath,
       useCaseSensitiveFileNames: options.useCaseSensitiveFileNames,
+      initialHeapSize: options.initialHeapSize,
     });
   }
 

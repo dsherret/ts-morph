@@ -59,10 +59,6 @@ BREAKING-CHANGES.md §9 lists these as unfinished rather than chosen, and says t
 tracked here — so here they are. Each is a compiler route or a provider, not a design
 decision, and each would restore something 28.0.0 had:
 
-- `TypeFormatFlags` as a real enum rather than a `NodeBuilderFlags` alias. Today the
-  two are the same nominal type, and five of the members that no longer exist have
-  values that are live in `NodeBuilderFlags` under other meanings — so a persisted
-  bitmask silently changes behaviour. **compiler**
 - The rest of `FormatCodeSettings`: the `insertSpace…` family, `semicolons`,
   `baseIndentSize`, `placeOpenBraceOnNewLineFor…`. The formatter accepts tab size,
   spaces-versus-tabs and trailing-whitespace trimming and nothing else. **compiler**
@@ -146,6 +142,36 @@ reactor could be swapped for a subprocess or native build without changing calle
 `inProcessApi.ts`). That trades away the single artifact, the browser, and synchronous
 construction — so it is a product decision, not an optimisation.
 
+**What did move it, since this was written.** The floor was not all execution. The Go
+runtime grows the reactor's linear memory by exactly what its allocator asks for, and on
+V8 every `memory.grow` detaches and replaces the buffer and is charged against the
+external-memory budget that triggers JavaScript collections. In a V8 CPU profile of the
+300-file check, `runtime.growMemory` and the collector it provoked were 13% of all
+samples. Go records the memory size once, at `osinit`, and hands the whole range to its
+allocator — so growing the memory from JavaScript _before_ `_initialize()` runs makes every
+later allocation ordinary. `createWasmAPI` now reserves 128 MiB that way
+(`initialHeapSize`; see `defaultInitialHeapSize` in the client). Measured: first
+diagnostics over 300 files ~690 → ~600 ms; fetching 200 files' trees 260 → 41 ms; the real
+ts-morph `getExportedDeclarations` loop over 200 files 310 → 230 ms; resident memory
+unchanged. 256 MiB bought nothing over 128.
+
+Things measured and not worth retrying, on top of the two below:
+
+- **`GOWASM=satconv,signext`** — rebuilt both ways from the same source, no difference.
+- **`wasm-opt -O3 --all-features`** on the reactor — 4.5 minutes, 5% smaller, no speedup.
+- **V8 tiering** — `--no-liftoff` (TurboFan only) reaches the same steady state as the
+  default, so the gap is not code the optimizer never reached; a cold process pays ~200 ms
+  of baseline compilation once and that is all.
+- **`GOGC` above 400** — 800, 1600 and off-with-a-limit are all within noise of 400.
+- **Host crossings** — 302 `fileExists`, 301 `readFile` and 3720 `clock_time_get` per
+  300-file run come to ~10 ms of 650. Counted, not reasoned.
+- **The native subprocess** is the one real route past what is left: 3.9× faster on
+  first diagnostics over 300 files, 2× on per-file checker queries, and at parity on tree
+  fetches once the heap is reserved — despite an 18 µs round trip against the reactor's
+  1.2 µs. The fork's `createAPI` (`packages/typescript/src/api/create.ts`) already picks it
+  when a binary is present; `DocumentRegistry` still constructs the reactor directly, and
+  switching is a packaging decision (a per-platform binary to ship) rather than a fix.
+
 Two things not to spend more on:
 
 - **`SingleThreaded: true` was tried and is worse.** It looked like a correctness-shaped
@@ -162,7 +188,10 @@ Two things not to spend more on:
   libs cost ~10× the explicit `lib: ["lib.es2022.d.ts"]` case, but 28.0.0 pays the same
   penalty (326 ms against 35 ms), because pulling in DOM is what TypeScript does when
   `lib` is unset. It is a real lever _for users_ — worth documenting as advice — but
-  there is nothing here to fix.
+  there is nothing here to fix. `skipLibCheck: true` is the other half of that lever,
+  and the larger half: the DOM library is not just parsed but _checked_, and skipping
+  that takes a one-file project from 410 ms to 92 ms and 300 files from 560 to 220. Both
+  are now in BREAKING-CHANGES.md §6.
 
 ### 2.2a A chatty operation costs a multiple of the floor — but not for the reason recorded here
 

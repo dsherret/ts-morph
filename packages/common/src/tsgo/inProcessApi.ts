@@ -38,6 +38,11 @@ export interface InProcessApiOptions {
    * Read the file and pass the bytes, or hand over a compiled module.
    */
   wasm?: Uint8Array | ArrayBuffer | CompiledWasmModule;
+  /**
+   * Bytes of linear memory reserved for the compiler's heap before it starts.
+   * Defaults to 128 MiB; see `defaultInitialHeapSize` in the tsgo client.
+   */
+  initialHeapSize?: number;
 }
 
 /** Creates a fully synchronous {@link API} backed by the in-process tsgo build. */
@@ -48,5 +53,6 @@ export function createInProcessApi(options: InProcessApiOptions = {}): API {
     wasm: options.wasm,
     defaultLibraryPath: options.defaultLibraryPath,
     useCaseSensitiveFileNames: options.useCaseSensitiveFileNames,
+    initialHeapSize: options.initialHeapSize,
   });
 }

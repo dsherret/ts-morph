@@ -550,6 +550,24 @@ for (const [path, text] of files)
 project.addSourceFilesAtPaths("/**/*.ts");
 ```
 
+**Two settings move these numbers more than anything in the table.** Both are measured on
+the raw compiler API, first diagnostics, median of several runs in one process:
+
+- **`skipLibCheck: true`.** With `lib` unset the compiler pulls in the DOM library and
+  then _checks it_ — every declaration in `lib.dom.d.ts` — before it gets to your files.
+  A one-file project goes from 410 ms to 92 ms with the option set, and 300 files from
+  560 ms to 220 ms. 28.0.0 paid the same, so this is not a regression, but it is the
+  cheapest 2.5× there is, and a codemod almost never wants diagnostics about the
+  libraries. Naming a smaller `lib` (`["lib.es2022.d.ts"]`) is the other half of it.
+- **The reserved heap.** The compiler's memory grows on demand, and every growth is dear
+  on the host — the buffer is detached and replaced, and the growth is charged against
+  the budget that triggers JavaScript garbage collections. `@ts-morph/common` reserves
+  128 MiB before the compiler starts, which took fetching 200 files' trees from 260 ms to
+  41 ms and the 200-file `getExportedDeclarations` loop from 310 ms to 230 ms, at no cost
+  in resident memory. `DocumentRegistryOptions.initialHeapSize` sets it at the
+  `@ts-morph/common` layer; `Project` does not expose it, and a project that keeps
+  hitting the limit grows past it exactly as before.
+
 Two smaller regressions worth knowing:
 
 - `getCompilerOptionsFromTsConfig` builds a throwaway Wasm instance per call, so it does
