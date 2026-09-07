@@ -9,31 +9,25 @@ export function matchGlobs(paths: ReadonlyArray<string>, patterns: string | Read
     patterns = patterns.map(p => FileUtils.toAbsoluteGlob(p, cwd));
 
   // adapted from multimatch, but more efficient: https://github.com/sindresorhus/multimatch/blob/main/index.js
-  const result: string[] = [];
+  // (a set rather than an array so that a project's worth of paths is not scanned per match)
+  const result = new Set<string>();
   for (const path of paths) {
     for (let pattern of patterns) {
-      let process = addArray;
+      let isNegated = false;
 
       if (FileUtils.isNegatedGlob(pattern)) {
-        process = removeArray;
+        isNegated = true;
         pattern = pattern.slice(1);
       }
 
-      if (runtime.getPathMatchesPattern(path, pattern))
-        process(result, path);
+      if (runtime.getPathMatchesPattern(path, pattern)) {
+        if (isNegated)
+          result.delete(path);
+        else
+          result.add(path);
+      }
     }
   }
 
-  return result;
-}
-
-function addArray(items: string[], newItem: string) {
-  if (items.indexOf(newItem) === -1)
-    items.push(newItem);
-}
-
-function removeArray(items: string[], removeItem: string) {
-  const index = items.indexOf(removeItem);
-  if (index >= 0)
-    items.splice(index, 1);
+  return Array.from(result);
 }

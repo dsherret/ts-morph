@@ -7,16 +7,16 @@ export type EventContainerSubscription<EventArgType> = (arg: EventArgType) => vo
  * Event container for event subscriptions.
  */
 export class EventContainer<EventArgType = undefined> {
-  readonly #subscriptions: EventContainerSubscription<EventArgType>[] = [];
+  // a set keeps insertion order and makes subscribe/unsubscribe O(1), which matters
+  // because some containers get one subscription per source file in the project
+  readonly #subscriptions = new Set<EventContainerSubscription<EventArgType>>();
 
   /**
    * Subscribe to an event being fired.
    * @param subscription - Subscription.
    */
   subscribe(subscription: EventContainerSubscription<EventArgType>) {
-    const index = this.#getIndex(subscription);
-    if (index === -1)
-      this.#subscriptions.push(subscription);
+    this.#subscriptions.add(subscription);
   }
 
   /**
@@ -24,9 +24,7 @@ export class EventContainer<EventArgType = undefined> {
    * @param subscription - Subscription.
    */
   unsubscribe(subscription: EventContainerSubscription<EventArgType>) {
-    const index = this.#getIndex(subscription);
-    if (index >= 0)
-      this.#subscriptions.splice(index, 1);
+    this.#subscriptions.delete(subscription);
   }
 
   /**
@@ -35,9 +33,5 @@ export class EventContainer<EventArgType = undefined> {
   fire(arg: EventArgType) {
     for (const subscription of this.#subscriptions)
       subscription(arg);
-  }
-
-  #getIndex(subscription: EventContainerSubscription<EventArgType>) {
-    return this.#subscriptions.indexOf(subscription);
   }
 }

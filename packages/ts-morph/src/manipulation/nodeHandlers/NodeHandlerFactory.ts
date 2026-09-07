@@ -62,10 +62,9 @@ export interface ReplaceTreeUnwrappingNodeOptions {
 
 export class NodeHandlerFactory {
   getDefault(opts: DefaultReplaceTreeOptions) {
-    const { parent: changingParent, isFirstChild, childCount, customMappings } = opts;
+    const { parent: changingParent, isFirstChild, childCount, replacingNodes, customMappings } = opts;
     const sourceFile = changingParent.getSourceFile();
     const compilerFactory = sourceFile._context.compilerFactory;
-    const replacingNodes = opts.replacingNodes == null ? undefined : [...opts.replacingNodes];
 
     const parentHandler = new DefaultParentHandler(compilerFactory, { childCount, isFirstChild, replacingNodes, customMappings });
 

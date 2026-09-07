@@ -25,7 +25,7 @@ export class RangeParentHandler implements NodeHandler {
   readonly #start: number;
   readonly #end: number;
   readonly #replacingLength: number | undefined;
-  readonly #replacingNodes: ts.Node[] | undefined;
+  readonly #replacingNodes: Set<ts.Node> | undefined;
   readonly #customMappings?: (newParentNode: ts.Node, newSourceFile: ts.SourceFile) => { currentNode: Node; newNode: ts.Node }[];
 
   constructor(compilerFactory: CompilerFactory, opts: RangeParentHandlerOptions) {
@@ -34,7 +34,7 @@ export class RangeParentHandler implements NodeHandler {
     this.#start = opts.start;
     this.#end = opts.end;
     this.#replacingLength = opts.replacingLength;
-    this.#replacingNodes = opts.replacingNodes?.map(n => n.compilerNode);
+    this.#replacingNodes = opts.replacingNodes == null ? undefined : new Set(opts.replacingNodes.map(n => n.compilerNode));
     this.#customMappings = opts.customMappings;
     this.#compilerFactory = compilerFactory;
   }
@@ -113,14 +113,9 @@ export class RangeParentHandler implements NodeHandler {
   }
 
   #tryReplaceNode(currentCompilerNode: ts.Node) {
-    if (this.#replacingNodes == null || this.#replacingNodes.length === 0)
-      return false;
-    const index = this.#replacingNodes.indexOf(currentCompilerNode);
-
-    if (index === -1)
+    if (this.#replacingNodes == null || !this.#replacingNodes.delete(currentCompilerNode))
       return false;
 
-    this.#replacingNodes.splice(index, 1);
     this.#helper.forgetNodeIfNecessary(currentCompilerNode);
 
     return true;

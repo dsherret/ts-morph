@@ -13,7 +13,7 @@ export class ArrayUtils {
   }
 
   static getUniqueItems<T>(a: ReadonlyArray<T>) {
-    return a.filter((item, index) => a.indexOf(item) === index);
+    return Array.from(new Set(a));
   }
 
   static removeFirst<T>(a: T[], item: T) {

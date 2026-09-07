@@ -21,7 +21,7 @@ export class DefaultParentHandler implements NodeHandler {
   readonly #helper: NodeHandlerHelper;
   readonly #childCount: number;
   readonly #isFirstChild: (currentNode: ts.Node, newNode: ts.Node) => boolean;
-  readonly #replacingNodes?: ts.Node[];
+  readonly #replacingNodes?: Set<ts.Node>;
   readonly #customMappings?: (newParentNode: ts.Node) => { currentNode: Node; newNode: ts.Node }[];
 
   constructor(compilerFactory: CompilerFactory, opts: DefaultParentHandlerOptions) {
@@ -29,7 +29,7 @@ export class DefaultParentHandler implements NodeHandler {
     this.#helper = new NodeHandlerHelper(compilerFactory);
     this.#childCount = opts.childCount;
     this.#isFirstChild = opts.isFirstChild;
-    this.#replacingNodes = opts.replacingNodes?.map(n => n.compilerNode);
+    this.#replacingNodes = opts.replacingNodes == null ? undefined : new Set(opts.replacingNodes.map(n => n.compilerNode));
     this.#customMappings = opts.customMappings;
     this.#compilerFactory = compilerFactory;
   }
@@ -83,14 +83,9 @@ export class DefaultParentHandler implements NodeHandler {
   }
 
   #tryReplaceNode(currentCompilerNode: ts.Node) {
-    if (this.#replacingNodes == null || this.#replacingNodes.length === 0)
-      return false;
-    const index = this.#replacingNodes.indexOf(currentCompilerNode);
-
-    if (index === -1)
+    if (this.#replacingNodes == null || !this.#replacingNodes.delete(currentCompilerNode))
       return false;
 
-    this.#replacingNodes.splice(index, 1);
     this.#helper.forgetNodeIfNecessary(currentCompilerNode);
 
     return true;

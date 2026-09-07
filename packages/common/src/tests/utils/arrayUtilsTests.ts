@@ -35,6 +35,10 @@ describe("ArrayUtils", () => {
     it("should return all the unique items in the array", () => {
       expect(ArrayUtils.getUniqueItems([1, 2, 3, 3, 2, 1])).to.eql([1, 2, 3]);
     });
+
+    it("should keep one NaN", () => {
+      expect(ArrayUtils.getUniqueItems([NaN, 1, NaN])).to.eql([NaN, 1]);
+    });
   });
 
   describe(`#${nameof(ArrayUtils, "removeFirst")}()`, () => {

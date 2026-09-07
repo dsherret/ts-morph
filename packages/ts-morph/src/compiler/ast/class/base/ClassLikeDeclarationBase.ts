@@ -1206,13 +1206,16 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
 
     getDerivedClasses() {
       const classes = getImmediateDerivedClasses(this);
+      const seen = new Set(classes);
 
       for (let i = 0; i < classes.length; i++) {
         const derivedClasses = getImmediateDerivedClasses(classes[i]);
         for (const derivedClass of derivedClasses) {
           // don't allow circular references
-          if (derivedClass !== (this as ClassLikeDeclarationBaseSpecific) && classes.indexOf(derivedClass) === -1)
+          if (derivedClass !== (this as ClassLikeDeclarationBaseSpecific) && !seen.has(derivedClass)) {
+            seen.add(derivedClass);
             classes.push(derivedClass);
+          }
         }
       }
 
