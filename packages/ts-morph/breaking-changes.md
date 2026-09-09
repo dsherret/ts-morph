@@ -17,7 +17,7 @@ longer a dependency. This is by far the largest breaking release of this library
   the one to check first.
 - **`Type`, `Symbol` and `Signature` cannot outlive a manipulation.** They are handles into a
   compiler snapshot. Re-fetch them after an edit rather than holding them across one.
-- **The `ts` namespace is much smaller**, 2249 runtime keys down to 411. Most were internals that
+- **The `ts` namespace is much smaller**, 2249 runtime keys down to 412. Most were internals that
   only leaked because 28.0.0 bundled the whole `typescript` module, but some genuinely public
   members are gone, among them `ts.createProgram`, `ts.createPrinter`, `ts.resolveModuleName`,
   `ts.sys` and `ts.version`. 407 of 671 `ts.isX` guards went with them.

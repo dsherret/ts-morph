@@ -9,7 +9,9 @@
 # Getting Started
 
 Clone with submodules (`git clone --recursive`, or `git submodule update --init --recursive`
-in an existing clone), then build the tsgo compiler once:
+in an existing clone), then build the tsgo compiler once. All three steps are required:
+ts-morph's own build imports the compiled client from `packages/typescript/dist`, so the
+`tsc -b` is not optional.
 
 ```bash
 cd submodules/typescript-go

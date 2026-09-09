@@ -82,8 +82,8 @@ const project = new Project({
 ```
 
 `resolutionMode` is `ModuleKind.CommonJS` or `ModuleKind.ESNext` when the compiler has an opinion
-about how the containing file imports, so a host can answer differently for an ESM and a CommonJS
-importer.
+about how the containing file imports, and `undefined` when it does not, so a host can answer
+differently for an ESM and a CommonJS importer.
 
 ### `libFolderPath`
 

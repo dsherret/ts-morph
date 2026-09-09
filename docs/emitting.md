@@ -119,5 +119,3 @@ for (const file of result.getFiles())
 // save the new files to the file system
 await newProject.save();
 ```
-
-...but consider using the custom transformers discussed above if you want it to be faster.

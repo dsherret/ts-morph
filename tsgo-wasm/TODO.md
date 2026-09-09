@@ -9,9 +9,12 @@ Finished work is not kept here. What a user needs to know from it is in
 [BREAKING-CHANGES.md](./BREAKING-CHANGES.md); what it measured and how it was done is
 in [MIGRATION-REPORT.md](./MIGRATION-REPORT.md) §8.
 
-Measured state: `ts-morph` 4520 passing / 2 pending, `common` 461 / 0, `bootstrap`
-85 / 4, both verification gates clean, 16/16 end-to-end scripts, `go test ./...`
-clean, all four `typescript.wasm` copies identical.
+Measured state: `ts-morph` 4520 passing / 2 pending, `common` 468 / 0, `bootstrap` 85 / 4,
+both verification gates clean, every end-to-end script in README.md passing and the browser
+acceptance test with them. The submodule's `typescript.wasm` and the copy in
+`packages/common/dist` are identical; the Deno copies (`packages/common/dist-deno`,
+`deno/common`) are whatever the last `build:deno` produced and lag until it is re-run.
+`go test ./...` in the submodule is **not** clean any more — see §3.
 
 ---
 
@@ -43,7 +46,7 @@ deliberately (PR #4507) for declaration emit. ts-morph clears the flag for the
 top-level case; the flag is all-or-nothing per print, so nested occurrences cannot be
 reached from this side. Reverting belongs upstream, if anywhere.
 
-### 1.4 Two small ones with no owner
+### 1.4 Small ones with no owner
 
 - A constructor definition reports `name: "constructor(a: number);"` / `kind: "class"`
   where 28.0.0 said `"__constructor"` / `"constructor"`. The symbol the checker
@@ -52,6 +55,8 @@ reached from this side. Reverting belongs upstream, if anywhere.
   kinds.
 - `JSDocSignature#getTypeNode()` is declared `TypeNode` but holds a `JSDocReturnTag`.
   The declaration is wrong, not the value. **compiler**
+- `SourceFileCreateOptions#scriptKind` is accepted and ignored — tsgo derives the kind
+  from the extension. It should come off the public surface. **ts-morph**
 
 ### 1.5 Capabilities that are missing rather than removed
 
@@ -60,10 +65,18 @@ tracked here — so here they are. Each is a compiler route or a provider, not a
 decision, and each would restore something 28.0.0 had:
 
 - The rest of `FormatCodeSettings`: the `insertSpace…` family, `semicolons`,
-  `baseIndentSize`, `placeOpenBraceOnNewLineFor…`. The formatter accepts tab size,
-  spaces-versus-tabs and trailing-whitespace trimming and nothing else. **compiler**
-- `CodeFixAction#getFixId()` / `getFixAllDescription()`. The compiler does not group
-  fixes into fix-alls, so there is no id to report or to feed back in. **compiler**
+  `baseIndentSize`, `placeOpenBraceOnNewLineFor…`. The API's formatting options
+  carry six settings — tab size, spaces-versus-tabs, trailing-whitespace trimming,
+  indent size, indent style and the newline — and ts-morph patches
+  `insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces` on its own side; nothing
+  else gets through. **compiler**
+- `CodeFixAction#getFixId()` / `getFixAllDescription()`. The compiler does group
+  fixes into fix-alls (`ls/codeactions.go` has the fix ids, and the fork's
+  `getCombinedCodeFix` takes one); the API's `CodeFixAction` struct just drops the two
+  fields. Two fields plus a protocol bump. The opposite claim still ships to users in
+  the doc comments on `packages/common/src/tsgo/ts.ts` and
+  `packages/ts-morph/src/compiler/tools/results/CodeFixAction.ts`, and so in the
+  published `.d.ts`; correct those whether or not the route is added. **compiler**
 - `formatDiagnosticsWithColorAndContext` with real colour and context. ts-morph
   formats diagnostics itself now, without the source line, the caret or the ANSI
   colouring. **compiler**
@@ -74,17 +87,46 @@ decision, and each would restore something 28.0.0 had:
 - `@types` packages added to the file system _after_ the project was created, for
   `getAmbientModules`. **compiler**
 
+### 1.6 Three `CompilerOptions` members the port dropped again
+
+**compiler.** The `ts-go` branch restored `esModuleInterop`, `alwaysStrict` and
+`allowSyntheticDefaultImports` on the client's `CompilerOptions` (TypeScript 7 removed only
+their `false` value, and `true` is `esModuleInterop`'s default), and BREAKING-CHANGES.md
+§5 promised as much. The `migrate-tsmain` port generates that interface from
+`core.CompilerOptions` with `tools/gen-proto`, which skips every field tagged
+`deprecated:"true"` — and TypeScript main tags those three that way, alongside `baseUrl`,
+`downlevelIteration` and `outFile`, which _are_ meant to be gone. So `esModuleInterop: true`
+is a compile error again while working at runtime.
+
+There is no index signature to escape through either, and that one was never fixed rather
+than lost: MIGRATION-REPORT §2.1 b recommended adding one, and the interface ends at
+`maxNodeModuleJsDepth?: number; }` on both branches. So every option tsgo adds in future is
+a compile error until the types are re-vendored.
+
+Fix: teach the generator to keep the three (a `@deprecated` doc comment would be honest),
+decide separately about the index signature, regenerate, `deno task vendorTsgoTypes`, and
+re-verify with the type check. BREAKING-CHANGES.md §5 describes the current state until then.
+
 ---
 
 ## 2. Performance
 
 The size-dependent costs are gone: an edit no longer grows with the project, and no
-loop is quadratic. What is left is constant factors.
+loop is quadratic. What is left is constant factors — plus one size-dependent cost in
+the reactor's memory, §2.2d, which is the open item here.
 
-### 2.1 Delete-heavy loops still grow with the project
+The last quadratic loop was found late, and by a user rather than by a profile, which
+is the part worth keeping: `EventContainer` kept its subscriptions in an array and
+unsubscribed with `indexOf` + `splice`, while `SourceFileReferenceContainer` registers
+one subscription per file with unresolved imports on a shared container. On ~380 files
+that was ~30 s of pure JavaScript in a 232 s run. It is a `Set` now, along with
+`matchGlobs`, `getDerivedClasses`, `getUniqueItems` and the manipulation handlers'
+replacing-node lists (`8b87817b`).
 
-**ts-morph.** Partly fixed, and the cause was twice attributed wrongly, so both dead
-ends are recorded here to save the next person repeating them.
+### 2.1 Delete-heavy loops: fixed, after two wrong attributions
+
+**ts-morph.** Closed. The cause was twice attributed wrongly, so both dead ends are
+recorded here to save the next person repeating them.
 
 | ms per create-and-delete step | 800   | 1600  | 3200  |
 | ----------------------------- | ----- | ----- | ----- |
@@ -104,29 +146,54 @@ change that can _lengthen_ the common directory and so cannot be folded incremen
 Fixed — the value is only read when the config is written, so a removal marks it stale
 and the fold happens once per flush.
 
-**It still grows**, 2.7× for 4× the files, so a third thing in this loop is not constant
-either and has not been found. Whatever it is, it is not the two above and not the
-snapshot. Profile the loop rather than reasoning about it: that is what settled the last
-two.
+**Re-measured 2026-09-09, it no longer grows.** A project of _n_ files is built, each
+file importing the previous one; then fifteen rounds of ten `createSourceFile` +
+`delete()` pairs, every file freshly named, after thirty warm-up pairs. The figure is
+the median round, divided by ten. **One project size per process** — run in a single
+process the later sizes ride the earlier ones' warm-up and the loop looks like it gets
+cheaper as the project grows, which is the confound that makes this shape easy to
+misread.
+
+| ms per create-and-delete step | 800   | 1600  | 3200  | 6400  |
+| ----------------------------- | ----- | ----- | ----- | ----- |
+| now                           | 0.178 | 0.185 | 0.180 | 0.173 |
+| 28.0.0, same timed loop       | 0.027 | 0.033 | 0.040 | 0.033 |
+
+Flat, which is the finding: §2.1 previously recorded 2.7× for 4× the files. Nothing is
+type-checked in this loop, so the ratio is not the §2.2 checking floor — at ~5× it sits
+well above it, alongside the chatty shape of §2.2a, and what is left is per-operation
+overhead rather than anything that scales. The two builds differ in setup only: 28.0.0
+has no `createSourceFiles`, so its project is built one file at a time. The timed loop
+is identical.
+
+The `EventContainer` change above did not do it. A/B-ing it — the same bundle with the
+array container patched back in — gave the same flat numbers, though that patched bundle
+was scratch and is gone, so take it as one run rather than as the rows above. Whichever
+fix in between removed the third thing, it was not recorded as doing so. If this loop
+ever grows again, profile it rather than reasoning about it: that is what settled the
+first two.
 
 ### 2.2 What the remaining gap actually is, and the floor under it
 
 Measured against published 28.0.0, checking is **a flat ~2× slower**, and the ratio does
-not move with the amount of work:
+not move with the amount of work. The first three rows are checking; the fourth is the
+edit-then-ask pair, kept here because it used to be recorded as a regression:
 
 | workload                              | 28.0.0     | now        | ratio |
 | ------------------------------------- | ---------- | ---------- | ----- |
 | one file, `lib: ["lib.es2022.d.ts"]`  | 34–42 ms   | 72–78 ms   | ~2.0× |
 | one file, default libs (DOM included) | 326–484 ms | 804–846 ms | ~2.2× |
 | 300 files, first diagnostics          | 387 ms     | 711 ms     | ~1.8× |
-| an edit then a `getType()`, 400 files | 2.80 ms    | 5.67 ms    | ~2.0× |
+| an edit then a `getType()`, 400 files | 1.25 ms    | 1.50 ms    | ~1.2× |
 
 That last row used to be recorded here as its own regression, on the grounds that the
-edited file was parsed twice. It genuinely was, and that is fixed — but fixing it moved
-the row rather than removing it. What is left in that shape is the snapshot the semantic
-question needs, and it lands on the same ~2× as everything else. Removing the second
-parse is worth what parsing that one file costs: on ~120-line files an edit-then-ask went
-11.9 ms to 8.8 ms, and on one-line files it measures nothing at all.
+edited file was parsed twice. It genuinely was, that is fixed, and re-measuring on
+2026-09-09 puts the row at near parity rather than at the floor: what is left in that
+shape is the snapshot the semantic question needs, and 28.0.0 opens one too. Removing
+the second parse is worth what parsing that one file costs: on ~120-line files an
+edit-then-ask went 11.9 ms to 8.8 ms, and on one-line files it measures nothing at all.
+An edit _without_ a question is the row that pays — 0.41 ms against 0.06 — because
+28.0.0 has nothing to hold back.
 
 **That flatness is the finding.** If the cost were lost parallelism — tsgo parallelises
 parse, bind and check through `core.NewWorkGroup`, and Go's `wasip1` target runs on one
@@ -153,7 +220,8 @@ later allocation ordinary. `createWasmAPI` now reserves 128 MiB that way
 (`initialHeapSize`; see `defaultInitialHeapSize` in the client). Measured: first
 diagnostics over 300 files ~690 → ~600 ms; fetching 200 files' trees 260 → 41 ms; the real
 ts-morph `getExportedDeclarations` loop over 200 files 310 → 230 ms; resident memory
-unchanged. 256 MiB bought nothing over 128.
+unchanged. 256 MiB bought nothing over 128 _at that project size_ — see §2.2d for where
+it does.
 
 Things measured and not worth retrying, on top of the two below:
 
@@ -313,6 +381,28 @@ would be round trips where today there is one. Worth prototyping against both sh
 before committing, and worth knowing that it caps out at 29% of a large file's first
 touch.
 
+### 2.2d The 128 MiB reserve is too small for large projects
+
+**compiler, and ts-morph.** The reserve makes the Go heap free to grow only up to what
+was reserved. Past it every `memory.grow` is back to costing a V8 major collection over
+the whole JavaScript heap ("GC in old space requested" in a `--trace-gc` log), and with
+`GOGC=400` the Go heap sits at up to ~5× its live size, so a large enough project
+outgrows 128 MiB. Measured on a modify-then-`getReferencingSourceFiles` loop, per
+operation, at 2000 files and at 6000; the crossover between them was not isolated:
+
+|                          | 2000 files | 6000 files, 128 MiB | 6000 files, 1 GiB |
+| ------------------------ | ---------- | ------------------- | ----------------- |
+| parse of the edited file | 25 µs      | 124 µs              | 18 µs             |
+| `addStatements`          | 117 µs     | 400 µs              | 92 µs             |
+
+The 1 GiB reserve restores the flat cost and resident memory is identical either way,
+because reserving is `memory.grow` before Go starts and the pages are untouched until
+used. Only the reserve made before `_initialize()` helps: Go fixes its arena bounds at
+`osinit`, so growing later from JavaScript is wasted. Two things to do, neither done:
+raise `defaultInitialHeapSize` in the fork's `packages/typescript/src/api/wasm/api.ts`
+to 512 MiB–1 GiB, and expose `initialHeapSize` on `Project` (the `DocumentRegistry`
+already takes it) so a caller who knows the project is large can size it.
+
 ### 2.3 Deferred: layered `processedFiles` maps
 
 **compiler.** Cloning those ten maps is ~20% of an edit, and making them layered
@@ -325,8 +415,8 @@ Worth doing when something makes snapshots frequent again, or for §2.1 — not 
 
 ## 3. Packaging and publishing
 
-- **JSR — one half is not ours to solve.** _Size_: `deno/common` is 47.34 MiB against
-  JSR's default 20 MiB limit. **This is settled: the scope owner is requesting an
+- **JSR — one half is not ours to solve.** _Size_: `deno/common` is ~45 MiB (nearly
+  all of it the reactor) against JSR's default 20 MiB limit. **This is settled: the scope owner is requesting an
   increased quota, so size is not a constraint to engineer around.** Do not propose
   compressing, splitting or trimming the reactor to fit it — that was tried, and
   shipping it gzipped was deliberately reverted because npm and any HTTP server
@@ -336,10 +426,27 @@ Worth doing when something makes snapshots frequent again, or for §2.1 — not 
   `https:` — a JSR consumer has no file to read beside the module. The likely answer
   is `initializeWasm` with a fetched `Response`, which already works, made to serve
   an `https:` default rather than only a `file:` one.
-- **Fork maintenance.** The fork is well ahead of upstream. Split the mislabelled
-  commit (`15ff4accb` says "expose getAmbientModules" and carries six unrelated
-  changes) before proposing anything upstream, and decide which changes to send there
-  rather than carry. MIGRATION-REPORT §5.1 lists the candidates.
+- **The submodule's `go test ./...` fails in three places, all ours.** Re-run 2026-09-09 on
+  the pinned `migrate-tsmain` commit. Nothing here reaches ts-morph — the reactor is built and
+  all three JavaScript suites pass — but each is the port leaving something behind, and the
+  last one is a behaviour change to `tsc` and `tsserver` rather than a stale test:
+  - `internal/tsoptions` does not **build**: the fork's own `withadditionalrootfiles_test.go`
+    calls `ParseJsonSourceFileConfigFileContent` with nine arguments where TypeScript main
+    takes eight. Update the call.
+  - Two `findRenameLocations` fourslash baselines (`renameStringLiteralTypes2`, `…3`) differ
+    from the checked-in ones. Decide whether the fork's rename work is meant to change them
+    and accept the baselines, or fix the divergence.
+  - `internal/project`'s `extensionless disk file preserves unknown script kind` fails because
+    the fork's `getScriptKind` fallback in `overlayfs.go` answers `ScriptKindTS` where upstream
+    answers `ScriptKindUnknown`. That is the fallback MIGRATION-REPORT §5.5 (a) flagged as
+    possibly changing `tsc`/`tsserver` behaviour; the test says it does. Narrow it to the API
+    path or take the upstream behaviour.
+- **Fork maintenance.** The fork is well ahead of upstream. The `migrate-tsmain` port
+  re-expressed the `ts-go` stack as 18 commits on microsoft/TypeScript main, so the old
+  advice to split `15ff4accb` no longer applies; what remains is deciding which changes
+  to send upstream rather than carry. MIGRATION-REPORT §5.1 lists the candidates, but by
+  their `ts-go` hashes, which are not in the pinned commit's history — a clone that
+  fetched only `migrate-tsmain` will not resolve them.
 - **Restatements to retire.** `TupleTypeNode.elements`,
   `JSDocTemplateTag.constraint` and `NoSubstitutionTemplateLiteral` are restated in
   `packages/common/src/tsgo/ts.ts` only because the fork's generated AST is wrong.
@@ -352,7 +459,7 @@ Worth doing when something makes snapshots frequent again, or for §2.1 — not 
 BREAKING-CHANGES.md has been found stale or inverted repeatedly, and twice more while
 being rebuilt: a claim that browsers were unsupported, and a `getConstraint` entry
 whose fixture used a resolved instantiation and so reported "unchanged" for
-differences that were real. Three of its claims are still stated from source rather
+differences that were real. Five of its claims are still stated from source rather
 than measured and are marked as such in its Appendix B.
 
 Treat any claim in it that nobody has re-run as a hypothesis, and measure against a

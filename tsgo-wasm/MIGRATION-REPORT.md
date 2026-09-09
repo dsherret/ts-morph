@@ -6,24 +6,49 @@ of `tsgo-wasm` (`packages/*/dist`, rebuilt after every `src` file — not stale)
 `origin/main`**.
 
 "Measured" means run side-by-side in one process against both builds through the differential harness.
-Everything else is marked. Line citations were re-anchored against the working tree while writing this.
+Everything else is marked. Line citations were anchored against the working tree at `433e2485`, with the
+submodule on its `ts-go` branch; both have moved since (see the second note below) and the citations
+have not been re-anchored.
 
 > **Superseded in part.** This report was written before `f70c5c00`…`b6670dac`. The following
 > recommendations have since landed and their findings below are historical: browser support (§2.2 —
 > shipped, `node:wasi` is in no artifact), tsgo's lib files (§2.3 — adopted, and the `lib` form
 > inversion is fixed in the other direction: file names work, short names now work too), the free-wins
-> list (§2.1 a–e, g–j — `esModuleInterop` and friends restored as `boolean`, `JsxEmit`/
+> list (§2.1 a, c–e, g–j — `esModuleInterop` and friends restored as `boolean` (and lost again in the
+> port; see the next note), `JsxEmit`/
 > `ModuleDetectionKind` exported, `forget()` fixed, stale handles wrapped in `InvalidOperationError`,
 > diagnostics deduplicated, 5074 and the caller's own tsconfig diagnostics restored, TS18002
 > suppressed, `printNode` comments restored), the per-file config rewrite (§2.0 — the bulk path is
 > batched and linear; a `createSourceFile` loop is not), reference resolution by containment (§7.1 a–c
 > — back to touching-token), the brace-spacing formatter no-op (§2.7), and the indenter's worst
 > divergences (§2.6). Since then: symbols on anonymous declarations and definition container
-> names (§7.2, §7.4), and definition kinds following TypeScript's own `getSymbolKind`. The
+> names (§3.1 N12, §3.4 L11, §7.1 e, §8.7), and definition kinds following TypeScript's own `getSymbolKind`. The
 > reactor was also shipped gzipped and then un-shipped: it ships uncompressed again.
 > Suite counts as of `433e2485`: `ts-morph` 4500/2, `common` 435/0,
 > `bootstrap` 85/4. See [TODO.md](./TODO.md) for what is actually left, and
 > [BREAKING-CHANGES.md](./BREAKING-CHANGES.md) for the user-facing state, which is re-measured.
+
+> **Superseded further (2026-09-09).** The submodule is now the **`migrate-tsmain` port**
+> (`9a85d411f4`, 18 commits on microsoft/TypeScript main `e533f4c083`, remote
+> `dsherret/TypeScript`), not the `ts-go` branch this report describes. Go lives under
+> `tsc/internal/…`, the JS client under `packages/typescript/src/…` (`wasm/node.ts` became
+> `wasm/wasi.ts`), and none of the `ts-go` commit hashes cited in §5 exist in the pinned tree — the
+> port re-expressed them as new commits, so §5.1's list identifies the changes but not where they
+> live now, and the "split `15ff4accb`" advice (§2.1 l, §5.5 f) is moot. Since fixed, so historical
+> below: `ts.TypeFormatFlags` is tsgo's own enum (§3.8, the §5.2 row, §6.2); `checker.symbolToString`
+> is exported and routed (§5.2 row); the generated lib text and the `typescript` devDependency are
+> gone (§1, §3.10, P13, §4); the three documentation items outside BREAKING-CHANGES.md in §7.3, and
+> the removed-capabilities README wording in §7.2. Two things went the other way: **free win (a) of
+> §2.1 was lost in the port** — TypeScript main tags `esModuleInterop`, `alwaysStrict` and
+> `allowSyntheticDefaultImports` deprecated, and the proto generator (`tools/gen-proto`) skips
+> deprecated fields, so all three are compile errors again (TODO.md §1.6) — and §2.4's
+> `UseTypeOfFunction` recommendation was rejected in favour of keeping the top-level clearing
+> (TODO.md §1.3). Correcting the note above: **free win (b) never landed** — the client's
+> `CompilerOptions` still has no index signature, on either branch. One more quadratic loop turned up after §8, from a user rather
+> than a profile: `EventContainer` unsubscribed with `indexOf` + `splice` while the reference
+> container subscribes once per file with an unresolved import, ~30 s of a 232 s run on ~380 files;
+> it and four other membership scans are sets now (`8b87817b`, TODO.md §2). Suite counts now:
+> `ts-morph` 4520/2, `common` 468/0, `bootstrap` 85/4.
 
 ---
 
@@ -461,7 +486,7 @@ Classification: **(a)** forced by tsgo · **(b)** deliberate ts-morph choice · 
   Kept: `factory`, `visitEachChild`, `visitNode`, `forEachChild`, `skipTrivia`, `tokenToString`,
   `getLeading/TrailingCommentRanges`, `getDecorators`, `getCombinedModifierFlags`,
   `escape/unescapeLeadingUnderscores`, every `isX` guard (+90 new).
-- **`ts.TypeFormatFlags` is an alias of `NodeBuilderFlags`** (`ts.ts:341`). 6 members gone, 15
+- **`ts.TypeFormatFlags` was an alias of `NodeBuilderFlags`** (since fixed: it is tsgo's own enum). 6 members gone, 15
   `NodeBuilderFlags`-only members added, 18 shared. Five of the six removed values are **live under other
   meanings**, so a persisted numeric mask silently changes behaviour. Classed **(c)** — see §5.
 - `ts.EmitHint` kept as an inert const object (§2.1 k).
@@ -485,7 +510,8 @@ Classification: **(a)** forced by tsgo · **(b)** deliberate ts-morph choice · 
 
 ### 3.10 Packaging
 
-- `packages/common/dist/typescript.wasm` is **45 087 913 bytes**; the bundle imports `node:wasi`.
+- `packages/common/dist/typescript.wasm` is **45 087 913 bytes** (45 058 767 as of this writing — it
+  moves with every rebuild); the bundle imports `node:wasi`.
 - No `browser` stub for `node:wasi`, no `engines` field (§2.2).
 - 2.8 MB of duplicate lib text (§2.3); `typescript@6.0.2` still a devDependency of `packages/common`.
 - Single-threaded (one request at a time) and "first code-fix call is more expensive" — **unverified**,
@@ -564,16 +590,16 @@ New entry points sit _beside_ existing ones, so conflict surface is low.
 
 ### 5.2 Missing routes — each is a handler plus a protocol method
 
-| Missing route                                           | Go that already works                                                                                                      | ts-morph pays                                                                                                                                                                                                                                              |
-| ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `format.GetIndentation` / `GetIndentationForNode`       | `internal/format/indent.go:24, :17`                                                                                        | **The from-scratch indenter that writes files** (H4). Highest-value missing route                                                                                                                                                                          |
-| `checker.TypeFormatFlags` in the generator's `enumDefs` | all members present, and `internal/api/session.go:2393` **already casts the client's number to `checker.TypeFormatFlags`** | The `NodeBuilderFlags` alias is not merely imprecise — it is **inverted**. Classic values were the correct wire values all along; it is a `NodeBuilderFlags` member that gets misread. **Blocked on one line.** Best value-to-effort ratio in the document |
-| `ls.CodeAction.FixID` / `.FixAllDescription`            | `internal/ls/codeactions.go:55-60`; the fork's own `GetCombinedCodeFix` _takes a fix id_                                   | `api.CodeFixAction` (`proto.go:1223-1227`) drops both — **two struct fields**. Also correct the false comment at `packages/common/src/tsgo/ts.ts:1203-1206` ("tsgo does not group fixes into fix-alls, so there is no id to report")                       |
-| `diagnosticwriter.FormatDiagnosticsWithColorAndContext` | `:122`                                                                                                                     | `Project#formatDiagnosticsWithColorAndContext` emits neither colour nor context. **Route it or rename the method**                                                                                                                                         |
-| display parts for `ImplementationLocation`              | `displayPartsWriter` + `getQuickInfoAndDeclarationAtLocation`                                                              | `getKind`/`getDisplayParts` dropped                                                                                                                                                                                                                        |
-| `vfsmatch.ReadDirectory`                                | `internal/vfs/vfsmatch/vfsmatch.go:31` (0 hits in `internal/api/`)                                                         | `readDirectory`/`matchFiles` gone from common                                                                                                                                                                                                              |
-| `checker.symbolToString`                                | `checker.go:1545` — unexported, **no wrapper and no route** (needs both)                                                   | display-name gaps                                                                                                                                                                                                                                          |
-| `lsutil.FormatCodeSettings` fields                      | read by `format/rulecontext.go`, `indent.go`                                                                               | `api.FormattingOptions` carries six of them                                                                                                                                                                                                                |
+| Missing route                                           | Go that already works                                                                                                      | ts-morph pays                                                                                                                                                                                                                                                                                                                    |
+| ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `format.GetIndentation` / `GetIndentationForNode`       | `internal/format/indent.go:24, :17`                                                                                        | **The from-scratch indenter that writes files** (H4). Highest-value missing route                                                                                                                                                                                                                                                |
+| `checker.TypeFormatFlags` in the generator's `enumDefs` | all members present, and `internal/api/session.go:2393` **already casts the client's number to `checker.TypeFormatFlags`** | **Done** — the client's `TypeFormatFlags` is now the generated enum. The `NodeBuilderFlags` alias was not merely imprecise — it is **inverted**. Classic values were the correct wire values all along; it is a `NodeBuilderFlags` member that gets misread. **Blocked on one line.** Best value-to-effort ratio in the document |
+| `ls.CodeAction.FixID` / `.FixAllDescription`            | `internal/ls/codeactions.go:55-60`; the fork's own `GetCombinedCodeFix` _takes a fix id_                                   | `api.CodeFixAction` (`proto.go:1223-1227`) drops both — **two struct fields**. Also correct the false comment at `packages/common/src/tsgo/ts.ts:1203-1206` ("tsgo does not group fixes into fix-alls, so there is no id to report")                                                                                             |
+| `diagnosticwriter.FormatDiagnosticsWithColorAndContext` | `:122`                                                                                                                     | `Project#formatDiagnosticsWithColorAndContext` emits neither colour nor context. **Route it or rename the method**                                                                                                                                                                                                               |
+| display parts for `ImplementationLocation`              | `displayPartsWriter` + `getQuickInfoAndDeclarationAtLocation`                                                              | `getKind`/`getDisplayParts` dropped                                                                                                                                                                                                                                                                                              |
+| `vfsmatch.ReadDirectory`                                | `internal/vfs/vfsmatch/vfsmatch.go:31` (0 hits in `internal/api/`)                                                         | `readDirectory`/`matchFiles` gone from common                                                                                                                                                                                                                                                                                    |
+| `checker.symbolToString`                                | **Done** — `Checker.SymbolToString` is exported and routed as `symbolToString`                                             | display-name gaps closed                                                                                                                                                                                                                                                                                                         |
+| `lsutil.FormatCodeSettings` fields                      | read by `format/rulecontext.go`, `indent.go`                                                                               | `api.FormattingOptions` carries six of them                                                                                                                                                                                                                                                                                      |
 
 ### 5.3 Genuinely absent from tsgo — verified by grep at `ts-go` tip
 
@@ -617,7 +643,7 @@ New entry points sit _beside_ existing ones, so conflict surface is low.
 | - | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | a | **`ScriptKindUnknown → ScriptKindTS` is patched into the compiler, not the API** — `internal/compiler/host.go:83-89`, `internal/project/overlayfs.go:397-405`, plus `snapshotfs.go:598-612` treating any already-read file as relevant. With forced `AllowNonTsExtensions` this changes what a `.vue`/`.svelte`/extensionless file means **for `tsc` and `tsserver` too**. Widest blast radius in the fork; **zero tests**. Move it behind a session option |
 | b | **Default-library files are filtered out of every rename, LSP included** — `internal/ls/findallreferences.go:694-699`, sitting in the rename branch but _not_ gated by `RenameOptions`, unlike the eligibility checks in the same commit. **No baselines were regenerated** (no `testdata` changes in the diff). Gate it                                                                                                                                    |
-| c | **The fork's CI never runs.** Inherited `.github/workflows/ci.yml:5-12` triggers on `main` only, so `ts-go` is never tested by upstream's Go suite; ts-morph's own CI builds the Wasm and type-checks `native-preview` but **does not run `go test`**. Five compiler packages are validated by nothing but ts-morph's TypeScript suite. One-line fix guarding the entire compiler diff                                                                      |
+| c | **The fork's CI never runs.** Inherited `.github/workflows/ci.yml` triggers on `main`, `main-ts7`, `ts7-release` and `release-*`, so the working branch is never tested by upstream's Go suite; ts-morph's own CI builds the Wasm and type-checks the client but **does not run `go test`**. Five compiler packages are validated by nothing but ts-morph's TypeScript suite. One-line fix guarding the entire compiler diff                                |
 | d | **Test coverage is asymmetric.** Covered: resolution hook, quote preference, rename. Uncovered: the ScriptKind fallback, `AllowNonTsExtensions`, the workgroup panic capture, the `GetTypeArguments` guard, the change-tracker newline change, the default-library rename filter, `emitEndOfFileNode`, and the `getTypeFromTypeNodeWorker` fix                                                                                                              |
 | e | **Rebase surface is concentrated in upstream's most active files** — `internal/api/session.go` +303, `proto.go` +477, `native-preview/src/api/proto.ts` +761, and upstream is actively rewriting `internal/api`. `internal/module/resolver.go` is the other hot spot                                                                                                                                                                                        |
 | f | **Commit `15ff4accb` is mislabelled** (§2.1 l)                                                                                                                                                                                                                                                                                                                                                                                                              |
@@ -668,7 +694,7 @@ values are the wire format shared with the Go compiler). `ModuleResolutionKind` 
 **Exception — `NewLineKind`, WORKED AROUND** (§2.5): it is ts-morph's own public API, so `ts.ts:58-66`
 rebuilds it as a const object aliasing the old names. Values still moved.
 
-**`TypeFormatFlags` — WORKED AROUND, and the workaround is backwards** (§5.2).
+**`TypeFormatFlags` — was WORKED AROUND, and the workaround was backwards; now tsgo's own enum** (§5.2).
 
 ### 6.3 AST shape
 
@@ -750,7 +776,8 @@ One TODO in shipped source: `compiler/tools/results/CodeAction.ts:35` — pre-ex
 ### 7.3 Documentation to correct before publishing
 
 > **Done for BREAKING-CHANGES.md.** It has since been rewritten as a migration guide and every
-> load-bearing claim re-measured against published 28.0.0; all six items below are fixed, and the
+> load-bearing claim re-measured against published 28.0.0; five of the six items below are fixed —
+> item 4's comment survives in `packages/common/src/tsgo/ts.ts` and `CodeFixAction.ts` — and the
 > "undocumented entirely" list is covered. The list is kept as the record of what a re-read missed
 > and a measurement caught. Two further inversions were found in the same pass and are not in the
 > list: `matchFiles`/`getFileMatcherPatterns` were described as already broken on 28.0.0 and are
@@ -776,7 +803,7 @@ contradicted by measurement:
    `getContainerKind` (L13), the `createSourceFile("/")` throw (P14), and most of the `ts` namespace's
    public-member losses (§3.8).
 
-Outside BREAKING-CHANGES.md:
+Outside BREAKING-CHANGES.md — all three since corrected:
 
 - `docs/setup/index.md:50-80` is TypeScript 5 code (array-form `resolveModuleNames`, `ts.ResolvedModule`,
   `ts.resolveModuleName`) and claims type-reference-directive support — the one explicitly deferred
@@ -937,11 +964,11 @@ recorded here so the TODO can hold only open work. Each was measured against pub
   only, so `node:wasi` appears in no shipped artifact and one artifact serves Node, Deno and the
   browser. A browser must load it in a Web Worker — V8 refuses a `WebAssembly.Module` this large on
   the main thread — and `await initializeWasm()` before the first `Project`.
-- **The reactor ships uncompressed**, one 43.17 MiB `typescript.wasm`, so `@ts-morph/common`
-  unpacks at 53.6 MB. It was shipped gzipped for a while — 9.54 MiB, unpacking at 18.3 MB — and
+- **The reactor ships uncompressed**, one ~43 MiB `typescript.wasm`, so `@ts-morph/common`
+  unpacks at ~48 MB. It was shipped gzipped for a while — 9.6 MiB, unpacking at 18.3 MB — and
   that was reverted: it cost ~60 ms of gunzip once per process and a second codec in the loader,
   to save bytes on the wire that a server's `content-encoding` saves for free and further
-  (8.10 MiB under brotli), since the browser unwraps that before the loader sees it. The disk
+  (8.13 MiB under brotli), since the browser unwraps that before the loader sees it. The disk
   saving was real; it was judged not worth the artifact. See BREAKING-CHANGES.md §7.
 
 **Performance, in the order it was done**

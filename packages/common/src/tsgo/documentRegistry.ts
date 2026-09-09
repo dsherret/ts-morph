@@ -32,15 +32,13 @@ const configFilePath = "/tsconfig.json";
  * alive — see DocumentRegistry#retire.
  *
  * This bounds how long a `Type`, `Symbol` or `Signature` goes on working after the
- * file it came from is manipulated. The window is counted in snapshots, and an edit
- * no longer opens one of its own (see DocumentRegistry#parseSourceFileText), so in
- * practice it is counted in *semantic reads* rather than in edits. Measured: a
- * handle answers across two manipulations that each ask the checker something and
- * fails on the third, and a run of manipulations that asks nothing in between
- * supersedes no snapshot at all, so the handle goes on answering for as long as
- * that run lasts. `Type#getText` is the exception in the other direction — it
- * resolves against whichever checker is current, so it can fail at the first read
- * that flushes a pending edit.
+ * file it came from is manipulated, and the window is counted in *edits*. Measured: a
+ * handle answers after two manipulations and throws after the third, whether the
+ * caller asked the checker something between them, read only text, or asked nothing at
+ * all — reads do not accumulate, and the third edit retires the handle by itself.
+ * `Type#getText` is the exception in the other direction — it resolves against
+ * whichever checker is current, so it can fail at the first read that flushes a
+ * pending edit.
  *
  * It is observable and not a tuning knob: at 0 the first read after an edit costs
  * the caller `getProperties`, `getMembers`, `getExports`, `getDeclarations`,

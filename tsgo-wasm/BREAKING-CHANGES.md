@@ -53,8 +53,8 @@ compiler, so they cannot be renumbered back. Measured against 28.0.0:
 | ---------------------- | -------------- | --- | ---------------------------- | ------- | ----- |
 | `SyntaxKind`           | 396            | 386 | **202** of the 380 that stay | 16      | 6     |
 | `NodeFlags`            | 42             | 41  | 29                           | 5       | 4     |
-| `ObjectFlags`          | 44             | 47  | 18                           | 0       | 3     |
-| `SymbolFlags`          | 65             | 68  | 5 (including `All`)          | 0       | 3     |
+| `ObjectFlags`          | 44             | 49  | 18                           | 0       | 5     |
+| `SymbolFlags`          | 65             | 67  | 5 (including `All`)          | 1       | 3     |
 | `TypeFlags`            | 72             | 73  | 1 (`Intrinsic`)              | 0       | 1     |
 | `NewLineKind`          | 2              | 5   | 2 — **both of them**         | 0       | 3     |
 | `JsxEmit`              | 6              | 6   | 2 — **transposed**           | 0       | 0     |
@@ -145,14 +145,13 @@ snapshot pins a program and a checker inside the Wasm module. It is observable b
 a contract. **Treat a `Type`, `Symbol` or `Signature` as invalid the moment you
 manipulate anything.**
 
-Two is counted in snapshots, and a manipulation no longer opens one of its own, so in
-practice it counts **semantic reads** rather than edits. Measured: with a semantic
-question after each manipulation a handle answers across two and fails on the third;
-with nothing asked in between, no snapshot is superseded and the handle goes on
-answering for as long as that run lasts. So the window is _wider_ than two whenever
-you are only editing — which is precisely why it is not a contract. Do not build on
-it. `Type#getText` goes the other way: it resolves against whichever checker is
-current, so it can fail at the first read that flushes a pending edit.
+Two is counted in **edits**, and nothing else moves it. Measured: a handle answers after
+two manipulations and throws after the third, whether ten semantic questions were asked
+in between, three text-only reads, or nothing at all. Reads never accumulate — ten of
+them after two edits still answer — and the third edit retires the handle on its own,
+with no read needed to trigger it. `Type#getText` goes the other way: it resolves
+against whichever checker is current, so it can fail at the first read that flushes a
+pending edit.
 
 ### The pattern
 
@@ -178,7 +177,7 @@ as they did.
 ## 3. The `ts` namespace is much smaller
 
 `ts` is now tsgo's surface, not a re-export of the whole `typescript` module.
-Measured: **2249 runtime keys → 411** (1930 removed, 92 added).
+Measured: **2249 runtime keys → 412** (1930 removed, 93 added).
 
 That headline number overstates the damage. Most of the 1930 were compiler
 internals that only leaked because 28.0.0 bundled all of `typescript`. Of the
@@ -228,10 +227,10 @@ It reports the Go compiler's version (`7.1.0-dev` at time of writing), where
 28.0.0 reported `6.0.2`. `TypeScriptVersionChecker` is gone: there is one
 compiler now, so there is nothing to branch on.
 
-### Type guards: 671 → 349
+### Type guards: 671 → 350
 
 Most `ts.isX` guards survive, but not all. Measured: 407 of 28.0.0's 671 guards
-are gone and 85 are new.
+are gone and 86 are new.
 
 One is a straight rename, and the old name is not aliased:
 **`isParameter` → `isParameterDeclaration`.**
@@ -276,7 +275,7 @@ and 264 of the `isX` guards.
 | **`SourceFile#fixUnusedIdentifiers`**                                                   | **Gone.** tsgo has the unused-identifier diagnostics and the deletion machinery, but no code-fix provider joins them, so the `unusedIdentifier_delete` fix-alls do not exist.                                                                                                                                                                     | Read the unused-identifier diagnostics (6133, 6196, …) and delete the nodes yourself. Tracked in [TODO.md](./TODO.md) — this needs a new provider in the compiler, not a route.       |
 | **Most code fixes**                                                                     | tsgo ships **three** providers: `"fixMissingImport"`, `"fixMissingTypeAnnotationOnExports"`, `"fixClassIncorrectlyImplementsInterface"`. Spelling suggestions (2551), unused-import removal, missing-member and "add missing function declaration" are all measured absent — whether each is unimplemented or merely unrouted is not established. | `fixMissingImports` and `organizeImports` work. Everything else must be hand-rolled.                                                                                                  |
 | **`resolveTypeReferenceDirectives`** on a resolution host                               | **Gone.** Type reference directives resolve down a separate path in the compiler with no hook. Module resolution itself is back (§8.6).                                                                                                                                                                                                           | No workaround. The `custom type reference directive resolution` tests are skipped.                                                                                                    |
-| **`customTransformers`** on emit                                                        | **Gone**, and it fails _silently_: the option is removed from the types, but at runtime a transformer passed anyway is simply never called and the output is untransformed. tsgo's emit pipeline is built in Go from the compiler options and has no injection point.                                                                             | Transform the AST with `Node#transform` before emitting, or post-process the emitted text. `docs/emitting.md` still documents this option and is wrong.                               |
+| **`customTransformers`** on emit                                                        | **Gone**, and it fails _silently_: the option is removed from the types, but at runtime a transformer passed anyway is simply never called and the output is untransformed. tsgo's emit pipeline is built in Go from the compiler options and has no injection point.                                                                             | Transform the AST with `Node#transform` before emitting, or post-process the emitted text. `docs/emitting.md` shows the replacement pattern.                                          |
 | **`createDocumentCache`** (`@ts-morph/common`)                                          | **Gone.** It deep-cloned a parsed `ts.SourceFile` and re-stamped its `fileName`; tsgo's nodes are lazy views over a binary buffer with a circular back-reference to their file, so they cannot be cloned that way.                                                                                                                                | The session's own snapshot cache serves the same purpose within a process. There is no cross-project reuse.                                                                           |
 | **Services-layer suggestion diagnostics**                                               | **Gone.** tsgo's suggestions come from the checker only. Measured: `getSuggestionDiagnostics` on a `require()` call returns `[80001]` on 28.0.0 and `[]` now.                                                                                                                                                                                     | None.                                                                                                                                                                                 |
 | **`CodeFixAction#getFixName`**                                                          | **Gone.** There is no `fixName` concept in tsgo. `getFixId()` and `getFixAllDescription()` are also off the surface, but those are a routing gap rather than an absence — see [TODO.md](./TODO.md).                                                                                                                                               | Match on the description, or on the fix ids listed above.                                                                                                                             |
@@ -357,11 +356,15 @@ The two marked "emit changes" are the ones to watch: the diagnostic is a warning
 emit still runs, and the output is different. `outFile` and `target: ES5` are
 real behaviour changes, not just a stricter message.
 
-`alwaysStrict`, `esModuleInterop` and `allowSyntheticDefaultImports` are **not**
-removed from the type — TypeScript 7 removed only their `false` value, `true` is
-`esModuleInterop`'s own default, so all three stay typed `boolean` and the
-compiler is left to object. `baseUrl`, `outFile`, `downlevelIteration` and
-`charset` are gone from `ts.CompilerOptions` as well as from the compiler.
+`alwaysStrict`, `esModuleInterop` and `allowSyntheticDefaultImports` are still read
+by the compiler — TypeScript 7 removed only their `false` value, and `true` is
+`esModuleInterop`'s own default — but **they are currently missing from
+`ts.CompilerOptions`**, and the type has no index signature, so `esModuleInterop:
+true` is a compile error in TypeScript code and works at runtime. That is a
+regression of the port onto TypeScript main, where the three are tagged deprecated
+and the client's type generator skips deprecated fields; restoring them is
+[TODO.md](./TODO.md) §1.6. `baseUrl`, `outFile`, `downlevelIteration` and `charset`
+are gone from `ts.CompilerOptions` as well as from the compiler, and are meant to be.
 
 ### Two diagnostics that changed by _not_ appearing
 
@@ -505,16 +508,17 @@ for (const [declaration, description] of described)
   declaration.addJsDoc({ description });
 ```
 
-At 400 files, an edit alone measures 0.53 ms and an edit followed by a `getType()`
-5.13 ms — against 0.20 and 3.02 on 28.0.0.
+At 400 files, an edit alone measures 0.41 ms and an edit followed by a `getType()`
+1.50 ms — against 0.06 and 1.25 ms on 28.0.0 over the same fixture.
 
-**Be aware of the trade in that pair.** Holding the write back made an edit on its own
-several times cheaper, but it made the edit-then-ask shape _more_ expensive than it was
-before the write was held back — the file is parsed once on this side for the tree the
-manipulation returns, and again when the flush opens a snapshot. So the advice above is
-not a nicety: on this build an editing loop that asks the compiler something every time
-round is the one shape that got worse. Removing the second parse is
-[TODO.md](./TODO.md) §2.1.
+**Be aware of the trade in that pair.** An edit on its own is the shape that pays most,
+several times what 28.0.0 charges; the edit-then-ask shape is close to parity, because
+what it adds is the snapshot the semantic question needs and 28.0.0 pays for that too.
+The second parse that used to make the pair worse — the edited file parsed once for the
+tree the manipulation returns and again when the flush opened a snapshot — has been
+removed, which is what closed most of the gap on the second row. The advice above still
+stands: an editing loop that asks the compiler something every time round opens a
+snapshot every time round.
 
 **Creating files in a loop is fine, and so is reading them back.** Both are linear:
 1600 files created and each one's statements read comes to 127 ms, 0.08 ms per file and
@@ -619,11 +623,12 @@ ts-morph's speed.
 - **Requires WebAssembly.** Node, Deno and browsers are all supported. The
   compiler is a Wasm reactor with a `wasi_snapshot_preview1` shim written against
   the web platform only — `node:wasi` is not imported by any shipped artifact.
-- **A 43.17 MiB `typescript.wasm` ships beside the bundle,** uncompressed. One
-  artifact, and the loader reads it as it stands. **`@ts-morph/common` installs at
-  53.6 MB unpacked**, and so do the Docker layers, CI caches and bundled lambdas
-  carrying it; a browser served the file without transport compression downloads
-  all 43 MiB of it. The npm tarball is 11.3 MB, because npm gzips it in transit
+- **A ~43 MiB `typescript.wasm` ships beside the bundle,** uncompressed (the exact
+  size moves with every rebuild). One artifact, and the loader reads it as it
+  stands. **`@ts-morph/common` installs at ~48 MB unpacked**, and so do the Docker
+  layers, CI caches and bundled lambdas carrying it; a browser served the file
+  without transport compression downloads all 43 MiB of it. The npm tarball is
+  ~10.6 MB, because npm gzips it in transit
   regardless — the size is what it costs once unpacked. `ts-morph`'s own tarball is
   ~0.2 MB.
 
@@ -631,7 +636,7 @@ ts-morph's speed.
   **about 60 ms once per process** to gunzip — `new Project()` measured 137 ms
   against 78 ms now, on Node 24 — but the deciding point is that it bought nothing
   on the wire that a server does not already do better: `content-encoding` takes
-  the same bytes to 9.54 MiB (gzip) or 8.10 MiB (brotli) with no decompression on
+  the same bytes to 9.58 MiB (gzip) or 8.13 MiB (brotli) with no decompression on
   the load path at all, because the browser unwraps it before the loader sees
   anything. What it did buy was disk, at the price of a second codec in the loader
   and a `.gz` every bundler had to be taught about. See
@@ -639,7 +644,7 @@ ts-morph's speed.
 - **Single-threaded:** one compiler request runs to completion at a time.
 - **The compiler is no longer a plain-JS dependency,** so setups that bundled
   `typescript` from source are affected.
-- **JSR publishing is not ready yet.** The package is 47.34 MiB, over JSR's default
+- **JSR publishing is not ready yet.** The package is ~45 MiB, over JSR's default
   20 MiB limit — an increased quota for the scope is being arranged, so this is a
   matter of waiting rather than a design problem. The remaining technical piece is
   that the Wasm cannot be loaded over `https:`. See [TODO.md](./TODO.md) §3.
@@ -825,8 +830,9 @@ probe.)_
   `NodeBuilderFlags` for a while, which lost six members and reused five of their
   values under other meanings. The compiler's `typeToString` now takes
   `TypeFormatFlags` itself, and ts-morph exports that enum: every 28.0.0 member is
-  present with its 28.0.0 value, and `NodeBuilderFlags` is a distinct type once
-  more.
+  present with its 28.0.0 value except the `NodeBuilderFlagsMask` aggregate, two
+  members are new (`UseInstantiationExpressions`, `WriteCallStyleSignature`), and
+  `NodeBuilderFlags` is a distinct type once more.
 - **Documentation comes back as one plain string.** tsgo renders a documentation
   comment or a JSDoc tag as one string rather than a classified
   `SymbolDisplayPart[]`, so the whole string arrives as a single part of kind
@@ -978,7 +984,7 @@ that fraction literally. 28.0.0 did this too.
 
 ### 8.5 Language service
 
-**There is no `ts.LanguageService`.** Formatting, organize-imports, rename,
+**`ts.LanguageService` is only a type alias of the tsgo project.** Formatting, organize-imports, rename,
 definitions, implementations and code fixes are methods on the tsgo session's
 project, and the program and checker hang off it too, so
 `LanguageService#compilerObject` returns that project.
@@ -1153,10 +1159,10 @@ else answers.
 `ts.parseConfigFileTextToJson`, `ts.ParseConfigHost` and `getTsParseConfigHost`
 are gone; `TsConfigResolver` uses the API's `parseConfigFile`.
 `TsConfigResolver#getErrors()` reports the real parse diagnostics, and a
-`tsconfig.json` whose syntax does not parse throws, as it always did. What changed
-is the options object: where TypeScript kept the key with an `undefined` value for
-an option it could not use (`{ "target": "FUN" }` gave `{ target: undefined }`),
-tsgo leaves the key out entirely. The accompanying diagnostic is unchanged.
+`tsconfig.json` whose syntax does not parse throws, as it always did. The options
+object is unchanged too: an option with a value the compiler cannot use
+(`{ "target": "FUN" }`) still comes back as the key with an `undefined` value, with
+the same diagnostic beside it.
 
 **`lib` accepts short names as well as file names.** `CompilerOptions#lib` is
 typed `string[]` and the `typescript` package filled it with library _file_ names
@@ -1238,8 +1244,6 @@ reads the project.
   **Declaration-emit diagnostics are not replicated** — tsgo does not report one
   for the case TypeScript did (an exported class extending a private name) — so
   `noEmitOnError` can under-report.
-- **Whole-project `noEmit` now reports `emitSkipped: true`** where 28.0.0 reported
-  `false`. More correct; measured.
 
 ### 8.8 `@ts-morph/common`
 
@@ -1256,7 +1260,7 @@ longer carries its own copy of the lib files (§5). Also gone as types:
 
 **`TransactionalFileSystem` no longer serves lib files.** Its constructor took
 `skipLoadingLibFiles` and `libFolderPath` in order to hold the in-memory copies;
-it now takes only `fileSystem`. `libFileExists()` is gone with them — there are no
+it now takes `{ fileSystem }`. `libFileExists()` is gone with them — there are no
 files it could answer for. `getLibFolderPath(options)` survives, and still throws
 when `skipLoadingLibFiles` and `libFolderPath` are both given, but it returns
 `undefined` rather than `/node_modules/typescript/lib` when no folder is named:
@@ -1264,12 +1268,12 @@ that is the value the compiler reads as "use your own copies".
 
 **`DocumentRegistry` is not `ts.DocumentRegistry` any more:**
 
-| Before                                                                                | Now                                                       |
-| ------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| `createOrUpdateSourceFile(fileName, compilationSettings, scriptSnapshot, scriptKind)` | `createOrUpdateSourceFile(fileName, text)`                |
-| text supplied as `ts.IScriptSnapshot`                                                 | text supplied as a `string`                               |
-| compiler options passed per call                                                      | set once via the constructor                              |
-| constructed from a `TransactionalFileSystem`                                          | constructed with `{ compilerOptions, files, fs, cwd, … }` |
+| Before                                                                                | Now                                                                 |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `createOrUpdateSourceFile(fileName, compilationSettings, scriptSnapshot, scriptKind)` | `createOrUpdateSourceFile(fileName, text)`                          |
+| text supplied as `ts.IScriptSnapshot`                                                 | text supplied as a `string`                                         |
+| compiler options passed per call                                                      | set once via the constructor                                        |
+| constructed from a `TransactionalFileSystem`                                          | constructed with `{ compilerOptions, files, fs, libFolderPath, … }` |
 
 `ts.IScriptSnapshot`, `ts.ScriptSnapshot` and `ts.DocumentRegistryBucketKey` no
 longer exist. New: `createOrUpdateSourceFiles(entries)` (the batched add — §6),
@@ -1281,8 +1285,8 @@ A returned tree for an _edited_ file is only valid until the next change to that
 file. Files the edit did not touch keep their nodes, which is what preserves
 wrapper identity for the rest of the project. `getSourceFileVersion` returns
 `undefined` for a file the registry does not know — a never-edited file is version
-`"0"`, so an unknown one must not report one — and every method throws after
-`dispose()`.
+`"0"`, so an unknown one must not report one — and every method that reaches the
+compiler throws after `dispose()`.
 
 The bundle ships `dist/typescript.wasm` beside `dist/ts-morph-common.js` and
 `dist/ts-morph-common.browser.mjs`. The browser build is an ES module reached
@@ -1352,6 +1356,7 @@ several are one routing change in the compiler fork away:
 | `ScriptTarget`         | `ES3` (0), `ES5` (1), `LatestStandard` (12) — there is no downlevel-to-`var` emit                                                                                                                                                                                                                                                                             |
 | `ModuleResolutionKind` | `NodeJs` (2), renamed `Node10`; `Unknown = 0` is new                                                                                                                                                                                                                                                                                                          |
 | `NodeFlags`            | `Namespace`, `GlobalAugmentation`, `HasAggregatedChildData`, `TypeCached`, `Deprecated`                                                                                                                                                                                                                                                                       |
+| `SymbolFlags`          | `Classifiable`                                                                                                                                                                                                                                                                                                                                                |
 | `CheckFlags`           | `Discriminant` (192), renamed `NonUniformAndLiteral` at the same value                                                                                                                                                                                                                                                                                        |
 | `InternalSymbolName`   | `Resolving` (`"__resolving__"`); `AssignmentDeclaration` and `ModuleExports` are new                                                                                                                                                                                                                                                                          |
 
@@ -1405,8 +1410,8 @@ Suite state on the tree this document describes:
 
 |                      | passing | pending | failing |
 | -------------------- | ------- | ------- | ------- |
-| `packages/common`    | 435     | 0       | 0       |
-| `packages/ts-morph`  | 4500    | 2       | 0       |
+| `packages/common`    | 468     | 0       | 0       |
+| `packages/ts-morph`  | 4520    | 2       | 0       |
 | `packages/bootstrap` | 85      | 4       | 0       |
 
 `packages/ts-morph`'s two pending tests are the `elementAccessExpressionTests`
