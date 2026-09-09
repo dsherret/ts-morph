@@ -21,8 +21,8 @@ jobs:
           deno-version: canary
       - uses: actions/setup-go@v6
         with:
-          go-version-file: submodules/typescript-go/go.mod
-          cache-dependency-path: submodules/typescript-go/go.sum
+          go-version-file: submodules/typescript-go/tsc/go.mod
+          cache-dependency-path: submodules/typescript-go/tsc/go.sum
       - uses: actions/setup-node@v6
         with:
           node-version: "24.x"
@@ -77,8 +77,8 @@ jobs:
           deno-version: canary
       - uses: actions/setup-go@v6
         with:
-          go-version-file: submodules/typescript-go/go.mod
-          cache-dependency-path: submodules/typescript-go/go.sum
+          go-version-file: submodules/typescript-go/tsc/go.mod
+          cache-dependency-path: submodules/typescript-go/tsc/go.sum
       - uses: actions/setup-node@v6
         with:
           node-version: "24.x"
