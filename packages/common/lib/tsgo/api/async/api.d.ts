@@ -1,5 +1,4 @@
 /// <reference lib="esnext.disposable" />
-import type { RenameOptions } from "./types";
 import { CheckFlags } from "../../enums/checkFlags.enum";
 import { CompletionItemKind } from "../../enums/completionItemKind.enum";
 import { DiagnosticCategory } from "../../enums/diagnosticCategory.enum";
@@ -17,7 +16,8 @@ import { TypePredicateKind } from "../../enums/typePredicateKind.enum";
 import { type __String, type Declaration, type Expression, type Identifier, ModifierFlags, type Node, type Path, type SourceFile, type SyntaxKind, type TypeNode } from "../../ast/index";
 import type { APIOptions, LSPConnectionOptions } from "../options";
 import type { CompilerOptions, Diagnostic, DocumentIdentifier, DocumentPosition, LSPUpdateSnapshotParams, ParsedCommandLine, ProjectConfig, ProjectReference, ProjectResponse, ReadConfigFileResponse, SignaturePropertyMethod, SignatureResponse, SourceFileIdentity, SourceFileMetadata, SymbolPropertyMethod, SymbolResponse, SymbolsPropertyMethod, TextEdit, TypeAcquisition, TypePropertyMethod, TypeResponse, TypesPropertyMethod, UpdateSnapshotParams, UpdateSnapshotResponse } from "../proto";
-import type { FileTextEdits, CodeFixAction, CombinedCodeActions, FileSpan, FormattingOptions, OrganizeImportsMode, QuotePreference } from "../proto";
+import type { CodeFixAction, CombinedCodeActions, FileSpan, FileTextEdits, FormattingOptions, OrganizeImportsMode, QuotePreference } from "../proto";
+import type { RenameOptions } from "./types";
 import { SourceFileCache } from "../sourceFileCache";
 import type { RequestTiming, TimingAccumulators, TimingInfo } from "../timing";
 import { Client, type ClientSocketOptions, type ClientSpawnOptions } from "./client";
