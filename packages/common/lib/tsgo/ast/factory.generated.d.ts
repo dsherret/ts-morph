@@ -146,11 +146,6 @@ export declare class NodeObject {
     get whenTrue(): any;
     forEachChild<T>(visitor: (node: Node) => T, visitArray?: (nodes: NodeArray<Node>) => T): T | undefined;
     getSourceFile(): SourceFile;
-    getChildren(sourceFile?: SourceFile): Node[];
-    getChildCount(sourceFile?: SourceFile): number;
-    getChildAt(index: number, sourceFile?: SourceFile): Node;
-    getFirstToken(sourceFile?: SourceFile): Node | undefined;
-    getLastToken(sourceFile?: SourceFile): Node | undefined;
     getStart(sourceFile?: SourceFile, includeJsDocComment?: boolean): number;
     getFullStart(): number;
     getEnd(): number;
@@ -159,6 +154,11 @@ export declare class NodeObject {
     getLeadingTriviaWidth(sourceFile?: SourceFile): number;
     getFullText(sourceFile?: SourceFile): string;
     getText(sourceFile?: SourceFile): string;
+    getChildCount(sourceFile?: SourceFile): number;
+    getChildAt(index: number, sourceFile?: SourceFile): Node;
+    getChildren(sourceFile?: SourceFile): readonly Node[];
+    getFirstToken(sourceFile?: SourceFile): Node | undefined;
+    getLastToken(sourceFile?: SourceFile): Node | undefined;
 }
 export declare function createNodeArray<T extends Node>(elements: readonly T[], pos?: number, end?: number): NodeArray<T>;
 export declare function cloneNode<T extends Node>(node: T): T;

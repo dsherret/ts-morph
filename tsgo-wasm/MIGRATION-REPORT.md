@@ -47,7 +47,21 @@ have not been re-anchored.
 > `CompilerOptions` still has no index signature, on either branch. One more quadratic loop turned up after §8, from a user rather
 > than a profile: `EventContainer` unsubscribed with `indexOf` + `splice` while the reference
 > container subscribes once per file with an unresolved import, ~30 s of a 232 s run on ~380 files;
-> it and four other membership scans are sets now (`8b87817b`, TODO.md §2). Suite counts now:
+> it and four other membership scans are sets now (`8b87817b`, TODO.md §2). **H10 is retired**
+> (and its line count was 215, not the 213 stated below): the compiler grew its own `getChildren`
+> and token getters in `packages/typescript/src/ast/astnav.ts` (#63893, by an outside contributor,
+> to the same shape as the fork's `children.ts` and a month later), so the fork's copy is deleted
+> and the generated AST and `packages/common/src/tsgo/getChildren.ts` point at the compiler's. Its
+> caching moved with it: children are held on `sourceFile.childrenCache` rather than the WeakMap
+> the row below describes. It is the more faithful of the two — it skips `NodeFlags.Reparsed`
+> children and gives `EndOfFile` its orphaned doc comment, neither of which the fork's did, and
+> over 32 corpus sources the fork's copy failed 16 client-side invariants to its 7. The one place
+> it is less faithful to 28.0.0 is the `</` of a JSX closing tag, TODO.md §1.7. The 7 invariants it
+> still fails are all the same assertion, `children[0].pos === node.pos`, which is wrong for this
+> fork by design: `RemoteNodeBase#pos` deliberately reports a `JSDoc` node's `/**` rather than its
+> full start, which is what 28.0.0 reports and what callers read — verified against
+> `typescript@6.0.3`, so the fork is right and the assertion is relaxed for a doc-comment first
+> child rather than the behaviour changed. Suite counts now:
 > `ts-morph` 4520/2, `common` 468/0, `bootstrap` 85/4.
 
 ---

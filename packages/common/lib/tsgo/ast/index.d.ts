@@ -15,7 +15,6 @@ export { SyntaxKind } from "../enums/syntaxKind.enum";
 export { TokenFlags } from "../enums/tokenFlags.enum";
 export * from "./ast";
 export * from "./astnav";
-export * from "./children";
 export * from "./clone";
 export * from "./comments";
 export * from "./is";

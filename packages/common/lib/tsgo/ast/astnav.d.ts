@@ -16,3 +16,6 @@ export declare function findNextToken(previousToken: Node, parent: Node, sourceF
 export declare function findPrecedingToken(sourceFile: SourceFile, position: number): Node | undefined;
 /** @internal */
 export declare function getTokenPosOfNode(node: Node, sourceFile: SourceFile, includeJSDoc?: boolean): number;
+export declare function getChildren(node: Node, sourceFile?: SourceFile): readonly Node[];
+export declare function getFirstToken(node: Node, sourceFile?: SourceFile): Node | undefined;
+export declare function getLastToken(node: Node, sourceFile?: SourceFile): Node | undefined;

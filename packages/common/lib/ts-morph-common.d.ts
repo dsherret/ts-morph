@@ -1327,7 +1327,7 @@ export declare class StringUtils {
 }
 
 export { ResolvedModuleName } from "./tsgo/api/options";
-export { getChildren, getLastToken } from "./tsgo/ast/children";
+export { getChildren, getLastToken } from "./tsgo/ast/astnav";
 export import CompilerOptions = ts.CompilerOptions;
 export import DiagnosticCategory = ts.DiagnosticCategory;
 export import EditorSettings = ts.EditorSettings;

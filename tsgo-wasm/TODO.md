@@ -107,6 +107,29 @@ Fix: teach the generator to keep the three (a `@deprecated` doc comment would be
 decide separately about the index signature, regenerate, `deno task vendorTsgoTypes`, and
 re-verify with the type check. BREAKING-CHANGES.md §5 describes the current state until then.
 
+### 1.7 `</` is one child in a JSX closing tag
+
+**compiler.** Taking the compiler's own `getChildren` (MIGRATION-REPORT's superseded note)
+changed one thing for callers. The retired `children.ts` re-split a `LessThanSlashToken`
+into a `<` and a `/` because 28.0.0's plain scanner has no combined token; `astnav.ts`
+does not:
+
+|                               | 28.0.0              | now             |
+| ----------------------------- | ------------------- | --------------- |
+| `JsxClosingElement` children  | `<`, `/`, name, `>` | `</`, name, `>` |
+| `JsxClosingFragment` children | `<`, `/`, `>`       | `</`, `>`       |
+
+Visible through `getChildCount()`, `getChildAtIndex()`, `getChildIndex()` and descendant
+counts on a closing tag. No ts-morph test covers it, so the suite did not move; it is
+recorded in BREAKING-CHANGES.md instead. Measured over 50 sources, 25 of them deliberately
+malformed, this is the **only** place the two implementations disagree.
+
+Left as upstream has it, because the split had a cost of its own: `getTokenAtPosition`
+already returned the combined `LessThanSlashToken`, so under the split that token was not
+among its own parent's children and `getChildIndex()` on a node reached by position
+answered `-1`. Restoring 28.0.0's shape here brings that back. Decide which way round
+before anyone relies on either.
+
 ---
 
 ## 2. Performance
@@ -441,6 +464,13 @@ Worth doing when something makes snapshots frequent again, or for §2.1 — not 
     answers `ScriptKindUnknown`. That is the fallback MIGRATION-REPORT §5.5 (a) flagged as
     possibly changing `tsc`/`tsserver` behaviour; the test says it does. Narrow it to the API
     path or take the upstream behaviour.
+- **And the fork's own JS suite fails twice, also pre-existing.** `a wrongly-typed call throws
+  on the client without taking down the server`, in both the sync and the generated async
+  `api.test.ts`: `getTypeArguments` on a non-type-reference is meant to come back as an error
+  response from the per-request panic recovery, and comes back as a value instead. Confirmed
+  on the pinned commit with nothing applied, so it is not the doc-comment work; 660 of 662
+  pass. It was masked until now by a `built/local/tsc` binary three weeks older than the Go
+  source it was tested against — rebuild that before trusting this suite.
 - **Fork maintenance.** The fork is well ahead of upstream. The `migrate-tsmain` port
   re-expressed the `ts-go` stack as 18 commits on microsoft/TypeScript main, so the old
   advice to split `15ff4accb` no longer applies; what remains is deciding which changes
