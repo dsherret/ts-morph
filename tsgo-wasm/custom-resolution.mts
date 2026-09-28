@@ -25,8 +25,8 @@ const files = {
 // 1. Without the callback the specifier does not resolve, so the import is an error.
 {
   const api = createWasmAPI({ wasm, cwd: "/", fs: createVirtualFileSystem(files) });
-  const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
-  const project = snapshot.getProject("/tsconfig.json")!;
+  const snapshot = api.createSnapshot({ openProject: "/tsconfig.json" });
+  const project = snapshot.getConfiguredProject("/tsconfig.json")!;
   const diagnostics = project.program.getSemanticDiagnostics("/main.ts");
   assert.ok(
     diagnostics.some(d => d.text.includes("my-alias")),
@@ -50,8 +50,8 @@ const files = {
       return { resolved: { resolvedFileName: "/Test.ts" } };
     },
   });
-  const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
-  const project = snapshot.getProject("/tsconfig.json")!;
+  const snapshot = api.createSnapshot({ openProject: "/tsconfig.json" });
+  const project = snapshot.getConfiguredProject("/tsconfig.json")!;
 
   const diagnostics = project.program.getSemanticDiagnostics("/main.ts");
   assert.deepEqual(diagnostics.map(d => d.text), [], "the import should resolve");
@@ -80,8 +80,8 @@ const files = {
     }),
     resolveModuleName: () => ({ resolved: null }),
   });
-  const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
-  const project = snapshot.getProject("/tsconfig.json")!;
+  const snapshot = api.createSnapshot({ openProject: "/tsconfig.json" });
+  const project = snapshot.getConfiguredProject("/tsconfig.json")!;
   const diagnostics = project.program.getSemanticDiagnostics("/main.ts");
   assert.ok(diagnostics.some(d => d.text.includes("./Test")), "resolving to nothing should stand");
   console.log("resolved to nothing:", diagnostics[0]!.text);
@@ -102,8 +102,8 @@ const files = {
     }),
     resolveModuleName: ({ moduleName }) => moduleName.endsWith(".ts") ? { moduleName: moduleName.slice(0, -".ts".length) } : undefined,
   });
-  const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
-  const project = snapshot.getProject("/tsconfig.json")!;
+  const snapshot = api.createSnapshot({ openProject: "/tsconfig.json" });
+  const project = snapshot.getConfiguredProject("/tsconfig.json")!;
   const diagnostics = project.program.getSemanticDiagnostics("/main.ts");
   assert.deepEqual(diagnostics.map(d => d.text), [], "the rewritten specifier should resolve");
   assert.ok(project.program.getSourceFileNames().includes("/Test.ts"), "the resolved file should be in the program");

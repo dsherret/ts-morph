@@ -1,5 +1,6 @@
+/// <reference lib="esnext.disposable" />
 import { type ClientOptions, type ClientSocketOptions, type ClientSpawnOptions } from "../options";
-import type { APIMethodInfo, SourceFileResponseMethod } from "../proto";
+import type { APIMethodInfo, APIRequest, SourceFileResponseMethod } from "../proto";
 import { TimingCollector, type TimingInfo } from "../timing";
 export type { ClientOptions, ClientSocketOptions, ClientSpawnOptions };
 /**
@@ -12,13 +13,25 @@ export declare class Client {
     private connection;
     private options;
     private connected;
+    private closed;
+    private connecting;
     private timing;
+    private batchedRequests;
+    private nextBatch;
     constructor(options: ClientOptions);
     connect(): Promise<void>;
+    private connectWorker;
     private connectViaSpawn;
     private connectViaSocket;
     private registerFSCallbacks;
-    apiRequest<K extends keyof APIMethodInfo>(method: K, params: APIMethodInfo[K]["params"]): Promise<APIMethodInfo[K]["result"]>;
+    private sendRequestWithTiming;
+    registerCallback(name: string, callback: (params: unknown) => unknown | Promise<unknown>): () => void;
+    private doBatch;
+    private scheduleImmediateBatch;
+    batchContext(): {
+        [Symbol.dispose](): void;
+    };
+    apiRequest<K extends APIRequest["method"]>(method: K, params: APIMethodInfo[K]["params"]): Promise<APIMethodInfo[K]["result"]>;
     apiRequestBinary<K extends SourceFileResponseMethod>(method: K, params: APIMethodInfo[K]["params"]): Promise<Uint8Array | undefined>;
     /**
      * Returns the timing collector that per-node materialization is reported

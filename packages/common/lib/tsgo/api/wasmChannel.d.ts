@@ -18,6 +18,7 @@ export interface RpcChannel {
     requestSync(method: string, payload: string): string;
     requestBinarySync(method: string, payload: Uint8Array): Uint8Array;
     registerCallback(name: string, callback: (name: string, payload: string) => string): void;
+    unregisterCallback(name: string): void;
     close(): void;
 }
 /**
@@ -98,6 +99,7 @@ export declare class WasmChannel implements RpcChannel {
      */
     bind(exports: WasmExports, options: SessionOptions): void;
     registerCallback(name: string, callback: (name: string, payload: string) => string): void;
+    unregisterCallback(name: string): void;
     requestSync(method: string, payload: string): string;
     requestBinarySync(method: string, payload: Uint8Array): Uint8Array;
     close(): void;

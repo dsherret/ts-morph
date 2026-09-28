@@ -29,8 +29,8 @@ describe("wasi shim", () => {
       },
     });
     try {
-      const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
-      const project = snapshot.getProject("/tsconfig.json")!;
+      const snapshot = api.createSnapshot({ openProject: "/tsconfig.json" });
+      const project = snapshot.getConfiguredProject("/tsconfig.json")!;
       // a real check, so the libs are read and the checker runs
       expect(project.program.getSemanticDiagnostics("/main.ts").length).to.equal(0);
       return { unsupported, output };

@@ -12,9 +12,9 @@ import * as ts from "../../tsgo/ts";
  * "cannot read properties of undefined", which is what these tests guard.
  *
  * The values are asserted in full rather than checked for presence, because
- * several of them moved relative to the `typescript` package. `JsxEmit.React`
- * and `JsxEmit.ReactNative` in particular are transposed, so a wrong number
- * emits the wrong JSX rather than failing.
+ * several of them moved relative to the `typescript` package, and a wrong number for
+ * a `JsxEmit` member emits the wrong JSX rather than failing. `React` and
+ * `ReactNative` were transposed and are not any more.
  */
 describe("ts enums", () => {
   function assertMembers(name: string, actual: object | undefined, expected: Record<string, number | string>) {
@@ -31,8 +31,8 @@ describe("ts enums", () => {
     assertMembers("JsxEmit", ts.JsxEmit, {
       None: 0,
       Preserve: 1,
-      ReactNative: 2,
-      React: 3,
+      React: 2,
+      ReactNative: 3,
       ReactJSX: 4,
       ReactJSXDev: 5,
     });

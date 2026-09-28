@@ -109,6 +109,8 @@ describe("DocumentRegistry snapshots", () => {
       getSourceFileVersion: registry => registry.getSourceFileVersion("/a.ts"),
       isSourceFileFromExternalLibrary: registry => registry.isSourceFileFromExternalLibrary("/a.ts"),
       snapshotsOpened: registry => registry.snapshotsOpened,
+      // the printer belongs to the session, so asking for it opens no project
+      printer: registry => registry.printer,
       dispose: registry => registry.dispose(),
     };
 

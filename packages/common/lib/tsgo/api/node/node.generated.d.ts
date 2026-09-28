@@ -3,7 +3,6 @@ import { RemoteNodeBase, type SourceFileInfo } from "./node.infrastructure";
 export declare class RemoteNodeList extends Array<RemoteNode> implements NodeArray<RemoteNode> {
     static get [Symbol.species](): ArrayConstructor;
     parent: RemoteNode;
-    hasTrailingComma?: boolean;
     transformFlags: number;
     protected view: DataView;
     protected index: number;
@@ -13,7 +12,9 @@ export declare class RemoteNodeList extends Array<RemoteNode> implements NodeArr
     get pos(): number;
     get end(): number;
     get next(): number;
+    get firstNodeIndex(): number;
     private get data();
+    get hasTrailingComma(): boolean;
     private sourceFile;
     constructor(view: DataView, index: number, parent: RemoteNode, sourceFile: SourceFileInfo, offsetNodes: number);
     get 0(): RemoteNode;
@@ -35,7 +36,7 @@ export declare class RemoteNodeList extends Array<RemoteNode> implements NodeArr
     [Symbol.iterator](): ArrayIterator<RemoteNode>;
     forEachNode<T>(visitNode: (node: RemoteNode) => T | undefined): T | undefined;
     at(index: number): RemoteNode;
-    private getOrCreateChildAtNodeIndex;
+    getOrCreateChildAtNodeIndex(index: number): RemoteNode | RemoteNodeList;
     __print(): string;
 }
 export declare class RemoteNode extends RemoteNodeBase implements Node {
@@ -45,6 +46,7 @@ export declare class RemoteNode extends RemoteNodeBase implements Node {
     get id(): string;
     constructor(view: DataView, index: number, parent: RemoteNode, sourceFile: SourceFileInfo, offsetNodes: number);
     forEachChild<T>(visitNode: (node: Node) => T, visitList?: (list: NodeArray<Node>) => T): T | undefined;
+    childrenIter<TNext = void>(): Generator<Node, TNext | undefined, TNext>;
     get jsDoc(): readonly Node[] | undefined;
     getSourceFile(): SourceFile;
     getStart(sourceFile?: SourceFile, includeJsDocComment?: boolean): number;
@@ -55,6 +57,11 @@ export declare class RemoteNode extends RemoteNodeBase implements Node {
     getLeadingTriviaWidth(sourceFile?: SourceFile): number;
     getFullText(sourceFile?: SourceFile): string;
     getText(sourceFile?: SourceFile): string;
+    getChildCount(sourceFile?: SourceFile): number;
+    getChildAt(index: number, sourceFile?: SourceFile): Node;
+    getChildren(sourceFile?: SourceFile): readonly Node[];
+    getFirstToken(sourceFile?: SourceFile): Node | undefined;
+    getLastToken(sourceFile?: SourceFile): Node | undefined;
     protected getString(index: number): string;
     private getOrCreateChildAtNodeIndex;
     private hasChildren;

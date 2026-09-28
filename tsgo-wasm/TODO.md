@@ -107,28 +107,24 @@ Fix: teach the generator to keep the three (a `@deprecated` doc comment would be
 decide separately about the index signature, regenerate, `deno task vendorTsgoTypes`, and
 re-verify with the type check. BREAKING-CHANGES.md §5 describes the current state until then.
 
-### 1.7 `</` is one child in a JSX closing tag
+### 1.7 The incremental root-file path is not taken any more
 
-**compiler.** Taking the compiler's own `getChildren` (MIGRATION-REPORT's superseded note)
-changed one thing for callers. The retired `children.ts` re-split a `LessThanSlashToken`
-into a `<` and a `/` because 28.0.0's plain scanner has no combined token; `astnav.ts`
-does not:
+**compiler.** Adding a root file to an open project used to extend its program rather than
+build a new one — `Project.updateRootFilesInProgram`, over `Program.UpdateRootFiles`. After
+the merge with TypeScript main that path is refused: `Program.RootFileChangesFrom` does not
+recognise the new root list as the old one with names appended, so every added root costs a
+full rebuild.
 
-|                               | 28.0.0              | now             |
-| ----------------------------- | ------------------- | --------------- |
-| `JsxClosingElement` children  | `<`, `/`, name, `>` | `</`, name, `>` |
-| `JsxClosingFragment` children | `<`, `/`, `>`       | `</`, `>`       |
+Correctness is unaffected — the roots arrive, and the project holds the right files — so
+this is a performance regression rather than a behaviour change. It is the one thing the
+merge lost: `TestAPIRootsProjectLevelRolling` asserts the extension and is skipped, naming
+this section, so restoring the path is what un-skips it.
 
-Visible through `getChildCount()`, `getChildAtIndex()`, `getChildIndex()` and descendant
-counts on a closing tag. No ts-morph test covers it, so the suite did not move; it is
-recorded in BREAKING-CHANGES.md instead. Measured over 50 sources, 25 of them deliberately
-malformed, this is the **only** place the two implementations disagree.
-
-Left as upstream has it, because the split had a cost of its own: `getTokenAtPosition`
-already returned the combined `LessThanSlashToken`, so under the split that token was not
-among its own parent's children and `getChildIndex()` on a node reached by position
-answered `-1`. Restoring 28.0.0's shape here brings that back. Decide which way round
-before anyone relies on either.
+Programs are also no longer built just because a project is open: upstream made that
+explicit, and `toAPISnapshotRequest` asks for the program of every project a request opens.
+A caller that opens a project and then reads its program without asking for it gets one
+that may be dirty — which is what upstream's own `snapshot.update ensures all dirty
+programs` test is about.
 
 ---
 
@@ -438,7 +434,7 @@ Worth doing when something makes snapshots frequent again, or for §2.1 — not 
 
 ## 3. Packaging and publishing
 
-- **JSR — one half is not ours to solve.** _Size_: `deno/common` is ~45 MiB (nearly
+- **JSR — one half is not ours to solve.** _Size_: `deno/common` is ~46 MiB (nearly
   all of it the reactor) against JSR's default 20 MiB limit. **This is settled: the scope owner is requesting an
   increased quota, so size is not a constraint to engineer around.** Do not propose
   compressing, splitting or trimming the reactor to fit it — that was tried, and
@@ -449,28 +445,17 @@ Worth doing when something makes snapshots frequent again, or for §2.1 — not 
   `https:` — a JSR consumer has no file to read beside the module. The likely answer
   is `initializeWasm` with a fetched `Response`, which already works, made to serve
   an `https:` default rather than only a `file:` one.
-- **The submodule's `go test ./...` fails in three places, all ours.** Re-run 2026-09-09 on
-  the pinned `migrate-tsmain` commit. Nothing here reaches ts-morph — the reactor is built and
-  all three JavaScript suites pass — but each is the port leaving something behind, and the
-  last one is a behaviour change to `tsc` and `tsserver` rather than a stale test:
-  - `internal/tsoptions` does not **build**: the fork's own `withadditionalrootfiles_test.go`
-    calls `ParseJsonSourceFileConfigFileContent` with nine arguments where TypeScript main
-    takes eight. Update the call.
-  - Two `findRenameLocations` fourslash baselines (`renameStringLiteralTypes2`, `…3`) differ
-    from the checked-in ones. Decide whether the fork's rename work is meant to change them
-    and accept the baselines, or fix the divergence.
-  - `internal/project`'s `extensionless disk file preserves unknown script kind` fails because
-    the fork's `getScriptKind` fallback in `overlayfs.go` answers `ScriptKindTS` where upstream
-    answers `ScriptKindUnknown`. That is the fallback MIGRATION-REPORT §5.5 (a) flagged as
-    possibly changing `tsc`/`tsserver` behaviour; the test says it does. Narrow it to the API
-    path or take the upstream behaviour.
-- **And the fork's own JS suite fails twice, also pre-existing.** `a wrongly-typed call throws
-  on the client without taking down the server`, in both the sync and the generated async
-  `api.test.ts`: `getTypeArguments` on a non-type-reference is meant to come back as an error
-  response from the per-request panic recovery, and comes back as a value instead. Confirmed
-  on the pinned commit with nothing applied, so it is not the doc-comment work; 660 of 662
-  pass. It was masked until now by a `built/local/tsc` binary three weeks older than the Go
-  source it was tested against — rebuild that before trusting this suite.
+- **The submodule's `go test ./...` fails in two places, both the same baseline pair.**
+  Re-run 2026-09-28 after the merge with TypeScript main: 63 packages pass, and two
+  `findRenameLocations` fourslash baselines (`renameStringLiteralTypes2`, `…3`) differ from
+  the checked-in ones. Decide whether the fork's rename work is meant to change them and
+  accept the baselines, or fix the divergence. The other two failures recorded here are
+  gone: `internal/tsoptions` builds again, and the `getScriptKind` fallback in
+  `overlayfs.go` — the one MIGRATION-REPORT §5.5 (a) flagged as possibly changing
+  `tsc`/`tsserver` behaviour — was dropped for upstream's, which is what its test asserts.
+  So was the pair in the fork's own JS suite: `getTypeArguments` on a non-type-reference
+  answers no type arguments rather than panicking, and the two tests that asked for the
+  panic now provoke the error with a handle the server never issued. That suite is 883/883.
 - **Fork maintenance.** The fork is well ahead of upstream. The `migrate-tsmain` port
   re-expressed the `ts-go` stack as 18 commits on microsoft/TypeScript main, so the old
   advice to split `15ff4accb` no longer applies; what remains is deciding which changes

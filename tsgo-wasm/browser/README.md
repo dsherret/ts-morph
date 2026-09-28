@@ -49,15 +49,16 @@ built-in is stubbed out of the browser build, and touching one — through a rea
   rejects anything else, in Chrome and in Node alike. `initializeWasm` falls back
   to buffering the response when the content type is wrong, which works but
   throws away the point of streaming.
-- **The asset is ~43 MiB, uncompressed** (the exact size moves with every rebuild
+- **The asset is ~44 MiB, uncompressed** (the exact size moves with every rebuild
   of the reactor). One artifact ships and nothing unwraps it: what the package
   contains is what a page downloads, unless the server compresses it in transit.
 - **Turn on transport compression.** This is the whole of the answer to that
-  43 MiB, and it belongs to the server rather than to the package: the same bytes
-  are 9.58 MiB under gzip and 8.13 MiB under brotli (quality 5). `content-encoding`
+  44 MiB, and it belongs to the server rather than to the package: the same bytes
+  are 10.06 MiB under gzip (quality 6), and were 8.13 MiB under brotli (quality 5)
+  when the asset was smaller. `content-encoding`
   is undone by the browser before `initializeWasm` sees anything, so it costs the
   loader nothing and needs no cooperation from it. Pre-compress the file next to
-  itself if the server can serve a pre-built `.gz` or `.br`; compressing 43 MiB per
+  itself if the server can serve a pre-built `.gz` or `.br`; compressing 44 MiB per
   request is not free (~1.5 s for gzip at level 9).
 - **Cache it, however it arrives.** Chrome caps a single HTTP cache entry at about
   1/8 of the disk cache; the cut-off measured on one machine sat between 27 MB and

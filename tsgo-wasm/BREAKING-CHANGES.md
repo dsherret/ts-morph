@@ -644,7 +644,7 @@ ts-morph's speed.
 - **Single-threaded:** one compiler request runs to completion at a time.
 - **The compiler is no longer a plain-JS dependency,** so setups that bundled
   `typescript` from source are affected.
-- **JSR publishing is not ready yet.** The package is ~45 MiB, over JSR's default
+- **JSR publishing is not ready yet.** The package is ~46 MiB, over JSR's default
   20 MiB limit — an increased quota for the scope is being arranged, so this is a
   matter of waiting rather than a design problem. The remaining technical piece is
   that the Wasm cannot be loaded over `https:`. See [TODO.md](./TODO.md) §3.
@@ -775,22 +775,6 @@ which ts-morph re-exports as a free `getChildren` from `@ts-morph/common`. It re
 retired copy returned `Node[]`. Nothing was ever meant to mutate the cached array, and
 mutating it would have corrupted wrapper identity, so this only breaks an assignment to a
 `ts.Node[]`.
-
-**A JSX closing tag's `</` is one child, not two.** 28.0.0 rescans with a plain scanner
-that has no combined `</`, so a closing tag's children begin with a `<` and a `/`. The
-compiler's scanner produces one `LessThanSlashToken` and keeps it:
-
-|                               | 28.0.0              | now             |
-| ----------------------------- | ------------------- | --------------- |
-| `JsxClosingElement` children  | `<`, `/`, name, `>` | `</`, name, `>` |
-| `JsxClosingFragment` children | `<`, `/`, `>`       | `</`, `>`       |
-
-So `getChildCount()` on a closing tag is one less, `getChildAtIndex()` shifts by one after
-the first, and descendant counts fall to match. It buys back a smaller inconsistency:
-`getTokenAtPosition` always returned the combined token, which under the old split was not
-among its own parent's children, so `getChildIndex()` on a closing tag's `<` reached by
-position answered `-1`. Measured over 50 sources, half of them deliberately malformed, this
-is the only place the reconstruction and 28.0.0 disagree apart from `JSDocText` above.
 
 A rebuilt node has no compiler-side handle. Positional questions still have an
 answer — the answer for the nearest stored ancestor — but `getTypeAtLocation` on

@@ -1,4 +1,5 @@
-import { type FileReference, ModifierFlags, type Node, type SourceFile, SyntaxKind } from "../../ast/index";
+import { type FileReference, type Node, type SourceFile, SyntaxKind } from "../../ast/index";
+export { modifierToFlag } from "../../ast/modifiers";
 import type { TimingCollector } from "../timing";
 import { NODE_DATA_TYPE_CHILDREN, NODE_DATA_TYPE_EXTENDED, NODE_DATA_TYPE_STRING } from "./protocol";
 export declare const popcount8: number[];
@@ -8,7 +9,7 @@ export declare const NODE_CHILD_MASK = 255;
 export declare const NODE_STRING_INDEX_MASK = 16777215;
 export declare const NODE_EXTENDED_DATA_MASK = 16777215;
 export interface TextDecoder {
-    decode(input?: ArrayBufferView | ArrayBufferLike): string;
+    decode(input?: Uint8Array): string;
 }
 export interface SourceFileInfo {
     readonly _offsetNodes: number;
@@ -19,7 +20,7 @@ export interface SourceFileInfo {
     readonly _decoder: TextDecoder;
     readonly text: string;
     nodes: any[];
-    readonly path?: string;
+    readonly path?: string | undefined;
     /**
      * The timing collector that per-node materialization is reported into, and
      * that this source file registered itself with when fetched. Present only
@@ -42,7 +43,7 @@ export declare function readSourceFileHash(data: DataView): string;
  * allowing the client to distinguish files parsed with different options.
  */
 export declare function readParseOptionsKey(data: DataView): string;
-export declare function modifierToFlag(kind: SyntaxKind): ModifierFlags;
+export declare function readSourceFileLease(data: DataView): number;
 export declare class RemoteNodeBase {
     parent: any;
     view: DataView;

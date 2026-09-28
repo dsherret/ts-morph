@@ -497,7 +497,10 @@ export type { PrintNodeOptions };
  * printed without it prints structurally, without its comments.
  */
 export function printNode(node: Node, options: PrintNodeOptions = {}): string {
-  return scratchProject().emitter.printNode(node as never, options);
+  // the printer moved to the API itself, but the scratch project is still opened so the
+  // session exists and the node's own text is where the printer reads it from
+  scratchProject();
+  return scratchApi!.printer.printNode(node as never, options);
 }
 
 /**
@@ -539,11 +542,11 @@ function openScratchProject(scratchPath: string, sourceText: string): TsgoSource
 function scratchProject(changedFiles: string[] = []): Project {
   const fs = scratchFileSystem();
   fs.writeFile!(scratchConfigPath, scratchConfigText());
-  const snapshot = scratchApi!.updateSnapshot({
-    fileChanges: { changed: [...changedFiles, scratchConfigPath] },
+  const snapshot = scratchApi!.createSnapshot({
+    fileNotifications: { changed: [...changedFiles, scratchConfigPath] },
     openProject: scratchConfigPath,
   });
-  const project = snapshot.getProject(scratchConfigPath);
+  const project = snapshot.getConfiguredProject(scratchConfigPath);
   if (project == null)
     throw new Error("Could not open the project the standalone parser runs in.");
   return project;

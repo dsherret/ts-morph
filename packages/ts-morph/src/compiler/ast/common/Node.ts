@@ -268,7 +268,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    */
   print(options: PrintNodeOptions = {}): string {
     const sourceFile = this._sourceFile;
-    return this._context.compilerFactory.documentRegistry.project.emitter.printNode(this.compilerNode, {
+    return this._context.compilerFactory.documentRegistry.printer.printNode(this.compilerNode, {
       // the printer reads the node's comments and original token text out of the
       // file it was parsed from, so the node is printed alongside its own text
       sourceText: sourceFile.getFullText(),
@@ -1779,7 +1779,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
    */
   transform(visitNode: (traversal: TransformTraversalControl) => ts.Node): Node {
     const compilerFactory = this._context.compilerFactory;
-    const emitter = compilerFactory.documentRegistry.project.emitter;
+    const emitter = compilerFactory.documentRegistry.printer;
     const newLine = this._context.manipulationSettings.getNewLineKind();
     interface Transformation {
       start: number;

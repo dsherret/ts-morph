@@ -3,7 +3,7 @@ import type { TimingCollector } from "../timing";
 import { RemoteNode, RemoteNodeList } from "./node.generated";
 import { type SourceFileInfo, type TextDecoder } from "./node.infrastructure";
 export { RemoteNode, RemoteNodeList } from "./node.generated";
-export { readParseOptionsKey, readSourceFileHash, RemoteNodeBase } from "./node.infrastructure";
+export { readParseOptionsKey, readSourceFileHash, readSourceFileLease, RemoteNodeBase } from "./node.infrastructure";
 export declare class RemoteSourceFile extends RemoteNode implements SourceFileInfo {
     readonly nodes: (RemoteNode | RemoteNodeList)[];
     readonly _offsetNodes: number;

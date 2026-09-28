@@ -125,7 +125,7 @@ function expectCompilerWorks() {
     }),
   });
   try {
-    const project = api.updateSnapshot({ openProject: "/tsconfig.json" }).getProject("/tsconfig.json")!;
+    const project = api.createSnapshot({ openProject: "/tsconfig.json" }).getConfiguredProject("/tsconfig.json")!;
     expect(project.program.getSemanticDiagnostics("/main.ts").length).to.equal(0);
   } finally {
     api.close();

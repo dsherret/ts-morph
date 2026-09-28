@@ -1,15 +1,18 @@
 import { type ClientOptions, type ClientSocketOptions, type ClientSpawnOptions, type ClientWasmOptions } from "../options";
-import type { APIMethodInfo, SourceFileResponseMethod } from "../proto";
+import type { APIMethodInfo, APIRequest, BatchRequestsResponse, SourceFileResponseMethod } from "../proto";
 import { TimingCollector, type TimingInfo } from "../timing";
 export type { ClientOptions, ClientSocketOptions, ClientSpawnOptions, ClientWasmOptions };
 export declare class Client {
     private channel;
     private encoder;
     private timing;
+    private maxResponseBytesPerPage;
     constructor(options: ClientOptions);
     private registerModuleNameResolver;
     private registerFsCallbacks;
     apiRequest<K extends keyof APIMethodInfo>(method: K, params?: APIMethodInfo[K]["params"]): APIMethodInfo[K]["result"];
+    registerCallback(name: string, callback: (params: unknown) => unknown): () => void;
+    batchRequests(requests: readonly APIRequest[]): BatchRequestsResponse;
     apiRequestBinary<K extends SourceFileResponseMethod>(method: K, params?: APIMethodInfo[K]["params"]): Uint8Array | undefined;
     echo(payload: string): string;
     echoBinary(payload: Uint8Array): Uint8Array;

@@ -12,8 +12,8 @@ const files: Record<string, string> = {
 };
 
 const api = createInProcessApi({ files });
-const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
-const project = snapshot.getProject("/tsconfig.json")!;
+const snapshot = api.createSnapshot({ openProject: "/tsconfig.json" });
+const project = snapshot.getConfiguredProject("/tsconfig.json")!;
 
 /** Renders a span as `file:"text"` so results are readable. */
 function show(span: { fileName: string; pos: number; end: number }): string {

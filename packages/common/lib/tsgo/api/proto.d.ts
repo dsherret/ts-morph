@@ -1,4 +1,4 @@
-import type { APIMethodInfo, DocumentIdentifier, SignatureResponse, SourceFileResponse, SymbolResponse, TypeResponse, UpdateSnapshotParams as CoreUpdateSnapshotParams } from "./proto.generated";
+import type { APIMethodInfo, CreateSnapshotParams as CoreCreateSnapshotParams, DocumentIdentifier, SignatureResponse, SourceFileResponse, SymbolResponse, TypeResponse } from "./proto.generated";
 export type { APIProjectRootFileChanges as ProjectRootFileChanges, ConfigFileResponse as ParsedCommandLine, DiagnosticResponse as Diagnostic, DiagnosticResponse as ProtoDiagnostic, ProjectConfigResponse as ProjectConfig } from "./proto.generated";
 export * from "./proto.generated";
 export type APIMethodsReturning<T> = {
@@ -11,6 +11,25 @@ export type SignaturePropertyMethod = APIMethodsReturning<SignatureResponse>;
 export type TypePropertyMethod = Exclude<APIMethodsReturning<TypeResponse>, IntrinsicTypeMethod>;
 export type TypesPropertyMethod = APIMethodsReturning<TypeResponse[]>;
 export type IntrinsicTypeMethod = "getAnyType" | "getBigIntType" | "getBooleanType" | "getESSymbolType" | "getNeverType" | "getNonPrimitiveType" | "getNullType" | "getNumberType" | "getStringType" | "getUndefinedType" | "getUnknownType" | "getVoidType";
+type BatchableAPIMethod = Exclude<keyof APIMethodInfo, "batchRequests">;
+export type APIRequest = {
+    [K in BatchableAPIMethod]: {
+        method: K;
+        params: APIMethodInfo[K]["params"];
+    };
+}[BatchableAPIMethod];
+export type APIResponse<Request extends APIRequest = APIRequest> = Request extends APIRequest ? {
+    method: Request["method"];
+} & ({
+    result: APIMethodInfo[Request["method"]]["result"];
+    error?: undefined;
+} | {
+    result: null;
+    error: string;
+}) : never;
+export type APIResponseTuple<Requests extends readonly APIRequest[]> = {
+    [Index in keyof Requests]: APIResponse<Requests[Index]>;
+};
 /**
  * A position within a document, combining a document identifier with an offset.
  */
@@ -30,31 +49,25 @@ export declare function resolveFileName(identifier: DocumentIdentifier): string;
  * If the identifier contains a file name, it is converted to a URI.
  */
 export declare function resolveDocumentURI(identifier: DocumentIdentifier): string;
-export interface LSPUpdateSnapshotParams extends CoreUpdateSnapshotParams {
-    /**
-     * @deprecated Use {@link openProjects} instead.
-     * Path to a tsconfig.json file to open in the new snapshot.
-     */
-    openProject?: string;
-    /** FileChanges are not supplied by the LSP */
-    fileChanges?: never;
-}
 /**
- * Parameters for updateSnapshot, including deprecated members handled by `toUpdateSnapshotRequest`
+ * Parameters for createSnapshot, including deprecated members handled by `toCreateSnapshotRequest`
  */
-export interface UpdateSnapshotParams extends CoreUpdateSnapshotParams {
+export interface CreateSnapshotParams extends CoreCreateSnapshotParams {
     /**
      * @deprecated Use {@link openProjects} instead.
      * Path to a tsconfig.json file to open in the new snapshot.
      */
-    openProject?: string;
+    openProject?: string | undefined;
+}
+export interface CreateBuildOrchestratorParams {
+    rootNames: readonly string[] | null;
 }
 /**
- * Builds the wire request for updateSnapshot, applying the deprecated `openProject`
+ * Builds the wire request for createSnapshot, applying the deprecated `openProject`
  * compatibility shim: a single `openProject` is folded into `openProjects` and is
  * never sent on the wire.
  */
-export declare function toUpdateSnapshotRequest(params?: UpdateSnapshotParams): UpdateSnapshotParams;
+export declare function toCreateSnapshotRequest(params?: CreateSnapshotParams): CreateSnapshotParams;
 /**
  * Which import transformations `Project.organizeImports` applies.
  * - `"all"` sorts, combines, and removes unused imports.

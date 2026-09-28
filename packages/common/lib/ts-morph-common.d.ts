@@ -905,10 +905,17 @@ export declare class DocumentRegistry {
      * is the session seam callers reach them through.
      */
     get project(): Project;
+    /**
+     * The compiler's printer.
+     *
+     * It belongs to the session rather than to a project - printing a node reads the node
+     * and the text it came from, and asks nothing of a program - so this does not open one.
+     */
+    get printer(): import("./tsgo/api/sync/api").Printer;
     /** The project's checker, for type and symbol queries. */
     get checker(): ts.TypeChecker;
     /** The project's program, for diagnostics and file enumeration. */
-    get program(): ts.Program;
+    get program(): ts.Program<import("./tsgo/api/proto.generated").ProjectId>;
     /**
      * How many snapshots the registry has opened.
      *

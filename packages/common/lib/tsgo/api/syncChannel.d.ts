@@ -56,6 +56,7 @@ export declare class SyncRpcChannel {
     requestBinarySync(method: string, payload: Uint8Array): Uint8Array;
     /** Register a string→string callback that the child may invoke. */
     registerCallback(name: string, callback: (name: string, payload: string) => string): void;
+    unregisterCallback(name: string): void;
     /** Kill the child process and release resources. */
     close(): void;
     private ensureOpen;

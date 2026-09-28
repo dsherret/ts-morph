@@ -62,7 +62,26 @@ have not been re-anchored.
 > full start, which is what 28.0.0 reports and what callers read — verified against
 > `typescript@6.0.3`, so the fork is right and the assertion is relaxed for a doc-comment first
 > child rather than the behaviour changed. Suite counts now:
-> `ts-morph` 4520/2, `common` 468/0, `bootstrap` 85/4.
+> `ts-morph` 4520/2, `common` 469/0, `bootstrap` 85/4, the fork's own JS suite 883/0.
+>
+> **Superseded again (2026-09-28).** The submodule is now merged with
+> `microsoft/TypeScript` main `4f5ddae224` — 138 commits, 2205 files, 25 conflicts — so the
+> pin is no longer 138 behind and the Go toolchain is 1.27. Two fork features were retired
+> into upstream's: `parseSourceFile` for `createSourceFile`, which leases the tree it hands
+> back so a program answers with the same object and which honours `scriptKind` (§1.4's
+> ignored option), and `updateTemporarySnapshot` for `createSnapshot`, whose per-snapshot
+> `fileSystem` layer generalises it. ts-morph creates its first snapshot and derives the
+> rest, because root files named for a project persist across derived snapshots and an
+> independent one starts without them. Also picked up: `batchRequests`, 33 new API methods,
+> `printFile`, and a `JsxEmit` that no longer transposes `React` and `ReactNative`. Three
+> bugs were fixed on the way through, two of them upstream's: a `(snapshot, project)` pair
+> could reference two versions of a path, so `getRetained` could answer with a stale tree;
+> `organizeImports` silently stopped sorting and dropping unused imports, because the
+> provider now matches a `.ts`-suffixed code-action kind; and the Wasm reactor needs a
+> `path_readlink` import it did not before. Two things stayed the fork's: the `</` of a JSX
+> closing tag is split again, because `getChildren-parity.mts` holds it to classic
+> TypeScript, and the root file list still leaves the project response. One thing was lost:
+> the incremental root-file path, TODO.md §1.7.
 
 ---
 

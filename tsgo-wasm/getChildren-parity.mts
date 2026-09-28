@@ -86,8 +86,8 @@ const files = {
 };
 
 const api = createInProcessApi({ files });
-const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
-const project = snapshot.getProject("/tsconfig.json")!;
+const snapshot = api.createSnapshot({ openProject: "/tsconfig.json" });
+const project = snapshot.getConfiguredProject("/tsconfig.json")!;
 
 // The two ASTs number and name their kinds independently (and classic TS
 // reverse-maps aliases like FirstStatement), so comparing names directly is

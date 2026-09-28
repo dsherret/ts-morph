@@ -145,6 +145,7 @@ export declare class NodeObject {
     get whenFalse(): any;
     get whenTrue(): any;
     forEachChild<T>(visitor: (node: Node) => T, visitArray?: (nodes: NodeArray<Node>) => T): T | undefined;
+    childrenIter<TNext = void>(): Generator<Node, TNext | undefined, TNext>;
     getSourceFile(): SourceFile;
     getStart(sourceFile?: SourceFile, includeJsDocComment?: boolean): number;
     getFullStart(): number;
@@ -336,7 +337,7 @@ export declare function createJSDocOverloadTag(tagName: Identifier, typeExpressi
 export declare function createJSDocTypedefTag(tagName: Identifier, typeExpression?: Node, name?: JSDocFullName, comment?: readonly JSDocComment[]): JSDocTypedefTag;
 export declare function createJSDocSignature(typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type?: TypeNode): JSDocSignature;
 export declare function createJSDocNameReference(name: EntityName): JSDocNameReference;
-export declare function createModuleDeclaration(modifiers: readonly ModifierLike[] | undefined, keyword: SyntaxKind.ModuleKeyword | SyntaxKind.NamespaceKeyword, name: ModuleName, body?: ModuleBody): ModuleDeclaration;
+export declare function createModuleDeclaration(modifiers: readonly ModifierLike[] | undefined, keyword: SyntaxKind.ModuleKeyword | SyntaxKind.NamespaceKeyword, name: ModuleName, attributes?: TypeLiteralNode, body?: ModuleBody): ModuleDeclaration;
 export declare function createImportEqualsDeclaration(modifiers: readonly ModifierLike[] | undefined, isTypeOnly: boolean | undefined, name: Identifier, moduleReference: ModuleReference): ImportEqualsDeclaration;
 export declare function createExportDeclaration(modifiers?: readonly ModifierLike[], isTypeOnly?: boolean, exportClause?: NamedExportBindings, moduleSpecifier?: Expression, attributes?: ImportAttributes): ExportDeclaration;
 export declare function createImportTypeNode(isTypeOf: boolean | undefined, argument: TypeNode, attributes?: ImportAttributes, qualifier?: EntityName, typeArguments?: readonly TypeNode[]): ImportTypeNode;
@@ -507,7 +508,7 @@ export declare function updateJSDocOverloadTag(node: JSDocOverloadTag, tagName: 
 export declare function updateJSDocTypedefTag(node: JSDocTypedefTag, tagName: Identifier, typeExpression?: Node, name?: JSDocFullName, comment?: readonly JSDocComment[]): JSDocTypedefTag;
 export declare function updateJSDocSignature(node: JSDocSignature, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type?: TypeNode): JSDocSignature;
 export declare function updateJSDocNameReference(node: JSDocNameReference, name: EntityName): JSDocNameReference;
-export declare function updateModuleDeclaration(node: ModuleDeclaration, modifiers: readonly ModifierLike[] | undefined, name: ModuleName, body?: ModuleBody): ModuleDeclaration;
+export declare function updateModuleDeclaration(node: ModuleDeclaration, modifiers: readonly ModifierLike[] | undefined, name: ModuleName, attributes?: TypeLiteralNode, body?: ModuleBody): ModuleDeclaration;
 export declare function updateImportEqualsDeclaration(node: ImportEqualsDeclaration, modifiers: readonly ModifierLike[] | undefined, name: Identifier, moduleReference: ModuleReference): ImportEqualsDeclaration;
 export declare function updateExportDeclaration(node: ExportDeclaration, modifiers?: readonly ModifierLike[], exportClause?: NamedExportBindings, moduleSpecifier?: Expression, attributes?: ImportAttributes): ExportDeclaration;
 export declare function updateImportTypeNode(node: ImportTypeNode, argument: TypeNode, attributes?: ImportAttributes, qualifier?: EntityName, typeArguments?: readonly TypeNode[]): ImportTypeNode;

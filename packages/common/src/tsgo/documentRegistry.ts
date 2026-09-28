@@ -14,7 +14,7 @@
 import { createVirtualFileSystem, type FileSystem } from "../../../../submodules/typescript-go/packages/typescript/dist/api/fs.js";
 import type { ModuleNameResolver } from "../../../../submodules/typescript-go/packages/typescript/dist/api/options.js";
 import type { CompilerOptions } from "../../../../submodules/typescript-go/packages/typescript/dist/api/proto.generated.js";
-import type { API, Project, Snapshot } from "../../../../submodules/typescript-go/packages/typescript/dist/api/sync/api.js";
+import type { API, Project, RetainedSourceFile, Snapshot } from "../../../../submodules/typescript-go/packages/typescript/dist/api/sync/api.js";
 import { createWasmAPI } from "../../../../submodules/typescript-go/packages/typescript/dist/api/wasm/api.js";
 import type { SourceFile } from "../../../../submodules/typescript-go/packages/typescript/dist/ast/index.js";
 import { JsxEmit } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/jsxEmit.enum.js";
@@ -128,6 +128,15 @@ export class DocumentRegistry {
   /** The generation of the first edit the current snapshot does not have, if any. */
   #supersededAtGeneration: number | undefined;
   #snapshotsOpened = 0;
+  /**
+   * The source-file leases {@link #parse} is holding, one per path.
+   *
+   * A leased tree is the compiler's copy for that path, so a program built over the same
+   * text answers with the same object - which is what a caller keying its own bookkeeping
+   * off nodes depends on. The lease is what keeps it that copy, so it is held until the
+   * path is parsed again, dropped, or the registry goes.
+   */
+  #leases = new Map<string, RetainedSourceFile>();
 
   constructor(options: DocumentRegistryOptions = {}) {
     this.#compilerOptions = options.compilerOptions ?? {};
@@ -268,6 +277,7 @@ export class DocumentRegistry {
       return;
     this.#recordEdit();
     this.#versions.delete(fileName);
+    this.#releaseLease(fileName);
     this.#fs.removeFile!(fileName);
     // a file the project was never told about leaves without being dropped from it: the
     // only place it had reached is the pending list, which has not been drained yet
@@ -336,6 +346,17 @@ export class DocumentRegistry {
     return this.#getProject();
   }
 
+  /**
+   * The compiler's printer.
+   *
+   * It belongs to the session rather than to a project - printing a node reads the node
+   * and the text it came from, and asks nothing of a program - so this does not open one.
+   */
+  get printer() {
+    this.#assertNotDisposed();
+    return this.#api.printer;
+  }
+
   /** The project's checker, for type and symbol queries. */
   get checker() {
     const project = this.#getProject();
@@ -370,6 +391,9 @@ export class DocumentRegistry {
     if (this.#disposed)
       return;
     this.#disposed = true;
+    for (const retained of this.#leases.values())
+      retained.dispose();
+    this.#leases.clear();
     this.#snapshot = undefined;
     this.#retiredSnapshots.length = 0;
     this.#project = undefined;
@@ -549,7 +573,7 @@ export class DocumentRegistry {
       changed.push(configFilePath);
     }
     this.#openProject({
-      fileChanges: {
+      fileNotifications: {
         ...changed.length > 0 ? { changed } : {},
         ...created.length > 0 ? { created } : {},
         ...deleted.length > 0 ? { deleted } : {},
@@ -651,13 +675,19 @@ export class DocumentRegistry {
    * back, the build does not recognize it, and it parses the text itself.
    */
   #parse(fileName: string, text: string): SourceFile {
-    return this.#api.parseSourceFile(
-      fileName,
-      text,
-      this.#snapshot != null && this.#project != null
-        ? { snapshot: this.#snapshot.id, project: this.#project.id }
-        : undefined,
-    );
+    const retained = this.#api.createSourceFile(fileName, text);
+    this.#leases.get(fileName)?.dispose();
+    this.#leases.set(fileName, retained);
+    return retained.sourceFile;
+  }
+
+  /** Lets go of the tree the registry was holding for a path, if it was holding one. */
+  #releaseLease(fileName: string): void {
+    const retained = this.#leases.get(fileName);
+    if (retained == null)
+      return;
+    this.#leases.delete(fileName);
+    retained.dispose();
   }
 
   #getProject(): Project {
@@ -669,7 +699,7 @@ export class DocumentRegistry {
   }
 
   #openProject(params: {
-    fileChanges?: { changed?: string[]; created?: string[]; deleted?: string[] };
+    fileNotifications?: { changed?: string[]; created?: string[]; deleted?: string[] };
     rootFileChanges?: { project: string; added?: string[]; removed?: string[] }[];
     openProject: string;
   }): void {
@@ -682,11 +712,16 @@ export class DocumentRegistry {
     this.#supersededAtGeneration = undefined;
     this.#checkerUsed = false;
     this.#snapshotsOpened++;
-    const snapshot = this.#api.updateSnapshot(params);
+    // the first snapshot is created; every later one is derived from it, because the root
+    // files named for the project persist across derived snapshots and an independent one
+    // would start without them
+    const snapshot = previous == null
+      ? this.#api.createSnapshot(params)
+      : previous.update(params);
     this.#snapshot = snapshot;
     if (previous != null)
       this.#retire(previous, previousHandedOutObjects, supersededAtGeneration);
-    const project = snapshot.getProject(configFilePath);
+    const project = snapshot.getConfiguredProject(configFilePath);
     if (project == null)
       throw new Error(`Could not open the project at ${configFilePath}`);
     this.#project = project;

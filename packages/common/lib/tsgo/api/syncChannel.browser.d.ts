@@ -16,5 +16,6 @@ export declare class SyncRpcChannel implements RpcChannel {
     requestSync(_method: string, _payload: string): string;
     requestBinarySync(_method: string, _payload: Uint8Array): Uint8Array;
     registerCallback(_name: string, _callback: (name: string, payload: string) => string): void;
+    unregisterCallback(_name: string): void;
     close(): void;
 }

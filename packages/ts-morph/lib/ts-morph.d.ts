@@ -3241,6 +3241,7 @@ export declare abstract class CompilerCommentNode implements ts.Node {
   getChildCount(sourceFile?: ts.SourceFile | undefined): number;
   getChildAt(index: number, sourceFile?: ts.SourceFile | undefined): ts.Node;
   getChildren(sourceFile?: ts.SourceFile | undefined): ts.Node[];
+  childrenIter<TNext = void>(): Generator<ts.Node, TNext | undefined, TNext>;
   getStart(sourceFile?: ts.SourceFile | undefined, includeJsDocComment?: boolean | undefined): number;
   getFullStart(): number;
   getEnd(): number;

@@ -1,50 +1,91 @@
 /// <reference lib="esnext.disposable" />
+import type { APIRequest as ProtocolRequest, APIResponse as ProtocolResponse } from "../proto";
 import { CheckFlags } from "../../enums/checkFlags.enum";
 import { CompletionItemKind } from "../../enums/completionItemKind.enum";
 import { DiagnosticCategory } from "../../enums/diagnosticCategory.enum";
 import { ElementFlags } from "../../enums/elementFlags.enum";
 import { EmitOnly } from "../../enums/emitOnly.enum";
+import { IndexKind } from "../../enums/indexKind.enum";
+import { JsxEmit } from "../../enums/jsxEmit.enum";
 import { ModuleKind } from "../../enums/moduleKind.enum";
+import { ModuleResolutionKind } from "../../enums/moduleResolutionKind.enum";
 import { NodeBuilderFlags } from "../../enums/nodeBuilderFlags.enum";
 import { ObjectFlags } from "../../enums/objectFlags.enum";
+import { ScriptKind } from "../../enums/scriptKind.enum";
 import { SignatureFlags } from "../../enums/signatureFlags.enum";
 import { SignatureKind } from "../../enums/signatureKind.enum";
 import { SymbolFlags } from "../../enums/symbolFlags.enum";
 import { TypeFlags } from "../../enums/typeFlags.enum";
 import { TypeFormatFlags } from "../../enums/typeFormatFlags.enum";
 import { TypePredicateKind } from "../../enums/typePredicateKind.enum";
-import { type __String, type Declaration, type Expression, type Identifier, ModifierFlags, type Node, type Path, type SourceFile, type SyntaxKind, type TypeNode } from "../../ast/index";
+import { type __String, type CallLikeExpression, type Declaration, type Expression, type FileReference, type Identifier, ModifierFlags, type NamedTupleMember, type Node, type ParameterDeclaration, type Path, type SourceFile, type StringLiteralLikeNode, type SyntaxKind, type TypeNode } from "../../ast/index";
 import type { APIOptions, LSPConnectionOptions } from "../options";
-import type { CompilerOptions, Diagnostic, DocumentIdentifier, DocumentPosition, LSPUpdateSnapshotParams, ParsedCommandLine, ProjectConfig, ProjectReference, ProjectResponse, ReadConfigFileResponse, SignaturePropertyMethod, SignatureResponse, SourceFileIdentity, SourceFileMetadata, SymbolPropertyMethod, SymbolResponse, SymbolsPropertyMethod, TextEdit, TypeAcquisition, TypePropertyMethod, TypeResponse, TypesPropertyMethod, UpdateSnapshotParams, UpdateSnapshotResponse } from "../proto";
+import type { BuildResponse, CleanBuildResponse, CompilerOptions, ConfiguredProjectId, CreateBuildOrchestratorResponse, CreateProgramOptions as ProtocolCreateProgramOptions, CreateSnapshotParams as ProtocolCreateSnapshotParams, CreateSnapshotProgramParams as ProtocolCreateSnapshotProgramParams, CreateSnapshotResponse, CreateSourceFileOptions, Diagnostic, DocumentIdentifier, DocumentPosition, FileNotifications, InferredProjectId, LanguageServerSnapshotChanges as ProtocolLanguageServerSnapshotChanges, ModuleResolutionEntry, ModuleResolutionSpec, PackageId, ParsedCommandLine, ProjectConfig, ProjectId, ProjectReference, ProjectResponse, ReadConfigFileResponse, ReconfigureSnapshotProgramParams as ProtocolReconfigureSnapshotProgramParams, ResolutionMode, ResolvedModule, ResolvedTypeReferenceDirective, ResolveModuleNameResult, SignaturePropertyMethod, SignatureResponse, SourceFileIdentity, SourceFileMetadata, StaticModuleResolution, SymbolPropertyMethod, SymbolResponse, SymbolsPropertyMethod, SyntheticProjectId, TextEdit, TypeAcquisition, TypePropertyMethod, TypeResponse, TypesPropertyMethod } from "../proto";
 import type { CodeFixAction, CombinedCodeActions, FileSpan, FileTextEdits, FormattingOptions, OrganizeImportsMode, QuotePreference } from "../proto";
 import type { RenameOptions } from "./types";
 import { SourceFileCache } from "../sourceFileCache";
 import type { RequestTiming, TimingAccumulators, TimingInfo } from "../timing";
 import { Client, type ClientSocketOptions, type ClientSpawnOptions } from "./client";
-import type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, EmitOutput, EmitOutputFile, EmitResult, FormatDiagnosticsHost, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction as APIImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, NumberLiteralType, ObjectType, StringLiteralType, StringMappingType, StructuredType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType } from "./types";
+import type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, EmitOutput, EmitOutputFile, EmitResult, FormatDiagnosticsHost, FreshableType, GenericType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction as APIImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, MappedType, NumberLiteralType, ObjectType, StringLiteralType, StringMappingType, StructuredType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, TupleTypeReference, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType } from "./types";
 export { formatDiagnostics, formatDiagnosticsWithColorAndContext } from "../diagnosticFormatter";
 export { documentURIToFileName, fileNameToDocumentURI } from "../path";
-export { CheckFlags, CompletionItemKind, DiagnosticCategory, ElementFlags, EmitOnly, ModifierFlags, ModuleKind, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypeFormatFlags, TypePredicateKind };
-export type { APIImportAdderAction as ImportAdderAction, APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, DocumentIdentifier, DocumentPosition, EmitOutput, EmitOutputFile, EmitResult, FormatDiagnosticsHost, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, ParsedCommandLine, ProjectConfig, ProjectReference, ReadConfigFileResponse, RenameOptions, RequestTiming, SourceFileIdentity, SourceFileMetadata, StringLiteralType, StringMappingType, StructuredType, SubstitutionType, TemplateLiteralType, TextEdit, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, Type, TypeAcquisition, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType, };
+export { CheckFlags, CompletionItemKind, DiagnosticCategory, ElementFlags, EmitOnly, IndexKind, JsxEmit, ModifierFlags, ModuleKind, ModuleResolutionKind, NodeBuilderFlags, ObjectFlags, ScriptKind, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypeFormatFlags, TypePredicateKind };
+export type { APIImportAdderAction as ImportAdderAction, APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, ConfiguredProjectId, CreateSourceFileOptions, Diagnostic, DocumentIdentifier, DocumentPosition, EmitOutput, EmitOutputFile, EmitResult, FileNotifications, FormatDiagnosticsHost, FreshableType, GenericType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InferredProjectId, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, MappedType, ModuleResolutionEntry, ModuleResolutionSpec, NumberLiteralType, ObjectType, PackageId, ParsedCommandLine, ProjectConfig, ProjectId, ProjectReference, ReadConfigFileResponse, RenameOptions, RequestTiming, ResolutionMode, ResolvedModule, ResolvedTypeReferenceDirective, ResolveModuleNameResult, SourceFileIdentity, SourceFileMetadata, StaticModuleResolution, StringLiteralType, StringMappingType, StructuredType, SubstitutionType, SyntheticProjectId, TemplateLiteralType, TextEdit, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, TupleTypeReference, Type, TypeAcquisition, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType, };
+export interface ModuleResolverOptions {
+    moduleResolutions?: ModuleResolutionSpec | undefined;
+    resolveModuleName?: ResolveModuleNameCallback | undefined;
+}
+export interface ResolveModuleNameCallbackOptions {
+    snapshot: Snapshot | InProgressSnapshot | undefined;
+}
+declare const inProgressSnapshotBrand: unique symbol;
+export type InProgressSnapshot = number & {
+    readonly [inProgressSnapshotBrand]: never;
+};
+export type ResolveModuleNameCallback = (moduleName: string, containingDirectory: string, resolutionMode: ResolutionMode | undefined, options: ResolveModuleNameCallbackOptions) => StaticModuleResolution | undefined;
+export type CreateProgramOptions = Omit<ProtocolCreateProgramOptions, "moduleResolver"> & {
+    moduleResolver?: ModuleResolver | undefined;
+};
+export type CreateSnapshotProgramParams = Omit<ProtocolCreateSnapshotProgramParams, "options"> & {
+    options?: CreateProgramOptions | undefined;
+};
+export type ReconfigureSnapshotProgramParams = Omit<ProtocolReconfigureSnapshotProgramParams, "options"> & {
+    options?: CreateProgramOptions | undefined;
+};
+export type CreateSnapshotParams = Omit<ProtocolCreateSnapshotParams, "createPrograms" | "reconfigurePrograms"> & {
+    createPrograms?: readonly CreateSnapshotProgramParams[] | undefined;
+    reconfigurePrograms?: readonly ReconfigureSnapshotProgramParams[] | undefined;
+};
+export type LanguageServerSnapshotChanges = Omit<ProtocolLanguageServerSnapshotChanges, "createPrograms" | "reconfigurePrograms"> & {
+    createPrograms?: readonly CreateSnapshotProgramParams[] | undefined;
+    reconfigurePrograms?: readonly ReconfigureSnapshotProgramParams[] | undefined;
+};
 export interface TranspileOptions {
-    compilerOptions?: CompilerOptions;
-    fileName?: string;
-    reportDiagnostics?: boolean;
+    compilerOptions?: CompilerOptions | undefined;
+    fileName?: string | undefined;
+    reportDiagnostics?: boolean | undefined;
 }
 export interface TranspileOutput {
     outputText: string;
-    diagnostics?: readonly Diagnostic[];
-    sourceMapText?: string;
+    diagnostics?: readonly Diagnostic[] | undefined;
+    sourceMapText?: string | undefined;
 }
+export { all, type AllAPIRequestGenerator, type AnyAPIRequestGenerator, type APIRequestGenerator, defer, type DeferredAPIRequestGenerator, type ExecutedGeneratorsResults } from "./generatorSupport";
+import { type AnyAPIRequestGenerator, type ExecutedGeneratorsResults } from "./generatorSupport";
 export declare class API<FromLSP extends boolean = false> implements FormatDiagnosticsHost {
     private client;
     private sourceFileCache;
     private parseDecoder;
     private toPath;
     private currentDirectory;
+    private readonly decoder;
     private getCanonicalFileNameWorker;
     private initialized;
+    private initializing;
     private activeSnapshots;
+    private activeBuildOrchestrators;
+    private activeSourceFileLeases;
+    readonly printer: Printer;
     private latestSnapshot;
     private compilerVersion;
     readonly internal: InternalAPI;
@@ -55,33 +96,115 @@ export declare class API<FromLSP extends boolean = false> implements FormatDiagn
      * Create an API instance from an existing LSP connection's API session.
      * Use this when connecting to an API pipe provided by an LSP server via custom/initializeAPISession.
      */
-    static fromLSPConnection(options: LSPConnectionOptions): API<true>;
-    private ensureInitialized;
+    static get fromLSPConnection(): {
+        (options: LSPConnectionOptions): API<true>;
+        gen(options: LSPConnectionOptions): Generator<ProtocolRequest, API<true>, ProtocolResponse["result"]>;
+    };
+    batch<T extends readonly AnyAPIRequestGenerator[]>(...requestGenerators: T): ExecutedGeneratorsResults<T>;
+    private get ensureInitialized();
+    private get initializeWorker();
     getCurrentDirectory(): string;
     getCanonicalFileName(fileName: string): string;
     getNewLine(): string;
-    parseConfigFile(file: DocumentIdentifier): ParsedCommandLine;
-    parseCommandLine(commandLine: readonly string[]): ParsedCommandLine;
-    readConfigFile(file: DocumentIdentifier): ReadConfigFileResponse;
-    parseJsonConfigFileContent(json: any, options: {
-        configDirectory: string;
-        configFileName?: never;
-    } | {
-        configFileName: DocumentIdentifier;
-        configDirectory?: never;
-    }): ParsedCommandLine;
-    transpileModule(input: string, options?: TranspileOptions): TranspileOutput;
-    transpileModuleFromFile(fileName: string, options?: TranspileOptions): TranspileOutput;
-    transpileDeclaration(input: string, options?: TranspileOptions): TranspileOutput;
-    transpileDeclarationFromFile(fileName: string, options?: TranspileOptions): TranspileOutput;
-    parseSourceFile(file: DocumentIdentifier, text: string, context?: {
-        snapshot: number;
-        project: Path;
-    }): SourceFile;
-    updateSnapshot(params?: FromLSP extends true ? LSPUpdateSnapshotParams : UpdateSnapshotParams): Snapshot;
-    close(): void;
+    get createBuildOrchestrator(): {
+        (rootNames: readonly string[], buildOrchestratorOptions: BuildOrchestratorOptions): BuildOrchestrator;
+        gen(rootNames: readonly string[], buildOrchestratorOptions: BuildOrchestratorOptions): Generator<ProtocolRequest, BuildOrchestrator, ProtocolResponse["result"]>;
+    };
+    get parseConfigFile(): {
+        (file: DocumentIdentifier): ParsedCommandLine;
+        gen(file: DocumentIdentifier): Generator<ProtocolRequest, ParsedCommandLine, ProtocolResponse["result"]>;
+    };
+    get parseCommandLine(): {
+        (commandLine: readonly string[]): ParsedCommandLine;
+        gen(commandLine: readonly string[]): Generator<ProtocolRequest, ParsedCommandLine, ProtocolResponse["result"]>;
+    };
+    get readConfigFile(): {
+        (file: DocumentIdentifier): ReadConfigFileResponse;
+        gen(file: DocumentIdentifier): Generator<ProtocolRequest, ReadConfigFileResponse, ProtocolResponse["result"]>;
+    };
+    get parseJsonConfigFileContent(): {
+        (json: any, options: {
+            configDirectory: string;
+            configFileName?: never;
+        } | {
+            configFileName: DocumentIdentifier;
+            configDirectory?: never;
+        }): ParsedCommandLine;
+        gen(json: any, options: {
+            configDirectory: string;
+            configFileName?: never;
+        } | {
+            configFileName: DocumentIdentifier;
+            configDirectory?: never;
+        }): Generator<ProtocolRequest, ParsedCommandLine, ProtocolResponse["result"]>;
+    };
+    /**
+     * Create and retain a source file independently of a program.
+     * Dispose the returned lease when the source file no longer needs to remain available remotely.
+     */
+    get createSourceFile(): {
+        (fileName: string, sourceText: string, options?: CreateSourceFileOptions): RetainedSourceFile;
+        gen(fileName: string, sourceText: string, options?: CreateSourceFileOptions): Generator<ProtocolRequest, RetainedSourceFile, ProtocolResponse["result"]>;
+    };
+    /**
+     * Read, create, and retain a source file independently of a program.
+     * Dispose the returned lease when the source file no longer needs to remain available remotely.
+     */
+    get createSourceFileFromFile(): {
+        (file: DocumentIdentifier, options?: CreateSourceFileOptions): RetainedSourceFile;
+        gen(file: DocumentIdentifier, options?: CreateSourceFileOptions): Generator<ProtocolRequest, RetainedSourceFile, ProtocolResponse["result"]>;
+    };
+    private retainSourceFileResponse;
+    get transpileModule(): {
+        (input: string, options?: TranspileOptions): TranspileOutput;
+        gen(input: string, options?: TranspileOptions): Generator<ProtocolRequest, TranspileOutput, ProtocolResponse["result"]>;
+    };
+    get transpileModuleFromFile(): {
+        (file: DocumentIdentifier, options?: TranspileOptions): TranspileOutput;
+        gen(file: DocumentIdentifier, options?: TranspileOptions): Generator<ProtocolRequest, TranspileOutput, ProtocolResponse["result"]>;
+    };
+    get transpileDeclaration(): {
+        (input: string, options?: TranspileOptions): TranspileOutput;
+        gen(input: string, options?: TranspileOptions): Generator<ProtocolRequest, TranspileOutput, ProtocolResponse["result"]>;
+    };
+    get transpileDeclarationFromFile(): {
+        (file: DocumentIdentifier, options?: TranspileOptions): TranspileOutput;
+        gen(file: DocumentIdentifier, options?: TranspileOptions): Generator<ProtocolRequest, TranspileOutput, ProtocolResponse["result"]>;
+    };
+    get createSnapshot(): {
+        <const CreatePrograms extends CreateSnapshotParams["createPrograms"] = undefined, const OpenFiles extends CreateSnapshotParams["openFiles"] = undefined>(params: SnapshotOperationParams<CreateSnapshotParams, CreatePrograms, OpenFiles>): SnapshotForOperationResults<CreatePrograms, OpenFiles>;
+        (): Snapshot;
+        gen<const CreatePrograms extends CreateSnapshotParams["createPrograms"] = undefined, const OpenFiles extends CreateSnapshotParams["openFiles"] = undefined>(params: SnapshotOperationParams<CreateSnapshotParams, CreatePrograms, OpenFiles>): Generator<ProtocolRequest, SnapshotForOperationResults<CreatePrograms, OpenFiles>, ProtocolResponse["result"]>;
+        gen(): Generator<ProtocolRequest, Snapshot, ProtocolResponse["result"]>;
+    };
+    private get updateSnapshot();
+    private prepareCreateSnapshotParams;
+    private prepareLanguageServerSnapshotChanges;
+    private createSnapshotUpdater;
+    /**
+     * Returns the language server's current canonical snapshot after atomically
+     * adopting any supplied API-driven changes. Only available on LSP-connected APIs.
+     */
+    get getCurrentLanguageServerSnapshot(): {
+        <const CreatePrograms extends LanguageServerSnapshotChanges["createPrograms"] = undefined, const OpenFiles extends LanguageServerSnapshotChanges["openFiles"] = undefined>(...args: FromLSP extends true ? [changes: SnapshotOperationParams<LanguageServerSnapshotChanges, CreatePrograms, OpenFiles>, baseSnapshot?: Snapshot] : [changes: never, baseSnapshot?: never]): SnapshotForOperationResults<CreatePrograms, OpenFiles>;
+        (...args: FromLSP extends true ? [changes?: LanguageServerSnapshotChanges, baseSnapshot?: Snapshot] : [changes: never, baseSnapshot?: never]): Snapshot;
+        gen<const CreatePrograms extends LanguageServerSnapshotChanges["createPrograms"] = undefined, const OpenFiles extends LanguageServerSnapshotChanges["openFiles"] = undefined>(...args: FromLSP extends true ? [changes: SnapshotOperationParams<LanguageServerSnapshotChanges, CreatePrograms, OpenFiles>, baseSnapshot?: Snapshot] : [changes: never, baseSnapshot?: never]): Generator<ProtocolRequest, SnapshotForOperationResults<CreatePrograms, OpenFiles>, ProtocolResponse["result"]>;
+        gen(...args: FromLSP extends true ? [changes?: LanguageServerSnapshotChanges, baseSnapshot?: Snapshot] : [changes: never, baseSnapshot?: never]): Generator<ProtocolRequest, Snapshot, ProtocolResponse["result"]>;
+    };
+    [globalThis.Symbol.dispose](): void;
+    get close(): {
+        (): void;
+        gen(): Generator<ProtocolRequest, void, ProtocolResponse["result"]>;
+    };
+    get createModuleResolver(): {
+        (compilerOptions: CompilerOptions, options?: ModuleResolverOptions): ModuleResolver;
+        gen(compilerOptions: CompilerOptions, options?: ModuleResolverOptions): Generator<ProtocolRequest, ModuleResolver, ProtocolResponse["result"]>;
+    };
     clearSourceFileCache(): void;
-    runWithTemporaryFileUpdate(baseSnapshot: Snapshot, file: DocumentIdentifier, newText: string, cb: (newSnapshot: Snapshot) => void): void;
+    get runWithTemporaryFileUpdate(): {
+        (baseSnapshot: Snapshot, file: DocumentIdentifier, newText: string, cb: (newSnapshot: Snapshot) => void): void;
+        gen(baseSnapshot: Snapshot, file: DocumentIdentifier, newText: string, cb: (newSnapshot: Snapshot) => void | Generator<ProtocolRequest, void, ProtocolResponse["result"]>): Generator<ProtocolRequest, void, ProtocolResponse["result"]>;
+    };
     /**
      * Returns a snapshot of collected timing information for requests made
      * through this API instance: client-measured round-trip latency and bytes
@@ -93,50 +216,190 @@ export declare class API<FromLSP extends boolean = false> implements FormatDiagn
      * `collectTiming` option; when it is not, the returned snapshot has
      * `enabled: false` and zeroed totals.
      */
-    getTimingInfo(): TimingInfo;
+    get getTimingInfo(): {
+        (): TimingInfo;
+        gen(): Generator<ProtocolRequest, TimingInfo, ProtocolResponse["result"]>;
+    };
     /** Clears all accumulated timing totals and recent-request history, on both the client and the server. */
-    resetTimingInfo(): void;
+    get resetTimingInfo(): {
+        (): void;
+        gen(): Generator<ProtocolRequest, void, ProtocolResponse["result"]>;
+    };
+    /** Creates a program from current filesystem state. */
+    get createProgram(): {
+        (rootFiles: readonly DocumentIdentifier[], compilerOptions: CompilerOptions, createProgramOptions?: CreateProgramOptions): Program;
+        gen(rootFiles: readonly DocumentIdentifier[], compilerOptions: CompilerOptions, createProgramOptions?: CreateProgramOptions): Generator<ProtocolRequest, Program, ProtocolResponse["result"]>;
+    };
+}
+type EnsureInitialized = (() => void) & {
+    gen(): Generator<ProtocolRequest, void, ProtocolResponse["result"]>;
+};
+/** An independently retained source file and its disposable remote-lifetime lease. */
+export declare class RetainedSourceFile {
+    readonly sourceFile: SourceFile;
+    private readonly lease;
+    private readonly client;
+    private readonly onDispose;
+    private disposed;
+    private disposePromise;
+    constructor(sourceFile: SourceFile, lease: number, client: Client, onDispose: () => void);
+    [globalThis.Symbol.dispose](): void;
+    get dispose(): {
+        (): void;
+        gen(): Generator<ProtocolRequest, void, ProtocolResponse["result"]>;
+    };
+    private get disposeWorker();
 }
 export declare class InternalAPI {
     private client;
     private ensureInitialized;
     /** @internal */
-    constructor(client: Client, ensureInitialized: () => void);
-    startCPUProfile(dir: string): void;
-    stopCPUProfile(): string;
-    saveHeapProfile(dir: string): string;
+    constructor(client: Client, ensureInitialized: EnsureInitialized);
+    get startCPUProfile(): {
+        (dir: string): void;
+        gen(dir: string): Generator<ProtocolRequest, void, ProtocolResponse["result"]>;
+    };
+    get stopCPUProfile(): {
+        (): string;
+        gen(): Generator<ProtocolRequest, string, ProtocolResponse["result"]>;
+    };
+    get saveHeapProfile(): {
+        (dir: string): string;
+        gen(dir: string): Generator<ProtocolRequest, string, ProtocolResponse["result"]>;
+    };
 }
+type SnapshotUpdater = ((params: CreateSnapshotParams) => Snapshot) & {
+    gen(params: CreateSnapshotParams): Generator<ProtocolRequest, Snapshot, ProtocolResponse["result"]>;
+};
+export interface SnapshotOperation {
+    readonly createdPrograms?: readonly Program<SyntheticProjectId>[] | undefined;
+    readonly openedFiles?: readonly SnapshotOpenedFileOperation[] | undefined;
+}
+export interface SnapshotOpenedFileOperation {
+    readonly project: Project;
+}
+/** Replaces every element of a tuple while preserving its length and index structure. */
+type MapTupleTo<Tuple extends readonly unknown[], Result> = {
+    readonly [Index in keyof Tuple]: Result;
+};
+/**
+ * Keeps `Tuple` as an inference target while contextually typing each element from
+ * `Elements`. The mapped intersection supplies nested completions and excess-property
+ * checks without widening an inferred tuple to an array.
+ */
+type ContextualizeTuple<Tuple extends readonly unknown[] | undefined, Elements extends readonly unknown[] | undefined> = Tuple & {
+    readonly [Index in keyof Tuple]: NonNullable<Elements>[number];
+};
+/** Substitutes the operation arrays with contextually typed, tuple-preserving versions. */
+type SnapshotOperationParams<Params extends {
+    createPrograms?: readonly unknown[] | undefined;
+    openFiles?: readonly unknown[] | undefined;
+}, CreatePrograms extends Params["createPrograms"], OpenFiles extends Params["openFiles"]> = Omit<Params, "createPrograms" | "openFiles"> & {
+    createPrograms?: ContextualizeTuple<CreatePrograms, Params["createPrograms"]> | undefined;
+    openFiles?: ContextualizeTuple<OpenFiles, Params["openFiles"]> | undefined;
+};
+/**
+ * Refines a snapshot's operation results to required tuples when the corresponding
+ * operation arrays were supplied, preserving their lengths for indexed access.
+ */
+type SnapshotForOperationResults<CreatePrograms extends readonly unknown[] | undefined, OpenFiles extends readonly unknown[] | undefined> = Snapshot & {
+    readonly operation: SnapshotOperation & (CreatePrograms extends readonly unknown[] ? {
+        readonly createdPrograms: MapTupleTo<CreatePrograms, Program<SyntheticProjectId>>;
+    } : unknown) & (OpenFiles extends readonly unknown[] ? {
+        readonly openedFiles: MapTupleTo<OpenFiles, SnapshotOpenedFileOperation>;
+    } : unknown);
+};
+/** Derives the refined snapshot result type from a complete operation parameter type. */
+export type SnapshotForOperation<Params extends CreateSnapshotParams> = SnapshotForOperationResults<Params extends {
+    createPrograms: infer CreatePrograms extends readonly unknown[];
+} ? CreatePrograms : undefined, Params extends {
+    openFiles: infer OpenFiles extends readonly unknown[];
+} ? OpenFiles : undefined>;
 export declare class Snapshot {
     readonly id: number;
+    readonly operation: SnapshotOperation;
     private projectMap;
     private toPath;
     private client;
     private disposed;
+    private disposePromise;
     private onDispose;
     private snapshotRegistry;
+    private projectDataMap;
+    private updateSnapshot;
     readonly internal: SnapshotInternalAPI;
-    constructor(data: UpdateSnapshotResponse, client: Client, sourceFileCache: SourceFileCache, toPath: (fileName: string) => Path, formatDiagnosticsHost: FormatDiagnosticsHost, onDispose: () => void);
+    constructor(data: CreateSnapshotResponse, client: Client, sourceFileCache: SourceFileCache, toPath: (fileName: string) => Path, formatDiagnosticsHost: FormatDiagnosticsHost, onDispose: () => void, updateSnapshot: SnapshotUpdater, baseSnapshot?: Snapshot);
     getProjects(): readonly Project[];
-    getProject(configFileName: string): Project | undefined;
-    getDefaultProjectForFile(file: DocumentIdentifier): Project | undefined;
+    getConfiguredProject(configFileName: string): Project<ConfiguredProjectId> | undefined;
+    getProject<Id extends ProjectId>(projectId: Id): Project<Id> | undefined;
+    getProgram<Id extends ProjectId>(projectId: Id): Program<Id> | undefined;
+    get update(): {
+        <const CreatePrograms extends CreateSnapshotParams["createPrograms"] = undefined, const OpenFiles extends CreateSnapshotParams["openFiles"] = undefined>(params: SnapshotOperationParams<CreateSnapshotParams, CreatePrograms, OpenFiles>): SnapshotForOperationResults<CreatePrograms, OpenFiles>;
+        (params: CreateSnapshotParams): Snapshot;
+        gen<const CreatePrograms extends CreateSnapshotParams["createPrograms"] = undefined, const OpenFiles extends CreateSnapshotParams["openFiles"] = undefined>(params: SnapshotOperationParams<CreateSnapshotParams, CreatePrograms, OpenFiles>): Generator<ProtocolRequest, SnapshotForOperationResults<CreatePrograms, OpenFiles>, ProtocolResponse["result"]>;
+        gen(params: CreateSnapshotParams): Generator<ProtocolRequest, Snapshot, ProtocolResponse["result"]>;
+    };
+    /**
+     * Gets the default project for a given file from the configured projects and
+     * inferred project already loaded in the snapshot. Synthetic projects are not
+     * considered. Files that have been opened with `openFiles` are guaranteed to
+     * have a result.
+     */
+    get getDefaultProjectForFile(): {
+        (file: DocumentIdentifier): Project | undefined;
+        gen(file: DocumentIdentifier): Generator<ProtocolRequest, Project | undefined, ProtocolResponse["result"]>;
+    };
     [globalThis.Symbol.dispose](): void;
-    dispose(): void;
+    get dispose(): {
+        (): void;
+        gen(): Generator<ProtocolRequest, void, ProtocolResponse["result"]>;
+    };
+    private get disposeWorker();
     isDisposed(): boolean;
     private ensureNotDisposed;
+    private requireProject;
+}
+export declare class ModuleResolver {
+    readonly id: number;
+    private readonly client;
+    private readonly disposeCallback;
+    private disposed;
+    constructor(id: number, client: Client, disposeCallback: (() => void) | undefined);
+    get resolveModuleName(): {
+        (moduleName: string, containingDirectory: DocumentIdentifier, resolutionMode?: ResolutionMode, options?: {
+            snapshot?: Snapshot | InProgressSnapshot | undefined;
+        }): ResolveModuleNameResult;
+        gen(moduleName: string, containingDirectory: DocumentIdentifier, resolutionMode?: ResolutionMode, options?: {
+            snapshot?: Snapshot | InProgressSnapshot | undefined;
+        }): Generator<ProtocolRequest, ResolveModuleNameResult, ProtocolResponse["result"]>;
+    };
+    [globalThis.Symbol.dispose](): void;
+    get dispose(): {
+        (): void;
+        gen(): Generator<ProtocolRequest, void, ProtocolResponse["result"]>;
+    };
+    /** @internal */
+    ensureNotDisposed(): void;
 }
 declare class SnapshotObjectRegistry {
     private readonly symbols;
     private readonly client;
     private readonly snapshotId;
     private readonly resolveProject;
-    constructor(client: Client, snapshotId: number, resolveProject: (projectId: Path) => Project | undefined);
-    /** Resolve a project id (a config file path) to its Project within this snapshot. */
-    getProject(projectId: Path): Project | undefined;
+    constructor(client: Client, snapshotId: number, resolveProject: (projectId: ProjectId) => Project | undefined);
+    /** Resolve a project ID to its Project within this snapshot. */
+    getProject(projectId: ProjectId): Project | undefined;
     getOrCreateSymbol(data: SymbolResponse): Symbol;
     getSymbol(id: number): Symbol | undefined;
     clear(): void;
-    fetchSymbol(source: Symbol | Signature | Type, method: SymbolPropertyMethod, handle: number | undefined, projectId: Path): Symbol;
-    fetchSymbols(source: Symbol | Signature | Type, method: SymbolsPropertyMethod, handles: readonly number[] | undefined, projectId: Path): readonly Symbol[];
+    get fetchSymbol(): {
+        (source: Symbol | Signature | Type, method: SymbolPropertyMethod, handle: number | undefined, projectId: ProjectId): Symbol;
+        gen(source: Symbol | Signature | Type, method: SymbolPropertyMethod, handle: number | undefined, projectId: ProjectId): Generator<ProtocolRequest, Symbol, ProtocolResponse["result"]>;
+    };
+    get fetchSymbols(): {
+        (source: Symbol | Signature | Type, method: SymbolsPropertyMethod, handles: readonly number[] | undefined, projectId: ProjectId): readonly Symbol[];
+        gen(source: Symbol | Signature | Type, method: SymbolsPropertyMethod, handles: readonly number[] | undefined, projectId: ProjectId): Generator<ProtocolRequest, readonly Symbol[], ProtocolResponse["result"]>;
+    };
 }
 declare class ProjectObjectRegistry {
     private client;
@@ -150,34 +413,74 @@ declare class ProjectObjectRegistry {
     getSymbol(id: number): Symbol | undefined;
     getOrCreateType(data: TypeResponse): TypeObject;
     getType(id: number): TypeObject | undefined;
+    createNodeHandle<T extends Node>(handle: string): NodeHandle<T>;
     getOrCreateSignature(data: SignatureResponse): Signature;
     getSignature(id: number): Signature | undefined;
     clear(): void;
-    fetchOptionalType<T extends Type>(source: Symbol | Signature | Type, method: TypePropertyMethod, handle: number | false | undefined): T | undefined;
-    fetchType<T extends Type>(source: Symbol | Signature | Type, method: TypePropertyMethod, handle: number | false | undefined): T;
-    fetchSymbol(source: Symbol | Signature | Type, method: SymbolPropertyMethod, handle: number | undefined): Symbol;
-    fetchSignature(source: Symbol | Signature | Type, method: SignaturePropertyMethod, handle: number | undefined): Signature;
-    fetchTypes(source: Symbol | Signature | Type, method: TypesPropertyMethod, handles?: readonly number[]): readonly Type[];
-    fetchSymbols(source: Symbol | Signature | Type, method: SymbolsPropertyMethod, handles?: readonly number[]): readonly Symbol[];
-    fetchBaseTypes(source: Type): readonly Type[];
-    fetchPropertiesOfType(source: Type): readonly Symbol[];
-    fetchApparentPropertiesOfType(source: Type): readonly Symbol[];
-    fetchPropertyOfType(source: Type, name: string): Symbol | undefined;
-    fetchSignaturesOfType(source: Type, kind: SignatureKind): readonly Signature[];
-    fetchIndexInfosOfType(source: Type): readonly IndexInfo[];
-    fetchTypeParameterAtPosition(source: Signature, pos: number): Type;
+    get fetchOptionalType(): {
+        <T extends Type>(source: Symbol | Signature | Type, method: TypePropertyMethod, handle: number | false | undefined): T | undefined;
+        gen<T extends Type>(source: Symbol | Signature | Type, method: TypePropertyMethod, handle: number | false | undefined): Generator<ProtocolRequest, T | undefined, ProtocolResponse["result"]>;
+    };
+    get fetchType(): {
+        <T extends Type>(source: Symbol | Signature | Type, method: TypePropertyMethod, handle: number | false | undefined): T;
+        gen<T extends Type>(source: Symbol | Signature | Type, method: TypePropertyMethod, handle: number | false | undefined): Generator<ProtocolRequest, T, ProtocolResponse["result"]>;
+    };
+    get fetchSymbol(): {
+        (source: Symbol | Signature | Type, method: SymbolPropertyMethod, handle: number | undefined): Symbol;
+        gen(source: Symbol | Signature | Type, method: SymbolPropertyMethod, handle: number | undefined): Generator<ProtocolRequest, Symbol, ProtocolResponse["result"]>;
+    };
+    get fetchSignature(): {
+        (source: Symbol | Signature | Type, method: SignaturePropertyMethod, handle: number | undefined): Signature;
+        gen(source: Symbol | Signature | Type, method: SignaturePropertyMethod, handle: number | undefined): Generator<ProtocolRequest, Signature, ProtocolResponse["result"]>;
+    };
+    get fetchTypes(): {
+        (source: Symbol | Signature | Type, method: TypesPropertyMethod, handles?: readonly number[]): readonly Type[];
+        gen(source: Symbol | Signature | Type, method: TypesPropertyMethod, handles?: readonly number[]): Generator<ProtocolRequest, readonly Type[], ProtocolResponse["result"]>;
+    };
+    get fetchSymbols(): {
+        (source: Symbol | Signature | Type, method: SymbolsPropertyMethod, handles?: readonly number[]): readonly Symbol[];
+        gen(source: Symbol | Signature | Type, method: SymbolsPropertyMethod, handles?: readonly number[]): Generator<ProtocolRequest, readonly Symbol[], ProtocolResponse["result"]>;
+    };
+    get fetchBaseTypes(): {
+        (source: Type): readonly Type[];
+        gen(source: Type): Generator<ProtocolRequest, readonly Type[], ProtocolResponse["result"]>;
+    };
+    get fetchPropertiesOfType(): {
+        (source: Type): readonly Symbol[];
+        gen(source: Type): Generator<ProtocolRequest, readonly Symbol[], ProtocolResponse["result"]>;
+    };
+    get fetchApparentPropertiesOfType(): {
+        (source: Type): readonly Symbol[];
+        gen(source: Type): Generator<ProtocolRequest, readonly Symbol[], ProtocolResponse["result"]>;
+    };
+    get fetchPropertyOfType(): {
+        (source: Type, name: string): Symbol | undefined;
+        gen(source: Type, name: string): Generator<ProtocolRequest, Symbol | undefined, ProtocolResponse["result"]>;
+    };
+    get fetchSignaturesOfType(): {
+        (source: Type, kind: SignatureKind): readonly Signature[];
+        gen(source: Type, kind: SignatureKind): Generator<ProtocolRequest, readonly Signature[], ProtocolResponse["result"]>;
+    };
+    get fetchIndexInfosOfType(): {
+        (source: Type): readonly IndexInfo[];
+        gen(source: Type): Generator<ProtocolRequest, readonly IndexInfo[], ProtocolResponse["result"]>;
+    };
+    get fetchTypeParameterAtPosition(): {
+        (source: Signature, pos: number): Type;
+        gen(source: Signature, pos: number): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
 }
-export declare class Project {
-    readonly id: Path;
+export declare class Project<Id extends ProjectId = ProjectId> {
+    readonly id: Id;
     readonly configFileName: string;
     readonly currentDirectory: string;
+    readonly dirty: boolean;
     /** The project's config, without its root file list — see `getRootFileNames`. */
     readonly parsedCommandLine: ProjectConfig;
     /** @deprecated Use `parsedCommandLine.options`. */
     readonly compilerOptions: CompilerOptions;
-    readonly program: Program;
+    readonly program: Program<Id>;
     readonly checker: Checker;
-    readonly emitter: Emitter;
     readonly languageService: LanguageService;
     private client;
     private snapshotId;
@@ -192,20 +495,38 @@ export declare class Project {
      * time proportional to the size of the project, for a list most callers never
      * read.
      */
-    getRootFileNames(): readonly string[];
+    get getRootFileNames(): {
+        (): readonly string[];
+        gen(): Generator<ProtocolRequest, readonly string[], ProtocolResponse["result"]>;
+    };
     /** @deprecated Use `languageService.getImportAdderEdits`. */
-    getImportAdderEdits(file: DocumentIdentifier, actions: readonly APIImportAdderAction[]): readonly TextEdit[];
+    get getImportAdderEdits(): {
+        (file: DocumentIdentifier, actions: readonly APIImportAdderAction[]): readonly TextEdit[];
+        gen(file: DocumentIdentifier, actions: readonly APIImportAdderAction[]): Generator<ProtocolRequest, readonly TextEdit[], ProtocolResponse["result"]>;
+    };
     /** @deprecated Use `languageService.getImportEditsForSymbols`. */
-    getImportEditsForSymbols(file: DocumentIdentifier, symbols: readonly Symbol[], options?: GetImportEditsForSymbolsOptions): readonly TextEdit[];
+    get getImportEditsForSymbols(): {
+        (file: DocumentIdentifier, symbols: readonly Symbol[], options?: GetImportEditsForSymbolsOptions): readonly TextEdit[];
+        gen(file: DocumentIdentifier, symbols: readonly Symbol[], options?: GetImportEditsForSymbolsOptions): Generator<ProtocolRequest, readonly TextEdit[], ProtocolResponse["result"]>;
+    };
     /** Returns the edits that format an entire file. */
-    formatDocument(file: DocumentIdentifier, options?: FormattingOptions): readonly TextEdit[];
+    get formatDocument(): {
+        (file: DocumentIdentifier, options?: FormattingOptions): readonly TextEdit[];
+        gen(file: DocumentIdentifier, options?: FormattingOptions): Generator<ProtocolRequest, readonly TextEdit[], ProtocolResponse["result"]>;
+    };
     /** Returns the edits that format the `[pos, end)` span of a file. */
-    formatDocumentRange(file: DocumentIdentifier, pos: number, end: number, options?: FormattingOptions): readonly TextEdit[];
+    get formatDocumentRange(): {
+        (file: DocumentIdentifier, pos: number, end: number, options?: FormattingOptions): readonly TextEdit[];
+        gen(file: DocumentIdentifier, pos: number, end: number, options?: FormattingOptions): Generator<ProtocolRequest, readonly TextEdit[], ProtocolResponse["result"]>;
+    };
     /**
      * Returns the edits that sort, combine, and/or remove unused imports in a
      * file. Defaults to all three; see {@link OrganizeImportsMode}.
      */
-    organizeImports(file: DocumentIdentifier, mode?: OrganizeImportsMode): readonly TextEdit[];
+    get organizeImports(): {
+        (file: DocumentIdentifier, mode?: OrganizeImportsMode): readonly TextEdit[];
+        gen(file: DocumentIdentifier, mode?: OrganizeImportsMode): Generator<ProtocolRequest, readonly TextEdit[], ProtocolResponse["result"]>;
+    };
     /**
      * Returns the edits that rename the symbol at `position`, grouped by file.
      * An empty result means the element cannot be renamed.
@@ -215,23 +536,38 @@ export declare class Project {
      * element, or import/export specifier is renamed outright instead of being
      * given the old name as an alias.
      */
-    rename(file: DocumentIdentifier, position: number, newName: string, options?: RenameOptions): readonly FileTextEdits[];
+    get rename(): {
+        (file: DocumentIdentifier, position: number, newName: string, options?: RenameOptions): readonly FileTextEdits[];
+        gen(file: DocumentIdentifier, position: number, newName: string, options?: RenameOptions): Generator<ProtocolRequest, readonly FileTextEdits[], ProtocolResponse["result"]>;
+    };
     /** Returns the locations that define the symbol at `position`. */
-    getDefinition(file: DocumentIdentifier, position: number): readonly FileSpan[];
+    get getDefinition(): {
+        (file: DocumentIdentifier, position: number): readonly FileSpan[];
+        gen(file: DocumentIdentifier, position: number): Generator<ProtocolRequest, readonly FileSpan[], ProtocolResponse["result"]>;
+    };
     /** Returns the locations that implement the symbol at `position`. */
-    getImplementations(file: DocumentIdentifier, position: number): readonly FileSpan[];
+    get getImplementations(): {
+        (file: DocumentIdentifier, position: number): readonly FileSpan[];
+        gen(file: DocumentIdentifier, position: number): Generator<ProtocolRequest, readonly FileSpan[], ProtocolResponse["result"]>;
+    };
     /**
      * Returns the quick fixes available for the `[pos, end)` span. When
      * `errorCodes` is given, only fixes addressing those diagnostics are returned.
      * `quotePreference` decides the quotes a fix writes a new string literal with.
      */
-    getCodeFixes(file: DocumentIdentifier, pos: number, end: number, errorCodes?: readonly number[], quotePreference?: QuotePreference): readonly CodeFixAction[];
+    get getCodeFixes(): {
+        (file: DocumentIdentifier, pos: number, end: number, errorCodes?: readonly number[], quotePreference?: QuotePreference): readonly CodeFixAction[];
+        gen(file: DocumentIdentifier, pos: number, end: number, errorCodes?: readonly number[], quotePreference?: QuotePreference): Generator<ProtocolRequest, readonly CodeFixAction[], ProtocolResponse["result"]>;
+    };
     /**
      * Returns the edits that apply `fixId` everywhere it is needed in the file,
      * i.e. the "fix all" form of a quick fix. Throws when no provider owns the
      * fix id.
      */
-    getCombinedCodeFix(file: DocumentIdentifier, fixId: string, options?: FormattingOptions, quotePreference?: QuotePreference): CombinedCodeActions;
+    get getCombinedCodeFix(): {
+        (file: DocumentIdentifier, fixId: string, options?: FormattingOptions, quotePreference?: QuotePreference): CombinedCodeActions;
+        gen(file: DocumentIdentifier, fixId: string, options?: FormattingOptions, quotePreference?: QuotePreference): Generator<ProtocolRequest, CombinedCodeActions, ProtocolResponse["result"]>;
+    };
     dispose(): void;
 }
 export declare class LanguageService {
@@ -240,35 +576,95 @@ export declare class LanguageService {
     private client;
     private objectRegistry;
     constructor(snapshotId: number, project: Project, client: Client, objectRegistry: ProjectObjectRegistry);
-    getImportAdderEdits(file: DocumentIdentifier, actions: readonly APIImportAdderAction[]): readonly TextEdit[];
-    getImportEditsForSymbols(file: DocumentIdentifier, symbols: readonly Symbol[], options?: GetImportEditsForSymbolsOptions): readonly TextEdit[];
-    getReferencedSymbolsForNode(node: Node, position: number): ReferencedSymbolEntry[];
-    getSignatureUsage(signatureDecl: Node): SignatureUsage[];
-    getCompletionsAtPosition(document: string, position: number, options?: CompletionOptions): CompletionInfo | undefined;
+    get getImportAdderEdits(): {
+        (file: DocumentIdentifier, actions: readonly APIImportAdderAction[]): readonly TextEdit[];
+        gen(file: DocumentIdentifier, actions: readonly APIImportAdderAction[]): Generator<ProtocolRequest, readonly TextEdit[], ProtocolResponse["result"]>;
+    };
+    get getImportEditsForSymbols(): {
+        (file: DocumentIdentifier, symbols: readonly Symbol[], options?: GetImportEditsForSymbolsOptions): readonly TextEdit[];
+        gen(file: DocumentIdentifier, symbols: readonly Symbol[], options?: GetImportEditsForSymbolsOptions): Generator<ProtocolRequest, readonly TextEdit[], ProtocolResponse["result"]>;
+    };
+    get getReferencedSymbolsForNode(): {
+        (node: Node, position: number): ReferencedSymbolEntry[];
+        gen(node: Node, position: number): Generator<ProtocolRequest, ReferencedSymbolEntry[], ProtocolResponse["result"]>;
+    };
+    get getSignatureUsage(): {
+        (signatureDecl: Node): SignatureUsage[];
+        gen(signatureDecl: Node): Generator<ProtocolRequest, SignatureUsage[], ProtocolResponse["result"]>;
+    };
+    get getCompletionsAtPosition(): {
+        (document: string, position: number, options?: CompletionOptions): CompletionInfo | undefined;
+        gen(document: string, position: number, options?: CompletionOptions): Generator<ProtocolRequest, CompletionInfo | undefined, ProtocolResponse["result"]>;
+    };
 }
-export declare class Program implements FormatDiagnosticsHost {
-    private snapshotId;
-    private project;
-    private client;
-    private sourceFileCache;
-    private toPath;
-    private formatDiagnosticsHost;
-    private decoder;
-    private sourceFileMetadataCache;
-    constructor(snapshotId: number, project: Project, client: Client, sourceFileCache: SourceFileCache, toPath: (fileName: string) => Path, formatDiagnosticsHost: FormatDiagnosticsHost);
+export declare class Program<Id extends ProjectId = ProjectId> implements FormatDiagnosticsHost {
+    /** @internal */
+    readonly snapshotId: number;
+    readonly id: Id;
+    private readonly project;
+    private readonly client;
+    private readonly sourceFileCache;
+    private readonly toPath;
+    private readonly formatDiagnosticsHost;
+    private readonly decoder;
+    private readonly sourceFileMetadataCache;
+    private ownedSnapshot;
+    private disposePromise;
+    constructor(snapshotId: number, project: Project<Id>, client: Client, sourceFileCache: SourceFileCache, toPath: (fileName: string) => Path, formatDiagnosticsHost: FormatDiagnosticsHost);
     getCurrentDirectory(): string;
     getCanonicalFileName(fileName: string): string;
     getNewLine(): string;
+    /** @internal */
+    setOwnedSnapshot(snapshot: Snapshot): void;
+    [globalThis.Symbol.dispose](): void;
+    get dispose(): {
+        (): void;
+        gen(): Generator<ProtocolRequest, void, ProtocolResponse["result"]>;
+    };
+    private get disposeWorker();
     getCompilerOptions(): CompilerOptions;
-    getSourceFile(file: DocumentIdentifier): SourceFile | undefined;
-    getSourceFileNames(): readonly string[];
+    get getSourceFile(): {
+        (file: DocumentIdentifier): SourceFile | undefined;
+        gen(file: DocumentIdentifier): Generator<ProtocolRequest, SourceFile | undefined, ProtocolResponse["result"]>;
+    };
+    get getResolvedModule(): {
+        (file: DocumentIdentifier, moduleName: string, mode: ModuleKind): ResolvedModule | undefined;
+        gen(file: DocumentIdentifier, moduleName: string, mode: ModuleKind): Generator<ProtocolRequest, ResolvedModule | undefined, ProtocolResponse["result"]>;
+    };
+    get getModeForUsageLocation(): {
+        (file: DocumentIdentifier, usage: StringLiteralLikeNode): ModuleKind;
+        gen(file: DocumentIdentifier, usage: StringLiteralLikeNode): Generator<ProtocolRequest, ModuleKind, ProtocolResponse["result"]>;
+    };
+    get getModeForResolutionAtIndex(): {
+        (file: DocumentIdentifier, index: number): ModuleKind;
+        gen(file: DocumentIdentifier, index: number): Generator<ProtocolRequest, ModuleKind, ProtocolResponse["result"]>;
+    };
+    get getResolvedModuleFromModuleSpecifier(): {
+        (moduleSpecifier: StringLiteralLikeNode, sourceFile?: DocumentIdentifier): ResolvedModule | undefined;
+        gen(moduleSpecifier: StringLiteralLikeNode, sourceFile?: DocumentIdentifier): Generator<ProtocolRequest, ResolvedModule | undefined, ProtocolResponse["result"]>;
+    };
+    get getResolvedTypeReferenceDirective(): {
+        (file: DocumentIdentifier, typeDirectiveName: string, mode: ModuleKind): ResolvedTypeReferenceDirective | undefined;
+        gen(file: DocumentIdentifier, typeDirectiveName: string, mode: ModuleKind): Generator<ProtocolRequest, ResolvedTypeReferenceDirective | undefined, ProtocolResponse["result"]>;
+    };
+    get getResolvedTypeReferenceDirectiveFromTypeReferenceDirective(): {
+        (typeReferenceDirective: FileReference, sourceFile: DocumentIdentifier): ResolvedTypeReferenceDirective | undefined;
+        gen(typeReferenceDirective: FileReference, sourceFile: DocumentIdentifier): Generator<ProtocolRequest, ResolvedTypeReferenceDirective | undefined, ProtocolResponse["result"]>;
+    };
+    get getSourceFileNames(): {
+        (): readonly string[];
+        gen(): Generator<ProtocolRequest, readonly string[], ProtocolResponse["result"]>;
+    };
     /**
      * Every source file in the program.
      *
      * Each one is fetched and decoded on the way out, so a caller that only needs
      * the names should ask for {@link getSourceFileNames} instead.
      */
-    getSourceFiles(): readonly SourceFile[];
+    get getSourceFiles(): {
+        (): readonly SourceFile[];
+        gen(): Generator<ProtocolRequest, readonly SourceFile[], ProtocolResponse["result"]>;
+    };
     /** The checker for this program, which the project owns. */
     getTypeChecker(): Checker;
     /**
@@ -276,93 +672,197 @@ export declare class Program implements FormatDiagnosticsHost {
      * is not part of the program. Metadata is fetched lazily per file and cached on this
      * `Program` instance.
      */
-    getSourceFileMetadata(fileName: string): SourceFileMetadata | undefined;
+    get getSourceFileMetadata(): {
+        (file: DocumentIdentifier): SourceFileMetadata | undefined;
+        gen(file: DocumentIdentifier): Generator<ProtocolRequest, SourceFileMetadata | undefined, ProtocolResponse["result"]>;
+    };
     /**
      * Returns program-stored metadata for the source file at the given path, or `undefined`
      * if the file is not part of the program. Like {@link getSourceFileMetadata}, but skips
      * the file name to path conversion. Metadata is fetched lazily per file and cached on
      * this `Program` instance.
      */
-    getSourceFileMetadataByPath(path: Path): SourceFileMetadata | undefined;
-    private fetchSourceFileMetadata;
+    get getSourceFileMetadataByPath(): {
+        (path: Path): SourceFileMetadata | undefined;
+        gen(path: Path): Generator<ProtocolRequest, SourceFileMetadata | undefined, ProtocolResponse["result"]>;
+    };
+    private get fetchSourceFileMetadata();
     /**
      * Returns whether the given source file was loaded as part of an external library
      * (e.g. a dependency resolved from `node_modules`). The underlying program metadata is
      * fetched lazily per file and cached on this `Program` instance.
      */
-    isSourceFileFromExternalLibrary(file: SourceFile): boolean;
+    get isSourceFileFromExternalLibrary(): {
+        (file: SourceFile): boolean;
+        gen(file: SourceFile): Generator<ProtocolRequest, boolean, ProtocolResponse["result"]>;
+    };
     /**
      * Returns whether the given source file is a default library file (e.g. `lib.d.ts`).
      * The underlying program metadata is fetched lazily per file and cached on this
      * `Program` instance.
      */
-    isSourceFileDefaultLibrary(file: SourceFile): boolean;
+    get isSourceFileDefaultLibrary(): {
+        (file: SourceFile): boolean;
+        gen(file: SourceFile): Generator<ProtocolRequest, boolean, ProtocolResponse["result"]>;
+    };
     /**
      * Get all config source file names associated with this program's project config.
      * Includes the root config file and any extended config files.
      */
-    getConfigFileNames(): readonly string[];
+    get getConfigFileNames(): {
+        (): readonly string[];
+        gen(): Generator<ProtocolRequest, readonly string[], ProtocolResponse["result"]>;
+    };
     /**
      * Get a config source file by file name/URI.
      * This can return the project's root tsconfig file or one of its extended config files.
      */
-    getConfigSourceFile(file: DocumentIdentifier): SourceFile | undefined;
+    get getConfigSourceFile(): {
+        (file: DocumentIdentifier): SourceFile | undefined;
+        gen(file: DocumentIdentifier): Generator<ProtocolRequest, SourceFile | undefined, ProtocolResponse["result"]>;
+    };
     /**
      * Get syntactic (parse) diagnostics for specific files or all files.
      * @param file - Optional file(s) to get diagnostics for. If omitted, returns diagnostics for all files.
      */
-    getSyntacticDiagnostics(file?: DocumentIdentifier | readonly DocumentIdentifier[]): readonly Diagnostic[];
+    get getSyntacticDiagnostics(): {
+        (file?: DocumentIdentifier | readonly DocumentIdentifier[]): readonly Diagnostic[];
+        gen(file?: DocumentIdentifier | readonly DocumentIdentifier[]): Generator<ProtocolRequest, readonly Diagnostic[], ProtocolResponse["result"]>;
+    };
     /**
      * Get binder diagnostics for specific files or all files.
      * @param file - Optional file(s) to get diagnostics for. If omitted, returns diagnostics for all files.
      */
-    getBindDiagnostics(file?: DocumentIdentifier | readonly DocumentIdentifier[]): readonly Diagnostic[];
+    get getBindDiagnostics(): {
+        (file?: DocumentIdentifier | readonly DocumentIdentifier[]): readonly Diagnostic[];
+        gen(file?: DocumentIdentifier | readonly DocumentIdentifier[]): Generator<ProtocolRequest, readonly Diagnostic[], ProtocolResponse["result"]>;
+    };
     /**
      * Get semantic (type-check) diagnostics for specific files or all files.
      * @param file - Optional file(s) to get diagnostics for. If omitted, returns diagnostics for all files.
      */
-    getSemanticDiagnostics(file?: DocumentIdentifier | readonly DocumentIdentifier[]): readonly Diagnostic[];
+    get getSemanticDiagnostics(): {
+        (file?: DocumentIdentifier | readonly DocumentIdentifier[]): readonly Diagnostic[];
+        gen(file?: DocumentIdentifier | readonly DocumentIdentifier[]): Generator<ProtocolRequest, readonly Diagnostic[], ProtocolResponse["result"]>;
+    };
     /**
      * Get suggestion diagnostics for specific files or all files.
      * @param file - Optional file(s) to get diagnostics for. If omitted, returns diagnostics for all files.
      */
-    getSuggestionDiagnostics(file?: DocumentIdentifier | readonly DocumentIdentifier[]): readonly Diagnostic[];
+    get getSuggestionDiagnostics(): {
+        (file?: DocumentIdentifier | readonly DocumentIdentifier[]): readonly Diagnostic[];
+        gen(file?: DocumentIdentifier | readonly DocumentIdentifier[]): Generator<ProtocolRequest, readonly Diagnostic[], ProtocolResponse["result"]>;
+    };
     /**
      * Get declaration emit diagnostics for specific files or all files.
      * @param file - Optional file(s) to get diagnostics for. If omitted, returns diagnostics for all files.
      */
-    getDeclarationDiagnostics(file?: DocumentIdentifier | readonly DocumentIdentifier[]): readonly Diagnostic[];
+    get getDeclarationDiagnostics(): {
+        (file?: DocumentIdentifier | readonly DocumentIdentifier[]): readonly Diagnostic[];
+        gen(file?: DocumentIdentifier | readonly DocumentIdentifier[]): Generator<ProtocolRequest, readonly Diagnostic[], ProtocolResponse["result"]>;
+    };
     /**
      * Get program-wide diagnostics for the project, including compiler options diagnostics.
      */
-    getProgramDiagnostics(): readonly Diagnostic[];
+    get getProgramDiagnostics(): {
+        (): readonly Diagnostic[];
+        gen(): Generator<ProtocolRequest, readonly Diagnostic[], ProtocolResponse["result"]>;
+    };
     /**
      * Get global (non-file-specific) semantic diagnostics for the project.
      */
-    getGlobalDiagnostics(): readonly Diagnostic[];
+    get getGlobalDiagnostics(): {
+        (): readonly Diagnostic[];
+        gen(): Generator<ProtocolRequest, readonly Diagnostic[], ProtocolResponse["result"]>;
+    };
     /**
      * Get config file parsing diagnostics for the project.
      */
-    getConfigFileParsingDiagnostics(): readonly Diagnostic[];
+    get getConfigFileParsingDiagnostics(): {
+        (): readonly Diagnostic[];
+        gen(): Generator<ProtocolRequest, readonly Diagnostic[], ProtocolResponse["result"]>;
+    };
     /**
-     * Emits files to the configured filesystem.
-     *
-     * When the API has a virtual filesystem with a `writeFile` callback, output
-     * is written there. Otherwise, the server writes directly to the host filesystem.
+     * Emits files to the configured filesystem. Layer and host filesystems are
+     * written through; full filesystems remain immutable and return emitted
+     * files in {@link EmitResult.fileSystem}.
      */
-    emit(emitOnly?: EmitOnly): EmitResult;
+    get emit(): {
+        (emitOnly?: EmitOnly): EmitResult;
+        gen(emitOnly?: EmitOnly): Generator<ProtocolRequest, EmitResult, ProtocolResponse["result"]>;
+    };
     /**
      * Emits files and returns their contents without writing to the filesystem.
      */
-    emitToString(emitOnly?: EmitOnly): EmitOutput;
+    get emitToString(): {
+        (emitOnly?: EmitOnly): EmitOutput;
+        gen(emitOnly?: EmitOnly): Generator<ProtocolRequest, EmitOutput, ProtocolResponse["result"]>;
+    };
     /**
      * Gets JavaScript output for selected files regardless of project `noEmit`, `emitDeclarationOnly`, and `noEmitOnError` settings.
      */
-    getJavaScriptEmit(files: readonly DocumentIdentifier[]): EmitOutput;
+    get getJavaScriptEmit(): {
+        (files: readonly DocumentIdentifier[]): EmitOutput;
+        gen(files: readonly DocumentIdentifier[]): Generator<ProtocolRequest, EmitOutput, ProtocolResponse["result"]>;
+    };
     /**
      * Gets declaration output for selected files regardless of project `noEmit`, `declaration`, `emitDeclarationOnly`, and `noEmitOnError` settings.
      */
-    getDeclarationEmit(files: readonly DocumentIdentifier[]): EmitOutput;
+    get getDeclarationEmit(): {
+        (files: readonly DocumentIdentifier[]): EmitOutput;
+        gen(files: readonly DocumentIdentifier[]): Generator<ProtocolRequest, EmitOutput, ProtocolResponse["result"]>;
+    };
+    getProject(): Project<Id>;
+}
+export interface BuildOrchestratorOptions {
+    cwd?: string | undefined;
+    dry?: boolean;
+    force?: boolean;
+    verbose?: boolean;
+    stopBuildOnErrors?: boolean;
+    overrideCompilerOptions?: OverrideCompilerOptions;
+}
+export interface OverrideCompilerOptions {
+    incremental?: boolean;
+    assumeChangesOnlyAffectDirectDependencies?: boolean;
+    declaration?: boolean;
+    declarationMap?: boolean;
+    emitDeclarationOnly?: boolean;
+    sourceMap?: boolean;
+    inlineSourceMap?: boolean;
+    traceResolution?: boolean;
+}
+export declare class BuildOrchestrator {
+    private client;
+    private id;
+    private disposed;
+    private disposePromise;
+    private onDispose;
+    constructor(client: Client, orchestratorResponse: CreateBuildOrchestratorResponse, onDispose: () => void);
+    [globalThis.Symbol.dispose](): void;
+    get dispose(): {
+        (): void;
+        gen(): Generator<ProtocolRequest, void, ProtocolResponse["result"]>;
+    };
+    private get disposeWorker();
+    get build(): {
+        (project?: string): BuildResponse;
+        gen(project?: string): Generator<ProtocolRequest, BuildResponse, ProtocolResponse["result"]>;
+    };
+    get buildReferences(): {
+        (project: string): BuildResponse;
+        gen(project: string): Generator<ProtocolRequest, BuildResponse, ProtocolResponse["result"]>;
+    };
+    get clean(): {
+        (project?: string): CleanBuildResponse;
+        gen(project?: string): Generator<ProtocolRequest, CleanBuildResponse, ProtocolResponse["result"]>;
+    };
+    get cleanReferences(): {
+        (project?: string): CleanBuildResponse;
+        gen(project?: string): Generator<ProtocolRequest, CleanBuildResponse, ProtocolResponse["result"]>;
+    };
+    isDisposed(): boolean;
+    private ensureNotDisposed;
 }
 export declare class Checker {
     private snapshotId;
@@ -372,200 +872,497 @@ export declare class Checker {
     private wellKnownSymbols;
     private wellKnownSignatures;
     constructor(snapshotId: number, project: Project, client: Client, objectRegistry: ProjectObjectRegistry);
-    getSymbolOfDeclaration(node: Node): Symbol | undefined;
-    symbolToString(symbol: Symbol, enclosingDeclaration?: Node): string;
-    getAmbientModules(): readonly Symbol[];
-    getExportedSymbolsOfFiles(files: readonly DocumentIdentifier[]): readonly (readonly ExportedSymbol[])[];
+    get getSymbolOfDeclaration(): {
+        (node: Node): Symbol | undefined;
+        gen(node: Node): Generator<ProtocolRequest, Symbol | undefined, ProtocolResponse["result"]>;
+    };
+    get symbolToString(): {
+        (symbol: Symbol, enclosingDeclaration?: Node): string;
+        gen(symbol: Symbol, enclosingDeclaration?: Node): Generator<ProtocolRequest, string, ProtocolResponse["result"]>;
+    };
+    get getAmbientModules(): {
+        (): readonly Symbol[];
+        gen(): Generator<ProtocolRequest, readonly Symbol[], ProtocolResponse["result"]>;
+    };
+    get getExportedSymbolsOfFiles(): {
+        (files: readonly DocumentIdentifier[]): readonly (readonly ExportedSymbol[])[];
+        gen(files: readonly DocumentIdentifier[]): Generator<ProtocolRequest, readonly (readonly ExportedSymbol[])[], ProtocolResponse["result"]>;
+    };
     dispose(): void;
-    getSymbolAtLocation(node: Node): Symbol | undefined;
-    getSymbolAtLocation(nodes: readonly Node[]): (Symbol | undefined)[];
-    getSymbolAtPosition(file: DocumentIdentifier, position: number): Symbol | undefined;
-    getSymbolAtPosition(file: DocumentIdentifier, positions: readonly number[]): (Symbol | undefined)[];
-    getSymbolOfSourceFile(file: DocumentIdentifier): Symbol | undefined;
-    getSymbolOfSourceFile(files: readonly DocumentIdentifier[]): (Symbol | undefined)[];
+    get getSymbolAtLocation(): {
+        (node: Node): Symbol | undefined;
+        (nodes: readonly Node[]): (Symbol | undefined)[];
+        gen(node: Node): Generator<ProtocolRequest, Symbol | undefined, ProtocolResponse["result"]>;
+        gen(nodes: readonly Node[]): Generator<ProtocolRequest, (Symbol | undefined)[], ProtocolResponse["result"]>;
+    };
+    get getSymbolAtPosition(): {
+        (file: DocumentIdentifier, position: number): Symbol | undefined;
+        (file: DocumentIdentifier, positions: readonly number[]): (Symbol | undefined)[];
+        gen(file: DocumentIdentifier, position: number): Generator<ProtocolRequest, Symbol | undefined, ProtocolResponse["result"]>;
+        gen(file: DocumentIdentifier, positions: readonly number[]): Generator<ProtocolRequest, (Symbol | undefined)[], ProtocolResponse["result"]>;
+    };
+    get getSymbolOfSourceFile(): {
+        (file: DocumentIdentifier): Symbol | undefined;
+        (files: readonly DocumentIdentifier[]): (Symbol | undefined)[];
+        gen(file: DocumentIdentifier): Generator<ProtocolRequest, Symbol | undefined, ProtocolResponse["result"]>;
+        gen(files: readonly DocumentIdentifier[]): Generator<ProtocolRequest, (Symbol | undefined)[], ProtocolResponse["result"]>;
+    };
     /**
      * Get the type of a symbol. Always returns a type; for symbols whose type
      * cannot be determined the checker yields the error type (use
      * {@link Type.isErrorType} to detect it).
      */
-    getTypeOfSymbol(symbol: Symbol): Type;
-    getTypeOfSymbol(symbols: readonly Symbol[]): Type[];
+    get getTypeOfSymbol(): {
+        (symbol: Symbol): Type;
+        (symbols: readonly Symbol[]): Type[];
+        gen(symbol: Symbol): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+        gen(symbols: readonly Symbol[]): Generator<ProtocolRequest, Type[], ProtocolResponse["result"]>;
+    };
     /**
      * Get the declared type of a symbol. Always returns a type; for symbols whose
      * declared type cannot be determined the checker yields the error type (use
      * {@link Type.isErrorType} to detect it).
      */
-    getDeclaredTypeOfSymbol(symbol: Symbol): Type;
-    getReferencesToSymbolInFile(file: DocumentIdentifier, symbol: Symbol): NodeHandle[];
+    get getDeclaredTypeOfSymbol(): {
+        (symbol: Symbol): Type;
+        gen(symbol: Symbol): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
+    /**
+     * Get the type of a symbol, excluding the missing type when
+     * `exactOptionalPropertyTypes: true` is set; for symbols whose
+     * type cannot be determined the checker yields the error type
+     * (use {@link Type.isErrorType} to detect it).
+     */
+    get getNonMissingTypeOfSymbol(): {
+        (symbol: Symbol): Type;
+        gen(symbol: Symbol): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
+    get getReferencesToSymbolInFile(): {
+        (file: DocumentIdentifier, symbol: Symbol): NodeHandle[];
+        gen(file: DocumentIdentifier, symbol: Symbol): Generator<ProtocolRequest, NodeHandle[], ProtocolResponse["result"]>;
+    };
     /** @deprecated Use `project.languageService.getReferencedSymbolsForNode`. */
-    getReferencedSymbolsForNode(node: Node, position: number): ReferencedSymbolEntry[];
+    get getReferencedSymbolsForNode(): {
+        (node: Node, position: number): ReferencedSymbolEntry[];
+        gen(node: Node, position: number): Generator<ProtocolRequest, ReferencedSymbolEntry[], ProtocolResponse["result"]>;
+    };
     /** @deprecated Use `project.languageService.getSignatureUsage`. */
-    getSignatureUsage(signatureDecl: Node): SignatureUsage[];
+    get getSignatureUsage(): {
+        (signatureDecl: Node): SignatureUsage[];
+        gen(signatureDecl: Node): Generator<ProtocolRequest, SignatureUsage[], ProtocolResponse["result"]>;
+    };
     /** @deprecated Use `project.languageService.getCompletionsAtPosition`. */
-    getCompletionsAtPosition(document: string, position: number, options?: CompletionOptions): CompletionInfo | undefined;
+    get getCompletionsAtPosition(): {
+        (document: string, position: number, options?: CompletionOptions): CompletionInfo | undefined;
+        gen(document: string, position: number, options?: CompletionOptions): Generator<ProtocolRequest, CompletionInfo | undefined, ProtocolResponse["result"]>;
+    };
     /**
      * Get the type at a node location. Always returns a type; for nodes whose
      * type cannot be determined the checker yields the error type (use
      * {@link Type.isErrorType} to detect it).
      */
-    getTypeAtLocation(node: Node): Type;
-    getTypeAtLocation(nodes: readonly Node[]): Type[];
-    getSignaturesOfType(type: Type, kind: SignatureKind): readonly Signature[];
+    get getTypeAtLocation(): {
+        (node: Node): Type;
+        (nodes: readonly Node[]): Type[];
+        gen(node: Node): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+        gen(nodes: readonly Node[]): Generator<ProtocolRequest, Type[], ProtocolResponse["result"]>;
+    };
+    get getSignaturesOfType(): {
+        (type: Type, kind: SignatureKind): readonly Signature[];
+        gen(type: Type, kind: SignatureKind): Generator<ProtocolRequest, readonly Signature[], ProtocolResponse["result"]>;
+    };
     /**
      * Get the resolved signature of a call-like expression. Always returns a
      * signature; when a call cannot be resolved the checker yields the unknown
      * signature (use {@link Checker.isUnknownSignature} to detect it).
      */
-    getResolvedSignature(node: Node): Signature;
-    getTypeAtPosition(file: DocumentIdentifier, position: number): Type | undefined;
-    getTypeAtPosition(file: DocumentIdentifier, positions: readonly number[]): (Type | undefined)[];
-    resolveName(name: string, meaning: SymbolFlags, location?: Node | DocumentPosition, excludeGlobals?: boolean): Symbol | undefined;
+    get getResolvedSignature(): {
+        (node: Node): Signature;
+        gen(node: Node): Generator<ProtocolRequest, Signature, ProtocolResponse["result"]>;
+    };
+    get getTypeAtPosition(): {
+        (file: DocumentIdentifier, position: number): Type | undefined;
+        (file: DocumentIdentifier, positions: readonly number[]): (Type | undefined)[];
+        gen(file: DocumentIdentifier, position: number): Generator<ProtocolRequest, Type | undefined, ProtocolResponse["result"]>;
+        gen(file: DocumentIdentifier, positions: readonly number[]): Generator<ProtocolRequest, (Type | undefined)[], ProtocolResponse["result"]>;
+    };
+    get resolveName(): {
+        (name: string, meaning: SymbolFlags, location?: Node | DocumentPosition, excludeGlobals?: boolean): Symbol | undefined;
+        gen(name: string, meaning: SymbolFlags, location?: Node | DocumentPosition, excludeGlobals?: boolean): Generator<ProtocolRequest, Symbol | undefined, ProtocolResponse["result"]>;
+    };
     /**
      * Returns all symbols with the given meaning that are visible at `location`.
      */
-    getSymbolsInScope(location: Node | DocumentPosition, meaning: SymbolFlags): readonly Symbol[];
-    getResolvedSymbol(node: Identifier): Symbol | undefined;
-    getContextualType(node: Expression): Type | undefined;
+    get getSymbolsInScope(): {
+        (location: Node | DocumentPosition, meaning: SymbolFlags): readonly Symbol[];
+        gen(location: Node | DocumentPosition, meaning: SymbolFlags): Generator<ProtocolRequest, readonly Symbol[], ProtocolResponse["result"]>;
+    };
+    get getResolvedSymbol(): {
+        (node: Identifier): Symbol | undefined;
+        gen(node: Identifier): Generator<ProtocolRequest, Symbol | undefined, ProtocolResponse["result"]>;
+    };
+    get getContextualType(): {
+        (node: Expression): Type | undefined;
+        gen(node: Expression): Generator<ProtocolRequest, Type | undefined, ProtocolResponse["result"]>;
+    };
+    get getContextualTypeForArgumentAtIndex(): {
+        (node: CallLikeExpression, argIndex: number): Type | undefined;
+        gen(node: CallLikeExpression, argIndex: number): Generator<ProtocolRequest, Type | undefined, ProtocolResponse["result"]>;
+    };
     /** Get the base type of a literal type (e.g. `number` for `42`). Always returns a type. */
-    getBaseTypeOfLiteralType(type: Type): Type;
+    get getBaseTypeOfLiteralType(): {
+        (type: Type): Type;
+        gen(type: Type): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
     /** Get the type with `null` and `undefined` removed. Always returns a type. */
-    getNonNullableType(type: Type): Type;
+    get getNonNullableType(): {
+        (type: Type): Type;
+        gen(type: Type): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
     /**
      * Get the type for a type node. Always returns a type; for type nodes whose
      * type cannot be determined the checker yields the error type (use
      * {@link Type.isErrorType} to detect it).
      */
-    getTypeFromTypeNode(node: TypeNode): Type;
+    get getTypeFromTypeNode(): {
+        (node: TypeNode): Type;
+        gen(node: TypeNode): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
     /** Get the widened type. Always returns a type. */
-    getWidenedType(type: Type): Type;
+    get getWidenedType(): {
+        (type: Type): Type;
+        gen(type: Type): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
     /**
      * Get the type of the parameter at the given index in a signature. Always
      * returns a type; an out-of-range index yields the `any` type.
      */
-    getParameterType(signature: Signature, index: number): Type;
-    isArrayLikeType(type: Type): boolean;
-    isTypeAssignableTo(source: Type, target: Type): boolean;
-    getShorthandAssignmentValueSymbol(node: Node): Symbol | undefined;
+    get getParameterType(): {
+        (signature: Signature, index: number): Type;
+        gen(signature: Signature, index: number): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
+    get isArrayLikeType(): {
+        (type: Type): boolean;
+        gen(type: Type): Generator<ProtocolRequest, boolean, ProtocolResponse["result"]>;
+    };
+    get isTypeAssignableTo(): {
+        (source: Type, target: Type): boolean;
+        gen(source: Type, target: Type): Generator<ProtocolRequest, boolean, ProtocolResponse["result"]>;
+    };
+    get getShorthandAssignmentValueSymbol(): {
+        (node: Node): Symbol | undefined;
+        gen(node: Node): Generator<ProtocolRequest, Symbol | undefined, ProtocolResponse["result"]>;
+    };
     /**
      * Get the type of a symbol as narrowed at a specific location. Always returns
      * a type; for symbols whose type cannot be determined the checker yields the
      * error type (use {@link Type.isErrorType} to detect it).
      */
-    getTypeOfSymbolAtLocation(symbol: Symbol, location: Node): Type;
-    private getIntrinsicType;
-    getAnyType(): Type;
-    getStringType(): Type;
-    getNumberType(): Type;
-    getBooleanType(): Type;
-    getVoidType(): Type;
-    getUndefinedType(): Type;
-    getNullType(): Type;
-    getNeverType(): Type;
-    getUnknownType(): Type;
-    getBigIntType(): Type;
-    getESSymbolType(): Type;
-    getNonPrimitiveType(): Type;
-    typeToTypeNode(type: Type, enclosingDeclaration?: Node, flags?: number): TypeNode | undefined;
-    signatureToSignatureDeclaration(signature: Signature, kind: SyntaxKind, enclosingDeclaration?: Node, flags?: NodeBuilderFlags): Node | undefined;
-    typeToString(type: Type, enclosingDeclaration?: Node, flags?: TypeFormatFlags): string;
-    isContextSensitive(node: Node): boolean;
-    isArrayType(type: Type): boolean;
-    isTupleType(type: Type): boolean;
+    get getTypeOfSymbolAtLocation(): {
+        (symbol: Symbol, location: Node): Type;
+        gen(symbol: Symbol, location: Node): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
+    private get getIntrinsicType();
+    get getAnyType(): {
+        (): Type;
+        gen(): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
+    get getStringType(): {
+        (): Type;
+        gen(): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
+    get getNumberType(): {
+        (): Type;
+        gen(): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
+    get getBooleanType(): {
+        (): Type;
+        gen(): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
+    get getVoidType(): {
+        (): Type;
+        gen(): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
+    get getUndefinedType(): {
+        (): Type;
+        gen(): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
+    get getNullType(): {
+        (): Type;
+        gen(): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
+    get getNeverType(): {
+        (): Type;
+        gen(): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
+    get getUnknownType(): {
+        (): Type;
+        gen(): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
+    get getBigIntType(): {
+        (): Type;
+        gen(): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
+    get getESSymbolType(): {
+        (): Type;
+        gen(): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
+    get getNonPrimitiveType(): {
+        (): Type;
+        gen(): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
+    get typeToTypeNode(): {
+        (type: Type, enclosingDeclaration?: Node, flags?: number): TypeNode | undefined;
+        gen(type: Type, enclosingDeclaration?: Node, flags?: number): Generator<ProtocolRequest, TypeNode | undefined, ProtocolResponse["result"]>;
+    };
+    get signatureToSignatureDeclaration(): {
+        (signature: Signature, kind: SyntaxKind, enclosingDeclaration?: Node, flags?: NodeBuilderFlags): Node | undefined;
+        gen(signature: Signature, kind: SyntaxKind, enclosingDeclaration?: Node, flags?: NodeBuilderFlags): Generator<ProtocolRequest, Node | undefined, ProtocolResponse["result"]>;
+    };
+    get typeToString(): {
+        (type: Type, enclosingDeclaration?: Node, flags?: TypeFormatFlags): string;
+        gen(type: Type, enclosingDeclaration?: Node, flags?: TypeFormatFlags): Generator<ProtocolRequest, string, ProtocolResponse["result"]>;
+    };
+    get isContextSensitive(): {
+        (node: Node): boolean;
+        gen(node: Node): Generator<ProtocolRequest, boolean, ProtocolResponse["result"]>;
+    };
+    get isArrayType(): {
+        (type: Type): boolean;
+        gen(type: Type): Generator<ProtocolRequest, boolean, ProtocolResponse["result"]>;
+    };
+    get isTupleType(): {
+        (type: Type): boolean;
+        gen(type: Type): Generator<ProtocolRequest, boolean, ProtocolResponse["result"]>;
+    };
+    get isTupleTypeTarget(): {
+        (type: Type): boolean;
+        gen(type: Type): Generator<ProtocolRequest, boolean, ProtocolResponse["result"]>;
+    };
+    /**
+     * The following symbols are considered read-only:
+     * - Properties with a `readonly` modifier
+     * - Variables declared with `const`
+     * - Get accessors without matching set accessors
+     * - Enum members
+     * - `Object.defineProperty` assignments with `writable: false` or no setter
+     * - Unions and intersections of the above
+     */
+    get isReadonlySymbol(): {
+        (symbol: Symbol): boolean;
+        gen(symbol: Symbol): Generator<ProtocolRequest, boolean, ProtocolResponse["result"]>;
+    };
     /** Get the return type of a signature. Always returns a type. */
-    getReturnTypeOfSignature(signature: Signature): Type;
+    get getReturnTypeOfSignature(): {
+        (signature: Signature): Type;
+        gen(signature: Signature): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
     /**
      * Get the rest type of a signature. Always returns a type; a signature with
      * no rest parameter yields the `any` type.
      */
-    getRestTypeOfSignature(signature: Signature): Type;
-    getTypePredicateOfSignature(signature: Signature): TypePredicate | undefined;
+    get getRestTypeOfSignature(): {
+        (signature: Signature): Type;
+        gen(signature: Signature): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
+    get getTypePredicateOfSignature(): {
+        (signature: Signature): TypePredicate | undefined;
+        gen(signature: Signature): Generator<ProtocolRequest, TypePredicate | undefined, ProtocolResponse["result"]>;
+    };
     /**
      * Get the base types of a class or interface type. A type with no base types
      * yields an empty array.
      */
-    getBaseTypes(type: InterfaceType): readonly Type[];
+    get getBaseTypes(): {
+        (type: InterfaceType): readonly Type[];
+        gen(type: InterfaceType): Generator<ProtocolRequest, readonly Type[], ProtocolResponse["result"]>;
+    };
     /** Get the apparent type of a type. Always returns a type. */
-    getApparentType(type: Type): Type;
+    get getApparentType(): {
+        (type: Type): Type;
+        gen(type: Type): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
     /** Get the reduced type of a type. Always returns a type. */
-    getReducedType(type: Type): Type;
-    getPropertiesOfType(type: Type): readonly Symbol[];
-    getIndexInfosOfType(type: Type): readonly IndexInfo[];
+    get getReducedType(): {
+        (type: Type): Type;
+        gen(type: Type): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
+    get getPropertiesOfType(): {
+        (type: Type): readonly Symbol[];
+        gen(type: Type): Generator<ProtocolRequest, readonly Symbol[], ProtocolResponse["result"]>;
+    };
+    get getIndexInfosOfType(): {
+        (type: Type): readonly IndexInfo[];
+        gen(type: Type): Generator<ProtocolRequest, readonly IndexInfo[], ProtocolResponse["result"]>;
+    };
+    get getIndexInfoOfType(): {
+        (type: Type, kind: IndexKind): IndexInfo | undefined;
+        gen(type: Type, kind: IndexKind): Generator<ProtocolRequest, IndexInfo | undefined, ProtocolResponse["result"]>;
+    };
+    get getIndexTypeOfType(): {
+        (type: Type, kind: IndexKind): Type | undefined;
+        gen(type: Type, kind: IndexKind): Generator<ProtocolRequest, Type | undefined, ProtocolResponse["result"]>;
+    };
+    get getTypeOfPropertyOfType(): {
+        (type: Type, propertyName: string): Type | undefined;
+        gen(type: Type, propertyName: string): Generator<ProtocolRequest, Type | undefined, ProtocolResponse["result"]>;
+    };
     /**
      * Get the constraint of a type parameter (the `T` in `<U extends T>`), or
      * undefined if it has none.
      */
-    getConstraintOfTypeParameter(type: TypeParameter): Type | undefined;
-    getDefaultFromTypeParameter(type: TypeParameter): Type | undefined;
-    getBaseConstraintOfType(type: Type): Type | undefined;
-    getPropertyOfType(type: Type, name: string): Symbol | undefined;
-    getConstantValue(node: Node): string | number | undefined;
+    get getConstraintOfTypeParameter(): {
+        (type: TypeParameter): Type | undefined;
+        gen(type: TypeParameter): Generator<ProtocolRequest, Type | undefined, ProtocolResponse["result"]>;
+    };
+    get getDefaultFromTypeParameter(): {
+        (type: TypeParameter): Type | undefined;
+        gen(type: TypeParameter): Generator<ProtocolRequest, Type | undefined, ProtocolResponse["result"]>;
+    };
+    get getBaseConstraintOfType(): {
+        (type: Type): Type | undefined;
+        gen(type: Type): Generator<ProtocolRequest, Type | undefined, ProtocolResponse["result"]>;
+    };
+    get getPropertyOfType(): {
+        (type: Type, name: string): Symbol | undefined;
+        gen(type: Type, name: string): Generator<ProtocolRequest, Symbol | undefined, ProtocolResponse["result"]>;
+    };
+    get getConstantValue(): {
+        (node: Node): string | number | undefined;
+        gen(node: Node): Generator<ProtocolRequest, string | number | undefined, ProtocolResponse["result"]>;
+    };
     /** Get the signature of a function-like declaration. Always returns a signature. */
-    getSignatureFromDeclaration(node: Node): Signature;
-    getExportSpecifierLocalTargetSymbol(node: Node): Symbol | undefined;
+    get getSignatureFromDeclaration(): {
+        (node: Node): Signature;
+        gen(node: Node): Generator<ProtocolRequest, Signature, ProtocolResponse["result"]>;
+    };
+    get getExportSpecifierLocalTargetSymbol(): {
+        (node: Node): Symbol | undefined;
+        gen(node: Node): Generator<ProtocolRequest, Symbol | undefined, ProtocolResponse["result"]>;
+    };
     /**
      * Follow all aliases to get the original symbol. Always returns a symbol; for
      * an unresolved alias the checker yields the unknown symbol (use
      * {@link Checker.isUnknownSymbol} to detect it).
      */
-    getAliasedSymbol(symbol: Symbol): Symbol;
+    get getAliasedSymbol(): {
+        (symbol: Symbol): Symbol;
+        gen(symbol: Symbol): Generator<ProtocolRequest, Symbol, ProtocolResponse["result"]>;
+    };
     /**
      * Get the fully qualified name of a symbol, walking up its parent chain
      * (e.g. `"/path/to/module".Namespace.Name`).
      */
-    getFullyQualifiedName(symbol: Symbol): string;
-    getImmediateAliasedSymbol(symbol: Symbol): Symbol | undefined;
+    get getFullyQualifiedName(): {
+        (symbol: Symbol): string;
+        gen(symbol: Symbol): Generator<ProtocolRequest, string, ProtocolResponse["result"]>;
+    };
+    get getImmediateAliasedSymbol(): {
+        (symbol: Symbol): Symbol | undefined;
+        gen(symbol: Symbol): Generator<ProtocolRequest, Symbol | undefined, ProtocolResponse["result"]>;
+    };
+    /**
+     * Get the target symbol if instantiated, or the provided symbol otherwise.
+     */
+    get getTargetSymbol(): {
+        (symbol: Symbol): Symbol;
+        gen(symbol: Symbol): Generator<ProtocolRequest, Symbol, ProtocolResponse["result"]>;
+    };
+    get getExportSymbolOfSymbol(): {
+        (symbol: Symbol): Symbol;
+        gen(symbol: Symbol): Generator<ProtocolRequest, Symbol, ProtocolResponse["result"]>;
+    };
     /**
      * Fetch (once, then cache) the handle ids of the per-checker singleton
      * symbols (unknown, undefined, arguments). These ids are stable for the life
      * of the project's checker, so identity checks against them are local after
      * the first call.
      */
-    private getWellKnownSymbols;
+    private get getWellKnownSymbols();
     /**
      * Returns `true` if the symbol is the checker's "unknown" symbol (e.g. the
      * result of {@link Checker.getAliasedSymbol} on an unresolved alias).
      */
-    isUnknownSymbol(symbol: Symbol): boolean;
+    get isUnknownSymbol(): {
+        (symbol: Symbol): boolean;
+        gen(symbol: Symbol): Generator<ProtocolRequest, boolean, ProtocolResponse["result"]>;
+    };
     /**
      * Returns `true` if the symbol is the checker's "undefined" symbol.
      */
-    isUndefinedSymbol(symbol: Symbol): boolean;
+    get isUndefinedSymbol(): {
+        (symbol: Symbol): boolean;
+        gen(symbol: Symbol): Generator<ProtocolRequest, boolean, ProtocolResponse["result"]>;
+    };
     /**
      * Returns `true` if the symbol is the checker's "arguments" symbol.
      */
-    isArgumentsSymbol(symbol: Symbol): boolean;
+    get isArgumentsSymbol(): {
+        (symbol: Symbol): boolean;
+        gen(symbol: Symbol): Generator<ProtocolRequest, boolean, ProtocolResponse["result"]>;
+    };
     /**
      * Fetch (once, then cache) the handle id of the per-checker unknown
      * signature. This id is stable for the life of the project's checker, so
      * identity checks against it are local after the first call.
      */
-    private getWellKnownSignatures;
+    private get getWellKnownSignatures();
     /**
      * Returns `true` if the signature is the checker's "unknown" signature (e.g.
      * the result of {@link Checker.getResolvedSignature} on a call that cannot be
      * resolved).
      */
-    isUnknownSignature(signature: Signature): boolean;
-    getExportsOfModule(symbol: Symbol): readonly Symbol[];
-    getMemberInModuleExports(symbol: Symbol, name: string): Symbol | undefined;
-    getJsDocTagsOfSymbol(symbol: Symbol): readonly JSDocTagInfo[];
-    getDocumentationCommentOfSymbol(symbol: Symbol): string;
-    getJsDocTagsOfSignature(signature: Signature): readonly JSDocTagInfo[];
-    getDocumentationCommentOfSignature(signature: Signature): string;
+    get isUnknownSignature(): {
+        (signature: Signature): boolean;
+        gen(signature: Signature): Generator<ProtocolRequest, boolean, ProtocolResponse["result"]>;
+    };
+    get getExportsOfModule(): {
+        (symbol: Symbol): readonly Symbol[];
+        gen(symbol: Symbol): Generator<ProtocolRequest, readonly Symbol[], ProtocolResponse["result"]>;
+    };
+    get getMemberInModuleExports(): {
+        (symbol: Symbol, name: string): Symbol | undefined;
+        gen(symbol: Symbol, name: string): Generator<ProtocolRequest, Symbol | undefined, ProtocolResponse["result"]>;
+    };
+    get getJsDocTagsOfSymbol(): {
+        (symbol: Symbol): readonly JSDocTagInfo[];
+        gen(symbol: Symbol): Generator<ProtocolRequest, readonly JSDocTagInfo[], ProtocolResponse["result"]>;
+    };
+    get getDocumentationCommentOfSymbol(): {
+        (symbol: Symbol): string;
+        gen(symbol: Symbol): Generator<ProtocolRequest, string, ProtocolResponse["result"]>;
+    };
+    get getJsDocTagsOfSignature(): {
+        (signature: Signature): readonly JSDocTagInfo[];
+        gen(signature: Signature): Generator<ProtocolRequest, readonly JSDocTagInfo[], ProtocolResponse["result"]>;
+    };
+    get getDocumentationCommentOfSignature(): {
+        (signature: Signature): string;
+        gen(signature: Signature): Generator<ProtocolRequest, string, ProtocolResponse["result"]>;
+    };
     /**
      * Returns the symbols the binder placed in the node's own local scope, in declaration
      * order. Nodes that do not hold locals return an empty array.
      */
-    getLocals(node: Node): readonly Symbol[];
+    get getLocals(): {
+        (node: Node): readonly Symbol[];
+        gen(node: Node): Generator<ProtocolRequest, readonly Symbol[], ProtocolResponse["result"]>;
+    };
     /**
      * Returns the type a value of the given type resolves to when awaited, or undefined
      * when the type cannot be awaited.
      */
-    getAwaitedType(type: Type): Type | undefined;
+    get getAwaitedType(): {
+        (type: Type): Type | undefined;
+        gen(type: Type): Generator<ProtocolRequest, Type | undefined, ProtocolResponse["result"]>;
+    };
     /**
      * Get the type arguments of a type reference (e.g. the `string` in `Array<string>`).
      */
-    getTypeArguments(type: TypeReference): readonly Type[];
+    get getTypeArguments(): {
+        (type: TypeReference): readonly Type[];
+        gen(type: TypeReference): Generator<ProtocolRequest, readonly Type[], ProtocolResponse["result"]>;
+    };
 }
 export interface PrintNodeOptions {
     /**
@@ -588,10 +1385,17 @@ export interface PrintNodeOptions {
      */
     newLine?: number | undefined;
 }
-export declare class Emitter {
+export declare class Printer {
     private client;
     constructor(client: Client);
-    printNode(node: Node, options?: PrintNodeOptions): string;
+    get printNode(): {
+        (node: Node, options?: PrintNodeOptions): string;
+        gen(node: Node, options?: PrintNodeOptions): Generator<ProtocolRequest, string, ProtocolResponse["result"]>;
+    };
+    get printFile(): {
+        (sourceFile: SourceFile, options?: PrintNodeOptions): string;
+        gen(sourceFile: SourceFile, options?: PrintNodeOptions): Generator<ProtocolRequest, string, ProtocolResponse["result"]>;
+    };
 }
 export declare class SnapshotInternalAPI {
     private snapshotId;
@@ -606,7 +1410,10 @@ export declare class SnapshotInternalAPI {
      * @param position The UTF-16 code-unit offset in the target file for insertion.
      * @returns The formatted text of the node, indented for the insertion position.
      */
-    formatNodeForInsertion(node: Node, file: DocumentIdentifier, position: number): string;
+    get formatNodeForInsertion(): {
+        (node: Node, file: DocumentIdentifier, position: number): string;
+        gen(node: Node, file: DocumentIdentifier, position: number): Generator<ProtocolRequest, string, ProtocolResponse["result"]>;
+    };
 }
 export declare class NodeHandle<out T extends Node = Node> {
     /**
@@ -624,7 +1431,10 @@ export declare class NodeHandle<out T extends Node = Node> {
      * and looking up the node by index. If no project is passed, the project that produced
      * the handle is used.
      */
-    resolve(project?: Project): T | undefined;
+    get resolve(): {
+        (project?: Project): T | undefined;
+        gen(project?: Project): Generator<ProtocolRequest, T | undefined, ProtocolResponse["result"]>;
+    };
 }
 /** A symbol definition paired with all of its reference nodes. */
 export interface ReferencedSymbolEntry {
@@ -681,26 +1491,47 @@ export declare class Symbol {
     private exportsCache;
     private globalExportsCache;
     constructor(data: SymbolResponse, objectRegistry: SnapshotObjectRegistry);
-    getParent(): Symbol | undefined;
+    get getParent(): {
+        (): Symbol | undefined;
+        gen(): Generator<ProtocolRequest, Symbol | undefined, ProtocolResponse["result"]>;
+    };
     /**
      * Get this symbol's members keyed by escaped name. The result is cached on
      * the symbol, so repeated calls do not round-trip to the server.
      */
-    getMembers(): ReadonlyMap<__String, Symbol>;
+    get getMembers(): {
+        (): ReadonlyMap<__String, Symbol>;
+        gen(): Generator<ProtocolRequest, ReadonlyMap<__String, Symbol>, ProtocolResponse["result"]>;
+    };
     /**
      * Get this symbol's exports keyed by escaped name. The result is cached on
      * the symbol, so repeated calls do not round-trip to the server.
      */
-    getExports(): ReadonlyMap<__String, Symbol>;
+    get getExports(): {
+        (): ReadonlyMap<__String, Symbol>;
+        gen(): Generator<ProtocolRequest, ReadonlyMap<__String, Symbol>, ProtocolResponse["result"]>;
+    };
     /**
      * Get the UMD global exports this module symbol declares with `export as namespace X`,
      * keyed by escaped name. The result is cached on the symbol.
      */
-    getGlobalExports(): ReadonlyMap<__String, Symbol>;
-    private fetchSymbolTable;
-    getExportSymbol(): Symbol;
-    getJsDocTags(checker: Checker): readonly JSDocTagInfo[];
-    getDocumentationComment(checker: Checker): string;
+    get getGlobalExports(): {
+        (): ReadonlyMap<__String, Symbol>;
+        gen(): Generator<ProtocolRequest, ReadonlyMap<__String, Symbol>, ProtocolResponse["result"]>;
+    };
+    private get fetchSymbolTable();
+    get getExportSymbol(): {
+        (): Symbol;
+        gen(): Generator<ProtocolRequest, Symbol, ProtocolResponse["result"]>;
+    };
+    get getJsDocTags(): {
+        (checker: Checker): readonly JSDocTagInfo[];
+        gen(checker: Checker): Generator<ProtocolRequest, readonly JSDocTagInfo[], ProtocolResponse["result"]>;
+    };
+    get getDocumentationComment(): {
+        (checker: Checker): string;
+        gen(checker: Checker): Generator<ProtocolRequest, string, ProtocolResponse["result"]>;
+    };
 }
 declare class TypeObject implements Type {
     private objectRegistry;
@@ -714,14 +1545,17 @@ declare class TypeObject implements Type {
     readonly freshType: number;
     readonly regularType: number;
     readonly target: number;
+    private readonly tupleType;
     readonly typeParameters: readonly number[];
     readonly outerTypeParameters: readonly number[];
     readonly localTypeParameters: readonly number[];
+    readonly thisType: number;
     readonly aliasTypeArguments: readonly number[];
     readonly aliasSymbol: number;
     readonly elementFlags: readonly ElementFlags[];
     readonly fixedLength: number;
     readonly readonly: boolean;
+    readonly labeledElementDeclarations?: readonly (NodeHandle<NamedTupleMember | ParameterDeclaration> | undefined)[];
     readonly texts: readonly string[];
     readonly objectType: number;
     readonly indexType: number;
@@ -729,6 +1563,10 @@ declare class TypeObject implements Type {
     readonly extendsType: number;
     readonly baseType: number;
     readonly substConstraint: number;
+    readonly typeParameter: number;
+    readonly constraintType: number;
+    readonly nameType: number;
+    readonly templateType: number;
     private trueType;
     private falseType;
     private constraint;
@@ -742,46 +1580,160 @@ declare class TypeObject implements Type {
     private constructSignatures;
     private indexInfos;
     private baseTypes;
+    private types;
     private stringIndexType;
     private numberIndexType;
     constructor(data: TypeResponse, objectRegistry: ProjectObjectRegistry);
-    getSymbol(): Symbol | undefined;
-    getProperties(): readonly Symbol[];
-    getProperty(propertyName: string): Symbol | undefined;
-    getApparentProperties(): readonly Symbol[];
-    getCallSignatures(): readonly Signature[];
-    getConstructSignatures(): readonly Signature[];
-    getNonNullableType(): Type;
-    getStringIndexType(): Type | undefined;
-    private getStringIndexTypeWorker;
-    getNumberIndexType(): Type | undefined;
-    private getNumberIndexTypeWorker;
-    getApparentType(): Type;
-    getReducedType(): Type;
-    getIndexInfos(): readonly IndexInfo[];
-    getAliasSymbol(): Symbol | undefined;
-    getTarget(): Type;
-    getFreshType(): FreshableType | undefined;
-    getRegularType(): FreshableType | undefined;
-    getTypes(): readonly Type[] | undefined;
-    getTypeParameters(): readonly TypeParameter[];
-    getOuterTypeParameters(): readonly TypeParameter[];
-    getLocalTypeParameters(): readonly TypeParameter[];
-    getAliasTypeArguments(): readonly Type[];
-    getObjectType(): Type;
-    getIndexType(): Type;
-    getCheckType(): Type;
-    getExtendsType(): Type;
-    getBaseType(): Type;
-    getConstraint(): Type | undefined;
-    getDefault(): Type | undefined;
-    getTrueType(): Type;
-    getFalseType(): Type;
+    get getSymbol(): {
+        (): Symbol | undefined;
+        gen(): Generator<ProtocolRequest, Symbol | undefined, ProtocolResponse["result"]>;
+    };
+    get getProperties(): {
+        (): readonly Symbol[];
+        gen(): Generator<ProtocolRequest, readonly Symbol[], ProtocolResponse["result"]>;
+    };
+    get getProperty(): {
+        (propertyName: string): Symbol | undefined;
+        gen(propertyName: string): Generator<ProtocolRequest, Symbol | undefined, ProtocolResponse["result"]>;
+    };
+    get getApparentProperties(): {
+        (): readonly Symbol[];
+        gen(): Generator<ProtocolRequest, readonly Symbol[], ProtocolResponse["result"]>;
+    };
+    get getCallSignatures(): {
+        (): readonly Signature[];
+        gen(): Generator<ProtocolRequest, readonly Signature[], ProtocolResponse["result"]>;
+    };
+    get getConstructSignatures(): {
+        (): readonly Signature[];
+        gen(): Generator<ProtocolRequest, readonly Signature[], ProtocolResponse["result"]>;
+    };
+    get getNonNullableType(): {
+        (): Type;
+        gen(): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
+    get getStringIndexType(): {
+        (): Type | undefined;
+        gen(): Generator<ProtocolRequest, Type | undefined, ProtocolResponse["result"]>;
+    };
+    private get getStringIndexTypeWorker();
+    get getNumberIndexType(): {
+        (): Type | undefined;
+        gen(): Generator<ProtocolRequest, Type | undefined, ProtocolResponse["result"]>;
+    };
+    private get getNumberIndexTypeWorker();
+    get getApparentType(): {
+        (): Type;
+        gen(): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
+    get getReducedType(): {
+        (): Type;
+        gen(): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
+    get getIndexInfos(): {
+        (): readonly IndexInfo[];
+        gen(): Generator<ProtocolRequest, readonly IndexInfo[], ProtocolResponse["result"]>;
+    };
+    get getAliasSymbol(): {
+        (): Symbol | undefined;
+        gen(): Generator<ProtocolRequest, Symbol | undefined, ProtocolResponse["result"]>;
+    };
+    get getTarget(): {
+        (): Type;
+        gen(): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
+    get getFreshType(): {
+        (): FreshableType | undefined;
+        gen(): Generator<ProtocolRequest, FreshableType | undefined, ProtocolResponse["result"]>;
+    };
+    get getRegularType(): {
+        (): FreshableType | undefined;
+        gen(): Generator<ProtocolRequest, FreshableType | undefined, ProtocolResponse["result"]>;
+    };
+    get getTypes(): {
+        (): readonly Type[] | undefined;
+        gen(): Generator<ProtocolRequest, readonly Type[] | undefined, ProtocolResponse["result"]>;
+    };
+    get getTypeParameters(): {
+        (): readonly TypeParameter[];
+        gen(): Generator<ProtocolRequest, readonly TypeParameter[], ProtocolResponse["result"]>;
+    };
+    get getOuterTypeParameters(): {
+        (): readonly TypeParameter[];
+        gen(): Generator<ProtocolRequest, readonly TypeParameter[], ProtocolResponse["result"]>;
+    };
+    get getLocalTypeParameters(): {
+        (): readonly TypeParameter[];
+        gen(): Generator<ProtocolRequest, readonly TypeParameter[], ProtocolResponse["result"]>;
+    };
+    get getThisType(): {
+        (): TypeParameter | undefined;
+        gen(): Generator<ProtocolRequest, TypeParameter | undefined, ProtocolResponse["result"]>;
+    };
+    get getAliasTypeArguments(): {
+        (): readonly Type[];
+        gen(): Generator<ProtocolRequest, readonly Type[], ProtocolResponse["result"]>;
+    };
+    get getTypeParameter(): {
+        (): TypeParameter;
+        gen(): Generator<ProtocolRequest, TypeParameter, ProtocolResponse["result"]>;
+    };
+    get getConstraintType(): {
+        (): Type;
+        gen(): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
+    get getNameType(): {
+        (): Type | undefined;
+        gen(): Generator<ProtocolRequest, Type | undefined, ProtocolResponse["result"]>;
+    };
+    get getTemplateType(): {
+        (): Type;
+        gen(): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
+    get getObjectType(): {
+        (): Type;
+        gen(): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
+    get getIndexType(): {
+        (): Type;
+        gen(): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
+    get getCheckType(): {
+        (): Type;
+        gen(): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
+    get getExtendsType(): {
+        (): Type;
+        gen(): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
+    get getBaseType(): {
+        (): Type;
+        gen(): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
+    get getConstraint(): {
+        (): Type | undefined;
+        gen(): Generator<ProtocolRequest, Type | undefined, ProtocolResponse["result"]>;
+    };
+    get getDefault(): {
+        (): Type | undefined;
+        gen(): Generator<ProtocolRequest, Type | undefined, ProtocolResponse["result"]>;
+    };
+    get getTrueType(): {
+        (): Type;
+        gen(): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
+    get getFalseType(): {
+        (): Type;
+        gen(): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
     /**
      * Get the base types of this type. Returns `undefined` for any type that is
      * not a class or interface.
      */
-    getBaseTypes(): readonly Type[] | undefined;
+    get getBaseTypes(): {
+        (): readonly Type[] | undefined;
+        gen(): Generator<ProtocolRequest, readonly Type[] | undefined, ProtocolResponse["result"]>;
+    };
     isClassOrInterface(): this is InterfaceType;
     isUnionType(): this is UnionType;
     isIntersectionType(): this is IntersectionType;
@@ -794,7 +1746,8 @@ declare class TypeObject implements Type {
     isBigIntLiteralType(): this is BigIntLiteralType;
     isBooleanLiteralType(): this is BooleanLiteralType;
     isTypeReference(): this is TypeReference;
-    isTupleType(): this is TupleType;
+    isTupleType(): this is TupleTypeReference;
+    isTupleTypeTarget(): this is TupleType;
     isIndexType(): this is IndexType;
     isIndexedAccessType(): this is IndexedAccessType;
     isConditionalType(): this is ConditionalType;
@@ -802,6 +1755,7 @@ declare class TypeObject implements Type {
     isTemplateLiteralType(): this is TemplateLiteralType;
     isStringMappingType(): this is StringMappingType;
     isTypeParameter(): this is TypeParameter;
+    isMappedType(): this is MappedType;
 }
 export declare function isUnionType(type: Type): type is UnionType;
 export declare function isIntersectionType(type: Type): type is IntersectionType;
@@ -821,7 +1775,8 @@ export declare function isNumberLiteralType(type: Type): type is NumberLiteralTy
 export declare function isBigIntLiteralType(type: Type): type is BigIntLiteralType;
 export declare function isBooleanLiteralType(type: Type): type is BooleanLiteralType;
 export declare function isTypeReference(type: Type): type is TypeReference;
-export declare function isTupleType(type: Type): type is TupleType;
+export declare function isTupleType(type: Type): type is TupleTypeReference;
+export declare function isTupleTypeTarget(type: Type): type is TupleType;
 export declare function isIndexType(type: Type): type is IndexType;
 export declare function isIndexedAccessType(type: Type): type is IndexedAccessType;
 export declare function isConditionalType(type: Type): type is ConditionalType;
@@ -840,17 +1795,41 @@ export declare class Signature {
     readonly target?: number | undefined;
     private returnType;
     constructor(data: SignatureResponse, project: Project, objectRegistry: ProjectObjectRegistry);
-    getTypeParameters(): readonly TypeParameter[];
-    getParameters(): readonly Symbol[];
-    getThisParameter(): Symbol | undefined;
-    getTarget(): Signature | undefined;
-    getReturnType(): Type;
-    getTypeParameterAtPosition(pos: number): Type;
+    get getTypeParameters(): {
+        (): readonly TypeParameter[];
+        gen(): Generator<ProtocolRequest, readonly TypeParameter[], ProtocolResponse["result"]>;
+    };
+    get getParameters(): {
+        (): readonly Symbol[];
+        gen(): Generator<ProtocolRequest, readonly Symbol[], ProtocolResponse["result"]>;
+    };
+    get getThisParameter(): {
+        (): Symbol | undefined;
+        gen(): Generator<ProtocolRequest, Symbol | undefined, ProtocolResponse["result"]>;
+    };
+    get getTarget(): {
+        (): Signature | undefined;
+        gen(): Generator<ProtocolRequest, Signature | undefined, ProtocolResponse["result"]>;
+    };
+    get getReturnType(): {
+        (): Type;
+        gen(): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
+    get getTypeParameterAtPosition(): {
+        (pos: number): Type;
+        gen(pos: number): Generator<ProtocolRequest, Type, ProtocolResponse["result"]>;
+    };
     get hasRestParameter(): boolean;
     get isConstruct(): boolean;
     get isAbstract(): boolean;
-    getJsDocTags(checker: Checker): readonly JSDocTagInfo[];
-    getDocumentationComment(checker: Checker): string;
+    get getJsDocTags(): {
+        (checker: Checker): readonly JSDocTagInfo[];
+        gen(checker: Checker): Generator<ProtocolRequest, readonly JSDocTagInfo[], ProtocolResponse["result"]>;
+    };
+    get getDocumentationComment(): {
+        (checker: Checker): string;
+        gen(checker: Checker): Generator<ProtocolRequest, string, ProtocolResponse["result"]>;
+    };
 }
 export interface ExportedSymbol {
     readonly name: string;

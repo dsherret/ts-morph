@@ -24,8 +24,8 @@ const api = createInProcessApi({
   },
 });
 
-const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
-const project = snapshot.getProject("/tsconfig.json")!;
+const snapshot = api.createSnapshot({ openProject: "/tsconfig.json" });
+const project = snapshot.getConfiguredProject("/tsconfig.json")!;
 
 // 1. Format a whole document.
 const formatEdits = project.formatDocument("/src/format.ts");

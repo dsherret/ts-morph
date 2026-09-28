@@ -17,15 +17,15 @@ const fs = createVirtualFileSystem(files);
 const api = createInProcessApi({ fs });
 
 function typeOfX(): string {
-  const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
-  const project = snapshot.getProject("/tsconfig.json")!;
+  const snapshot = api.createSnapshot({ openProject: "/tsconfig.json" });
+  const project = snapshot.getConfiguredProject("/tsconfig.json")!;
   const symbol = project.checker.getSymbolAtPosition("/src/index.ts", "export const ".length)!;
   return project.checker.typeToString(project.checker.getTypeOfSymbol(symbol)!);
 }
 
 function statementCount(): number {
-  const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
-  const project = snapshot.getProject("/tsconfig.json")!;
+  const snapshot = api.createSnapshot({ openProject: "/tsconfig.json" });
+  const project = snapshot.getConfiguredProject("/tsconfig.json")!;
   return project.program.getSourceFile("/src/index.ts")!.statements.length;
 }
 
@@ -36,7 +36,7 @@ console.log("baseline: typeof x = number, statements = 1");
 
 // 2. Edit the file's text, then report the change.
 fs.writeFile!("/src/index.ts", `export const x: string = "hi";\nexport const second = 2;\n`);
-api.updateSnapshot({ fileChanges: { changed: ["/src/index.ts"] } });
+api.createSnapshot({ fileChanges: { changed: ["/src/index.ts"] } });
 api.clearSourceFileCache();
 assert.equal(typeOfX(), "string", "checker should observe the edited text");
 assert.equal(statementCount(), 2, "AST should observe the edited text");
@@ -44,10 +44,10 @@ console.log("after edit: typeof x = string, statements = 2");
 
 // 3. Create a new file and have it participate in the program.
 fs.writeFile!("/src/other.ts", `export const other = 123;\n`);
-api.updateSnapshot({ fileChanges: { created: ["/src/other.ts"] } });
+api.createSnapshot({ fileChanges: { created: ["/src/other.ts"] } });
 {
-  const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
-  const project = snapshot.getProject("/tsconfig.json")!;
+  const snapshot = api.createSnapshot({ openProject: "/tsconfig.json" });
+  const project = snapshot.getConfiguredProject("/tsconfig.json")!;
   const other = project.program.getSourceFile("/src/other.ts");
   assert.ok(other, "newly created file should be in the program");
   console.log("after create: /src/other.ts has", other.statements.length, "statement(s)");
@@ -55,11 +55,11 @@ api.updateSnapshot({ fileChanges: { created: ["/src/other.ts"] } });
 
 // 4. Delete it again.
 fs.removeFile!("/src/other.ts");
-api.updateSnapshot({ fileChanges: { deleted: ["/src/other.ts"] } });
+api.createSnapshot({ fileChanges: { deleted: ["/src/other.ts"] } });
 api.clearSourceFileCache();
 {
-  const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
-  const project = snapshot.getProject("/tsconfig.json")!;
+  const snapshot = api.createSnapshot({ openProject: "/tsconfig.json" });
+  const project = snapshot.getConfiguredProject("/tsconfig.json")!;
   const names = project.program.getSourceFileNames();
   assert.ok(!names.includes("/src/other.ts"), "deleted file should leave the program");
   console.log("after delete: /src/other.ts removed from program");

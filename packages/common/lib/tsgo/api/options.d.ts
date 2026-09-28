@@ -6,6 +6,8 @@ import type { RpcChannel } from "./wasmChannel";
 export interface ClientSocketOptions {
     /** Path to the Unix domain socket or Windows named pipe for API communication */
     pipe: string;
+    /** Maximum encoded byte size of each batch response page. Defaults to 300 million bytes. Individual responses can be larger than this size, but this controls where batch pages are cutoff. */
+    maxResponseBytesPerPage?: number | undefined;
 }
 export interface ClientWasmOptions {
     /** A pre-built request channel bound to an in-process WebAssembly reactor. */
@@ -16,18 +18,22 @@ export interface ClientWasmOptions {
     resolveModuleName?: ModuleNameResolver;
     /** When true, collect per-request timing information. */
     collectTiming?: boolean;
+    /** Maximum encoded byte size of each batch response page. Defaults to 300 million bytes. Individual responses can be larger than this size, but this controls where batch pages are cutoff. */
+    maxResponseBytesPerPage?: number | undefined;
 }
 export interface ClientSpawnOptions {
     /** Path to the tsc executable. Defaults to the bundled tsc binary. */
-    tsserverPath?: string;
+    tsserverPath?: string | undefined;
     /** Current working directory */
-    cwd?: string;
+    cwd?: string | undefined;
     /** Virtual filesystem callbacks */
-    fs?: FileSystem;
+    fs?: FileSystem | undefined;
     /** Resolves a module specifier in place of the compiler. */
     resolveModuleName?: ModuleNameResolver;
     /** Allow trusted projects to execute configured external content mapper processes. */
-    runExternalCode?: boolean;
+    runExternalCode?: boolean | undefined;
+    /** Maximum encoded byte size of each batch response page. Defaults to 300 million bytes. Individual responses can be larger than this size, but this controls where batch pages are cutoff. */
+    maxResponseBytesPerPage?: number | undefined;
     /**
      * When true, collect timing information for each request. The client
      * measures round-trip latency and bytes sent/received, and the server
@@ -35,7 +41,7 @@ export interface ClientSpawnOptions {
      * with an estimated transport overhead) in the snapshot returned by
      * {@link API.getTimingInfo}.
      */
-    collectTiming?: boolean;
+    collectTiming?: boolean | undefined;
 }
 export type ClientOptions = ClientSocketOptions | ClientSpawnOptions | ClientWasmOptions;
 export declare function isSpawnOptions(options: ClientOptions): options is ClientSpawnOptions;

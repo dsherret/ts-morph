@@ -39,6 +39,7 @@ export interface Node extends ReadonlyTextRange {
     readonly flags: NodeFlags;
     readonly parent: Node;
     readonly jsDoc?: readonly Node[] | undefined;
+    childrenIter<TNext = void>(): Generator<Node, TNext | undefined, TNext>;
     forEachChild<T>(visitor: (node: Node) => T, visitArray?: (nodes: NodeArray<Node>) => T): T | undefined;
     /**
      * Returns every child in source order, including the punctuation/keyword
@@ -59,6 +60,11 @@ export interface Node extends ReadonlyTextRange {
     getLeadingTriviaWidth(sourceFile?: SourceFile): number;
     getFullText(sourceFile?: SourceFile): string;
     getText(sourceFile?: SourceFile): string;
+    getChildCount(sourceFile?: SourceFile): number;
+    getChildAt(index: number, sourceFile?: SourceFile): Node;
+    getChildren(sourceFile?: SourceFile): readonly Node[];
+    getFirstToken(sourceFile?: SourceFile): Node | undefined;
+    getLastToken(sourceFile?: SourceFile): Node | undefined;
 }
 export interface FileReference extends TextRange {
     readonly fileName: string;

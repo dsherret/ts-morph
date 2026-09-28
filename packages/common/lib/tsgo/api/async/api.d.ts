@@ -4,37 +4,70 @@ import { CompletionItemKind } from "../../enums/completionItemKind.enum";
 import { DiagnosticCategory } from "../../enums/diagnosticCategory.enum";
 import { ElementFlags } from "../../enums/elementFlags.enum";
 import { EmitOnly } from "../../enums/emitOnly.enum";
+import { IndexKind } from "../../enums/indexKind.enum";
+import { JsxEmit } from "../../enums/jsxEmit.enum";
 import { ModuleKind } from "../../enums/moduleKind.enum";
+import { ModuleResolutionKind } from "../../enums/moduleResolutionKind.enum";
 import { NodeBuilderFlags } from "../../enums/nodeBuilderFlags.enum";
 import { ObjectFlags } from "../../enums/objectFlags.enum";
+import { ScriptKind } from "../../enums/scriptKind.enum";
 import { SignatureFlags } from "../../enums/signatureFlags.enum";
 import { SignatureKind } from "../../enums/signatureKind.enum";
 import { SymbolFlags } from "../../enums/symbolFlags.enum";
 import { TypeFlags } from "../../enums/typeFlags.enum";
 import { TypeFormatFlags } from "../../enums/typeFormatFlags.enum";
 import { TypePredicateKind } from "../../enums/typePredicateKind.enum";
-import { type __String, type Declaration, type Expression, type Identifier, ModifierFlags, type Node, type Path, type SourceFile, type SyntaxKind, type TypeNode } from "../../ast/index";
+import { type __String, type CallLikeExpression, type Declaration, type Expression, type FileReference, type Identifier, ModifierFlags, type NamedTupleMember, type Node, type ParameterDeclaration, type Path, type SourceFile, type StringLiteralLikeNode, type SyntaxKind, type TypeNode } from "../../ast/index";
 import type { APIOptions, LSPConnectionOptions } from "../options";
-import type { CompilerOptions, Diagnostic, DocumentIdentifier, DocumentPosition, LSPUpdateSnapshotParams, ParsedCommandLine, ProjectConfig, ProjectReference, ProjectResponse, ReadConfigFileResponse, SignaturePropertyMethod, SignatureResponse, SourceFileIdentity, SourceFileMetadata, SymbolPropertyMethod, SymbolResponse, SymbolsPropertyMethod, TextEdit, TypeAcquisition, TypePropertyMethod, TypeResponse, TypesPropertyMethod, UpdateSnapshotParams, UpdateSnapshotResponse } from "../proto";
+import type { BuildResponse, CleanBuildResponse, CompilerOptions, ConfiguredProjectId, CreateBuildOrchestratorResponse, CreateProgramOptions as ProtocolCreateProgramOptions, CreateSnapshotParams as ProtocolCreateSnapshotParams, CreateSnapshotProgramParams as ProtocolCreateSnapshotProgramParams, CreateSnapshotResponse, CreateSourceFileOptions, Diagnostic, DocumentIdentifier, DocumentPosition, FileNotifications, InferredProjectId, ParsedCommandLine, ProjectConfig, LanguageServerSnapshotChanges as ProtocolLanguageServerSnapshotChanges, ModuleResolutionEntry, ModuleResolutionSpec, PackageId, ProjectId, ProjectReference, ProjectResponse, ReadConfigFileResponse, ReconfigureSnapshotProgramParams as ProtocolReconfigureSnapshotProgramParams, ResolutionMode, ResolvedModule, ResolvedTypeReferenceDirective, ResolveModuleNameResult, SignaturePropertyMethod, SignatureResponse, SourceFileIdentity, SourceFileMetadata, StaticModuleResolution, SymbolPropertyMethod, SymbolResponse, SymbolsPropertyMethod, SyntheticProjectId, TextEdit, TypeAcquisition, TypePropertyMethod, TypeResponse, TypesPropertyMethod } from "../proto";
 import type { CodeFixAction, CombinedCodeActions, FileSpan, FileTextEdits, FormattingOptions, OrganizeImportsMode, QuotePreference } from "../proto";
 import type { RenameOptions } from "./types";
 import { SourceFileCache } from "../sourceFileCache";
 import type { RequestTiming, TimingAccumulators, TimingInfo } from "../timing";
 import { Client, type ClientSocketOptions, type ClientSpawnOptions } from "./client";
-import type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, EmitOutput, EmitOutputFile, EmitResult, FormatDiagnosticsHost, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction as APIImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, NumberLiteralType, ObjectType, StringLiteralType, StringMappingType, StructuredType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType } from "./types";
+import type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, EmitOutput, EmitOutputFile, EmitResult, FormatDiagnosticsHost, FreshableType, GenericType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction as APIImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, MappedType, NumberLiteralType, ObjectType, StringLiteralType, StringMappingType, StructuredType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, TupleTypeReference, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType } from "./types";
 export { formatDiagnostics, formatDiagnosticsWithColorAndContext } from "../diagnosticFormatter";
 export { documentURIToFileName, fileNameToDocumentURI } from "../path";
-export { CheckFlags, CompletionItemKind, DiagnosticCategory, ElementFlags, EmitOnly, ModifierFlags, ModuleKind, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypeFormatFlags, TypePredicateKind };
-export type { APIImportAdderAction as ImportAdderAction, APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, DocumentIdentifier, DocumentPosition, EmitOutput, EmitOutputFile, EmitResult, FormatDiagnosticsHost, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, ParsedCommandLine, ProjectConfig, ProjectReference, ReadConfigFileResponse, RenameOptions, RequestTiming, SourceFileIdentity, SourceFileMetadata, StringLiteralType, StringMappingType, StructuredType, SubstitutionType, TemplateLiteralType, TextEdit, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, Type, TypeAcquisition, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType, };
+export { CheckFlags, CompletionItemKind, DiagnosticCategory, ElementFlags, EmitOnly, IndexKind, JsxEmit, ModifierFlags, ModuleKind, ModuleResolutionKind, NodeBuilderFlags, ObjectFlags, ScriptKind, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypeFormatFlags, TypePredicateKind };
+export type { APIImportAdderAction as ImportAdderAction, APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, ConfiguredProjectId, CreateSourceFileOptions, Diagnostic, DocumentIdentifier, DocumentPosition, EmitOutput, EmitOutputFile, EmitResult, FileNotifications, FormatDiagnosticsHost, FreshableType, GenericType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InferredProjectId, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, MappedType, ModuleResolutionEntry, ModuleResolutionSpec, NumberLiteralType, ObjectType, PackageId, ParsedCommandLine, ProjectConfig, ProjectId, ProjectReference, ReadConfigFileResponse, RenameOptions, RequestTiming, SourceFileIdentity, ResolutionMode, ResolvedModule, ResolvedTypeReferenceDirective, ResolveModuleNameResult, SourceFileMetadata, StaticModuleResolution, StringLiteralType, StringMappingType, StructuredType, SubstitutionType, SyntheticProjectId, TemplateLiteralType, TextEdit, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, TupleTypeReference, Type, TypeAcquisition, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType, };
+export interface ModuleResolverOptions {
+    moduleResolutions?: ModuleResolutionSpec | undefined;
+    resolveModuleName?: ResolveModuleNameCallback | undefined;
+}
+export interface ResolveModuleNameCallbackOptions {
+    snapshot: Snapshot | InProgressSnapshot | undefined;
+}
+declare const inProgressSnapshotBrand: unique symbol;
+export type InProgressSnapshot = number & {
+    readonly [inProgressSnapshotBrand]: never;
+};
+export type ResolveModuleNameCallback = (moduleName: string, containingDirectory: string, resolutionMode: ResolutionMode | undefined, options: ResolveModuleNameCallbackOptions) => StaticModuleResolution | undefined | Promise<StaticModuleResolution | undefined>;
+export type CreateProgramOptions = Omit<ProtocolCreateProgramOptions, "moduleResolver"> & {
+    moduleResolver?: ModuleResolver | undefined;
+};
+export type CreateSnapshotProgramParams = Omit<ProtocolCreateSnapshotProgramParams, "options"> & {
+    options?: CreateProgramOptions | undefined;
+};
+export type ReconfigureSnapshotProgramParams = Omit<ProtocolReconfigureSnapshotProgramParams, "options"> & {
+    options?: CreateProgramOptions | undefined;
+};
+export type CreateSnapshotParams = Omit<ProtocolCreateSnapshotParams, "createPrograms" | "reconfigurePrograms"> & {
+    createPrograms?: readonly CreateSnapshotProgramParams[] | undefined;
+    reconfigurePrograms?: readonly ReconfigureSnapshotProgramParams[] | undefined;
+};
+export type LanguageServerSnapshotChanges = Omit<ProtocolLanguageServerSnapshotChanges, "createPrograms" | "reconfigurePrograms"> & {
+    createPrograms?: readonly CreateSnapshotProgramParams[] | undefined;
+    reconfigurePrograms?: readonly ReconfigureSnapshotProgramParams[] | undefined;
+};
 export interface TranspileOptions {
-    compilerOptions?: CompilerOptions;
-    fileName?: string;
-    reportDiagnostics?: boolean;
+    compilerOptions?: CompilerOptions | undefined;
+    fileName?: string | undefined;
+    reportDiagnostics?: boolean | undefined;
 }
 export interface TranspileOutput {
     outputText: string;
-    diagnostics?: readonly Diagnostic[];
-    sourceMapText?: string;
+    diagnostics?: readonly Diagnostic[] | undefined;
+    sourceMapText?: string | undefined;
 }
 export declare class API<FromLSP extends boolean = false> implements FormatDiagnosticsHost {
     private client;
@@ -42,9 +75,14 @@ export declare class API<FromLSP extends boolean = false> implements FormatDiagn
     private parseDecoder;
     private toPath;
     private currentDirectory;
+    private readonly decoder;
     private getCanonicalFileNameWorker;
     private initialized;
+    private initializing;
     private activeSnapshots;
+    private activeBuildOrchestrators;
+    private activeSourceFileLeases;
+    readonly printer: Printer;
     private latestSnapshot;
     private compilerVersion;
     readonly internal: InternalAPI;
@@ -56,10 +94,15 @@ export declare class API<FromLSP extends boolean = false> implements FormatDiagn
      * Use this when connecting to an API pipe provided by an LSP server via custom/initializeAPISession.
      */
     static fromLSPConnection(options: LSPConnectionOptions): Promise<API<true>>;
+    batchContext(): {
+        [globalThis.Symbol.dispose](): void;
+    };
     private ensureInitialized;
+    private initializeWorker;
     getCurrentDirectory(): string;
     getCanonicalFileName(fileName: string): string;
     getNewLine(): string;
+    createBuildOrchestrator(rootNames: readonly string[], buildOrchestratorOptions: BuildOrchestratorOptions): Promise<BuildOrchestrator>;
     parseConfigFile(file: DocumentIdentifier): Promise<ParsedCommandLine>;
     parseCommandLine(commandLine: readonly string[]): Promise<ParsedCommandLine>;
     readConfigFile(file: DocumentIdentifier): Promise<ReadConfigFileResponse>;
@@ -70,16 +113,36 @@ export declare class API<FromLSP extends boolean = false> implements FormatDiagn
         configFileName: DocumentIdentifier;
         configDirectory?: never;
     }): Promise<ParsedCommandLine>;
+    /**
+     * Create and retain a source file independently of a program.
+     * Dispose the returned lease when the source file no longer needs to remain available remotely.
+     */
+    createSourceFile(fileName: string, sourceText: string, options?: CreateSourceFileOptions): Promise<RetainedSourceFile>;
+    /**
+     * Read, create, and retain a source file independently of a program.
+     * Dispose the returned lease when the source file no longer needs to remain available remotely.
+     */
+    createSourceFileFromFile(file: DocumentIdentifier, options?: CreateSourceFileOptions): Promise<RetainedSourceFile>;
+    private retainSourceFileResponse;
     transpileModule(input: string, options?: TranspileOptions): Promise<TranspileOutput>;
-    transpileModuleFromFile(fileName: string, options?: TranspileOptions): Promise<TranspileOutput>;
+    transpileModuleFromFile(file: DocumentIdentifier, options?: TranspileOptions): Promise<TranspileOutput>;
     transpileDeclaration(input: string, options?: TranspileOptions): Promise<TranspileOutput>;
-    transpileDeclarationFromFile(fileName: string, options?: TranspileOptions): Promise<TranspileOutput>;
-    parseSourceFile(file: DocumentIdentifier, text: string, context?: {
-        snapshot: number;
-        project: Path;
-    }): Promise<SourceFile>;
-    updateSnapshot(params?: FromLSP extends true ? LSPUpdateSnapshotParams : UpdateSnapshotParams): Promise<Snapshot>;
+    transpileDeclarationFromFile(file: DocumentIdentifier, options?: TranspileOptions): Promise<TranspileOutput>;
+    createSnapshot<const CreatePrograms extends CreateSnapshotParams["createPrograms"] = undefined, const OpenFiles extends CreateSnapshotParams["openFiles"] = undefined>(params: SnapshotOperationParams<CreateSnapshotParams, CreatePrograms, OpenFiles>): Promise<SnapshotForOperationResults<CreatePrograms, OpenFiles>>;
+    createSnapshot(): Promise<Snapshot>;
+    private updateSnapshot;
+    private prepareCreateSnapshotParams;
+    private prepareLanguageServerSnapshotChanges;
+    private createSnapshotUpdater;
+    /**
+     * Returns the language server's current canonical snapshot after atomically
+     * adopting any supplied API-driven changes. Only available on LSP-connected APIs.
+     */
+    getCurrentLanguageServerSnapshot<const CreatePrograms extends LanguageServerSnapshotChanges["createPrograms"] = undefined, const OpenFiles extends LanguageServerSnapshotChanges["openFiles"] = undefined>(...args: FromLSP extends true ? [changes: SnapshotOperationParams<LanguageServerSnapshotChanges, CreatePrograms, OpenFiles>, baseSnapshot?: Snapshot] : [changes: never, baseSnapshot?: never]): Promise<SnapshotForOperationResults<CreatePrograms, OpenFiles>>;
+    getCurrentLanguageServerSnapshot(...args: FromLSP extends true ? [changes?: LanguageServerSnapshotChanges, baseSnapshot?: Snapshot] : [changes: never, baseSnapshot?: never]): Promise<Snapshot>;
+    [globalThis.Symbol.asyncDispose](): Promise<void>;
     close(): Promise<void>;
+    createModuleResolver(compilerOptions: CompilerOptions, options?: ModuleResolverOptions): Promise<ModuleResolver>;
     clearSourceFileCache(): void;
     runWithTemporaryFileUpdate(baseSnapshot: Snapshot, file: DocumentIdentifier, newText: string, cb: (newSnapshot: Snapshot) => void | Promise<void>): Promise<void>;
     /**
@@ -96,47 +159,138 @@ export declare class API<FromLSP extends boolean = false> implements FormatDiagn
     getTimingInfo(): Promise<TimingInfo>;
     /** Clears all accumulated timing totals and recent-request history, on both the client and the server. */
     resetTimingInfo(): Promise<void>;
+    /** Creates a program from current filesystem state. */
+    createProgram(rootFiles: readonly DocumentIdentifier[], compilerOptions: CompilerOptions, createProgramOptions?: CreateProgramOptions): Promise<Program>;
+}
+type EnsureInitialized = () => Promise<void>;
+/** An independently retained source file and its disposable remote-lifetime lease. */
+export declare class RetainedSourceFile {
+    readonly sourceFile: SourceFile;
+    private readonly lease;
+    private readonly client;
+    private readonly onDispose;
+    private disposed;
+    private disposePromise;
+    constructor(sourceFile: SourceFile, lease: number, client: Client, onDispose: () => void);
+    [globalThis.Symbol.asyncDispose](): Promise<void>;
+    dispose(): Promise<void>;
+    private disposeWorker;
 }
 export declare class InternalAPI {
     private client;
     private ensureInitialized;
     /** @internal */
-    constructor(client: Client, ensureInitialized: () => Promise<void>);
+    constructor(client: Client, ensureInitialized: EnsureInitialized);
     startCPUProfile(dir: string): Promise<void>;
     stopCPUProfile(): Promise<string>;
     saveHeapProfile(dir: string): Promise<string>;
 }
+type SnapshotUpdater = (params: CreateSnapshotParams) => Promise<Snapshot>;
+export interface SnapshotOperation {
+    readonly createdPrograms?: readonly Program<SyntheticProjectId>[] | undefined;
+    readonly openedFiles?: readonly SnapshotOpenedFileOperation[] | undefined;
+}
+export interface SnapshotOpenedFileOperation {
+    readonly project: Project;
+}
+/** Replaces every element of a tuple while preserving its length and index structure. */
+type MapTupleTo<Tuple extends readonly unknown[], Result> = {
+    readonly [Index in keyof Tuple]: Result;
+};
+/**
+ * Keeps `Tuple` as an inference target while contextually typing each element from
+ * `Elements`. The mapped intersection supplies nested completions and excess-property
+ * checks without widening an inferred tuple to an array.
+ */
+type ContextualizeTuple<Tuple extends readonly unknown[] | undefined, Elements extends readonly unknown[] | undefined> = Tuple & {
+    readonly [Index in keyof Tuple]: NonNullable<Elements>[number];
+};
+/** Substitutes the operation arrays with contextually typed, tuple-preserving versions. */
+type SnapshotOperationParams<Params extends {
+    createPrograms?: readonly unknown[] | undefined;
+    openFiles?: readonly unknown[] | undefined;
+}, CreatePrograms extends Params["createPrograms"], OpenFiles extends Params["openFiles"]> = Omit<Params, "createPrograms" | "openFiles"> & {
+    createPrograms?: ContextualizeTuple<CreatePrograms, Params["createPrograms"]> | undefined;
+    openFiles?: ContextualizeTuple<OpenFiles, Params["openFiles"]> | undefined;
+};
+/**
+ * Refines a snapshot's operation results to required tuples when the corresponding
+ * operation arrays were supplied, preserving their lengths for indexed access.
+ */
+type SnapshotForOperationResults<CreatePrograms extends readonly unknown[] | undefined, OpenFiles extends readonly unknown[] | undefined> = Snapshot & {
+    readonly operation: SnapshotOperation & (CreatePrograms extends readonly unknown[] ? {
+        readonly createdPrograms: MapTupleTo<CreatePrograms, Program<SyntheticProjectId>>;
+    } : unknown) & (OpenFiles extends readonly unknown[] ? {
+        readonly openedFiles: MapTupleTo<OpenFiles, SnapshotOpenedFileOperation>;
+    } : unknown);
+};
+/** Derives the refined snapshot result type from a complete operation parameter type. */
+export type SnapshotForOperation<Params extends CreateSnapshotParams> = SnapshotForOperationResults<Params extends {
+    createPrograms: infer CreatePrograms extends readonly unknown[];
+} ? CreatePrograms : undefined, Params extends {
+    openFiles: infer OpenFiles extends readonly unknown[];
+} ? OpenFiles : undefined>;
 export declare class Snapshot {
     readonly id: number;
+    readonly operation: SnapshotOperation;
     private projectMap;
     private toPath;
     private client;
     private disposed;
+    private disposePromise;
     private onDispose;
     private snapshotRegistry;
+    private projectDataMap;
+    private updateSnapshot;
     readonly internal: SnapshotInternalAPI;
-    constructor(data: UpdateSnapshotResponse, client: Client, sourceFileCache: SourceFileCache, toPath: (fileName: string) => Path, formatDiagnosticsHost: FormatDiagnosticsHost, onDispose: () => void);
+    constructor(data: CreateSnapshotResponse, client: Client, sourceFileCache: SourceFileCache, toPath: (fileName: string) => Path, formatDiagnosticsHost: FormatDiagnosticsHost, onDispose: () => void, updateSnapshot: SnapshotUpdater, baseSnapshot?: Snapshot);
     getProjects(): readonly Project[];
-    getProject(configFileName: string): Project | undefined;
+    getConfiguredProject(configFileName: string): Project<ConfiguredProjectId> | undefined;
+    getProject<Id extends ProjectId>(projectId: Id): Project<Id> | undefined;
+    getProgram<Id extends ProjectId>(projectId: Id): Program<Id> | undefined;
+    update<const CreatePrograms extends CreateSnapshotParams["createPrograms"] = undefined, const OpenFiles extends CreateSnapshotParams["openFiles"] = undefined>(params: SnapshotOperationParams<CreateSnapshotParams, CreatePrograms, OpenFiles>): Promise<SnapshotForOperationResults<CreatePrograms, OpenFiles>>;
+    update(params: CreateSnapshotParams): Promise<Snapshot>;
+    /**
+     * Gets the default project for a given file from the configured projects and
+     * inferred project already loaded in the snapshot. Synthetic projects are not
+     * considered. Files that have been opened with `openFiles` are guaranteed to
+     * have a result.
+     */
     getDefaultProjectForFile(file: DocumentIdentifier): Promise<Project | undefined>;
     [globalThis.Symbol.dispose](): void;
     dispose(): Promise<void>;
+    private disposeWorker;
     isDisposed(): boolean;
     private ensureNotDisposed;
+    private requireProject;
+}
+export declare class ModuleResolver {
+    readonly id: number;
+    private readonly client;
+    private readonly disposeCallback;
+    private disposed;
+    constructor(id: number, client: Client, disposeCallback: (() => void) | undefined);
+    resolveModuleName(moduleName: string, containingDirectory: DocumentIdentifier, resolutionMode?: ResolutionMode, options?: {
+        snapshot?: Snapshot | InProgressSnapshot | undefined;
+    }): Promise<ResolveModuleNameResult>;
+    [globalThis.Symbol.asyncDispose](): Promise<void>;
+    dispose(): Promise<void>;
+    /** @internal */
+    ensureNotDisposed(): void;
 }
 declare class SnapshotObjectRegistry {
     private readonly symbols;
     private readonly client;
     private readonly snapshotId;
     private readonly resolveProject;
-    constructor(client: Client, snapshotId: number, resolveProject: (projectId: Path) => Project | undefined);
-    /** Resolve a project id (a config file path) to its Project within this snapshot. */
-    getProject(projectId: Path): Project | undefined;
+    constructor(client: Client, snapshotId: number, resolveProject: (projectId: ProjectId) => Project | undefined);
+    /** Resolve a project ID to its Project within this snapshot. */
+    getProject(projectId: ProjectId): Project | undefined;
     getOrCreateSymbol(data: SymbolResponse): Symbol;
     getSymbol(id: number): Symbol | undefined;
     clear(): void;
-    fetchSymbol(source: Symbol | Signature | Type, method: SymbolPropertyMethod, handle: number | undefined, projectId: Path): Promise<Symbol>;
-    fetchSymbols(source: Symbol | Signature | Type, method: SymbolsPropertyMethod, handles: readonly number[] | undefined, projectId: Path): Promise<readonly Symbol[]>;
+    fetchSymbol(source: Symbol | Signature | Type, method: SymbolPropertyMethod, handle: number | undefined, projectId: ProjectId): Promise<Symbol>;
+    fetchSymbols(source: Symbol | Signature | Type, method: SymbolsPropertyMethod, handles: readonly number[] | undefined, projectId: ProjectId): Promise<readonly Symbol[]>;
 }
 declare class ProjectObjectRegistry {
     private client;
@@ -150,6 +304,7 @@ declare class ProjectObjectRegistry {
     getSymbol(id: number): Symbol | undefined;
     getOrCreateType(data: TypeResponse): TypeObject;
     getType(id: number): TypeObject | undefined;
+    createNodeHandle<T extends Node>(handle: string): NodeHandle<T>;
     getOrCreateSignature(data: SignatureResponse): Signature;
     getSignature(id: number): Signature | undefined;
     clear(): void;
@@ -167,17 +322,17 @@ declare class ProjectObjectRegistry {
     fetchIndexInfosOfType(source: Type): Promise<readonly IndexInfo[]>;
     fetchTypeParameterAtPosition(source: Signature, pos: number): Promise<Type>;
 }
-export declare class Project {
-    readonly id: Path;
+export declare class Project<Id extends ProjectId = ProjectId> {
+    readonly id: Id;
     readonly configFileName: string;
     readonly currentDirectory: string;
+    readonly dirty: boolean;
     /** The project's config, without its root file list — see `getRootFileNames`. */
     readonly parsedCommandLine: ProjectConfig;
     /** @deprecated Use `parsedCommandLine.options`. */
     readonly compilerOptions: CompilerOptions;
-    readonly program: Program;
+    readonly program: Program<Id>;
     readonly checker: Checker;
-    readonly emitter: Emitter;
     readonly languageService: LanguageService;
     private client;
     private snapshotId;
@@ -246,21 +401,36 @@ export declare class LanguageService {
     getSignatureUsage(signatureDecl: Node): Promise<SignatureUsage[]>;
     getCompletionsAtPosition(document: string, position: number, options?: CompletionOptions): Promise<CompletionInfo | undefined>;
 }
-export declare class Program implements FormatDiagnosticsHost {
-    private snapshotId;
-    private project;
-    private client;
-    private sourceFileCache;
-    private toPath;
-    private formatDiagnosticsHost;
-    private decoder;
-    private sourceFileMetadataCache;
-    constructor(snapshotId: number, project: Project, client: Client, sourceFileCache: SourceFileCache, toPath: (fileName: string) => Path, formatDiagnosticsHost: FormatDiagnosticsHost);
+export declare class Program<Id extends ProjectId = ProjectId> implements FormatDiagnosticsHost {
+    /** @internal */
+    readonly snapshotId: number;
+    readonly id: Id;
+    private readonly project;
+    private readonly client;
+    private readonly sourceFileCache;
+    private readonly toPath;
+    private readonly formatDiagnosticsHost;
+    private readonly decoder;
+    private readonly sourceFileMetadataCache;
+    private ownedSnapshot;
+    private disposePromise;
+    constructor(snapshotId: number, project: Project<Id>, client: Client, sourceFileCache: SourceFileCache, toPath: (fileName: string) => Path, formatDiagnosticsHost: FormatDiagnosticsHost);
     getCurrentDirectory(): string;
     getCanonicalFileName(fileName: string): string;
     getNewLine(): string;
+    /** @internal */
+    setOwnedSnapshot(snapshot: Snapshot): void;
+    [globalThis.Symbol.dispose](): void;
+    dispose(): Promise<void>;
+    private disposeWorker;
     getCompilerOptions(): CompilerOptions;
     getSourceFile(file: DocumentIdentifier): Promise<SourceFile | undefined>;
+    getResolvedModule(file: DocumentIdentifier, moduleName: string, mode: ModuleKind): Promise<ResolvedModule | undefined>;
+    getModeForUsageLocation(file: DocumentIdentifier, usage: StringLiteralLikeNode): Promise<ModuleKind>;
+    getModeForResolutionAtIndex(file: DocumentIdentifier, index: number): Promise<ModuleKind>;
+    getResolvedModuleFromModuleSpecifier(moduleSpecifier: StringLiteralLikeNode, sourceFile?: DocumentIdentifier): Promise<ResolvedModule | undefined>;
+    getResolvedTypeReferenceDirective(file: DocumentIdentifier, typeDirectiveName: string, mode: ModuleKind): Promise<ResolvedTypeReferenceDirective | undefined>;
+    getResolvedTypeReferenceDirectiveFromTypeReferenceDirective(typeReferenceDirective: FileReference, sourceFile: DocumentIdentifier): Promise<ResolvedTypeReferenceDirective | undefined>;
     getSourceFileNames(): Promise<readonly string[]>;
     /**
      * Every source file in the program.
@@ -276,7 +446,7 @@ export declare class Program implements FormatDiagnosticsHost {
      * is not part of the program. Metadata is fetched lazily per file and cached on this
      * `Program` instance.
      */
-    getSourceFileMetadata(fileName: string): Promise<SourceFileMetadata | undefined>;
+    getSourceFileMetadata(file: DocumentIdentifier): Promise<SourceFileMetadata | undefined>;
     /**
      * Returns program-stored metadata for the source file at the given path, or `undefined`
      * if the file is not part of the program. Like {@link getSourceFileMetadata}, but skips
@@ -345,10 +515,9 @@ export declare class Program implements FormatDiagnosticsHost {
      */
     getConfigFileParsingDiagnostics(): Promise<readonly Diagnostic[]>;
     /**
-     * Emits files to the configured filesystem.
-     *
-     * When the API has a virtual filesystem with a `writeFile` callback, output
-     * is written there. Otherwise, the server writes directly to the host filesystem.
+     * Emits files to the configured filesystem. Layer and host filesystems are
+     * written through; full filesystems remain immutable and return emitted
+     * files in {@link EmitResult.fileSystem}.
      */
     emit(emitOnly?: EmitOnly): Promise<EmitResult>;
     /**
@@ -363,6 +532,42 @@ export declare class Program implements FormatDiagnosticsHost {
      * Gets declaration output for selected files regardless of project `noEmit`, `declaration`, `emitDeclarationOnly`, and `noEmitOnError` settings.
      */
     getDeclarationEmit(files: readonly DocumentIdentifier[]): Promise<EmitOutput>;
+    getProject(): Project<Id>;
+}
+export interface BuildOrchestratorOptions {
+    cwd?: string | undefined;
+    dry?: boolean;
+    force?: boolean;
+    verbose?: boolean;
+    stopBuildOnErrors?: boolean;
+    overrideCompilerOptions?: OverrideCompilerOptions;
+}
+export interface OverrideCompilerOptions {
+    incremental?: boolean;
+    assumeChangesOnlyAffectDirectDependencies?: boolean;
+    declaration?: boolean;
+    declarationMap?: boolean;
+    emitDeclarationOnly?: boolean;
+    sourceMap?: boolean;
+    inlineSourceMap?: boolean;
+    traceResolution?: boolean;
+}
+export declare class BuildOrchestrator {
+    private client;
+    private id;
+    private disposed;
+    private disposePromise;
+    private onDispose;
+    constructor(client: Client, orchestratorResponse: CreateBuildOrchestratorResponse, onDispose: () => void);
+    [globalThis.Symbol.dispose](): void;
+    dispose(): Promise<void>;
+    private disposeWorker;
+    build(project?: string): Promise<BuildResponse>;
+    buildReferences(project: string): Promise<BuildResponse>;
+    clean(project?: string): Promise<CleanBuildResponse>;
+    cleanReferences(project?: string): Promise<CleanBuildResponse>;
+    isDisposed(): boolean;
+    private ensureNotDisposed;
 }
 export declare class Checker {
     private snapshotId;
@@ -396,6 +601,13 @@ export declare class Checker {
      * {@link Type.isErrorType} to detect it).
      */
     getDeclaredTypeOfSymbol(symbol: Symbol): Promise<Type>;
+    /**
+     * Get the type of a symbol, excluding the missing type when
+     * `exactOptionalPropertyTypes: true` is set; for symbols whose
+     * type cannot be determined the checker yields the error type
+     * (use {@link Type.isErrorType} to detect it).
+     */
+    getNonMissingTypeOfSymbol(symbol: Symbol): Promise<Type>;
     getReferencesToSymbolInFile(file: DocumentIdentifier, symbol: Symbol): Promise<NodeHandle[]>;
     /** @deprecated Use `project.languageService.getReferencedSymbolsForNode`. */
     getReferencedSymbolsForNode(node: Node, position: number): Promise<ReferencedSymbolEntry[]>;
@@ -426,6 +638,7 @@ export declare class Checker {
     getSymbolsInScope(location: Node | DocumentPosition, meaning: SymbolFlags): Promise<readonly Symbol[]>;
     getResolvedSymbol(node: Identifier): Promise<Symbol | undefined>;
     getContextualType(node: Expression): Promise<Type | undefined>;
+    getContextualTypeForArgumentAtIndex(node: CallLikeExpression, argIndex: number): Promise<Type | undefined>;
     /** Get the base type of a literal type (e.g. `number` for `42`). Always returns a type. */
     getBaseTypeOfLiteralType(type: Type): Promise<Type>;
     /** Get the type with `null` and `undefined` removed. Always returns a type. */
@@ -471,6 +684,17 @@ export declare class Checker {
     isContextSensitive(node: Node): Promise<boolean>;
     isArrayType(type: Type): Promise<boolean>;
     isTupleType(type: Type): Promise<boolean>;
+    isTupleTypeTarget(type: Type): Promise<boolean>;
+    /**
+     * The following symbols are considered read-only:
+     * - Properties with a `readonly` modifier
+     * - Variables declared with `const`
+     * - Get accessors without matching set accessors
+     * - Enum members
+     * - `Object.defineProperty` assignments with `writable: false` or no setter
+     * - Unions and intersections of the above
+     */
+    isReadonlySymbol(symbol: Symbol): Promise<boolean>;
     /** Get the return type of a signature. Always returns a type. */
     getReturnTypeOfSignature(signature: Signature): Promise<Type>;
     /**
@@ -490,6 +714,9 @@ export declare class Checker {
     getReducedType(type: Type): Promise<Type>;
     getPropertiesOfType(type: Type): Promise<readonly Symbol[]>;
     getIndexInfosOfType(type: Type): Promise<readonly IndexInfo[]>;
+    getIndexInfoOfType(type: Type, kind: IndexKind): Promise<IndexInfo | undefined>;
+    getIndexTypeOfType(type: Type, kind: IndexKind): Promise<Type | undefined>;
+    getTypeOfPropertyOfType(type: Type, propertyName: string): Promise<Type | undefined>;
     /**
      * Get the constraint of a type parameter (the `T` in `<U extends T>`), or
      * undefined if it has none.
@@ -514,6 +741,11 @@ export declare class Checker {
      */
     getFullyQualifiedName(symbol: Symbol): Promise<string>;
     getImmediateAliasedSymbol(symbol: Symbol): Promise<Symbol | undefined>;
+    /**
+     * Get the target symbol if instantiated, or the provided symbol otherwise.
+     */
+    getTargetSymbol(symbol: Symbol): Promise<Symbol>;
+    getExportSymbolOfSymbol(symbol: Symbol): Promise<Symbol>;
     /**
      * Fetch (once, then cache) the handle ids of the per-checker singleton
      * symbols (unknown, undefined, arguments). These ids are stable for the life
@@ -588,10 +820,11 @@ export interface PrintNodeOptions {
      */
     newLine?: number | undefined;
 }
-export declare class Emitter {
+export declare class Printer {
     private client;
     constructor(client: Client);
     printNode(node: Node, options?: PrintNodeOptions): Promise<string>;
+    printFile(sourceFile: SourceFile, options?: PrintNodeOptions): Promise<string>;
 }
 export declare class SnapshotInternalAPI {
     private snapshotId;
@@ -714,14 +947,17 @@ declare class TypeObject implements Type {
     readonly freshType: number;
     readonly regularType: number;
     readonly target: number;
+    private readonly tupleType;
     readonly typeParameters: readonly number[];
     readonly outerTypeParameters: readonly number[];
     readonly localTypeParameters: readonly number[];
+    readonly thisType: number;
     readonly aliasTypeArguments: readonly number[];
     readonly aliasSymbol: number;
     readonly elementFlags: readonly ElementFlags[];
     readonly fixedLength: number;
     readonly readonly: boolean;
+    readonly labeledElementDeclarations?: readonly (NodeHandle<NamedTupleMember | ParameterDeclaration> | undefined)[];
     readonly texts: readonly string[];
     readonly objectType: number;
     readonly indexType: number;
@@ -729,6 +965,10 @@ declare class TypeObject implements Type {
     readonly extendsType: number;
     readonly baseType: number;
     readonly substConstraint: number;
+    readonly typeParameter: number;
+    readonly constraintType: number;
+    readonly nameType: number;
+    readonly templateType: number;
     private trueType;
     private falseType;
     private constraint;
@@ -742,6 +982,7 @@ declare class TypeObject implements Type {
     private constructSignatures;
     private indexInfos;
     private baseTypes;
+    private types;
     private stringIndexType;
     private numberIndexType;
     constructor(data: TypeResponse, objectRegistry: ProjectObjectRegistry);
@@ -767,7 +1008,12 @@ declare class TypeObject implements Type {
     getTypeParameters(): Promise<readonly TypeParameter[]>;
     getOuterTypeParameters(): Promise<readonly TypeParameter[]>;
     getLocalTypeParameters(): Promise<readonly TypeParameter[]>;
+    getThisType(): Promise<TypeParameter | undefined>;
     getAliasTypeArguments(): Promise<readonly Type[]>;
+    getTypeParameter(): Promise<TypeParameter>;
+    getConstraintType(): Promise<Type>;
+    getNameType(): Promise<Type | undefined>;
+    getTemplateType(): Promise<Type>;
     getObjectType(): Promise<Type>;
     getIndexType(): Promise<Type>;
     getCheckType(): Promise<Type>;
@@ -794,7 +1040,8 @@ declare class TypeObject implements Type {
     isBigIntLiteralType(): this is BigIntLiteralType;
     isBooleanLiteralType(): this is BooleanLiteralType;
     isTypeReference(): this is TypeReference;
-    isTupleType(): this is TupleType;
+    isTupleType(): this is TupleTypeReference;
+    isTupleTypeTarget(): this is TupleType;
     isIndexType(): this is IndexType;
     isIndexedAccessType(): this is IndexedAccessType;
     isConditionalType(): this is ConditionalType;
@@ -802,6 +1049,7 @@ declare class TypeObject implements Type {
     isTemplateLiteralType(): this is TemplateLiteralType;
     isStringMappingType(): this is StringMappingType;
     isTypeParameter(): this is TypeParameter;
+    isMappedType(): this is MappedType;
 }
 export declare function isUnionType(type: Type): type is UnionType;
 export declare function isIntersectionType(type: Type): type is IntersectionType;
@@ -821,7 +1069,8 @@ export declare function isNumberLiteralType(type: Type): type is NumberLiteralTy
 export declare function isBigIntLiteralType(type: Type): type is BigIntLiteralType;
 export declare function isBooleanLiteralType(type: Type): type is BooleanLiteralType;
 export declare function isTypeReference(type: Type): type is TypeReference;
-export declare function isTupleType(type: Type): type is TupleType;
+export declare function isTupleType(type: Type): type is TupleTypeReference;
+export declare function isTupleTypeTarget(type: Type): type is TupleType;
 export declare function isIndexType(type: Type): type is IndexType;
 export declare function isIndexedAccessType(type: Type): type is IndexedAccessType;
 export declare function isConditionalType(type: Type): type is ConditionalType;

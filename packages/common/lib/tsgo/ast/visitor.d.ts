@@ -9,5 +9,7 @@ export type { Visitor };
 export { visitEachChild, visitNode, visitNodes, visitNodesArray } from "./visitor.generated";
 declare function forEachChildOfJSDocParameterOrPropertyTag<T>(data: any, cbNode: (node: Node) => T, cbNodes: ((nodes: NodeArray<Node>) => T) | undefined): T | undefined;
 export { forEachChildOfJSDocParameterOrPropertyTag as forEachChildOfJSDocParameterTag, forEachChildOfJSDocParameterOrPropertyTag as forEachChildOfJSDocPropertyTag };
+declare function yieldEachChildOfJSDocParameterOrPropertyTag<T>(data: any): Generator<Node, T | undefined, T>;
+export { yieldEachChildOfJSDocParameterOrPropertyTag as yieldEachChildOfJSDocParameterTag, yieldEachChildOfJSDocParameterOrPropertyTag as yieldEachChildOfJSDocPropertyTag };
 declare function visitEachChildOfJSDocParameterOrPropertyTag(node: JSDocParameterOrPropertyTag, visitor: Visitor): JSDocParameterOrPropertyTag;
 export { visitEachChildOfJSDocParameterOrPropertyTag as visitEachChildOfJSDocParameterTag, visitEachChildOfJSDocParameterOrPropertyTag as visitEachChildOfJSDocPropertyTag };

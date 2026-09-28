@@ -12,8 +12,8 @@ const api = createInProcessApi({
   },
 });
 
-const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
-const project = snapshot.getProject("/tsconfig.json")!;
+const snapshot = api.createSnapshot({ openProject: "/tsconfig.json" });
+const project = snapshot.getConfiguredProject("/tsconfig.json")!;
 
 const modules = project.checker.getAmbientModules();
 const names = modules.map(m => m.name).sort();

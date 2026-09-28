@@ -3,8 +3,8 @@ import type { ElementFlags } from "../../enums/elementFlags.enum";
 import type { ObjectFlags } from "../../enums/objectFlags.enum";
 import type { TypeFlags } from "../../enums/typeFlags.enum";
 import type { TypePredicateKind } from "../../enums/typePredicateKind.enum";
-import type { IndexSignatureDeclaration } from "../../ast/ast";
-import type { Diagnostic } from "../proto";
+import type { IndexSignatureDeclaration, NamedTupleMember, ParameterDeclaration } from "../../ast/ast";
+import type { Diagnostic, RequestFileSystem } from "../proto";
 import type { NodeHandle, Signature, Symbol } from "./api";
 export type { Diagnostic } from "../proto";
 /**
@@ -84,8 +84,10 @@ export interface Type {
     isBooleanLiteralType(): this is BooleanLiteralType;
     /** Whether this type is a type reference */
     isTypeReference(): this is TypeReference;
-    /** Whether this type is a tuple type */
-    isTupleType(): this is TupleType;
+    /** Whether this type is a tuple type reference */
+    isTupleType(): this is TupleTypeReference;
+    /** Whether this type owns tuple metadata */
+    isTupleTypeTarget(): this is TupleType;
     /** Whether this type is an index type (`keyof T`) */
     isIndexType(): this is IndexType;
     /** Whether this type is an indexed access type (`T[K]`) */
@@ -100,6 +102,8 @@ export interface Type {
     isStringMappingType(): this is StringMappingType;
     /** Whether this type is a type parameter */
     isTypeParameter(): this is TypeParameter;
+    /** Whether this is a mapped type */
+    isMappedType(): this is MappedType;
 }
 /**
  * Freshable types (TypeFlags.Freshable) - literal types (TypeFlags.Literal) and computed enum types (TypeFlags.Enum).
@@ -140,10 +144,26 @@ export interface ObjectType extends Type {
     /** Object flags — use to determine the specific kind of object type. */
     readonly objectFlags: ObjectFlags;
 }
+/** Mapped types (ObjectFlags.Mapped) */
+export interface MappedType extends ObjectType {
+    /** Get the type parameter iterated by the mapped type */
+    getTypeParameter(): Promise<TypeParameter>;
+    /** Get the constraint over which the mapped type iterates */
+    getConstraintType(): Promise<Type>;
+    /** Get the remapped property name type, if present */
+    getNameType(): Promise<Type | undefined>;
+    /** Get the property value template type */
+    getTemplateType(): Promise<Type>;
+}
 /** Type references (ObjectFlags.Reference) — e.g. Array<string>, Map<K, V> */
 export interface TypeReference extends ObjectType {
     /** Get the generic target type (e.g. Array for Array<string>) */
-    getTarget(): Promise<Type>;
+    getTarget(): Promise<GenericType>;
+}
+/** References to tuple types */
+export interface TupleTypeReference extends TypeReference {
+    /** Get the tuple type that describes this reference's shape */
+    getTarget(): Promise<TupleType>;
 }
 /** Interface types — classes and interfaces (ObjectFlags.ClassOrInterface) */
 export interface InterfaceType extends TypeReference {
@@ -153,15 +173,24 @@ export interface InterfaceType extends TypeReference {
     getOuterTypeParameters(): Promise<readonly TypeParameter[]>;
     /** Get local type parameters declared on this interface/class */
     getLocalTypeParameters(): Promise<readonly TypeParameter[]>;
+    /** Get the synthetic `this` type of this interface/class */
+    getThisType(): Promise<TypeParameter | undefined>;
 }
-/** Tuple types (ObjectFlags.Tuple) */
-export interface TupleType extends InterfaceType {
+/** Generic types */
+export interface GenericType extends InterfaceType, TypeReference {
+}
+/** Tuple type targets (ObjectFlags.Tuple) */
+export interface TupleType extends GenericType {
+    /** Get this tuple target */
+    getTarget(): Promise<TupleType>;
     /** Per-element flags (Required, Optional, Rest, Variadic) */
     readonly elementFlags: readonly ElementFlags[];
     /** Number of initial required or optional elements */
     readonly fixedLength: number;
     /** Whether the tuple is readonly */
     readonly readonly: boolean;
+    /** Declarations providing tuple element names */
+    readonly labeledElementDeclarations?: readonly (NodeHandle<NamedTupleMember | ParameterDeclaration> | undefined)[];
 }
 /** Union or intersection types (TypeFlags.Union | TypeFlags.Intersection) */
 export interface UnionOrIntersectionType extends Type {
@@ -327,6 +356,8 @@ export interface EmitResult {
     readonly emitSkipped: boolean;
     readonly diagnostics: readonly Diagnostic[];
     readonly emittedFiles: readonly string[];
+    /** Emitted files captured as a filesystem layer suitable for {@link Snapshot.update}. */
+    readonly fileSystem?: RequestFileSystem | undefined;
 }
 export interface EmitOutput {
     readonly emitSkipped: boolean;
@@ -336,11 +367,11 @@ export interface EmitOutput {
 export interface ImportSymbolAction {
     readonly kind: "importSymbol";
     readonly symbol: Symbol;
-    readonly isValidTypeOnlyUseSite?: boolean;
+    readonly isValidTypeOnlyUseSite?: boolean | undefined;
 }
 export type ImportAdderAction = ImportSymbolAction;
 export interface GetImportEditsForSymbolsOptions {
-    readonly isValidTypeOnlyUseSite?: boolean;
+    readonly isValidTypeOnlyUseSite?: boolean | undefined;
 }
 export interface RenameOptions {
     /**

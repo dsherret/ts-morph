@@ -1,4 +1,4 @@
-export declare const PROTOCOL_VERSION = 7;
+export declare const PROTOCOL_VERSION = 9;
 export declare const HEADER_OFFSET_METADATA = 0;
 export declare const HEADER_OFFSET_HASH_LO0 = 4;
 export declare const HEADER_OFFSET_HASH_LO1 = 8;
@@ -10,7 +10,10 @@ export declare const HEADER_OFFSET_STRING_TABLE = 28;
 export declare const HEADER_OFFSET_EXTENDED_DATA = 32;
 export declare const HEADER_OFFSET_STRUCTURED_DATA = 36;
 export declare const HEADER_OFFSET_NODES = 40;
-export declare const HEADER_SIZE = 44;
+export declare const HEADER_OFFSET_SOURCE_FILE_ID = 44;
+export declare const HEADER_OFFSET_SOURCE_FILE_LEASE = 52;
+export declare const HEADER_OFFSET_BINDER_DATA = 60;
+export declare const HEADER_SIZE = 64;
 export declare const NODE_LEN = 28;
 export declare const NODE_OFFSET_KIND = 0;
 export declare const NODE_OFFSET_POS = 4;

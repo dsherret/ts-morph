@@ -60,6 +60,11 @@ export abstract class CompilerCommentNode implements ts.Node {
     return [];
   }
 
+  // a comment has no children, so this ends immediately
+  *childrenIter<TNext = void>(): Generator<ts.Node, TNext | undefined, TNext> {
+    return undefined;
+  }
+
   getStart(sourceFile?: ts.SourceFile | undefined, includeJsDocComment?: boolean | undefined) {
     return this.#start;
   }

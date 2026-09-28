@@ -14,8 +14,8 @@ const files: Record<string, string> = {
 };
 
 const api = createInProcessApi({ files });
-const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
-const project = snapshot.getProject("/tsconfig.json")!;
+const snapshot = api.createSnapshot({ openProject: "/tsconfig.json" });
+const project = snapshot.getConfiguredProject("/tsconfig.json")!;
 
 function applyEdits(text: string, edits: readonly { pos: number; end: number; newText: string }[]): string {
   return [...edits]

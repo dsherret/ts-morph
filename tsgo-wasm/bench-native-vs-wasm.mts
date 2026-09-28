@@ -47,8 +47,8 @@ function projectFiles(n: number, libs: string[] | undefined): Record<string, str
 }
 
 function firstDiagnostics(api: any): number {
-  const snap = api.updateSnapshot({ openProject: config });
-  const project = snap.getProject(config);
+  const snap = api.createSnapshot({ openProject: config });
+  const project = snap.getConfiguredProject(config);
   const diags = project.program.getSemanticDiagnostics();
   return diags.length;
 }

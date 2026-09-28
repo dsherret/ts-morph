@@ -31,7 +31,7 @@ export declare enum SymbolFlags {
     ConstEnumOnlyModule = 268435456,
     ReplaceableByMethod = 536870912,
     GlobalLookup = 1073741824,
-    All = 536870912,
+    All = 1073741823,
     Enum = 384,
     Variable = 3,
     Value = 111551,
