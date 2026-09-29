@@ -55,8 +55,6 @@ reached from this side. Reverting belongs upstream, if anywhere.
   kinds.
 - `JSDocSignature#getTypeNode()` is declared `TypeNode` but holds a `JSDocReturnTag`.
   The declaration is wrong, not the value. **compiler**
-- `SourceFileCreateOptions#scriptKind` is accepted and ignored — tsgo derives the kind
-  from the extension. It should come off the public surface. **ts-morph**
 
 ### 1.5 Capabilities that are missing rather than removed
 
@@ -87,44 +85,50 @@ decision, and each would restore something 28.0.0 had:
 - `@types` packages added to the file system _after_ the project was created, for
   `getAmbientModules`. **compiler**
 
-### 1.6 Three `CompilerOptions` members the port dropped again
+### 1.6 The three `CompilerOptions` members are back, and there is no index signature
 
-**compiler.** The `ts-go` branch restored `esModuleInterop`, `alwaysStrict` and
-`allowSyntheticDefaultImports` on the client's `CompilerOptions` (TypeScript 7 removed only
-their `false` value, and `true` is `esModuleInterop`'s default), and BREAKING-CHANGES.md
-§5 promised as much. The `migrate-tsmain` port generates that interface from
-`core.CompilerOptions` with `tools/gen-proto`, which skips every field tagged
-`deprecated:"true"` — and TypeScript main tags those three that way, alongside `baseUrl`,
-`downlevelIteration` and `outFile`, which _are_ meant to be gone. So `esModuleInterop: true`
-is a compile error again while working at runtime.
+**Resolved.** `esModuleInterop`, `alwaysStrict` and `allowSyntheticDefaultImports` are on the
+client's `CompilerOptions` again. TypeScript main tags all three `deprecated:"true"` — it
+removed only their `false` value, and `true` is `esModuleInterop`'s default — and
+`tools/gen-proto` skipped every field tagged that way, which made `esModuleInterop: true` a
+compile error while working at runtime.
 
-There is no index signature to escape through either, and that one was never fixed rather
-than lost: MIGRATION-REPORT §2.1 b recommended adding one, and the interface ends at
-`maxNodeModuleJsDepth?: number; }` on both branches. So every option tsgo adds in future is
-a compile error until the types are re-vendored.
+The generator now carries an allowlist, `deprecatedFieldsKeptInAPI`, naming those three and
+what to say about each: they are emitted with an `@deprecated` note of their own rather than
+the Go comment's "do not use outside of options parsing and validation", which is about
+internal use and not about what a client should expect. `baseUrl`, `downlevelIteration` and
+`outFile` are tagged the same way and really are gone, so they stay out.
 
-Fix: teach the generator to keep the three (a `@deprecated` doc comment would be honest),
-decide separately about the index signature, regenerate, `deno task vendorTsgoTypes`, and
-re-verify with the type check. BREAKING-CHANGES.md §5 describes the current state until then.
+What holds it is `_OptionsOnlyTrueSurvivesOf` in `packages/common/src/tsgo/ts.ts`: type-only,
+so it costs nothing, and in the sources rather than in a test because the sources are what
+every build type-checks. Dropping one of the three fails the build naming it — verified by
+doing it. `compilerOptionsTests.ts` covers the runtime half, that the options survive the
+trip through a project.
 
-### 1.7 The incremental root-file path is not taken any more
+**No index signature, decided rather than deferred.** MIGRATION-REPORT §2.1 b recommended one
+so a future option would not be a compile error until the types were re-vendored. Against
+that: an index signature makes every misspelled option compile, on the one interface where a
+typo is silent — the compiler ignores what it does not know. Re-vendoring is a build step
+(`deno task vendorTsgoTypes`), and a missing option is a compile error that says so, which is
+the better failure. So: no.
 
-**compiler.** Adding a root file to an open project used to extend its program rather than
-build a new one — `Project.updateRootFilesInProgram`, over `Program.UpdateRootFiles`. After
-the merge with TypeScript main that path is refused: `Program.RootFileChangesFrom` does not
-recognise the new root list as the old one with names appended, so every added root costs a
-full rebuild.
+### 1.7 Programs are built when they are asked for, not when a project is opened
 
-Correctness is unaffected — the roots arrive, and the project holds the right files — so
-this is a performance regression rather than a behaviour change. It is the one thing the
-merge lost: `TestAPIRootsProjectLevelRolling` asserts the extension and is skipped, naming
-this section, so restoring the path is what un-skips it.
+**Resolved, but worth knowing.** Upstream made ensuring explicit: a snapshot request says
+which programs it wants built, and `toAPISnapshotRequest` asks for the program of every
+project the request opens. A caller that opens a project and then reads its program without
+asking for it can get one that is still dirty — which is what upstream's own
+`snapshot.update ensures all dirty programs` test is about.
 
-Programs are also no longer built just because a project is open: upstream made that
-explicit, and `toAPISnapshotRequest` asks for the program of every project a request opens.
-A caller that opens a project and then reads its program without asking for it gets one
-that may be dirty — which is what upstream's own `snapshot.update ensures all dirty
-programs` test is about.
+The incremental root-file path — `Project.updateRootFilesInProgram` over
+`Program.UpdateRootFiles`, which extends a program rather than building a new one — briefly
+stopped being taken, and the cause was ordering rather than anything upstream changed. A
+request that opens a project built its program in the open pass, before the root files the
+same request named had been applied, and that first build consumed whatever file change was
+pending. The second build then found a program that no longer held the root it was being
+asked to remove, so `canRemoveRoots` refused and the whole program was rebuilt. The open
+pass now leaves the build to the roots pass when the same request carries roots for that
+project, and `TestAPIRootsProjectLevelRolling` holds it to extending the program.
 
 ---
 

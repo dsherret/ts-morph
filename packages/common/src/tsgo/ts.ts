@@ -269,6 +269,24 @@ export interface CompilerOptions extends TsgoCompilerOptions {
   configFilePath?: string;
 }
 
+/**
+ * The options TypeScript 7 kept only the `true` value of.
+ *
+ * `tools/gen-proto` leaves every field tagged `deprecated:"true"` out of the generated
+ * interface, and TypeScript main tags these three that way alongside `baseUrl`,
+ * `downlevelIteration` and `outFile`. Those three really are gone; these three are not —
+ * only their `false` value is, and `esModuleInterop` defaults to `true`. Leaving them out
+ * makes correct code a compile error, so the generator keeps them.
+ *
+ * Type-only, so it costs nothing at runtime, and it lives in the sources rather than in a
+ * test because this is what every build type-checks: if the generator drops one of them
+ * again, the build stops here rather than in a suite nothing runs.
+ */
+type _OptionsOnlyTrueSurvivesOf = Pick<
+  CompilerOptions,
+  "esModuleInterop" | "alwaysStrict" | "allowSyntheticDefaultImports"
+>;
+
 // Token-inclusive children (which the tsgo AST does not store) are not part of
 // this namespace; import them from ./getChildren directly.
 

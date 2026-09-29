@@ -22,6 +22,7 @@ import { ModuleDetectionKind } from "../../../../submodules/typescript-go/packag
 import { ModuleKind } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/moduleKind.enum.js";
 import { ModuleResolutionKind } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/moduleResolutionKind.enum.js";
 import { NewLineKind } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/newLineKind.enum.js";
+import type { ScriptKind } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/scriptKind.enum.js";
 import { ScriptTarget } from "../../../../submodules/typescript-go/packages/typescript/dist/enums/scriptTarget.enum.js";
 
 /** The tsconfig every file in the registry belongs to. */
@@ -221,10 +222,10 @@ export class DocumentRegistry {
    * the compiler goes through {@link project}, {@link checker}, {@link program} or
    * {@link getSourceFile}, all of which flush first.
    */
-  parseSourceFileText(fileName: string, text: string): SourceFile {
+  parseSourceFileText(fileName: string, text: string, scriptKind?: ScriptKind): SourceFile {
     this.#assertNotDisposed();
     this.#write([{ fileName, text }]);
-    return this.#parse(fileName, text);
+    return this.#parse(fileName, text, scriptKind);
   }
 
   /**
@@ -239,12 +240,12 @@ export class DocumentRegistry {
    * is the one every other file resolves against, and is what a semantic question is
    * asked of.
    */
-  parseSourceFileAt(fileName: string): SourceFile {
+  parseSourceFileAt(fileName: string, scriptKind?: ScriptKind): SourceFile {
     this.#assertNotDisposed();
     const text = this.#fs.readFile!(fileName);
     if (text == null)
       throw new Error(`Could not find source file: ${fileName}`);
-    return this.#parse(fileName, text);
+    return this.#parse(fileName, text, scriptKind);
   }
 
   /**
@@ -674,8 +675,9 @@ export class DocumentRegistry {
    * never parsed a second time. Passing none is correct and costs a parse: the tree comes
    * back, the build does not recognize it, and it parses the text itself.
    */
-  #parse(fileName: string, text: string): SourceFile {
-    const retained = this.#api.createSourceFile(fileName, text);
+  #parse(fileName: string, text: string, scriptKind?: ScriptKind): SourceFile {
+    // the kind is the caller's when it names one, and the extension's otherwise
+    const retained = this.#api.createSourceFile(fileName, text, scriptKind == null ? {} : { scriptKind });
     this.#leases.get(fileName)?.dispose();
     this.#leases.set(fileName, retained);
     return retained.sourceFile;

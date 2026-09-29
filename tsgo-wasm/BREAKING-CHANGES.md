@@ -358,13 +358,13 @@ real behaviour changes, not just a stricter message.
 
 `alwaysStrict`, `esModuleInterop` and `allowSyntheticDefaultImports` are still read
 by the compiler — TypeScript 7 removed only their `false` value, and `true` is
-`esModuleInterop`'s own default — but **they are currently missing from
-`ts.CompilerOptions`**, and the type has no index signature, so `esModuleInterop:
-true` is a compile error in TypeScript code and works at runtime. That is a
-regression of the port onto TypeScript main, where the three are tagged deprecated
-and the client's type generator skips deprecated fields; restoring them is
-[TODO.md](./TODO.md) §1.6. `baseUrl`, `outFile`, `downlevelIteration` and `charset`
-are gone from `ts.CompilerOptions` as well as from the compiler, and are meant to be.
+`esModuleInterop`'s own default — and they are on `ts.CompilerOptions`, carrying an
+`@deprecated` note that says as much. They briefly were not: TypeScript main tags all
+three deprecated, and the client's type generator skips deprecated fields, so writing
+one was a compile error while working at runtime. The generator now keeps these three
+by name — see [TODO.md](./TODO.md) §1.6, which also says why the type has no index
+signature. `baseUrl`, `outFile`, `downlevelIteration` and `charset` are gone from
+`ts.CompilerOptions` as well as from the compiler, and are meant to be.
 
 ### Two diagnostics that changed by _not_ appearing
 

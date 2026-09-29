@@ -916,6 +916,19 @@ const test = new Test();`,
       expect(sourceFile.getScriptKind()).to.equal(ScriptKind.JSON);
     });
 
+    it("should use the script kind rather than the extension when they disagree", () => {
+      // .json above is what the extension derives anyway, so it says nothing about
+      // whether the option was read. A .ts file parsed as TSX only works if it was.
+      const sourceFile = new Project({ useInMemoryFileSystem: true })
+        .createSourceFile("MyFile.ts", "const x = <div />;\n", { scriptKind: ScriptKind.TSX });
+      expect(sourceFile.getScriptKind()).to.equal(ScriptKind.TSX);
+      expect(sourceFile.getDescendantsOfKind(SyntaxKind.JsxSelfClosingElement).length).to.equal(1);
+
+      // and without one the extension still decides
+      const derived = new Project({ useInMemoryFileSystem: true }).createSourceFile("MyFile.ts", "const y = 1;\n");
+      expect(derived.getScriptKind()).to.equal(ScriptKind.TS);
+    });
+
     it("", () => {
       // todo: remove
       const project = new Project({ useInMemoryFileSystem: true });

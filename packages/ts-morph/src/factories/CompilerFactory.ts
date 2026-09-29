@@ -247,7 +247,7 @@ export class CompilerFactory {
     const existingSourceFile = this.addOrGetSourceFileFromFilePath(filePath, options);
     if (existingSourceFile != null) {
       existingSourceFile.getChildren().forEach(c => c.forget());
-      this.replaceCompilerNode(existingSourceFile, this.createCompilerSourceFileFromText(filePath, sourceText));
+      this.replaceCompilerNode(existingSourceFile, this.createCompilerSourceFileFromText(filePath, sourceText, options.scriptKind));
       return existingSourceFile;
     }
 
@@ -595,7 +595,7 @@ export class CompilerFactory {
     this.documentRegistry.setSourceFileText(filePath, text);
 
     const sourceFile: SourceFile = new SourceFile(this.#context, () => {
-      const compilerSourceFile = this.documentRegistry.parseSourceFileAt(filePath);
+      const compilerSourceFile = this.documentRegistry.parseSourceFileAt(filePath, options.scriptKind);
       // the node the wrapper is for is only known now, so this is where the node
       // cache learns of it — every other path to it goes through the file path
       // cache, which has had the wrapper since it was made
@@ -626,11 +626,11 @@ export class CompilerFactory {
    * own and their handles resolve into whatever program next holds this text, so a
    * semantic question asked of one of them still answers about the edit.
    *
-   * There is no script kind parameter: the compiler derives the script kind
-   * from the file extension and has no way to be told otherwise.
+   * A script kind names what the text is to be parsed as; without one the compiler
+   * derives it from the file extension.
    */
-  createCompilerSourceFileFromText(filePath: StandardizedFilePath, text: string): ts.SourceFile {
-    return this.documentRegistry.parseSourceFileText(filePath, text);
+  createCompilerSourceFileFromText(filePath: StandardizedFilePath, text: string, scriptKind?: ScriptKind): ts.SourceFile {
+    return this.documentRegistry.parseSourceFileText(filePath, text, scriptKind);
   }
 
   /**

@@ -1410,6 +1410,12 @@ export interface CompilerOptions {
     useUnknownInCatchVariables?: boolean | undefined;
     verbatimModuleSyntax?: boolean | undefined;
     maxNodeModuleJsDepth?: number | undefined;
+    /** @deprecated TypeScript 7 removed the `false` value, so `true` is the only meaning left. */
+    allowSyntheticDefaultImports?: boolean | undefined;
+    /** @deprecated TypeScript 7 removed the `false` value, so `true` is the only meaning left. */
+    alwaysStrict?: boolean | undefined;
+    /** @deprecated TypeScript 7 removed the `false` value, so `true` is the default and the only meaning left. */
+    esModuleInterop?: boolean | undefined;
     /** Internal fields */
     configFilePath?: string | undefined;
 }

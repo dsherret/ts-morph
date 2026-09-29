@@ -839,7 +839,7 @@ export declare class DocumentRegistry {
      * the compiler goes through {@link project}, {@link checker}, {@link program} or
      * {@link getSourceFile}, all of which flush first.
      */
-    parseSourceFileText(fileName: string, text: string): SourceFile;
+    parseSourceFileText(fileName: string, text: string, scriptKind?: ScriptKind): SourceFile;
     /**
      * Parses the text the registry already holds for a file, without opening the project.
      *
@@ -852,7 +852,7 @@ export declare class DocumentRegistry {
      * is the one every other file resolves against, and is what a semantic question is
      * asked of.
      */
-    parseSourceFileAt(fileName: string): SourceFile;
+    parseSourceFileAt(fileName: string, scriptKind?: ScriptKind): SourceFile;
     /**
      * Replaces the compiler options the registry's project is opened with.
      *
