@@ -948,7 +948,7 @@ export type LocalTargetDeclarations = SourceFile | ClassDeclaration | InterfaceD
  * Declarations that can be exported from a module.
  * @remarks This may be missing some types. Please open an issue if this returns a type not listed here.
  */
-export type ExportedDeclarations = ClassDeclaration | InterfaceDeclaration | EnumDeclaration | FunctionDeclaration | VariableDeclaration | TypeAliasDeclaration | ModuleDeclaration | Expression | SourceFile;
+export type ExportedDeclarations = BindingElement | ClassDeclaration | InterfaceDeclaration | EnumDeclaration | FunctionDeclaration | VariableDeclaration | TypeAliasDeclaration | ModuleDeclaration | Expression | SourceFile;
 export declare function AmbientableNode<T extends Constructor<AmbientableNodeExtensionType>>(Base: T): Constructor<AmbientableNode> & T;
 
 export interface AmbientableNode {
