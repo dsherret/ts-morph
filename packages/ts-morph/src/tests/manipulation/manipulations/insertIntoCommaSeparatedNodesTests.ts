@@ -194,6 +194,33 @@ describe("insertIntoCommaSeparatedNodes", () => {
       );
     });
 
+    it("should not duplicate a comma before a standalone comment when appending", () => {
+      doTest(
+        "const t = {\n    prop1: 1,\n    // test\n};",
+        2,
+        [{ name: "prop2", initializer: "4" }],
+        "const t = {\n    prop1: 1,\n    // test\n    prop2: 4\n};",
+      );
+    });
+
+    it("should preserve comments before and after a comma when inserting after a standalone comment", () => {
+      doTest(
+        "const t = {\n    prop1: 1 /* before */, /* after */\n    // test\n    prop3: 3\n};",
+        2,
+        [{ name: "prop2", initializer: "4" }],
+        "const t = {\n    prop1: 1 /* before */, /* after */\n    // test\n    prop2: 4,\n    prop3: 3\n};",
+      );
+    });
+
+    it("should preserve multiple standalone comments and their trailing ranges after a comma", () => {
+      doTest(
+        "const t = {\n    prop1: 1,\n    // first\n    /* second */ // trailing\n};",
+        3,
+        [{ name: "prop2", initializer: "4" }],
+        "const t = {\n    prop1: 1,\n    // first\n    /* second */ // trailing\n    prop2: 4\n};",
+      );
+    });
+
     it("should take into account comments in the index", () => {
       doTest(
         "const t = {\n    // test\n    prop1: 5\n};",

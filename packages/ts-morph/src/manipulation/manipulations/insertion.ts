@@ -168,21 +168,21 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
       if (previousNonCommentNode === previousNode)
         appendNodeTrailingCommentRanges(previousNodeNextSibling);
       else
-        appendCommentNodeTexts();
+        appendCommentNodeTexts(previousNodeNextSibling);
     } else {
       text += ",";
       if (previousNonCommentNode === previousNode)
         appendNodeTrailingCommentRanges(previousNonCommentNode);
       else
-        appendCommentNodeTexts();
+        appendCommentNodeTexts(previousNonCommentNode);
     }
 
     prependSeparator();
     newText = text + newText;
 
-    function appendCommentNodeTexts() {
+    function appendCommentNodeTexts(startNode: Node) {
       const lastCommentRangeEnd = getLastCommentRangeEnd(previousNode!) || previousNode!.getEnd();
-      text += originalSourceFileText.substring(previousNonCommentNode!.getEnd(), lastCommentRangeEnd);
+      text += originalSourceFileText.substring(startNode.getEnd(), lastCommentRangeEnd);
     }
 
     function appendNodeTrailingCommentRanges(node: Node) {
