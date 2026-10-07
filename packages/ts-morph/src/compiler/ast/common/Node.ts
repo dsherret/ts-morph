@@ -4389,7 +4389,7 @@ function* getCompilerDescendantsIterator(node: ts.Node, sourceFile: ts.SourceFil
  * of having to parse all the tokens via `node.getChildren()`.
  */
 function useParseTreeSearchForKind(thisNodeOrSyntaxKind: Node | SyntaxKind, searchingKind: SyntaxKind) {
-  return searchingKind >= SyntaxKind.FirstNode && searchingKind < SyntaxKind.FirstJSDocNode
+  return (searchingKind === SyntaxKind.StringLiteral || searchingKind >= SyntaxKind.FirstNode && searchingKind < SyntaxKind.FirstJSDocNode)
     && getThisKind() !== SyntaxKind.SyntaxList;
 
   function getThisKind() {

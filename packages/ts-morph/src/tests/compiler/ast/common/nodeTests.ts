@@ -849,6 +849,40 @@ class MyClass {
       doTest("class C {} interface I {}", sourceFile => sourceFile.getChildSyntaxListOrThrow(), SyntaxKind.ClassDeclaration, ["class C {}"]);
     });
 
+    it("should get string literal children of an array literal", () => {
+      doTest(
+        "[\"abc\", \"def\"];",
+        sourceFile => sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ArrayLiteralExpression),
+        SyntaxKind.StringLiteral,
+        ["\"abc\"", "\"def\""],
+      );
+    });
+
+    it("should get string literal children of a call expression", () => {
+      doTest(
+        "fn(\"abc\", \"def\");",
+        sourceFile => sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.CallExpression),
+        SyntaxKind.StringLiteral,
+        ["\"abc\"", "\"def\""],
+      );
+    });
+
+    it("should get string literal children of a syntax list", () => {
+      doTest(
+        "[\"abc\", \"def\"];",
+        sourceFile => sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ArrayLiteralExpression).getFirstChildByKindOrThrow(SyntaxKind.SyntaxList),
+        SyntaxKind.StringLiteral,
+        ["\"abc\"", "\"def\""],
+      );
+    });
+
+    it("should get the first and last string literal children by kind", () => {
+      const { sourceFile } = getInfoFromText("[\"abc\", \"def\"];");
+      const arrayLiteral = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ArrayLiteralExpression);
+      expect(arrayLiteral.getFirstChildByKindOrThrow(SyntaxKind.StringLiteral).getLiteralValue()).to.equal("abc");
+      expect(arrayLiteral.getLastChildByKindOrThrow(SyntaxKind.StringLiteral).getLiteralValue()).to.equal("def");
+    });
+
     it("should get children using .getChildren() when specifying a token kind", () => {
       doTest("class C {}", sourceFile => sourceFile.getClassOrThrow("C"), SyntaxKind.OpenBraceToken, ["{"]);
     });
@@ -859,6 +893,11 @@ class MyClass {
   });
 
   describe(nameof<Node>("getDescendantsOfKind"), () => {
+    it("should get nested string literals once in source order", () => {
+      const { sourceFile } = getInfoFromText("fn(\"abc\", [\"def\", \"ghi\"]);");
+      expect(sourceFile.getDescendantsOfKind(SyntaxKind.StringLiteral).map(node => node.getLiteralValue())).to.deep.equal(["abc", "def", "ghi"]);
+    });
+
     it("should get the descendant by a kind", () => {
       const { sourceFile } = getInfoFromText("interface Identifier { prop: string; }\ninterface MyInterface { nextProp: string; }");
       const properties = sourceFile.getDescendantsOfKind(SyntaxKind.PropertySignature);
