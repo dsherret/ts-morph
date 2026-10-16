@@ -104,6 +104,11 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
       structurePrinter.printTexts(writer, structures);
 
       if (typeParameters.length === 0) {
+        if (Node.isArrowFunction(this)) {
+          addArrowFunctionParensIfNecessary(this);
+          if (this._sourceFile.getLanguageVariant() === ts.LanguageVariant.JSX && structures.length === 1)
+            writer.write(",");
+        }
         insertIntoParentTextRange({
           insertPos: getInsertPos(this),
           parent: this,
@@ -145,8 +150,30 @@ function getInsertPos(node: TypeParameteredNode & Node) {
   const namedNode = node as any as (NamedNode & Node);
   if (namedNode.getNameNode != null)
     return namedNode.getNameNode().getEnd();
-  else if (Node.isCallSignatureDeclaration(node) || Node.isFunctionTypeNode(node))
+  else if (Node.isCallSignatureDeclaration(node) || Node.isFunctionTypeNode(node) || Node.isArrowFunction(node))
     return node.getFirstChildByKindOrThrow(SyntaxKind.OpenParenToken).getStart();
   else
     throw new errors.NotImplementedError(`Not implemented scenario inserting type parameters for node with kind ${node.getKindName()}.`);
+}
+
+function addArrowFunctionParensIfNecessary(node: Node<ts.ArrowFunction>) {
+  if (node.getFirstChildByKind(SyntaxKind.OpenParenToken) != null)
+    return;
+
+  const parameter = node._getNodeFromCompilerNode(node.compilerNode.parameters[0]);
+  const name = parameter.getNameNode();
+  const text = parameter.getText();
+  insertIntoParentTextRange({
+    parent: node,
+    insertPos: parameter.getStart(),
+    newText: `(${text})`,
+    replacing: { textLength: text.length },
+    customMappings: newParent => {
+      const newParameter = (newParent as ts.ArrowFunction).parameters[0];
+      return [
+        { currentNode: parameter, newNode: newParameter },
+        { currentNode: name, newNode: newParameter.name },
+      ];
+    },
+  });
 }
