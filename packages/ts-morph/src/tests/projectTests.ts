@@ -439,6 +439,22 @@ describe("Project", () => {
   });
 
   describe(nameof<Project>("addDirectoryAtPathIfExists"), () => {
+    it("should return undefined repeatedly after attempting to add a missing source file", () => {
+      const project = new Project({ useInMemoryFileSystem: true });
+      const dirPath = "/some/path/that/doesnt/exist";
+
+      expect(project.addDirectoryAtPathIfExists(dirPath, { recursive: true })).to.be.undefined;
+      expect(project.addSourceFileAtPathIfExists(`${dirPath}/file.ts`)).to.be.undefined;
+      expect(project.addDirectoryAtPathIfExists(dirPath, { recursive: true })).to.be.undefined;
+      expect(project.addDirectoryAtPathIfExists("/some", { recursive: true })).to.be.undefined;
+      expect(project.getDirectories()).to.deep.equal([]);
+
+      project.getFileSystem().mkdirSync(dirPath);
+      const directory = project.addDirectoryAtPathIfExists(dirPath, { recursive: true });
+      expect(directory).to.not.be.undefined;
+      expect(project.addDirectoryAtPathIfExists(dirPath, { recursive: true })).to.equal(directory);
+    });
+
     it("should throw if the directory doesn't exist", () => {
       const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
       const project = new Project({ fileSystem });

@@ -784,6 +784,27 @@ describe("TransactionalFileSystem", () => {
   });
 
   describe(nameof<TransactionalFileSystem>("readFileSync"), () => {
+    it("should not remember missing directories when reading a file", () => {
+      const { wrapper } = setup();
+      const filePath = wrapper.getStandardizedAbsolutePath("/dir/sub/file.ts");
+
+      expect(() => wrapper.readFileSync(filePath, "utf-8")).to.throw(errors.FileNotFoundError);
+      expect(wrapper.directoryExistsSync(wrapper.getStandardizedAbsolutePath("/dir/sub"))).to.be.false;
+      expect(wrapper.directoryExistsSync(wrapper.getStandardizedAbsolutePath("/dir"))).to.be.false;
+      expect(wrapper.readDirSync(wrapper.getStandardizedAbsolutePath("/"))).to.deep.equal([]);
+    });
+
+    it("should not restore a deleted ancestor when reading an untracked descendant", () => {
+      const { wrapper, fileSystem } = setup();
+      const dirPath = wrapper.getStandardizedAbsolutePath("/dir");
+      const filePath = wrapper.getStandardizedAbsolutePath("/dir/sub/file.ts");
+      fileSystem.writeFileSync(filePath, "text");
+      wrapper.queueDirectoryDelete(dirPath);
+
+      expect(() => wrapper.readFileSync(filePath, "utf-8")).to.throw(errors.InvalidOperationError);
+      expect(wrapper.directoryExistsSync(dirPath)).to.be.false;
+    });
+
     it("should not read the file after it was deleted", () => {
       const { wrapper } = setup();
       const filePath = wrapper.getStandardizedAbsolutePath("/file.ts");
@@ -806,6 +827,23 @@ describe("TransactionalFileSystem", () => {
       expect(() => wrapper.readFileSync(filePath, "utf-8")).to.throw(errors.InvalidOperationError);
       wrapper.flushSync();
       expect(() => wrapper.readFileSync(filePath, "utf-8")).to.throw(errors.FileNotFoundError);
+    });
+  });
+
+  describe(nameof<TransactionalFileSystem>("readFile"), () => {
+    it("should not remember missing directories when reading a file", async () => {
+      const { wrapper } = setup();
+      const filePath = wrapper.getStandardizedAbsolutePath("/dir/sub/file.ts");
+
+      try {
+        await wrapper.readFile(filePath, "utf-8");
+        expect.fail("Expected the file read to fail.");
+      } catch (err) {
+        expect(err).to.be.instanceOf(errors.FileNotFoundError);
+      }
+      expect(wrapper.directoryExistsSync(wrapper.getStandardizedAbsolutePath("/dir/sub"))).to.be.false;
+      expect(wrapper.directoryExistsSync(wrapper.getStandardizedAbsolutePath("/dir"))).to.be.false;
+      expect(wrapper.readDirSync(wrapper.getStandardizedAbsolutePath("/"))).to.deep.equal([]);
     });
   });
 
