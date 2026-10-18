@@ -48,6 +48,8 @@ export class RangeHandler implements NodeHandler {
       && (
         currentNodeChildren.peek.getStart(currentSourceFile) < this.#start
         || currentNodeChildren.peek.getStart(currentSourceFile) === this.#start && newNodeChildren.peek.end > this.#end
+        || currentNodeChildren.peek.kind === ts.SyntaxKind.SyntaxList && currentNodeChildren.peek.getFullStart() <= this.#start
+          && newNodeChildren.peek.end > this.#end
       )
     ) {
       this.#rangeHandlerReplace(currentNodeChildren.next(), newNodeChildren.next(), newSourceFile);

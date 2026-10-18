@@ -1416,6 +1416,24 @@ function myFunction(param: MyClass) {
       ], expectedText);
     });
 
+    it("should add missing imports after removing an import before leading whitespace", () => {
+      const project = new Project({ useInMemoryFileSystem: true });
+      const sourceFile = project.createSourceFile("test.ts", 'import foo from "./bar"; console.log(qux);');
+      project.createSourceFile("baz.ts", "export const qux = 1;");
+      sourceFile.getImportDeclarations().forEach(i => i.replaceWithText(""));
+      expect(sourceFile.getFullText()).to.equal(" console.log(qux);");
+      const statement = sourceFile.getStatements()[0];
+      const descendants = statement.getDescendants();
+      const syntaxList = sourceFile.getChildSyntaxListOrThrow();
+
+      sourceFile.fixMissingImports();
+
+      expect(sourceFile.getFullText()).to.equal('import { qux } from "./baz";\n\n console.log(qux);');
+      expect(sourceFile.getChildSyntaxListOrThrow()).to.equal(syntaxList);
+      expect(sourceFile.getStatements()[1]).to.equal(statement);
+      expect(statement.getDescendants()).to.have.ordered.members(descendants);
+    });
+
     it("should add missing imports when there are none when using \r\n newlines", () => {
       const startText = "const t = new MyClass();\nconst u: MyInterface = {};";
       const expectedText = `import MyClass from "./MyClass";\r\nimport { MyInterface } from "./MyInterface";\r\n\r\n${startText}`;
