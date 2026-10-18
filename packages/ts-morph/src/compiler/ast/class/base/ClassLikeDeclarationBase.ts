@@ -903,7 +903,6 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
 
     insertMethods(index: number, structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>>): MethodDeclaration[] {
       const isAmbient = isNodeAmbientOrInAmbientContext(this);
-      structures = structures.map(s => ({ ...s }));
 
       // insert, fill, and get created nodes
       return insertChildren<MethodDeclaration>(this, {

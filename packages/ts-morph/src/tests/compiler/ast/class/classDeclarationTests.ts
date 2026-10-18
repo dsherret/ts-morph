@@ -1,6 +1,6 @@
 import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
-import { ClassDeclaration, TypeParameterVariance } from "../../../../compiler";
+import { ClassDeclaration, Scope, TypeParameterVariance } from "../../../../compiler";
 import {
   ClassDeclarationSpecificStructure,
   ClassDeclarationStructure,
@@ -17,6 +17,39 @@ describe("ClassDeclaration", () => {
     it("should get the class' type", () => {
       const { sourceFile } = getInfoFromText("class Identifier { prop: string; }");
       expect(sourceFile.getClassOrThrow("Identifier").getType().getText()).to.deep.equal("Identifier");
+    });
+  });
+
+  describe(nameof<ClassDeclaration>("addMethods"), () => {
+    it("should add a method whose structure has an inherited name getter", () => {
+      class MethodStructure {
+        get name() {
+          return "method";
+        }
+      }
+      const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>("class C {}");
+      const [method] = firstChild.addMethods([new MethodStructure()]);
+      expect(method.getName()).to.equal("method");
+      expect(sourceFile.getText()).to.equal("class C {\n    method() {\n    }\n}");
+    });
+
+    it("should not mutate the input structure or its overloads", () => {
+      const overload = Object.freeze({ returnType: "void" });
+      const structure = Object.freeze({
+        name: "method",
+        scope: Scope.Public,
+        isStatic: true,
+        isAbstract: false,
+        hasQuestionToken: false,
+        overloads: [overload],
+      });
+      Object.freeze(structure.overloads);
+      const original = { ...structure, overloads: [{ ...overload }] };
+      const { firstChild } = getInfoFromText<ClassDeclaration>("class C {}");
+      firstChild.addMethods([structure]);
+      expect(firstChild.getText()).to.equal("class C {\n    public static method(): void;\n    public static method() {\n    }\n}");
+      expect(structure).to.deep.equal(original);
+      expect(structure.overloads[0]).to.equal(overload);
     });
   });
 
