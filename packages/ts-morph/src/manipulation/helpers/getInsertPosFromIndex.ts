@@ -15,7 +15,7 @@ export function getInsertPosFromIndex(index: number, syntaxList: SyntaxList, chi
       return colonToken.getEnd();
     }
 
-    const isInline = syntaxList !== parent.getChildSyntaxList();
+    const isInline = Node.isUnionTypeNode(parent) || syntaxList !== parent.getChildSyntaxList();
     if (isInline)
       return syntaxList.getStart();
 

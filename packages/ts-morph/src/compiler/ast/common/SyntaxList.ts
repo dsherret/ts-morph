@@ -28,7 +28,7 @@ export class SyntaxList extends Node<ts.SyntaxList> {
     index = verifyAndGetIndex(index, initialChildCount);
 
     // get text
-    const isInline = this !== parent.getChildSyntaxList();
+    const isInline = Node.isUnionTypeNode(parent) || this !== parent.getChildSyntaxList();
     let insertText = getTextFromStringOrWriter(
       isInline ? parent._getWriterWithQueuedChildIndentation() : parent._getWriterWithChildIndentation(),
       textOrWriterFunction,

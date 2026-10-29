@@ -47,6 +47,37 @@ describe("SyntaxList", () => {
 
       expect(sourceFile.getFullText()).to.equal(`export \n    abstract class MyClass {}`);
     });
+
+    describe("union types", () => {
+      function doTest(text: string, index: number, insertText: string, expectedText: string, expectedNodes: string[]) {
+        const { sourceFile } = getInfoFromText(text);
+        const unionType = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.UnionType);
+        const syntaxList = unionType.getFirstChildByKindOrThrow(SyntaxKind.SyntaxList);
+        const insertedNodes = syntaxList.insertChildText(index, writer => writer.write(insertText));
+        expect(sourceFile.getFullText()).to.equal(expectedText);
+        expect(insertedNodes.map(node => node.getText())).to.deep.equal(expectedNodes);
+      }
+
+      it("should insert inline at the start", () => {
+        doTest("type T = string | number;", 0, "null |", "type T = null | string | number;", ["null", "|"]);
+      });
+
+      it("should insert inline in the middle", () => {
+        doTest("type T = string | number;", 2, "boolean |", "type T = string | boolean | number;", ["boolean", "|"]);
+      });
+
+      it("should insert inline at the end", () => {
+        doTest("type T = string | number;", 3, "| undefined", "type T = string | number | undefined;", ["|", "undefined"]);
+      });
+
+      it("should insert inline before a leading pipe", () => {
+        doTest("type T = | string | number;", 0, "| null", "type T = | null | string | number;", ["|", "null"]);
+      });
+
+      it("should not change the text when inserting empty text", () => {
+        doTest("type T = string | number;", 0, "", "type T = string | number;", []);
+      });
+    });
   });
 
   describe(nameof<SyntaxList>("addChildText"), () => {
