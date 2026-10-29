@@ -256,6 +256,104 @@ describe("Project", () => {
     });
   });
 
+  describe("module detection", () => {
+    const duplicateDeclarations = { "/a.ts": "const value = 1;", "/b.ts": "const value = 2;" };
+
+    function setup(files: Record<string, string>, mode: ts.ModuleDetectionKind) {
+      const options = { module: ts.ModuleKind.ESNext, moduleDetection: mode, types: [], skipLibCheck: true };
+      const project = new Project({ useInMemoryFileSystem: true, compilerOptions: options });
+      for (const [fileName, text] of Object.entries(files))
+        project.createSourceFile(fileName, text);
+      return { project, options };
+    }
+
+    function getNativeDiagnosticCodes(files: Record<string, string>, options: ts.CompilerOptions) {
+      const libFolder = "/node_modules/typescript/lib/";
+      const texts = new Map<string, string>([
+        ...getLibFiles().map(file => [libFolder + file.fileName, file.text] as const),
+        ...Object.entries(files),
+      ]);
+      const host = ts.createCompilerHost(options);
+      host.getCurrentDirectory = () => "/";
+      host.getDefaultLibFileName = () => libFolder + ts.getDefaultLibFileName(options);
+      host.getDefaultLibLocation = () => libFolder;
+      host.fileExists = fileName => texts.has(fileName);
+      host.readFile = fileName => texts.get(fileName);
+      host.getSourceFile = (fileName, languageVersionOrOptions) => {
+        const text = texts.get(fileName);
+        return text == null ? undefined : ts.createSourceFile(fileName, text, languageVersionOrOptions, true);
+      };
+      const program = ts.createProgram(Object.keys(files), options, host);
+      return ts.getPreEmitDiagnostics(program).map(d => d.code);
+    }
+
+    for (const mode of [ts.ModuleDetectionKind.Force, ts.ModuleDetectionKind.Legacy]) {
+      it(`should report duplicate declarations like native TypeScript in ${ts.ModuleDetectionKind[mode]} mode`, () => {
+        const { project, options } = setup(duplicateDeclarations, mode);
+        const expected = getNativeDiagnosticCodes(duplicateDeclarations, options);
+
+        expect(expected).to.deep.equal(mode === ts.ModuleDetectionKind.Force ? [] : [2451, 2451]);
+        expect(project.getPreEmitDiagnostics().map(d => d.getCode())).to.deep.equal(expected);
+      });
+    }
+
+    it("should diagnose an unimported type from another forced module like native TypeScript", () => {
+      const files = { "/a.ts": "interface Shared { value: number }", "/b.ts": "const item: Shared = { value: 1 };" };
+      const { project, options } = setup(files, ts.ModuleDetectionKind.Force);
+      const expected = getNativeDiagnosticCodes(files, options);
+
+      expect(expected).to.deep.equal([2304]);
+      expect(project.getPreEmitDiagnostics().map(d => d.getCode())).to.deep.equal(expected);
+    });
+
+    it("should preserve declaration-file globals in Force mode", () => {
+      const files = { "/global.d.ts": "interface Global { value: number }", "/a.ts": "const item: Global = { value: 1 };" };
+      const { project, options } = setup(files, ts.ModuleDetectionKind.Force);
+      const expected = getNativeDiagnosticCodes(files, options);
+
+      expect(expected).to.deep.equal([]);
+      expect(project.getPreEmitDiagnostics().map(d => d.getCode())).to.deep.equal(expected);
+      expect(ts.isExternalModule(project.getSourceFileOrThrow("global.d.ts").compilerNode)).to.equal(false);
+    });
+
+    it("should preserve forced module isolation after manipulating an already checked source file", () => {
+      const { project, options } = setup(duplicateDeclarations, ts.ModuleDetectionKind.Force);
+      project.getPreEmitDiagnostics(); // warm the program before reparsing
+      const sourceFile = project.getSourceFileOrThrow("a.ts");
+      const declaration = sourceFile.getVariableDeclarationOrThrow("value");
+      declaration.setInitializer("3");
+      const files = { ...duplicateDeclarations, "/a.ts": sourceFile.getFullText() };
+
+      expect(getNativeDiagnosticCodes(files, options)).to.deep.equal([]);
+      expect(project.getPreEmitDiagnostics().map(d => d.getCode())).to.deep.equal([]);
+      expect(ts.isExternalModule(sourceFile.compilerNode)).to.equal(true);
+      expect(declaration).to.equal(sourceFile.getVariableDeclarationOrThrow("value"));
+    });
+
+    const transitions = [
+      [ts.ModuleDetectionKind.Legacy, ts.ModuleDetectionKind.Force],
+      [ts.ModuleDetectionKind.Force, ts.ModuleDetectionKind.Legacy],
+    ];
+    for (const [from, to] of transitions) {
+      it(`should reclassify warmed source files when changing from ${ts.ModuleDetectionKind[from]} to ${ts.ModuleDetectionKind[to]}`, () => {
+        const { project, options } = setup(duplicateDeclarations, from);
+        project.getPreEmitDiagnostics();
+        project.getLanguageService().compilerObject.getSemanticDiagnostics("/a.ts");
+        const sourceFile = project.getSourceFileOrThrow("a.ts");
+        const declaration = sourceFile.getVariableDeclarationOrThrow("value");
+        project.compilerOptions.set({ moduleDetection: to });
+        const expected = getNativeDiagnosticCodes(duplicateDeclarations, { ...options, moduleDetection: to });
+
+        expect(expected).to.deep.equal(to === ts.ModuleDetectionKind.Force ? [] : [2451, 2451]);
+        expect(project.getPreEmitDiagnostics().map(d => d.getCode())).to.deep.equal(expected);
+        expect(ts.isExternalModule(sourceFile.compilerNode)).to.equal(to === ts.ModuleDetectionKind.Force);
+        expect(project.getLanguageService().compilerObject.getSemanticDiagnostics("/a.ts").map(d => d.code))
+          .to.deep.equal(to === ts.ModuleDetectionKind.Force ? [] : [2451]);
+        expect(declaration).to.equal(sourceFile.getVariableDeclarationOrThrow("value"));
+      });
+    }
+  });
+
   describe(nameof<Project>("resolveSourceFileDependencies"), () => {
     it("should resolve file dependencies once specified", () => {
       const { project, initialFiles, resolvedFiles } = fileDependencyResolutionSetup({ skipFileDependencyResolution: true });

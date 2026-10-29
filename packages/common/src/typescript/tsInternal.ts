@@ -45,3 +45,8 @@ export interface FileSystemEntries {
 export function getEmitModuleResolutionKind(this: any, compilerOptions: ts.CompilerOptions) {
   return (ts as any).getEmitModuleResolutionKind.apply(this, arguments);
 }
+
+/** @internal */
+export function getSetExternalModuleIndicator(this: any, compilerOptions: ts.CompilerOptions): (file: ts.SourceFile) => void {
+  return (ts as any).getSetExternalModuleIndicator.apply(this, arguments);
+}
