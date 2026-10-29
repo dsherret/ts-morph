@@ -205,6 +205,34 @@ describe("EnumDeclaration", () => {
     });
   });
 
+  const appendWithCommentsTestCases = [
+    {
+      description: "interspersed comments",
+      startCode: "enum MyEnum {\n    // first\n    member1,\n    // second\n    member2,\n    member3,\n}\n",
+      expectedCode: "enum MyEnum {\n    // first\n    member1,\n    // second\n    member2,\n    member3,\n    member4,\n    member5\n}\n",
+    },
+    {
+      description: "interspersed and trailing comments",
+      startCode: "enum MyEnum {\n    // first\n    member1,\n    // second\n    member2,\n    member3\n    // trailing\n}\n",
+      expectedCode: "enum MyEnum {\n    // first\n    member1,\n    // second\n    member2,\n    member3,\n    // trailing\n    member4,\n    member5\n}\n",
+    },
+    {
+      description: "trailing comments",
+      startCode: "enum MyEnum {\n    member1,\n    member2,\n    member3\n    // trailing\n}\n",
+      expectedCode: "enum MyEnum {\n    member1,\n    member2,\n    member3,\n    // trailing\n    member4,\n    member5\n}\n",
+    },
+    {
+      description: "a trailing comma and trailing comments",
+      startCode: "enum MyEnum {\n    member1,\n    member2,\n    member3,\n    // trailing\n}\n",
+      expectedCode: "enum MyEnum {\n    member1,\n    member2,\n    member3,\n    // trailing\n    member4,\n    member5\n}\n",
+    },
+    {
+      description: "interspersed and trailing comments with a trailing comma",
+      startCode: "enum MyEnum {\n    // first\n    member1,\n    // second\n    member2,\n    member3,\n    // trailing\n}\n",
+      expectedCode: "enum MyEnum {\n    // first\n    member1,\n    // second\n    member2,\n    member3,\n    // trailing\n    member4,\n    member5\n}\n",
+    },
+  ];
+
   describe(nameof<EnumDeclaration>("addMember"), () => {
     function doTest(startCode: string, structure: OptionalKind<EnumMemberStructure>, expectedCode: string) {
       const { firstChild, sourceFile } = getInfoFromText<EnumDeclaration>(startCode);
@@ -216,6 +244,27 @@ describe("EnumDeclaration", () => {
     it("should add a member", () => {
       doTest("enum MyEnum {\n    member1\n}\n", { name: "member2" }, "enum MyEnum {\n    member1,\n    member2\n}\n");
     });
+
+    for (const { description, startCode, expectedCode } of appendWithCommentsTestCases) {
+      it(`should append repeatedly after ${description} without changing existing values`, () => {
+        const { firstChild, sourceFile, project } = getInfoFromText<EnumDeclaration>(startCode);
+        const existingMembers = firstChild.getMembers();
+        const firstAdded = firstChild.addMember({ name: "member4" });
+        expect(existingMembers.map(member => member.getValue())).to.deep.equal([0, 1, 2]);
+        expect(project.getLanguageService().compilerObject.getSyntacticDiagnostics(sourceFile.getFilePath()).map(d => d.code)).to.deep.equal([]);
+        const secondAdded = firstChild.addMember({ name: "member5" });
+
+        expect(existingMembers.map(member => member.getValue())).to.deep.equal([0, 1, 2]);
+        expect(firstAdded).to.be.instanceOf(EnumMember);
+        expect(secondAdded).to.be.instanceOf(EnumMember);
+        expect(firstAdded).to.equal(firstChild.getMembers()[3]);
+        expect(secondAdded).to.equal(firstChild.getMembers()[4]);
+        expect([firstAdded.getName(), secondAdded.getName()]).to.deep.equal(["member4", "member5"]);
+        expect([firstAdded.getValue(), secondAdded.getValue()]).to.deep.equal([3, 4]);
+        expect(project.getLanguageService().compilerObject.getSyntacticDiagnostics(sourceFile.getFilePath()).map(d => d.code)).to.deep.equal([]);
+        expect(sourceFile.getFullText()).to.equal(expectedCode);
+      });
+    }
   });
 
   describe(nameof<EnumDeclaration>("addMembers"), () => {
@@ -233,6 +282,26 @@ describe("EnumDeclaration", () => {
         "enum MyEnum {\n    member1,\n    member2,\n    member3\n}\n",
       );
     });
+
+    for (const { description, startCode, expectedCode } of appendWithCommentsTestCases) {
+      it(`should append a batch after ${description} without changing existing values`, () => {
+        const { firstChild, sourceFile, project } = getInfoFromText<EnumDeclaration>(startCode);
+        const existingMembers = firstChild.getMembers();
+        const result = firstChild.addMembers([{ name: "member4" }, { name: "member5" }]);
+        assert<IsExact<typeof result, EnumMember[]>>(true);
+
+        expect(existingMembers.map(member => member.getValue())).to.deep.equal([0, 1, 2]);
+        expect(result.length).to.equal(2);
+        expect(result[0]).to.be.instanceOf(EnumMember);
+        expect(result[1]).to.be.instanceOf(EnumMember);
+        expect(result[0]).to.equal(firstChild.getMembers()[3]);
+        expect(result[1]).to.equal(firstChild.getMembers()[4]);
+        expect(result.map(member => member.getName())).to.deep.equal(["member4", "member5"]);
+        expect(result.map(member => member.getValue())).to.deep.equal([3, 4]);
+        expect(project.getLanguageService().compilerObject.getSyntacticDiagnostics(sourceFile.getFilePath()).map(d => d.code)).to.deep.equal([]);
+        expect(sourceFile.getFullText()).to.equal(expectedCode);
+      });
+    }
   });
 
   describe(nameof<EnumDeclaration>("isConstEnum"), () => {

@@ -63,7 +63,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
     structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction | string> | string | WriterFunction,
   ): (EnumMember | CommentEnumMember)[];
   addMembers(structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction>) {
-    return this.insertMembers(this.getMembers().length, structures);
+    return this.insertMembers(this.getMembersWithComments().length, structures);
   }
 
   /**
