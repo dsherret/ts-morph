@@ -17,13 +17,17 @@ export class DirectoryCoordinator {
     this.#fileSystemWrapper = fileSystemWrapper;
   }
 
-  addDirectoryAtPathIfExists(dirPath: StandardizedFilePath, options: DirectoryAddOptions & { markInProject: boolean }) {
+  addDirectoryAtPathIfExists(
+    dirPath: StandardizedFilePath,
+    options: DirectoryAddOptions & { markInProject: boolean },
+    includeDescendant?: (dirPath: StandardizedFilePath) => boolean,
+  ) {
     const directory = this.#compilerFactory.getDirectoryFromPath(dirPath, options);
     if (directory == null)
       return undefined;
 
     if (options.recursive) {
-      for (const descendantDirPath of FileUtils.getDescendantDirectories(this.#fileSystemWrapper, dirPath))
+      for (const descendantDirPath of FileUtils.getDescendantDirectories(this.#fileSystemWrapper, dirPath, includeDescendant))
         this.#compilerFactory.createDirectoryOrAddIfExists(descendantDirPath, options);
     }
 
@@ -69,8 +73,18 @@ export class DirectoryCoordinator {
       globbedDirectories.add(FileUtils.getDirPath(filePath));
     }
 
-    for (const dirPath of FileUtils.getParentMostPaths(Array.from(globbedDirectories)))
-      this.addDirectoryAtPathIfExists(dirPath, { recursive: true, markInProject: options.markInProject });
+    // A glob should only add dependency directories when it matches files inside them.
+    const traversedDirectories = new Set<StandardizedFilePath>();
+    const includeDescendant = (dirPath: StandardizedFilePath) => {
+      if (FileUtils.getBaseName(dirPath).toLowerCase() === "node_modules")
+        return false;
+      traversedDirectories.add(dirPath);
+      return true;
+    };
+    for (const dirPath of Array.from(globbedDirectories).sort((a, b) => a.length - b.length)) {
+      if (!traversedDirectories.has(dirPath))
+        this.addDirectoryAtPathIfExists(dirPath, { recursive: true, markInProject: options.markInProject }, includeDescendant);
+    }
 
     return sourceFiles;
   }
