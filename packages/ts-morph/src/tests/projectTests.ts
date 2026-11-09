@@ -319,6 +319,21 @@ describe("Project", () => {
       assertHasDirectories(project, [...initialDirectories, ...resolvedDirectories, "/node_modules/library"]);
     });
 
+    it("should not promote dependency files when a glob matches an existing source beside node_modules", () => {
+      const fileSystem = new InMemoryFileSystemHost();
+      fileSystem.writeFileSync("/app/main.ts", "/// <reference path='node_modules/library/index.d.ts' />");
+      fileSystem.writeFileSync("/app/node_modules/library/index.d.ts", "");
+      fileSystem.mkdirSync("/app/ordinary");
+      fileSystem.writeFileSync("/app/tsconfig.json", JSON.stringify({ files: ["main.ts"] }));
+      const project = new Project({ fileSystem, tsConfigFilePath: "/app/tsconfig.json", skipLoadingLibFiles: true });
+
+      const sourceFiles = project.addSourceFilesAtPaths("/app/*.ts");
+      expect(sourceFiles.map(file => file.getFilePath())).to.deep.equal(["/app/main.ts"]);
+      expect(project.resolveSourceFileDependencies().map(file => file.getFilePath())).to.deep.equal([]);
+      assertHasSourceFiles(project, ["/app/main.ts"]);
+      assertHasDirectories(project, ["/app", "/app/ordinary"]);
+    });
+
     it("should ignore handle nested node_modules directories", () => {
       const fileSystem = new InMemoryFileSystemHost();
       fileSystem.writeFileSync("/node_modules/first.d.ts", "");
@@ -766,6 +781,18 @@ describe("Project", () => {
   });
 
   describe(nameof<Project>("addSourceFilesAtPaths"), () => {
+    it("should add descendants of an explicitly matched node_modules directory", () => {
+      const project = new Project({ useInMemoryFileSystem: true });
+      const fs = project.getFileSystem();
+      fs.writeFileSync("/app/main.ts", "");
+      fs.writeFileSync("/app/node_modules/library/index.ts", "");
+      fs.mkdirSync("/app/node_modules/library/ordinary");
+
+      const sourceFiles = project.addSourceFilesAtPaths(["/app/*.ts", "/app/node_modules/library/*.ts"]);
+      expect(sourceFiles.map(file => file.getFilePath())).to.deep.equal(["/app/main.ts", "/app/node_modules/library/index.ts"]);
+      expect(project.getDirectory("/app/node_modules/library/ordinary")).to.not.be.undefined;
+    });
+
     it("should add based on a string file glob", () => {
       const project = new Project({ useInMemoryFileSystem: true });
       const fs = project.getFileSystem();
