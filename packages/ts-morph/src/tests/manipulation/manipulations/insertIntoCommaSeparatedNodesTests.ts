@@ -7,6 +7,53 @@ import { getInfoFromText, getInfoFromTextWithDescendant } from "../../compiler/t
 
 describe("insertIntoCommaSeparatedNodes", () => {
   // these are high level tests of this function
+  describe("trailing line comments", () => {
+    for (const comma of ["", ","]) {
+      it(`should append an argument after a trailing line comment with comma '${comma}'`, () => {
+        const { sourceFile } = getInfoFromText(`f(\n    1${comma} // one\n);`);
+        const call = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.CallExpression);
+        const added = call.addArgument("2");
+        expect(sourceFile.getFullText()).to.equal("f(\n    1, // one\n    2\n);");
+        expect(call.getArguments().map(arg => arg.getText())).to.deep.equal(["1", "2"]);
+        expect(added).to.equal(call.getArguments()[1]);
+      });
+      it(`should append a parameter after a trailing line comment with comma '${comma}'`, () => {
+        const { sourceFile } = getInfoFromText(`function f(\n    a: number${comma} // one\n) {}`);
+        const func = sourceFile.getFunctionOrThrow("f");
+        const added = func.addParameter({ name: "b", type: "string" });
+        expect(sourceFile.getFullText()).to.equal("function f(\n    a: number, // one\n    b: string\n) {}");
+        expect(func.getParameters().map(param => param.getName())).to.deep.equal(["a", "b"]);
+        expect(added).to.equal(func.getParameters()[1]);
+      });
+      it(`should append a type argument after a trailing line comment with comma '${comma}'`, () => {
+        const { sourceFile } = getInfoFromText(`f<\n    string${comma} // one\n>();`);
+        const call = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.CallExpression);
+        const added = call.addTypeArgument("number");
+        expect(sourceFile.getFullText()).to.equal("f<\n    string, // one\n    number\n>();");
+        expect(call.getTypeArguments().map(arg => arg.getText())).to.deep.equal(["string", "number"]);
+        expect(added).to.equal(call.getTypeArguments()[1]);
+      });
+    }
+
+    it("should insert between arguments after a trailing line comment", () => {
+      const { sourceFile } = getInfoFromText("f(1, // one\n    3);");
+      const call = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.CallExpression);
+      const added = call.insertArgument(1, "2");
+      expect(sourceFile.getFullText()).to.equal("f(1, // one\n    2, 3);");
+      expect(call.getArguments().map(arg => arg.getText())).to.deep.equal(["1", "2", "3"]);
+      expect(added).to.equal(call.getArguments()[1]);
+    });
+
+    it("should append a type parameter after a trailing line comment", () => {
+      const { sourceFile } = getInfoFromText("function f<\n    T // one\n>() {}");
+      const func = sourceFile.getFunctionOrThrow("f");
+      const added = func.addTypeParameter({ name: "U" });
+      expect(sourceFile.getFullText()).to.equal("function f<\n    T, // one\n    U\n>() {}");
+      expect(func.getTypeParameters().map(param => param.getName())).to.deep.equal(["T", "U"]);
+      expect(added).to.equal(func.getTypeParameters()[1]);
+    });
+  });
+
   describe("named imports", () => {
     function doTest(text: string, index: number, writerFunction: WriterFunction, expected: string, surroundWithSpaces = true) {
       const { firstChild } = getInfoFromText<ModuleDeclaration>(`declare namespace Test {\n    import ${text} from "./test";\n}\n`);

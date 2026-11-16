@@ -98,6 +98,7 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
     parentNextSibling.getKind() === SyntaxKind.CloseBraceToken || parentNextSibling.getKind() === SyntaxKind.CloseBracketToken
   );
   let { newText } = opts;
+  let trailingLineCommentEnd: number | undefined;
 
   if (previousNode != null) {
     prependCommaAndSeparator();
@@ -109,7 +110,9 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
     else
       appendIndentation();
 
-    const nextEndStart = nextNode == null ? (isContained ? parentNextSibling!.getStart(true) : parent.getEnd()) : nextNode.getStart(true);
+    const nextEndStart = nextNode == null
+      ? Math.max(isContained ? parentNextSibling!.getStart(true) : parent.getEnd(), trailingLineCommentEnd ?? 0)
+      : nextNode.getStart(true);
     const insertPos = (previousNonCommentNode || previousNode).getEnd();
     insertIntoParentTextRange({
       insertPos,
@@ -177,7 +180,10 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
         appendCommentNodeTexts();
     }
 
-    prependSeparator();
+    if (trailingLineCommentEnd != null && !opts.useNewLines && !StringUtils.startsWithNewLine(newText))
+      newText = parent._context.manipulationSettings.getNewLineKindAsString() + parent.getParentOrThrow().getChildIndentationText() + newText;
+    else
+      prependSeparator();
     newText = text + newText;
 
     function appendCommentNodeTexts() {
@@ -195,6 +201,8 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
     function getLastCommentRangeEnd(node: Node) {
       const commentRanges = node.getTrailingCommentRanges();
       const lastCommentRange = commentRanges[commentRanges.length - 1];
+      if (lastCommentRange?.getKind() === SyntaxKind.SingleLineCommentTrivia)
+        trailingLineCommentEnd = lastCommentRange.getEnd();
       return lastCommentRange?.getEnd();
     }
   }
