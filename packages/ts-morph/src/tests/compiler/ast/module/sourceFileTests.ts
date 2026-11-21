@@ -1,4 +1,4 @@
-import { CompilerOptions, errors, LanguageVariant, ModuleResolutionKind, nameof, NewLineKind, ScriptTarget, SyntaxKind } from "@ts-morph/common";
+import { CompilerOptions, errors, LanguageVariant, ModuleKind, ModuleResolutionKind, nameof, NewLineKind, ScriptTarget, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { EmitResult, FileSystemRefreshResult, FormatCodeSettings, SourceFile, TextChange, VariableDeclarationKind } from "../../../../compiler";
 import { IndentationText, ManipulationSettings } from "../../../../options";
@@ -284,6 +284,61 @@ describe("SourceFile", () => {
       sourceFile.move("/dir/NewFile.ts");
       expect(sourceFile.getFullText()).to.equal(`import {OtherInterface} from "../OtherInterface.js";\nexport interface MyInterface {}`);
       expect(otherFile.getFullText()).to.equal(`import {MyInterface} from "./dir/NewFile.js";\nexport interface OtherInterface {}`);
+    });
+
+    describe("module specifier extensions (issue #1612)", () => {
+      const moduleKinds = [
+        { name: "Node10", moduleResolution: ModuleResolutionKind.Node10, module: ModuleKind.CommonJS },
+        { name: "Node16", moduleResolution: ModuleResolutionKind.Node16, module: ModuleKind.Node16 },
+        { name: "NodeNext", moduleResolution: ModuleResolutionKind.NodeNext, module: ModuleKind.NodeNext },
+        { name: "Bundler", moduleResolution: ModuleResolutionKind.Bundler, module: ModuleKind.ESNext },
+      ];
+      const extensionCases = [
+        { targetPath: "/lib/file.ts", specifier: "../lib/file.js", expected: "../../lib/file.js" },
+        { targetPath: "/lib/file.mts", specifier: "../lib/file.mjs", expected: "../../lib/file.mjs" },
+        { targetPath: "/lib/file.cts", specifier: "../lib/file.cjs", expected: "../../lib/file.cjs" },
+        { targetPath: "/lib/file.ts", specifier: "../lib/file", expected: "../../lib/file" },
+      ];
+
+      function moveImporter(compilerOptions: CompilerOptions, targetPath: string, specifier: string) {
+        const project = new Project({ useInMemoryFileSystem: true, compilerOptions });
+        project.getFileSystem().writeFileSync("/package.json", `{ "type": "module" }`);
+        project.createSourceFile(targetPath, "export const value = 1;");
+        const sourceFile = project.createSourceFile("/src/file.ts", `import { value } from "${specifier}";\nexport const other = value;`);
+        sourceFile.move("/src/deep/file.ts");
+        return sourceFile;
+      }
+
+      for (const { name, moduleResolution, module } of moduleKinds) {
+        for (const { targetPath, specifier, expected } of extensionCases) {
+          it(`should update ${specifier} to ${expected} for ${name}`, () => {
+            const sourceFile = moveImporter({ moduleResolution, module }, targetPath, specifier);
+            const importDeclaration = sourceFile.getImportDeclarations()[0];
+            expect(importDeclaration.getModuleSpecifierValue()).to.equal(expected);
+            expect(importDeclaration.getModuleSpecifierSourceFile()?.getFilePath()).to.equal(targetPath);
+          });
+        }
+      }
+
+      for (const { name, moduleResolution, module } of moduleKinds.filter(m => m.module === ModuleKind.Node16 || m.module === ModuleKind.NodeNext)) {
+        it(`should keep an index file specifier and have no resolution errors in an esm package for ${name}`, () => {
+          const sourceFile = moveImporter({ moduleResolution, module }, "/lib/index.ts", "../lib/index.js");
+          expect(sourceFile.getImportDeclarations()[0].getModuleSpecifierValue()).to.equal("../../lib/index.js");
+          const codes = sourceFile.getPreEmitDiagnostics().map(d => d.getCode());
+          expect(codes.filter(code => code === 2307 || code === 2834 || code === 2835)).to.deep.equal([]);
+        });
+      }
+
+      it("should keep updating a specifier for a file moved into a different directory", () => {
+        const project = new Project({
+          useInMemoryFileSystem: true,
+          compilerOptions: { moduleResolution: ModuleResolutionKind.Node16, module: ModuleKind.Node16 },
+        });
+        const target = project.createSourceFile("/lib/file.ts", "export const value = 1;");
+        const importer = project.createSourceFile("/src/file.ts", `import { value } from "../lib/file.js";\nexport const other = value;`);
+        target.move("/lib/nested/renamed.ts");
+        expect(importer.getImportDeclarations()[0].getModuleSpecifierValue()).to.equal("../lib/nested/renamed.js");
+      });
     });
 
     it("should handle moving two source files to a new directory (issue #314)", () => {
