@@ -1,6 +1,7 @@
-import { nameof, SyntaxKind } from "@ts-morph/common";
+import { nameof, NewLineKind, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, FunctionDeclaration, JSDocableNode, Node, VariableStatement } from "../../../../compiler";
+import { IndentationText } from "../../../../options";
 import { JSDocableNodeStructure, JSDocStructure, OptionalKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../../testHelpers";
@@ -171,6 +172,51 @@ describe("JSDocableNode", () => {
   });
 
   describe(nameof<JSDocableNode>("addJsDoc"), () => {
+    it("should indent a js doc and its inline member on separate lines", () => {
+      const { sourceFile } = getInfoFromText("interface I { value: string; }");
+      sourceFile.getInterfaceOrThrow("I").getPropertyOrThrow("value").addJsDoc("Description");
+      expect(sourceFile.getFullText()).to.equal("interface I { \n    /** Description */\n    value: string; }");
+    });
+
+    it("should use the configured newline and indentation for an inline member", () => {
+      const { sourceFile, project } = getInfoFromText("interface I { value: string; }");
+      project.manipulationSettings.set({
+        newLineKind: NewLineKind.CarriageReturnLineFeed,
+        indentationText: IndentationText.Tab,
+      });
+      sourceFile.getInterfaceOrThrow("I").getPropertyOrThrow("value").addJsDoc("Description");
+      expect(sourceFile.getFullText()).to.equal("interface I { \r\n\t/** Description */\r\n\tvalue: string; }");
+    });
+
+    it("should indent a js doc within a nested inline type", () => {
+      const { sourceFile } = getInfoFromText("interface I {\n    nested: { value: string }\n}");
+      const node = sourceFile.getDescendantsOfKind(SyntaxKind.PropertySignature).pop()!;
+      node.addJsDoc("Description");
+      expect(sourceFile.getFullText()).to.equal("interface I {\n    nested: { \n        /** Description */\n        value: string }\n}");
+    });
+
+    for (
+      const { name, code, kind } of [
+        { name: "inline type literal", code: "interface I { nested: { value: string } }", kind: SyntaxKind.PropertySignature },
+        { name: "inline interface", code: "interface I { value: string; }", kind: SyntaxKind.PropertySignature },
+        { name: "same-line member", code: "interface I { first: string; value: number; }", kind: SyntaxKind.PropertySignature },
+        { name: "inline class method", code: "class C { method() {} }", kind: SyntaxKind.MethodDeclaration },
+      ]
+    ) {
+      it(`should recognize the first js doc: ${name}`, () => {
+        const { sourceFile } = getInfoFromText(code);
+        const node = sourceFile.getDescendantsOfKind(kind).pop()! as Node & JSDocableNode;
+        const doc = node.addJsDoc("Description");
+
+        expect(doc).to.be.instanceOf(Node);
+        expect(node.getJsDocs()).to.deep.equal([doc]);
+        expect(node.print()).to.contain("/** Description */");
+
+        const secondDoc = node.addJsDoc("Second");
+        expect(node.getJsDocs()).to.deep.equal([doc, secondDoc]);
+      });
+    }
+
     function doTest(startCode: string, structure: OptionalKind<JSDocStructure>, expectedCode: string) {
       const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
       const result = firstChild.addJsDoc(structure);
