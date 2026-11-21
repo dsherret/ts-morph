@@ -136,6 +136,54 @@ describe("MethodDeclaration", () => {
         "class Identifier {\n    identifier();\n    identifier(): string;\n    identifier() {}\n }",
       );
     });
+
+    it("should read an inherited private-field getter once without mutating a frozen structure", () => {
+      const { overload, getReadCount } = getFrozenGetterOverload();
+      const { firstChild } = getInfoFromText<ClassDeclaration>("class C {\n    public m() {}\n}");
+      (firstChild.getMembers()[0] as MethodDeclaration).addOverload(overload);
+      expect(firstChild.getText()).to.equal("class C {\n    public m(): string;\n    public m() {}\n}");
+      expect(getReadCount()).to.equal(1);
+      expect(Object.keys(overload)).to.deep.equal([]);
+    });
+
+    it("should keep an explicitly undefined property from overriding to the implementation's value", () => {
+      const { firstChild } = getInfoFromText<ClassDeclaration>("class C {\n    public m() {}\n}");
+      (firstChild.getMembers()[0] as MethodDeclaration).addOverload({ scope: undefined });
+      expect(firstChild.getText()).to.equal("class C {\n    m();\n    public m() {}\n}");
+    });
+
+    it("should use the implementation's value when an inherited getter returns undefined", () => {
+      class Overload {
+        get scope() {
+          return undefined;
+        }
+      }
+      const { firstChild } = getInfoFromText<ClassDeclaration>("class C {\n    public m() {}\n}");
+      (firstChild.getMembers()[0] as MethodDeclaration).addOverload(new Overload());
+      expect(firstChild.getText()).to.equal("class C {\n    public m();\n    public m() {}\n}");
+    });
+  });
+
+  describe("overloads in a structure", () => {
+    it("should read an inherited private-field getter once without mutating a frozen structure", () => {
+      const { overload, getReadCount } = getFrozenGetterOverload();
+      const { firstChild } = getInfoFromText<ClassDeclaration>("class C {}");
+      firstChild.addMethod({ name: "m", scope: Scope.Public, overloads: [overload] });
+      expect(firstChild.getText()).to.equal("class C {\n    public m(): string;\n    public m() {\n    }\n}");
+      expect(getReadCount()).to.equal(1);
+      expect(Object.keys(overload)).to.deep.equal([]);
+    });
+
+    it("should prefer an inherited getter's value over the implementation's value", () => {
+      class Overload {
+        get scope() {
+          return Scope.Protected;
+        }
+      }
+      const { firstChild } = getInfoFromText<ClassDeclaration>("class C {}");
+      firstChild.addMethod({ name: "m", scope: Scope.Public, overloads: [new Overload()] });
+      expect(firstChild.getText()).to.equal("class C {\n    protected m();\n    public m() {\n    }\n}");
+    });
   });
 
   describe(nameof<MethodDeclaration>("remove"), () => {
@@ -392,3 +440,16 @@ class Test {
     });
   });
 });
+
+function getFrozenGetterOverload() {
+  let readCount = 0;
+  class Overload {
+    #returnType = "string";
+
+    get returnType() {
+      readCount++;
+      return this.#returnType;
+    }
+  }
+  return { overload: Object.freeze(new Overload()), getReadCount: () => readCount };
+}

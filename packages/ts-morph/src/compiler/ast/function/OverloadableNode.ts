@@ -3,6 +3,7 @@ import { CodeBlockWriter } from "../../../codeBlockWriter";
 import { getRangeWithoutCommentsFromArray, insertIntoParentTextRange, verifyAndGetIndex } from "../../../manipulation";
 import { Structure } from "../../../structures";
 import { Constructor } from "../../../types";
+import { withStructureDefaults } from "../../../utils";
 import { BodyableNode, NamedNode, StaticableNode } from "../base";
 import { Node } from "../common";
 
@@ -116,7 +117,7 @@ export function insertOverloads<TNode extends OverloadableNode & Node, TStructur
   const mainIndex = firstIndex + index;
 
   const thisStructure = opts.getThisStructure(implementationNode);
-  const structures = opts.structures.map(structure => Object.assign(Object.assign({}, thisStructure), structure));
+  const structures = opts.structures.map(structure => withStructureDefaults(structure, getMissingProperties(thisStructure, structure)));
   const writer = implementationNode._getWriterWithQueuedIndentation();
 
   // write text
@@ -135,4 +136,11 @@ export function insertOverloads<TNode extends OverloadableNode & Node, TStructur
   });
 
   return getRangeWithoutCommentsFromArray<TNode>(parentSyntaxList.getChildren(), mainIndex, structures.length, opts.expectedSyntaxKind);
+}
+
+// own enumerable properties, even when undefined, don't use the implementation's value
+function getMissingProperties<T extends Record<string, any>>(defaults: T, structure: T) {
+  return Object.fromEntries(
+    Object.entries(defaults).filter(([key]) => !Object.prototype.propertyIsEnumerable.call(structure, key)),
+  ) as Partial<T>;
 }

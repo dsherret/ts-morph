@@ -11,4 +11,5 @@ export * from "./references";
 export * from "./setValueIfUndefined";
 export * from "./tsconfig";
 export * from "./TypeScriptVersionChecker";
+export * from "./withStructureDefaults";
 export * from "./WriterUtils";
