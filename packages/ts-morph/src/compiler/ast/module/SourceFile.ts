@@ -1023,7 +1023,26 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
 function updateStringLiteralReferences(nodeReferences: ReadonlyArray<[StringLiteral, SourceFile]>) {
   for (const [stringLiteral, sourceFile] of nodeReferences) {
-    if (ModuleUtils.isModuleSpecifierRelative(stringLiteral.getLiteralText()))
+    const compilerOptions = stringLiteral._context.compilerOptions.get()
+    const literalText = stringLiteral.getLiteralText();
+    const paths = compilerOptions?.paths;
+    // See https://www.typescriptlang.org/docs/handbook/modules/reference.html#paths
+    if (paths) {
+      // Check if the string literal is a path alias specifier
+      for (const [path, mappings] of Object.entries(paths)) {
+        const hasWildCard = path.endsWith('*');
+        const [alias] = path.split('*');
+        if (literalText.startsWith(alias) && hasWildCard) {
+          const pathAfterAlias = FileUtils.pathJoin(
+            stringLiteral._sourceFile.getDirectoryPath(),
+            stringLiteral._sourceFile.getRelativePathAsModuleSpecifierTo(sourceFile)
+          );
+          stringLiteral.setLiteralValue(FileUtils.pathJoin(alias, pathAfterAlias));
+          break;
+        }
+      }
+    }
+    if (ModuleUtils.isModuleSpecifierRelative(literalText))
       stringLiteral.setLiteralValue(stringLiteral._sourceFile.getRelativePathAsModuleSpecifierTo(sourceFile));
   }
 }
