@@ -292,6 +292,30 @@ describe("Node", () => {
     });
   });
 
+  describe(nameof<Node>("getChildSyntaxList"), () => {
+    it("should get class members rather than type parameters", () => {
+      const { firstChild } = getInfoFromText<ClassDeclaration>("class C<T> { value: T; }");
+      expect(firstChild.getChildSyntaxList()!.getChildren()).to.deep.equal(firstChild.getMembers());
+    });
+
+    it("should get function statements rather than parameters", () => {
+      const { firstChild } = getInfoFromText<FunctionDeclaration>("function f(value: string) { return value; }");
+      expect(firstChild.getChildSyntaxList()!.getChildren()).to.deep.equal(firstChild.getStatements());
+    });
+
+    it("should return undefined for a node without a syntax list", () => {
+      const { firstChild } = getInfoFromText<FunctionDeclaration>("declare function f(value: string): void;");
+      expect(firstChild.getChildSyntaxList()).to.be.undefined;
+    });
+  });
+
+  describe(nameof<Node>("getChildSyntaxListOrThrow"), () => {
+    it("should throw for a node without a child syntax list", () => {
+      const { firstChild } = getInfoFromText<FunctionDeclaration>("declare function f(): void;");
+      expect(() => firstChild.getChildSyntaxListOrThrow()).to.throw("A child syntax list was expected.");
+    });
+  });
+
   describe(nameof<Node>("getChildAtPos"), () => {
     const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>("function myFunction() { const v = 5; }");
     const syntaxList = sourceFile.getChildSyntaxList()!;

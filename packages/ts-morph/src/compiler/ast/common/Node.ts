@@ -633,6 +633,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
       || Node.isCaseClause(this)
       || Node.isDefaultClause(this)
       || Node.isJsxElement(this)
+      || Node.isUnionTypeNode(this)
     ) {
       return node.getFirstChildByKind(SyntaxKind.SyntaxList);
     }
