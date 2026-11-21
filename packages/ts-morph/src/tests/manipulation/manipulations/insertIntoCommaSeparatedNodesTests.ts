@@ -119,6 +119,87 @@ describe("insertIntoCommaSeparatedNodes", () => {
     });
   });
 
+  describe("after comment nodes", () => {
+    for (const newLine of ["\n", "\r\n"]) {
+      const text = `enum E {${newLine}  a${newLine}  // c${newLine}}`;
+
+      it(`should leave the text unchanged when the insert fails with a missing comma and newline ${JSON.stringify(newLine)}`, () => {
+        const { sourceFile } = getInfoFromText(text);
+        const enumDec = sourceFile.getEnumOrThrow("E");
+        const [member, comment] = enumDec.getMembersWithComments();
+        expect(() => enumDec.addMember("} enum F {")).to.throw();
+        expect(sourceFile.getFullText()).to.equal(text);
+        expect(member.getText()).to.equal("a");
+        expect(comment.getText()).to.equal("// c");
+      });
+    }
+
+    it("should leave the text unchanged when an object literal insert fails with a missing comma", () => {
+      const text = "const o = {\n  a: 1\n  // c\n};";
+      const { sourceFile } = getInfoFromText(text);
+      const object = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ObjectLiteralExpression);
+      expect(() => object.addProperty("} + {")).to.throw();
+      expect(sourceFile.getFullText()).to.equal(text);
+    });
+
+    it("should keep held comment nodes valid when the insert fails after they were mapped", () => {
+      const text = "enum E {\n  a\n  // c\n  /* d */\n}";
+      const { sourceFile } = getInfoFromText(text);
+      const enumDec = sourceFile.getEnumOrThrow("E");
+      const comment = enumDec.getMembersWithComments()[1];
+      const pos = comment.getPos();
+      expect(() => enumDec.insertMember(2, "b /*")).to.throw();
+      expect(sourceFile.getFullText()).to.equal(text);
+      expect(comment.getPos()).to.equal(pos);
+      expect(comment.getText()).to.equal("// c");
+      expect(enumDec.getMembersWithComments()[1]).to.equal(comment);
+    });
+
+    it("should keep held members attached when the insert fails after they were moved", () => {
+      const text = "enum E {\n  a = 1\n  // c\n  /* d */\n}";
+      const { sourceFile } = getInfoFromText(text);
+      const enumDec = sourceFile.getEnumOrThrow("E");
+      const members = enumDec.getMembersWithComments();
+      const initializer = enumDec.getMemberOrThrow("a").getInitializerOrThrow();
+      expect(() => enumDec.insertMember(2, "z /*")).to.throw();
+      expect(sourceFile.getFullText()).to.equal(text);
+      expect(enumDec.getMembersWithComments()).to.deep.equal(members);
+      expect(enumDec.getMemberOrThrow("a").getInitializerOrThrow()).to.equal(initializer);
+      expect(members.map(member => member.getText())).to.deep.equal(["a = 1", "// c", "/* d */"]);
+    });
+
+    it("should keep held comment nodes in an enum when a comma follows them", () => {
+      const { sourceFile } = getInfoFromText("enum E {\n  a\n  // c\n  /* d */\n  ,\n}");
+      const enumDec = sourceFile.getEnumOrThrow("E");
+      const [member, first, second] = enumDec.getMembersWithComments();
+      enumDec.addMember("b");
+      expect(sourceFile.getFullText()).to.equal("enum E {\n  a,\n  // c\n  /* d */\n    b\n}");
+      expect(first.getText()).to.equal("// c");
+      expect(second.getText()).to.equal("/* d */");
+      expect(enumDec.getMembersWithComments().slice(0, 3)).to.deep.equal([member, first, second]);
+    });
+
+    it("should keep a held comment node in an object literal when a comma follows it", () => {
+      const { sourceFile } = getInfoFromText("const o = {\n  a: 1\n  // c\n  ,\n};");
+      const object = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ObjectLiteralExpression);
+      const [property, comment] = object.getPropertiesWithComments();
+      object.addPropertyAssignment({ name: "b", initializer: "2" });
+      expect(sourceFile.getFullText()).to.equal("const o = {\n  a: 1,\n  // c\n    b: 2\n};");
+      expect(comment.getText()).to.equal("// c");
+      expect(object.getPropertiesWithComments().slice(0, 2)).to.deep.equal([property, comment]);
+    });
+
+    it("should keep a held comment node when adding a missing comma", () => {
+      const { sourceFile } = getInfoFromText("enum E {\n  a\n  // c\n}");
+      const enumDec = sourceFile.getEnumOrThrow("E");
+      const comment = enumDec.getMembersWithComments()[1];
+      enumDec.addMember("b");
+      expect(sourceFile.getFullText()).to.equal("enum E {\n  a,\n  // c\n    b\n}");
+      expect(comment.getText()).to.equal("// c");
+      expect(enumDec.getMembersWithComments()[1]).to.equal(comment);
+    });
+  });
+
   describe("named imports", () => {
     function doTest(text: string, index: number, writerFunction: WriterFunction, expected: string, surroundWithSpaces = true) {
       const { firstChild } = getInfoFromText<ModuleDeclaration>(`declare namespace Test {\n    import ${text} from "./test";\n}\n`);
