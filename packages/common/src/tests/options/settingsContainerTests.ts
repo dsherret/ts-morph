@@ -73,6 +73,17 @@ describe("SettingsContainer", () => {
     expect(container.get().lib).to.equal(lib);
   });
 
+  it("should keep frozen values frozen", () => {
+    const lib = Object.freeze(["es5"]) as string[];
+    const container = new CompilerOptionsContainer({ lib });
+    expect(Object.isFrozen(container.get().lib)).to.equal(true);
+
+    container.reset();
+
+    expect(Object.isFrozen(container.get().lib)).to.equal(true);
+    expect(container.get().lib).to.equal(lib);
+  });
+
   it("should handle cycles and an own __proto__ key", () => {
     const paths = JSON.parse(`{ "__proto__": ["x"] }`);
     const cycle: any = { name: "cycle" };

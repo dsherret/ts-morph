@@ -67,19 +67,21 @@ function cloneSettings<T extends object>(settings: T): T {
 
 // only arrays and plain objects are cloned because values like `configFile` are shared class instances
 function cloneValue(value: unknown, clones: Map<object, unknown>): unknown {
-  if (!isPlainArrayOrObject(value))
+  if (!isPlainArrayOrObject(value) || Object.isFrozen(value))
     return value;
   if (clones.has(value))
     return clones.get(value);
 
-  const result = Array.isArray(value) ? [] : Object.create(Object.getPrototypeOf(value));
+  const result = Array.isArray(value) ? new Array(value.length) : Object.create(Object.getPrototypeOf(value));
   clones.set(value, result);
-  for (const key of Reflect.ownKeys(value)) {
-    const descriptor = Object.getOwnPropertyDescriptor(value, key)!;
-    if ("value" in descriptor)
-      descriptor.value = cloneValue(descriptor.value, clones);
+  for (const key of Object.keys(value)) {
     // define rather than assign so an own `__proto__` key stays a normal property
-    Object.defineProperty(result, key, descriptor);
+    Object.defineProperty(result, key, {
+      value: cloneValue((value as Record<string, unknown>)[key], clones),
+      writable: true,
+      enumerable: true,
+      configurable: true,
+    });
   }
   return result;
 }

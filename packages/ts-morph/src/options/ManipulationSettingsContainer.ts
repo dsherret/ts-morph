@@ -71,6 +71,12 @@ export class ManipulationSettingsContainer extends SettingsContainer<Manipulatio
       usePrefixAndSuffixTextForRename: false,
       useTrailingCommas: false,
     });
+    // subscribed first so that later `onModified` listeners don't read stale values
+    this.onModified(() => {
+      this.#editorSettings = undefined;
+      this.#formatCodeSettings = undefined;
+      this.#userPreferences = undefined;
+    });
   }
 
   /**
@@ -163,17 +169,6 @@ export class ManipulationSettingsContainer extends SettingsContainer<Manipulatio
     this.#editorSettings = undefined;
     this.#formatCodeSettings = undefined;
     this.#userPreferences = undefined;
-  }
-
-  /**
-   * Resets the settings to the default.
-   */
-  reset() {
-    // clear first so that `onModified` listeners don't read stale values
-    this.#editorSettings = undefined;
-    this.#formatCodeSettings = undefined;
-    this.#userPreferences = undefined;
-    super.reset();
   }
 
   /**
