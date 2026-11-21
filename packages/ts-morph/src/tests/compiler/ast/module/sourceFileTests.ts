@@ -1418,7 +1418,7 @@ function myFunction(param: MyClass) {
 
     it("should add missing imports after removing an import before leading whitespace", () => {
       const project = new Project({ useInMemoryFileSystem: true });
-      const sourceFile = project.createSourceFile("test.ts", 'import foo from "./bar"; console.log(qux);');
+      const sourceFile = project.createSourceFile("test.ts", "import foo from \"./bar\"; console.log(qux);");
       project.createSourceFile("baz.ts", "export const qux = 1;");
       sourceFile.getImportDeclarations().forEach(i => i.replaceWithText(""));
       expect(sourceFile.getFullText()).to.equal(" console.log(qux);");
@@ -1428,7 +1428,7 @@ function myFunction(param: MyClass) {
 
       sourceFile.fixMissingImports();
 
-      expect(sourceFile.getFullText()).to.equal('import { qux } from "./baz";\n\n console.log(qux);');
+      expect(sourceFile.getFullText()).to.equal("import { qux } from \"./baz\";\n\n console.log(qux);");
       expect(sourceFile.getChildSyntaxListOrThrow()).to.equal(syntaxList);
       expect(sourceFile.getStatements()[1]).to.equal(statement);
       expect(statement.getDescendants()).to.have.ordered.members(descendants);
