@@ -614,8 +614,9 @@ export declare class FileUtils {
     /**
      * Gets the descendant directories of the specified directory.
      * @param dirPath - Directory path.
+     * @param includeDirectory - Whether to yield and traverse a directory.
      */
-    static getDescendantDirectories(fileSystemWrapper: TransactionalFileSystem, dirPath: StandardizedFilePath): IterableIterator<StandardizedFilePath>;
+    static getDescendantDirectories(fileSystemWrapper: TransactionalFileSystem, dirPath: StandardizedFilePath, includeDirectory?: (dirPath: StandardizedFilePath) => boolean): IterableIterator<StandardizedFilePath>;
     /**
      * Gets the glob as absolute.
      * @param glob - Glob.

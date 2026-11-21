@@ -255,14 +255,19 @@ export class FileUtils {
   /**
    * Gets the descendant directories of the specified directory.
    * @param dirPath - Directory path.
+   * @param includeDirectory - Whether to yield and traverse a directory.
    */
-  static *getDescendantDirectories(fileSystemWrapper: TransactionalFileSystem, dirPath: StandardizedFilePath): IterableIterator<StandardizedFilePath> {
+  static *getDescendantDirectories(
+    fileSystemWrapper: TransactionalFileSystem,
+    dirPath: StandardizedFilePath,
+    includeDirectory?: (dirPath: StandardizedFilePath) => boolean,
+  ): IterableIterator<StandardizedFilePath> {
     for (const entry of fileSystemWrapper.readDirSync(dirPath)) {
-      if (!entry.isDirectory)
+      if (!entry.isDirectory || includeDirectory?.(entry.path) === false)
         continue;
 
       yield entry.path;
-      yield* FileUtils.getDescendantDirectories(fileSystemWrapper, entry.path);
+      yield* FileUtils.getDescendantDirectories(fileSystemWrapper, entry.path, includeDirectory);
     }
   }
 
