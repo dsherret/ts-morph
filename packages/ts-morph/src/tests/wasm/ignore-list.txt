@@ -1,0 +1,4 @@
+# Tests to ignore when running --compiler=wasm
+# These tests rely on deprecated JS TS compiler internals that the Go port intentionally skipped.
+
+src/tests/compiler/ast/deprecatedApiTests.ts

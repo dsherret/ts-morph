@@ -1,0 +1,3 @@
+[submodule "packages/compiler-go-source"]
+	path = packages/compiler-go-source
+	url = https://github.com/microsoft/typescript-go.git

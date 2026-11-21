@@ -14,3 +14,14 @@ npm-debug.log
 
 #IDE
 .idea
+
+# Go Wasm Compiler Migration
+/dist/
+/go.work
+/go.work.sum
+/package-lock.json
+/packages/common/lib/*.wasm
+/packages/common/lib/*.inline.js
+/packages/common/lib/wasm_exec.js
+PLAN.md
+pr_post.md
