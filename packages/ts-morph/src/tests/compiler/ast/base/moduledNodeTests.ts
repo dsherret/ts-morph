@@ -551,13 +551,40 @@ describe("ModuledNode", () => {
         if (
           !Node.isClassDeclaration(node) && !Node.isInterfaceDeclaration(node) && !Node.isEnumDeclaration(node) && !Node.isFunctionDeclaration(node)
           && !Node.isVariableDeclaration(node) && !Node.isTypeAliasDeclaration(node) && !Node.isModuleDeclaration(node)
-          && !Node.isExpression(node) && !Node.isSourceFile(node)
+          && !Node.isExpression(node) && !Node.isSourceFile(node) && !Node.isBindingElement(node)
         ) {
           const assertNever: never = node;
           throw new Error(`Node was not an exported declaration: ${(node as Node).getKindName()}`);
         }
       }
     }
+
+    it("should get binding elements from exported destructuring declarations", () => {
+      const { sourceFile } = getInfoFromText(
+        `export const { foo, bar: baz, ...rest } = { foo: 1, bar: 2, other: 3 };\n`
+          + `export const [first, ...[second, third]] = [1, 2, 3];\n`
+          + `export const { nested: { value } } = { nested: { value: 4 } };`,
+      );
+
+      assertMapsEqual([
+        ["foo", ["foo"]],
+        ["baz", ["bar: baz"]],
+        ["rest", ["...rest"]],
+        ["first", ["first"]],
+        ["second", ["second"]],
+        ["third", ["third"]],
+        ["value", ["value"]],
+      ], sourceFile.getExportedDeclarations());
+
+      const bindingElement = sourceFile.getDescendants().find(Node.isBindingElement)!;
+      const exportedDeclaration: ExportedDeclarations = bindingElement;
+      expect(exportedDeclaration.getKindName()).to.equal("BindingElement");
+
+      for (const declarations of sourceFile.getExportedDeclarations().values()) {
+        for (const declaration of declarations)
+          expect(Node.isBindingElement(declaration)).to.equal(true);
+      }
+    });
 
     it("should get from a file", () => {
       const project = new Project({ useInMemoryFileSystem: true });

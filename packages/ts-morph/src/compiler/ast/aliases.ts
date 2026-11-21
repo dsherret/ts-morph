@@ -184,6 +184,7 @@ export type LocalTargetDeclarations =
  * @remarks This may be missing some types. Please open an issue if this returns a type not listed here.
  */
 export type ExportedDeclarations =
+  | BindingElement
   | ClassDeclaration
   | InterfaceDeclaration
   | EnumDeclaration
