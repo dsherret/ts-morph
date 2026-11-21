@@ -71,6 +71,21 @@ describe("ArrowFunction", () => {
       expect(expression.getText()).to.equal("value => value");
     });
 
+    for (
+      const [text, typeParameter] of [
+        ["x => x", ""],
+        ["async x => x", "1"],
+      ]
+    ) {
+      it(`should leave ${text} unchanged when inserting the invalid type parameter '${typeParameter}'`, () => {
+        const { expression } = getInfoFromTextWithExpression(text);
+        const sourceFile = expression.getSourceFile();
+        const fullText = sourceFile.getFullText();
+        expect(() => expression.addTypeParameter(typeParameter)).to.throw();
+        expect(sourceFile.getFullText()).to.equal(fullText);
+      });
+    }
+
     it("should leave an unparenthesized parameter unchanged when the index is invalid", () => {
       const { expression } = getInfoFromTextWithExpression("value => value");
       expect(() => expression.insertTypeParameter(1, "T")).to.throw();
