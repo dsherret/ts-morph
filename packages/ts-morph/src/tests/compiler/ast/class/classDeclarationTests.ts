@@ -33,6 +33,21 @@ describe("ClassDeclaration", () => {
       expect(sourceFile.getText()).to.equal("class C {\n    method() {\n    }\n}");
     });
 
+    it("should read a getter based name once so overloads and the implementation match", () => {
+      let count = 0;
+      const structure = {
+        get name() {
+          return `m${count++}`;
+        },
+        overloads: [{}],
+      };
+      const { firstChild } = getInfoFromText<ClassDeclaration>("class C {}");
+      firstChild.addMethods([structure]);
+      const names = firstChild.getText().match(/m\d+/g)!;
+      expect(names.length).to.equal(2);
+      expect(names[0]).to.equal(names[1]);
+    });
+
     it("should not mutate the input structure or its overloads", () => {
       const overload = Object.freeze({ returnType: "void" });
       const structure = Object.freeze({

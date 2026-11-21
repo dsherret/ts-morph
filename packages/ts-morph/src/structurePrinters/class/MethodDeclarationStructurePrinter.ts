@@ -29,8 +29,10 @@ export class MethodDeclarationStructurePrinter extends NodePrinter<OptionalKind<
   }
 
   protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<MethodDeclarationStructure>) {
-    this.#printOverloads(writer, structure.name, getOverloadStructures());
-    this.#printHeader(writer, structure.name, structure);
+    // read once because the name may be a getter that returns different values
+    const name = structure.name;
+    this.#printOverloads(writer, name, getOverloadStructures());
+    this.#printHeader(writer, name, structure);
 
     if (this.#options.isAmbient || structure.isAbstract)
       writer.write(";");
