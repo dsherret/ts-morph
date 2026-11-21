@@ -1,6 +1,7 @@
 import { StringUtils, SyntaxKind, ts } from "@ts-morph/common";
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { Node, SourceFile } from "../../compiler";
+import { ExtendedParser } from "../../compiler/ast/utils";
 import { Structure } from "../../structures";
 import {
   appendCommaToText,
@@ -129,12 +130,12 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
     if (keepsFollowingText)
       newText = newText.trimEnd();
     const insertPos = (previousNonCommentNode || previousNode).getEnd();
-    insertIntoParentTextRange({
+    insertKeepingCommentNodes({
       insertPos,
       newText,
       parent,
       replacing: { textLength: (keepsFollowingText ? trailingCommentsEnd : nextEndStart) - insertPos },
-    });
+    }, previousNonCommentNode == null ? [] : currentNodes.slice(currentNodes.indexOf(previousNonCommentNode) + 1, insertIndex));
   } else if (nextNode != null) {
     if (opts.useNewLines || opts.surroundWithSpaces)
       prependSeparator();
@@ -450,18 +451,15 @@ function insertAfterCommentNode(
 ) {
   const { currentNodes, insertIndex, parent } = opts;
 
-  // add the comma first because the new text could otherwise parse as a continuation of the previous node (ex. `1\n[k]`)
-  if (!hasComma)
-    insertIntoParentTextRange({ insertPos: previousNonCommentNode.getEnd(), newText: ",", parent });
-
   const nextNode = currentNodes[insertIndex] as Node | undefined;
   const hasNextNonCommentNode = currentNodes.slice(insertIndex).some(node => !Node.isCommentNode(node));
   const newLine = parent._context.manipulationSettings.getNewLineKindAsString();
-  const insertPos = getTrailingCommentsEnd(commentNode);
+  const commentsEnd = getTrailingCommentsEnd(commentNode);
   const parentNextSibling = parent.getNextSibling();
   const followingStart = nextNode?.getStart(true) ?? parentNextSibling?.getStart(true) ?? parent.getEnd();
-  const replaceEnd = Math.max(insertPos, followingStart);
-  const keepsFollowingText = parent._sourceFile.getFullText().substring(insertPos, replaceEnd).trim().length > 0;
+  const replaceEnd = Math.max(commentsEnd, followingStart);
+  const fullText = parent._sourceFile.getFullText();
+  const keepsFollowingText = fullText.substring(commentsEnd, replaceEnd).trim().length > 0;
 
   let newText = opts.newText;
   if (!StringUtils.startsWithNewLine(newText))
@@ -476,12 +474,50 @@ function insertAfterCommentNode(
     newText += nextNode != null ? parent.getParentOrThrow().getChildIndentationText() : parent.getParentOrThrow().getIndentationText();
   }
 
-  insertIntoParentTextRange({
+  // add the comma in the same manipulation so a failed insert leaves the text unchanged
+  // (the new text could otherwise parse as a continuation of the previous node, ex. `1\n[k]`)
+  const insertPos = hasComma ? commentsEnd : previousNonCommentNode.getEnd();
+  if (!hasComma)
+    newText = "," + fullText.substring(insertPos, commentsEnd) + newText;
+
+  insertKeepingCommentNodes({
     insertPos,
     newText,
     parent,
-    replacing: { textLength: keepsFollowingText ? 0 : replaceEnd - insertPos },
-  });
+    replacing: { textLength: (keepsFollowingText ? commentsEnd : replaceEnd) - insertPos },
+  }, hasComma ? [] : currentNodes.slice(currentNodes.indexOf(previousNonCommentNode) + 1, insertIndex));
+}
+
+function insertKeepingCommentNodes(insertOpts: InsertIntoParentTextRangeOptions, commentNodes: Node[]) {
+  if (commentNodes.length === 0) {
+    insertIntoParentTextRange(insertOpts);
+    return;
+  }
+
+  const { insertPos, parent } = insertOpts;
+  const commentTexts = commentNodes.map(node => node.getText());
+  const originalCompilerNodes = commentNodes.map(node => node.compilerNode);
+
+  try {
+    insertIntoParentTextRange({
+      ...insertOpts,
+      customMappings: (newParentNode, newSourceFile) => {
+        const newCommentNodes = ExtendedParser.getCompilerChildren(newParentNode, newSourceFile)
+          .filter(node => node.pos >= insertPos && (node.kind === SyntaxKind.SingleLineCommentTrivia || node.kind === SyntaxKind.MultiLineCommentTrivia));
+        return commentNodes
+          .map((currentNode, i) => ({ currentNode, newNode: newCommentNodes[i], text: commentTexts[i] }))
+          .filter(({ currentNode, newNode, text }) => newNode?.kind === currentNode.getKind() && newNode.getText(newSourceFile) === text)
+          .map(({ currentNode, newNode }) => ({ currentNode, newNode }));
+      },
+    });
+  } catch (err) {
+    // the source file keeps its old tree on failure, so point the mapped comments back at it
+    commentNodes.forEach((node, i) => {
+      if (!node.wasForgotten() && node.compilerNode !== originalCompilerNodes[i])
+        parent._context.compilerFactory.replaceCompilerNode(node, originalCompilerNodes[i]);
+    });
+    throw err;
+  }
 }
 
 function getCommaAfterNode(node: Node) {
