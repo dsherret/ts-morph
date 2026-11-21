@@ -49,6 +49,21 @@ describe("ManipulationSettingsContainer", () => {
     expect(settings.getUserPreferences().quotePreference).to.equal("double");
   });
 
+  it("should not call an overridden onModified during construction", () => {
+    class CustomSettings extends ManipulationSettingsContainer {
+      readonly actions: (() => void)[] = [];
+      #count = 0;
+
+      onModified(action: () => void) {
+        this.#count++;
+        this.actions.push(action);
+        super.onModified(action);
+      }
+    }
+
+    expect(new CustomSettings().actions.length).to.equal(0);
+  });
+
   it("should have the correct defaults", () => {
     const settings = new ManipulationSettingsContainer();
     checkSettings(settings, {

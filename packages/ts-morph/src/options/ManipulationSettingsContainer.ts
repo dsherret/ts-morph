@@ -72,7 +72,7 @@ export class ManipulationSettingsContainer extends SettingsContainer<Manipulatio
       useTrailingCommas: false,
     });
     // subscribed first so that later `onModified` listeners don't read stale values
-    this.onModified(() => {
+    super.onModified(() => {
       this.#editorSettings = undefined;
       this.#formatCodeSettings = undefined;
       this.#userPreferences = undefined;

@@ -84,6 +84,66 @@ describe("SettingsContainer", () => {
     expect(container.get().lib).to.equal(lib);
   });
 
+  it("should not evaluate nested accessors", () => {
+    const plugin = {
+      get name(): string {
+        throw new Error("lazy");
+      },
+    };
+    const container = new CompilerOptionsContainer({ plugins: [plugin] });
+
+    container.reset();
+
+    const descriptor = Object.getOwnPropertyDescriptor(container.get().plugins![0], "name")!;
+    expect(descriptor.get).to.equal(Object.getOwnPropertyDescriptor(plugin, "name")!.get);
+  });
+
+  it("should keep symbol and non-enumerable keys on nested values", () => {
+    const symbol = Symbol("key");
+    const plugin: any = { name: "plugin", [symbol]: ["x"] };
+    Object.defineProperty(plugin, "hidden", { value: ["y"], enumerable: false });
+    const container = new CompilerOptionsContainer({ plugins: [plugin] });
+
+    container.reset();
+
+    const result = container.get().plugins![0] as any;
+    expect(result).to.not.equal(plugin);
+    expect(result[symbol]).to.deep.equal(["x"]);
+    expect(result[symbol]).to.not.equal(plugin[symbol]);
+    const descriptor = Object.getOwnPropertyDescriptor(result, "hidden")!;
+    expect(descriptor.enumerable).to.equal(false);
+    expect(descriptor.value).to.deep.equal(["y"]);
+    expect(descriptor.value).to.not.equal(plugin.hidden);
+  });
+
+  it("should keep sealed and non-extensible values as is", () => {
+    const sealed = Object.seal({ name: "sealed" });
+    const nonExtensible = Object.preventExtensions({ name: "nonExtensible" });
+    const container = new CompilerOptionsContainer({ plugins: [sealed, nonExtensible] });
+
+    container.reset();
+
+    const plugins = container.get().plugins!;
+    expect(plugins[0]).to.equal(sealed);
+    expect(Object.isSealed(plugins[0])).to.equal(true);
+    expect(plugins[1]).to.equal(nonExtensible);
+    expect(Object.isExtensible(plugins[1])).to.equal(false);
+  });
+
+  it("should not expose live settings through a top-level back-reference", () => {
+    const options: any = { charset: "a" };
+    options.self = options;
+    const container = new CompilerOptionsContainer(options);
+
+    container.get().self.charset = "MUT";
+    expect(container.getEncoding()).to.equal("a");
+
+    container.reset();
+    container.get().self.charset = "MUT";
+    expect(container.getEncoding()).to.equal("a");
+    expect(options.charset).to.equal("a");
+  });
+
   it("should handle cycles and an own __proto__ key", () => {
     const paths = JSON.parse(`{ "__proto__": ["x"] }`);
     const cycle: any = { name: "cycle" };

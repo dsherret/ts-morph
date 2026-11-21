@@ -59,7 +59,6 @@ export abstract class SettingsContainer<T extends object> {
 function cloneSettings<T extends object>(settings: T): T {
   const clones = new Map<object, unknown>();
   const result = Object.assign({}, settings) as Record<PropertyKey, unknown>;
-  clones.set(settings, result);
   for (const key of Reflect.ownKeys(result))
     result[key] = cloneValue(result[key], clones);
   return result as T;
@@ -67,21 +66,19 @@ function cloneSettings<T extends object>(settings: T): T {
 
 // only arrays and plain objects are cloned because values like `configFile` are shared class instances
 function cloneValue(value: unknown, clones: Map<object, unknown>): unknown {
-  if (!isPlainArrayOrObject(value) || Object.isFrozen(value))
+  if (!isPlainArrayOrObject(value) || !Object.isExtensible(value))
     return value;
   if (clones.has(value))
     return clones.get(value);
 
-  const result = Array.isArray(value) ? new Array(value.length) : Object.create(Object.getPrototypeOf(value));
+  const result = Array.isArray(value) ? [] : Object.create(Object.getPrototypeOf(value));
   clones.set(value, result);
-  for (const key of Object.keys(value)) {
+  for (const key of Reflect.ownKeys(value)) {
+    const descriptor = Object.getOwnPropertyDescriptor(value, key)!;
+    if ("value" in descriptor)
+      descriptor.value = cloneValue(descriptor.value, clones);
     // define rather than assign so an own `__proto__` key stays a normal property
-    Object.defineProperty(result, key, {
-      value: cloneValue((value as Record<string, unknown>)[key], clones),
-      writable: true,
-      enumerable: true,
-      configurable: true,
-    });
+    Object.defineProperty(result, key, descriptor);
   }
   return result;
 }
