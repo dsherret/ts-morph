@@ -120,6 +120,26 @@ describe("ConstructorDeclaration", () => {
         "class Identifier {\n    constructor();\n    constructor(param);\n    constructor() {}\n }",
       );
     });
+
+    it("should read an inherited private-field getter once without mutating a frozen structure", () => {
+      const { overload, getReadCount } = getFrozenGetterOverload();
+      const { firstChild } = getInfoFromText<ClassDeclaration>("class C {\n    private constructor() {}\n}");
+      (firstChild.getMembers()[0] as ConstructorDeclaration).addOverload(overload);
+      expect(firstChild.getText()).to.equal("class C {\n    private constructor(param);\n    private constructor() {}\n}");
+      expect(getReadCount()).to.equal(1);
+      expect(Object.keys(overload)).to.deep.equal([]);
+    });
+  });
+
+  describe("overloads in a structure", () => {
+    it("should read an inherited private-field getter once without mutating a frozen structure", () => {
+      const { overload, getReadCount } = getFrozenGetterOverload();
+      const { firstChild } = getInfoFromText<ClassDeclaration>("class C {}");
+      firstChild.addConstructor({ scope: Scope.Private, overloads: [overload] });
+      expect(firstChild.getText()).to.equal("class C {\n    private constructor(param);\n    private constructor() {\n    }\n}");
+      expect(getReadCount()).to.equal(1);
+      expect(Object.keys(overload)).to.deep.equal([]);
+    });
   });
 
   describe(nameof<ConstructorDeclaration>("remove"), () => {
@@ -249,3 +269,16 @@ class T {
     });
   });
 });
+
+function getFrozenGetterOverload() {
+  let readCount = 0;
+  class Overload {
+    #parameters = [{ name: "param" }];
+
+    get parameters() {
+      readCount++;
+      return this.#parameters;
+    }
+  }
+  return { overload: Object.freeze(new Overload()), getReadCount: () => readCount };
+}

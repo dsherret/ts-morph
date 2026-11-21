@@ -1,8 +1,7 @@
-import { ObjectUtils } from "@ts-morph/common";
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { StructurePrinterFactory } from "../../factories";
 import { MethodDeclarationOverloadStructure, MethodDeclarationStructure, OptionalKind } from "../../structures";
-import { setValueIfUndefined } from "../../utils";
+import { withStructureDefaults } from "../../utils";
 import { NodePrinter } from "../NodePrinter";
 
 export class MethodDeclarationStructurePrinter extends NodePrinter<OptionalKind<MethodDeclarationStructure>> {
@@ -44,18 +43,17 @@ export class MethodDeclarationStructurePrinter extends NodePrinter<OptionalKind<
 
     function getOverloadStructures() {
       // all the overloads need to have the same scope as the implementation
-      const overloads = ObjectUtils.clone(structure.overloads);
+      const overloads = structure.overloads;
       if (overloads == null || overloads.length === 0)
         return;
 
-      for (const overload of overloads) {
-        setValueIfUndefined(overload, "scope", structure.scope);
-        setValueIfUndefined(overload, "isStatic", structure.isStatic); // allow people to do stupid things
-        setValueIfUndefined(overload, "isAbstract", structure.isAbstract);
-        setValueIfUndefined(overload, "hasQuestionToken", structure.hasQuestionToken);
-      }
-
-      return overloads;
+      const defaults = {
+        scope: structure.scope,
+        isStatic: structure.isStatic, // allow people to do stupid things
+        isAbstract: structure.isAbstract,
+        hasQuestionToken: structure.hasQuestionToken,
+      };
+      return overloads.map(overload => withStructureDefaults(overload, defaults));
     }
   }
 

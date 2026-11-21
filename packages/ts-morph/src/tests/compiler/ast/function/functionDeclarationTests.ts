@@ -131,6 +131,39 @@ describe("FunctionDeclaration", () => {
         "function identifier();\nfunction identifier(): number;\nfunction identifier() {}\n",
       );
     });
+
+    it("should read an inherited private-field getter once without mutating a frozen structure", () => {
+      const { overload, getReadCount } = getFrozenGetterOverload();
+      const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>("export function f() {}\n");
+      firstChild.addOverload(overload);
+      expect(sourceFile.getFullText()).to.equal("export function f(): string;\nexport function f() {}\n");
+      expect(getReadCount()).to.equal(1);
+      expect(Object.keys(overload)).to.deep.equal([]);
+    });
+  });
+
+  describe("overloads in a structure", () => {
+    it("should read an inherited private-field getter once without mutating a frozen structure", () => {
+      const { overload, getReadCount } = getFrozenGetterOverload();
+      const { sourceFile } = getInfoFromText("");
+      sourceFile.addFunction({ name: "f", isExported: true, overloads: [overload] });
+      expect(sourceFile.getFullText()).to.equal("export function f(): string;\nexport function f() {\n}\n");
+      expect(getReadCount()).to.equal(1);
+      expect(Object.keys(overload)).to.deep.equal([]);
+    });
+
+    it("should read a getter based name once so overloads and the implementation match", () => {
+      let count = 0;
+      const structure = {
+        get name() {
+          return `f${count++}`;
+        },
+        overloads: [{}],
+      };
+      const { sourceFile } = getInfoFromText("");
+      sourceFile.addFunction(structure);
+      expect(sourceFile.getFullText()).to.equal("function f0();\nfunction f0() {\n}\n");
+    });
   });
 
   describe(nameof<FunctionDeclaration>("remove"), () => {
@@ -312,3 +345,16 @@ export default async function *test<T>(param): string {
     });
   });
 });
+
+function getFrozenGetterOverload() {
+  let readCount = 0;
+  class Overload {
+    #returnType = "string";
+
+    get returnType() {
+      readCount++;
+      return this.#returnType;
+    }
+  }
+  return { overload: Object.freeze(new Overload()), getReadCount: () => readCount };
+}

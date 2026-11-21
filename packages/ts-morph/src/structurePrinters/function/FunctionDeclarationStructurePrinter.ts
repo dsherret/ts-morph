@@ -1,8 +1,8 @@
-import { ObjectUtils, StringUtils } from "@ts-morph/common";
+import { StringUtils } from "@ts-morph/common";
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { StructurePrinterFactory } from "../../factories";
 import { FunctionDeclarationOverloadStructure, FunctionDeclarationStructure, OptionalKind } from "../../structures";
-import { setValueIfUndefined } from "../../utils";
+import { withStructureDefaults } from "../../utils";
 import { NodePrinter } from "../NodePrinter";
 
 export class FunctionDeclarationStructurePrinter extends NodePrinter<OptionalKind<FunctionDeclarationStructure>> {
@@ -32,8 +32,10 @@ export class FunctionDeclarationStructurePrinter extends NodePrinter<OptionalKin
   }
 
   protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<FunctionDeclarationStructure>) {
-    this.#printOverloads(writer, structure.name, getOverloadStructures());
-    this.#printHeader(writer, structure.name, structure);
+    // read once because the name may be a getter that returns different values
+    const name = structure.name;
+    this.#printOverloads(writer, name, getOverloadStructures());
+    this.#printHeader(writer, name, structure);
     if (this.#options.isAmbient || structure.hasDeclareKeyword)
       writer.write(";");
     else {
@@ -44,17 +46,16 @@ export class FunctionDeclarationStructurePrinter extends NodePrinter<OptionalKin
 
     function getOverloadStructures() {
       // all the overloads need to have similar properties as the implementation
-      const overloads = ObjectUtils.clone(structure.overloads);
+      const overloads = structure.overloads;
       if (overloads == null || overloads.length === 0)
         return;
 
-      for (const overload of overloads) {
-        setValueIfUndefined(overload, "hasDeclareKeyword", structure.hasDeclareKeyword);
-        setValueIfUndefined(overload, "isExported", structure.isExported);
-        setValueIfUndefined(overload, "isDefaultExport", structure.isDefaultExport);
-      }
-
-      return overloads;
+      const defaults = {
+        hasDeclareKeyword: structure.hasDeclareKeyword,
+        isExported: structure.isExported,
+        isDefaultExport: structure.isDefaultExport,
+      };
+      return overloads.map(overload => withStructureDefaults(overload, defaults));
     }
   }
 
