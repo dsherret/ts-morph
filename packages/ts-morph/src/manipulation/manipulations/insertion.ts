@@ -90,6 +90,15 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
   const { currentNodes, insertIndex, parent } = opts;
   const previousNode = currentNodes[insertIndex - 1] as Node | undefined;
   const previousNonCommentNode = getPreviousNonCommentNode();
+  if (previousNode != null && previousNonCommentNode != null && previousNode !== previousNonCommentNode) {
+    const comma = getCommaAfterNode(previousNonCommentNode);
+    // a comma after the comment can't be kept in place, so that uncommon case is rewritten below
+    if (comma == null || comma.getStart() < previousNode.getEnd()) {
+      insertAfterCommentNode(opts, previousNode, previousNonCommentNode, comma != null);
+      return;
+    }
+  }
+
   const nextNode = currentNodes[insertIndex] as Node | undefined;
   const nextNonCommentNode = getNextNonCommentNode();
   const separator = opts.useNewLines ? parent._context.manipulationSettings.getNewLineKindAsString() : " ";
@@ -168,21 +177,21 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
       if (previousNonCommentNode === previousNode)
         appendNodeTrailingCommentRanges(previousNodeNextSibling);
       else
-        appendCommentNodeTexts(previousNodeNextSibling);
+        appendCommentNodeTexts();
     } else {
       text += ",";
       if (previousNonCommentNode === previousNode)
         appendNodeTrailingCommentRanges(previousNonCommentNode);
       else
-        appendCommentNodeTexts(previousNonCommentNode);
+        appendCommentNodeTexts();
     }
 
     prependSeparator();
     newText = text + newText;
 
-    function appendCommentNodeTexts(startNode: Node) {
+    function appendCommentNodeTexts() {
       const lastCommentRangeEnd = getLastCommentRangeEnd(previousNode!) || previousNode!.getEnd();
-      text += originalSourceFileText.substring(startNode.getEnd(), lastCommentRangeEnd);
+      text += originalSourceFileText.substring(previousNonCommentNode!.getEnd(), lastCommentRangeEnd);
     }
 
     function appendNodeTrailingCommentRanges(node: Node) {
@@ -388,4 +397,56 @@ export function insertIntoBracesOrSourceFileWithGetChildrenWithComments(opts: In
     // get the previous member in order to get the implementation signature + 1
     return startChildren[index - 1].getChildIndex() + 1;
   }
+}
+
+function insertAfterCommentNode(
+  opts: InsertIntoCommaSeparatedNodesOptions,
+  commentNode: Node,
+  previousNonCommentNode: Node,
+  hasComma: boolean,
+) {
+  const { currentNodes, insertIndex, parent } = opts;
+
+  // add the comma first because the new text could otherwise parse as a continuation of the previous node (ex. `1\n[k]`)
+  if (!hasComma)
+    insertIntoParentTextRange({ insertPos: previousNonCommentNode.getEnd(), newText: ",", parent });
+
+  const nextNode = currentNodes[insertIndex] as Node | undefined;
+  const hasNextNonCommentNode = currentNodes.slice(insertIndex).some(node => !Node.isCommentNode(node));
+  const newLine = parent._context.manipulationSettings.getNewLineKindAsString();
+  const insertPos = getTrailingCommentsEnd(commentNode);
+  const parentNextSibling = parent.getNextSibling();
+  const followingStart = nextNode?.getStart(true) ?? parentNextSibling?.getStart(true) ?? parent.getEnd();
+  const replaceEnd = Math.max(insertPos, followingStart);
+  const keepsFollowingText = parent._sourceFile.getFullText().substring(insertPos, replaceEnd).trim().length > 0;
+
+  let newText = opts.newText;
+  if (!StringUtils.startsWithNewLine(newText))
+    newText = newLine + newText;
+  if (hasNextNonCommentNode || opts.useTrailingCommas)
+    newText = appendCommaToText(newText);
+  if (keepsFollowingText)
+    newText = newText.trimEnd();
+  else {
+    if (!StringUtils.endsWithNewLine(newText))
+      newText += newLine;
+    newText += nextNode != null ? parent.getParentOrThrow().getChildIndentationText() : parent.getParentOrThrow().getIndentationText();
+  }
+
+  insertIntoParentTextRange({
+    insertPos,
+    newText,
+    parent,
+    replacing: { textLength: keepsFollowingText ? 0 : replaceEnd - insertPos },
+  });
+}
+
+function getCommaAfterNode(node: Node) {
+  const nextToken = node.getNextSiblings().find(sibling => !Node.isCommentNode(sibling));
+  return nextToken?.getKind() === SyntaxKind.CommaToken ? nextToken : undefined;
+}
+
+function getTrailingCommentsEnd(node: Node) {
+  const commentRanges = node.getTrailingCommentRanges();
+  return commentRanges[commentRanges.length - 1]?.getEnd() ?? node.getEnd();
 }

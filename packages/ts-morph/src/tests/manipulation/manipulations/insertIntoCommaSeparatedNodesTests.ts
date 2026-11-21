@@ -221,6 +221,15 @@ describe("insertIntoCommaSeparatedNodes", () => {
       );
     });
 
+    it("should add a missing comma before appending a computed property after a comment", () => {
+      doTest(
+        "const t = {\n    prop1: 1\n    // test\n};",
+        2,
+        [{ name: "[k]", initializer: "2" }],
+        "const t = {\n    prop1: 1,\n    // test\n    [k]: 2\n};",
+      );
+    });
+
     it("should take into account comments in the index", () => {
       doTest(
         "const t = {\n    // test\n    prop1: 5\n};",

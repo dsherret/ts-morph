@@ -245,6 +245,22 @@ describe("EnumDeclaration", () => {
       doTest("enum MyEnum {\n    member1\n}\n", { name: "member2" }, "enum MyEnum {\n    member1,\n    member2\n}\n");
     });
 
+    for (
+      const [description, startCode, expectedCode] of [
+        ["with a comma", "enum E {\n  a,\n  // end\n}", "enum E {\n  a,\n  // end\n    x\n}"],
+        ["without a comma", "enum E {\n  a\n  // end\n}", "enum E {\n  a,\n  // end\n    x\n}"],
+      ]
+    ) {
+      it(`should keep a held trailing comment node valid ${description}`, () => {
+        const { firstChild, sourceFile } = getInfoFromText<EnumDeclaration>(startCode);
+        const comment = firstChild.getMembersWithComments()[1];
+        firstChild.addMember({ name: "x" });
+        expect(sourceFile.getFullText()).to.equal(expectedCode);
+        expect(comment.wasForgotten()).to.equal(false);
+        expect(comment.getText()).to.equal("// end");
+      });
+    }
+
     for (const { description, startCode, expectedCode } of appendWithCommentsTestCases) {
       it(`should append repeatedly after ${description} without changing existing values`, () => {
         const { firstChild, sourceFile, project } = getInfoFromText<EnumDeclaration>(startCode);
