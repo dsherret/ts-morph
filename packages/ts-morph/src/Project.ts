@@ -595,6 +595,22 @@ export class Project {
   }
 
   /**
+   * Disposes the project, releasing the internal `ts.LanguageService` and the
+   * compiler caches it holds. The TypeScript language service keeps type
+   * resolution tables, symbol maps, and parsed ASTs in internal data
+   * structures that the JS garbage collector cannot reclaim, so a `Project`
+   * that is simply dropped leaks memory — visible when many `Project` instances
+   * are created and discarded (pools, batch processing, serverless handlers).
+   * Call `dispose()` once a `Project` is no longer needed (#1666).
+   *
+   * Using the project (or its language service / source files / program) after
+   * disposal is undefined.
+   */
+  dispose(): void {
+    this._context.languageService.dispose();
+  }
+
+  /**
    * Gets the program.
    */
   getProgram(): Program {
