@@ -781,6 +781,18 @@ describe("Project", () => {
   });
 
   describe(nameof<Project>("addSourceFilesAtPaths"), () => {
+    it("should add descendant directories whose name differs from node_modules only by case", () => {
+      const project = new Project({ useInMemoryFileSystem: true });
+      const fs = project.getFileSystem();
+      fs.writeFileSync("/p/main.ts", "");
+      fs.mkdirSync("/p/Node_Modules/keep");
+      fs.mkdirSync("/p/node_modules/skip");
+
+      project.addSourceFilesAtPaths("/p/*.ts");
+      expect(project.getDirectory("/p/Node_Modules/keep")).to.not.be.undefined;
+      expect(project.getDirectory("/p/node_modules/skip")).to.be.undefined;
+    });
+
     it("should add descendants of an explicitly matched node_modules directory", () => {
       const project = new Project({ useInMemoryFileSystem: true });
       const fs = project.getFileSystem();

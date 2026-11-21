@@ -76,7 +76,7 @@ export class DirectoryCoordinator {
     // A glob should only add dependency directories when it matches files inside them.
     const traversedDirectories = new Set<StandardizedFilePath>();
     const includeDescendant = (dirPath: StandardizedFilePath) => {
-      if (FileUtils.getBaseName(dirPath).toLowerCase() === "node_modules")
+      if (FileUtils.getBaseName(dirPath) === "node_modules")
         return false;
       traversedDirectories.add(dirPath);
       return true;
