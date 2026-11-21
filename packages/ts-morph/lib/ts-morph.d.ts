@@ -10244,6 +10244,8 @@ export declare class ManipulationSettingsContainer extends SettingsContainer<Man
    * @param settings - Settings to set.
    */
   set(settings: Partial<ManipulationSettings>): void;
+  /** Resets the settings to the default. */
+  reset(): void;
 }
 
 export type StatementStructures = ClassDeclarationStructure | EnumDeclarationStructure | FunctionDeclarationStructure | InterfaceDeclarationStructure | ModuleDeclarationStructure | TypeAliasDeclarationStructure | ImportDeclarationStructure | ExportDeclarationStructure | ExportAssignmentStructure | VariableStatementStructure;

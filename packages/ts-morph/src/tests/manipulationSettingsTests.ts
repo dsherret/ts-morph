@@ -27,6 +27,28 @@ describe("ManipulationSettingsContainer", () => {
     expect(settings.get()).to.deep.equal(settingsSettings);
   }
 
+  it("should clear the derived caches on reset", () => {
+    const settings = new ManipulationSettingsContainer();
+    settings.set({ indentationText: IndentationText.TwoSpaces, quoteKind: QuoteKind.Single });
+    expect(settings.getEditorSettings().indentSize).to.equal(2);
+    expect(settings.getFormatCodeSettings().indentSize).to.equal(2);
+    expect(settings.getUserPreferences().quotePreference).to.equal("single");
+
+    let modifiedCount = 0;
+    let indentSizeInListener: number | undefined;
+    settings.onModified(() => {
+      modifiedCount++;
+      indentSizeInListener = settings.getEditorSettings().indentSize;
+    });
+    settings.reset();
+
+    expect(modifiedCount).to.equal(1);
+    expect(indentSizeInListener).to.equal(4);
+    expect(settings.getEditorSettings().indentSize).to.equal(4);
+    expect(settings.getFormatCodeSettings().indentSize).to.equal(4);
+    expect(settings.getUserPreferences().quotePreference).to.equal("double");
+  });
+
   it("should have the correct defaults", () => {
     const settings = new ManipulationSettingsContainer();
     checkSettings(settings, {

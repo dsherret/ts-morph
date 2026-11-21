@@ -166,6 +166,17 @@ export class ManipulationSettingsContainer extends SettingsContainer<Manipulatio
   }
 
   /**
+   * Resets the settings to the default.
+   */
+  reset() {
+    // clear first so that `onModified` listeners don't read stale values
+    this.#editorSettings = undefined;
+    this.#formatCodeSettings = undefined;
+    this.#userPreferences = undefined;
+    super.reset();
+  }
+
+  /**
    * @internal
    * Gets the indent size as represented in spaces.
    */
