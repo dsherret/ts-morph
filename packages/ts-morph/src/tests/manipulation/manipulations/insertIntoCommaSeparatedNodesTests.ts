@@ -155,6 +155,19 @@ describe("insertIntoCommaSeparatedNodes", () => {
       expect(enumDec.getMembersWithComments()[1]).to.equal(comment);
     });
 
+    it("should keep held members attached when the insert fails after they were moved", () => {
+      const text = "enum E {\n  a = 1\n  // c\n  /* d */\n}";
+      const { sourceFile } = getInfoFromText(text);
+      const enumDec = sourceFile.getEnumOrThrow("E");
+      const members = enumDec.getMembersWithComments();
+      const initializer = enumDec.getMemberOrThrow("a").getInitializerOrThrow();
+      expect(() => enumDec.insertMember(2, "z /*")).to.throw();
+      expect(sourceFile.getFullText()).to.equal(text);
+      expect(enumDec.getMembersWithComments()).to.deep.equal(members);
+      expect(enumDec.getMemberOrThrow("a").getInitializerOrThrow()).to.equal(initializer);
+      expect(members.map(member => member.getText())).to.deep.equal(["a = 1", "// c", "/* d */"]);
+    });
+
     it("should keep held comment nodes in an enum when a comma follows them", () => {
       const { sourceFile } = getInfoFromText("enum E {\n  a\n  // c\n  /* d */\n  ,\n}");
       const enumDec = sourceFile.getEnumOrThrow("E");

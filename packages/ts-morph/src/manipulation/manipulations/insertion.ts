@@ -496,7 +496,8 @@ function insertKeepingCommentNodes(insertOpts: InsertIntoParentTextRangeOptions,
 
   const { insertPos, parent } = insertOpts;
   const commentTexts = commentNodes.map(node => node.getText());
-  const originalCompilerNodes = commentNodes.map(node => node.compilerNode);
+  const descendants = Array.from(parent._getDescendantsIterator());
+  const originalCompilerNodes = descendants.map(node => node.compilerNode);
 
   try {
     insertIntoParentTextRange({
@@ -511,8 +512,8 @@ function insertKeepingCommentNodes(insertOpts: InsertIntoParentTextRangeOptions,
       },
     });
   } catch (err) {
-    // the source file keeps its old tree on failure, so point the mapped comments back at it
-    commentNodes.forEach((node, i) => {
+    // the source file keeps its old tree on failure, so point the moved nodes back at it
+    descendants.forEach((node, i) => {
       if (!node.wasForgotten() && node.compilerNode !== originalCompilerNodes[i])
         parent._context.compilerFactory.replaceCompilerNode(node, originalCompilerNodes[i]);
     });
