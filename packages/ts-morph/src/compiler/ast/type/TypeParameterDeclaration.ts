@@ -155,8 +155,12 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
     const parentSyntaxList = this.getParentSyntaxListOrThrow();
     const typeParameters = parentSyntaxList.getChildrenOfKind(SyntaxKind.TypeParameter);
 
+    const remaining = typeParameters.find(p => p !== this);
+
     if (typeParameters.length === 1)
       removeAllTypeParameters();
+    else if (typeParameters.length === 2 && requiresCommaWhenAlone(remaining!))
+      removeKeepingTrailingComma(this, remaining!);
     else
       removeCommaSeparatedChild(this);
 
@@ -221,5 +225,42 @@ function removeConstraintOrDefault(nodeToRemove: Node | undefined, siblingKind: 
   removeChildren({
     children: [nodeToRemove.getPreviousSiblingIfKindOrThrow(siblingKind), nodeToRemove],
     removePrecedingSpaces: true,
+  });
+}
+
+// a lone unconstrained type parameter without a default on an arrow function parses as jsx
+function requiresCommaWhenAlone(typeParameter: TypeParameterDeclaration) {
+  return Node.isArrowFunction(typeParameter.getParent())
+    && typeParameter._sourceFile.getLanguageVariant() === ts.LanguageVariant.JSX
+    && typeParameter.getConstraint() == null
+    && typeParameter.getDefault() == null;
+}
+
+function removeKeepingTrailingComma(toRemove: TypeParameterDeclaration, remaining: TypeParameterDeclaration) {
+  if (toRemove.getPos() < remaining.getPos()) {
+    if (remaining.getNextSiblingIfKind(SyntaxKind.CommaToken) == null) {
+      insertIntoParentTextRange({
+        parent: remaining.getParentSyntaxListOrThrow(),
+        insertPos: remaining.getEnd(),
+        newText: ",",
+      });
+    }
+    const comma = toRemove.getNextSiblingIfKindOrThrow(SyntaxKind.CommaToken);
+    const textAfterComma = toRemove._sourceFile.getFullText().substring(comma.getEnd()).trimStart();
+    removeChildren({
+      children: [toRemove, comma],
+      removeFollowingSpaces: true,
+      removeFollowingNewLines: true,
+      // `<//` scans as a jsx closing tag
+      replaceTrivia: textAfterComma.startsWith("//") ? " " : "",
+    });
+    return;
+  }
+
+  const trailingComma = toRemove.getNextSiblingIfKind(SyntaxKind.CommaToken);
+  removeChildren({
+    children: trailingComma == null ? [toRemove] : [toRemove, trailingComma],
+    // start after the comma so a line comment can't swallow the closing `>`
+    customRemovalPos: toRemove.getPreviousSiblingIfKindOrThrow(SyntaxKind.CommaToken).getEnd(),
   });
 }
