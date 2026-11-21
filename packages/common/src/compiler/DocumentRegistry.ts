@@ -1,6 +1,6 @@
 import { errors } from "../errors";
 import { StandardizedFilePath, TransactionalFileSystem } from "../fileSystem";
-import { ts } from "../typescript";
+import { getSetExternalModuleIndicator, ts } from "../typescript";
 import { createCompilerSourceFile } from "./createCompilerSourceFile";
 
 /**
@@ -138,7 +138,11 @@ export class DocumentRegistry implements ts.DocumentRegistry {
     version: string,
     scriptKind: ts.ScriptKind | undefined,
   ): ts.SourceFile {
-    const newSourceFile = createCompilerSourceFile(fileName, scriptSnapshot, compilationSettings.target, version, true, scriptKind);
+    const sourceFileOptions: ts.CreateSourceFileOptions = {
+      languageVersion: compilationSettings.target ?? ts.ScriptTarget.Latest,
+      setExternalModuleIndicator: getSetExternalModuleIndicator(compilationSettings),
+    };
+    const newSourceFile = createCompilerSourceFile(fileName, scriptSnapshot, sourceFileOptions, version, true, scriptKind);
     this.#sourceFileCacheByFilePath.set(fileName, newSourceFile);
     return newSourceFile;
   }
