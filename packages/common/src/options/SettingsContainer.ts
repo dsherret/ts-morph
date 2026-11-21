@@ -13,7 +13,7 @@ export abstract class SettingsContainer<T extends object> {
    */
   constructor(defaultSettings: T) {
     this.#defaultSettings = Object.assign({}, defaultSettings);
-    this._settings = defaultSettings;
+    this._settings = Object.assign({}, defaultSettings);
   }
 
   /**
