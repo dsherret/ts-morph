@@ -12,15 +12,15 @@ export abstract class SettingsContainer<T extends object> {
    * @param defaultSettings - The settings to use by default.
    */
   constructor(defaultSettings: T) {
-    this.#defaultSettings = Object.assign({}, defaultSettings);
-    this._settings = Object.assign({}, defaultSettings);
+    this.#defaultSettings = cloneSettings(defaultSettings);
+    this._settings = cloneSettings(defaultSettings);
   }
 
   /**
    * Resets the settings to the default.
    */
   reset() {
-    this._settings = Object.assign({}, this.#defaultSettings);
+    this._settings = cloneSettings(this.#defaultSettings);
     this.#fireModified();
   }
 
@@ -54,4 +54,38 @@ export abstract class SettingsContainer<T extends object> {
     if (this.#modifiedEventContainer != null)
       this.#modifiedEventContainer.fire(undefined);
   }
+}
+
+function cloneSettings<T extends object>(settings: T): T {
+  const clones = new Map<object, unknown>();
+  const result = Object.assign({}, settings) as Record<PropertyKey, unknown>;
+  for (const key of Reflect.ownKeys(result))
+    result[key] = cloneValue(result[key], clones);
+  return result as T;
+}
+
+// only arrays and plain objects are cloned because values like `configFile` are shared class instances
+function cloneValue(value: unknown, clones: Map<object, unknown>): unknown {
+  if (!isPlainArrayOrObject(value) || !Object.isExtensible(value))
+    return value;
+  if (clones.has(value))
+    return clones.get(value);
+
+  const result = Array.isArray(value) ? [] : Object.create(Object.getPrototypeOf(value));
+  clones.set(value, result);
+  for (const key of Reflect.ownKeys(value)) {
+    const descriptor = Object.getOwnPropertyDescriptor(value, key)!;
+    if ("value" in descriptor)
+      descriptor.value = cloneValue(descriptor.value, clones);
+    // define rather than assign so an own `__proto__` key stays a normal property
+    Object.defineProperty(result, key, descriptor);
+  }
+  return result;
+}
+
+function isPlainArrayOrObject(value: unknown): value is object {
+  if (typeof value !== "object" || value === null)
+    return false;
+  const prototype = Object.getPrototypeOf(value);
+  return prototype === Array.prototype || prototype === Object.prototype || prototype === null;
 }
