@@ -277,6 +277,15 @@ describe("SourceFile", () => {
       expect(otherFile.getFullText()).to.equal(`import {MyInterface} from "./dir/NewFile";\nexport interface OtherInterface {}`);
     });
 
+    it("should keep the file extension of module specifiers when moving (issue #1612)", () => {
+      const fileText = `import {OtherInterface} from "./OtherInterface.js";\nexport interface MyInterface {}`;
+      const { sourceFile, project } = getInfoFromText(fileText, { filePath: "/MyInterface.ts" });
+      const otherFile = project.createSourceFile("/OtherInterface.ts", `import {MyInterface} from "./MyInterface.js";\nexport interface OtherInterface {}`);
+      sourceFile.move("/dir/NewFile.ts");
+      expect(sourceFile.getFullText()).to.equal(`import {OtherInterface} from "../OtherInterface.js";\nexport interface MyInterface {}`);
+      expect(otherFile.getFullText()).to.equal(`import {MyInterface} from "./dir/NewFile.js";\nexport interface OtherInterface {}`);
+    });
+
     it("should handle moving two source files to a new directory (issue #314)", () => {
       // there was a bug previously where the moved source file was removed from the list of dirty source files, but it is dirty because
       // the action of moving (removing and adding) to the cache causes the source file to lose its references
