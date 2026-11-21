@@ -107,6 +107,8 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
     parentNextSibling.getKind() === SyntaxKind.CloseBraceToken || parentNextSibling.getKind() === SyntaxKind.CloseBracketToken
   );
   let { newText } = opts;
+  let trailingCommentsEnd = previousNode?.getEnd() ?? 0;
+  let endsWithLineComment = false;
 
   if (previousNode != null) {
     prependCommaAndSeparator();
@@ -118,13 +120,20 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
     else
       appendIndentation();
 
-    const nextEndStart = nextNode == null ? (isContained ? parentNextSibling!.getStart(true) : parent.getEnd()) : nextNode.getStart(true);
+    const nextStart = nextNode == null ? (isContained ? parentNextSibling!.getStart(true) : parent.getEnd()) : nextNode.getStart(true);
+    const nextEndStart = Math.max(nextStart, trailingCommentsEnd);
+    // keep any comments between the copied text and the next node, except
+    // after a comment node where this range may hold the separating comma
+    const keepsFollowingText = (previousNonCommentNode == null || previousNonCommentNode === previousNode)
+      && parent.getSourceFile().getFullText().substring(trailingCommentsEnd, nextEndStart).trim().length > 0;
+    if (keepsFollowingText)
+      newText = newText.trimEnd();
     const insertPos = (previousNonCommentNode || previousNode).getEnd();
     insertIntoParentTextRange({
       insertPos,
       newText,
       parent,
-      replacing: { textLength: nextEndStart - insertPos },
+      replacing: { textLength: (keepsFollowingText ? trailingCommentsEnd : nextEndStart) - insertPos },
     });
   } else if (nextNode != null) {
     if (opts.useNewLines || opts.surroundWithSpaces)
@@ -172,12 +181,13 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
     const previousNodeNextSibling = previousNonCommentNode.getNextSibling();
     let text = "";
     if (previousNodeNextSibling != null && previousNodeNextSibling.getKind() === SyntaxKind.CommaToken) {
-      appendNodeTrailingCommentRanges(previousNonCommentNode);
-      text += ",";
       if (previousNonCommentNode === previousNode)
-        appendNodeTrailingCommentRanges(previousNodeNextSibling);
-      else
+        appendCommaWithSurroundingComments(previousNodeNextSibling);
+      else {
+        appendNodeTrailingCommentRanges(previousNonCommentNode);
+        text += ",";
         appendCommentNodeTexts();
+      }
     } else {
       text += ",";
       if (previousNonCommentNode === previousNode)
@@ -186,8 +196,37 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
         appendCommentNodeTexts();
     }
 
-    prependSeparator();
+    if (endsWithLineComment && !opts.useNewLines && !StringUtils.startsWithNewLine(newText))
+      newText = getNewLineWithChildIndentation() + newText;
+    else
+      prependSeparator();
     newText = text + newText;
+
+    function appendCommaWithSurroundingComments(comma: Node) {
+      const commentsBeforeComma = originalSourceFileText.substring(previousNonCommentNode!.getEnd(), comma.getStart()).trimEnd();
+      const commentRangesBeforeComma = [...previousNonCommentNode!.getTrailingCommentRanges(), ...comma.getLeadingCommentRanges()];
+      const lastCommentBeforeComma = commentRangesBeforeComma[commentRangesBeforeComma.length - 1];
+      const commentRangesAfterComma = comma.getTrailingCommentRanges();
+      const lastCommentAfterComma = commentRangesAfterComma[commentRangesAfterComma.length - 1];
+      const commentsEnd = lastCommentAfterComma?.getEnd() ?? comma.getEnd();
+      const commentsAfterComma = originalSourceFileText.substring(comma.getEnd(), commentsEnd);
+
+      // a comma placed after a line comment would become part of the comment
+      if (lastCommentBeforeComma?.getKind() === SyntaxKind.SingleLineCommentTrivia) {
+        text += "," + commentsBeforeComma;
+        if (commentsAfterComma.length > 0)
+          text += getNewLineWithChildIndentation() + commentsAfterComma.trimStart();
+      } else {
+        text += commentsBeforeComma + "," + commentsAfterComma;
+      }
+
+      trailingCommentsEnd = commentsEnd;
+      endsWithLineComment = (lastCommentAfterComma ?? lastCommentBeforeComma)?.getKind() === SyntaxKind.SingleLineCommentTrivia;
+    }
+
+    function getNewLineWithChildIndentation() {
+      return parent._context.manipulationSettings.getNewLineKindAsString() + parent.getParentOrThrow().getChildIndentationText();
+    }
 
     function appendCommentNodeTexts() {
       const lastCommentRangeEnd = getLastCommentRangeEnd(previousNode!) || previousNode!.getEnd();
@@ -204,6 +243,10 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
     function getLastCommentRangeEnd(node: Node) {
       const commentRanges = node.getTrailingCommentRanges();
       const lastCommentRange = commentRanges[commentRanges.length - 1];
+      if (lastCommentRange != null) {
+        trailingCommentsEnd = lastCommentRange.getEnd();
+        endsWithLineComment = lastCommentRange.getKind() === SyntaxKind.SingleLineCommentTrivia;
+      }
       return lastCommentRange?.getEnd();
     }
   }

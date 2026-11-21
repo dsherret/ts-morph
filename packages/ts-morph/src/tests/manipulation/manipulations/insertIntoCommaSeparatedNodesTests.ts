@@ -7,6 +7,118 @@ import { getInfoFromText, getInfoFromTextWithDescendant } from "../../compiler/t
 
 describe("insertIntoCommaSeparatedNodes", () => {
   // these are high level tests of this function
+  describe("trailing line comments", () => {
+    for (const comma of ["", ","]) {
+      it(`should append an argument after a trailing line comment with comma '${comma}'`, () => {
+        const { sourceFile } = getInfoFromText(`f(\n    1${comma} // one\n);`);
+        const call = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.CallExpression);
+        const added = call.addArgument("2");
+        expect(sourceFile.getFullText()).to.equal("f(\n    1, // one\n    2\n);");
+        expect(call.getArguments().map(arg => arg.getText())).to.deep.equal(["1", "2"]);
+        expect(added).to.equal(call.getArguments()[1]);
+      });
+      it(`should append a parameter after a trailing line comment with comma '${comma}'`, () => {
+        const { sourceFile } = getInfoFromText(`function f(\n    a: number${comma} // one\n) {}`);
+        const func = sourceFile.getFunctionOrThrow("f");
+        const added = func.addParameter({ name: "b", type: "string" });
+        expect(sourceFile.getFullText()).to.equal("function f(\n    a: number, // one\n    b: string\n) {}");
+        expect(func.getParameters().map(param => param.getName())).to.deep.equal(["a", "b"]);
+        expect(added).to.equal(func.getParameters()[1]);
+      });
+      it(`should append a type argument after a trailing line comment with comma '${comma}'`, () => {
+        const { sourceFile } = getInfoFromText(`f<\n    string${comma} // one\n>();`);
+        const call = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.CallExpression);
+        const added = call.addTypeArgument("number");
+        expect(sourceFile.getFullText()).to.equal("f<\n    string, // one\n    number\n>();");
+        expect(call.getTypeArguments().map(arg => arg.getText())).to.deep.equal(["string", "number"]);
+        expect(added).to.equal(call.getTypeArguments()[1]);
+      });
+    }
+
+    it("should insert between arguments after a trailing line comment", () => {
+      const { sourceFile } = getInfoFromText("f(1, // one\n    3);");
+      const call = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.CallExpression);
+      const added = call.insertArgument(1, "2");
+      expect(sourceFile.getFullText()).to.equal("f(1, // one\n    2, 3);");
+      expect(call.getArguments().map(arg => arg.getText())).to.deep.equal(["1", "2", "3"]);
+      expect(added).to.equal(call.getArguments()[1]);
+    });
+
+    for (
+      const [text, expected] of [
+        // comma after a line comment
+        ["f(a // c\n, b);", "f(a, // c\n    x, b);"],
+        ["f(a // c\n /*e*/, b);", "f(a // c\n /*e*/, x, b);"],
+        ["f(a // c\n, /*z*/ b);", "f(a, // c\n    /*z*/ x, b);"],
+        // comments between the copied comment and the next node
+        ["f(a, // c\n // d\n b);", "f(a, // c\n    x,\n // d\n b);"],
+        ["f(a, // c\n /*d*/ b);", "f(a, // c\n    x,\n /*d*/ b);"],
+        ["f(a,\n /*d*/ b);", "f(a, x,\n /*d*/ b);"],
+        // trailing comments of any kind
+        ["f(a /*c*/);", "f(a, /*c*/ x);"],
+        ["f(a /*c*/, /*d*/);", "f(a /*c*/, /*d*/ x);"],
+        ["f(a /*c*/ // d\n);", "f(a, /*c*/ // d\n    x\n);"],
+      ]
+    ) {
+      it(`should keep comments when inserting an argument into ${JSON.stringify(text)}`, () => {
+        const { sourceFile } = getInfoFromText(text);
+        const call = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.CallExpression);
+        call.insertArgument(1, "x");
+        expect(sourceFile.getFullText()).to.equal(expected);
+        expect(sourceFile.getPreEmitDiagnostics().filter(d => d.getCategory() === 1 && d.getCode() < 2000)).to.deep.equal([]);
+      });
+    }
+
+    for (const useTrailingCommas of [false, true]) {
+      it(`should not keep a comma after a comment node when useTrailingCommas is ${useTrailingCommas}`, () => {
+        const { sourceFile, project } = getInfoFromText("const o = {\n  a: 1\n  // mid\n  ,\n};");
+        project.manipulationSettings.set({ useTrailingCommas });
+        const object = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ObjectLiteralExpression);
+        object.addPropertyAssignment({ name: "x", initializer: "1" });
+        expect(sourceFile.getFullText()).to.equal(`const o = {\n  a: 1,\n  // mid\n    x: 1${useTrailingCommas ? "," : ""}\n};`);
+      });
+    }
+
+    it("should move the comma before a line comment for parameters", () => {
+      const { sourceFile } = getInfoFromText("function f(a // c\n, b) {}");
+      sourceFile.getFunctionOrThrow("f").insertParameter(1, { name: "x" });
+      expect(sourceFile.getFullText()).to.equal("function f(a, // c\n    x, b) {}");
+    });
+
+    it("should move the comma before a line comment for type parameters", () => {
+      const { sourceFile } = getInfoFromText("function f<A // c\n, B>() {}");
+      sourceFile.getFunctionOrThrow("f").insertTypeParameter(1, "X");
+      expect(sourceFile.getFullText()).to.equal("function f<A, // c\n    X, B>() {}");
+    });
+
+    it("should move the comma before a line comment for named imports", () => {
+      const { sourceFile } = getInfoFromText(`import { a // c\n, b } from "./m";`);
+      sourceFile.getImportDeclarations()[0].insertNamedImport(1, "x");
+      expect(sourceFile.getFullText()).to.equal(`import { a, // c\n    x, b } from "./m";`);
+    });
+
+    it("should move the comma before a line comment for named exports", () => {
+      const { sourceFile } = getInfoFromText(`export { a // c\n, b } from "./m";`);
+      sourceFile.getExportDeclarations()[0].insertNamedExport(1, "x");
+      expect(sourceFile.getFullText()).to.equal(`export { a, // c\n    x, b } from "./m";`);
+    });
+
+    it("should move the comma before a line comment for implements", () => {
+      const { sourceFile } = getInfoFromText("class C implements A // c\n, B {}");
+      sourceFile.getClassOrThrow("C").insertImplements(1, "X");
+      expect(sourceFile.getFullText()).to.equal("class C implements A, // c\n    X, B {}");
+    });
+
+    it("should append a type parameter after a trailing line comment", () => {
+      const { sourceFile } = getInfoFromText("function f<\n    T // one\n>() {}");
+      const func = sourceFile.getFunctionOrThrow("f");
+      const added = func.addTypeParameter({ name: "U" });
+      expect(sourceFile.getFullText()).to.equal("function f<\n    T, // one\n    U\n>() {}");
+      expect(func.getTypeParameters().map(param => param.getName())).to.deep.equal(["T", "U"]);
+      expect(added).to.equal(func.getTypeParameters()[1]);
+    });
+  });
+
   describe("named imports", () => {
     function doTest(text: string, index: number, writerFunction: WriterFunction, expected: string, surroundWithSpaces = true) {
       const { firstChild } = getInfoFromText<ModuleDeclaration>(`declare namespace Test {\n    import ${text} from "./test";\n}\n`);
