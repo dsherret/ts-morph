@@ -15,6 +15,7 @@ import {
 import { Directory } from "../../../fileSystem";
 import {
   getTextFromTextChanges,
+  insertIntoParentTextRange,
   insertIntoTextRange,
   replaceNodeText,
   replaceSourceFileForFilePathMove,
@@ -925,6 +926,11 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     function applyTextChanges(changes: ReadonlyArray<TextChange>) {
+      if (changes.some(change => change.getSpan().getLength() > 0)) {
+        applyReplacingTextChanges(changes);
+        return;
+      }
+
       // group all the changes by their start position and insert them into the file
       const groups = ArrayUtils.groupBy(changes, change => change.getSpan().getStart());
       let addedLength = 0;
@@ -941,6 +947,54 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
         addedLength += newText.length;
       }
+    }
+
+    function applyReplacingTextChanges(changes: ReadonlyArray<TextChange>) {
+      const fileLength = sourceFile.getFullText().length;
+      const edits = getStatementRanges(changes).map(range => {
+        const newFileText = getTextFromTextChanges(sourceFile, range.changes);
+        return { ...range, newText: newFileText.slice(range.start, newFileText.length - (fileLength - range.end)) };
+      });
+
+      // apply from the end of the file so the earlier positions stay valid
+      for (const { start, end, newText } of edits.reverse()) {
+        if (start === end)
+          insertIntoTextRange({ sourceFile, insertPos: start, newText });
+        else {
+          insertIntoParentTextRange({
+            parent: sourceFile.getChildSyntaxListOrThrow(),
+            insertPos: start,
+            newText,
+            replacing: { textLength: end - start },
+          });
+        }
+      }
+    }
+
+    // widens changes within a statement to the whole statement so that other statements' nodes stay valid
+    function getStatementRanges(changes: ReadonlyArray<TextChange>) {
+      const ranges: { start: number; end: number; changes: TextChange[] }[] = [];
+      for (const change of changes) {
+        const span = change.getSpan();
+        let start = span.getStart();
+        let end = span.getEnd();
+        for (const statement of sourceFile.compilerNode.statements) {
+          const statementStart = statement.getStart(sourceFile.compilerNode);
+          if (statementStart < span.getEnd() && statement.end > span.getStart()) {
+            start = Math.min(start, statementStart);
+            end = Math.max(end, statement.end);
+          }
+        }
+
+        const lastRange = ranges[ranges.length - 1];
+        if (lastRange != null && (start < lastRange.end || start === lastRange.start)) {
+          lastRange.end = Math.max(lastRange.end, end);
+          lastRange.changes.push(change);
+        } else {
+          ranges.push({ start, end, changes: [change] });
+        }
+      }
+      return ranges;
     }
   }
 

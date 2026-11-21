@@ -1494,6 +1494,110 @@ function myFunction(param: MyClass) {
       expect(w.wasForgotten()).to.be.false;
       expect(i.wasForgotten()).to.be.false;
     });
+
+    describe("text changes that replace text", () => {
+      const bazFile = { path: "/baz.ts", text: "export const qux = 1;\nexport type Qux = number;" };
+
+      function doReplacementTest(startText: string, expectedText: string, wrapDescendants: boolean) {
+        const { sourceFile, project } = getInfoFromText(startText, { filePath: "/main.ts" });
+        project.createSourceFile(bazFile.path, bazFile.text);
+        if (wrapDescendants)
+          sourceFile.getDescendants();
+        sourceFile.fixMissingImports();
+        expect(sourceFile.getFullText()).to.equal(expectedText);
+        expect(sourceFile.getDescendants().length).to.be.greaterThan(0);
+      }
+
+      for (const wrapDescendants of [false, true]) {
+        const suffix = wrapDescendants ? "wrapped" : "not wrapped";
+
+        it(`should remove the type keyword from a type only import when descendants are ${suffix}`, () => {
+          doReplacementTest(
+            `import type { Qux } from "./baz";\nlet a: Qux; console.log(qux);`,
+            `import { qux, type Qux } from "./baz";\nlet a: Qux; console.log(qux);`,
+            wrapDescendants,
+          );
+        });
+
+        it(`should replace empty named imports when descendants are ${suffix}`, () => {
+          doReplacementTest(
+            `import {} from "./baz";\nconsole.log(qux);`,
+            `import { qux } from "./baz";\nconsole.log(qux);`,
+            wrapDescendants,
+          );
+        });
+      }
+
+      it("should handle a replacement along with new import declarations", () => {
+        const { sourceFile, project } = getInfoFromText(
+          `import {} from "./baz";\nimport { b } from "./mid";\nconsole.log(qux, b, c, z);`,
+          { filePath: "/main.ts" },
+        );
+        project.createSourceFile(bazFile.path, bazFile.text);
+        project.createSourceFile("/mid.ts", "export const b = 1; export const c = 2;");
+        project.createSourceFile("/zed.ts", "export const z = 1;");
+        sourceFile.getDescendants();
+        const midImport = sourceFile.getImportDeclarations()[1];
+
+        sourceFile.fixMissingImports();
+
+        expect(sourceFile.getFullText()).to.equal(
+          `import { qux } from "./baz";\nimport { b, c } from "./mid";\nimport { z } from "./zed";\nconsole.log(qux, b, c, z);`,
+        );
+        expect(midImport.wasForgotten()).to.be.false;
+      });
+
+      it("should handle a replacement along with an insert within another statement", () => {
+        const { sourceFile, project } = getInfoFromText(
+          `import {} from "./mid";\nimport type * as N from "./baz";\nconsole.log(qux, b);`,
+          { filePath: "/main.ts" },
+        );
+        project.createSourceFile(bazFile.path, bazFile.text);
+        project.createSourceFile("/mid.ts", "export const b = 1;");
+        sourceFile.getDescendants();
+
+        sourceFile.fixMissingImports();
+
+        expect(sourceFile.getFullText()).to.contain(`import { b } from "./mid";`);
+        expect(sourceFile.getFullText()).to.contain("N.qux");
+        expect(sourceFile.getDescendants().length).to.be.greaterThan(0);
+      });
+
+      it("should keep wrapped statements between two replaced statements valid", () => {
+        const { sourceFile, project } = getInfoFromText(
+          `import {} from "./baz";\n// keep\nconst k = 1;\nimport {} from "./zed";\nconsole.log(qux, zed);`,
+          { filePath: "/main.ts" },
+        );
+        project.createSourceFile(bazFile.path, bazFile.text);
+        project.createSourceFile("/zed.ts", "export const zed = 1;");
+        const variableStatement = sourceFile.getVariableStatementOrThrow(s => s.getText().includes("k"));
+        const descendants = variableStatement.getDescendants();
+
+        sourceFile.fixMissingImports();
+
+        expect(sourceFile.getFullText()).to.equal(
+          `import { qux } from "./baz";\n// keep\nconst k = 1;\nimport { zed } from "./zed";\nconsole.log(qux, zed);`,
+        );
+        expect(variableStatement.wasForgotten()).to.be.false;
+        expect(variableStatement.getDescendants()).to.have.ordered.members(descendants);
+      });
+
+      it("should keep wrapped nodes outside the replaced statement valid", () => {
+        const { sourceFile, project } = getInfoFromText(
+          `import type { Qux } from "./baz";\nlet a: Qux; console.log(qux);`,
+          { filePath: "/main.ts" },
+        );
+        project.createSourceFile(bazFile.path, bazFile.text);
+        const statement = sourceFile.getStatements()[1];
+        const descendants = statement.getDescendants();
+
+        sourceFile.fixMissingImports();
+
+        expect(statement.wasForgotten()).to.be.false;
+        expect(statement.getText()).to.equal("let a: Qux;");
+        expect(statement.getDescendants()).to.have.ordered.members(descendants);
+      });
+    });
   });
 
   describe(nameof<SourceFile>("getImportStringLiterals"), () => {
