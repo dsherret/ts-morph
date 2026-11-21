@@ -1077,8 +1077,16 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
 function updateStringLiteralReferences(nodeReferences: ReadonlyArray<[StringLiteral, SourceFile]>) {
   for (const [stringLiteral, sourceFile] of nodeReferences) {
-    if (ModuleUtils.isModuleSpecifierRelative(stringLiteral.getLiteralText()))
-      stringLiteral.setLiteralValue(stringLiteral._sourceFile.getRelativePathAsModuleSpecifierTo(sourceFile));
+    const literalText = stringLiteral.getLiteralText();
+    if (!ModuleUtils.isModuleSpecifierRelative(literalText))
+      continue;
+    let moduleSpecifier = stringLiteral._sourceFile.getRelativePathAsModuleSpecifierTo(sourceFile);
+    // keep an explicit extension (ex. ".js" when using node16 module resolution) if the specifier still points at the file
+    const extension = /\.[cm]?[jt]sx?$/i.exec(literalText)?.[0];
+    const fileName = FileUtils.getBaseName(sourceFile.getFilePath()).replace(/((\.d\.ts$)|(\.[^/.]+$))/i, "");
+    if (extension != null && moduleSpecifier.endsWith("/" + fileName))
+      moduleSpecifier += extension;
+    stringLiteral.setLiteralValue(moduleSpecifier);
   }
 }
 
