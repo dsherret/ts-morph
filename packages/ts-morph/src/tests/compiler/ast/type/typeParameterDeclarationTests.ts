@@ -1,4 +1,4 @@
-import { nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, FunctionDeclaration, TypeParameterDeclaration, TypeParameterVariance } from "../../../../compiler";
 import { StructureKind, TypeParameterDeclarationStructure } from "../../../../structures";
@@ -269,6 +269,87 @@ describe("TypeParameterDeclaration", () => {
 
     it("should remove when it has a constraint", () => {
       doTest("function func<T extends Other, U>() {}", 0, "function func<U>() {}");
+    });
+
+    it("should not keep a comma on an arrow function in a ts file", () => {
+      for (const [index, expectedText] of [[0, "const f = <U>(x) => x;"], [1, "const f = <T>(x) => x;"]] as const) {
+        const { sourceFile } = getInfoFromText("const f = <T, U>(x) => x;");
+        sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ArrowFunction).getTypeParameters()[index].remove();
+        expect(sourceFile.getFullText()).to.equal(expectedText);
+      }
+    });
+
+    describe("arrow function in a tsx file", () => {
+      function doTsxTest(startText: string, indexToRemove: number, expectedText: string) {
+        const { sourceFile } = getInfoFromText(startText, { isJsx: true });
+        const typeParameters = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ArrowFunction).getTypeParameters();
+        const remaining = typeParameters.filter((_, i) => i !== indexToRemove);
+
+        typeParameters[indexToRemove].remove();
+
+        expect(sourceFile.getFullText()).to.equal(expectedText);
+        expect(typeParameters[indexToRemove].wasForgotten()).to.be.true;
+        const newTypeParameters = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ArrowFunction).getTypeParameters();
+        expect(newTypeParameters.length).to.equal(remaining.length);
+        newTypeParameters.forEach((p, i) => expect(p).to.equal(remaining[i]));
+      }
+
+      it("should keep a comma when removing the first of two", () => {
+        doTsxTest("const f = <T, U>(x) => x;", 0, "const f = <U,>(x) => x;");
+      });
+
+      it("should keep a comma when removing the last of two", () => {
+        doTsxTest("const f = <T, U>(x) => x;", 1, "const f = <T,>(x) => x;");
+      });
+
+      it("should keep a single comma when there is already a trailing comma", () => {
+        doTsxTest("const f = <T, U,>(x) => x;", 0, "const f = <U,>(x) => x;");
+        doTsxTest("const f = <T, U,>(x) => x;", 1, "const f = <T,>(x) => x;");
+      });
+
+      it("should remove the last remaining type parameter", () => {
+        doTsxTest("const f = <T,>(x) => x;", 0, "const f = (x) => x;");
+      });
+
+      it("should handle three type parameters", () => {
+        doTsxTest("const f = <T, U, V>(x) => x;", 0, "const f = <U, V>(x) => x;");
+        doTsxTest("const f = <T, U, V>(x) => x;", 1, "const f = <T, V>(x) => x;");
+        doTsxTest("const f = <T, U, V>(x) => x;", 2, "const f = <T, U>(x) => x;");
+      });
+
+      it("should not add a comma when the remaining type parameter has a constraint or default", () => {
+        doTsxTest("const f = <T extends object, U>(x) => x;", 1, "const f = <T extends object>(x) => x;");
+        doTsxTest("const f = <T, U = string>(x) => x;", 0, "const f = <U = string>(x) => x;");
+      });
+
+      it("should keep a comma when the removed type parameter has the constraint", () => {
+        doTsxTest("const f = <T extends object, U>(x) => x;", 0, "const f = <U,>(x) => x;");
+      });
+
+      it("should keep a comma for a const type parameter", () => {
+        doTsxTest("const f = <const T, U>(x) => x;", 1, "const f = <const T,>(x) => x;");
+      });
+
+      it("should handle async arrow functions", () => {
+        doTsxTest("const f = async <T, U>(x) => x;", 0, "const f = async <U,>(x) => x;");
+        doTsxTest("const f = async <T, U>(x) => x;", 1, "const f = async <T,>(x) => x;");
+      });
+
+      it("should handle comments", () => {
+        doTsxTest("const f = <T, /* c */ U>(x) => x;", 0, "const f = </* c */ U,>(x) => x;");
+        doTsxTest("const f = <T /* c */, U>(x) => x;", 1, "const f = <T /* c */,>(x) => x;");
+      });
+
+      it("should handle a line comment between the type parameters", () => {
+        doTsxTest("const f = <T, // c\n  U>(x) => x;", 0, "const f = < // c\n  U,>(x) => x;");
+        doTsxTest("const f = <T, // c\n  U>(x) => x;", 1, "const f = <T,>(x) => x;");
+      });
+
+      it("should not keep a comma for a non-arrow function", () => {
+        const { sourceFile } = getInfoFromText("function f<T, U>() {}", { isJsx: true });
+        sourceFile.getFunctions()[0].getTypeParameters()[0].remove();
+        expect(sourceFile.getFullText()).to.equal("function f<U>() {}");
+      });
     });
   });
 
