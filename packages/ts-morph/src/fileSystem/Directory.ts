@@ -4,7 +4,7 @@ import { Project, SourceFileCreateOptions } from "../Project";
 import { ProjectContext } from "../ProjectContext";
 import { OptionalKind, SourceFileStructure } from "../structures";
 import { WriterFunction } from "../types";
-import { setValueIfUndefined } from "../utils";
+import { ModuleUtils, setValueIfUndefined } from "../utils";
 import { DirectoryEmitResult } from "./DirectoryEmitResult";
 
 export interface DirectoryAddOptions {
@@ -875,7 +875,7 @@ export class Directory {
   getRelativePathAsModuleSpecifierTo(sourceFileDirOrFilePath: SourceFile | Directory | string) {
     const moduleResolution = this._context.program.getEmitModuleResolutionKind();
     const thisDirectory = this;
-    const moduleSpecifier = FileUtils.getRelativePathTo(this.getPath(), getPath()).replace(/((\.d\.ts$)|(\.[^/.]+$))/i, "");
+    const moduleSpecifier = ModuleUtils.removeFileExtension(FileUtils.getRelativePathTo(this.getPath(), getPath()));
     return moduleSpecifier.startsWith("../") ? moduleSpecifier : "./" + moduleSpecifier;
 
     function getPath() {

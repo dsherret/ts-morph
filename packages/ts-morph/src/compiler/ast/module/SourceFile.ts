@@ -3,9 +3,11 @@ import {
   errors,
   EventContainer,
   FileUtils,
+  getEmitModuleResolutionKind,
   LanguageVariant,
   libFolderInMemoryPath,
   Memoize,
+  ModuleResolutionKind,
   ScriptKind,
   ScriptTarget,
   StandardizedFilePath,
@@ -834,7 +836,15 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
    */
   getRelativePathAsModuleSpecifierTo(directory: Directory): string;
   getRelativePathAsModuleSpecifierTo(sourceFileDirOrFilePath: SourceFile | Directory | string) {
-    return this.getDirectory().getRelativePathAsModuleSpecifierTo(sourceFileDirOrFilePath);
+    const moduleSpecifier = this.getDirectory().getRelativePathAsModuleSpecifierTo(sourceFileDirOrFilePath);
+    if (!isModuleSpecifierExtensionRequired(this))
+      return moduleSpecifier;
+    const targetPath = sourceFileDirOrFilePath instanceof SourceFile
+      ? sourceFileDirOrFilePath.getFilePath()
+      : sourceFileDirOrFilePath instanceof Directory
+      ? getDirectoryIndexFilePath(sourceFileDirOrFilePath)
+      : sourceFileDirOrFilePath;
+    return moduleSpecifier + (ModuleUtils.getModuleSpecifierExtension(targetPath, this._context.compilerOptions.get()) ?? "");
   }
 
   /**
@@ -1080,14 +1090,56 @@ function updateStringLiteralReferences(nodeReferences: ReadonlyArray<[StringLite
     const literalText = stringLiteral.getLiteralText();
     if (!ModuleUtils.isModuleSpecifierRelative(literalText))
       continue;
-    let moduleSpecifier = stringLiteral._sourceFile.getRelativePathAsModuleSpecifierTo(sourceFile);
-    // keep an explicit extension (ex. ".js" when using node16 module resolution) if the specifier still points at the file
-    const extension = /\.[cm]?[jt]sx?$/i.exec(literalText)?.[0];
-    const fileName = FileUtils.getBaseName(sourceFile.getFilePath()).replace(/((\.d\.ts$)|(\.[^/.]+$))/i, "");
-    if (extension != null && moduleSpecifier.endsWith("/" + fileName))
-      moduleSpecifier += extension;
-    stringLiteral.setLiteralValue(moduleSpecifier);
+    stringLiteral.setLiteralValue(getUpdatedModuleSpecifier(stringLiteral._sourceFile, sourceFile, literalText));
   }
+}
+
+function getUpdatedModuleSpecifier(importer: SourceFile, target: SourceFile, literalText: string) {
+  // use the directory because the existing specifier decides whether to have an extension
+  const directory = importer.getDirectory();
+  const moduleSpecifier = directory.getRelativePathAsModuleSpecifierTo(target);
+  const literalExtension = /\.([cm]?[jt]sx?|json)$/i.exec(literalText)?.[0];
+  if (literalExtension == null || isExtensionPartOfFileName(target, literalText, literalExtension))
+    return moduleSpecifier;
+  // the specifier won't match the relative path when node10 resolution collapses an index file
+  if (!moduleSpecifier.endsWith(ModuleUtils.removeFileExtension(directory.getRelativePathTo(target))))
+    return moduleSpecifier;
+  const targetPath = target.getFilePath();
+  const outputExtension = ModuleUtils.getModuleSpecifierExtension(targetPath, importer._context.compilerOptions.get());
+  if (outputExtension == null)
+    return moduleSpecifier;
+  // a specifier with a typescript extension (allowImportingTsExtensions) refers to the target's actual extension
+  const isTsSpecifier = /\.[cm]?tsx?$/i.test(literalExtension);
+  const isDeclarationFile = /\.d\.[cm]?ts$/i.test(targetPath);
+  return moduleSpecifier + (isTsSpecifier && !isDeclarationFile ? targetPath.substring(ModuleUtils.removeFileExtension(targetPath).length) : outputExtension);
+}
+
+/** Gets if what looks like an extension is the end of the name (ex. `./data.json` for `data.json.d.ts`). */
+function isExtensionPartOfFileName(target: SourceFile, literalText: string, literalExtension: string) {
+  const extension = literalExtension.toLowerCase();
+  const targetName = ModuleUtils.removeFileExtension(target.getBaseName()).toLowerCase();
+  const literalName = literalText.substring(0, literalText.length - extension.length).toLowerCase();
+  return targetName.endsWith(extension) && !literalName.endsWith(extension);
+}
+
+function getDirectoryIndexFilePath(directory: Directory) {
+  const extensions = ["ts", "tsx", "d.ts", "mts", "d.mts", "cts", "d.cts", "js", "jsx", "mjs", "cjs"];
+  const indexFileName = extensions.map(extension => `index.${extension}`).find(fileName => directory.getSourceFile(fileName) != null);
+  return indexFileName ?? "index.ts";
+}
+
+function isModuleSpecifierExtensionRequired(sourceFile: SourceFile) {
+  const compilerOptions = sourceFile._context.compilerOptions.get();
+  const moduleResolution = getEmitModuleResolutionKind(compilerOptions);
+  if (moduleResolution !== ModuleResolutionKind.Node16 && moduleResolution !== ModuleResolutionKind.NodeNext)
+    return false;
+  const format = ts.getImpliedNodeFormatForFile(
+    sourceFile.getFilePath(),
+    undefined,
+    sourceFile._context.getModuleResolutionHost(),
+    compilerOptions,
+  );
+  return format === ts.ModuleKind.ESNext;
 }
 
 function getReferencingNodeFromStringLiteral(literal: StringLiteral) {
