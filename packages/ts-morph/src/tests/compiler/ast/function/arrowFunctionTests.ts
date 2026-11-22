@@ -93,6 +93,131 @@ describe("ArrowFunction", () => {
     });
   });
 
+  describe("unparenthesized parameter", () => {
+    for (const prefix of ["", "async "]) {
+      it(`should add parens when setting the return type of ${prefix}x => x`, () => {
+        const { expression } = getInfoFromTextWithExpression(`${prefix}x => x`);
+        const parameter = expression.getParameters()[0];
+        const name = parameter.getNameNode();
+        expression.setReturnType("number");
+        expect(expression.getText()).to.equal(`${prefix}(x): number => x`);
+        expect(expression.getParameters()[0]).to.equal(parameter);
+        expect(parameter.getNameNode()).to.equal(name);
+      });
+
+      it(`should add parens when appending a parameter to ${prefix}x => x`, () => {
+        const { expression } = getInfoFromTextWithExpression(`${prefix}x => x`);
+        const parameter = expression.getParameters()[0];
+        const name = parameter.getNameNode();
+        const added = expression.addParameter({ name: "y" });
+        expect(expression.getText()).to.equal(`${prefix}(x, y) => x`);
+        expect(expression.getParameters()).to.deep.equal([parameter, added]);
+        expect(parameter.getNameNode()).to.equal(name);
+      });
+
+      it(`should add parens when removing the parameter of ${prefix}x => 1`, () => {
+        const { expression } = getInfoFromTextWithExpression(`${prefix}x => 1`);
+        expression.getParameters()[0].remove();
+        expect(expression.getText()).to.equal(`${prefix}() => 1`);
+        expect(expression.getParameters()).to.deep.equal([]);
+      });
+    }
+
+    it("should keep the existing parameter when inserting multiple parameters at the start", () => {
+      const { expression } = getInfoFromTextWithExpression("x => x");
+      const parameter = expression.getParameters()[0];
+      const added = expression.insertParameters(0, [{ name: "a" }, { name: "b", type: "string" }]);
+      expect(expression.getText()).to.equal("(a, b: string, x) => x");
+      expect(expression.getParameters()).to.deep.equal([...added, parameter]);
+      expect(parameter.getName()).to.equal("x");
+    });
+
+    for (
+      const [description, edit, expectedText, expectedListText] of [
+        ["setting the return type", (f: ArrowFunction) => f.setReturnType("number"), "async (x): number => 1", "x"],
+        ["appending a parameter", (f: ArrowFunction) => f.addParameter({ name: "y" }), "async (x, y) => 1", "x, y"],
+        ["prepending a parameter", (f: ArrowFunction) => f.insertParameter(0, { name: "y" }), "async (y, x) => 1", "y, x"],
+        ["adding a type parameter", (f: ArrowFunction) => f.addTypeParameter("T"), "async <T>(x) => 1", "x"],
+        ["setting the parameter type", (f: ArrowFunction) => f.getParameters()[0].setType("string"), "async (x: string) => 1", "x: string"],
+        ["removing the parameter", (f: ArrowFunction) => f.getParameters()[0].remove(), "async () => 1", ""],
+      ] as const
+    ) {
+      it(`should keep a held parameter syntax list when ${description}`, () => {
+        const { expression } = getInfoFromTextWithExpression("async x => 1");
+        const syntaxList = expression.getParameters()[0].getParentSyntaxListOrThrow();
+        edit(expression);
+        expect(expression.getText()).to.equal(expectedText);
+        expect(syntaxList.wasForgotten()).to.equal(false);
+        expect(syntaxList.getText()).to.equal(expectedListText);
+        expect(syntaxList.getPreviousSiblingOrThrow().getKind()).to.equal(SyntaxKind.OpenParenToken);
+      });
+    }
+
+    for (
+      const [description, edit] of [
+        ["a return type", (f: ArrowFunction) => f.setReturnType("number => y")],
+        ["an appended parameter", (f: ArrowFunction) => f.addParameter({ name: "y) => (z" })],
+        ["a prepended parameter", (f: ArrowFunction) => f.insertParameter(0, { name: "y) => (z" })],
+        ["a type parameter", (f: ArrowFunction) => f.addTypeParameter("T>(a) => <U")],
+      ] as const
+    ) {
+      for (const prefix of ["", "async "]) {
+        it(`should keep held nodes valid when ${description} changes the structure of ${prefix}x => x`, () => {
+          const { expression } = getInfoFromTextWithExpression(`const f = ${prefix}x => x;`);
+          const sourceFile = expression.getSourceFile();
+          const fullText = sourceFile.getFullText();
+          const parameter = expression.getParameters()[0];
+          const name = parameter.getNameNode();
+          const syntaxList = parameter.getParentSyntaxListOrThrow();
+          expect(() => edit(expression)).to.throw();
+          expect(sourceFile.getFullText()).to.equal(fullText);
+          expect(syntaxList.wasForgotten()).to.equal(false);
+          expect(syntaxList.getText()).to.equal("x");
+          expect(parameter.getText()).to.equal("x");
+          expect(name.getText()).to.equal("x");
+          expression.setReturnType("string");
+          expect(sourceFile.getFullText()).to.equal(`const f = ${prefix}(x): string => x;`);
+          expect(syntaxList.getText()).to.equal("x");
+          expect(parameter.getText()).to.equal("x");
+        });
+      }
+    }
+
+    it("should keep a comment after the parameter", () => {
+      const { expression } = getInfoFromTextWithExpression("x /* c */ => x");
+      expression.setReturnType("number");
+      expect(expression.getText()).to.equal("(x): number /* c */ => x");
+    });
+
+    it("should not change the text when no parameters are added", () => {
+      const { expression } = getInfoFromTextWithExpression("x => x");
+      expect(expression.addParameters([])).to.deep.equal([]);
+      expect(expression.getText()).to.equal("x => x");
+    });
+
+    it("should not change the text when the parameter index is invalid", () => {
+      const { expression } = getInfoFromTextWithExpression("x => x");
+      expect(() => expression.insertParameter(2, { name: "y" })).to.throw();
+      expect(expression.getText()).to.equal("x => x");
+    });
+
+    it("should not change the text when the return type is invalid", () => {
+      const { expression } = getInfoFromTextWithExpression("const f = x => x;");
+      const sourceFile = expression.getSourceFile();
+      const fullText = sourceFile.getFullText();
+      expect(() => expression.setReturnType(")")).to.throw();
+      expect(sourceFile.getFullText()).to.equal(fullText);
+    });
+
+    it("should not change the text when the new parameter is invalid", () => {
+      const { expression } = getInfoFromTextWithExpression("x => x");
+      const sourceFile = expression.getSourceFile();
+      const fullText = sourceFile.getFullText();
+      expect(() => expression.addParameter({ name: "1" })).to.throw();
+      expect(sourceFile.getFullText()).to.equal(fullText);
+    });
+  });
+
   describe(nameof<ArrowFunction>("getEqualsGreaterThan"), () => {
     function doTest(text: string, expectedText: string) {
       const { expression } = getInfoFromTextWithExpression(text);

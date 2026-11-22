@@ -7,6 +7,7 @@ import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { ParameterDeclaration } from "../function/ParameterDeclaration";
+import { addParensToArrowFunctionIfNecessary } from "./helpers";
 
 export type ParameteredNodeExtensionType = Node<ts.Node & { parameters: ts.NodeArray<ts.ParameterDeclaration> }>;
 
@@ -93,7 +94,6 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
         return [];
 
       const parameters = this.getParameters();
-      const syntaxList = this.getFirstChildByKindOrThrow(SyntaxKind.OpenParenToken).getNextSiblingIfKindOrThrow(SyntaxKind.SyntaxList);
       index = verifyAndGetIndex(index, parameters.length);
 
       const writer = this._getWriterWithQueuedChildIndentation();
@@ -101,13 +101,21 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
 
       structurePrinter.printTexts(writer, structures);
 
-      insertIntoCommaSeparatedNodes({
-        parent: syntaxList,
-        currentNodes: parameters,
-        insertIndex: index,
-        newText: writer.toString(),
-        useTrailingCommas: false,
+      const newText = writer.toString();
+      const addedParens = addParensToArrowFunctionIfNecessary(this, {
+        getNewText: parameterText => index === 0 ? `(${newText}, ${parameterText})` : `(${parameterText}, ${newText})`,
+        isLastParameter: index === 0,
       });
+
+      if (!addedParens) {
+        insertIntoCommaSeparatedNodes({
+          parent: this.getFirstChildByKindOrThrow(SyntaxKind.OpenParenToken).getNextSiblingIfKindOrThrow(SyntaxKind.SyntaxList),
+          currentNodes: parameters,
+          insertIndex: index,
+          newText,
+          useTrailingCommas: false,
+        });
+      }
 
       return getNodesToReturn(parameters, this.getParameters(), index, false);
     }

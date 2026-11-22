@@ -1,4 +1,4 @@
-import { SyntaxKind, ts } from "@ts-morph/common";
+import { ts } from "@ts-morph/common";
 import { insertIntoParentTextRange, removeChildren, removeCommaSeparatedChild } from "../../../manipulation";
 import { ParameterDeclarationSpecificStructure, ParameterDeclarationStructure, StructureKind } from "../../../structures";
 import { WriterFunction } from "../../../types";
@@ -14,6 +14,7 @@ import {
   ScopeableNode,
   TypedNode,
 } from "../base";
+import { addParensToArrowFunctionIfNecessary } from "../base/helpers";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common/Node";
@@ -71,6 +72,7 @@ export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterD
    * Remove this parameter.
    */
   remove() {
+    addParensIfNecessary(this);
     removeCommaSeparatedChild(this);
   }
 
@@ -133,29 +135,5 @@ export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterD
 }
 
 function addParensIfNecessary(parameter: Node) {
-  const parent = parameter.getParentOrThrow();
-
-  if (isParameterWithoutParens())
-    addParens();
-
-  function isParameterWithoutParens() {
-    return Node.isArrowFunction(parent)
-      && parent.compilerNode.parameters.length === 1
-      && parameter.getParentSyntaxListOrThrow().getPreviousSiblingIfKind(SyntaxKind.OpenParenToken) == null;
-  }
-
-  function addParens() {
-    const paramText = parameter.getText();
-    insertIntoParentTextRange({
-      parent,
-      insertPos: parameter.getStart(),
-      newText: `(${paramText})`,
-      replacing: {
-        textLength: paramText.length,
-      },
-      customMappings: newParent => {
-        return [{ currentNode: parameter, newNode: (newParent as ts.ArrowFunction).parameters[0] }];
-      },
-    });
-  }
+  addParensToArrowFunctionIfNecessary(parameter.getParentOrThrow());
 }

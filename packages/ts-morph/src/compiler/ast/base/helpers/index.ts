@@ -1,3 +1,4 @@
+export * from "./addParensToArrowFunctionIfNecessary";
 export * from "./getBodyText";
 export * from "./getBodyTextWithoutLeadingIndentation";
 export * from "./hasBlock";
