@@ -132,6 +132,57 @@ describe("ArrowFunction", () => {
       expect(parameter.getName()).to.equal("x");
     });
 
+    for (
+      const [description, edit, expectedText, expectedListText] of [
+        ["setting the return type", (f: ArrowFunction) => f.setReturnType("number"), "async (x): number => 1", "x"],
+        ["appending a parameter", (f: ArrowFunction) => f.addParameter({ name: "y" }), "async (x, y) => 1", "x, y"],
+        ["prepending a parameter", (f: ArrowFunction) => f.insertParameter(0, { name: "y" }), "async (y, x) => 1", "y, x"],
+        ["adding a type parameter", (f: ArrowFunction) => f.addTypeParameter("T"), "async <T>(x) => 1", "x"],
+        ["setting the parameter type", (f: ArrowFunction) => f.getParameters()[0].setType("string"), "async (x: string) => 1", "x: string"],
+        ["removing the parameter", (f: ArrowFunction) => f.getParameters()[0].remove(), "async () => 1", ""],
+      ] as const
+    ) {
+      it(`should keep a held parameter syntax list when ${description}`, () => {
+        const { expression } = getInfoFromTextWithExpression("async x => 1");
+        const syntaxList = expression.getParameters()[0].getParentSyntaxListOrThrow();
+        edit(expression);
+        expect(expression.getText()).to.equal(expectedText);
+        expect(syntaxList.wasForgotten()).to.equal(false);
+        expect(syntaxList.getText()).to.equal(expectedListText);
+        expect(syntaxList.getPreviousSiblingOrThrow().getKind()).to.equal(SyntaxKind.OpenParenToken);
+      });
+    }
+
+    for (
+      const [description, edit] of [
+        ["a return type", (f: ArrowFunction) => f.setReturnType("number => y")],
+        ["an appended parameter", (f: ArrowFunction) => f.addParameter({ name: "y) => (z" })],
+        ["a prepended parameter", (f: ArrowFunction) => f.insertParameter(0, { name: "y) => (z" })],
+        ["a type parameter", (f: ArrowFunction) => f.addTypeParameter("T>(a) => <U")],
+      ] as const
+    ) {
+      for (const prefix of ["", "async "]) {
+        it(`should keep held nodes valid when ${description} changes the structure of ${prefix}x => x`, () => {
+          const { expression } = getInfoFromTextWithExpression(`const f = ${prefix}x => x;`);
+          const sourceFile = expression.getSourceFile();
+          const fullText = sourceFile.getFullText();
+          const parameter = expression.getParameters()[0];
+          const name = parameter.getNameNode();
+          const syntaxList = parameter.getParentSyntaxListOrThrow();
+          expect(() => edit(expression)).to.throw();
+          expect(sourceFile.getFullText()).to.equal(fullText);
+          expect(syntaxList.wasForgotten()).to.equal(false);
+          expect(syntaxList.getText()).to.equal("x");
+          expect(parameter.getText()).to.equal("x");
+          expect(name.getText()).to.equal("x");
+          expression.setReturnType("string");
+          expect(sourceFile.getFullText()).to.equal(`const f = ${prefix}(x): string => x;`);
+          expect(syntaxList.getText()).to.equal("x");
+          expect(parameter.getText()).to.equal("x");
+        });
+      }
+    }
+
     it("should keep a comment after the parameter", () => {
       const { expression } = getInfoFromTextWithExpression("x /* c */ => x");
       expression.setReturnType("number");
