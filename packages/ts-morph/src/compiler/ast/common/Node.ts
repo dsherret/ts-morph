@@ -1411,7 +1411,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
   /** @internal */
   replaceWithText(textOrWriterFunction: string | WriterFunction, writer: CodeBlockWriter): Node;
   replaceWithText(textOrWriterFunction: string | WriterFunction, writer?: CodeBlockWriter): Node {
-    const newText = getTextFromStringOrWriter(writer || this._getWriterWithQueuedIndentation(), textOrWriterFunction);
+    const newText = getTextFromStringOrWriter(writer || getReplaceWithTextWriter(this), textOrWriterFunction);
     if (Node.isSourceFile(this)) {
       this.replaceText([this.getPos(), this.getEnd()], newText);
       return this;
@@ -4346,6 +4346,20 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
 function getWrappedCondition(thisNode: Node, condition: ((c: Node) => boolean) | undefined): ((c: ts.Node) => boolean) | undefined {
   return condition == null ? undefined : ((c: ts.Node) => condition(thisNode._getNodeFromCompilerNode(c)));
+}
+
+function getReplaceWithTextWriter(node: Node) {
+  // these nodes start inside a template literal without an opening backtick, so
+  // the writer can't tell that indenting their newlines would change the string
+  switch (node.getKind()) {
+    case SyntaxKind.TemplateSpan:
+    case SyntaxKind.TemplateLiteralTypeSpan:
+    case SyntaxKind.TemplateMiddle:
+    case SyntaxKind.TemplateTail:
+      return node._getWriter();
+    default:
+      return node._getWriterWithQueuedIndentation();
+  }
 }
 
 function insertWhiteSpaceTextAtPos(node: Node, insertPos: number, textOrWriterFunction: string | WriterFunction, methodName: string) {

@@ -1261,6 +1261,60 @@ class MyClass {
       someIdentifier.replaceWithText("Some()");
       expect(sourceFile.getFullText()).to.equal("Some()().Prop.Access.Expr;");
     });
+
+    describe("template literals", () => {
+      function doTemplateTest(
+        startText: string,
+        kind: SyntaxKind,
+        replaceText: string | WriterFunction,
+        expectedNodeText: string,
+        expectedText: string,
+      ) {
+        const { sourceFile } = getInfoFromText(startText);
+        const node = sourceFile.getFirstDescendantByKindOrThrow(kind);
+        const newNode = typeof replaceText === "string" ? node.replaceWithText(replaceText) : node.replaceWithText(replaceText);
+        expect(newNode.getText()).to.equal(expectedNodeText);
+        expect(sourceFile.getFullText()).to.equal(expectedText);
+      }
+
+      const startText = "function f() {\n      const s = `a ${1}\nb ${2} c`;\n}";
+
+      it("should not indent newlines when replacing a template span", () => {
+        doTemplateTest(startText, SyntaxKind.TemplateSpan, "1}\nnew ${", "1}\nnew ${", "function f() {\n      const s = `a ${1}\nnew ${2} c`;\n}");
+      });
+
+      it("should not indent newlines when replacing a template span with a writer", () => {
+        doTemplateTest(
+          startText,
+          SyntaxKind.TemplateSpan,
+          writer => writer.write("1}\nnew ${"),
+          "1}\nnew ${",
+          "function f() {\n      const s = `a ${1}\nnew ${2} c`;\n}",
+        );
+      });
+
+      it("should not indent newlines when replacing a template middle", () => {
+        doTemplateTest(startText, SyntaxKind.TemplateMiddle, "}\nnew ${", "}\nnew ${", "function f() {\n      const s = `a ${1}\nnew ${2} c`;\n}");
+      });
+
+      it("should not indent newlines when replacing a template tail", () => {
+        doTemplateTest(startText, SyntaxKind.TemplateTail, "}\nnew`", "}\nnew`", "function f() {\n      const s = `a ${1}\nb ${2}\nnew`;\n}");
+      });
+
+      it("should not indent newlines when replacing a template literal type span", () => {
+        doTemplateTest(
+          "namespace N {\n    type T = `a ${string}\nb ${number} c`;\n}",
+          SyntaxKind.TemplateLiteralTypeSpan,
+          "string}\nnew ${",
+          "string}\nnew ${",
+          "namespace N {\n    type T = `a ${string}\nnew ${number} c`;\n}",
+        );
+      });
+
+      it("should keep whitespace that's in the replacement text", () => {
+        doTemplateTest(startText, SyntaxKind.TemplateSpan, "1}\n  new ${", "1}\n  new ${", "function f() {\n      const s = `a ${1}\n  new ${2} c`;\n}");
+      });
+    });
   });
 
   describe(nameof<Node>("print"), () => {
