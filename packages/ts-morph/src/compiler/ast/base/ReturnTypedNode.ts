@@ -9,6 +9,7 @@ import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { TypeNode } from "../type/TypeNode";
+import { addParensToArrowFunctionIfNecessary } from "./helpers";
 
 export type ReturnTypedNodeExtensionType = Node<ts.SignatureDeclaration>;
 
@@ -65,6 +66,9 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionTy
           returnTypeNode.replaceWithText(text);
         return this;
       }
+
+      if (addParensToArrowFunctionIfNecessary(this, { getNewText: parameterText => `(${parameterText}): ${text}` }))
+        return this;
 
       // insert new type
       insertIntoParentTextRange({
