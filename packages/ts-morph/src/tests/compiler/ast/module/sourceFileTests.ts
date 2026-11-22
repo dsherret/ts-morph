@@ -1,4 +1,15 @@
-import { CompilerOptions, errors, LanguageVariant, ModuleKind, ModuleResolutionKind, nameof, NewLineKind, ScriptTarget, SyntaxKind } from "@ts-morph/common";
+import {
+  CompilerOptions,
+  errors,
+  LanguageVariant,
+  ModuleKind,
+  ModuleResolutionKind,
+  nameof,
+  NewLineKind,
+  ScriptTarget,
+  SyntaxKind,
+  ts,
+} from "@ts-morph/common";
 import { expect } from "chai";
 import { EmitResult, FileSystemRefreshResult, FormatCodeSettings, SourceFile, TextChange, VariableDeclarationKind } from "../../../../compiler";
 import { IndentationText, ManipulationSettings } from "../../../../options";
@@ -339,6 +350,61 @@ describe("SourceFile", () => {
         target.move("/lib/nested/renamed.ts");
         expect(importer.getImportDeclarations()[0].getModuleSpecifierValue()).to.equal("../lib/nested/renamed.js");
       });
+
+      const bundler = { moduleResolution: ModuleResolutionKind.Bundler, module: ModuleKind.ESNext };
+      const nodeNext = { moduleResolution: ModuleResolutionKind.NodeNext, module: ModuleKind.NodeNext };
+      const node10 = { moduleResolution: ModuleResolutionKind.Node10, module: ModuleKind.CommonJS };
+      const movedFileCases = [
+        { options: bundler, from: "/lib/c.jsx", to: "/lib/m/c.jsx", specifier: "../lib/c.jsx", expected: "../lib/m/c.jsx" },
+        { options: bundler, from: "/lib/data.json.d.ts", to: "/lib/m/data.json.d.ts", specifier: "../lib/data.json", expected: "../lib/m/data.json" },
+        { options: nodeNext, from: "/lib/foo.d.js", to: "/lib/m/foo.d.js", specifier: "../lib/foo.d.js", expected: "../lib/m/foo.d.js" },
+        { options: node10, from: "/a/index.ts", to: "/index/index.ts", specifier: "../a/index.js", expected: "../index" },
+        { options: node10, from: "/lib/jquery.js.ts", to: "/lib/m/jquery.js.ts", specifier: "../lib/jquery.js", expected: "../lib/m/jquery.js" },
+        { options: bundler, from: "/lib/s.d.css.ts", to: "/lib/m/s.d.css.ts", specifier: "../lib/s.css", expected: "../lib/m/s.css" },
+      ];
+
+      for (const { options, from, to, specifier, expected } of movedFileCases) {
+        it(`should update ${specifier} to ${expected} when moving ${from}`, () => {
+          const project = new Project({
+            useInMemoryFileSystem: true,
+            compilerOptions: { ...options, allowJs: true, allowArbitraryExtensions: true, noEmit: true },
+          });
+          const target = project.createSourceFile(from, "export const value = 1;");
+          const importer = project.createSourceFile("/src/file.ts", `import { value } from "${specifier}";\nexport const other = value;`);
+          target.move(to);
+          expect(importer.getImportDeclarations()[0].getModuleSpecifierValue()).to.equal(expected);
+        });
+      }
+
+      const targetExtensionCases = [
+        { from: "/lib/file.ts", to: "/lib/moved/file.mts", specifier: "../lib/file.js", expected: "../lib/moved/file.mjs" },
+        { from: "/lib/file.ts", to: "/lib/moved/file.cts", specifier: "../lib/file.js", expected: "../lib/moved/file.cjs" },
+        { from: "/lib/file.mts", to: "/lib/moved/file.ts", specifier: "../lib/file.mjs", expected: "../lib/moved/file.js" },
+        { from: "/lib/file.cts", to: "/lib/moved/file.mts", specifier: "../lib/file.cjs", expected: "../lib/moved/file.mjs" },
+        { from: "/lib/file.ts", to: "/lib/moved/file.mts", specifier: "../lib/file.ts", expected: "../lib/moved/file.mts" },
+        { from: "/lib/file.ts", to: "/lib/moved/file.tsx", specifier: "../lib/file.ts", expected: "../lib/moved/file.tsx" },
+      ];
+
+      for (const { from, to, specifier, expected } of targetExtensionCases) {
+        it(`should use the target's extension when moving ${from} to ${to} with ${specifier}`, () => {
+          const project = new Project({
+            useInMemoryFileSystem: true,
+            compilerOptions: {
+              moduleResolution: ModuleResolutionKind.NodeNext,
+              module: ModuleKind.NodeNext,
+              allowImportingTsExtensions: true,
+              noEmit: true,
+            },
+          });
+          project.getFileSystem().writeFileSync("/package.json", `{ "type": "module" }`);
+          const target = project.createSourceFile(from, "export const value = 1;");
+          const importer = project.createSourceFile("/src/file.ts", `import { value } from "${specifier}";\nexport const other = value;`);
+          target.move(to);
+          const importDeclaration = importer.getImportDeclarations()[0];
+          expect(importDeclaration.getModuleSpecifierValue()).to.equal(expected);
+          expect(importDeclaration.getModuleSpecifierSourceFile()?.getFilePath()).to.equal(to);
+        });
+      }
     });
 
     it("should handle moving two source files to a new directory (issue #314)", () => {
@@ -1238,6 +1304,83 @@ function myFunction(param: MyClass) {
 
     it("should use an explicit index when getting the module specifier to a directory and the module resolution strategy is classic", () => {
       doDirectoryTest("/dir/file.ts", "/dir2", "../dir2/index", { moduleResolution: ModuleResolutionKind.Classic });
+    });
+
+    describe("node16 and nodenext extensions", () => {
+      const compilerOptions = { moduleResolution: ModuleResolutionKind.NodeNext, module: ModuleKind.NodeNext };
+
+      function getSpecifier(from: string, to: string, options: CompilerOptions = compilerOptions, packageType = "module") {
+        const project = new Project({ useInMemoryFileSystem: true, compilerOptions: options });
+        project.getFileSystem().writeFileSync("/package.json", `{ "type": "${packageType}" }`);
+        return project.createSourceFile(from).getRelativePathAsModuleSpecifierTo(project.createSourceFile(to));
+      }
+
+      const cases = [
+        ["/dir2/to.ts", "../dir2/to.js"],
+        ["/dir2/to.tsx", "../dir2/to.js"],
+        ["/dir2/to.mts", "../dir2/to.mjs"],
+        ["/dir2/to.cts", "../dir2/to.cjs"],
+        ["/dir2/to.d.ts", "../dir2/to.js"],
+        ["/dir2/to.d.mts", "../dir2/to.mjs"],
+        ["/dir2/to.d.cts", "../dir2/to.cjs"],
+        ["/dir2/index.ts", "../dir2/index.js"],
+      ];
+
+      for (const [to, expected] of cases) {
+        it(`should get ${expected} for ${to} from an es module`, () => {
+          expect(getSpecifier("/dir/from.ts", to)).to.equal(expected);
+        });
+      }
+
+      it("should use .jsx for a tsx file when preserving jsx", () => {
+        expect(getSpecifier("/dir/from.ts", "/dir2/to.tsx", { ...compilerOptions, jsx: ts.JsxEmit.Preserve })).to.equal("../dir2/to.jsx");
+      });
+
+      it("should add the extension for a .mts importer in a commonjs package", () => {
+        expect(getSpecifier("/dir/from.mts", "/dir2/to.ts", compilerOptions, "commonjs")).to.equal("../dir2/to.js");
+      });
+
+      it("should not add an extension for a commonjs importer", () => {
+        expect(getSpecifier("/dir/from.ts", "/dir2/to.ts", compilerOptions, "commonjs")).to.equal("../dir2/to");
+        expect(getSpecifier("/dir/from.cts", "/dir2/to.ts")).to.equal("../dir2/to");
+      });
+
+      it("should not add an extension for bundler resolution", () => {
+        const options = { moduleResolution: ModuleResolutionKind.Bundler, module: ModuleKind.ESNext };
+        expect(getSpecifier("/dir/from.ts", "/dir2/to.ts", options)).to.equal("../dir2/to");
+      });
+
+      it("should add the extension to a directory's index file", () => {
+        const project = new Project({ useInMemoryFileSystem: true, compilerOptions });
+        project.getFileSystem().writeFileSync("/package.json", `{ "type": "module" }`);
+        const fromFile = project.createSourceFile("/dir/from.ts");
+        expect(fromFile.getRelativePathAsModuleSpecifierTo(project.createDirectory("/dir2"))).to.equal("../dir2/index.js");
+      });
+
+      for (const [indexName, expected] of [["index.mts", "../dir2/index.mjs"], ["index.cts", "../dir2/index.cjs"], ["index.d.mts", "../dir2/index.mjs"]]) {
+        it(`should use the extension of a directory's ${indexName}`, () => {
+          const project = new Project({ useInMemoryFileSystem: true, compilerOptions });
+          project.getFileSystem().writeFileSync("/package.json", `{ "type": "module" }`);
+          const fromFile = project.createSourceFile("/dir/from.ts");
+          project.createSourceFile(`/dir2/${indexName}`);
+          expect(fromFile.getRelativePathAsModuleSpecifierTo(project.getDirectoryOrThrow("/dir2"))).to.equal(expected);
+        });
+      }
+
+      it("should handle .jsx, .d.js, and arbitrary extension declaration targets", () => {
+        expect(getSpecifier("/dir/from.ts", "/dir2/to.jsx")).to.equal("../dir2/to.jsx");
+        expect(getSpecifier("/dir/from.ts", "/dir2/to.d.js")).to.equal("../dir2/to.d.js");
+        expect(getSpecifier("/dir/from.ts", "/dir2/styles.d.css.ts")).to.equal("../dir2/styles.css");
+      });
+
+      it("should use the extension when setting an import's module specifier to a source file", () => {
+        const project = new Project({ useInMemoryFileSystem: true, compilerOptions });
+        project.getFileSystem().writeFileSync("/package.json", `{ "type": "module" }`);
+        const toFile = project.createSourceFile("/dir2/to.mts", "export const value = 1;");
+        const fromFile = project.createSourceFile("/dir/from.ts", `import { value } from "./old.js";`);
+        fromFile.getImportDeclarations()[0].setModuleSpecifier(toFile);
+        expect(fromFile.getFullText()).to.equal(`import { value } from "../dir2/to.mjs";`);
+      });
     });
   });
 
