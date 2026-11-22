@@ -1,6 +1,7 @@
 import { errors, SyntaxKind, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange } from "../../../../manipulation";
 import { Node } from "../../common/Node";
+import { ExtendedParser } from "../../utils";
 
 export interface AddParensToArrowFunctionOptions {
   /** Gets the text to replace the parameter with. Must include the parentheses. */
@@ -55,7 +56,7 @@ export function addParensToArrowFunctionIfNecessary(node: Node, opts: AddParensT
 }
 
 function getParameterSyntaxList(arrowFunction: ts.Node, sourceFile: ts.SourceFile) {
-  const children = arrowFunction.getChildren(sourceFile);
+  const children = ExtendedParser.getCompilerChildren(arrowFunction, sourceFile);
   // the modifiers and type parameters have their own syntax lists, so find the one after the paren
   return children[children.findIndex(child => child.kind === SyntaxKind.OpenParenToken) + 1];
 }
