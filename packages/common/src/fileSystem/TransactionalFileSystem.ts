@@ -676,8 +676,19 @@ export class TransactionalFileSystem {
   #verifyCanReadFile(filePath: StandardizedFilePath) {
     if (this.#isPathQueuedForDeletion(filePath))
       throw new errors.InvalidOperationError(`Cannot read file at ${filePath} when it is queued for deletion.`);
-    if (this.#getOrCreateParentDirectory(filePath).getWasEverDeleted())
-      throw new errors.InvalidOperationError(`Cannot read file at ${filePath} because one of its ancestor directories was once deleted or moved.`);
+
+    let dirPath = FileUtils.getDirPath(filePath);
+    while (true) {
+      const dir = this.#getDirectoryIfExists(dirPath);
+      if (dir != null) {
+        if (dir.getWasEverDeleted())
+          throw new errors.InvalidOperationError(`Cannot read file at ${filePath} because one of its ancestor directories was once deleted or moved.`);
+        return;
+      }
+      if (FileUtils.isRootDirPath(dirPath))
+        return;
+      dirPath = FileUtils.getDirPath(dirPath);
+    }
   }
 
   readDirSync(dirPath: StandardizedFilePath): DirEntry[] {
