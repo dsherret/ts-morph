@@ -13,6 +13,18 @@ export function appendCommaToText(text: string) {
 }
 
 /**
+ * Gets whether the text contains only whitespace and comments (no syntax tokens).
+ */
+export function isOnlyTrivia(text: string) {
+  scanner.setText(text);
+  try {
+    return scanner.scan() === ts.SyntaxKind.EndOfFileToken;
+  } finally {
+    scanner.setText(undefined);
+  }
+}
+
+/**
  * Gets the position in the text that a comma could be appended.
  * @param text - Text to search.
  * @returns The position to append. -1 otherwise.

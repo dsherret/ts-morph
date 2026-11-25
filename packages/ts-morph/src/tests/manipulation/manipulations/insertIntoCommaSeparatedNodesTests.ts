@@ -1,7 +1,7 @@
 import { SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ArrayLiteralExpression, ModuleDeclaration } from "../../../compiler";
-import { OptionalKind, PropertyAssignmentStructure } from "../../../structures";
+import { OptionalKind, PropertyAssignmentStructure, StructureKind } from "../../../structures";
 import { WriterFunction } from "../../../types";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../../compiler/testHelpers";
 
@@ -466,6 +466,74 @@ describe("insertIntoCommaSeparatedNodes", () => {
         [{ name: "prop2", initializer: "`${p}/*`" }],
         "const t = {\n    prop2: `${p}/*`,\n    prop1\n};",
       );
+    });
+
+    it("should not add a trailing comma when inserting a comment after the last property", () => {
+      const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression("const o = {\n    p1: 5\n};");
+      const prop = objectLiteralExpression.getPropertyOrThrow("p1");
+      const inserted = objectLiteralExpression.insertProperty(prop.getChildIndex() + 1, "// 1");
+      expect(sourceFile.getFullText()).to.equal("const o = {\n    p1: 5\n    // 1\n};");
+      expect(inserted.getText()).to.equal("// 1");
+    });
+
+    it("should not add a trailing comma when inserting a comment after an existing trailing comment", () => {
+      const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression("const o = {\n    p1: 5\n    // 1\n};");
+      const inserted = objectLiteralExpression.insertProperty(2, "// 2");
+      expect(sourceFile.getFullText()).to.equal("const o = {\n    p1: 5\n    // 1\n    // 2\n};");
+      expect(inserted.getText()).to.equal("// 2");
+    });
+
+    it("should not add a trailing comma when inserting multiple comments after the last property", () => {
+      const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression("const o = {\n    p1: 5\n};");
+      objectLiteralExpression.insertProperties(1, ["// 1", "/* 2 */"]);
+      expect(sourceFile.getFullText()).to.equal("const o = {\n    p1: 5\n    // 1\n    /* 2 */\n};");
+    });
+
+    it("should add a comma when inserting a comment followed by a property after the last property", () => {
+      const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression("const o = {\n    p1: 5\n};");
+      objectLiteralExpression.insertProperties(1, ["// 1", { kind: StructureKind.PropertyAssignment, name: "p2", initializer: "6" }]);
+      expect(sourceFile.getFullText()).to.equal("const o = {\n    p1: 5,\n    // 1\n    p2: 6\n};");
+    });
+
+    it("should not add a trailing comma when inserting a comment between the last property and an existing comment", () => {
+      const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression("const o = {\n    p1: 5\n    // 2\n};");
+      objectLiteralExpression.insertProperty(1, "// 1");
+      expect(sourceFile.getFullText()).to.equal("const o = {\n    p1: 5\n    // 1\n    // 2\n};");
+    });
+
+    it("should not add a trailing comma when inserting a comment after a property with a trailing inline comment", () => {
+      const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression("const o = {\n    p1: 5 // existing\n};");
+      objectLiteralExpression.insertProperty(1, "// 1");
+      expect(sourceFile.getFullText()).to.equal("const o = {\n    p1: 5 // existing\n    // 1\n};");
+    });
+
+    it("should preserve an existing trailing comma when inserting a comment after the last property", () => {
+      const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression("const o = {\n    p1: 5,\n};");
+      objectLiteralExpression.insertProperty(1, "// 1");
+      expect(sourceFile.getFullText()).to.equal("const o = {\n    p1: 5,\n    // 1\n};");
+    });
+
+    it("should not add a trailing comma when inserting a comment with useTrailingCommas enabled", () => {
+      const { sourceFile, project, objectLiteralExpression } = getObjectLiteralExpression("const o = {\n    p1: 5\n};");
+      project.manipulationSettings.set({ useTrailingCommas: true });
+      objectLiteralExpression.insertProperty(1, "// 1");
+      expect(sourceFile.getFullText()).to.equal("const o = {\n    p1: 5\n    // 1\n};");
+    });
+
+    it("should not add a trailing comma when inserting a comment after the last enum member", () => {
+      const { sourceFile } = getInfoFromText("enum E {\n    A\n}");
+      const enumDec = sourceFile.getEnumOrThrow("E");
+      const inserted = enumDec.insertMember(1, "// 1");
+      expect(sourceFile.getFullText()).to.equal("enum E {\n    A\n    // 1\n}");
+      expect(inserted.getText()).to.equal("// 1");
+    });
+
+    it("should not add a trailing comma when inserting a comment after a trailing comment in an enum", () => {
+      const { sourceFile } = getInfoFromText("enum E {\n    A\n    // 1\n}");
+      const enumDec = sourceFile.getEnumOrThrow("E");
+      const inserted = enumDec.insertMember(2, "// 2");
+      expect(sourceFile.getFullText()).to.equal("enum E {\n    A\n    // 1\n    // 2\n}");
+      expect(inserted.getText()).to.equal("// 2");
     });
   });
 });

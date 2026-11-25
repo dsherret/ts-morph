@@ -9,6 +9,7 @@ import {
   getInsertPosFromIndex,
   getNodesToReturn,
   getRangeWithoutCommentsFromArray,
+  isOnlyTrivia,
   verifyAndGetIndex,
 } from "../helpers";
 import { NodeHandlerFactory } from "../nodeHandlers";
@@ -91,11 +92,12 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
   const { currentNodes, insertIndex, parent } = opts;
   const previousNode = currentNodes[insertIndex - 1] as Node | undefined;
   const previousNonCommentNode = getPreviousNonCommentNode();
+  const isNewTextOnlyTrivia = isOnlyTrivia(opts.newText);
   if (previousNode != null && previousNonCommentNode != null && previousNode !== previousNonCommentNode) {
     const comma = getCommaAfterNode(previousNonCommentNode);
     // a comma after the comment can't be kept in place, so that uncommon case is rewritten below
     if (comma == null || comma.getStart() < previousNode.getEnd()) {
-      insertAfterCommentNode(opts, previousNode, previousNonCommentNode, comma != null);
+      insertAfterCommentNode(opts, previousNode, previousNonCommentNode, comma != null, isNewTextOnlyTrivia);
       return;
     }
   }
@@ -190,7 +192,8 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
         appendCommentNodeTexts();
       }
     } else {
-      text += ",";
+      if (!isNewTextOnlyTrivia)
+        text += ",";
       if (previousNonCommentNode === previousNode)
         appendNodeTrailingCommentRanges(previousNonCommentNode);
       else
@@ -274,7 +277,8 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
   }
 
   function appendCommaAndSeparator() {
-    newText = appendCommaToText(newText);
+    if (!isNewTextOnlyTrivia)
+      newText = appendCommaToText(newText);
     appendSeparator();
   }
 
@@ -448,6 +452,7 @@ function insertAfterCommentNode(
   commentNode: Node,
   previousNonCommentNode: Node,
   hasComma: boolean,
+  isNewTextOnlyTrivia: boolean,
 ) {
   const { currentNodes, insertIndex, parent } = opts;
 
@@ -464,7 +469,7 @@ function insertAfterCommentNode(
   let newText = opts.newText;
   if (!StringUtils.startsWithNewLine(newText))
     newText = newLine + newText;
-  if (hasNextNonCommentNode || opts.useTrailingCommas)
+  if (!isNewTextOnlyTrivia && (hasNextNonCommentNode || opts.useTrailingCommas))
     newText = appendCommaToText(newText);
   if (keepsFollowingText)
     newText = newText.trimEnd();
@@ -476,8 +481,9 @@ function insertAfterCommentNode(
 
   // add the comma in the same manipulation so a failed insert leaves the text unchanged
   // (the new text could otherwise parse as a continuation of the previous node, ex. `1\n[k]`)
-  const insertPos = hasComma ? commentsEnd : previousNonCommentNode.getEnd();
-  if (!hasComma)
+  const needsComma = !hasComma && !isNewTextOnlyTrivia;
+  const insertPos = needsComma ? previousNonCommentNode.getEnd() : commentsEnd;
+  if (needsComma)
     newText = "," + fullText.substring(insertPos, commentsEnd) + newText;
 
   insertKeepingCommentNodes({
@@ -485,7 +491,7 @@ function insertAfterCommentNode(
     newText,
     parent,
     replacing: { textLength: (keepsFollowingText ? commentsEnd : replaceEnd) - insertPos },
-  }, hasComma ? [] : currentNodes.slice(currentNodes.indexOf(previousNonCommentNode) + 1, insertIndex));
+  }, needsComma ? currentNodes.slice(currentNodes.indexOf(previousNonCommentNode) + 1, insertIndex) : []);
 }
 
 function insertKeepingCommentNodes(insertOpts: InsertIntoParentTextRangeOptions, commentNodes: Node[]) {
