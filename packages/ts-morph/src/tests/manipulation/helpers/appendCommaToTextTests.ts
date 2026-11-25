@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { appendCommaToText } from "../../../manipulation/helpers";
+import { appendCommaToText, isOnlyTrivia } from "../../../manipulation/helpers";
 
 describe("appendCommaToText", () => {
   function runTest(inputText: string, expectedText: string) {
@@ -49,5 +49,24 @@ describe("appendCommaToText", () => {
 
   it("should append when only a comment", () => {
     runTest(" // a", " // a");
+  });
+});
+
+describe("isOnlyTrivia", () => {
+  it("should be true when empty or whitespace", () => {
+    expect(isOnlyTrivia("")).to.be.true;
+    expect(isOnlyTrivia("  \r\n\t ")).to.be.true;
+  });
+
+  it("should be true when only comments", () => {
+    expect(isOnlyTrivia("// comment")).to.be.true;
+    expect(isOnlyTrivia("/* block */")).to.be.true;
+    expect(isOnlyTrivia("  // first\n  /* second */  ")).to.be.true;
+  });
+
+  it("should be false when containing syntax tokens", () => {
+    expect(isOnlyTrivia("a")).to.be.false;
+    expect(isOnlyTrivia("// comment\na: 1")).to.be.false;
+    expect(isOnlyTrivia("p: 1,")).to.be.false;
   });
 });
