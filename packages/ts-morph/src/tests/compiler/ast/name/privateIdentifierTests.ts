@@ -1,4 +1,4 @@
-import { nameof } from "@ts-morph/common";
+import { nameof, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, PrivateIdentifier } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
@@ -38,6 +38,14 @@ describe("PrivateIdentifier", () => {
 
     it("should support renaming to an identifier", () => {
       doTest("class C { #test; method() { this.#test = 4; } }", "test", "class C { test; method() { this.test = 4; } }");
+    });
+  });
+
+  describe(nameof<PrivateIdentifier>("getDefinitionNodes"), () => {
+    it("should get the property declaration", () => {
+      const { sourceFile } = getInfoFromText("class C { #test = 1; method() { return this.#test; } }");
+      const identifier = sourceFile.getDescendantsOfKind(SyntaxKind.PrivateIdentifier)[1];
+      expect(identifier.getDefinitionNodes().map(n => n.getText())).to.deep.equal(["#test = 1;"]);
     });
   });
 });
