@@ -168,6 +168,30 @@ const t = MyNamespace.MyClass;
       expect((ident as Identifier).getDefinitionNodes().map(t => t.getText()))
         .to.deep.equal([`export class Test {}`].sort());
     });
+
+    function doAnonymousDefaultExportTest(exportText: string, expectedText: string) {
+      const project = new Project({ useInMemoryFileSystem: true });
+      project.createSourceFile("export.ts", exportText);
+      const mainSourceFile = project.createSourceFile("main.ts", `import value from "./export";\nvalue;`);
+      const ident = mainSourceFile.getStatements()[1].getFirstDescendantByKindOrThrow(SyntaxKind.Identifier);
+      expect(ident.getDefinitionNodes().map(n => n.getText())).to.deep.equal([expectedText]);
+    }
+
+    it("should get an anonymous default exported function", () => {
+      doAnonymousDefaultExportTest("export default function() {}", "export default function() {}");
+    });
+
+    it("should get an anonymous default exported class", () => {
+      doAnonymousDefaultExportTest("export default class {}\n", "export default class {}");
+    });
+
+    it("should get an anonymous default exported function that has a js doc", () => {
+      doAnonymousDefaultExportTest("/** Docs */\nexport default function() {}", "export default function() {}");
+    });
+
+    it("should get the export assignment of a default exported expression", () => {
+      doAnonymousDefaultExportTest("export default () => 5;", "export default () => 5;");
+    });
   });
 
   describe(nameof<Identifier>("getType"), () => {

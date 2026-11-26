@@ -54,9 +54,19 @@ export class DefinitionInfo<TCompilerObject extends ts.DefinitionInfo = ts.Defin
       return this.getSourceFile();
 
     const start = this.getTextSpan().getStart();
+    const end = this.getTextSpan().getEnd();
     const identifier = findIdentifier(this.getSourceFile());
 
-    return identifier == null ? undefined : identifier.getParentOrThrow();
+    if (identifier != null)
+      return identifier.getParentOrThrow();
+
+    // the text span is either a name that's not an identifier (ex. `#prop`) or, for anonymous
+    // declarations (ex. `export default function() {}`), the declaration itself
+    const spanNode = findDeclaration(this.getSourceFile());
+    const parent = spanNode?.getParent();
+    if (parent != null && ts.getNameOfDeclaration(parent.compilerNode as ts.Declaration) === spanNode!.compilerNode)
+      return parent;
+    return spanNode;
 
     function findIdentifier(node: Node): Node | undefined {
       if (node.getKind() === SyntaxKind.Identifier && node.getStart() === start)
@@ -65,6 +75,19 @@ export class DefinitionInfo<TCompilerObject extends ts.DefinitionInfo = ts.Defin
       for (const child of node._getChildrenIterator()) {
         if (child.getPos() <= start && child.getEnd() > start)
           return findIdentifier(child);
+      }
+
+      return undefined;
+    }
+
+    function findDeclaration(node: Node): Node | undefined {
+      for (const child of node._getChildrenIterator()) {
+        if (child.getPos() <= start && child.getEnd() > start) {
+          const declaration = findDeclaration(child);
+          if (declaration != null)
+            return declaration;
+          return child.getStart() === start && child.getEnd() === end && child.getKind() !== SyntaxKind.SyntaxList ? child : undefined;
+        }
       }
 
       return undefined;
